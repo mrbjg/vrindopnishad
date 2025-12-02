@@ -1,43 +1,80 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../App';
+import { Home, BookOpen, Scroll, Music, FileText, LayoutDashboard, LogIn, LogOut, Menu, X } from 'lucide-react';
 
 const Navigation = () => {
   const { isAdmin, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/');
+    setMobileMenuOpen(false);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
   };
 
   return (
     <nav className="navbar">
       <div className="nav-container">
-        <Link to="/" className="nav-logo" data-testid="nav-logo">
+        <Link to="/" className="nav-logo" data-testid="nav-logo" onClick={closeMobileMenu}>
           ॐ Vrindopnishad
         </Link>
-        <div className="nav-links">
-          <Link to="/" className="nav-link" data-testid="nav-home">Home</Link>
-          <Link to="/content" className="nav-link" data-testid="nav-content">Content</Link>
-          <Link to="/category/shloka" className="nav-link" data-testid="nav-shlokas">Shlokas</Link>
-          <Link to="/category/strotra" className="nav-link" data-testid="nav-strotras">Strotras</Link>
-          <Link to="/category/poem" className="nav-link" data-testid="nav-poems">Poems</Link>
+        
+        {/* Mobile menu toggle */}
+        <button 
+          className="mobile-menu-toggle"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          data-testid="mobile-menu-toggle"
+        >
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+
+        {/* Navigation links */}
+        <div className={`nav-links ${mobileMenuOpen ? 'mobile-open' : ''}`}>
+          <Link to="/" className="nav-link" data-testid="nav-home" onClick={closeMobileMenu}>
+            <Home size={20} />
+            <span>Home</span>
+          </Link>
+          <Link to="/content" className="nav-link" data-testid="nav-content" onClick={closeMobileMenu}>
+            <BookOpen size={20} />
+            <span>Content</span>
+          </Link>
+          <Link to="/category/shloka" className="nav-link" data-testid="nav-shlokas" onClick={closeMobileMenu}>
+            <Scroll size={20} />
+            <span>Shlokas</span>
+          </Link>
+          <Link to="/category/strotra" className="nav-link" data-testid="nav-strotras" onClick={closeMobileMenu}>
+            <Music size={20} />
+            <span>Strotras</span>
+          </Link>
+          <Link to="/category/poem" className="nav-link" data-testid="nav-poems" onClick={closeMobileMenu}>
+            <FileText size={20} />
+            <span>Poems</span>
+          </Link>
           {isAdmin ? (
             <>
-              <Link to="/admin/dashboard" className="nav-link" data-testid="nav-admin">Dashboard</Link>
+              <Link to="/admin/dashboard" className="nav-link" data-testid="nav-admin" onClick={closeMobileMenu}>
+                <LayoutDashboard size={20} />
+                <span>Dashboard</span>
+              </Link>
               <button
                 onClick={handleLogout}
-                className="btn btn-secondary"
-                style={{ padding: '0.5rem 1rem' }}
+                className="nav-link nav-btn"
                 data-testid="logout-btn"
               >
-                Logout
+                <LogOut size={20} />
+                <span>Logout</span>
               </button>
             </>
           ) : (
-            <Link to="/admin/login" className="btn btn-secondary" style={{ padding: '0.5rem 1rem' }} data-testid="nav-login">
-              Admin Login
+            <Link to="/admin/login" className="nav-link nav-highlight" data-testid="nav-login" onClick={closeMobileMenu}>
+              <LogIn size={20} />
+              <span>Admin</span>
             </Link>
           )}
         </div>
