@@ -175,7 +175,13 @@ h1, h2, h3, h4, h5, h6 {
 .container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 2rem;
+  }
 }
 
 /* Hero Section */
