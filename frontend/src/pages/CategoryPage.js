@@ -1,0 +1,104 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import axios from 'axios';
+import { API } from '../App';
+import Navigation from '../components/Navigation';
+
+const CategoryPage = () => {
+  const { category } = useParams();
+  const [content, setContent] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const categoryInfo = {
+    shloka: {
+      name: 'Shlokas',
+      description: 'Sacred verses from Hindu scriptures',
+      icon: '📿'
+    },
+    strotra: {
+      name: 'Strotras',
+      description: 'Devotional hymns and prayers',
+      icon: '🕉️'
+    },
+    poem: {
+      name: 'Poems',
+      description: 'Spiritual and devotional poetry',
+      icon: '📜'
+    }
+  };
+
+  useEffect(() => {
+    fetchContent();
+  }, [category]);
+
+  const fetchContent = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API}/content`, { params: { category } });
+      setContent(response.data.content || []);
+    } catch (error) {
+      console.error('Error fetching content:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const info = categoryInfo[category] || { name: category, description: '', icon: '📖' };
+
+  return (
+    <div>
+      <Navigation />
+      <div className="container mt-4">
+        <div className="text-center mb-4">
+          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>{info.icon}</div>
+          <h1 style={{ fontSize: '3rem', marginBottom: '0.5rem' }} data-testid="category-title">{info.name}</h1>
+          <p style={{ fontSize: '1.2rem', color: '#5d3a1a' }}>{info.description}</p>
+        </div>
+
+        {loading ? (
+          <div className="text-center mt-5">
+            <div className="spinner"></div>
+          </div>
+        ) : content.length === 0 ? (
+          <div className="card text-center" style={{ padding: '3rem' }} data-testid="no-content-message">
+            <h3>No {info.name.toLowerCase()} available yet</h3>
+            <p style={{ color: '#666', marginTop: '1rem' }}>Please check back later or explore other categories.</p>
+            <Link to="/" className="btn btn-primary mt-3" data-testid="back-home-btn">
+              Back to Home
+            </Link>
+          </div>
+        ) : (
+          <div className="content-grid">
+            {content.map((item) => (
+              <Link
+                key={item.id}
+                to={`/content/${item.id}`}
+                style={{ textDecoration: 'none' }}
+                data-testid={`content-card-${item.id}`}
+              >
+                <div className="card">
+                  <h3 style={{ marginBottom: '1rem' }}>{item.title}</h3>
+                  {item.description && (
+                    <p style={{ color: '#666', marginBottom: '1rem' }}>{item.description}</p>
+                  )}
+                  {item.sanskrit_text && (
+                    <p className="sanskrit-text" style={{ fontSize: '1rem', marginTop: '1rem' }}>
+                      {item.sanskrit_text.substring(0, 100)}{item.sanskrit_text.length > 100 ? '...' : ''}
+                    </p>
+                  )}
+                  <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    {item.audio_url && <span style={{ fontSize: '0.85rem', color: '#ff6b35' }}>🎵 Audio</span>}
+                    {item.image_urls && item.image_urls.length > 0 && <span style={{ fontSize: '0.85rem', color: '#ff6b35' }}>🖼️ Images</span>}
+                    {item.video_urls && item.video_urls.length > 0 && <span style={{ fontSize: '0.85rem', color: '#ff6b35' }}>🎬 Videos</span>}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default CategoryPage;
