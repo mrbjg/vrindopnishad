@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../App';
-import { Home, BookOpen, Scroll, Music, FileText, LayoutDashboard, LogIn, LogOut, Menu, X } from 'lucide-react';
+import { Home, BookOpen, Scroll, Music, FileText, LayoutDashboard, LogIn, LogOut } from 'lucide-react';
 
 const Navigation = () => {
   const { isAdmin, logout } = useContext(AuthContext);
@@ -24,15 +24,21 @@ const Navigation = () => {
         <Link to="/" className="nav-logo" data-testid="nav-logo" onClick={closeMobileMenu}>
           ॐ Vrindopnishad
         </Link>
-        
-        {/* Mobile menu toggle */}
-        <button 
-          className="mobile-menu-toggle"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+
+        {/* Animated Hamburger Menu Toggle */}
+        <label
+          className={`hamburger-menu ${mobileMenuOpen ? 'open' : ''}`}
           data-testid="mobile-menu-toggle"
         >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+          <input
+            type="checkbox"
+            checked={mobileMenuOpen}
+            onChange={() => setMobileMenuOpen(!mobileMenuOpen)}
+          />
+          <span></span>
+          <span></span>
+          <span></span>
+        </label>
 
         {/* Navigation links */}
         <div className={`nav-links ${mobileMenuOpen ? 'mobile-open' : ''}`}>

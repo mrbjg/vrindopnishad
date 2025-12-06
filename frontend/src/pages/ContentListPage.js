@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../App';
 import Navigation from '../components/Navigation';
+import Loader from '../components/Loader';
 import { Music, Image as ImageIcon, Video, Layers } from 'lucide-react';
 
 const ContentListPage = () => {
@@ -32,8 +33,8 @@ const ContentListPage = () => {
       <Navigation />
       <div className="container mt-4">
         <div className="text-center mb-4">
-          <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }} data-testid="content-list-title">Sacred Collection</h1>
-          <p style={{ fontSize: '1.2rem', color: '#5d3a1a' }}>Browse our collection of divine texts</p>
+          <h1 className="hero-title" style={{ fontSize: 'clamp(1.75rem, 5vw, 3rem)', marginBottom: '1rem' }} data-testid="content-list-title">Sacred Collection</h1>
+          <p className="hero-subtitle" style={{ fontSize: 'clamp(1rem, 3vw, 1.2rem)', marginBottom: 0 }}>Browse our collection of divine texts</p>
         </div>
 
         <div className="mb-4" style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -52,7 +53,7 @@ const ContentListPage = () => {
             data-testid="filter-shloka-btn"
             style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 17h4"/><path d="M12 17v4"/><path d="M8 3v9a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V3"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 17h4" /><path d="M12 17v4" /><path d="M8 3v9a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V3" /></svg>
             Shlokas
           </button>
           <button
@@ -70,14 +71,14 @@ const ContentListPage = () => {
             data-testid="filter-poem-btn"
             style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /><line x1="16" x2="8" y1="13" y2="13" /><line x1="16" x2="8" y1="17" y2="17" /><line x1="10" x2="8" y1="9" y2="9" /></svg>
             Poems
           </button>
         </div>
 
         {loading ? (
           <div className="text-center mt-5">
-            <div className="spinner"></div>
+            <Loader text="Loading content..." />
           </div>
         ) : content.length === 0 ? (
           <div className="card text-center" style={{ padding: '3rem' }} data-testid="no-content-message">

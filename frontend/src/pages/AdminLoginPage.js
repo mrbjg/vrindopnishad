@@ -2,20 +2,21 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { API, AuthContext } from '../App';
+import { useLoading } from '../contexts/LoadingContext';
 import Navigation from '../components/Navigation';
 
 const AdminLoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
   const { login } = useContext(AuthContext);
+  const { showLoading, hideLoading } = useLoading();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
+    showLoading('Logging in...');
 
     try {
       const response = await axios.post(`${API}/auth/login`, { email, password });
@@ -24,7 +25,7 @@ const AdminLoginPage = () => {
     } catch (err) {
       setError(err.response?.data?.detail || 'Login failed. Please check your credentials.');
     } finally {
-      setLoading(false);
+      hideLoading();
     }
   };
 
@@ -76,10 +77,9 @@ const AdminLoginPage = () => {
               type="submit"
               className="btn btn-primary"
               style={{ width: '100%' }}
-              disabled={loading}
               data-testid="login-btn"
             >
-              {loading ? 'Logging in...' : 'Login'}
+              Login
             </button>
           </form>
 

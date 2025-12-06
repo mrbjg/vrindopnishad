@@ -11,6 +11,7 @@ A beautiful, full-stack web application for managing and sharing sacred Hindu te
 - **Listen to Audio** narrations with AI-generated or uploaded audio
 - **View Imagery** with AI-generated or uploaded images and videos
 - **Responsive Design** works on desktop, tablet, and mobile
+- **Demo Mode** - Try without any setup required!
 
 ### Admin Features
 - **Secure Admin Login** with JWT authentication
@@ -23,26 +24,72 @@ A beautiful, full-stack web application for managing and sharing sacred Hindu te
 
 ## 🛠️ Tech Stack
 
-**Frontend**: React 19 | React Router | Axios | CSS3  
+**Frontend**: React 19 | React Router | Axios | Tailwind CSS  
 **Backend**: FastAPI | Firebase | Google Cloud TTS | Gemini AI  
 **Database**: Firebase Firestore | Firebase Storage
 
-## 📦 Quick Start
+---
 
-### 1. Firebase Setup (Required)
+## ⚡ Quick Start (Choose One)
 
-Follow the detailed guide in `FIREBASE_SETUP_GUIDE.md`:
-1. Create Firebase project
-2. Enable Firestore & Storage
-3. Download service account JSON
-4. Update `/app/backend/.env` with your Firebase config
+### Option 1: Try Demo Mode (5 minutes) ⭐ **RECOMMENDED**
 
-### 2. Access the Application
+**No Firebase, no setup, no credentials needed!**
 
-- **Website**: https://modern-icons-1.preview.emergentagent.com
-- **Admin Login**: `/admin/login`
-  - Email: `admin@vrindopnishad.com`
-  - Password: `admin123`
+**macOS/Linux:**
+```bash
+cd Sant-Vaani
+chmod +x start-demo.sh
+./start-demo.sh
+```
+
+**Windows:**
+```bash
+cd Sant-Vaani\frontend
+npm install
+npm start
+```
+
+Opens at `http://localhost:3000` with sample content to explore.
+
+---
+
+### Option 2: Full Setup with Firebase (15 minutes)
+
+**macOS/Linux:**
+```bash
+cd Sant-Vaani
+chmod +x setup.sh
+./setup.sh
+# Follow the prompts and instructions
+```
+
+**Windows:**
+See `INSTALLATION.md` for detailed Windows setup.
+
+---
+
+## 📖 Documentation
+
+- **[QUICK_START.md](QUICK_START.md)** - Quick setup guide for all options
+- **[INSTALLATION.md](INSTALLATION.md)** - Detailed installation guide (recommended)
+- **[FIREBASE_SETUP_GUIDE.md](FIREBASE_SETUP_GUIDE.md)** - Step-by-step Firebase configuration
+
+---
+
+## 🎯 Getting Started
+
+### 1. Demo Mode (Fastest)
+```bash
+./start-demo.sh
+```
+Perfect for testing the UI without any setup.
+
+### 2. Full Setup
+1. Follow `INSTALLATION.md`
+2. Configure Firebase (5 min)
+3. Run backend and frontend
+4. Login with `admin@vrindopnishad.com` / `admin123`
 
 ### 3. Create Content
 

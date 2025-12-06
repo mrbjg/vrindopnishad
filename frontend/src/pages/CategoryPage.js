@@ -52,11 +52,11 @@ const CategoryPage = () => {
       <Navigation />
       <div className="container mt-4">
         <div className="text-center mb-4">
-          <div style={{ fontSize: '4rem', marginBottom: '1rem', display: 'flex', justifyContent: 'center', color: '#ff6b35' }}>
-            <IconComponent size={80} strokeWidth={1.5} />
+          <div className="category-icon-large" style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'center', color: '#ff6b35' }}>
+            <IconComponent size={60} strokeWidth={1.5} />
           </div>
-          <h1 style={{ fontSize: '3rem', marginBottom: '0.5rem' }} data-testid="category-title">{info.name}</h1>
-          <p style={{ fontSize: '1.2rem', color: '#5d3a1a' }}>{info.description}</p>
+          <h1 className="hero-title" style={{ fontSize: 'clamp(1.75rem, 5vw, 3rem)', marginBottom: '0.5rem' }} data-testid="category-title">{info.name}</h1>
+          <p className="hero-subtitle" style={{ fontSize: 'clamp(1rem, 3vw, 1.2rem)', marginBottom: 0 }}>{info.description}</p>
         </div>
 
         {loading ? (

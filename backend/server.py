@@ -16,7 +16,14 @@ from firebase_admin import credentials, firestore, storage
 from google.cloud import texttospeech
 import base64
 import asyncio
-from emergentintegrations.llm.chat import LlmChat, UserMessage
+
+# Optional import for AI image generation
+try:
+    from emergentintegrations.llm.chat import LlmChat, UserMessage
+    HAS_EMERGENT = True
+except ImportError:
+    HAS_EMERGENT = False
+    logging.warning("emergentintegrations not available - AI image generation disabled")
 
 
 ROOT_DIR = Path(__file__).parent
@@ -41,8 +48,12 @@ except Exception as e:
     db = None
     bucket = None
 
-# Google TTS Client
-tts_client = texttospeech.TextToSpeechClient()
+# Google TTS Client (optional - requires Google Cloud credentials)
+try:
+    tts_client = texttospeech.TextToSpeechClient()
+except Exception as e:
+    tts_client = None
+    logging.warning(f"Google TTS not available: {e}")
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -198,6 +209,9 @@ async def delete_content(content_id: str, payload: dict = Depends(verify_token))
 @api_router.post("/content/{content_id}/generate-audio")
 async def generate_audio(content_id: str, request: GenerateAudioRequest, payload: dict = Depends(verify_token)):
     """Generate audio using Google TTS"""
+    if not tts_client:
+        raise HTTPException(status_code=503, detail="Google TTS not available - missing credentials")
+    
     if not db:
         raise HTTPException(status_code=503, detail="Firebase not initialized")
     
@@ -239,6 +253,9 @@ async def generate_audio(content_id: str, request: GenerateAudioRequest, payload
 @api_router.post("/content/{content_id}/generate-image")
 async def generate_image(content_id: str, request: GenerateImageRequest, payload: dict = Depends(verify_token)):
     """Generate image using Gemini Nano Banana"""
+    if not HAS_EMERGENT:
+        raise HTTPException(status_code=503, detail="AI image generation not available - emergentintegrations package not installed")
+    
     if not db:
         raise HTTPException(status_code=503, detail="Firebase not initialized")
     
@@ -418,8 +435,8 @@ app.include_router(api_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )

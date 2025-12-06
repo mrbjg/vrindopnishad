@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../App';
 import Navigation from '../components/Navigation';
+import Loader from '../components/Loader';
 import { ArrowLeft, Music, Image as ImageIcon, Video } from 'lucide-react';
 
 const ContentDetailPage = () => {
@@ -31,7 +32,7 @@ const ContentDetailPage = () => {
       <div>
         <Navigation />
         <div className="container mt-5 text-center">
-          <div className="spinner"></div>
+          <Loader text="Loading content details..." />
         </div>
       </div>
     );
@@ -62,12 +63,12 @@ const ContentDetailPage = () => {
           Back to Collection
         </Link>
 
-        <div className="card" style={{ padding: '3rem' }}>
+        <div className="card content-detail-card">
           <div className={`category-badge category-${content.category} mb-3`}>
             {content.category}
           </div>
 
-          <h1 style={{ fontSize: '2.5rem', marginBottom: '2rem' }} data-testid="content-title">
+          <h1 style={{ fontSize: 'clamp(1.5rem, 5vw, 2.5rem)', marginBottom: '1.5rem' }} data-testid="content-title">
             {content.title}
           </h1>
 

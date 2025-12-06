@@ -76,10 +76,10 @@ const HomePage = () => {
         </div>
       </div>
 
-      <div className="container mt-5" style={{ paddingBottom: '4rem' }}>
-        <div className="card" style={{ background: 'linear-gradient(135deg, #fff5e6 0%, #ffe4b5 100%)', textAlign: 'center', padding: '3rem' }}>
-          <h2 style={{ marginBottom: '1.5rem' }}>Experience Divine Wisdom</h2>
-          <p style={{ fontSize: '1.1rem', color: '#5d3a1a', marginBottom: '2rem', maxWidth: '700px', margin: '0 auto 2rem' }}>
+      <div className="container mt-5" style={{ paddingBottom: '2rem' }}>
+        <div className="card" style={{ background: 'linear-gradient(135deg, #fff5e6 0%, #ffe4b5 100%)', textAlign: 'center', padding: 'clamp(1.5rem, 5vw, 3rem)' }}>
+          <h2 style={{ marginBottom: '1rem', fontSize: 'clamp(1.25rem, 4vw, 1.75rem)' }}>Experience Divine Wisdom</h2>
+          <p style={{ fontSize: 'clamp(0.9rem, 3vw, 1.1rem)', color: '#5d3a1a', marginBottom: '1.5rem', maxWidth: '700px', margin: '0 auto 1.5rem', lineHeight: 1.6 }}>
             Read, Listen, and Immerse yourself in the sacred texts with audio narrations, beautiful imagery, and video content
           </p>
           <Link to="/content" className="btn btn-primary" data-testid="start-journey-btn">

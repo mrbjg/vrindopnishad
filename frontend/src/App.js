@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '@/App.css';
+import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import HomePage from './pages/HomePage';
@@ -8,11 +8,19 @@ import ContentDetailPage from './pages/ContentDetailPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboard from './pages/AdminDashboard';
 import CategoryPage from './pages/CategoryPage';
+import LoaderDemo from './pages/LoaderDemo';
+import { mockApiService } from './services/mockData';
+import Loader from './components/Loader';
+import { LoadingProvider } from './contexts/LoadingContext';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-export const API = `${BACKEND_URL}/api`;
+// Backend URL with fallback for development
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+const USE_MOCK_DATA = process.env.REACT_APP_DEMO_MODE === 'true' || !BACKEND_URL || BACKEND_URL === '';
+export const API = USE_MOCK_DATA ? null : `${BACKEND_URL}/api`;
+export const USE_DEMO_MODE = USE_MOCK_DATA;
 
 export const AuthContext = React.createContext();
+export const ApiContext = React.createContext();
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -30,16 +38,22 @@ function App() {
 
   const verifyToken = async (tk) => {
     try {
-      const response = await axios.get(`${API}/auth/verify`, {
-        headers: { Authorization: `Bearer ${tk}` }
-      });
-      if (response.data.valid) {
-        setToken(tk);
-        setIsAdmin(true);
+      if (USE_MOCK_DATA) {
+        await mockApiService.verifyToken();
       } else {
-        localStorage.removeItem('admin_token');
+        const response = await axios.get(`${API}/auth/verify`, {
+          headers: { Authorization: `Bearer ${tk}` }
+        });
+        if (!response.data.valid) {
+          localStorage.removeItem('admin_token');
+          setLoading(false);
+          return;
+        }
       }
+      setToken(tk);
+      setIsAdmin(true);
     } catch (error) {
+      console.log('Token verification failed, clearing token');
       localStorage.removeItem('admin_token');
     } finally {
       setLoading(false);
@@ -59,31 +73,37 @@ function App() {
   };
 
   if (loading) {
-    return (
-      <div className="loading-screen">
-        <div className="spinner"></div>
-      </div>
-    );
+    return <Loader fullScreen text="Loading Vrindopnishad..." />;
   }
 
   return (
-    <AuthContext.Provider value={{ isAdmin, token, login, logout }}>
-      <div className="App">
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/content" element={<ContentListPage />} />
-            <Route path="/content/:id" element={<ContentDetailPage />} />
-            <Route path="/category/:category" element={<CategoryPage />} />
-            <Route path="/admin/login" element={<AdminLoginPage />} />
-            <Route
-              path="/admin/dashboard"
-              element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin/login" />}
-            />
-          </Routes>
-        </BrowserRouter>
-      </div>
-    </AuthContext.Provider>
+    <LoadingProvider>
+      <AuthContext.Provider value={{ isAdmin, token, login, logout }}>
+        <ApiContext.Provider value={{ apiService: USE_MOCK_DATA ? mockApiService : null, isDemoMode: USE_MOCK_DATA }}>
+          <div className="App">
+            {USE_MOCK_DATA && (
+              <div style={{ position: 'fixed', top: '10px', right: '10px', background: '#ff9800', color: 'white', padding: '10px 15px', borderRadius: '5px', zIndex: 1000, fontSize: '12px', fontWeight: 'bold' }}>
+                📋 Demo Mode (No Backend)
+              </div>
+            )}
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/content" element={<ContentListPage />} />
+                <Route path="/content/:id" element={<ContentDetailPage />} />
+                <Route path="/category/:category" element={<CategoryPage />} />
+                <Route path="/loader-demo" element={<LoaderDemo />} />
+                <Route path="/admin/login" element={<AdminLoginPage />} />
+                <Route
+                  path="/admin/dashboard"
+                  element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin/login" />}
+                />
+              </Routes>
+            </BrowserRouter>
+          </div>
+        </ApiContext.Provider>
+      </AuthContext.Provider>
+    </LoadingProvider>
   );
 }
 
