@@ -39,7 +39,7 @@ Follow the detailed guide in `FIREBASE_SETUP_GUIDE.md`:
 
 ### 2. Access the Application
 
-- **Website**: https://vedic-poetry.preview.emergentagent.com
+- **Website**: https://modern-icons-1.preview.emergentagent.com
 - **Admin Login**: `/admin/login`
   - Email: `admin@vrindopnishad.com`
   - Password: `admin123`
