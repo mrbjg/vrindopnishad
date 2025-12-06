@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navigation from '../components/Navigation';
+import { Compass, Scroll, Music, FileText, BookOpen, ArrowRight } from 'lucide-react';
 
 const HomePage = () => {
   return (
@@ -16,9 +17,11 @@ const HomePage = () => {
           </p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link to="/content" className="btn btn-primary" data-testid="explore-content-btn">
+              <Compass size={20} style={{ marginRight: '0.5rem' }} />
               Explore Content
             </Link>
             <Link to="/category/shloka" className="btn btn-secondary" data-testid="browse-shlokas-btn">
+              <Scroll size={20} style={{ marginRight: '0.5rem' }} />
               Browse Shlokas
             </Link>
           </div>
@@ -34,7 +37,10 @@ const HomePage = () => {
         <div className="content-grid">
           <Link to="/category/shloka" style={{ textDecoration: 'none' }}>
             <div className="card" data-testid="category-shloka-card">
-              <div className="category-badge category-shloka mb-3">Shlokas</div>
+              <div className="category-badge category-shloka mb-3" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
+                <Scroll size={18} />
+                <span>Shlokas</span>
+              </div>
               <h3 style={{ marginBottom: '1rem' }}>Sacred Verses</h3>
               <p style={{ color: '#666', lineHeight: '1.6' }}>
                 Divine verses from Hindu scriptures including the Bhagavad Gita, Upanishads, and Vedas
@@ -44,7 +50,10 @@ const HomePage = () => {
 
           <Link to="/category/strotra" style={{ textDecoration: 'none' }}>
             <div className="card" data-testid="category-strotra-card">
-              <div className="category-badge category-strotra mb-3">Strotras</div>
+              <div className="category-badge category-strotra mb-3" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
+                <Music size={18} />
+                <span>Strotras</span>
+              </div>
               <h3 style={{ marginBottom: '1rem' }}>Devotional Hymns</h3>
               <p style={{ color: '#666', lineHeight: '1.6' }}>
                 Traditional hymns and prayers dedicated to various deities and divine forms
@@ -54,7 +63,10 @@ const HomePage = () => {
 
           <Link to="/category/poem" style={{ textDecoration: 'none' }}>
             <div className="card" data-testid="category-poem-card">
-              <div className="category-badge category-poem mb-3">Poems</div>
+              <div className="category-badge category-poem mb-3" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
+                <FileText size={18} />
+                <span>Poems</span>
+              </div>
               <h3 style={{ marginBottom: '1rem' }}>Spiritual Poetry</h3>
               <p style={{ color: '#666', lineHeight: '1.6' }}>
                 Devotional and spiritual poetry expressing the essence of Hindu philosophy
@@ -71,6 +83,7 @@ const HomePage = () => {
             Read, Listen, and Immerse yourself in the sacred texts with audio narrations, beautiful imagery, and video content
           </p>
           <Link to="/content" className="btn btn-primary" data-testid="start-journey-btn">
+            <ArrowRight size={20} style={{ marginRight: '0.5rem' }} />
             Start Your Journey
           </Link>
         </div>

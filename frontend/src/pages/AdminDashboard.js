@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { API, AuthContext } from '../App';
 import Navigation from '../components/Navigation';
+import { Plus, X, Edit2, Trash2, Music, Image as ImageIcon, Video, Sparkles, Save } from 'lucide-react';
 
 const AdminDashboard = () => {
   const { token } = useContext(AuthContext);
@@ -181,8 +182,19 @@ const AdminDashboard = () => {
             className="btn btn-primary"
             onClick={() => setShowCreateForm(!showCreateForm)}
             data-testid="toggle-create-form-btn"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
-            {showCreateForm ? 'Cancel' : 'Create New Content'}
+            {showCreateForm ? (
+              <>
+                <X size={20} />
+                Cancel
+              </>
+            ) : (
+              <>
+                <Plus size={20} />
+                Create New Content
+              </>
+            )}
           </button>
         </div>
 
@@ -271,11 +283,13 @@ const AdminDashboard = () => {
               </div>
 
               <div style={{ display: 'flex', gap: '1rem' }}>
-                <button type="submit" className="btn btn-primary" data-testid="submit-btn">
+                <button type="submit" className="btn btn-primary" data-testid="submit-btn" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Save size={20} />
                   {editingId ? 'Update Content' : 'Create Content'}
                 </button>
                 {editingId && (
-                  <button type="button" className="btn btn-outline" onClick={resetForm}>
+                  <button type="button" className="btn btn-outline" onClick={resetForm} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <X size={20} />
                     Cancel Edit
                   </button>
                 )}
@@ -288,7 +302,10 @@ const AdminDashboard = () => {
           <h2 className="mb-3">AI Generation Tools</h2>
           
           <div className="mb-4">
-            <h3 style={{ fontSize: '1.3rem', marginBottom: '1rem' }}>Generate Audio (Google TTS)</h3>
+            <h3 style={{ fontSize: '1.3rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Music size={24} />
+              Generate Audio (Google TTS)
+            </h3>
             <div className="form-group">
               <label className="form-label">Select Content</label>
               <select
@@ -330,7 +347,9 @@ const AdminDashboard = () => {
               onClick={handleGenerateAudio}
               disabled={generatingAudio}
               data-testid="generate-audio-btn"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
             >
+              <Sparkles size={20} />
               {generatingAudio ? 'Generating...' : 'Generate Audio'}
             </button>
           </div>
@@ -338,7 +357,10 @@ const AdminDashboard = () => {
           <div className="decorative-border"></div>
 
           <div className="mt-4">
-            <h3 style={{ fontSize: '1.3rem', marginBottom: '1rem' }}>Generate Image (Gemini Nano Banana)</h3>
+            <h3 style={{ fontSize: '1.3rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <ImageIcon size={24} />
+              Generate Image (Gemini Nano Banana)
+            </h3>
             <div className="form-group">
               <label className="form-label">Select Content</label>
               <select
@@ -368,7 +390,9 @@ const AdminDashboard = () => {
               onClick={handleGenerateImage}
               disabled={generatingImage}
               data-testid="generate-image-btn"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
             >
+              <Sparkles size={20} />
               {generatingImage ? 'Generating...' : 'Generate Image'}
             </button>
           </div>
@@ -405,25 +429,43 @@ const AdminDashboard = () => {
                         <span className={`category-badge category-${item.category}`}>{item.category}</span>
                       </td>
                       <td style={{ padding: '1rem', textAlign: 'center' }}>
-                        {item.audio_url && '🎵 '}
-                        {item.image_urls && item.image_urls.length > 0 && `🖼️(${item.image_urls.length}) `}
-                        {item.video_urls && item.video_urls.length > 0 && `🎬(${item.video_urls.length})`}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                          {item.audio_url && (
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                              <Music size={16} />
+                            </span>
+                          )}
+                          {item.image_urls && item.image_urls.length > 0 && (
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                              <ImageIcon size={16} />
+                              <span style={{ fontSize: '0.85rem' }}>({item.image_urls.length})</span>
+                            </span>
+                          )}
+                          {item.video_urls && item.video_urls.length > 0 && (
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                              <Video size={16} />
+                              <span style={{ fontSize: '0.85rem' }}>({item.video_urls.length})</span>
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td style={{ padding: '1rem', textAlign: 'center' }}>
                         <button
                           className="btn btn-outline"
-                          style={{ padding: '0.5rem 1rem', marginRight: '0.5rem' }}
+                          style={{ padding: '0.5rem 1rem', marginRight: '0.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
                           onClick={() => handleEdit(item)}
                           data-testid={`edit-btn-${item.id}`}
                         >
+                          <Edit2 size={16} />
                           Edit
                         </button>
                         <button
                           className="btn"
-                          style={{ padding: '0.5rem 1rem', background: '#dc3545', color: 'white' }}
+                          style={{ padding: '0.5rem 1rem', background: '#dc3545', color: 'white', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
                           onClick={() => handleDelete(item.id)}
                           data-testid={`delete-btn-${item.id}`}
                         >
+                          <Trash2 size={16} />
                           Delete
                         </button>
                       </td>

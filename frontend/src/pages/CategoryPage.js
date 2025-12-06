@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../App';
 import Navigation from '../components/Navigation';
+import { Scroll, Music, FileText, BookOpen, Music as MusicIcon, Image as ImageIcon, Video } from 'lucide-react';
 
 const CategoryPage = () => {
   const { category } = useParams();
@@ -13,17 +14,17 @@ const CategoryPage = () => {
     shloka: {
       name: 'Shlokas',
       description: 'Sacred verses from Hindu scriptures',
-      icon: '📿'
+      icon: Scroll
     },
     strotra: {
       name: 'Strotras',
       description: 'Devotional hymns and prayers',
-      icon: '🕉️'
+      icon: Music
     },
     poem: {
       name: 'Poems',
       description: 'Spiritual and devotional poetry',
-      icon: '📜'
+      icon: FileText
     }
   };
 
@@ -43,14 +44,17 @@ const CategoryPage = () => {
     }
   };
 
-  const info = categoryInfo[category] || { name: category, description: '', icon: '📖' };
+  const info = categoryInfo[category] || { name: category, description: '', icon: BookOpen };
+  const IconComponent = info.icon;
 
   return (
     <div>
       <Navigation />
       <div className="container mt-4">
         <div className="text-center mb-4">
-          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>{info.icon}</div>
+          <div style={{ fontSize: '4rem', marginBottom: '1rem', display: 'flex', justifyContent: 'center', color: '#ff6b35' }}>
+            <IconComponent size={80} strokeWidth={1.5} />
+          </div>
           <h1 style={{ fontSize: '3rem', marginBottom: '0.5rem' }} data-testid="category-title">{info.name}</h1>
           <p style={{ fontSize: '1.2rem', color: '#5d3a1a' }}>{info.description}</p>
         </div>
@@ -87,9 +91,24 @@ const CategoryPage = () => {
                     </p>
                   )}
                   <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    {item.audio_url && <span style={{ fontSize: '0.85rem', color: '#ff6b35' }}>🎵 Audio</span>}
-                    {item.image_urls && item.image_urls.length > 0 && <span style={{ fontSize: '0.85rem', color: '#ff6b35' }}>🖼️ Images</span>}
-                    {item.video_urls && item.video_urls.length > 0 && <span style={{ fontSize: '0.85rem', color: '#ff6b35' }}>🎬 Videos</span>}
+                    {item.audio_url && (
+                      <span style={{ fontSize: '0.85rem', color: '#ff6b35', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <MusicIcon size={16} />
+                        Audio
+                      </span>
+                    )}
+                    {item.image_urls && item.image_urls.length > 0 && (
+                      <span style={{ fontSize: '0.85rem', color: '#ff6b35', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <ImageIcon size={16} />
+                        Images
+                      </span>
+                    )}
+                    {item.video_urls && item.video_urls.length > 0 && (
+                      <span style={{ fontSize: '0.85rem', color: '#ff6b35', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <Video size={16} />
+                        Videos
+                      </span>
+                    )}
                   </div>
                 </div>
               </Link>
