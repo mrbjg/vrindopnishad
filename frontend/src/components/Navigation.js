@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../App';
 import { Home, BookOpen, Scroll, Music, FileText, LayoutDashboard, LogIn, LogOut } from 'lucide-react';
 
+import VLogo from '../assets/VLogo.png';
+
 const Navigation = () => {
   const { isAdmin, logout } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -22,7 +24,7 @@ const Navigation = () => {
     <nav className="navbar">
       <div className="nav-container">
         <Link to="/" className="nav-logo" data-testid="nav-logo" onClick={closeMobileMenu}>
-          ॐ Vrindopnishad
+          <img src={VLogo} alt="Vrindopnishad Logo" className="nav-logo-img" />
         </Link>
 
         {/* Animated Hamburger Menu Toggle */}
