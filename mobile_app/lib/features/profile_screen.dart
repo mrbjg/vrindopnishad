@@ -1,4 +1,6 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -14,33 +16,79 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = AppTheme.isDark(context);
+
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor(context),
       body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
         slivers: [
-          // Curved gradient header
+          // Premium Curved gradient header with glassmorphism
           SliverToBoxAdapter(
             child: Container(
-              height: 280,
+              height: 360,
               decoration: BoxDecoration(
-                gradient: AppTheme.headerGradient(context),
+                gradient: isDark
+                    ? LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          const Color(0xFF1A1A2E),
+                          const Color(0xFF16213E),
+                          AppTheme.glowPurple.withOpacity(0.3),
+                        ],
+                      )
+                    : LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          const Color(0xFFFEF3C7),
+                          const Color(0xFFFBD38D),
+                          AppTheme.primaryColor.withOpacity(0.6),
+                        ],
+                      ),
                 borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(40),
-                  bottomRight: Radius.circular(40),
+                  bottomLeft: Radius.circular(48),
+                  bottomRight: Radius.circular(48),
                 ),
               ),
               child: Stack(
                 children: [
-                  // Decorative element
+                  // Decorative animated elements
                   Positioned(
-                    top: -30,
-                    right: -30,
-                    child: Opacity(
-                      opacity: 0.12,
-                      child: Icon(
-                        LucideIcons.flower2,
-                        size: 180,
-                        color: Colors.white,
+                    top: -40,
+                    right: -40,
+                    child:
+                        Container(
+                              width: 180,
+                              height: 180,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: RadialGradient(
+                                  colors: [
+                                    Colors.white.withOpacity(0.15),
+                                    Colors.transparent,
+                                  ],
+                                ),
+                              ),
+                            )
+                            .animate(onPlay: (c) => c.repeat())
+                            .shimmer(duration: 3000.ms, color: Colors.white24),
+                  ),
+                  Positioned(
+                    bottom: 80,
+                    left: -30,
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [
+                            AppTheme.glowPink.withOpacity(0.2),
+                            Colors.transparent,
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -49,55 +97,99 @@ class ProfileScreen extends StatelessWidget {
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
+                          // Premium avatar with glow
                           Container(
-                            padding: const EdgeInsets.all(4),
+                            padding: const EdgeInsets.all(5),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.3),
-                                width: 3,
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Colors.white.withOpacity(0.3),
+                                  Colors.white.withOpacity(0.1),
+                                ],
                               ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppTheme.primaryColor.withOpacity(0.3),
+                                  blurRadius: 30,
+                                  spreadRadius: -5,
+                                ),
+                              ],
                             ),
-                            child: CircleAvatar(
-                              radius: 50,
-                              backgroundColor: Colors.white.withOpacity(0.2),
-                              child: const Icon(
-                                LucideIcons.user,
-                                size: 48,
-                                color: Colors.white,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white.withOpacity(0.1),
+                              ),
+                              child: CircleAvatar(
+                                radius: 52,
+                                backgroundColor: Colors.white.withOpacity(0.2),
+                                child: const Icon(
+                                  LucideIcons.user,
+                                  size: 48,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ).animate().fadeIn().scale(
                             begin: const Offset(0.8, 0.8),
+                            curve: Curves.easeOutBack,
                           ),
                           const SizedBox(height: 20),
                           Text(
                             "Devotee",
                             style: GoogleFonts.spectral(
-                              fontSize: 28,
+                              fontSize: 30,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
+                              letterSpacing: -0.5,
                             ),
                           ).animate().fadeIn(delay: 100.ms),
-                          const SizedBox(height: 6),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              "✨ Exploring Vaidik Wisdom",
-                              style: GoogleFonts.outfit(
-                                color: Colors.white.withOpacity(0.9),
-                                fontSize: 14,
+                          const SizedBox(height: 8),
+                          // Status badge with glassmorphism
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 18,
+                                  vertical: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.2),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      LucideIcons.sparkles,
+                                      size: 16,
+                                      color: Colors.white.withOpacity(0.9),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      "Exploring Vaidik Wisdom",
+                                      style: GoogleFonts.outfit(
+                                        color: Colors.white.withOpacity(0.9),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ).animate().fadeIn(delay: 200.ms),
+                          ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1),
                         ],
                       ),
                     ),
@@ -107,126 +199,99 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
 
-          // Menu items
+          // Menu items with staggered animations
           SliverPadding(
             padding: const EdgeInsets.all(24),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
+                // Your Collection Section
                 _buildMenuSection(context, "Your Collection", [
-                  _buildListTile(
+                  _buildGlassListTile(
                     context,
                     LucideIcons.bookmark,
                     "Saved Items",
                     "Your personal collection",
-                    AppTheme.primaryColor,
+                    [AppTheme.primaryColor, AppTheme.primaryDark],
                     () => Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const SavedItemsScreen(),
                       ),
                     ),
-                  ),
-                  _buildListTile(
+                  ).animate().fadeIn(delay: 300.ms).slideX(begin: 0.05),
+                  const SizedBox(height: 12),
+                  _buildGlassListTile(
                     context,
-                    LucideIcons.history,
+                    LucideIcons.clock,
                     "Reading History",
                     "Continue where you left off",
-                    Colors.blue,
+                    [AppTheme.glowBlue, const Color(0xFF60A5FA)],
                     () => Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const ReadingHistoryScreen(),
                       ),
                     ),
-                  ),
+                  ).animate().fadeIn(delay: 350.ms).slideX(begin: 0.05),
                 ]),
-                const SizedBox(height: 24),
+                const SizedBox(height: 28),
+
+                // Preferences Section
                 _buildMenuSection(context, "Preferences", [
-                  _buildListTile(
+                  _buildGlassListTile(
                     context,
-                    LucideIcons.settings,
+                    LucideIcons.sliders,
                     "Settings",
                     "Notifications, Theme, Account",
-                    Colors.grey,
+                    [AppTheme.glowPurple, const Color(0xFFA78BFA)],
                     () => Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const SettingsScreen(),
                       ),
                     ),
-                  ),
-                  _buildListTile(
+                  ).animate().fadeIn(delay: 400.ms).slideX(begin: 0.05),
+                  const SizedBox(height: 12),
+                  _buildGlassListTile(
                     context,
                     LucideIcons.info,
                     "About Sant-Vaani",
                     "Our mission and vision",
-                    Colors.teal,
+                    [AppTheme.glowTeal, const Color(0xFF2DD4BF)],
                     () => Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const AboutScreen(),
                       ),
                     ),
-                  ),
+                  ).animate().fadeIn(delay: 450.ms).slideX(begin: 0.05),
                 ]),
-                const SizedBox(height: 24),
+                const SizedBox(height: 28),
+
+                // Admin Section
                 _buildMenuSection(context, "Admin", [
-                  _buildListTile(
+                  _buildGlassListTile(
                     context,
-                    LucideIcons.shieldCheck,
+                    LucideIcons.command,
                     "Admin Dashboard",
                     "Add or manage sacred content",
-                    Colors.deepPurple,
+                    [AppTheme.glowPink, const Color(0xFFF472B6)],
                     () => Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const AdminDashboard(),
                       ),
                     ),
-                  ),
+                  ).animate().fadeIn(delay: 500.ms).slideX(begin: 0.05),
                 ]),
-                const SizedBox(height: 32),
-                // Logout button
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppTheme.isDark(context)
-                        ? Colors.red.shade900.withOpacity(0.3)
-                        : Colors.red.shade50,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 8,
-                    ),
-                    leading: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        LucideIcons.logOut,
-                        color: Colors.red,
-                        size: 20,
-                      ),
-                    ),
-                    title: Text(
-                      "Logout",
-                      style: GoogleFonts.outfit(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.red,
-                      ),
-                    ),
-                    trailing: Icon(
-                      LucideIcons.chevronRight,
-                      size: 18,
-                      color: Colors.red.shade300,
-                    ),
-                    onTap: () => _showLogoutDialog(context),
-                  ),
-                ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 28),
+
+                // Logout button with special styling
+                _buildLogoutButton(
+                  context,
+                ).animate().fadeIn(delay: 550.ms).slideY(begin: 0.05),
+
+                const SizedBox(height: 100), // Bottom nav padding
               ]),
             ),
           ),
@@ -244,15 +309,32 @@ class ProfileScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 12),
-          child: Text(
-            title,
-            style: GoogleFonts.outfit(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: AppTheme.textMuted(context),
-              letterSpacing: 0.5,
-            ),
+          padding: const EdgeInsets.only(left: 4, bottom: 14),
+          child: Row(
+            children: [
+              Container(
+                width: 4,
+                height: 20,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [AppTheme.primaryColor, AppTheme.glowPurple],
+                  ),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                title,
+                style: GoogleFonts.outfit(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.textMuted(context),
+                  letterSpacing: 0.8,
+                ),
+              ),
+            ],
           ),
         ),
         ...children,
@@ -260,114 +342,333 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildListTile(
+  Widget _buildGlassListTile(
     BuildContext context,
     IconData icon,
     String title,
     String subtitle,
-    Color iconColor,
+    List<Color> gradientColors,
     VoidCallback onTap,
   ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: AppTheme.cardColor(context),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: AppTheme.softShadow(context),
+    final isDark = AppTheme.isDark(context);
+
+    return PressableScale(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(22),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withOpacity(0.06)
+                  : Colors.white.withOpacity(0.8),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                color: isDark
+                    ? Colors.white.withOpacity(0.08)
+                    : Colors.black.withOpacity(0.04),
+                width: 1.5,
+              ),
+              boxShadow: AppTheme.softShadow(context),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  // Gradient icon container
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: gradientColors,
+                      ),
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: gradientColors[0].withOpacity(0.4),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                          spreadRadius: -4,
+                        ),
+                      ],
+                    ),
+                    child: Icon(icon, color: Colors.white, size: 22),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: GoogleFonts.outfit(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: AppTheme.textPrimary(context),
+                            letterSpacing: -0.2,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          subtitle,
+                          style: GoogleFonts.outfit(
+                            color: AppTheme.textMuted(context),
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: AppTheme.surfaceColor(context),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      LucideIcons.chevronRight,
+                      size: 18,
+                      color: AppTheme.primaryColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        leading: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: iconColor.withOpacity(AppTheme.isDark(context) ? 0.2 : 0.1),
-            borderRadius: BorderRadius.circular(12),
+    );
+  }
+
+  Widget _buildLogoutButton(BuildContext context) {
+    final isDark = AppTheme.isDark(context);
+
+    return PressableScale(
+      onTap: () => _showLogoutDialog(context),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(22),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.red.withOpacity(0.1)
+                  : Colors.red.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                color: Colors.red.withOpacity(0.15),
+                width: 1.5,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Colors.red, Colors.red.shade400],
+                      ),
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.red.withOpacity(0.4),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                          spreadRadius: -4,
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      LucideIcons.logOut,
+                      color: Colors.white,
+                      size: 22,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Text(
+                    "Logout",
+                    style: GoogleFonts.outfit(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      color: Colors.red,
+                    ),
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      LucideIcons.chevronRight,
+                      size: 18,
+                      color: Colors.red.shade400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-          child: Icon(icon, color: iconColor, size: 22),
         ),
-        title: Text(
-          title,
-          style: GoogleFonts.outfit(
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-            color: AppTheme.textPrimary(context),
-          ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: GoogleFonts.outfit(
-            color: AppTheme.textMuted(context),
-            fontSize: 13,
-          ),
-        ),
-        trailing: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppTheme.surfaceColor(context),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(
-            LucideIcons.chevronRight,
-            size: 16,
-            color: AppTheme.textMuted(context),
-          ),
-        ),
-        onTap: onTap,
       ),
     );
   }
 
   void _showLogoutDialog(BuildContext context) {
+    final isDark = AppTheme.isDark(context);
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppTheme.cardColor(context),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(
-          "Logout",
-          style: GoogleFonts.spectral(
-            fontWeight: FontWeight.bold,
-            color: AppTheme.textPrimary(context),
-          ),
-        ),
-        content: Text(
-          "Are you sure you want to logout?",
-          style: GoogleFonts.outfit(color: AppTheme.textSecondary(context)),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              "Cancel",
-              style: GoogleFonts.outfit(color: AppTheme.textMuted(context)),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text("Logged out successfully"),
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(28),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+              padding: const EdgeInsets.all(28),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? const Color(0xFF1A1A2E).withOpacity(0.95)
+                    : Colors.white.withOpacity(0.95),
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withOpacity(0.1)
+                      : Colors.black.withOpacity(0.05),
                 ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      LucideIcons.logOut,
+                      color: Colors.red,
+                      size: 32,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    "Logout",
+                    style: GoogleFonts.spectral(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textPrimary(context),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    "Are you sure you want to logout?",
+                    style: GoogleFonts.outfit(
+                      color: AppTheme.textMuted(context),
+                      fontSize: 15,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 28),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: PressableScale(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            decoration: BoxDecoration(
+                              color: AppTheme.surfaceColor(context),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Cancel",
+                                style: GoogleFonts.outfit(
+                                  fontWeight: FontWeight.w600,
+                                  color: AppTheme.textPrimary(context),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: PressableScale(
+                          onTap: () {
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Row(
+                                  children: [
+                                    const Icon(
+                                      LucideIcons.check,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      "Logged out successfully",
+                                      style: GoogleFonts.outfit(),
+                                    ),
+                                  ],
+                                ),
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Colors.red, Colors.red.shade400],
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.red.withOpacity(0.3),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Logout",
+                                style: GoogleFonts.outfit(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            child: Text(
-              "Logout",
-              style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
-            ),
           ),
-        ],
+        ),
       ),
     );
   }
