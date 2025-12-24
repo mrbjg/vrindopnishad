@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,16 +48,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        );
+        _showFriendlyError(e.toString());
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -69,16 +61,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       await ref.read(authServiceProvider).signInWithGoogle();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        );
+        _showFriendlyError(e.toString());
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -91,20 +74,124 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       await ref.read(authServiceProvider).signInWithApple();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        );
+        _showFriendlyError(e.toString());
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  void _showFriendlyError(String errorMsg) {
+    String title = "Oops!";
+    String message = "Something went wrong. Please try again.";
+    IconData icon = LucideIcons.alertCircle;
+
+    // Parse common Firebase Auth errors
+    if (errorMsg.contains('invalid-credential') ||
+        errorMsg.contains('user-not-found') ||
+        errorMsg.contains('wrong-password')) {
+      title = "Incorrect Details";
+      message =
+          "The email or password you entered is incorrect. Please check and try again.";
+      icon = LucideIcons.userX;
+    } else if (errorMsg.contains('email-already-in-use')) {
+      title = "Account Exists";
+      message = "This email is already registered. Please sign in instead.";
+      icon = LucideIcons.userCheck;
+    } else if (errorMsg.contains('invalid-email')) {
+      title = "Invalid Email";
+      message = "Please enter a valid email address.";
+      icon = LucideIcons.mailWarning;
+    } else if (errorMsg.contains('weak-password')) {
+      title = "Weak Password";
+      message = "Your password is too weak. Please use at least 6 characters.";
+      icon = LucideIcons.shieldAlert;
+    } else if (errorMsg.contains('network-request-failed')) {
+      title = "No Internet";
+      message = "Please check your internet connection and try again.";
+      icon = LucideIcons.wifiOff;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: AppTheme.isDark(context)
+                    ? const Color(0xFF1A1A2E).withOpacity(0.95)
+                    : Colors.white.withOpacity(0.95),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: AppTheme.isDark(context)
+                      ? Colors.white.withOpacity(0.1)
+                      : Colors.black.withOpacity(0.05),
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(icon, color: Colors.red, size: 32),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    title,
+                    style: GoogleFonts.spectral(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textPrimary(context),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    message,
+                    style: GoogleFonts.outfit(
+                      fontSize: 15,
+                      color: AppTheme.textSecondary(context),
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  PressableScale(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      decoration: BoxDecoration(
+                        color: AppTheme.surfaceColor(context),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Okay, Got it",
+                          style: GoogleFonts.outfit(
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.textPrimary(context),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
