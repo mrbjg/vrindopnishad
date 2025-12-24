@@ -13,11 +13,21 @@ import 'profile/settings_screen.dart';
 import 'profile/about_screen.dart';
 import 'admin_dashboard.dart';
 
-class ProfileScreen extends ConsumerWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends ConsumerState<ProfileScreen>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     final isDark = AppTheme.isDark(context);
     final authState = ref.watch(authStateProvider);
     final user = authState.value;
@@ -31,117 +41,8 @@ class ProfileScreen extends ConsumerWidget {
         slivers: [
           // Optimized Header
           SliverToBoxAdapter(
-            child: Container(
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).padding.top + 20,
-                left: 24,
-                right: 24,
-                bottom: 40,
-              ),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isDark
-                      ? [const Color(0xFF1A1A2E), const Color(0xFF16213E)]
-                      : [const Color(0xFFFEF3C7), const Color(0xFFFBD38D)],
-                ),
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(40),
-                  bottomRight: Radius.circular(40),
-                ),
-              ),
-              child: Column(
-                children: [
-                  // Profile Picture with CachedNetworkImage
-                  Container(
-                    width: 110,
-                    height: 110,
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isDark ? Colors.white10 : Colors.white54,
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.3),
-                        width: 2,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 15,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: ClipOval(
-                      child:
-                          user?.photoURL != null && user!.photoURL!.isNotEmpty
-                          ? CachedNetworkImage(
-                              imageUrl: user.photoURL!,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(
-                                color: isDark
-                                    ? Colors.white.withOpacity(0.05)
-                                    : Colors.black.withOpacity(0.05),
-                                child: const Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                ),
-                              ),
-                              errorWidget: (context, url, error) =>
-                                  _buildFallbackAvatar(isDark),
-                            )
-                          : _buildFallbackAvatar(isDark),
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  // Name
-                  Text(
-                    user?.displayName ??
-                        user?.email?.split('@')[0] ??
-                        "Devotee",
-                    style: GoogleFonts.spectral(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : const Color(0xFF1A1A2E),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  // Email Badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? Colors.white.withOpacity(0.08)
-                          : Colors.white.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.white.withOpacity(0.2)),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          LucideIcons.mail,
-                          size: 14,
-                          color: isDark ? Colors.white60 : Colors.black54,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          user?.email ?? "Exploring Wisdom",
-                          style: GoogleFonts.outfit(
-                            fontSize: 13,
-                            color: isDark ? Colors.white70 : Colors.black87,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+            child: RepaintBoundary(
+              child: _ProfileHeader(user: user, isDark: isDark),
             ),
           ),
 
@@ -279,81 +180,77 @@ class ProfileScreen extends ConsumerWidget {
     required bool isDark,
     required VoidCallback onTap,
   }) {
-    return PressableScale(
-      onTap: () {
-        HapticFeedback.lightImpact();
-        onTap();
-      },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(22),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(isDark ? 0.06 : 0.35),
-              borderRadius: BorderRadius.circular(22),
-              border: Border.all(
-                color: Colors.white.withOpacity(isDark ? 0.12 : 0.5),
-                width: 1.5,
-              ),
+    return RepaintBoundary(
+      child: PressableScale(
+        onTap: () {
+          HapticFeedback.lightImpact();
+          onTap();
+        },
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark
+                ? Colors.white.withOpacity(0.06)
+                : Colors.white.withOpacity(0.35),
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(
+              color: Colors.white.withOpacity(isDark ? 0.12 : 0.5),
+              width: 1.5,
             ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: gradientColors,
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: gradientColors,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: gradientColors[0].withOpacity(0.4),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
                     ),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: gradientColors[0].withOpacity(0.4),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Icon(icon, color: Colors.white, size: 22),
+                  ],
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: GoogleFonts.outfit(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: isDark
-                              ? Colors.white
-                              : const Color(0xFF1A1A2E),
-                        ),
+                child: Icon(icon, color: Colors.white, size: 22),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.outfit(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: isDark ? Colors.white : const Color(0xFF1A1A2E),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        subtitle,
-                        style: GoogleFonts.outfit(
-                          color: isDark ? Colors.white60 : Colors.black54,
-                          fontSize: 13,
-                        ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: GoogleFonts.outfit(
+                        color: isDark ? Colors.white60 : Colors.black54,
+                        fontSize: 13,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Icon(
-                  LucideIcons.chevronRight,
-                  size: 20,
-                  color: isDark
-                      ? Colors.white.withOpacity(0.4)
-                      : Colors.black.withOpacity(0.3),
-                ),
-              ],
-            ),
+              ),
+              Icon(
+                LucideIcons.chevronRight,
+                size: 20,
+                color: isDark
+                    ? Colors.white.withOpacity(0.4)
+                    : Colors.black.withOpacity(0.3),
+              ),
+            ],
           ),
         ),
       ),
@@ -365,62 +262,55 @@ class ProfileScreen extends ConsumerWidget {
     WidgetRef ref,
     bool isDark,
   ) {
-    return PressableScale(
-      onTap: () => _showGlassLogoutDialog(context, ref, isDark),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(22),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.red.withOpacity(isDark ? 0.1 : 0.08),
-              borderRadius: BorderRadius.circular(22),
-              border: Border.all(
-                color: Colors.red.withOpacity(0.3),
-                width: 1.5,
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Colors.red, Color(0xFFDC2626)],
+    return RepaintBoundary(
+      child: PressableScale(
+        onTap: () => _showGlassLogoutDialog(context, ref, isDark),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.red.withOpacity(isDark ? 0.1 : 0.08),
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: Colors.red.withOpacity(0.3), width: 1.5),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Colors.red, Color(0xFFDC2626)],
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.red.withOpacity(0.4),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
                     ),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.red.withOpacity(0.4),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    LucideIcons.logOut,
-                    color: Colors.white,
-                    size: 22,
-                  ),
+                  ],
                 ),
-                const SizedBox(width: 16),
-                Text(
-                  "Logout",
-                  style: GoogleFonts.outfit(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: Colors.red,
-                  ),
+                child: const Icon(
+                  LucideIcons.logOut,
+                  color: Colors.white,
+                  size: 22,
                 ),
-                const Spacer(),
-                Icon(
-                  LucideIcons.chevronRight,
-                  size: 20,
-                  color: Colors.red.withOpacity(0.5),
+              ),
+              const SizedBox(width: 16),
+              Text(
+                "Logout",
+                style: GoogleFonts.outfit(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  color: Colors.red,
                 ),
-              ],
-            ),
+              ),
+              const Spacer(),
+              Icon(
+                LucideIcons.chevronRight,
+                size: 20,
+                color: Colors.red.withOpacity(0.5),
+              ),
+            ],
           ),
         ),
       ),
@@ -575,8 +465,132 @@ class ProfileScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildFallbackAvatar(bool isDark) {
+// Separate widget for profile header to optimize rebuilds
+class _ProfileHeader extends StatelessWidget {
+  final dynamic user;
+  final bool isDark;
+
+  const _ProfileHeader({required this.user, required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + 20,
+        left: 24,
+        right: 24,
+        bottom: 40,
+      ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? [const Color(0xFF1A1A2E), const Color(0xFF16213E)]
+              : [const Color(0xFFFEF3C7), const Color(0xFFFBD38D)],
+        ),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(40),
+          bottomRight: Radius.circular(40),
+        ),
+      ),
+      child: Column(
+        children: [
+          // Profile Picture with CachedNetworkImage
+          Container(
+            width: 110,
+            height: 110,
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isDark ? Colors.white10 : Colors.white54,
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+                width: 2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 15,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: ClipOval(
+              child: user?.photoURL != null && user!.photoURL!.isNotEmpty
+                  ? CachedNetworkImage(
+                      imageUrl: user.photoURL!,
+                      fit: BoxFit.cover,
+                      memCacheWidth: 220, // Cache at exact size needed
+                      memCacheHeight: 220,
+                      maxWidthDiskCache: 220,
+                      maxHeightDiskCache: 220,
+                      placeholder: (context, url) => Container(
+                        color: isDark
+                            ? Colors.white.withOpacity(0.05)
+                            : Colors.black.withOpacity(0.05),
+                        child: const Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) =>
+                          _buildFallbackAvatar(),
+                    )
+                  : _buildFallbackAvatar(),
+            ),
+          ),
+          const SizedBox(height: 18),
+          // Name
+          Text(
+            user?.displayName ?? user?.email?.split('@')[0] ?? "Devotee",
+            style: GoogleFonts.spectral(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : const Color(0xFF1A1A2E),
+            ),
+          ),
+          const SizedBox(height: 8),
+          // Email Badge
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withOpacity(0.08)
+                  : Colors.white.withOpacity(0.6),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white.withOpacity(0.2)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  LucideIcons.mail,
+                  size: 14,
+                  color: isDark ? Colors.white60 : Colors.black54,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  user?.email ?? "Exploring Wisdom",
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    color: isDark ? Colors.white70 : Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFallbackAvatar() {
     return Container(
       color: isDark
           ? Colors.white.withOpacity(0.1)
