@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:just_audio/just_audio.dart';
 import '../core/theme.dart';
 import '../core/providers.dart';
 import '../core/localization.dart';
@@ -28,8 +29,35 @@ class ContentDetailScreen extends ConsumerStatefulWidget {
 
 class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   bool _isBookmarked = false;
-  bool _isPlaying = false;
   double _fontSize = 16.0;
+
+  late AudioPlayer _audioPlayer;
+  bool _isPlayerReady = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _audioPlayer = AudioPlayer();
+    _initAudio();
+  }
+
+  Future<void> _initAudio() async {
+    try {
+      // Example audio URL - replace with actual content audio URL
+      const demoAudioUrl =
+          'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+      await _audioPlayer.setUrl(demoAudioUrl);
+      setState(() => _isPlayerReady = true);
+    } catch (e) {
+      debugPrint('Error loading audio: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
 
   void _toggleBookmark(AppLocalization l) {
     HapticFeedback.lightImpact();
@@ -125,7 +153,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
               // Content sections
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 160),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
                     // Sanskrit/Original Text - Hero section
@@ -251,12 +279,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             ),
           ),
 
-          // Fixed glass audio player at bottom
+          // Fixed audio player at bottom
           Positioned(
             left: 16,
             right: 16,
             bottom: 20,
-            child: _buildFloatingAudioPlayer(context, l, isDark),
+            child: _buildAudioPlayer(context, l, isDark),
           ),
         ],
       ),
@@ -513,131 +541,282 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  Widget _buildFloatingAudioPlayer(
+  Widget _buildAudioPlayer(
     BuildContext context,
     AppLocalization l,
     bool isDark,
   ) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(
-            color: isDark
-                ? const Color(0xFF1A1A2E).withOpacity(0.95)
-                : Colors.white.withOpacity(0.95),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: Colors.white.withOpacity(isDark ? 0.15 : 0.5),
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.12),
-                blurRadius: 24,
-                offset: const Offset(0, 6),
+    return StreamBuilder<PlayerState>(
+      stream: _audioPlayer.playerStateStream,
+      builder: (context, snapshot) {
+        final playerState = snapshot.data;
+        final isPlaying = playerState?.playing ?? false;
+        final processingState =
+            playerState?.processingState ?? ProcessingState.idle;
+
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? const Color(0xFF1A1A2E).withOpacity(0.95)
+                    : Colors.white.withOpacity(0.95),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: Colors.white.withOpacity(isDark ? 0.15 : 0.5),
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 32,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Row(
-            children: [
-              // Play button
-              PressableScale(
-                onTap: () {
-                  HapticFeedback.mediumImpact();
-                  setState(() => _isPlaying = !_isPlaying);
-                },
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: _isPlaying
-                          ? [AppTheme.glowTeal, const Color(0xFF2DD4BF)]
-                          : [AppTheme.primaryColor, AppTheme.primaryDark],
-                    ),
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color:
-                            (_isPlaying
-                                    ? AppTheme.glowTeal
-                                    : AppTheme.primaryColor)
-                                .withOpacity(0.35),
-                        blurRadius: 16,
-                        offset: const Offset(0, 4),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Title and controls row
+                  Row(
+                    children: [
+                      // Play/Pause button
+                      PressableScale(
+                        onTap: () {
+                          HapticFeedback.mediumImpact();
+                          if (isPlaying) {
+                            _audioPlayer.pause();
+                          } else {
+                            _audioPlayer.play();
+                          }
+                        },
+                        child: Container(
+                          width: 54,
+                          height: 54,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: isPlaying
+                                  ? [AppTheme.glowTeal, const Color(0xFF2DD4BF)]
+                                  : [
+                                      AppTheme.primaryColor,
+                                      AppTheme.primaryDark,
+                                    ],
+                            ),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color:
+                                    (isPlaying
+                                            ? AppTheme.glowTeal
+                                            : AppTheme.primaryColor)
+                                        .withOpacity(0.4),
+                                blurRadius: 20,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            isPlaying ? LucideIcons.pause : LucideIcons.play,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      // Info
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              isPlaying ? "Now Playing" : "Sanskrit Recitation",
+                              style: GoogleFonts.outfit(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: isDark
+                                    ? Colors.white
+                                    : const Color(0xFF1A1A2E),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            StreamBuilder<Duration?>(
+                              stream: _audioPlayer.durationStream,
+                              builder: (context, durationSnap) {
+                                final duration =
+                                    durationSnap.data ?? Duration.zero;
+                                return StreamBuilder<Duration>(
+                                  stream: _audioPlayer.positionStream,
+                                  builder: (context, positionSnap) {
+                                    final position =
+                                        positionSnap.data ?? Duration.zero;
+                                    return Text(
+                                      '${_formatDuration(position)} / ${_formatDuration(duration)}',
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 12,
+                                        color: isDark
+                                            ? Colors.white60
+                                            : Colors.black54,
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Additional controls
+                      Row(
+                        children: [
+                          _buildSmallButton(
+                            icon: LucideIcons.skipBack,
+                            onTap: () {
+                              final newPosition =
+                                  _audioPlayer.position -
+                                  const Duration(seconds: 10);
+                              _audioPlayer.seek(newPosition);
+                            },
+                            isDark: isDark,
+                          ),
+                          const SizedBox(width: 8),
+                          _buildSmallButton(
+                            icon: LucideIcons.skipForward,
+                            onTap: () {
+                              final newPosition =
+                                  _audioPlayer.position +
+                                  const Duration(seconds: 10);
+                              _audioPlayer.seek(newPosition);
+                            },
+                            isDark: isDark,
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  child: Icon(
-                    _isPlaying ? LucideIcons.pause : LucideIcons.play,
-                    color: Colors.white,
-                    size: 20,
+                  const SizedBox(height: 16),
+                  // Progress bar
+                  StreamBuilder<Duration?>(
+                    stream: _audioPlayer.durationStream,
+                    builder: (context, durationSnap) {
+                      final duration = durationSnap.data ?? Duration.zero;
+                      return StreamBuilder<Duration>(
+                        stream: _audioPlayer.positionStream,
+                        builder: (context, positionSnap) {
+                          final position = positionSnap.data ?? Duration.zero;
+                          final progress = duration.inMilliseconds > 0
+                              ? position.inMilliseconds /
+                                    duration.inMilliseconds
+                              : 0.0;
+
+                          return Stack(
+                            children: [
+                              // Background track
+                              Container(
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? Colors.white.withOpacity(0.08)
+                                      : Colors.black.withOpacity(0.08),
+                                  borderRadius: BorderRadius.circular(3),
+                                ),
+                              ),
+                              // Progress
+                              FractionallySizedBox(
+                                widthFactor: progress.clamp(0.0, 1.0),
+                                child: Container(
+                                  height: 6,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        AppTheme.primaryColor,
+                                        AppTheme.primaryDark,
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(3),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppTheme.primaryColor
+                                            .withOpacity(0.3),
+                                        blurRadius: 8,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
                   ),
-                ),
-              ),
-              const SizedBox(width: 14),
-              // Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _isPlaying ? "Now Playing" : "Listen",
-                      style: GoogleFonts.outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : const Color(0xFF1A1A2E),
+                  const SizedBox(height: 12),
+                  // Font size controls
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Text Size",
+                        style: GoogleFonts.outfit(
+                          fontSize: 11,
+                          color: isDark ? Colors.white60 : Colors.black54,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      "Sanskrit Narration",
-                      style: GoogleFonts.outfit(
-                        fontSize: 11,
-                        color: isDark ? Colors.white60 : Colors.black54,
+                      const SizedBox(width: 12),
+                      _buildFontButton(
+                        icon: LucideIcons.minus,
+                        onTap: () {
+                          if (_fontSize > 12) {
+                            setState(() => _fontSize -= 2);
+                          }
+                        },
+                        isDark: isDark,
                       ),
-                    ),
-                  ],
-                ),
+                      const SizedBox(width: 8),
+                      _buildFontButton(
+                        icon: LucideIcons.plus,
+                        onTap: () {
+                          if (_fontSize < 22) {
+                            setState(() => _fontSize += 2);
+                          }
+                        },
+                        isDark: isDark,
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              // Font controls
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.white.withOpacity(0.06)
-                      : Colors.black.withOpacity(0.04),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    _buildFontButton(
-                      icon: LucideIcons.minus,
-                      onTap: () {
-                        if (_fontSize > 12) {
-                          setState(() => _fontSize -= 2);
-                        }
-                      },
-                      isDark: isDark,
-                    ),
-                    const SizedBox(width: 4),
-                    _buildFontButton(
-                      icon: LucideIcons.plus,
-                      onTap: () {
-                        if (_fontSize < 22) {
-                          setState(() => _fontSize += 2);
-                        }
-                      },
-                      isDark: isDark,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSmallButton({
+    required IconData icon,
+    required VoidCallback onTap,
+    required bool isDark,
+  }) {
+    return PressableScale(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: isDark
+              ? Colors.white.withOpacity(0.08)
+              : Colors.black.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(
+          icon,
+          size: 16,
+          color: isDark ? Colors.white70 : Colors.black54,
         ),
       ),
     );
@@ -668,5 +847,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         ),
       ),
     );
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    return '$minutes:$seconds';
   }
 }

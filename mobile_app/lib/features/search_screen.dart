@@ -545,7 +545,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => CategoryScreen(categoryName: label),
+            builder: (_) => CategoryScreen(
+              categoryName: label,
+              gradientColors: const [Color(0xFFE8A838), Color(0xFFF59E0B)],
+            ),
           ),
         );
       },

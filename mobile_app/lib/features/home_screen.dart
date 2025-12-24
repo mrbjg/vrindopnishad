@@ -367,7 +367,10 @@ class HomeScreen extends ConsumerWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => CategoryScreen(categoryName: title),
+            builder: (_) => CategoryScreen(
+              categoryName: title,
+              gradientColors: gradientColors,
+            ),
           ),
         );
       },

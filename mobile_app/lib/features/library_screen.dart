@@ -286,8 +286,13 @@ class LibraryScreen extends ConsumerWidget {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) =>
-                      CategoryScreen(categoryName: l.translate('shlokas')),
+                  builder: (_) => CategoryScreen(
+                    categoryName: l.translate('shlokas'),
+                    gradientColors: const [
+                      Color(0xFFE8A838),
+                      Color(0xFFF59E0B),
+                    ],
+                  ),
                 ),
               ),
               child: Container(

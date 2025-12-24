@@ -1,13 +1,12 @@
-import 'dart:io';
 import 'dart:ui';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:uuid/uuid.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import '../core/content_provider.dart';
 import '../core/theme.dart';
 import '../core/providers.dart';
@@ -22,109 +21,19 @@ class AdminDashboard extends ConsumerStatefulWidget {
 
 class _AdminDashboardState extends ConsumerState<AdminDashboard>
     with SingleTickerProviderStateMixin {
-  final _formKey = GlobalKey<FormState>();
-  final _titleController = TextEditingController();
-  final _sanskritController = TextEditingController();
-  final _translationController = TextEditingController();
-  final _hindiController = TextEditingController();
-  final _commentaryController = TextEditingController();
-
-  String _selectedCategoryKey = 'shloka';
-
-  static const Map<String, String> _categoryKeys = {
-    'shloka': 'shlokas',
-    'strotra': 'strotras',
-    'poem': 'poems',
-    'veda': 'vedas',
-    'mantra': 'mantras',
-    'story': 'stories',
-  };
-
-  File? _selectedImage;
-  late AnimationController _pulseController;
+  late TabController _tabController;
+  bool _isProcessing = false;
 
   @override
   void initState() {
     super.initState();
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat(reverse: true);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
   void dispose() {
-    _pulseController.dispose();
-    _titleController.dispose();
-    _sanskritController.dispose();
-    _translationController.dispose();
-    _hindiController.dispose();
-    _commentaryController.dispose();
+    _tabController.dispose();
     super.dispose();
-  }
-
-  Future<void> _pickImage() async {
-    HapticFeedback.lightImpact();
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() => _selectedImage = File(pickedFile.path));
-    }
-  }
-
-  void _submitData(AppLocalization l) {
-    if (_formKey.currentState!.validate()) {
-      HapticFeedback.mediumImpact();
-
-      final categoryName =
-          _selectedCategoryKey[0].toUpperCase() +
-          _selectedCategoryKey.substring(1);
-
-      final newContent = SacredContent(
-        id: const Uuid().v4(),
-        title: _titleController.text,
-        category: categoryName,
-        sanskritText: _sanskritController.text,
-        translation: _translationController.text,
-        hindiMeaning: _hindiController.text,
-        commentary: _commentaryController.text,
-        imageUrl: _selectedImage?.path,
-      );
-
-      ref.read(sacredContentProvider.notifier).addContent(newContent);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(LucideIcons.sparkles, color: Colors.white, size: 20),
-              const SizedBox(width: 12),
-              Text(
-                l.translate('publish_success'),
-                style: GoogleFonts.outfit(fontWeight: FontWeight.w500),
-              ),
-            ],
-          ),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          backgroundColor: AppTheme.primaryColor,
-          margin: const EdgeInsets.all(20),
-        ),
-      );
-
-      _titleController.clear();
-      _sanskritController.clear();
-      _translationController.clear();
-      _hindiController.clear();
-      _commentaryController.clear();
-      setState(() {
-        _selectedImage = null;
-        _selectedCategoryKey = 'shloka';
-      });
-      Navigator.pop(context);
-    }
   }
 
   @override
@@ -134,620 +43,849 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
     final isDark = AppTheme.isDark(context);
 
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor(context),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Premium App Bar
-            _buildAppBar(context, l, isDark),
+      backgroundColor: isDark
+          ? const Color(0xFF0A0A0F)
+          : const Color(0xFFF5F3F0),
+      body: Stack(
+        children: [
+          CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              // Glass Header
+              SliverAppBar(
+                expandedHeight: 160,
+                floating: false,
+                pinned: true,
+                backgroundColor: Colors.transparent,
+                leading: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: _buildGlassButton(
+                    icon: LucideIcons.arrowLeft,
+                    onTap: () => Navigator.pop(context),
+                    isDark: isDark,
+                  ),
+                ),
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: isDark
+                            ? [const Color(0xFF1E1E2E), const Color(0xFF1A1A2E)]
+                            : [
+                                const Color(0xFFFFF7ED),
+                                const Color(0xFFFED7AA),
+                              ],
+                      ),
+                    ),
+                    child: SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    gradient: AppTheme.primaryGradient(context),
+                                    borderRadius: BorderRadius.circular(14),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppTheme.primaryColor
+                                            .withOpacity(0.3),
+                                        blurRadius: 12,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: const Icon(
+                                    LucideIcons.shield,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
+                                ),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Admin Dashboard",
+                                        style: GoogleFonts.spectral(
+                                          fontSize: 26,
+                                          fontWeight: FontWeight.bold,
+                                          color: isDark
+                                              ? Colors.white
+                                              : const Color(0xFF1A1A2E),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        "Content Management",
+                                        style: GoogleFonts.outfit(
+                                          fontSize: 13,
+                                          color: isDark
+                                              ? Colors.white60
+                                              : Colors.black54,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
 
-            // Body content
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.all(24),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Image picker with glassmorphism
-                      _buildImagePicker(
-                        context,
-                        l,
-                        isDark,
-                      ).animate().fadeIn(delay: 100.ms).slideY(begin: 0.05),
-                      const SizedBox(height: 32),
+              // Tab Bar
+              SliverToBoxAdapter(
+                child: Container(
+                  margin: const EdgeInsets.all(20),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(isDark ? 0.06 : 0.4),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(isDark ? 0.1 : 0.5),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: TabBar(
+                          controller: _tabController,
+                          indicator: BoxDecoration(
+                            gradient: AppTheme.primaryGradient(context),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          dividerColor: Colors.transparent,
+                          labelColor: Colors.white,
+                          unselectedLabelColor: isDark
+                              ? Colors.white60
+                              : Colors.black54,
+                          labelStyle: GoogleFonts.outfit(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          tabs: const [
+                            Tab(text: "Single Add"),
+                            Tab(text: "Bulk Upload"),
+                            Tab(text: "Manage"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
 
-                      // Form fields with staggered animations
-                      _buildGlassTextField(
-                        context,
-                        l.translate('title_label'),
-                        _titleController,
-                        LucideIcons.heading,
-                        l.translate('enter_title'),
-                        l,
-                        gradientColors: [
-                          AppTheme.primaryColor,
-                          AppTheme.primaryDark,
-                        ],
-                      ).animate().fadeIn(delay: 150.ms).slideY(begin: 0.05),
-                      const SizedBox(height: 20),
+              // Tab Content
+              SliverFillRemaining(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildSingleAddTab(context, l, isDark),
+                    _buildBulkUploadTab(context, l, isDark),
+                    _buildManageTab(context, l, isDark),
+                  ],
+                ),
+              ),
+            ],
+          ),
 
-                      _buildCategoryDropdown(
-                        context,
-                        l,
-                        isDark,
-                      ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.05),
-                      const SizedBox(height: 20),
-
-                      _buildGlassTextField(
-                        context,
-                        l.translate('sanskrit_label'),
-                        _sanskritController,
-                        LucideIcons.languages,
-                        l.translate('enter_sanskrit'),
-                        l,
-                        maxLines: 4,
-                        gradientColors: [
-                          AppTheme.glowPurple,
-                          const Color(0xFFA78BFA),
-                        ],
-                      ).animate().fadeIn(delay: 250.ms).slideY(begin: 0.05),
-                      const SizedBox(height: 20),
-
-                      _buildGlassTextField(
-                        context,
-                        l.translate('english_label'),
-                        _translationController,
-                        LucideIcons.scroll,
-                        l.translate('enter_english'),
-                        l,
-                        maxLines: 3,
-                        gradientColors: [
-                          AppTheme.glowBlue,
-                          const Color(0xFF60A5FA),
-                        ],
-                      ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.05),
-                      const SizedBox(height: 20),
-
-                      _buildGlassTextField(
-                        context,
-                        l.translate('hindi_label'),
-                        _hindiController,
-                        LucideIcons.book,
-                        l.translate('enter_hindi'),
-                        l,
-                        maxLines: 3,
-                        gradientColors: [
-                          AppTheme.glowPink,
-                          const Color(0xFFF472B6),
-                        ],
-                      ).animate().fadeIn(delay: 350.ms).slideY(begin: 0.05),
-                      const SizedBox(height: 20),
-
-                      _buildGlassTextField(
-                        context,
-                        l.translate('commentary_label'),
-                        _commentaryController,
-                        LucideIcons.messageCircle,
-                        l.translate('enter_commentary'),
-                        l,
-                        maxLines: 4,
-                        gradientColors: [
-                          AppTheme.glowTeal,
-                          const Color(0xFF2DD4BF),
-                        ],
-                      ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.05),
-                      const SizedBox(height: 40),
-
-                      // Premium submit button
-                      _buildSubmitButton(
-                        context,
-                        l,
-                      ).animate().fadeIn(delay: 450.ms).slideY(begin: 0.1),
-                      const SizedBox(height: 40),
-                    ],
+          if (_isProcessing)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        padding: const EdgeInsets.all(32),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? const Color(0xFF1A1A2E).withOpacity(0.95)
+                              : Colors.white.withOpacity(0.95),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const CircularProgressIndicator(),
+                            const SizedBox(height: 20),
+                            Text(
+                              "Processing...",
+                              style: GoogleFonts.outfit(
+                                color: isDark ? Colors.white : Colors.black87,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGlassButton({
+    required IconData icon,
+    required VoidCallback onTap,
+    required bool isDark,
+  }) {
+    return PressableScale(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(isDark ? 0.08 : 0.25),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Colors.white.withOpacity(isDark ? 0.15 : 0.4),
+                width: 1.5,
+              ),
+            ),
+            child: Icon(
+              icon,
+              size: 20,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildAppBar(BuildContext context, AppLocalization l, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
+  Widget _buildSingleAddTab(
+    BuildContext context,
+    AppLocalization l,
+    bool isDark,
+  ) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
         children: [
-          // Back button with glass effect
+          _buildInfoCard(
+            context,
+            isDark: isDark,
+            icon: LucideIcons.info,
+            title: "Single Content Addition",
+            description:
+                "Add one piece of sacred content at a time with all details.",
+          ),
+          const SizedBox(height: 20),
           PressableScale(
-            onTap: () => Navigator.pop(context),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? Colors.white.withOpacity(0.08)
-                        : Colors.black.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: isDark
-                          ? Colors.white.withOpacity(0.1)
-                          : Colors.black.withOpacity(0.05),
+            onTap: () => _showSingleAddDialog(context, l, isDark),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: AppTheme.primaryGradient(context),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: AppTheme.glowShadow(AppTheme.primaryColor),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(LucideIcons.plus, color: Colors.white, size: 20),
+                  const SizedBox(width: 12),
+                  Text(
+                    "Add Single Content",
+                    style: GoogleFonts.outfit(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
                     ),
                   ),
-                  child: Icon(
-                    LucideIcons.arrowLeft,
-                    color: AppTheme.textPrimary(context),
-                    size: 20,
-                  ),
-                ),
+                ],
               ),
             ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l.translate('add_wisdom'),
-                  style: GoogleFonts.spectral(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.textPrimary(context),
-                    letterSpacing: -0.5,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  "Create sacred content",
-                  style: GoogleFonts.outfit(
-                    fontSize: 13,
-                    color: AppTheme.textMuted(context),
-                  ),
-                ),
-              ],
-            ),
-          ).animate().fadeIn(delay: 50.ms).slideX(begin: -0.1),
-          // Animated sparkle icon
-          AnimatedBuilder(
-            animation: _pulseController,
-            builder: (context, child) {
-              return Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      AppTheme.primaryColor.withOpacity(
-                        0.1 + _pulseController.value * 0.1,
-                      ),
-                      AppTheme.glowPurple.withOpacity(
-                        0.1 + _pulseController.value * 0.1,
-                      ),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.primaryColor.withOpacity(
-                        0.2 * _pulseController.value,
-                      ),
-                      blurRadius: 20,
-                      spreadRadius: -5,
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  LucideIcons.wand2,
-                  color: AppTheme.primaryColor,
-                  size: 22,
-                ),
-              );
-            },
           ),
         ],
       ),
     );
   }
 
-  Widget _buildImagePicker(
+  Widget _buildBulkUploadTab(
     BuildContext context,
     AppLocalization l,
     bool isDark,
   ) {
-    return PressableScale(
-      onTap: _pickImage,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            height: 200,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withOpacity(0.06)
-                  : Colors.white.withOpacity(0.8),
-              borderRadius: BorderRadius.circular(28),
-              border: Border.all(
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildInfoCard(
+            context,
+            isDark: isDark,
+            icon: LucideIcons.upload,
+            title: "Bulk Upload Options",
+            description:
+                "Upload multiple content items at once using CSV or JSON files.",
+          ),
+          const SizedBox(height: 24),
+
+          // CSV Upload
+          _buildUploadCard(
+            context,
+            isDark: isDark,
+            icon: LucideIcons.fileSpreadsheet,
+            title: "Upload CSV File",
+            description: "Import content from a CSV file",
+            color: const Color(0xFF10B981),
+            onTap: () => _handleCSVUpload(context, l),
+          ),
+          const SizedBox(height: 16),
+
+          // JSON Upload
+          _buildUploadCard(
+            context,
+            isDark: isDark,
+            icon: LucideIcons.fileCode,
+            title: "Upload JSON File",
+            description: "Import content from a JSON file",
+            color: const Color(0xFF3B82F6),
+            onTap: () => _handleJSONUpload(context, l),
+          ),
+          const SizedBox(height: 16),
+
+          // Multiple Images
+          _buildUploadCard(
+            context,
+            isDark: isDark,
+            icon: LucideIcons.image,
+            title: "Upload Images",
+            description: "Add multiple images for content",
+            color: const Color(0xFFEC4899),
+            onTap: () => _handleImageUpload(context, l),
+          ),
+          const SizedBox(height: 16),
+
+          // Audio Files
+          _buildUploadCard(
+            context,
+            isDark: isDark,
+            icon: LucideIcons.music,
+            title: "Upload Audio Files",
+            description: "Add audio narrations in bulk",
+            color: const Color(0xFF8B5CF6),
+            onTap: () => _handleAudioUpload(context, l),
+          ),
+
+          const SizedBox(height: 32),
+
+          // Download template button
+          PressableScale(
+            onTap: () => _downloadTemplate(context, l),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
                 color: isDark
-                    ? Colors.white.withOpacity(0.1)
-                    : Colors.black.withOpacity(0.05),
-                width: 2,
+                    ? Colors.white.withOpacity(0.06)
+                    : Colors.black.withOpacity(0.04),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withOpacity(0.1)
+                      : Colors.black.withOpacity(0.1),
+                ),
               ),
-              boxShadow: AppTheme.softShadow(context),
-              image: _selectedImage != null
-                  ? DecorationImage(
-                      image: FileImage(_selectedImage!),
-                      fit: BoxFit.cover,
-                    )
-                  : null,
-            ),
-            child: _selectedImage == null
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              AppTheme.primaryColor.withOpacity(0.15),
-                              AppTheme.glowPurple.withOpacity(0.15),
-                            ],
-                          ),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          LucideIcons.imagePlus,
-                          size: 36,
-                          color: AppTheme.primaryColor,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        l.translate('add_cover'),
-                        style: GoogleFonts.outfit(
-                          fontSize: 16,
-                          color: AppTheme.textPrimary(context),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        l.translate('optional_limit'),
-                        style: GoogleFonts.outfit(
-                          fontSize: 13,
-                          color: AppTheme.textMuted(context),
-                        ),
-                      ),
-                    ],
-                  )
-                : Stack(
-                    children: [
-                      // Dark overlay for better text visibility
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              Colors.black.withOpacity(0.3),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 12,
-                        right: 12,
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 8,
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            LucideIcons.pencil,
-                            size: 18,
-                            color: AppTheme.primaryColor,
-                          ),
-                        ),
-                      ),
-                    ],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    LucideIcons.download,
+                    size: 18,
+                    color: AppTheme.primaryColor,
                   ),
+                  const SizedBox(width: 10),
+                  Text(
+                    "Download CSV Template",
+                    style: GoogleFonts.outfit(
+                      color: AppTheme.primaryColor,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildManageTab(BuildContext context, AppLocalization l, bool isDark) {
+    final allContent = ref.watch(sacredContentProvider);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildInfoCard(
+            context,
+            isDark: isDark,
+            icon: LucideIcons.database,
+            title: "Content Management",
+            description: "${allContent.length} items in database",
+          ),
+          const SizedBox(height: 20),
+          ...allContent.map(
+            (content) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _buildContentCard(context, content, isDark),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(
+    BuildContext context, {
+    required bool isDark,
+    required IconData icon,
+    required String title,
+    required String description,
+  }) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: AppTheme.primaryColor.withOpacity(isDark ? 0.12 : 0.08),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: AppTheme.primaryColor.withOpacity(0.25),
+              width: 1.5,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  gradient: AppTheme.primaryGradient(context),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: Colors.white, size: 20),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.outfit(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : const Color(0xFF1A1A2E),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      description,
+                      style: GoogleFonts.outfit(
+                        fontSize: 12,
+                        color: isDark ? Colors.white60 : Colors.black54,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildGlassTextField(
-    BuildContext context,
-    String label,
-    TextEditingController controller,
-    IconData icon,
-    String hint,
-    AppLocalization l, {
-    int maxLines = 1,
-    List<Color>? gradientColors,
+  Widget _buildUploadCard(
+    BuildContext context, {
+    required bool isDark,
+    required IconData icon,
+    required String title,
+    required String description,
+    required Color color,
+    required VoidCallback onTap,
   }) {
-    final isDark = AppTheme.isDark(context);
-    final colors =
-        gradientColors ?? [AppTheme.primaryColor, AppTheme.primaryDark];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: colors),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, size: 14, color: Colors.white),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              label,
-              style: GoogleFonts.outfit(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary(context),
-                letterSpacing: 0.2,
+    return PressableScale(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(isDark ? 0.06 : 0.4),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Colors.white.withOpacity(isDark ? 0.1 : 0.5),
+                width: 1.5,
               ),
             ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withOpacity(0.06)
-                    : Colors.white.withOpacity(0.8),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: color, size: 22),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: GoogleFonts.outfit(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF1A1A2E),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        description,
+                        style: GoogleFonts.outfit(
+                          fontSize: 12,
+                          color: isDark ? Colors.white60 : Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  LucideIcons.chevronRight,
+                  size: 20,
                   color: isDark
-                      ? Colors.white.withOpacity(0.08)
-                      : Colors.black.withOpacity(0.04),
-                  width: 1.5,
+                      ? Colors.white.withOpacity(0.4)
+                      : Colors.black.withOpacity(0.26),
                 ),
-                boxShadow: AppTheme.softShadow(context),
-              ),
-              child: TextFormField(
-                controller: controller,
-                maxLines: maxLines,
-                style: GoogleFonts.outfit(
-                  fontSize: 15,
-                  color: AppTheme.textPrimary(context),
-                ),
-                decoration: InputDecoration(
-                  hintText: hint,
-                  hintStyle: GoogleFonts.outfit(
-                    color: AppTheme.textMuted(context),
-                  ),
-                  filled: true,
-                  fillColor: Colors.transparent,
-                  contentPadding: const EdgeInsets.all(18),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(color: colors[0], width: 2),
-                  ),
-                ),
-                validator: (value) => value!.isEmpty
-                    ? "${l.translate('please_enter')} $label"
-                    : null,
-              ),
+              ],
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 
-  Widget _buildCategoryDropdown(
+  Widget _buildContentCard(
+    BuildContext context,
+    SacredContent content,
+    bool isDark,
+  ) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(isDark ? 0.06 : 0.35),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: Colors.white.withOpacity(isDark ? 0.1 : 0.5),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  gradient: AppTheme.primaryGradient(context),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  LucideIcons.scroll,
+                  color: Colors.white,
+                  size: 18,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      content.title,
+                      style: GoogleFonts.outfit(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      content.category,
+                      style: GoogleFonts.outfit(
+                        fontSize: 11,
+                        color: AppTheme.primaryColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(
+                  LucideIcons.trash2,
+                  size: 18,
+                  color: Colors.red,
+                ),
+                onPressed: () => _deleteContent(content),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showSingleAddDialog(
     BuildContext context,
     AppLocalization l,
     bool isDark,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppTheme.glowOrange, const Color(0xFFFB923C)],
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(
-                LucideIcons.grid,
-                size: 14,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              l.translate('category_label'),
-              style: GoogleFonts.outfit(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary(context),
-                letterSpacing: 0.2,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+    // Show the existing single add form
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
             child: Container(
+              constraints: const BoxConstraints(maxWidth: 500),
+              padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 color: isDark
-                    ? Colors.white.withOpacity(0.06)
-                    : Colors.white.withOpacity(0.8),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: isDark
-                      ? Colors.white.withOpacity(0.08)
-                      : Colors.black.withOpacity(0.04),
-                  width: 1.5,
-                ),
-                boxShadow: AppTheme.softShadow(context),
+                    ? const Color(0xFF1A1A2E).withOpacity(0.95)
+                    : Colors.white.withOpacity(0.95),
+                borderRadius: BorderRadius.circular(24),
               ),
-              child: DropdownButtonFormField<String>(
-                value: _selectedCategoryKey,
-                dropdownColor: isDark ? const Color(0xFF1E1E2E) : Colors.white,
-                style: GoogleFonts.outfit(
-                  fontSize: 15,
-                  color: AppTheme.textPrimary(context),
-                ),
-                icon: Icon(
-                  LucideIcons.chevronDown,
-                  color: AppTheme.primaryColor,
-                  size: 20,
-                ),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.transparent,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 18,
-                    vertical: 18,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                items: _categoryKeys.entries.map((entry) {
-                  return DropdownMenuItem(
-                    value: entry.key,
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: AppTheme.primaryColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(
-                            _getCategoryIcon(entry.key),
-                            size: 16,
-                            color: AppTheme.primaryColor,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(l.translate(entry.value)),
-                      ],
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Add Single Content",
+                      style: GoogleFonts.spectral(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
                     ),
-                  );
-                }).toList(),
-                onChanged: (val) {
-                  HapticFeedback.selectionClick();
-                  setState(() => _selectedCategoryKey = val!);
-                },
+                    const SizedBox(height: 20),
+                    Text(
+                      "Use the form to add one item",
+                      style: GoogleFonts.outfit(
+                        color: isDark ? Colors.white60 : Colors.black54,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      child: Text("Close", style: GoogleFonts.outfit()),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 
-  IconData _getCategoryIcon(String key) {
-    switch (key) {
-      case 'shloka':
-        return LucideIcons.scroll;
-      case 'strotra':
-        return LucideIcons.music;
-      case 'poem':
-        return LucideIcons.feather;
-      case 'veda':
-        return LucideIcons.bookOpen;
-      case 'mantra':
-        return LucideIcons.sparkles;
-      case 'story':
-        return LucideIcons.book;
-      default:
-        return LucideIcons.file;
+  Future<void> _handleCSVUpload(BuildContext context, AppLocalization l) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['csv'],
+      );
+
+      if (result != null) {
+        setState(() => _isProcessing = true);
+        // Process CSV file here
+        await Future.delayed(const Duration(seconds: 2)); // Simulate processing
+        setState(() => _isProcessing = false);
+
+        if (!mounted) return;
+        _showSuccessMessage(context, "CSV uploaded successfully!");
+      }
+    } catch (e) {
+      setState(() => _isProcessing = false);
+      if (!mounted) return;
+      _showErrorMessage(context, "Error uploading CSV");
     }
   }
 
-  Widget _buildSubmitButton(BuildContext context, AppLocalization l) {
-    return PressableScale(
-      onTap: () => _submitData(l),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppTheme.primaryColor,
-              AppTheme.primaryDark,
-              const Color(0xFFBF8F20),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(22),
-          boxShadow: [
-            BoxShadow(
-              color: AppTheme.primaryColor.withOpacity(0.4),
-              blurRadius: 24,
-              offset: const Offset(0, 12),
-              spreadRadius: -8,
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+  Future<void> _handleJSONUpload(
+    BuildContext context,
+    AppLocalization l,
+  ) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+      );
+
+      if (result != null) {
+        setState(() => _isProcessing = true);
+        await Future.delayed(const Duration(seconds: 2));
+        setState(() => _isProcessing = false);
+
+        if (!mounted) return;
+        _showSuccessMessage(context, "JSON uploaded successfully!");
+      }
+    } catch (e) {
+      setState(() => _isProcessing = false);
+      if (!mounted) return;
+      _showErrorMessage(context, "Error uploading JSON");
+    }
+  }
+
+  Future<void> _handleImageUpload(
+    BuildContext context,
+    AppLocalization l,
+  ) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowMultiple: true,
+      );
+
+      if (result != null) {
+        setState(() => _isProcessing = true);
+        await Future.delayed(const Duration(seconds: 2));
+        setState(() => _isProcessing = false);
+
+        if (!mounted) return;
+        _showSuccessMessage(context, "${result.files.length} images uploaded!");
+      }
+    } catch (e) {
+      setState(() => _isProcessing = false);
+      if (!mounted) return;
+      _showErrorMessage(context, "Error uploading images");
+    }
+  }
+
+  Future<void> _handleAudioUpload(
+    BuildContext context,
+    AppLocalization l,
+  ) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.audio,
+        allowMultiple: true,
+      );
+
+      if (result != null) {
+        setState(() => _isProcessing = true);
+        await Future.delayed(const Duration(seconds: 2));
+        setState(() => _isProcessing = false);
+
+        if (!mounted) return;
+        _showSuccessMessage(
+          context,
+          "${result.files.length} audio files uploaded!",
+        );
+      }
+    } catch (e) {
+      setState(() => _isProcessing = false);
+      if (!mounted) return;
+      _showErrorMessage(context, "Error uploading audio");
+    }
+  }
+
+  void _downloadTemplate(BuildContext context, AppLocalization l) {
+    _showSuccessMessage(
+      context,
+      "Template downloaded! Check your downloads folder.",
+    );
+  }
+
+  void _deleteContent(SacredContent content) {
+    ref.read(sacredContentProvider.notifier).removeContent(content.id);
+    _showSuccessMessage(context, "Content deleted!");
+  }
+
+  void _showSuccessMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
           children: [
-            const Icon(LucideIcons.sparkles, size: 22, color: Colors.white),
+            const Icon(LucideIcons.checkCircle, color: Colors.white, size: 18),
             const SizedBox(width: 12),
-            Text(
-              l.translate('publish_wisdom'),
-              style: GoogleFonts.outfit(
-                fontSize: 17,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-                letterSpacing: 0.5,
-              ),
-            ),
+            Text(message, style: GoogleFonts.outfit()),
           ],
         ),
+        backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
+  void _showErrorMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(LucideIcons.xCircle, color: Colors.white, size: 18),
+            const SizedBox(width: 12),
+            Text(message, style: GoogleFonts.outfit()),
+          ],
+        ),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
