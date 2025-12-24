@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../core/theme.dart';
 import '../core/providers.dart';
 import '../core/localization.dart';
@@ -20,15 +19,14 @@ class SearchScreen extends ConsumerStatefulWidget {
 }
 
 class _SearchScreenState extends ConsumerState<SearchScreen> {
-  final TextEditingController _searchController = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
+  final _searchController = TextEditingController();
+  final _focusNode = FocusNode();
   List<SacredContent> _results = [];
   bool _isSearching = false;
 
   @override
   void initState() {
     super.initState();
-    // Auto-focus search field
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
@@ -67,183 +65,299 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final isDark = AppTheme.isDark(context);
 
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor(context),
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          SliverToBoxAdapter(
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                l.translate('search'),
-                                style: GoogleFonts.spectral(
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppTheme.textPrimary(context),
-                                  letterSpacing: -0.5,
-                                ),
-                              ).animate().fadeIn().slideX(begin: -0.1),
-                              const SizedBox(height: 6),
-                              Text(
-                                l.translate('find_wisdom'),
-                                style: GoogleFonts.outfit(
-                                  color: AppTheme.textMuted(context),
-                                  fontSize: 15,
-                                ),
-                              ).animate().fadeIn(delay: 50.ms),
-                            ],
-                          ),
-                        ),
-                        Container(
-                              padding: const EdgeInsets.all(14),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    AppTheme.primaryColor.withOpacity(0.15),
-                                    AppTheme.glowPurple.withOpacity(0.15),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(18),
-                              ),
-                              child: Icon(
-                                LucideIcons.sparkles,
-                                color: AppTheme.primaryColor,
-                                size: 24,
-                              ),
-                            )
-                            .animate(onPlay: (c) => c.repeat(reverse: true))
-                            .scale(
-                              begin: const Offset(1, 1),
-                              end: const Offset(1.1, 1.1),
-                              duration: 1500.ms,
-                            ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(22),
+      backgroundColor: isDark
+          ? const Color(0xFF0A0A0F)
+          : const Color(0xFFF5F3F0),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Glass Header with Back Button
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
+              child: Row(
+                children: [
+                  // Glass Back Button
+                  PressableScale(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.pop(context);
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
                       child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                         child: Container(
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: isDark
-                                ? Colors.white.withOpacity(0.08)
-                                : Colors.white.withOpacity(0.9),
-                            borderRadius: BorderRadius.circular(22),
+                            color: Colors.white.withOpacity(
+                              isDark ? 0.08 : 0.3,
+                            ),
+                            borderRadius: BorderRadius.circular(14),
                             border: Border.all(
-                              color: isDark
-                                  ? Colors.white.withOpacity(0.1)
-                                  : Colors.black.withOpacity(0.05),
+                              color: Colors.white.withOpacity(
+                                isDark ? 0.15 : 0.5,
+                              ),
                               width: 1.5,
                             ),
-                            boxShadow: AppTheme.softShadow(context),
                           ),
-                          child: TextField(
-                            controller: _searchController,
-                            focusNode: _focusNode,
-                            onChanged: (query) => _onSearch(query, allContent),
-                            style: GoogleFonts.outfit(
-                              fontSize: 16,
-                              color: AppTheme.textPrimary(context),
-                            ),
-                            decoration: InputDecoration(
-                              hintText: l.translate('search_hint'),
-                              hintStyle: GoogleFonts.outfit(
-                                color: AppTheme.textMuted(context),
-                              ),
-                              prefixIcon: Container(
-                                padding: const EdgeInsets.all(12),
-                                margin: const EdgeInsets.only(
-                                  left: 8,
-                                  right: 4,
-                                ),
-                                child: Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.primaryColor.withOpacity(
-                                      0.1,
-                                    ),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Icon(
-                                    LucideIcons.compass,
-                                    color: AppTheme.primaryColor,
-                                    size: 18,
-                                  ),
-                                ),
-                              ),
-                              suffixIcon: _searchController.text.isNotEmpty
-                                  ? IconButton(
-                                      icon: Container(
-                                        padding: const EdgeInsets.all(6),
-                                        decoration: BoxDecoration(
-                                          color: AppTheme.textMuted(
-                                            context,
-                                          ).withOpacity(0.1),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Icon(
-                                          LucideIcons.x,
-                                          size: 14,
-                                          color: AppTheme.textMuted(context),
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        _searchController.clear();
-                                        _onSearch("", allContent);
-                                      },
-                                    )
-                                  : null,
-                              filled: true,
-                              fillColor: Colors.transparent,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 18,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(22),
-                                borderSide: BorderSide.none,
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(22),
-                                borderSide: BorderSide(
-                                  color: AppTheme.primaryColor,
-                                  width: 2,
-                                ),
-                              ),
-                            ),
+                          child: Icon(
+                            LucideIcons.arrowLeft,
+                            size: 20,
+                            color: isDark ? Colors.white : Colors.black87,
                           ),
                         ),
                       ),
-                    ).animate().fadeIn(delay: 100.ms).slideY(begin: 0.1),
-                    const SizedBox(height: 24),
-                  ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l.translate('search'),
+                          style: GoogleFonts.spectral(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.textPrimary(context),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Glass Filter Button
+                  PressableScale(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      _showFilterDialog(context, isDark);
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(
+                              isDark ? 0.08 : 0.3,
+                            ),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(
+                                isDark ? 0.15 : 0.5,
+                              ),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Icon(
+                            LucideIcons.slidersHorizontal,
+                            size: 20,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Glass Search Bar
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(18),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(isDark ? 0.08 : 0.35),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(isDark ? 0.15 : 0.5),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: TextField(
+                      controller: _searchController,
+                      focusNode: _focusNode,
+                      onChanged: (q) => _onSearch(q, allContent),
+                      style: GoogleFonts.outfit(
+                        fontSize: 16,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: l.translate('search_hint'),
+                        hintStyle: GoogleFonts.outfit(
+                          color: isDark ? Colors.white60 : Colors.black54,
+                        ),
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.all(14),
+                          child: Icon(
+                            LucideIcons.search,
+                            color: isDark ? Colors.white70 : Colors.black54,
+                            size: 20,
+                          ),
+                        ),
+                        suffixIcon: _searchController.text.isNotEmpty
+                            ? IconButton(
+                                icon: Icon(
+                                  LucideIcons.x,
+                                  size: 18,
+                                  color: isDark
+                                      ? Colors.white60
+                                      : Colors.black54,
+                                ),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  _onSearch("", allContent);
+                                },
+                              )
+                            : null,
+                        filled: true,
+                        fillColor: Colors.transparent,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(18),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
+
+            // Results or suggestions
+            Expanded(
+              child: _isSearching
+                  ? _buildResults(context, l, isDark)
+                  : _buildSuggestions(context, l, allContent, isDark),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showFilterDialog(BuildContext context, bool isDark) {
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? const Color(0xFF1A1A2E).withOpacity(0.95)
+                    : Colors.white.withOpacity(0.95),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: Colors.white.withOpacity(isDark ? 0.15 : 0.5),
+                  width: 1.5,
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Filter By",
+                    style: GoogleFonts.spectral(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  _buildFilterOption(context, "All Categories", true, isDark),
+                  _buildFilterOption(context, "Shlokas", false, isDark),
+                  _buildFilterOption(context, "Stotras", false, isDark),
+                  _buildFilterOption(context, "Mantras", false, isDark),
+                  const SizedBox(height: 20),
+                  PressableScale(
+                    onTap: () => Navigator.pop(ctx),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      decoration: BoxDecoration(
+                        gradient: AppTheme.primaryGradient(context),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Apply Filters",
+                          style: GoogleFonts.outfit(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-          _isSearching
-              ? _buildSliverSearchResults(context, l, isDark)
-              : SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  sliver: SliverToBoxAdapter(
-                    child: _buildSuggestions(context, l, allContent, isDark),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilterOption(
+    BuildContext context,
+    String label,
+    bool selected,
+    bool isDark,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: selected
+                  ? AppTheme.primaryColor.withOpacity(0.2)
+                  : Colors.white.withOpacity(isDark ? 0.05 : 0.2),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: selected
+                    ? AppTheme.primaryColor
+                    : Colors.white.withOpacity(isDark ? 0.1 : 0.3),
+                width: selected ? 2 : 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  selected ? LucideIcons.checkCircle : LucideIcons.circle,
+                  size: 18,
+                  color: selected
+                      ? AppTheme.primaryColor
+                      : (isDark ? Colors.white60 : Colors.black54),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  label,
+                  style: GoogleFonts.outfit(
+                    fontSize: 15,
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                    color: selected
+                        ? AppTheme.primaryColor
+                        : (isDark ? Colors.white : Colors.black87),
                   ),
                 ),
-        ],
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -254,426 +368,176 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     List<SacredContent> allContent,
     bool isDark,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppTheme.glowOrange, AppTheme.primaryColor],
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(
-                LucideIcons.trendingUp,
-                size: 14,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              "Trending Now",
-              style: GoogleFonts.outfit(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-                color: AppTheme.textPrimary(context),
-              ),
-            ),
-          ],
-        ).animate().fadeIn(delay: 150.ms),
-        const SizedBox(height: 16),
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: [
-            _buildTag(context, "Bhagavad Gita", allContent, isDark, 0),
-            _buildTag(context, "Hanuman Chalisa", allContent, isDark, 1),
-            _buildTag(context, "Shiva Tandava", allContent, isDark, 2),
-            _buildTag(context, "Gayatri Mantra", allContent, isDark, 3),
-          ],
-        ),
-        const SizedBox(height: 32),
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppTheme.glowPurple, AppTheme.glowBlue],
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(
-                LucideIcons.sparkles,
-                size: 14,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              "Quick Access",
-              style: GoogleFonts.outfit(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-                color: AppTheme.textPrimary(context),
-              ),
-            ),
-          ],
-        ).animate().fadeIn(delay: 200.ms),
-        const SizedBox(height: 16),
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: [
-            _buildCategoryChip(
-              context,
-              LucideIcons.scroll,
-              "Shlokas",
-              isDark,
-              0,
-            ),
-            _buildCategoryChip(context, LucideIcons.mic, "Stotras", isDark, 1),
-            _buildCategoryChip(
-              context,
-              LucideIcons.sparkles,
-              "Mantras",
-              isDark,
-              2,
-            ),
-            _buildCategoryChip(
-              context,
-              LucideIcons.library,
-              "Vedas",
-              isDark,
-              3,
-            ),
-          ],
-        ),
-        const SizedBox(height: 48),
-        Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Trending
+          Row(
             children: [
-              Container(
-                    padding: const EdgeInsets.all(36),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          AppTheme.primaryColor.withOpacity(0.1),
-                          AppTheme.glowPurple.withOpacity(0.1),
-                        ],
-                      ),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      LucideIcons.compass,
-                      size: 52,
-                      color: AppTheme.primaryColor.withOpacity(0.4),
-                    ),
-                  )
-                  .animate()
-                  .fadeIn(delay: 300.ms)
-                  .scale(begin: const Offset(0.8, 0.8)),
-              const SizedBox(height: 24),
+              Icon(
+                LucideIcons.trendingUp,
+                size: 18,
+                color: AppTheme.glowOrange,
+              ),
+              const SizedBox(width: 8),
               Text(
-                l.translate('discover_wisdom_short'),
+                "Trending Now",
                 style: GoogleFonts.outfit(
-                  color: AppTheme.textMuted(context),
+                  fontWeight: FontWeight.w600,
                   fontSize: 15,
+                  color: AppTheme.textPrimary(context),
                 ),
-              ).animate().fadeIn(delay: 350.ms),
+              ),
             ],
           ),
-        ),
-        const SizedBox(height: 100),
-      ],
-    );
-  }
+          const SizedBox(height: 14),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              _buildGlassTag(context, "Bhagavad Gita", allContent, isDark),
+              _buildGlassTag(context, "Hanuman Chalisa", allContent, isDark),
+              _buildGlassTag(context, "Shiva Tandava", allContent, isDark),
+              _buildGlassTag(context, "Gayatri Mantra", allContent, isDark),
+            ],
+          ),
+          const SizedBox(height: 28),
 
-  Widget _buildTag(
-    BuildContext context,
-    String label,
-    List<SacredContent> allContent,
-    bool isDark,
-    int index,
-  ) {
-    return PressableScale(
-          onTap: () {
-            HapticFeedback.lightImpact();
-            _searchController.text = label;
-            _onSearch(label, allContent);
-          },
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.white.withOpacity(0.06)
-                      : Colors.white.withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: AppTheme.primaryColor.withOpacity(0.2),
-                  ),
-                  boxShadow: AppTheme.softShadow(context),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      LucideIcons.hash,
-                      size: 14,
-                      color: AppTheme.primaryColor,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      label,
-                      style: GoogleFonts.outfit(
-                        fontSize: 14,
-                        color: AppTheme.textPrimary(context),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
+          // Quick Access
+          Row(
+            children: [
+              Icon(LucideIcons.zap, size: 18, color: AppTheme.glowPurple),
+              const SizedBox(width: 8),
+              Text(
+                "Quick Access",
+                style: GoogleFonts.outfit(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  color: AppTheme.textPrimary(context),
                 ),
               ),
-            ),
+            ],
           ),
-        )
-        .animate()
-        .fadeIn(delay: (200 + 50 * index).ms)
-        .scale(begin: const Offset(0.9, 0.9));
-  }
-
-  Widget _buildSliverSearchResults(
-    BuildContext context,
-    AppLocalization l,
-    bool isDark,
-  ) {
-    if (_results.isEmpty) {
-      return SliverFillRemaining(
-        hasScrollBody: false,
-        child: _buildNoResults(context, l),
-      );
-    }
-
-    return SliverPadding(
-      padding: const EdgeInsets.fromLTRB(24, 0, 24, 100),
-      sliver: SliverList(
-        delegate: SliverChildBuilderDelegate((context, index) {
-          if (index == 0) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 24),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(
-                      LucideIcons.checkCircle,
-                      size: 16,
-                      color: Colors.green,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    "${_results.length} ${l.translate('results_found')}",
-                    style: GoogleFonts.outfit(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      color: AppTheme.textPrimary(context),
-                    ),
-                  ),
-                ],
+          const SizedBox(height: 14),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              _buildGlassCategoryChip(
+                context,
+                LucideIcons.scroll,
+                "Shlokas",
+                isDark,
               ),
-            );
-          }
-          final item = _results[index - 1];
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: _buildResultCard(context, item, index - 1, isDark),
-          );
-        }, childCount: _results.length + 1),
-      ),
-    );
-  }
+              _buildGlassCategoryChip(
+                context,
+                LucideIcons.music,
+                "Stotras",
+                isDark,
+              ),
+              _buildGlassCategoryChip(
+                context,
+                LucideIcons.sparkles,
+                "Mantras",
+                isDark,
+              ),
+              _buildGlassCategoryChip(
+                context,
+                LucideIcons.bookOpen,
+                "Vedas",
+                isDark,
+              ),
+            ],
+          ),
+          const SizedBox(height: 60),
 
-  Widget _buildNoResults(BuildContext context, AppLocalization l) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(28),
-            decoration: BoxDecoration(
-              color: Colors.red.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              LucideIcons.searchX,
-              size: 48,
-              color: Colors.red.withOpacity(0.6),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            l.translate('no_results'),
-            style: GoogleFonts.outfit(
-              color: AppTheme.textMuted(context),
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            "Try a different search term",
-            style: GoogleFonts.outfit(
-              color: AppTheme.textMuted(context).withOpacity(0.7),
-              fontSize: 14,
+          // Illustration
+          Center(
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(32),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor.withOpacity(0.08),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    LucideIcons.search,
+                    size: 48,
+                    color: AppTheme.primaryColor.withOpacity(0.4),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  l.translate('discover_wisdom_short'),
+                  style: GoogleFonts.outfit(
+                    color: AppTheme.textMuted(context),
+                    fontSize: 14,
+                  ),
+                ),
+              ],
             ),
           ),
+          const SizedBox(height: 100),
         ],
       ),
     );
   }
 
-  Widget _buildResultCard(
+  Widget _buildGlassTag(
     BuildContext context,
-    SacredContent item,
-    int index,
+    String label,
+    List<SacredContent> allContent,
     bool isDark,
   ) {
     return PressableScale(
       onTap: () {
-        HapticFeedback.lightImpact();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ContentDetailScreen(content: item),
-          ),
-        );
+        _searchController.text = label;
+        _onSearch(label, allContent);
       },
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(14),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withOpacity(0.06)
-                  : Colors.white.withOpacity(0.8),
-              borderRadius: BorderRadius.circular(22),
+              color: Colors.white.withOpacity(isDark ? 0.06 : 0.3),
+              borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: isDark
-                    ? Colors.white.withOpacity(0.08)
-                    : Colors.black.withOpacity(0.04),
+                color: Colors.white.withOpacity(isDark ? 0.1 : 0.5),
                 width: 1.5,
               ),
-              boxShadow: AppTheme.softShadow(context),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Container(
-                    width: 54,
-                    height: 54,
-                    decoration: BoxDecoration(
-                      gradient: AppTheme.primaryGradient(context),
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppTheme.primaryColor.withOpacity(0.3),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                          spreadRadius: -4,
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      LucideIcons.bookOpen,
-                      color: Colors.white,
-                      size: 24,
-                    ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(LucideIcons.hash, size: 14, color: AppTheme.primaryColor),
+                const SizedBox(width: 6),
+                Text(
+                  label,
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.title,
-                          style: GoogleFonts.outfit(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                            color: AppTheme.textPrimary(context),
-                            letterSpacing: -0.2,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppTheme.primaryColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            item.category,
-                            style: GoogleFonts.outfit(
-                              color: AppTheme.primaryColor,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: AppTheme.surfaceColor(context),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      LucideIcons.chevronRight,
-                      size: 18,
-                      color: AppTheme.primaryColor,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
       ),
-    ).animate().fadeIn(delay: (50 * index).ms).slideX(begin: 0.05);
+    );
   }
 
-  Widget _buildCategoryChip(
+  Widget _buildGlassCategoryChip(
     BuildContext context,
     IconData icon,
     String label,
     bool isDark,
-    int index,
   ) {
     return PressableScale(
       onTap: () {
@@ -681,40 +545,196 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CategoryScreen(categoryName: label),
+            builder: (_) => CategoryScreen(categoryName: label),
           ),
         );
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: isDark
-              ? Colors.white.withOpacity(0.06)
-              : AppTheme.primaryColor.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: isDark
-                ? Colors.white.withOpacity(0.1)
-                : AppTheme.primaryColor.withOpacity(0.2),
-            width: 1.5,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(14),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(isDark ? 0.06 : 0.3),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: AppTheme.primaryColor.withOpacity(0.3),
+                width: 1.5,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 16, color: AppTheme.primaryColor),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.primaryColor,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-        child: Row(
+      ),
+    );
+  }
+
+  Widget _buildResults(BuildContext context, AppLocalization l, bool isDark) {
+    if (_results.isEmpty) {
+      return Center(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 16, color: AppTheme.primaryColor),
-            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.red.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                LucideIcons.searchX,
+                size: 40,
+                color: Colors.red.withOpacity(0.6),
+              ),
+            ),
+            const SizedBox(height: 20),
             Text(
-              label,
+              l.translate('no_results'),
               style: GoogleFonts.outfit(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary(context),
+                color: AppTheme.textMuted(context),
+                fontSize: 15,
               ),
             ),
           ],
         ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+      physics: const BouncingScrollPhysics(),
+      itemCount: _results.length + 1,
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Row(
+              children: [
+                Icon(LucideIcons.checkCircle, size: 16, color: Colors.green),
+                const SizedBox(width: 8),
+                Text(
+                  "${_results.length} ${l.translate('results_found')}",
+                  style: GoogleFonts.outfit(
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.textPrimary(context),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+        final item = _results[index - 1];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: _buildGlassResultCard(context, item, isDark),
+        );
+      },
+    );
+  }
+
+  Widget _buildGlassResultCard(
+    BuildContext context,
+    SacredContent item,
+    bool isDark,
+  ) {
+    return PressableScale(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => ContentDetailScreen(content: item)),
+        );
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(isDark ? 0.06 : 0.35),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: Colors.white.withOpacity(isDark ? 0.1 : 0.5),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    gradient: AppTheme.primaryGradient(context),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.primaryColor.withOpacity(0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    LucideIcons.bookOpen,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.title,
+                        style: GoogleFonts.outfit(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        item.category,
+                        style: GoogleFonts.outfit(
+                          color: AppTheme.primaryColor,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  LucideIcons.chevronRight,
+                  size: 18,
+                  color: isDark
+                      ? Colors.white.withOpacity(0.4)
+                      : Colors.black.withOpacity(0.3),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
-    ).animate().fadeIn(delay: (250 + 50 * index).ms).slideY(begin: 0.1);
+    );
   }
 }

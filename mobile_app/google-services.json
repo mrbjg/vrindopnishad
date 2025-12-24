@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1027361942428",
+    "project_id": "santvaanig",
+    "storage_bucket": "santvaanig.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1027361942428:android:c3a0b4ca14ae952753b659",
+        "android_client_info": {
+          "package_name": "com.santvaani.sant_vaani"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1027361942428-qan7576dnckruo88bl7gr6rfsi5ho0kn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAr78jEl1kzZ_MKRieUBlk5o5lO2p24vQU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1027361942428-qan7576dnckruo88bl7gr6rfsi5ho0kn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1027361942428-g0gisvdp87rpufeaij3d16mff3pv7d1d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.santvaani.santVaani"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
