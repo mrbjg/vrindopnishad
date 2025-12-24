@@ -1,10 +1,8 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../core/theme.dart';
 import '../core/providers.dart';
 import '../core/localization.dart';
@@ -30,9 +28,7 @@ class HomeScreen extends ConsumerWidget {
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
-          // ═══════════════════════════════════════════════════════════════
-          // HERO HEADER
-          // ═══════════════════════════════════════════════════════════════
+          // HERO HEADER - No BackdropFilter
           SliverToBoxAdapter(
             child: Container(
               padding: EdgeInsets.only(
@@ -96,49 +92,41 @@ class HomeScreen extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      // Logo with glass effect
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(18),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                          child: Container(
-                            padding: const EdgeInsets.all(14),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(
-                                isDark ? 0.1 : 0.4,
-                              ),
-                              borderRadius: BorderRadius.circular(18),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(
-                                  isDark ? 0.2 : 0.6,
-                                ),
-                                width: 1.5,
-                              ),
-                            ),
-                            child: SvgPicture.asset(
-                              'assets/logo.svg',
-                              height: 28,
-                              colorFilter: ColorFilter.mode(
-                                isDark ? Colors.white : AppTheme.primaryColor,
-                                BlendMode.srcIn,
-                              ),
-                            ),
+                      // Logo - Simple container
+                      Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withOpacity(0.1)
+                              : Colors.white.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.3),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            LucideIcons.sparkles,
+                            size: 28,
+                            color: isDark
+                                ? Colors.white
+                                : AppTheme.primaryColor,
                           ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 28),
-                  // Glass search bar
-                  _buildGlassSearchBar(context, l, isDark),
+                  // Search bar - Simple, no blur
+                  _buildSearchBar(context, l, isDark),
                 ],
               ),
             ),
           ),
 
-          // ═══════════════════════════════════════════════════════════════
-          // GLASS CATEGORIES with Gradient Background
-          // ═══════════════════════════════════════════════════════════════
+          // CATEGORIES SECTION
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
@@ -148,53 +136,38 @@ class HomeScreen extends ConsumerWidget {
                   _buildSectionHeader(
                     context,
                     l.translate('categories'),
-                    l.translate('see_all'),
+                    l.translate('view_all'),
                   ),
-                  const SizedBox(height: 20),
-                  // Categories with animated gradient background
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: isDark
-                            ? [
-                                const Color(0xFF2D1B4E).withOpacity(0.3),
-                                const Color(0xFF1A2332).withOpacity(0.3),
-                                const Color(0xFF0F4C5C).withOpacity(0.3),
-                              ]
-                            : [
-                                const Color(0xFFFEE8E1).withOpacity(0.5),
-                                const Color(0xFFE8F3FF).withOpacity(0.5),
-                                const Color(0xFFF0E6FF).withOpacity(0.5),
-                              ],
-                      ),
-                      borderRadius: BorderRadius.circular(28),
-                    ),
-                    padding: const EdgeInsets.all(20),
-                    child: _buildGlassCategoryGrid(context, l, isDark),
-                  ),
+                  const SizedBox(height: 16),
+                  _buildCategoryGrid(context, l, isDark),
                 ],
               ),
             ),
           ),
 
-          // ═══════════════════════════════════════════════════════════════
-          // FEATURED with Glass
-          // ═══════════════════════════════════════════════════════════════
+          // FEATURED SECTION
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 32, 24, 0),
-              child: _buildGlassFeaturedBanner(context, l, isDark),
+              padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionHeader(
+                    context,
+                    l.translate('featured'),
+                    l.translate('view_all'),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildFeaturedBanner(context, isDark, l),
+                ],
+              ),
             ),
           ),
 
-          // ═══════════════════════════════════════════════════════════════
-          // RECENT CONTENT
-          // ═══════════════════════════════════════════════════════════════
+          // RECENT WISDOM
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -215,48 +188,40 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildGlassSearchBar(
-    BuildContext context,
-    AppLocalization l,
-    bool isDark,
-  ) {
+  Widget _buildSearchBar(BuildContext context, AppLocalization l, bool isDark) {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const SearchScreen()),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(isDark ? 0.1 : 0.35),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.white.withOpacity(isDark ? 0.2 : 0.6),
-                width: 1.5,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        decoration: BoxDecoration(
+          color: isDark
+              ? Colors.white.withOpacity(0.08)
+              : Colors.white.withOpacity(0.7),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isDark ? Colors.white.withOpacity(0.1) : Colors.white,
+            width: 1.5,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              LucideIcons.search,
+              size: 20,
+              color: isDark ? Colors.white70 : Colors.black54,
+            ),
+            const SizedBox(width: 14),
+            Text(
+              l.translate('search_hint'),
+              style: GoogleFonts.outfit(
+                color: isDark ? Colors.white60 : Colors.black54,
+                fontSize: 15,
               ),
             ),
-            child: Row(
-              children: [
-                Icon(
-                  LucideIcons.search,
-                  size: 20,
-                  color: isDark ? Colors.white70 : Colors.black54,
-                ),
-                const SizedBox(width: 14),
-                Text(
-                  l.translate('search_hint'),
-                  style: GoogleFonts.outfit(
-                    color: isDark ? Colors.white60 : Colors.black54,
-                    fontSize: 15,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          ],
         ),
       ),
     );
@@ -293,7 +258,7 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildGlassCategoryGrid(
+  Widget _buildCategoryGrid(
     BuildContext context,
     AppLocalization l,
     bool isDark,
@@ -343,7 +308,7 @@ class HomeScreen extends ConsumerWidget {
       itemCount: categories.length,
       itemBuilder: (context, index) {
         final cat = categories[index];
-        return _buildGlassCategoryCard(
+        return _buildCategoryCard(
           context,
           cat['name'] as String,
           cat['icon'] as IconData,
@@ -354,7 +319,7 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildGlassCategoryCard(
+  Widget _buildCategoryCard(
     BuildContext context,
     String title,
     IconData icon,
@@ -374,212 +339,162 @@ class HomeScreen extends ConsumerWidget {
           ),
         );
       },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(isDark ? 0.08 : 0.25),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: Colors.white.withOpacity(isDark ? 0.15 : 0.5),
-                width: 1.5,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: gradientColors[0].withOpacity(0.2),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: gradientColors,
-                    ),
-                    borderRadius: BorderRadius.circular(18),
-                    boxShadow: [
-                      BoxShadow(
-                        color: gradientColors[0].withOpacity(0.4),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Icon(icon, color: Colors.white, size: 26),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  title,
-                  style: GoogleFonts.outfit(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : const Color(0xFF1A1A2E),
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: isDark
+              ? Colors.white.withOpacity(0.06)
+              : Colors.white.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withOpacity(0.1)
+                : Colors.black.withOpacity(0.05),
+            width: 1.5,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: gradientColors[0].withOpacity(0.15),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: gradientColors),
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: gradientColors[0].withOpacity(0.35),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Icon(icon, color: Colors.white, size: 26),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: GoogleFonts.outfit(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.textPrimary(context),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildGlassFeaturedBanner(
+  Widget _buildFeaturedBanner(
     BuildContext context,
-    AppLocalization l,
     bool isDark,
+    AppLocalization l,
   ) {
     return PressableScale(
-      onTap: () {
-        HapticFeedback.lightImpact();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const ContentDetailScreen(
-              title: "Sacred Journey",
-              category: "Featured",
-            ),
+      onTap: () => HapticFeedback.lightImpact(),
+      child: Container(
+        height: 180,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppTheme.primaryColor,
+              AppTheme.primaryDark,
+              const Color(0xFF8B5CF6),
+            ],
           ),
-        );
-      },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: isDark
-                    ? [
-                        const Color(0xFF2D1B4E).withOpacity(0.6),
-                        AppTheme.primaryColor.withOpacity(0.3),
-                      ]
-                    : [
-                        AppTheme.primaryColor.withOpacity(0.9),
-                        AppTheme.primaryDark.withOpacity(0.9),
-                      ],
-              ),
-              borderRadius: BorderRadius.circular(28),
-              border: Border.all(
-                color: Colors.white.withOpacity(isDark ? 0.15 : 0.4),
-                width: 1.5,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.primaryColor.withOpacity(0.3),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
-                ),
-              ],
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.primaryColor.withOpacity(0.3),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
             ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.25),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          l.translate('featured'),
-                          style: GoogleFonts.outfit(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      Text(
-                        l.translate('featured_title'),
-                        style: GoogleFonts.spectral(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          height: 1.2,
-                        ),
-                      ),
-                      const SizedBox(height: 18),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 18,
-                          vertical: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              l.translate('start_now'),
-                              style: GoogleFonts.outfit(
-                                fontWeight: FontWeight.w600,
-                                color: AppTheme.primaryDark,
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Icon(
-                              LucideIcons.arrowRight,
-                              size: 16,
-                              color: AppTheme.primaryDark,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Decorative circle
+            Positioned(
+              top: -40,
+              right: -40,
+              child: Container(
+                width: 160,
+                height: 160,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withOpacity(0.1),
                 ),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(
-                      width: 90,
-                      height: 90,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
-                        ),
-                      ),
-                      child: const Icon(
-                        LucideIcons.sparkles,
-                        size: 40,
+              ),
+            ),
+            Positioned(
+              bottom: -30,
+              left: -30,
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withOpacity(0.08),
+                ),
+              ),
+            ),
+            // Content
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      l.translate('featured').toUpperCase(),
+                      style: GoogleFonts.outfit(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
                         color: Colors.white,
+                        letterSpacing: 1.5,
                       ),
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 12),
+                  Text(
+                    "Bhagavad Gita",
+                    style: GoogleFonts.spectral(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    "The Song of the Divine",
+                    style: GoogleFonts.outfit(
+                      fontSize: 14,
+                      color: Colors.white.withOpacity(0.85),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -594,36 +509,46 @@ class HomeScreen extends ConsumerWidget {
     if (content.isEmpty) {
       return Container(
         padding: const EdgeInsets.all(40),
-        child: Center(
-          child: Column(
-            children: [
-              Icon(
-                LucideIcons.inbox,
-                size: 48,
+        decoration: BoxDecoration(
+          color: isDark
+              ? Colors.white.withOpacity(0.04)
+              : Colors.white.withOpacity(0.6),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          children: [
+            Icon(
+              LucideIcons.inbox,
+              size: 48,
+              color: AppTheme.textMuted(context),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l.translate('no_content'),
+              style: GoogleFonts.outfit(
                 color: AppTheme.textMuted(context),
+                fontSize: 15,
               ),
-              const SizedBox(height: 16),
-              Text(
-                l.translate('no_content'),
-                style: GoogleFonts.outfit(color: AppTheme.textMuted(context)),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
     }
 
     return Column(
-      children: content.take(4).map((item) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: _buildGlassContentCard(context, item, isDark),
-        );
-      }).toList(),
+      children: content
+          .take(5)
+          .map(
+            (item) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _buildRecentCard(context, item, isDark),
+            ),
+          )
+          .toList(),
     );
   }
 
-  Widget _buildGlassContentCard(
+  Widget _buildRecentCard(
     BuildContext context,
     SacredContent item,
     bool isDark,
@@ -636,109 +561,74 @@ class HomeScreen extends ConsumerWidget {
           MaterialPageRoute(builder: (_) => ContentDetailScreen(content: item)),
         );
       },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(isDark ? 0.06 : 0.4),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.white.withOpacity(isDark ? 0.1 : 0.5),
-                width: 1,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withOpacity(0.08)
+                : Colors.black.withOpacity(0.04),
+          ),
+          boxShadow: isDark
+              ? null
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                gradient: AppTheme.primaryGradient(context),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Icon(
+                LucideIcons.bookOpen,
+                color: Colors.white,
+                size: 24,
               ),
             ),
-            child: Row(
-              children: [
-                Container(
-                  width: 54,
-                  height: 54,
-                  decoration: BoxDecoration(
-                    gradient: AppTheme.primaryGradient(context),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.primaryColor.withOpacity(0.3),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.title,
+                    style: GoogleFonts.outfit(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.textPrimary(context),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  child: const Icon(
-                    LucideIcons.bookOpen,
-                    color: Colors.white,
-                    size: 24,
+                  const SizedBox(height: 4),
+                  Text(
+                    item.category,
+                    style: GoogleFonts.outfit(
+                      fontSize: 13,
+                      color: AppTheme.primaryColor,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.title,
-                        style: GoogleFonts.outfit(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                          color: isDark
-                              ? Colors.white
-                              : const Color(0xFF1A1A2E),
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppTheme.primaryColor.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              item.category,
-                              style: GoogleFonts.outfit(
-                                color: AppTheme.primaryColor,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Icon(
-                            LucideIcons.clock,
-                            size: 12,
-                            color: AppTheme.textMuted(context),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            "5 min",
-                            style: GoogleFonts.outfit(
-                              color: AppTheme.textMuted(context),
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Icon(
-                  LucideIcons.chevronRight,
-                  size: 20,
-                  color: isDark
-                      ? Colors.white.withOpacity(0.5)
-                      : Colors.black.withOpacity(0.3),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+            Icon(
+              LucideIcons.chevronRight,
+              size: 20,
+              color: AppTheme.textMuted(context),
+            ),
+          ],
         ),
       ),
     );

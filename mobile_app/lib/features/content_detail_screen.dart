@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,7 +31,6 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   double _fontSize = 16.0;
 
   late AudioPlayer _audioPlayer;
-  bool _isPlayerReady = false;
 
   @override
   void initState() {
@@ -43,11 +41,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
   Future<void> _initAudio() async {
     try {
-      // Example audio URL - replace with actual content audio URL
       const demoAudioUrl =
           'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
       await _audioPlayer.setUrl(demoAudioUrl);
-      setState(() => _isPlayerReady = true);
     } catch (e) {
       debugPrint('Error loading audio: $e');
     }
@@ -59,7 +55,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     super.dispose();
   }
 
-  void _toggleBookmark(AppLocalization l) {
+  void _toggleBookmark() {
     HapticFeedback.lightImpact();
     setState(() => _isBookmarked = !_isBookmarked);
   }
@@ -85,7 +81,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
-              // Header with gradient and title
+              // Header
               SliverToBoxAdapter(
                 child: Container(
                   padding: EdgeInsets.only(
@@ -110,7 +106,6 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Category chip
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
@@ -119,9 +114,6 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         decoration: BoxDecoration(
                           color: AppTheme.primaryColor.withOpacity(0.15),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: AppTheme.primaryColor.withOpacity(0.3),
-                          ),
                         ),
                         child: Text(
                           displayCategory.toUpperCase(),
@@ -134,7 +126,6 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      // Title
                       Text(
                         displayTitle,
                         style: GoogleFonts.spectral(
@@ -153,14 +144,14 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
               // Content sections
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 160),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 180),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
-                    // Sanskrit/Original Text - Hero section
+                    // Sanskrit Text Card
                     _buildHeroTextCard(context, isDark),
                     const SizedBox(height: 28),
 
-                    // Translation card
+                    // Translation
                     _buildContentCard(
                       context,
                       title: l.translate('english_translation'),
@@ -168,15 +159,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           widget.content?.translation ??
                           "You have the right to perform your prescribed duties, but you are not entitled to the fruits of your actions.",
                       icon: LucideIcons.languages,
-                      gradientColors: [
-                        const Color(0xFF3B82F6),
-                        const Color(0xFF60A5FA),
-                      ],
+                      color: const Color(0xFF3B82F6),
                       isDark: isDark,
                     ),
                     const SizedBox(height: 18),
 
-                    // Hindi Meaning card
+                    // Hindi Meaning
                     _buildContentCard(
                       context,
                       title: l.translate('hindi_meaning'),
@@ -184,15 +172,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           widget.content?.hindiMeaning ??
                           "तेरा कर्म करने में ही अधिकार है, उसके फलों में कभी नहीं।",
                       icon: LucideIcons.heart,
-                      gradientColors: [
-                        const Color(0xFFEC4899),
-                        const Color(0xFFF472B6),
-                      ],
+                      color: const Color(0xFFEC4899),
                       isDark: isDark,
                     ),
                     const SizedBox(height: 18),
 
-                    // Commentary card
+                    // Commentary
                     _buildContentCard(
                       context,
                       title: l.translate('commentary'),
@@ -200,10 +185,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           widget.content?.commentary ??
                           "This shloka is the cornerstone of Karma Yoga. It teaches us to focus on the effort rather than the outcome.",
                       icon: LucideIcons.lightbulb,
-                      gradientColors: [
-                        const Color(0xFF10B981),
-                        const Color(0xFF34D399),
-                      ],
+                      color: const Color(0xFF10B981),
                       isDark: isDark,
                     ),
                   ]),
@@ -212,86 +194,71 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             ],
           ),
 
-          // Fixed glass top bar with rounded corners
+          // Fixed top bar
           Positioned(
             top: 0,
             left: 0,
             right: 0,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(24),
-                bottomRight: Radius.circular(24),
+            child: Container(
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top + 8,
+                bottom: 12,
+                left: 12,
+                right: 12,
               ),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                child: Container(
-                  padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).padding.top + 8,
-                    bottom: 12,
-                    left: 12,
-                    right: 12,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? const Color(0xFF1A1A2E).withOpacity(0.95)
+                    : Colors.white.withOpacity(0.95),
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(24),
+                  bottomRight: Radius.circular(24),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildTopButton(
+                    icon: LucideIcons.arrowLeft,
+                    onTap: () => Navigator.pop(context),
+                    isDark: isDark,
                   ),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? const Color(0xFF1A1A2E).withOpacity(0.85)
-                        : Colors.white.withOpacity(0.85),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(24),
-                      bottomRight: Radius.circular(24),
-                    ),
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Colors.white.withOpacity(isDark ? 0.1 : 0.3),
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Row(
                     children: [
-                      _buildGlassButton(
-                        icon: LucideIcons.arrowLeft,
-                        onTap: () => Navigator.pop(context),
+                      _buildTopButton(
+                        icon: _isBookmarked
+                            ? LucideIcons.bookmarkMinus
+                            : LucideIcons.bookmark,
+                        onTap: _toggleBookmark,
                         isDark: isDark,
+                        isActive: _isBookmarked,
                       ),
-                      Row(
-                        children: [
-                          _buildGlassButton(
-                            icon: _isBookmarked
-                                ? LucideIcons.bookmarkMinus
-                                : LucideIcons.bookmark,
-                            onTap: () => _toggleBookmark(l),
-                            isDark: isDark,
-                            isActive: _isBookmarked,
-                          ),
-                          const SizedBox(width: 10),
-                          _buildGlassButton(
-                            icon: LucideIcons.share2,
-                            onTap: () {},
-                            isDark: isDark,
-                          ),
-                        ],
+                      const SizedBox(width: 10),
+                      _buildTopButton(
+                        icon: LucideIcons.share2,
+                        onTap: () {},
+                        isDark: isDark,
                       ),
                     ],
                   ),
-                ),
+                ],
               ),
             ),
           ),
 
-          // Fixed audio player at bottom
+          // Fixed audio player
           Positioned(
             left: 16,
             right: 16,
             bottom: 20,
-            child: _buildAudioPlayer(context, l, isDark),
+            child: _buildAudioPlayer(context, isDark),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildGlassButton({
+  Widget _buildTopButton({
     required IconData icon,
     required VoidCallback onTap,
     required bool isDark,
@@ -302,151 +269,103 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         HapticFeedback.lightImpact();
         onTap();
       },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: isActive
-                  ? AppTheme.primaryColor.withOpacity(0.2)
-                  : Colors.white.withOpacity(isDark ? 0.08 : 0.25),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isActive
-                    ? AppTheme.primaryColor.withOpacity(0.4)
-                    : Colors.white.withOpacity(isDark ? 0.15 : 0.4),
-                width: 1.5,
-              ),
-            ),
-            child: Icon(
-              icon,
-              size: 20,
-              color: isActive
-                  ? AppTheme.primaryColor
-                  : (isDark ? Colors.white : Colors.black87),
-            ),
-          ),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: isActive
+              ? AppTheme.primaryColor.withOpacity(0.15)
+              : (isDark
+                    ? Colors.white.withOpacity(0.08)
+                    : Colors.black.withOpacity(0.05)),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(
+          icon,
+          size: 20,
+          color: isActive
+              ? AppTheme.primaryColor
+              : (isDark ? Colors.white : Colors.black87),
         ),
       ),
     );
   }
 
   Widget _buildHeroTextCard(BuildContext context, bool isDark) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-        child: Container(
-          padding: const EdgeInsets.all(28),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: isDark
-                  ? [
-                      AppTheme.primaryColor.withOpacity(0.18),
-                      AppTheme.glowPurple.withOpacity(0.12),
-                    ]
-                  : [
-                      AppTheme.primaryColor.withOpacity(0.12),
-                      AppTheme.primaryColor.withOpacity(0.06),
-                    ],
-            ),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: AppTheme.primaryColor.withOpacity(isDark ? 0.25 : 0.3),
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.primaryColor.withOpacity(0.12),
-                blurRadius: 20,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              // Decorative top ornament
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [AppTheme.primaryColor, AppTheme.primaryDark],
-                  ),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.primaryColor.withOpacity(0.3),
-                      blurRadius: 12,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  LucideIcons.scroll,
-                  size: 18,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Sanskrit text
-              Text(
-                widget.content?.sanskritText ??
-                    "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥",
-                textAlign: TextAlign.center,
-                style: GoogleFonts.spectral(
-                  fontSize: 16 + _fontSize,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.primaryColor,
-                  height: 1.9,
-                  letterSpacing: 0.3,
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Decorative divider
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 20,
-                    height: 1.5,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.transparent,
-                          AppTheme.primaryColor.withOpacity(0.4),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Icon(
-                      LucideIcons.sparkles,
-                      size: 12,
-                      color: AppTheme.primaryColor.withOpacity(0.5),
-                    ),
-                  ),
-                  Container(
-                    width: 20,
-                    height: 1.5,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppTheme.primaryColor.withOpacity(0.4),
-                          Colors.transparent,
-                        ],
-                      ),
-                    ),
-                  ),
+    return Container(
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? [
+                  AppTheme.primaryColor.withOpacity(0.15),
+                  AppTheme.glowPurple.withOpacity(0.1),
+                ]
+              : [
+                  AppTheme.primaryColor.withOpacity(0.1),
+                  AppTheme.primaryColor.withOpacity(0.05),
                 ],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: AppTheme.primaryColor.withOpacity(0.2),
+          width: 1.5,
+        ),
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppTheme.primaryColor, AppTheme.primaryDark],
+              ),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              LucideIcons.scroll,
+              size: 18,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            widget.content?.sanskritText ??
+                "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥",
+            textAlign: TextAlign.center,
+            style: GoogleFonts.spectral(
+              fontSize: 16 + _fontSize,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.primaryColor,
+              height: 1.9,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 20,
+                height: 1.5,
+                color: AppTheme.primaryColor.withOpacity(0.3),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Icon(
+                  LucideIcons.sparkles,
+                  size: 12,
+                  color: AppTheme.primaryColor.withOpacity(0.5),
+                ),
+              ),
+              Container(
+                width: 20,
+                height: 1.5,
+                color: AppTheme.primaryColor.withOpacity(0.3),
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }
@@ -456,339 +375,277 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     required String title,
     required String content,
     required IconData icon,
-    required List<Color> gradientColors,
+    required Color color,
     required bool isDark,
   }) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(isDark ? 0.06 : 0.4),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: Colors.white.withOpacity(isDark ? 0.1 : 0.5),
-              width: 1.5,
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header with icon and title
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(9),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: gradientColors),
-                      borderRadius: BorderRadius.circular(11),
-                      boxShadow: [
-                        BoxShadow(
-                          color: gradientColors[0].withOpacity(0.25),
-                          blurRadius: 10,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Icon(icon, size: 16, color: Colors.white),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      title.toUpperCase(),
-                      style: GoogleFonts.outfit(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: gradientColors[0],
-                        letterSpacing: 0.8,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // Divider
-              Container(
-                height: 1,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      gradientColors[0].withOpacity(0.25),
-                      Colors.transparent,
-                    ],
-                  ),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withOpacity(0.08)
+              : Colors.black.withOpacity(0.04),
+        ),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 ),
+              ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(9),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(11),
+                ),
+                child: Icon(icon, size: 16, color: color),
               ),
-              const SizedBox(height: 16),
-              // Content text
+              const SizedBox(width: 12),
               Text(
-                content,
+                title.toUpperCase(),
                 style: GoogleFonts.outfit(
-                  fontSize: 14 + (_fontSize - 16) * 0.5,
-                  color: isDark
-                      ? Colors.white.withOpacity(0.9)
-                      : const Color(0xFF2D3748),
-                  height: 1.7,
-                  letterSpacing: 0.2,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                  letterSpacing: 0.8,
                 ),
               ),
             ],
           ),
-        ),
+          const SizedBox(height: 16),
+          Container(
+            height: 1,
+            color: isDark
+                ? Colors.white.withOpacity(0.08)
+                : Colors.black.withOpacity(0.05),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            content,
+            style: GoogleFonts.outfit(
+              fontSize: 14 + (_fontSize - 16) * 0.5,
+              color: isDark
+                  ? Colors.white.withOpacity(0.9)
+                  : const Color(0xFF2D3748),
+              height: 1.7,
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildAudioPlayer(
-    BuildContext context,
-    AppLocalization l,
-    bool isDark,
-  ) {
+  Widget _buildAudioPlayer(BuildContext context, bool isDark) {
     return StreamBuilder<PlayerState>(
       stream: _audioPlayer.playerStateStream,
       builder: (context, snapshot) {
         final playerState = snapshot.data;
         final isPlaying = playerState?.playing ?? false;
-        final processingState =
-            playerState?.processingState ?? ProcessingState.idle;
 
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? const Color(0xFF1A1A2E).withOpacity(0.95)
-                    : Colors.white.withOpacity(0.95),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: Colors.white.withOpacity(isDark ? 0.15 : 0.5),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
-                    blurRadius: 32,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: isDark
+                ? const Color(0xFF1A1A2E).withOpacity(0.98)
+                : Colors.white.withOpacity(0.98),
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Controls row
+              Row(
                 children: [
-                  // Title and controls row
-                  Row(
-                    children: [
-                      // Play/Pause button
-                      PressableScale(
-                        onTap: () {
-                          HapticFeedback.mediumImpact();
-                          if (isPlaying) {
-                            _audioPlayer.pause();
-                          } else {
-                            _audioPlayer.play();
-                          }
-                        },
-                        child: Container(
-                          width: 54,
-                          height: 54,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: isPlaying
-                                  ? [AppTheme.glowTeal, const Color(0xFF2DD4BF)]
-                                  : [
-                                      AppTheme.primaryColor,
-                                      AppTheme.primaryDark,
-                                    ],
-                            ),
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color:
-                                    (isPlaying
-                                            ? AppTheme.glowTeal
-                                            : AppTheme.primaryColor)
-                                        .withOpacity(0.4),
-                                blurRadius: 20,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            isPlaying ? LucideIcons.pause : LucideIcons.play,
-                            color: Colors.white,
-                            size: 24,
-                          ),
+                  // Play/Pause
+                  PressableScale(
+                    onTap: () {
+                      HapticFeedback.mediumImpact();
+                      isPlaying ? _audioPlayer.pause() : _audioPlayer.play();
+                    },
+                    child: Container(
+                      width: 54,
+                      height: 54,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: isPlaying
+                              ? [AppTheme.glowTeal, const Color(0xFF2DD4BF)]
+                              : [AppTheme.primaryColor, AppTheme.primaryDark],
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      // Info
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              isPlaying ? "Now Playing" : "Sanskrit Recitation",
-                              style: GoogleFonts.outfit(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: isDark
-                                    ? Colors.white
-                                    : const Color(0xFF1A1A2E),
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            StreamBuilder<Duration?>(
-                              stream: _audioPlayer.durationStream,
-                              builder: (context, durationSnap) {
-                                final duration =
-                                    durationSnap.data ?? Duration.zero;
-                                return StreamBuilder<Duration>(
-                                  stream: _audioPlayer.positionStream,
-                                  builder: (context, positionSnap) {
-                                    final position =
-                                        positionSnap.data ?? Duration.zero;
-                                    return Text(
-                                      '${_formatDuration(position)} / ${_formatDuration(duration)}',
-                                      style: GoogleFonts.outfit(
-                                        fontSize: 12,
-                                        color: isDark
-                                            ? Colors.white60
-                                            : Colors.black54,
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Additional controls
-                      Row(
-                        children: [
-                          _buildSmallButton(
-                            icon: LucideIcons.skipBack,
-                            onTap: () {
-                              final newPosition =
-                                  _audioPlayer.position -
-                                  const Duration(seconds: 10);
-                              _audioPlayer.seek(newPosition);
-                            },
-                            isDark: isDark,
-                          ),
-                          const SizedBox(width: 8),
-                          _buildSmallButton(
-                            icon: LucideIcons.skipForward,
-                            onTap: () {
-                              final newPosition =
-                                  _audioPlayer.position +
-                                  const Duration(seconds: 10);
-                              _audioPlayer.seek(newPosition);
-                            },
-                            isDark: isDark,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color:
+                                (isPlaying
+                                        ? AppTheme.glowTeal
+                                        : AppTheme.primaryColor)
+                                    .withOpacity(0.4),
+                            blurRadius: 16,
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
-                    ],
+                      child: Icon(
+                        isPlaying ? LucideIcons.pause : LucideIcons.play,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  // Progress bar
-                  StreamBuilder<Duration?>(
-                    stream: _audioPlayer.durationStream,
-                    builder: (context, durationSnap) {
-                      final duration = durationSnap.data ?? Duration.zero;
-                      return StreamBuilder<Duration>(
-                        stream: _audioPlayer.positionStream,
-                        builder: (context, positionSnap) {
-                          final position = positionSnap.data ?? Duration.zero;
-                          final progress = duration.inMilliseconds > 0
-                              ? position.inMilliseconds /
-                                    duration.inMilliseconds
-                              : 0.0;
-
-                          return Stack(
-                            children: [
-                              // Background track
-                              Container(
-                                height: 6,
-                                decoration: BoxDecoration(
-                                  color: isDark
-                                      ? Colors.white.withOpacity(0.08)
-                                      : Colors.black.withOpacity(0.08),
-                                  borderRadius: BorderRadius.circular(3),
-                                ),
-                              ),
-                              // Progress
-                              FractionallySizedBox(
-                                widthFactor: progress.clamp(0.0, 1.0),
-                                child: Container(
-                                  height: 6,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        AppTheme.primaryColor,
-                                        AppTheme.primaryDark,
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(3),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: AppTheme.primaryColor
-                                            .withOpacity(0.3),
-                                        blurRadius: 8,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  // Font size controls
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Text Size",
-                        style: GoogleFonts.outfit(
-                          fontSize: 11,
-                          color: isDark ? Colors.white60 : Colors.black54,
+                  const SizedBox(width: 16),
+                  // Info
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          isPlaying ? "Now Playing" : "Sanskrit Recitation",
+                          style: GoogleFonts.outfit(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: isDark
+                                ? Colors.white
+                                : const Color(0xFF1A1A2E),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      _buildFontButton(
-                        icon: LucideIcons.minus,
-                        onTap: () {
-                          if (_fontSize > 12) {
-                            setState(() => _fontSize -= 2);
-                          }
-                        },
-                        isDark: isDark,
-                      ),
-                      const SizedBox(width: 8),
-                      _buildFontButton(
-                        icon: LucideIcons.plus,
-                        onTap: () {
-                          if (_fontSize < 22) {
-                            setState(() => _fontSize += 2);
-                          }
-                        },
-                        isDark: isDark,
-                      ),
-                    ],
+                        const SizedBox(height: 4),
+                        StreamBuilder<Duration?>(
+                          stream: _audioPlayer.durationStream,
+                          builder: (context, durationSnap) {
+                            final duration = durationSnap.data ?? Duration.zero;
+                            return StreamBuilder<Duration>(
+                              stream: _audioPlayer.positionStream,
+                              builder: (context, positionSnap) {
+                                final position =
+                                    positionSnap.data ?? Duration.zero;
+                                return Text(
+                                  '${_formatDuration(position)} / ${_formatDuration(duration)}',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 12,
+                                    color: isDark
+                                        ? Colors.white60
+                                        : Colors.black54,
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Skip controls
+                  _buildSmallButton(
+                    icon: LucideIcons.skipBack,
+                    onTap: () => _audioPlayer.seek(
+                      _audioPlayer.position - const Duration(seconds: 10),
+                    ),
+                    isDark: isDark,
+                  ),
+                  const SizedBox(width: 8),
+                  _buildSmallButton(
+                    icon: LucideIcons.skipForward,
+                    onTap: () => _audioPlayer.seek(
+                      _audioPlayer.position + const Duration(seconds: 10),
+                    ),
+                    isDark: isDark,
                   ),
                 ],
               ),
-            ),
+              const SizedBox(height: 16),
+              // Progress bar
+              StreamBuilder<Duration?>(
+                stream: _audioPlayer.durationStream,
+                builder: (context, durationSnap) {
+                  final duration = durationSnap.data ?? Duration.zero;
+                  return StreamBuilder<Duration>(
+                    stream: _audioPlayer.positionStream,
+                    builder: (context, positionSnap) {
+                      final position = positionSnap.data ?? Duration.zero;
+                      final progress = duration.inMilliseconds > 0
+                          ? position.inMilliseconds / duration.inMilliseconds
+                          : 0.0;
+
+                      return Stack(
+                        children: [
+                          Container(
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withOpacity(0.08)
+                                  : Colors.black.withOpacity(0.08),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                          ),
+                          FractionallySizedBox(
+                            widthFactor: progress.clamp(0.0, 1.0),
+                            child: Container(
+                              height: 6,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    AppTheme.primaryColor,
+                                    AppTheme.primaryDark,
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(3),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+              const SizedBox(height: 12),
+              // Font size controls
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Text Size",
+                    style: GoogleFonts.outfit(
+                      fontSize: 11,
+                      color: isDark ? Colors.white60 : Colors.black54,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  _buildFontButton(
+                    icon: LucideIcons.minus,
+                    onTap: () {
+                      if (_fontSize > 12) setState(() => _fontSize -= 2);
+                    },
+                    isDark: isDark,
+                  ),
+                  const SizedBox(width: 8),
+                  _buildFontButton(
+                    icon: LucideIcons.plus,
+                    onTap: () {
+                      if (_fontSize < 22) setState(() => _fontSize += 2);
+                    },
+                    isDark: isDark,
+                  ),
+                ],
+              ),
+            ],
           ),
         );
       },

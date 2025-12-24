@@ -3,8 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../core/theme.dart';
-import '../core/providers.dart';
-import '../core/localization.dart';
 import 'home_screen.dart';
 import 'search_screen.dart';
 import 'library_screen.dart';
@@ -36,8 +34,6 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currentLanguage = ref.watch(languageProvider);
-    final l = AppLocalization(currentLanguage);
     final isDark = AppTheme.isDark(context);
 
     return Scaffold(
@@ -45,14 +41,48 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
       extendBody: true,
       bottomNavigationBar: Container(
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-        child: AppTheme.frostedGlass(
-          context: context,
-          borderRadius: 24,
-          blur: 15,
-          child: Container(
-            height: 64,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Row(
+        height: 70,
+        decoration: BoxDecoration(
+          color: isDark
+              ? const Color(0xFF1A1A2E).withOpacity(0.95)
+              : Colors.white.withOpacity(0.95),
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Sliding Background Highlight
+            AnimatedAlign(
+              duration: const Duration(milliseconds: 350),
+              curve: Curves.easeOutBack,
+              alignment: Alignment(
+                -1.0 +
+                    (_currentIndex *
+                        (2.0 / 3.0)), // Distribute -1 to 1 across 4 items
+                0,
+              ),
+              child: FractionallySizedBox(
+                widthFactor: 1 / 4,
+                child: Center(
+                  child: Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryColor.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // Icons Row
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildNavItem(
@@ -60,32 +90,32 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                   index: 0,
                   icon: LucideIcons.home,
                   activeIcon: Icons.home_rounded,
-                  label: l.translate('home'),
+                  isDark: isDark,
                 ),
                 _buildNavItem(
                   context,
                   index: 1,
                   icon: LucideIcons.search,
                   activeIcon: Icons.search_rounded,
-                  label: l.translate('search'),
+                  isDark: isDark,
                 ),
                 _buildNavItem(
                   context,
                   index: 2,
                   icon: LucideIcons.bookmark,
                   activeIcon: Icons.bookmark_rounded,
-                  label: l.translate('library'),
+                  isDark: isDark,
                 ),
                 _buildNavItem(
                   context,
                   index: 3,
                   icon: LucideIcons.user,
                   activeIcon: Icons.person_rounded,
-                  label: l.translate('profile'),
+                  isDark: isDark,
                 ),
               ],
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -96,32 +126,26 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
     required int index,
     required IconData icon,
     required IconData activeIcon,
-    required String label,
+    required bool isDark,
   }) {
     final isActive = _currentIndex == index;
-    final isDark = AppTheme.isDark(context);
 
-    return GestureDetector(
-      onTap: () => _onItemTapped(index),
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isActive
-              ? AppTheme.primaryColor.withOpacity(0.15)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Icon(
-          isActive ? activeIcon : icon,
-          size: 24,
-          color: isActive
-              ? AppTheme.primaryColor
-              : isDark
-              ? Colors.white.withOpacity(0.5)
-              : Colors.black.withOpacity(0.4),
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => _onItemTapped(index),
+        behavior: HitTestBehavior.opaque,
+        child: Center(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutBack,
+            child: Icon(
+              isActive ? activeIcon : icon,
+              size: isActive ? 32 : 24, // Significantly bigger when active
+              color: isActive
+                  ? AppTheme.primaryColor
+                  : (isDark ? Colors.white54 : Colors.black45),
+            ),
+          ),
         ),
       ),
     );

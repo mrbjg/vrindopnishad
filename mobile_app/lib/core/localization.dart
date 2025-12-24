@@ -14,10 +14,10 @@ class AppLocalization {
 
   static final Map<AppLanguage, Map<String, String>> _localizedValues = {
     AppLanguage.english: {
-      'greeting': "नमस्ते 🙏",
+      'greeting': "श्री राधे",
       'home': "Home",
       'profile': "Profile",
-      'discover_wisdom': "Discover Wisdom",
+      'discover_wisdom': "Vrinda Vaani",
       'search_hint': "Search shlokas, strotras...",
       'categories': "Categories",
       'see_all': "See All",
@@ -105,7 +105,7 @@ class AppLocalization {
       'admin_access_sub': "Add and manage content",
     },
     AppLanguage.hindi: {
-      'greeting': "नमस्ते 🙏",
+      'greeting': "श्री राधे 🙏",
       'home': "होम",
       'profile': "प्रोफाइल",
       'discover_wisdom': "ज्ञान की खोज करें",

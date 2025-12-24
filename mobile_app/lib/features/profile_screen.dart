@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../core/theme.dart';
 import '../core/auth_provider.dart';
 import 'profile/saved_items_screen.dart';
@@ -28,7 +29,7 @@ class ProfileScreen extends ConsumerWidget {
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
-          // Glass Header with Profile
+          // Optimized Header
           SliverToBoxAdapter(
             child: Container(
               padding: EdgeInsets.only(
@@ -42,16 +43,8 @@ class ProfileScreen extends ConsumerWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: isDark
-                      ? [
-                          const Color(0xFF1A1A2E),
-                          const Color(0xFF16213E),
-                          const Color(0xFF0F1828),
-                        ]
-                      : [
-                          const Color(0xFFFEF3C7),
-                          const Color(0xFFFBD38D),
-                          const Color(0xFFF59E0B),
-                        ],
+                      ? [const Color(0xFF1A1A2E), const Color(0xFF16213E)]
+                      : [const Color(0xFFFEF3C7), const Color(0xFFFBD38D)],
                 ),
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(40),
@@ -60,106 +53,91 @@ class ProfileScreen extends ConsumerWidget {
               ),
               child: Column(
                 children: [
-                  // Glass Avatar with Gmail Picture
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(60),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                      child: Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withOpacity(isDark ? 0.15 : 0.4),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(isDark ? 0.3 : 0.7),
-                            width: 3,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppTheme.primaryColor.withOpacity(0.4),
-                              blurRadius: 24,
-                              spreadRadius: -4,
-                            ),
-                          ],
+                  // Profile Picture with CachedNetworkImage
+                  Container(
+                    width: 110,
+                    height: 110,
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isDark ? Colors.white10 : Colors.white54,
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.3),
+                        width: 2,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 15,
+                          offset: const Offset(0, 5),
                         ),
-                        child:
-                            user?.photoURL != null && user!.photoURL!.isNotEmpty
-                            ? CircleAvatar(
-                                radius: 52,
-                                backgroundImage: NetworkImage(user.photoURL!),
-                                backgroundColor: Colors.transparent,
-                              )
-                            : CircleAvatar(
-                                radius: 52,
-                                backgroundColor: isDark
-                                    ? Colors.white.withOpacity(0.15)
-                                    : Colors.white.withOpacity(0.6),
-                                child: Icon(
-                                  LucideIcons.user,
-                                  size: 44,
-                                  color: isDark
-                                      ? Colors.white
-                                      : AppTheme.primaryColor,
+                      ],
+                    ),
+                    child: ClipOval(
+                      child:
+                          user?.photoURL != null && user!.photoURL!.isNotEmpty
+                          ? CachedNetworkImage(
+                              imageUrl: user.photoURL!,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Container(
+                                color: isDark
+                                    ? Colors.white.withOpacity(0.05)
+                                    : Colors.black.withOpacity(0.05),
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
                                 ),
                               ),
-                      ),
+                              errorWidget: (context, url, error) =>
+                                  _buildFallbackAvatar(isDark),
+                            )
+                          : _buildFallbackAvatar(isDark),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 18),
                   // Name
                   Text(
                     user?.displayName ??
                         user?.email?.split('@')[0] ??
                         "Devotee",
                     style: GoogleFonts.spectral(
-                      fontSize: 28,
+                      fontSize: 26,
                       fontWeight: FontWeight.bold,
                       color: isDark ? Colors.white : const Color(0xFF1A1A2E),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  // Glass Badge
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 10,
+                  const SizedBox(height: 8),
+                  // Email Badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.white.withOpacity(0.08)
+                          : Colors.white.withOpacity(0.6),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.white.withOpacity(0.2)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          LucideIcons.mail,
+                          size: 14,
+                          color: isDark ? Colors.white60 : Colors.black54,
                         ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(isDark ? 0.12 : 0.4),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(isDark ? 0.2 : 0.6),
-                            width: 1.5,
+                        const SizedBox(width: 8),
+                        Text(
+                          user?.email ?? "Exploring Wisdom",
+                          style: GoogleFonts.outfit(
+                            fontSize: 13,
+                            color: isDark ? Colors.white70 : Colors.black87,
                           ),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              LucideIcons.sparkles,
-                              size: 16,
-                              color: isDark
-                                  ? Colors.white
-                                  : AppTheme.primaryColor,
-                            ),
-                            const SizedBox(width: 10),
-                            Text(
-                              user?.email ?? "Exploring Vaidik Wisdom",
-                              style: GoogleFonts.outfit(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: isDark
-                                    ? Colors.white
-                                    : const Color(0xFF1A1A2E),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      ],
                     ),
                   ),
                 ],
@@ -594,6 +572,19 @@ class ProfileScreen extends ConsumerWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildFallbackAvatar(bool isDark) {
+    return Container(
+      color: isDark
+          ? Colors.white.withOpacity(0.1)
+          : Colors.white.withOpacity(0.6),
+      child: Icon(
+        LucideIcons.user,
+        size: 40,
+        color: isDark ? Colors.white70 : AppTheme.primaryColor,
       ),
     );
   }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme.dart';
 
@@ -17,12 +16,19 @@ class AboutScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
             Center(
-              child: SvgPicture.asset(
-                'assets/logo.svg',
+              child: Container(
+                width: 120,
                 height: 120,
-                colorFilter: const ColorFilter.mode(
-                  AppTheme.primaryColor,
-                  BlendMode.srcIn,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppTheme.primaryColor, AppTheme.primaryDark],
+                  ),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  LucideIcons.sparkles,
+                  size: 60,
+                  color: Colors.white,
                 ),
               ),
             ),
