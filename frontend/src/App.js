@@ -101,7 +101,7 @@ function App() {
                 📋 Demo Mode (No Backend)
               </div>
             )}
-            <BrowserRouter>
+            <BrowserRouter basename={process.env.PUBLIC_URL}>
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/content" element={<ContentListPage />} />
