@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navigation from '../components/Navigation';
+import InstallApp from '../components/InstallApp';
 import { Compass, Scroll, Music, FileText, BookOpen, ArrowRight } from 'lucide-react';
 
 const HomePage = () => {
@@ -75,6 +76,8 @@ const HomePage = () => {
           </Link>
         </div>
       </div>
+
+      <InstallApp />
 
       <div className="container mt-5" style={{ paddingBottom: '2rem' }}>
         <div className="card" style={{ background: 'linear-gradient(135deg, #fff5e6 0%, #ffe4b5 100%)', textAlign: 'center', padding: 'clamp(1.5rem, 5vw, 3rem)' }}>
