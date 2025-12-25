@@ -12,6 +12,7 @@ import LoaderDemo from './pages/LoaderDemo';
 import { mockApiService } from './services/mockData';
 import Loader from './components/Loader';
 import { LoadingProvider } from './contexts/LoadingContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 import { auth } from './firebase';
 import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
@@ -92,34 +93,36 @@ function App() {
   }
 
   return (
-    <LoadingProvider>
-      <AuthContext.Provider value={{ isAdmin, user, token, login, logout }}>
-        <ApiContext.Provider value={{ apiService: USE_MOCK_DATA ? mockApiService : null, isDemoMode: USE_MOCK_DATA }}>
-          <div className="App">
-            {USE_MOCK_DATA && (
-              <div style={{ position: 'fixed', top: '10px', right: '10px', background: '#ff9800', color: 'white', padding: '10px 15px', borderRadius: '5px', zIndex: 1000, fontSize: '12px', fontWeight: 'bold' }}>
-                📋 Demo Mode (No Backend)
-              </div>
-            )}
-            <BrowserRouter basename={process.env.PUBLIC_URL}>
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/content" element={<ContentListPage />} />
-                <Route path="/content/:id" element={<ContentDetailPage />} />
-                <Route path="/category/:category" element={<CategoryPage />} />
-                <Route path="/loader-demo" element={<LoaderDemo />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/admin/login" element={<AdminLoginPage />} />
-                <Route
-                  path="/admin/dashboard"
-                  element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin/login" />}
-                />
-              </Routes>
-            </BrowserRouter>
-          </div>
-        </ApiContext.Provider>
-      </AuthContext.Provider>
-    </LoadingProvider>
+    <ThemeProvider>
+      <LoadingProvider>
+        <AuthContext.Provider value={{ isAdmin, user, token, login, logout }}>
+          <ApiContext.Provider value={{ apiService: USE_MOCK_DATA ? mockApiService : null, isDemoMode: USE_MOCK_DATA }}>
+            <div className="App min-h-screen bg-background text-foreground">
+              {USE_MOCK_DATA && (
+                <div className="fixed top-2.5 right-2.5 bg-amber-500 text-white px-4 py-2 rounded-lg z-[1000] text-xs font-bold shadow-lg">
+                  📋 Demo Mode (No Backend)
+                </div>
+              )}
+              <BrowserRouter basename={process.env.PUBLIC_URL}>
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/content" element={<ContentListPage />} />
+                  <Route path="/content/:id" element={<ContentDetailPage />} />
+                  <Route path="/category/:category" element={<CategoryPage />} />
+                  <Route path="/loader-demo" element={<LoaderDemo />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/admin/login" element={<AdminLoginPage />} />
+                  <Route
+                    path="/admin/dashboard"
+                    element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin/login" />}
+                  />
+                </Routes>
+              </BrowserRouter>
+            </div>
+          </ApiContext.Provider>
+        </AuthContext.Provider>
+      </LoadingProvider>
+    </ThemeProvider>
   );
 }
 

@@ -1,20 +1,46 @@
 <!doctype html>
 <html lang="en">
 
-<meta charset="utf-8" />
-<meta name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
-<meta name="theme-color" content="#D2691E" />
-<meta name="description"
-    content="Vrindopnishad - A sacred repository of Hindu Vaidik Sanskriti. Explore timeless wisdom through Shlokas, Strotras, and devotional poetry." />
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
 
-<!-- PWA & Mobile Settings -->
-<link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-<link rel="apple-touch-icon" href="%PUBLIC_URL%/icon-192.png" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!-- Theme colors for light and dark mode -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F8F7F4" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0D0D12" />
 
-<title>Vrindopnishad</title>
+    <meta name="description"
+        content="Vrindopnishad - A sacred repository of Hindu Vaidik Sanskriti. Explore timeless wisdom through Shlokas, Strotras, and devotional poetry." />
+
+    <!-- PWA & Mobile Settings -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/icon-192.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <title>Vrindopnishad | Sant-Vaani</title>
+
+    <!-- Prevent flash of wrong theme -->
+    <script>
+        (function () {
+            // Check localStorage first
+            const stored = localStorage.getItem('theme');
+            let theme = stored;
+
+            // If system mode or no stored preference, check system preference
+            if (!stored || stored === 'system') {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+
+            // Apply the theme class immediately (before CSS loads)
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
 </head>
 
 <body>

@@ -13,6 +13,14 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
   void toggleTheme(bool isDark) {
     state = isDark ? ThemeMode.dark : ThemeMode.light;
   }
+
+  /// Reset to follow system theme
+  void useSystemTheme() {
+    state = ThemeMode.system;
+  }
+
+  /// Check if currently using system theme
+  bool get isSystemMode => state == ThemeMode.system;
 }
 
 final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
