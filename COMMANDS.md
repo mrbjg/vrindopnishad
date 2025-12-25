@@ -32,6 +32,7 @@ Located in `mobile_app/`.
     flutter build apk --release
     ```
     *Output location:* `build/app/outputs/flutter-apk/app-release.apk`
+    *Note: Ensure you have configured `mobile_app/android/key.properties` for a signed production build. See [MOBILE_SIGNING.md](./MOBILE_SIGNING.md) for details.*
 
 *   **Build iOS (Requires Mac):**
     ```bash
