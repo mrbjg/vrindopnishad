@@ -6,12 +6,12 @@ import { Home, BookOpen, Scroll, Music, FileText, LayoutDashboard, LogIn, LogOut
 import VLogo from '../assets/VLogo.png';
 
 const Navigation = () => {
-  const { isAdmin, logout } = useContext(AuthContext);
+  const { isAdmin, user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
     setMobileMenuOpen(false);
   };
@@ -64,6 +64,7 @@ const Navigation = () => {
             <FileText size={20} />
             <span>Poems</span>
           </Link>
+
           {isAdmin ? (
             <>
               <Link to="/admin/dashboard" className="nav-link" data-testid="nav-admin" onClick={closeMobileMenu}>
@@ -79,10 +80,31 @@ const Navigation = () => {
                 <span>Logout</span>
               </button>
             </>
+          ) : user ? (
+            <div className="nav-user-container">
+              <div className="nav-user-profile">
+                {user.photoURL ? (
+                  <img src={user.photoURL} alt="Profile" className="nav-user-avatar" />
+                ) : (
+                  <div className="nav-user-avatar-placeholder">
+                    {user.email?.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <span className="nav-user-name">{user.displayName || user.email?.split('@')[0]}</span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="nav-link nav-btn"
+                data-testid="logout-btn"
+              >
+                <LogOut size={20} />
+                <span>Logout</span>
+              </button>
+            </div>
           ) : (
-            <Link to="/admin/login" className="nav-link nav-highlight" data-testid="nav-login" onClick={closeMobileMenu}>
+            <Link to="/login" className="nav-link nav-highlight" data-testid="nav-login" onClick={closeMobileMenu}>
               <LogIn size={20} />
-              <span>Admin</span>
+              <span>Login</span>
             </Link>
           )}
         </div>

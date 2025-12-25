@@ -13,6 +13,10 @@ import { mockApiService } from './services/mockData';
 import Loader from './components/Loader';
 import { LoadingProvider } from './contexts/LoadingContext';
 
+import { auth } from './firebase';
+import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
+import LoginPage from './pages/LoginPage';
+
 // Backend URL with fallback for development
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
 const USE_MOCK_DATA = process.env.REACT_APP_DEMO_MODE === 'true' || !BACKEND_URL || BACKEND_URL === '';
@@ -24,16 +28,26 @@ export const ApiContext = React.createContext();
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('admin_token');
+
+    // Firebase Auth Listener
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+      if (!storedToken) {
+        setLoading(false);
+      }
+    });
+
     if (storedToken) {
       verifyToken(storedToken);
-    } else {
-      setLoading(false);
     }
+
+    return () => unsubscribe();
   }, []);
 
   const verifyToken = async (tk) => {
@@ -66,10 +80,11 @@ function App() {
     setIsAdmin(true);
   };
 
-  const logout = () => {
+  const logout = async () => {
     localStorage.removeItem('admin_token');
     setToken(null);
     setIsAdmin(false);
+    await firebaseSignOut(auth);
   };
 
   if (loading) {
@@ -78,7 +93,7 @@ function App() {
 
   return (
     <LoadingProvider>
-      <AuthContext.Provider value={{ isAdmin, token, login, logout }}>
+      <AuthContext.Provider value={{ isAdmin, user, token, login, logout }}>
         <ApiContext.Provider value={{ apiService: USE_MOCK_DATA ? mockApiService : null, isDemoMode: USE_MOCK_DATA }}>
           <div className="App">
             {USE_MOCK_DATA && (
@@ -93,6 +108,7 @@ function App() {
                 <Route path="/content/:id" element={<ContentDetailPage />} />
                 <Route path="/category/:category" element={<CategoryPage />} />
                 <Route path="/loader-demo" element={<LoaderDemo />} />
+                <Route path="/login" element={<LoginPage />} />
                 <Route path="/admin/login" element={<AdminLoginPage />} />
                 <Route
                   path="/admin/dashboard"
