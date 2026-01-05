@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'database_helper.dart';
+import '../services/api_service.dart';
 
 class SacredContent {
   final String id;
@@ -55,6 +56,25 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
   }
 
   Future<void> _loadFromDatabase() async {
+    try {
+      // 1. Try to fetch from API
+      final apiContent = await ApiService.fetchAllContent();
+
+      if (apiContent.isNotEmpty) {
+        // 2. If successful, update local DB
+        await DatabaseHelper.instance.deleteAllContent();
+        for (var item in apiContent) {
+          await DatabaseHelper.instance.insertContent(item);
+        }
+        state = apiContent;
+        return;
+      }
+    } catch (e) {
+      // Ignore API errors, fallback to local DB
+      print("Sync failed: $e");
+    }
+
+    // 3. Fallback to local DB (offline mode)
     final dbContent = await DatabaseHelper.instance.fetchAllContent();
     if (dbContent.isEmpty) {
       state = _initialContent;

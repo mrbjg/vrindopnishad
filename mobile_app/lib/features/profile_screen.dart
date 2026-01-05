@@ -519,11 +519,11 @@ class _ProfileHeader extends StatelessWidget {
               ],
             ),
             child: ClipOval(
-              child: user?.photoURL != null && user!.photoURL!.isNotEmpty
+              child: _getPhotoUrl(user) != null
                   ? CachedNetworkImage(
-                      imageUrl: user.photoURL!,
+                      imageUrl: _getPhotoUrl(user)!,
                       fit: BoxFit.cover,
-                      memCacheWidth: 220, // Cache at exact size needed
+                      memCacheWidth: 220,
                       memCacheHeight: 220,
                       maxWidthDiskCache: 220,
                       maxHeightDiskCache: 220,
@@ -548,7 +548,7 @@ class _ProfileHeader extends StatelessWidget {
           const SizedBox(height: 18),
           // Name
           Text(
-            user?.displayName ?? user?.email?.split('@')[0] ?? "Devotee",
+            _getDisplayName(user) ?? user?.email?.split('@')[0] ?? "Devotee",
             style: GoogleFonts.spectral(
               fontSize: 26,
               fontWeight: FontWeight.bold,
@@ -588,6 +588,40 @@ class _ProfileHeader extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String? _getPhotoUrl(dynamic user) {
+    if (user == null) return null;
+    try {
+      // Try Supabase metadata
+      final metadata = user.userMetadata;
+      if (metadata != null && metadata is Map) {
+        return metadata['avatar_url'] ??
+            metadata['picture'] ??
+            metadata['photo_url'];
+      }
+      // Fallback for direct property (if any)
+      return user.photoURL;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  String? _getDisplayName(dynamic user) {
+    if (user == null) return null;
+    try {
+      // Try Supabase metadata
+      final metadata = user.userMetadata;
+      if (metadata != null && metadata is Map) {
+        return metadata['full_name'] ??
+            metadata['name'] ??
+            metadata['display_name'];
+      }
+      // Fallback
+      return user.displayName;
+    } catch (_) {
+      return null;
+    }
   }
 
   Widget _buildFallbackAvatar() {

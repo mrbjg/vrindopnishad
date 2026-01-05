@@ -8,6 +8,8 @@ import '../core/theme.dart';
 import '../core/providers.dart';
 import '../core/localization.dart';
 import '../core/content_provider.dart';
+import '../core/favorites_provider.dart';
+import '../widgets/share_content_widget.dart';
 
 class ContentDetailScreen extends ConsumerStatefulWidget {
   final SacredContent? content;
@@ -27,7 +29,6 @@ class ContentDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
-  bool _isBookmarked = false;
   double _fontSize = 16.0;
 
   late AudioPlayer _audioPlayer;
@@ -55,9 +56,26 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     super.dispose();
   }
 
-  void _toggleBookmark() {
+  Future<void> _toggleFavorite() async {
+    if (widget.content == null) return;
     HapticFeedback.lightImpact();
-    setState(() => _isBookmarked = !_isBookmarked);
+    try {
+      await ref
+          .read(favoritesProvider.notifier)
+          .toggleFavorite(widget.content!.id);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  void _shareContent() {
+    if (widget.content == null) return;
+    HapticFeedback.lightImpact();
+    ShareContentHelper.shareAsImage(context, widget.content!);
   }
 
   @override
@@ -225,18 +243,29 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   ),
                   Row(
                     children: [
-                      _buildTopButton(
-                        icon: _isBookmarked
-                            ? LucideIcons.bookmarkMinus
-                            : LucideIcons.bookmark,
-                        onTap: _toggleBookmark,
-                        isDark: isDark,
-                        isActive: _isBookmarked,
+                      // Favorites Heart Button
+                      Consumer(
+                        builder: (context, ref, child) {
+                          final isFavorite = widget.content != null
+                              ? ref.watch(
+                                  isFavoriteProvider(widget.content!.id),
+                                )
+                              : false;
+                          return _buildTopButton(
+                            icon: isFavorite
+                                ? LucideIcons.heartOff
+                                : LucideIcons.heart,
+                            onTap: _toggleFavorite,
+                            isDark: isDark,
+                            isActive: isFavorite,
+                          );
+                        },
                       ),
                       const SizedBox(width: 10),
+                      // Share Button
                       _buildTopButton(
                         icon: LucideIcons.share2,
-                        onTap: () {},
+                        onTap: _shareContent,
                         isDark: isDark,
                       ),
                     ],

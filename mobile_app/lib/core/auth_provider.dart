@@ -1,121 +1,106 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  // For web, we need to specify the client ID
+  final SupabaseClient _supabase = Supabase.instance.client;
+  // For Android, we must pass the Web Client ID as serverClientId to get a valid ID Token for Supabase
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    clientId: kIsWeb
-        ? '1027361942428-qan7576dnckruo88bl7gr6rfsi5ho0kn.apps.googleusercontent.com'
-        : null,
+    serverClientId:
+        '373857631114-tfrl4mn3ivb37f4nrrhrdlk50306v2db.apps.googleusercontent.com',
   );
 
-  Stream<User?> get authStateChanges => _auth.authStateChanges();
+  Stream<User?> get authStateChanges =>
+      _supabase.auth.onAuthStateChange.map((data) => data.session?.user);
 
-  User? get currentUser => _auth.currentUser;
+  User? get currentUser => _supabase.auth.currentUser;
 
   // Email & Password Sign Up
-  Future<UserCredential?> signUpWithEmail(String email, String password) async {
-    try {
-      return await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-    } catch (e) {
-      rethrow;
-    }
+  Future<AuthResponse> signUpWithEmail(String email, String password) async {
+    return await _supabase.auth.signUp(email: email, password: password);
   }
 
   // Email & Password Sign In
-  Future<UserCredential?> signInWithEmail(String email, String password) async {
-    try {
-      return await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-    } catch (e) {
-      rethrow;
-    }
+  Future<AuthResponse> signInWithEmail(String email, String password) async {
+    return await _supabase.auth.signInWithPassword(
+      email: email,
+      password: password,
+    );
   }
 
-  // Google Sign In - works on web and mobile
-  Future<UserCredential?> signInWithGoogle() async {
+  // Google Sign In
+  Future<AuthResponse?> signInWithGoogle() async {
     try {
+      print("Starting Google Sign In...");
       if (kIsWeb) {
-        // For web, use signInWithPopup
-        final GoogleAuthProvider googleProvider = GoogleAuthProvider();
-        googleProvider.addScope('email');
-        googleProvider.addScope('profile');
-        return await _auth.signInWithPopup(googleProvider);
+        // Web: Use OAuth flow
+        await _supabase.auth.signInWithOAuth(OAuthProvider.google);
+        return null; // Redirects on web, no response immediately
       } else {
-        // For mobile, use standard Google Sign-In flow
-        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-        if (googleUser == null) return null;
+        // Mobile: Native Google Sign In
+        print("Mobile flow: Signing in with Google...");
+        final googleUser = await _googleSignIn.signIn();
+        if (googleUser == null) {
+          print("Google Sign In canceled by user.");
+          return null;
+        }
 
-        final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
-        final AuthCredential credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
+        print("Google account retrieved: ${googleUser.email}");
+        final googleAuth = await googleUser.authentication;
+        final accessToken = googleAuth.accessToken;
+        final idToken = googleAuth.idToken;
+
+        print(
+          "Tokens retrieved. idToken: ${idToken != null}, accessToken: ${accessToken != null}",
         );
 
-        return await _auth.signInWithCredential(credential);
+        if (accessToken == null) {
+          throw 'No Access Token found.';
+        }
+        if (idToken == null) {
+          throw 'No ID Token found.';
+        }
+
+        print("Signing in to Supabase with ID Token...");
+        final response = await _supabase.auth.signInWithIdToken(
+          provider: OAuthProvider.google,
+          idToken: idToken,
+          accessToken: accessToken,
+        );
+        print("Supabase login successful: ${response.user?.email}");
+        return response;
       }
     } catch (e) {
+      print("Google Sign In Error: $e");
       rethrow;
     }
   }
 
   // Apple Sign In
-  Future<UserCredential?> signInWithApple() async {
+  Future<AuthResponse?> signInWithApple() async {
     try {
       if (kIsWeb) {
-        // For web, use signInWithPopup
-        final OAuthProvider appleProvider = OAuthProvider('apple.com');
-        appleProvider.addScope('email');
-        appleProvider.addScope('name');
-        return await _auth.signInWithPopup(appleProvider);
+        await _supabase.auth.signInWithOAuth(OAuthProvider.apple);
+        return null;
       } else {
-        // For mobile
-        final appleCredential = await SignInWithApple.getAppleIDCredential(
+        final credential = await SignInWithApple.getAppleIDCredential(
           scopes: [
             AppleIDAuthorizationScopes.email,
             AppleIDAuthorizationScopes.fullName,
           ],
         );
 
-        final OAuthProvider oAuthProvider = OAuthProvider("apple.com");
-        final AuthCredential credential = oAuthProvider.credential(
-          idToken: appleCredential.identityToken,
-          accessToken: appleCredential.authorizationCode,
+        return await _supabase.auth.signInWithIdToken(
+          provider: OAuthProvider.apple,
+          idToken: credential.identityToken!,
+          accessToken: credential.authorizationCode,
         );
-
-        return await _auth.signInWithCredential(credential);
       }
     } catch (e) {
       rethrow;
     }
-  }
-
-  // Phone Authentication
-  Future<void> verifyPhone({
-    required String phoneNumber,
-    required Function(PhoneAuthCredential) verificationCompleted,
-    required Function(FirebaseAuthException) verificationFailed,
-    required Function(String, int?) codeSent,
-    required Function(String) codeAutoRetrievalTimeout,
-  }) async {
-    await _auth.verifyPhoneNumber(
-      phoneNumber: phoneNumber,
-      verificationCompleted: verificationCompleted,
-      verificationFailed: verificationFailed,
-      codeSent: codeSent,
-      codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
-    );
   }
 
   // Sign Out
@@ -125,7 +110,7 @@ class AuthService {
         await _googleSignIn.signOut();
       }
     } catch (_) {}
-    await _auth.signOut();
+    await _supabase.auth.signOut();
   }
 }
 

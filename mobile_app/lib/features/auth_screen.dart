@@ -164,6 +164,15 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     ),
                     textAlign: TextAlign.center,
                   ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Error detail: $errorMsg",
+                    style: GoogleFonts.outfit(
+                      fontSize: 10,
+                      color: Colors.red.withOpacity(0.5),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(height: 24),
                   PressableScale(
                     onTap: () => Navigator.pop(context),

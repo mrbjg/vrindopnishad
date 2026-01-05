@@ -56,4 +56,9 @@ class DatabaseHelper {
     final db = await instance.database;
     await db.delete('sacred_content', where: 'id = ?', whereArgs: [id]);
   }
+
+  Future<void> deleteAllContent() async {
+    final db = await instance.database;
+    await db.delete('sacred_content');
+  }
 }

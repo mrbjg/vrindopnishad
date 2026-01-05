@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 import 'core/theme.dart';
 import 'core/providers.dart';
 import 'core/auth_provider.dart';
 import 'features/main_navigation_screen.dart';
 import 'features/auth_screen.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase with platform-specific options
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  } catch (e) {
-    debugPrint('Firebase initialization failed: $e');
-  }
+  // Initialize Supabase
+  await Supabase.initialize(
+    url: 'https://tilimltxgeucefxzerqi.supabase.co',
+    anonKey: 'sb_publishable_0YiM-Q8itRORUDdToracaQ_vzcrjUlC',
+  );
 
   runApp(const ProviderScope(child: SantVaaniApp()));
 }

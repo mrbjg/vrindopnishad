@@ -166,6 +166,76 @@ async def delete_content(content_id: str, payload: dict = Depends(verify_token))
         logger.error(f"Error deleting content: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# File Upload Routes (Admin)
+@api_router.post("/upload/audio/{content_id}")
+async def upload_audio(content_id: str, file: UploadFile = File(...), payload: dict = Depends(verify_token)):
+    """Upload audio file to Supabase Storage"""
+    if not supabase_db.is_available:
+        raise HTTPException(status_code=503, detail="Supabase not initialized")
+    
+    try:
+        # Check if content exists
+        content = supabase_db.get_content_by_id(content_id)
+        if not content:
+            raise HTTPException(status_code=404, detail="Content not found")
+        
+        # Read file
+        file_bytes = await file.read()
+        file_ext = os.path.splitext(file.filename)[1]
+        file_path = f"{content_id}/audio{file_ext}"
+        
+        # Upload to Supabase 'audio' bucket
+        public_url = supabase_db.upload_file(
+            bucket="audio",
+            path=file_path,
+            file_bytes=file_bytes,
+            content_type=file.content_type
+        )
+        
+        # Update content with audio URL
+        supabase_db.update_content(content_id, {"audio_url": public_url})
+        
+        return {"success": True, "audio_url": public_url, "message": "Audio uploaded successfully"}
+    except Exception as e:
+        logger.error(f"Error uploading audio: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/upload/image/{content_id}")
+async def upload_image(content_id: str, file: UploadFile = File(...), payload: dict = Depends(verify_token)):
+    """Upload image file to Supabase Storage"""
+    if not supabase_db.is_available:
+        raise HTTPException(status_code=503, detail="Supabase not initialized")
+    
+    try:
+        # Check if content exists
+        content = supabase_db.get_content_by_id(content_id)
+        if not content:
+            raise HTTPException(status_code=404, detail="Content not found")
+        
+        # Read file
+        file_bytes = await file.read()
+        file_ext = os.path.splitext(file.filename)[1]
+        timestamp = int(datetime.now().timestamp())
+        file_path = f"{content_id}/image_{timestamp}{file_ext}"
+        
+        # Upload to Supabase 'images' bucket
+        public_url = supabase_db.upload_file(
+            bucket="images",
+            path=file_path,
+            file_bytes=file_bytes,
+            content_type=file.content_type
+        )
+        
+        # Update content with image URL (append to list)
+        current_images = content.get('image_urls', []) or []
+        current_images.append(public_url)
+        supabase_db.update_content(content_id, {"image_urls": current_images})
+        
+        return {"success": True, "image_url": public_url, "message": "Image uploaded successfully"}
+    except Exception as e:
+        logger.error(f"Error uploading image: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Public Routes
 @api_router.get("/content")
 async def get_all_content(category: Optional[str] = None, limit: int = 50):
@@ -209,7 +279,11 @@ async def get_categories():
         "categories": [
             {"id": "shloka", "name": "Shlokas", "description": "Sacred verses from Hindu scriptures"},
             {"id": "strotra", "name": "Strotras", "description": "Devotional hymns and prayers"},
-            {"id": "poem", "name": "Poems", "description": "Spiritual and devotional poetry"}
+            {"id": "mantra", "name": "Mantras", "description": "Sacred chants and incantations"},
+            {"id": "veda", "name": "Vedas", "description": "Ancient scriptures and knowledge"},
+            {"id": "story", "name": "Stories", "description": "Pauranic Kathas and spiritual stories"},
+            {"id": "poem", "name": "Poems", "description": "Spiritual and devotional poetry"},
+            {"id": "picture", "name": "Darshan", "description": "Divine images and galleries"}
         ]
     }
 

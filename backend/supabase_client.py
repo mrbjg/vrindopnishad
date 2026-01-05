@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 # Supabase Configuration
 SUPABASE_URL = os.environ.get('SUPABASE_URL', '')
-SUPABASE_KEY = os.environ.get('SUPABASE_ANON_KEY', '')
+SUPABASE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY') or os.environ.get('SUPABASE_ANON_KEY', '')
 
 # Global Supabase client
 _supabase_client: Optional[Client] = None
@@ -104,6 +104,21 @@ class SupabaseDB:
         response = query.execute()
         return response.data if response.data else []
 
+    def upload_file(self, bucket: str, path: str, file_bytes: bytes, content_type: str) -> str:
+        """Upload file to Supabase Storage and return public URL"""
+        if not self.is_available:
+            raise Exception("Supabase not initialized")
+        
+        # Upload file
+        self.client.storage.from_(bucket).upload(
+            path=path,
+            file=file_bytes,
+            file_options={"content-type": content_type}
+        )
+        
+        # Get public URL
+        public_url = self.client.storage.from_(bucket).get_public_url(path)
+        return public_url
 
 # SQL to create the content table in Supabase
 CREATE_TABLE_SQL = """
