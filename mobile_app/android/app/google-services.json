@@ -1,51 +1,26 @@
 {
   "project_info": {
-    "project_number": "1027361942428",
-    "project_id": "santvaanig",
-    "storage_bucket": "santvaanig.firebasestorage.app"
+    "project_number": "373857631114",
+    "project_id": "vrindavaanig",
+    "storage_bucket": "vrindavaanig.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1027361942428:android:c3a0b4ca14ae952753b659",
+        "mobilesdk_app_id": "1:373857631114:android:4651683427acc6caa82673",
         "android_client_info": {
           "package_name": "com.santvaani.sant_vaani"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "1027361942428-759e6auri7d4slameolhgs8q47mn1csu.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.santvaani.sant_vaani",
-            "certificate_hash": "1b3965f4544d2e0151cbbf370c4cd6dd3f8a4e87"
-          }
-        },
-        {
-          "client_id": "1027361942428-qan7576dnckruo88bl7gr6rfsi5ho0kn.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAr78jEl1kzZ_MKRieUBlk5o5lO2p24vQU"
+          "current_key": "AIzaSyBgJ5hLlX6_yV3AJOL1u6zSy2G5FlNOc3s"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1027361942428-qan7576dnckruo88bl7gr6rfsi5ho0kn.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "1027361942428-g0gisvdp87rpufeaij3d16mff3pv7d1d.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.santvaani.santVaani"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

@@ -41,53 +41,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAr78jEl1kzZ_MKRieUBlk5o5lO2p24vQU',
-    appId: '1:1027361942428:android:c3a0b4ca14ae952753b659',
-    messagingSenderId: '1027361942428',
-    projectId: 'santvaanig',
-    storageBucket: 'santvaanig.firebasestorage.app',
+    apiKey: 'AIzaSyBgJ5hLlX6_yV3AJOL1u6zSy2G5FlNOc3s',
+    appId: '1:373857631114:android:4651683427acc6caa82673',
+    messagingSenderId: '373857631114',
+    projectId: 'vrindavaanig',
+    storageBucket: 'vrindavaanig.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyC_H5NWNm53LcmncHDiHZ9Xa2CqduQQIv4',
-    appId: '1:1027361942428:ios:a6ce547a905c9a4553b659',
-    messagingSenderId: '1027361942428',
-    projectId: 'santvaanig',
-    storageBucket: 'santvaanig.firebasestorage.app',
-    androidClientId: '1027361942428-759e6auri7d4slameolhgs8q47mn1csu.apps.googleusercontent.com',
-    iosClientId: '1027361942428-g0gisvdp87rpufeaij3d16mff3pv7d1d.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBUKS4FEGc4UxBVdKqAg_ebye0wZMG2Xms',
+    appId: '1:373857631114:ios:66d74abdd09886bfa82673',
+    messagingSenderId: '373857631114',
+    projectId: 'vrindavaanig',
+    storageBucket: 'vrindavaanig.firebasestorage.app',
     iosBundleId: 'com.santvaani.santVaani',
   );
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBV89ziohwoKmshLiZLxKm5JnbVPrYWL_o',
-    appId: '1:1027361942428:web:c71feffde5f3567853b659',
-    messagingSenderId: '1027361942428',
-    projectId: 'santvaanig',
-    authDomain: 'santvaanig.firebaseapp.com',
-    storageBucket: 'santvaanig.firebasestorage.app',
-    measurementId: 'G-Z4XX4EPYW3',
+    apiKey: 'AIzaSyC4oSs_XYXyxAyOptMC8yTa1oscW9G16cY',
+    appId: '1:373857631114:web:f341d8a54711ca85a82673',
+    messagingSenderId: '373857631114',
+    projectId: 'vrindavaanig',
+    authDomain: 'vrindavaanig.firebaseapp.com',
+    storageBucket: 'vrindavaanig.firebasestorage.app',
+    measurementId: 'G-YKQSX1MCDE',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyC_H5NWNm53LcmncHDiHZ9Xa2CqduQQIv4',
-    appId: '1:1027361942428:ios:a6ce547a905c9a4553b659',
-    messagingSenderId: '1027361942428',
-    projectId: 'santvaanig',
-    storageBucket: 'santvaanig.firebasestorage.app',
-    androidClientId: '1027361942428-759e6auri7d4slameolhgs8q47mn1csu.apps.googleusercontent.com',
-    iosClientId: '1027361942428-g0gisvdp87rpufeaij3d16mff3pv7d1d.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBUKS4FEGc4UxBVdKqAg_ebye0wZMG2Xms',
+    appId: '1:373857631114:ios:66d74abdd09886bfa82673',
+    messagingSenderId: '373857631114',
+    projectId: 'vrindavaanig',
+    storageBucket: 'vrindavaanig.firebasestorage.app',
     iosBundleId: 'com.santvaani.santVaani',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBV89ziohwoKmshLiZLxKm5JnbVPrYWL_o',
-    appId: '1:1027361942428:web:e1e7629135d4a64553b659',
-    messagingSenderId: '1027361942428',
-    projectId: 'santvaanig',
-    authDomain: 'santvaanig.firebaseapp.com',
-    storageBucket: 'santvaanig.firebasestorage.app',
-    measurementId: 'G-T94PXCPVC4',
+    apiKey: 'AIzaSyC4oSs_XYXyxAyOptMC8yTa1oscW9G16cY',
+    appId: '1:373857631114:web:a836487499591a40a82673',
+    messagingSenderId: '373857631114',
+    projectId: 'vrindavaanig',
+    authDomain: 'vrindavaanig.firebaseapp.com',
+    storageBucket: 'vrindavaanig.firebasestorage.app',
+    measurementId: 'G-7GBNBPC27X',
   );
 
 }
