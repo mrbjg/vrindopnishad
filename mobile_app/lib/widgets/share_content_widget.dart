@@ -194,7 +194,7 @@ class ShareContentHelper {
       );
 
       // Capture the widget
-      final Uint8List? imageBytes = await _screenshotController
+      final Uint8List imageBytes = await _screenshotController
           .captureFromWidget(
             widget,
             delay: const Duration(milliseconds: 100),
