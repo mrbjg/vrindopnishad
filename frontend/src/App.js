@@ -111,10 +111,10 @@ function App() {
                   <Route path="/category/:category" element={<CategoryPage />} />
                   <Route path="/loader-demo" element={<LoaderDemo />} />
                   <Route path="/login" element={<LoginPage />} />
-                  <Route path="/admin/login" element={<AdminLoginPage />} />
+                  <Route path="/admin-old/login" element={<AdminLoginPage />} />
                   <Route
-                    path="/admin/dashboard"
-                    element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin/login" />}
+                    path="/admin-old/dashboard"
+                    element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin-old/login" />}
                   />
                 </Routes>
               </BrowserRouter>

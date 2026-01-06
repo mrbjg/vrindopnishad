@@ -67,10 +67,14 @@ const Navigation = () => {
 
           {isAdmin ? (
             <>
-              <Link to="/admin/dashboard" className="nav-link" data-testid="nav-admin" onClick={closeMobileMenu}>
+              <Link to="/admin-old/dashboard" className="nav-link" data-testid="nav-admin-old" onClick={closeMobileMenu}>
                 <LayoutDashboard size={20} />
-                <span>Dashboard</span>
+                <span>Old Admin</span>
               </Link>
+              <a href={`${process.env.PUBLIC_URL}/admin/`} className="nav-link" data-testid="nav-admin" onClick={closeMobileMenu}>
+                <LayoutDashboard size={20} />
+                <span>Admin Portal</span>
+              </a>
               <button
                 onClick={handleLogout}
                 className="nav-link nav-btn"
