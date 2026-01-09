@@ -206,9 +206,9 @@ class ShareContentHelper {
         Navigator.of(context).pop();
       }
 
-      if (imageBytes == null) {
-        throw Exception('Failed to capture image');
-      }
+      // if (imageBytes == null) {
+      //   throw Exception('Failed to capture image');
+      // }
 
       // Save to temp file
       final tempDir = await getTemporaryDirectory();
