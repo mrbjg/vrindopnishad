@@ -10,18 +10,18 @@ const HomePage = () => {
       <Navigation />
       <div className="hero">
         <div className="hero-content fade-in">
-          <div className="om-symbol mb-3">ॐ</div>
-          <h1 className="hero-title" data-testid="app-title">Vrindopnishad</h1>
+          <div className="om-symbol mb-3 pulse-glow">ॐ</div>
+          <h1 className="hero-title gradient-text" data-testid="app-title">Vrindopnishad</h1>
           <p className="hero-subtitle" data-testid="app-subtitle">
             A sacred repository of Hindu Vaidik Sanskriti<br />
             Explore timeless wisdom through Shlokas, Strotras, and devotional poetry
           </p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link to="/content" className="btn btn-primary" data-testid="explore-content-btn">
+            <Link to="/content" className="btn btn-primary btn-ripple wiggle-hover" data-testid="explore-content-btn">
               <Compass size={20} style={{ marginRight: '0.5rem' }} />
               Explore Content
             </Link>
-            <Link to="/category/shloka" className="btn btn-secondary" data-testid="browse-shlokas-btn">
+            <Link to="/category/shloka" className="btn btn-secondary btn-ripple wiggle-hover" data-testid="browse-shlokas-btn">
               <Scroll size={20} style={{ marginRight: '0.5rem' }} />
               Browse Shlokas
             </Link>
@@ -31,13 +31,13 @@ const HomePage = () => {
 
       <div className="container mt-5">
         <div className="text-center mb-5">
-          <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Categories</h2>
+          <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }} className="slide-in-left">Categories</h2>
           <div className="decorative-border"></div>
         </div>
 
         <div className="content-grid">
           <Link to="/category/shloka" style={{ textDecoration: 'none' }}>
-            <div className="card" data-testid="category-shloka-card">
+            <div className="card card-interactive" data-testid="category-shloka-card">
               <div className="category-badge category-shloka mb-3" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
                 <Scroll size={18} />
                 <span>Shlokas</span>
@@ -50,7 +50,7 @@ const HomePage = () => {
           </Link>
 
           <Link to="/category/strotra" style={{ textDecoration: 'none' }}>
-            <div className="card" data-testid="category-strotra-card">
+            <div className="card card-interactive" data-testid="category-strotra-card">
               <div className="category-badge category-strotra mb-3" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
                 <Music size={18} />
                 <span>Strotras</span>
@@ -63,7 +63,7 @@ const HomePage = () => {
           </Link>
 
           <Link to="/category/poem" style={{ textDecoration: 'none' }}>
-            <div className="card" data-testid="category-poem-card">
+            <div className="card card-interactive" data-testid="category-poem-card">
               <div className="category-badge category-poem mb-3" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
                 <FileText size={18} />
                 <span>Poems</span>
