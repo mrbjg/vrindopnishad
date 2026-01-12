@@ -304,7 +304,7 @@ class HomeScreen extends ConsumerWidget {
         )
         .animate()
         .fadeIn(delay: (index * 100).ms, duration: 400.ms)
-        .scale(delay: (index * 100).ms, duration: 400.ms, curve: Curves.backOut)
+        .scale(delay: (index * 100).ms, duration: 400.ms, curve: Curves.easeOutBack)
         .slideY(begin: 0.2, end: 0, delay: (index * 100).ms);
       },
     );

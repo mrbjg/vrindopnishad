@@ -103,8 +103,14 @@ class MorphPainter extends CustomPainter {
     canvas.drawPath(shiftedPath, paint);
 
     // Add a subtle glow
-    paint.maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.0);
-    canvas.drawPath(shiftedPath, paint.copyWith(color: color.withOpacity(0.3)));
+    final glowPaint = Paint()
+      ..color = color.withOpacity(0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.0
+      ..strokeCap = StrokeCap.round
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.0);
+    
+    canvas.drawPath(shiftedPath, glowPaint);
   }
 
   @override
