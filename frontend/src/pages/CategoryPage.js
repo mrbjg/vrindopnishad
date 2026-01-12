@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
-import { API } from '../App';
+import { apiService } from '../services/api';
 import Navigation from '../components/Navigation';
 import { Scroll, Music, FileText, BookOpen, Music as MusicIcon, Image as ImageIcon, Video } from 'lucide-react';
 
@@ -35,8 +34,8 @@ const CategoryPage = () => {
   const fetchContent = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API}/content`, { params: { category } });
-      setContent(response.data.content || []);
+      const data = await apiService.getAllContent(category);
+      setContent(data || []);
     } catch (error) {
       console.error('Error fetching content:', error);
     } finally {

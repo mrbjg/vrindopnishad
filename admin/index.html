@@ -18,8 +18,12 @@
 
 <body>
     <div class="app">
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
         <!-- Sidebar -->
         <aside class="sidebar">
+            <button class="btn-icon-only sidebar-close-btn" id="sidebar-close-btn">
+                <i data-lucide="x"></i>
+            </button>
             <div class="logo">
                 <div class="logo-icon-wrapper">
                     <i data-lucide="flame" class="logo-flame"></i>
@@ -348,7 +352,7 @@
                                         <h4><i data-lucide="paperclip"></i> Media</h4>
                                     </div>
                                     <div class="form-group">
-                                        <label>Image</label>
+                                        <label>Image Upload</label>
                                         <div class="file-upload" id="image-drop-zone">
                                             <input type="file" id="image-upload" name="image" accept="image/*" hidden>
                                             <i data-lucide="image-plus"></i>
@@ -357,13 +361,31 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label>Audio</label>
+                                        <label for="image-url">
+                                            <i data-lucide="link"></i>
+                                            External Image URL
+                                        </label>
+                                        <input type="url" id="image-url" name="imageUrl"
+                                            placeholder="https://example.com/image.jpg">
+                                        <span class="file-hint">Paste a link to an image (overrides upload)</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Audio Upload</label>
                                         <div class="file-upload" id="audio-drop-zone">
                                             <input type="file" id="audio-upload" name="audio" accept="audio/*" hidden>
                                             <i data-lucide="music"></i>
                                             <p>Drop audio here</p>
                                             <span class="file-hint">or click to browse</span>
                                         </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="audio-url">
+                                            <i data-lucide="music-2"></i>
+                                            External Audio URL
+                                        </label>
+                                        <input type="url" id="audio-url" name="audioUrl"
+                                            placeholder="https://example.com/audio.mp3">
+                                        <span class="file-hint">Paste a link to an audio file (overrides upload)</span>
                                     </div>
                                 </div>
 
@@ -624,6 +646,16 @@
                 <div class="form-group">
                     <label for="edit-tags">Tags (comma separated)</label>
                     <input type="text" id="edit-tags">
+                </div>
+                <div class="form-group">
+                    <label for="edit-image-url">External Image URL</label>
+                    <input type="url" id="edit-image-url" placeholder="https://example.com/image.jpg">
+                    <span class="file-hint">Direct link to an image (.jpg, .png, etc.)</span>
+                </div>
+                <div class="form-group">
+                    <label for="edit-audio-url">External Audio URL</label>
+                    <input type="url" id="edit-audio-url" placeholder="https://example.com/audio.mp3">
+                    <span class="file-hint">Direct link to an audio file (.mp3, .wav)</span>
                 </div>
                 <div class="form-group">
                     <label for="edit-content-text">Main Content Text</label>

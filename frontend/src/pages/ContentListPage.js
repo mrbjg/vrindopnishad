@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import { API } from '../App';
+import { apiService } from '../services/api';
 import Navigation from '../components/Navigation';
 import Loader from '../components/Loader';
 import { Music, Image as ImageIcon, Video, Layers } from 'lucide-react';
@@ -18,9 +17,9 @@ const ContentListPage = () => {
   const fetchContent = async () => {
     try {
       setLoading(true);
-      const params = filter !== 'all' ? { category: filter } : {};
-      const response = await axios.get(`${API}/content`, { params });
-      setContent(response.data.content || []);
+      const cat = filter !== 'all' ? filter : null;
+      const data = await apiService.getAllContent(cat);
+      setContent(data || []);
     } catch (error) {
       console.error('Error fetching content:', error);
     } finally {
@@ -108,13 +107,13 @@ const ContentListPage = () => {
                     </p>
                   )}
                   <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    {item.audio_url && (
+                    {(item.audio_url) && (
                       <span style={{ fontSize: '0.85rem', color: '#ff6b35', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                         <Music size={16} />
                         Audio
                       </span>
                     )}
-                    {item.image_urls && item.image_urls.length > 0 && (
+                    {(item.image_url || (item.image_urls && item.image_urls.length > 0)) && (
                       <span style={{ fontSize: '0.85rem', color: '#ff6b35', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                         <ImageIcon size={16} />
                         Images

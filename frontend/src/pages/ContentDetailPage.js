@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
-import { API } from '../App';
+import { apiService } from '../services/api';
 import Navigation from '../components/Navigation';
 import Loader from '../components/Loader';
 import { ArrowLeft, Music, Image as ImageIcon, Video } from 'lucide-react';
@@ -18,8 +17,8 @@ const ContentDetailPage = () => {
   const fetchContent = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API}/content/${id}`);
-      setContent(response.data.content);
+      const data = await apiService.getContentById(id);
+      setContent(data);
     } catch (error) {
       console.error('Error fetching content:', error);
     } finally {
@@ -133,14 +132,22 @@ const ContentDetailPage = () => {
             </div>
           )}
 
-          {content.image_urls && content.image_urls.length > 0 && (
+          {(content.image_url || (content.image_urls && content.image_urls.length > 0)) && (
             <div className="mb-4" data-testid="images-section">
               <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <ImageIcon size={24} />
                 Sacred Imagery
               </h3>
               <div className="image-gallery">
-                {content.image_urls.map((url, idx) => (
+                {content.image_url && (
+                  <img
+                    src={content.image_url}
+                    alt={`${content.title}`}
+                    className="gallery-image"
+                    style={{ marginBottom: '1rem' }}
+                  />
+                )}
+                {content.image_urls && content.image_urls.map((url, idx) => (
                   <img
                     key={idx}
                     src={url}

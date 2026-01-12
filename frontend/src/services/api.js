@@ -1,27 +1,7 @@
-import axios from 'axios';
-import { mockApiService, mockContent, mockCategories } from './mockData';
+import { supabase } from '../lib/supabase';
+import { mockApiService } from './mockData';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
-const API_URL = `${BACKEND_URL}/api`;
-const USE_MOCK = process.env.REACT_APP_DEMO_MODE === 'true' || !BACKEND_URL || BACKEND_URL === '';
-
-// Create axios instance with default config
-const apiClient = axios.create({
-  baseURL: API_URL,
-  timeout: 10000
-});
-
-// Add token to requests
-apiClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('admin_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+const USE_MOCK = process.env.REACT_APP_DEMO_MODE === 'true';
 
 export const apiService = {
   // Content APIs
@@ -30,10 +10,19 @@ export const apiService = {
       return mockApiService.getAllContent(category);
     }
     try {
-      const params = { limit };
-      if (category) params.category = category;
-      const response = await apiClient.get('/content', { params });
-      return response.data;
+      let query = supabase
+        .from('content')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(limit);
+
+      if (category) {
+        query = query.eq('category', category);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data;
     } catch (error) {
       console.error('Error fetching content:', error);
       throw error;
@@ -45,8 +34,14 @@ export const apiService = {
       return mockApiService.getContentById(id);
     }
     try {
-      const response = await apiClient.get(`/content/${id}`);
-      return response.data;
+      const { data, error } = await supabase
+        .from('content')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) throw error;
+      return data;
     } catch (error) {
       console.error('Error fetching content:', error);
       throw error;
@@ -59,22 +54,32 @@ export const apiService = {
       return mockApiService.getCategories();
     }
     try {
-      const response = await apiClient.get('/categories');
-      return response.data;
+      // Get unique categories from content table
+      const { data, error } = await supabase
+        .from('content')
+        .select('category');
+
+      if (error) throw error;
+
+      const uniqueCategories = [...new Set(data.map(item => item.category))];
+      return uniqueCategories;
     } catch (error) {
       console.error('Error fetching categories:', error);
       throw error;
     }
   },
 
-  // Admin APIs
+  // Admin APIs (In case frontend needs them)
   createContent: async (contentData) => {
-    if (USE_MOCK) {
-      return { success: true, id: 'mock-id', message: 'Content created in demo mode' };
-    }
     try {
-      const response = await apiClient.post('/content', contentData);
-      return response.data;
+      const { data, error } = await supabase
+        .from('content')
+        .insert([contentData])
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
     } catch (error) {
       console.error('Error creating content:', error);
       throw error;
@@ -82,12 +87,16 @@ export const apiService = {
   },
 
   updateContent: async (id, contentData) => {
-    if (USE_MOCK) {
-      return { success: true, message: 'Content updated in demo mode' };
-    }
     try {
-      const response = await apiClient.put(`/content/${id}`, contentData);
-      return response.data;
+      const { data, error } = await supabase
+        .from('content')
+        .update(contentData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
     } catch (error) {
       console.error('Error updating content:', error);
       throw error;
@@ -95,102 +104,29 @@ export const apiService = {
   },
 
   deleteContent: async (id) => {
-    if (USE_MOCK) {
-      return { success: true, message: 'Content deleted in demo mode' };
-    }
     try {
-      const response = await apiClient.delete(`/content/${id}`);
-      return response.data;
+      const { error } = await supabase
+        .from('content')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      return { success: true };
     } catch (error) {
       console.error('Error deleting content:', error);
       throw error;
     }
   },
 
-  uploadAudio: async (contentId, file) => {
-    if (USE_MOCK) {
-      return { success: true, audio_url: 'mock-audio-url' };
-    }
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      const response = await apiClient.post(`/upload/audio/${contentId}`, formData);
-      return response.data;
-    } catch (error) {
-      console.error('Error uploading audio:', error);
-      throw error;
-    }
-  },
-
-  uploadImage: async (contentId, file) => {
-    if (USE_MOCK) {
-      return { success: true, image_url: 'mock-image-url' };
-    }
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      const response = await apiClient.post(`/upload/image/${contentId}`, formData);
-      return response.data;
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      throw error;
-    }
-  },
-
-  uploadVideo: async (contentId, file) => {
-    if (USE_MOCK) {
-      return { success: true, video_url: 'mock-video-url' };
-    }
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      const response = await apiClient.post(`/upload/video/${contentId}`, formData);
-      return response.data;
-    } catch (error) {
-      console.error('Error uploading video:', error);
-      throw error;
-    }
-  },
-
-  generateAudio: async (contentId, text, language = 'hi-IN') => {
-    if (USE_MOCK) {
-      return { success: true, audio_url: 'mock-generated-audio' };
-    }
-    try {
-      const response = await apiClient.post(`/content/${contentId}/generate-audio`, {
-        text,
-        language
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error generating audio:', error);
-      throw error;
-    }
-  },
-
-  generateImage: async (contentId, prompt) => {
-    if (USE_MOCK) {
-      return { success: true, image_urls: ['mock-generated-image'] };
-    }
-    try {
-      const response = await apiClient.post(`/content/${contentId}/generate-image`, {
-        prompt
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error generating image:', error);
-      throw error;
-    }
-  },
-
   // Auth APIs
   login: async (email, password) => {
-    if (USE_MOCK) {
-      return mockApiService.login(email, password);
-    }
     try {
-      const response = await apiClient.post('/auth/login', { email, password });
-      return response.data;
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      if (error) throw error;
+      return data;
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -198,12 +134,10 @@ export const apiService = {
   },
 
   verifyToken: async () => {
-    if (USE_MOCK) {
-      return mockApiService.verifyToken();
-    }
     try {
-      const response = await apiClient.get('/auth/verify');
-      return response.data;
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      return session;
     } catch (error) {
       console.error('Token verification error:', error);
       throw error;

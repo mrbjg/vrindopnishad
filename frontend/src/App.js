@@ -9,9 +9,8 @@ import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboard from './pages/AdminDashboard';
 import CategoryPage from './pages/CategoryPage';
 import LoaderDemo from './pages/LoaderDemo';
-import { mockApiService } from './services/mockData';
-import Loader from './components/Loader';
 import { LoadingProvider } from './contexts/LoadingContext';
+import { apiService } from './services/api';
 import { ThemeProvider } from './contexts/ThemeContext';
 
 import { auth } from './firebase';
@@ -19,9 +18,11 @@ import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
 import LoginPage from './pages/LoginPage';
 
 // Backend URL with fallback for development
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
-const USE_MOCK_DATA = process.env.REACT_APP_DEMO_MODE === 'true' || !BACKEND_URL || BACKEND_URL === '';
-export const API = USE_MOCK_DATA ? null : `${BACKEND_URL}/api`;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const USE_SUPABASE = process.env.REACT_APP_SUPABASE_URL && process.env.REACT_APP_SUPABASE_ANON_KEY;
+const USE_MOCK_DATA = process.env.REACT_APP_DEMO_MODE === 'true';
+
+export const API = USE_SUPABASE ? 'supabase' : (USE_MOCK_DATA ? null : `${BACKEND_URL}/api`);
 export const USE_DEMO_MODE = USE_MOCK_DATA;
 
 export const AuthContext = React.createContext();
@@ -96,7 +97,7 @@ function App() {
     <ThemeProvider>
       <LoadingProvider>
         <AuthContext.Provider value={{ isAdmin, user, token, login, logout }}>
-          <ApiContext.Provider value={{ apiService: USE_MOCK_DATA ? mockApiService : null, isDemoMode: USE_MOCK_DATA }}>
+          <ApiContext.Provider value={{ apiService: apiService, isDemoMode: USE_MOCK_DATA }}>
             <div className="App min-h-screen bg-background text-foreground">
               {USE_MOCK_DATA && (
                 <div className="fixed top-2.5 right-2.5 bg-amber-500 text-white px-4 py-2 rounded-lg z-[1000] text-xs font-bold shadow-lg">

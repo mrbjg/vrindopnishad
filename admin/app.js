@@ -149,8 +149,30 @@ function setupEventListeners() {
     document.getElementById('download-json-template')?.addEventListener('click', downloadJSONTemplate);
 
     // Mobile menu
-    document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
-        document.querySelector('.sidebar').classList.toggle('open');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    const toggleSidebar = () => {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+    };
+
+    const closeSidebar = () => {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+    };
+
+    document.getElementById('mobile-menu-btn')?.addEventListener('click', toggleSidebar);
+    document.getElementById('sidebar-close-btn')?.addEventListener('click', closeSidebar);
+    overlay?.addEventListener('click', closeSidebar);
+
+    // Close sidebar when clicking nav items on mobile
+    elements.navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                closeSidebar();
+            }
+        });
     });
 }
 
@@ -222,13 +244,17 @@ function setupPreview() {
             input.addEventListener('input', updateLivePreview);
         }
     });
+
+    // Also watch for external image URL changes
+    document.getElementById('image-url')?.addEventListener('input', updateLivePreview);
 }
 
 function updateLivePreview() {
     const preview = {
         title: document.getElementById('title')?.value || 'Title Preview',
         sanskrit: document.getElementById('sanskrit-text')?.value || '',
-        content: document.getElementById('content-text')?.value || document.getElementById('commentary')?.value || 'Content will appear here...'
+        content: document.getElementById('content-text')?.value || document.getElementById('commentary')?.value || 'Content will appear here...',
+        image: document.getElementById('image-url')?.value || ''
     };
 
     const container = document.getElementById('live-preview');
@@ -245,6 +271,19 @@ function updateLivePreview() {
     }
 
     container.querySelector('.preview-content').textContent = preview.content;
+
+    // Handle External Image Preview
+    if (preview.image) {
+        let img = container.querySelector('img');
+        if (!img) {
+            img = document.createElement('img');
+            img.style.maxWidth = '100%';
+            img.style.borderRadius = '8px';
+            img.style.marginTop = '10px';
+            container.appendChild(img);
+        }
+        img.src = preview.image;
+    }
 }
 
 function setEntryMode(mode) {
@@ -482,7 +521,9 @@ async function handleAddContent(e) {
         content_text: formData.get('contentText'),
         author: formData.get('author'),
         status: formData.get('status'),
-        tags: formData.get('tags') ? formData.get('tags').split(',').map(t => t.trim()).filter(t => t) : []
+        tags: formData.get('tags') ? formData.get('tags').split(',').map(t => t.trim()).filter(t => t) : [],
+        image_url: formData.get('imageUrl') || null,
+        audio_url: formData.get('audioUrl') || null
     };
 
     try {
@@ -631,6 +672,8 @@ function openEditModal(id) {
     document.getElementById('edit-status').value = content.status || 'published';
     document.getElementById('edit-tags').value = content.tags ? content.tags.join(', ') : '';
     document.getElementById('edit-content-text').value = content.content_text || '';
+    document.getElementById('edit-image-url').value = content.image_url || '';
+    document.getElementById('edit-audio-url').value = content.audio_url || '';
 
     elements.editModal.classList.remove('hidden');
     if (window.lucide) lucide.createIcons();
@@ -657,6 +700,8 @@ async function handleEditContent(e) {
         status: document.getElementById('edit-status').value,
         tags: document.getElementById('edit-tags').value ? document.getElementById('edit-tags').value.split(',').map(t => t.trim()).filter(t => t) : [],
         content_text: document.getElementById('edit-content-text').value,
+        image_url: document.getElementById('edit-image-url').value || null,
+        audio_url: document.getElementById('edit-audio-url').value || null,
     };
 
     try {
