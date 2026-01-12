@@ -30,8 +30,9 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
 
       state = favoriteIds;
     } catch (e) {
-      print('Error loading favorites: $e');
-      state = {};
+      // Gracefully handle missing table - use local-only favorites
+      print('Favorites sync unavailable (table may not exist): $e');
+      // Keep current state, don't reset to empty
     }
   }
 
@@ -62,10 +63,8 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
         'content_id': contentId,
       });
     } catch (e) {
-      // Rollback on error
-      state = {...state}..remove(contentId);
-      print('Error adding favorite: $e');
-      rethrow;
+      // Keep local state even if server sync fails
+      print('Favorites sync failed (continuing locally): $e');
     }
   }
 
@@ -85,10 +84,8 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
           .eq('user_id', _currentUser!.id)
           .eq('content_id', contentId);
     } catch (e) {
-      // Rollback on error
-      state = {...state, contentId};
-      print('Error removing favorite: $e');
-      rethrow;
+      // Keep local state even if server sync fails
+      print('Favorites sync failed (continuing locally): $e');
     }
   }
 

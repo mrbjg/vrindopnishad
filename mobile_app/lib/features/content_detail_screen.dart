@@ -347,6 +347,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       ),
       child: Column(
         children: [
+          // Animated breathing icon
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -360,8 +361,17 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               size: 18,
               color: Colors.white,
             ),
-          ),
+          )
+          .animate(onPlay: (c) => c.repeat(reverse: true))
+          .scale(
+            begin: const Offset(1, 1),
+            end: const Offset(1.1, 1.1),
+            duration: 2.seconds,
+            curve: Curves.easeInOut,
+          )
+          .shimmer(duration: 2.seconds, color: Colors.white30),
           const SizedBox(height: 20),
+          // Animated Sanskrit text
           Text(
             widget.content?.sanskritText ??
                 "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥",
@@ -372,8 +382,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               color: AppTheme.primaryColor,
               height: 1.9,
             ),
-          ),
+          )
+          .animate()
+          .fadeIn(duration: 800.ms)
+          .slideY(begin: 0.1, end: 0, duration: 800.ms, curve: Curves.easeOutCubic),
           const SizedBox(height: 20),
+          // Animated divider
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -381,20 +395,30 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 width: 20,
                 height: 1.5,
                 color: AppTheme.primaryColor.withOpacity(0.3),
-              ),
+              )
+              .animate()
+              .scaleX(delay: 500.ms, begin: 0, end: 1, duration: 400.ms),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Icon(
                   LucideIcons.sparkles,
                   size: 12,
                   color: AppTheme.primaryColor.withOpacity(0.5),
+                )
+                .animate(onPlay: (c) => c.repeat(reverse: true))
+                .scale(
+                  begin: const Offset(1, 1),
+                  end: const Offset(1.2, 1.2),
+                  duration: 1.seconds,
                 ),
               ),
               Container(
                 width: 20,
                 height: 1.5,
                 color: AppTheme.primaryColor.withOpacity(0.3),
-              ),
+              )
+              .animate()
+              .scaleX(delay: 500.ms, begin: 0, end: 1, duration: 400.ms),
             ],
           ),
         ],

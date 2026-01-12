@@ -414,7 +414,7 @@ class HomeScreen extends ConsumerWidget {
         ),
         child: Stack(
           children: [
-            // Decorative circle
+            // Decorative circle with breathing animation
             Positioned(
               top: -40,
               right: -40,
@@ -425,6 +425,13 @@ class HomeScreen extends ConsumerWidget {
                   shape: BoxShape.circle,
                   color: Colors.white.withOpacity(0.1),
                 ),
+              )
+              .animate(onPlay: (c) => c.repeat(reverse: true))
+              .scale(
+                begin: const Offset(1, 1),
+                end: const Offset(1.15, 1.15),
+                duration: 3.seconds,
+                curve: Curves.easeInOut,
               ),
             ),
             Positioned(
@@ -437,6 +444,13 @@ class HomeScreen extends ConsumerWidget {
                   shape: BoxShape.circle,
                   color: Colors.white.withOpacity(0.08),
                 ),
+              )
+              .animate(onPlay: (c) => c.repeat(reverse: true))
+              .scale(
+                begin: const Offset(1, 1),
+                end: const Offset(1.2, 1.2),
+                duration: 4.seconds,
+                curve: Curves.easeInOut,
               ),
             ),
             // Content
@@ -464,7 +478,10 @@ class HomeScreen extends ConsumerWidget {
                         letterSpacing: 1.5,
                       ),
                     ),
-                  ),
+                  )
+                  .animate()
+                  .fadeIn(delay: 200.ms)
+                  .slideX(begin: -0.2, end: 0, delay: 200.ms),
                   const SizedBox(height: 12),
                   Text(
                     "Bhagavad Gita",
@@ -473,7 +490,10 @@ class HomeScreen extends ConsumerWidget {
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
-                  ),
+                  )
+                  .animate()
+                  .fadeIn(delay: 400.ms)
+                  .slideY(begin: 0.3, end: 0, delay: 400.ms, curve: Curves.easeOutBack),
                   const SizedBox(height: 6),
                   Text(
                     "The Song of the Divine",
@@ -481,13 +501,20 @@ class HomeScreen extends ConsumerWidget {
                       fontSize: 14,
                       color: Colors.white.withOpacity(0.85),
                     ),
-                  ),
+                  )
+                  .animate()
+                  .fadeIn(delay: 600.ms)
+                  .slideY(begin: 0.3, end: 0, delay: 600.ms),
                 ],
               ),
             ),
           ],
         ),
-      ),
+      )
+      .animate()
+      .fadeIn(duration: 500.ms)
+      .scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1), duration: 500.ms, curve: Curves.easeOutBack)
+      .shimmer(delay: 1.seconds, duration: 1500.ms, color: Colors.white24),
     );
   }
 
