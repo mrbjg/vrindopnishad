@@ -88,8 +88,13 @@ class ContentCreate(BaseModel):
     hindi_text: Optional[str] = None
     english_text: Optional[str] = None
     english_translation: Optional[str] = None
-    category: str  # poem, shloka, strotra
+    category: str
     description: Optional[str] = None
+    tags: List[str] = []
+    content_text: Optional[str] = None
+    status: str = "published"
+    author: Optional[str] = None
+    media_links: List[dict] = []
 
 class ContentUpdate(BaseModel):
     title: Optional[str] = None
@@ -99,6 +104,11 @@ class ContentUpdate(BaseModel):
     english_translation: Optional[str] = None
     category: Optional[str] = None
     description: Optional[str] = None
+    tags: Optional[List[str]] = None
+    content_text: Optional[str] = None
+    status: Optional[str] = None
+    author: Optional[str] = None
+    media_links: Optional[List[dict]] = None
 
 class GenerateAudioRequest(BaseModel):
     text: str
@@ -158,13 +168,18 @@ async def create_content(content: ContentCreate, payload: dict = Depends(verify_
         content_data = content.model_dump()
         content_data.update({
             "id": content_id,
-            "audio_url": None,
-            "image_urls": [],
-            "video_urls": [],
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat()
         })
         
+        # Ensure audio_url, image_urls, video_urls lists exist if not provided
+        if "audio_url" not in content_data:
+            content_data["audio_url"] = None
+        if "image_urls" not in content_data:
+            content_data["image_urls"] = []
+        if "video_urls" not in content_data:
+            content_data["video_urls"] = []
+            
         db.collection('content').document(content_id).set(content_data)
         return {"success": True, "id": content_id, "message": "Content created successfully"}
     except Exception as e:
@@ -416,14 +431,39 @@ async def get_content_by_id(content_id: str):
 @api_router.get("/categories")
 async def get_categories():
     """Get all categories"""
-    return {
-        "success": True,
-        "categories": [
-            {"id": "shloka", "name": "Shlokas", "description": "Sacred verses from Hindu scriptures"},
-            {"id": "strotra", "name": "Strotras", "description": "Devotional hymns and prayers"},
-            {"id": "poem", "name": "Poems", "description": "Spiritual and devotional poetry"}
-        ]
-    }
+    if not db:
+        return {
+            "success": True,
+            "categories": [
+                {"id": "shloka", "name": "Shlokas"},
+                {"id": "strotra", "name": "Strotras"},
+                {"id": "poem", "name": "Poems"}
+            ]
+        }
+    
+    try:
+        # Get unique categories from content collection
+        docs = db.collection('content').select(['category']).stream()
+        categories = set()
+        for doc in docs:
+            cat = doc.to_dict().get('category')
+            if cat:
+                categories.add(cat)
+        
+        return {
+            "success": True,
+            "categories": [{"id": cat.lower().replace(" ", "-"), "name": cat} for cat in sorted(list(categories))]
+        }
+    except Exception as e:
+        logger.error(f"Error fetching categories: {e}")
+        return {
+            "success": True,
+            "categories": [
+                {"id": "shloka", "name": "Shlokas"},
+                {"id": "strotra", "name": "Strotras"},
+                {"id": "poem", "name": "Poems"}
+            ]
+        }
 
 @api_router.get("/")
 async def root():

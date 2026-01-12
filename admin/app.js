@@ -74,6 +74,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     await checkAuth();
     setupEventListeners();
     setupDragAndDrop();
+    setupPreview();
+
+    // Default to shloka mode
+    setEntryMode('shloka');
 
     // Re-initialize Lucide icons after dynamic content
     if (window.lucide) {
@@ -102,6 +106,7 @@ function setupEventListeners() {
     // Login
     elements.loginForm.addEventListener('submit', handleLogin);
     elements.logoutBtn.addEventListener('click', handleLogout);
+    document.getElementById('google-login-btn')?.addEventListener('click', handleGoogleLogin);
 
     // Navigation
     elements.navItems.forEach(item => {
@@ -183,9 +188,86 @@ function setupDropZone(zone, input) {
     input.addEventListener('change', () => {
         if (input.files.length) {
             zone.querySelector('p').textContent = input.files[0].name;
+            // Update preview if image
+            if (bucket === 'images') {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const preview = document.getElementById('live-preview');
+                    if (preview) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.maxWidth = '100%';
+                        img.style.borderRadius = '8px';
+                        img.style.marginTop = '10px';
+                        // Remove old image preview
+                        const oldImg = preview.querySelector('img');
+                        if (oldImg) oldImg.remove();
+                        preview.appendChild(img);
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
         }
     });
 }
+
+function setupPreview() {
+    const previewInputs = [
+        'title', 'sanskrit-text', 'hindi-meaning', 'translation', 'commentary', 'content-text'
+    ];
+
+    previewInputs.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.addEventListener('input', updateLivePreview);
+        }
+    });
+}
+
+function updateLivePreview() {
+    const preview = {
+        title: document.getElementById('title')?.value || 'Title Preview',
+        sanskrit: document.getElementById('sanskrit-text')?.value || '',
+        content: document.getElementById('content-text')?.value || document.getElementById('commentary')?.value || 'Content will appear here...'
+    };
+
+    const container = document.getElementById('live-preview');
+    if (!container) return;
+
+    container.querySelector('.preview-title').textContent = preview.title;
+
+    const sanskritEl = container.querySelector('.preview-sanskrit');
+    if (preview.sanskrit) {
+        sanskritEl.textContent = preview.sanskrit;
+        sanskritEl.style.display = 'block';
+    } else {
+        sanskritEl.style.display = 'none';
+    }
+
+    container.querySelector('.preview-content').textContent = preview.content;
+}
+
+function setEntryMode(mode) {
+    const form = document.getElementById('add-content-form');
+    const buttons = document.querySelectorAll('.form-mode-selector button');
+
+    if (!form) return;
+
+    buttons.forEach(btn => {
+        const isActive = btn.textContent.toLowerCase().includes(mode);
+        btn.classList.toggle('active', isActive);
+    });
+
+    if (mode === 'shloka') {
+        form.classList.add('mode-shloka');
+        form.classList.remove('mode-general');
+    } else {
+        form.classList.add('mode-general');
+        form.classList.remove('mode-shloka');
+    }
+}
+
+window.setEntryMode = setEntryMode;
 
 // ========================================
 // Authentication
@@ -220,6 +302,22 @@ async function handleLogout() {
     currentUser = null;
     elements.loginModal.classList.remove('hidden');
     showToast('Logged out', 'success');
+}
+
+async function handleGoogleLogin() {
+    try {
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin + window.location.pathname
+            }
+        });
+
+        if (error) throw error;
+    } catch (error) {
+        console.error('Google login error:', error);
+        showToast(error.message || 'Failed to sign in with Google', 'error');
+    }
 }
 
 // ========================================
@@ -381,6 +479,10 @@ async function handleAddContent(e) {
         hindi_text: formData.get('hindiMeaning'),
         english_translation: formData.get('translation'),
         description: formData.get('commentary'),
+        content_text: formData.get('contentText'),
+        author: formData.get('author'),
+        status: formData.get('status'),
+        tags: formData.get('tags') ? formData.get('tags').split(',').map(t => t.trim()).filter(t => t) : []
     };
 
     try {
@@ -525,6 +627,10 @@ function openEditModal(id) {
     document.getElementById('edit-hindi').value = content.hindi_text || '';
     document.getElementById('edit-translation').value = content.english_translation || '';
     document.getElementById('edit-commentary').value = content.description || '';
+    document.getElementById('edit-author').value = content.author || '';
+    document.getElementById('edit-status').value = content.status || 'published';
+    document.getElementById('edit-tags').value = content.tags ? content.tags.join(', ') : '';
+    document.getElementById('edit-content-text').value = content.content_text || '';
 
     elements.editModal.classList.remove('hidden');
     if (window.lucide) lucide.createIcons();
@@ -547,6 +653,10 @@ async function handleEditContent(e) {
         hindi_text: document.getElementById('edit-hindi').value,
         english_translation: document.getElementById('edit-translation').value,
         description: document.getElementById('edit-commentary').value,
+        author: document.getElementById('edit-author').value,
+        status: document.getElementById('edit-status').value,
+        tags: document.getElementById('edit-tags').value ? document.getElementById('edit-tags').value.split(',').map(t => t.trim()).filter(t => t) : [],
+        content_text: document.getElementById('edit-content-text').value,
     };
 
     try {
@@ -672,6 +782,10 @@ async function confirmImport() {
             hindi_text: item.hindiMeaning || item.hindi_text,
             english_translation: item.translation || item.english_translation,
             description: item.commentary || item.description,
+            author: item.author || item.Author || '',
+            status: item.status || item.Status || 'published',
+            tags: item.tags ? (Array.isArray(item.tags) ? item.tags : item.tags.split(',').map(t => t.trim())) : [],
+            content_text: item.content_text || item.contentText || '',
         }));
 
         const { error } = await supabaseClient

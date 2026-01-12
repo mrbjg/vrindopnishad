@@ -61,8 +61,13 @@ class ContentCreate(BaseModel):
     hindi_text: Optional[str] = None
     english_text: Optional[str] = None
     english_translation: Optional[str] = None
-    category: str  # poem, shloka, strotra
+    category: str
     description: Optional[str] = None
+    tags: List[str] = []
+    content_text: Optional[str] = None
+    status: str = "published"
+    author: Optional[str] = None
+    media_links: List[dict] = []
 
 class ContentUpdate(BaseModel):
     title: Optional[str] = None
@@ -72,6 +77,11 @@ class ContentUpdate(BaseModel):
     english_translation: Optional[str] = None
     category: Optional[str] = None
     description: Optional[str] = None
+    tags: Optional[List[str]] = None
+    content_text: Optional[str] = None
+    status: Optional[str] = None
+    author: Optional[str] = None
+    media_links: Optional[List[dict]] = None
 
 
 # Helper Functions
@@ -274,18 +284,49 @@ async def get_content_by_id(content_id: str):
 @api_router.get("/categories")
 async def get_categories():
     """Get all categories"""
-    return {
-        "success": True,
-        "categories": [
-            {"id": "shloka", "name": "Shlokas", "description": "Sacred verses from Hindu scriptures"},
-            {"id": "strotra", "name": "Strotras", "description": "Devotional hymns and prayers"},
-            {"id": "mantra", "name": "Mantras", "description": "Sacred chants and incantations"},
-            {"id": "veda", "name": "Vedas", "description": "Ancient scriptures and knowledge"},
-            {"id": "story", "name": "Stories", "description": "Pauranic Kathas and spiritual stories"},
-            {"id": "poem", "name": "Poems", "description": "Spiritual and devotional poetry"},
-            {"id": "picture", "name": "Darshan", "description": "Divine images and galleries"}
-        ]
-    }
+    if not supabase_db.is_available:
+         return {
+            "success": True,
+            "categories": [
+                {"id": "shloka", "name": "Shlokas"},
+                {"id": "strotra", "name": "Strotras"},
+                {"id": "poem", "name": "Poems"}
+            ]
+        }
+    
+    try:
+        # Get unique categories from content table
+        response = supabase_db.client.table(supabase_db.table_name).select("category").execute()
+        categories = set()
+        for item in response.data:
+            cat = item.get('category')
+            if cat:
+                categories.add(cat)
+        
+        if not categories:
+            return {
+                "success": True,
+                "categories": [
+                    {"id": "shloka", "name": "Shlokas"},
+                    {"id": "strotra", "name": "Strotras"},
+                    {"id": "poem", "name": "Poems"}
+                ]
+            }
+
+        return {
+            "success": True,
+            "categories": [{"id": cat.lower().replace(" ", "-"), "name": cat} for cat in sorted(list(categories))]
+        }
+    except Exception as e:
+        logger.error(f"Error fetching categories: {e}")
+        return {
+            "success": True,
+            "categories": [
+                {"id": "shloka", "name": "Shlokas"},
+                {"id": "strotra", "name": "Strotras"},
+                {"id": "poem", "name": "Poems"}
+            ]
+        }
 
 @api_router.get("/")
 async def root():

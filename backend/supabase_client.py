@@ -122,7 +122,7 @@ class SupabaseDB:
 
 # SQL to create the content table in Supabase
 CREATE_TABLE_SQL = """
--- Run this in Supabase SQL Editor to create the content table
+-- Run this in Supabase SQL Editor to create or update the content table
 
 CREATE TABLE IF NOT EXISTS content (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -133,12 +133,24 @@ CREATE TABLE IF NOT EXISTS content (
     english_translation TEXT,
     category TEXT NOT NULL,
     description TEXT,
+    content_text TEXT,
+    tags TEXT[] DEFAULT '{}',
+    status TEXT DEFAULT 'published',
+    author TEXT,
+    media_links JSONB DEFAULT '[]',
     audio_url TEXT,
     image_urls TEXT[] DEFAULT '{}',
     video_urls TEXT[] DEFAULT '{}',
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- If table already exists, run these to add missing columns:
+-- ALTER TABLE content ADD COLUMN IF NOT EXISTS content_text TEXT;
+-- ALTER TABLE content ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}';
+-- ALTER TABLE content ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'published';
+-- ALTER TABLE content ADD COLUMN IF NOT EXISTS author TEXT;
+-- ALTER TABLE content ADD COLUMN IF NOT EXISTS media_links JSONB DEFAULT '[]';
 
 -- Enable Row Level Security
 ALTER TABLE content ENABLE ROW LEVEL SECURITY;
