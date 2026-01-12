@@ -10,6 +10,8 @@ import '../core/content_provider.dart';
 import 'content_detail_screen.dart';
 import 'category_screen.dart';
 import 'search_screen.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import '../widgets/sacred_morph_widget.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -93,29 +95,14 @@ class HomeScreen extends ConsumerWidget {
                         ),
                       ),
                       // Logo - Simple container
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.white.withOpacity(0.1)
-                              : Colors.white.withOpacity(0.5),
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Center(
-                          child: Icon(
-                            LucideIcons.sparkles,
-                            size: 28,
-                            color: isDark
-                                ? Colors.white
-                                : AppTheme.primaryColor,
-                          ),
-                        ),
-                      ),
+                      // Logo - Animated Sacred Symbol
+                      const SacredMorphWidget(
+                        size: 56,
+                        color: Colors.white,
+                      )
+                      .animate(onPlay: (controller) => controller.repeat())
+                      .shimmer(duration: 2.seconds, color: Colors.white24)
+                      .scale(duration: 1.seconds, curve: Curves.easeInOut),
                     ],
                   ),
                   const SizedBox(height: 28),
@@ -314,7 +301,11 @@ class HomeScreen extends ConsumerWidget {
           cat['icon'] as IconData,
           cat['gradient'] as List<Color>,
           isDark,
-        );
+        )
+        .animate()
+        .fadeIn(delay: (index * 100).ms, duration: 400.ms)
+        .scale(delay: (index * 100).ms, duration: 400.ms, curve: Curves.backOut)
+        .slideY(begin: 0.2, end: 0, delay: (index * 100).ms);
       },
     );
   }
@@ -538,10 +529,16 @@ class HomeScreen extends ConsumerWidget {
     return Column(
       children: content
           .take(5)
+          .toList()
+          .asMap()
+          .entries
           .map(
-            (item) => Padding(
+            (entry) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: _buildRecentCard(context, item, isDark),
+              child: _buildRecentCard(context, entry.value, isDark)
+                .animate()
+                .fadeIn(delay: (entry.key * 100 + 400).ms)
+                .slideX(begin: 0.1, end: 0, delay: (entry.key * 100 + 400).ms, curve: Curves.easeOutCubic),
             ),
           )
           .toList(),

@@ -7,6 +7,7 @@ import 'home_screen.dart';
 import 'search_screen.dart';
 import 'library_screen.dart';
 import 'profile_screen.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class MainNavigationScreen extends ConsumerStatefulWidget {
   const MainNavigationScreen({super.key});
@@ -135,16 +136,24 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
         onTap: () => _onItemTapped(index),
         behavior: HitTestBehavior.opaque,
         child: Center(
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOutBack,
-            child: Icon(
-              isActive ? activeIcon : icon,
-              size: isActive ? 32 : 24, // Significantly bigger when active
-              color: isActive
-                  ? AppTheme.primaryColor
-                  : (isDark ? Colors.white54 : Colors.black45),
-            ),
+          child: Icon(
+            isActive ? activeIcon : icon,
+            size: isActive ? 28 : 24,
+            color: isActive
+                ? AppTheme.primaryColor
+                : (isDark ? Colors.white54 : Colors.black45),
+          )
+          .animate(target: isActive ? 1 : 0)
+          .scale(
+            begin: const Offset(1, 1),
+            end: const Offset(1.15, 1.15),
+            duration: 400.ms,
+            curve: Curves.elasticOut,
+          )
+          .shake(
+            hz: isActive ? 3 : 0,
+            duration: 500.ms,
+            curve: Curves.easeInOut,
           ),
         ),
       ),

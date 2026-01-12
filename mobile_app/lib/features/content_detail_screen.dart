@@ -8,6 +8,7 @@ import '../core/theme.dart';
 import '../core/providers.dart';
 import '../core/localization.dart';
 import '../core/content_provider.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../core/favorites_provider.dart';
 import '../widgets/share_content_widget.dart';
 
@@ -537,6 +538,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         isPlaying ? LucideIcons.pause : LucideIcons.play,
                         color: Colors.white,
                         size: 24,
+                      )
+                      .animate(target: isPlaying ? 1 : 0)
+                      .scale(
+                        begin: const Offset(1, 1),
+                        end: const Offset(1.1, 1.1),
+                        duration: 300.ms,
+                        curve: Curves.elasticOut,
                       ),
                     ),
                   ),
