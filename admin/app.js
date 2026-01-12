@@ -22,6 +22,13 @@ let allContent = [];
 let categories = ['Shloka', 'Strotra', 'Mantra', 'Bhajan', 'Katha', 'Aarti', 'Chalisa'];
 let importData = [];
 
+// SECURITY: Only these emails can access the admin panel
+const AUTHORIZED_ADMINS = [
+    'admin@vrindopnishad.com',  // Main Owner
+    'mdark4025@gmail.com',
+    // Add other authorized emails here
+];
+
 // ========================================
 // DOM Elements
 // ========================================
@@ -89,11 +96,26 @@ async function checkAuth() {
     const { data: { session } } = await supabaseClient.auth.getSession();
 
     if (session) {
+        // Strict Whitelist Check
+        if (AUTHORIZED_ADMINS.length > 0 && !AUTHORIZED_ADMINS.includes(session.user.email)) {
+            showToast('Access Denied: Unrecognized Admin Email', 'error');
+            await handleLogout();
+            return;
+        }
+
         currentUser = session.user;
+
+        // Unlock the UI
+        const appContainer = document.querySelector('.app');
+        if (appContainer) appContainer.classList.remove('app-locked');
+
         elements.loginModal.classList.add('hidden');
         elements.userName.textContent = session.user.email?.split('@')[0] || 'Admin';
         await loadDashboard();
     } else {
+        // Keep locked
+        const appContainer = document.querySelector('.app');
+        if (appContainer) appContainer.classList.add('app-locked');
         elements.loginModal.classList.remove('hidden');
     }
 }
@@ -339,6 +361,11 @@ async function handleLogin(e) {
 async function handleLogout() {
     await supabaseClient.auth.signOut();
     currentUser = null;
+
+    // Relock UI
+    const appContainer = document.querySelector('.app');
+    if (appContainer) appContainer.classList.add('app-locked');
+
     elements.loginModal.classList.remove('hidden');
     showToast('Logged out', 'success');
 }
