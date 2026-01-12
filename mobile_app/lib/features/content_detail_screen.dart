@@ -42,9 +42,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
   Future<void> _initAudio() async {
     try {
-      const demoAudioUrl =
+      // Use the content's audio URL if available, otherwise use a demo
+      String audioUrl = widget.content?.audioUrl ?? 
           'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
-      await _audioPlayer.setUrl(demoAudioUrl);
+      
+      await _audioPlayer.setUrl(audioUrl);
     } catch (e) {
       debugPrint('Error loading audio: $e');
     }

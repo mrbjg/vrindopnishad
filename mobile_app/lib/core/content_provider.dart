@@ -11,6 +11,7 @@ class SacredContent {
   final String hindiMeaning;
   final String commentary;
   final String? imageUrl;
+  final String? audioUrl;
 
   SacredContent({
     required this.id,
@@ -21,6 +22,7 @@ class SacredContent {
     required this.hindiMeaning,
     required this.commentary,
     this.imageUrl,
+    this.audioUrl,
   });
 
   Map<String, dynamic> toMap() {
@@ -33,6 +35,7 @@ class SacredContent {
       'hindiMeaning': hindiMeaning,
       'commentary': commentary,
       'imageUrl': imageUrl,
+      'audioUrl': audioUrl,
     };
   }
 
@@ -46,6 +49,7 @@ class SacredContent {
       hindiMeaning: map['hindiMeaning'],
       commentary: map['commentary'],
       imageUrl: map['imageUrl'],
+      audioUrl: map['audioUrl'],
     );
   }
 }
@@ -55,23 +59,28 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
     _loadFromDatabase();
   }
 
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
   Future<void> _loadFromDatabase() async {
+    _isLoading = true;
     try {
-      // 1. Try to fetch from API
+      // 1. Try to fetch from Supabase (online mode)
       final apiContent = await ApiService.fetchAllContent();
 
       if (apiContent.isNotEmpty) {
-        // 2. If successful, update local DB
+        // 2. If successful, update local DB for offline support
         await DatabaseHelper.instance.deleteAllContent();
         for (var item in apiContent) {
           await DatabaseHelper.instance.insertContent(item);
         }
         state = apiContent;
+        _isLoading = false;
         return;
       }
     } catch (e) {
       // Ignore API errors, fallback to local DB
-      print("Sync failed: $e");
+      print("Supabase sync failed: $e");
     }
 
     // 3. Fallback to local DB (offline mode)
@@ -84,6 +93,40 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
       }
     } else {
       state = dbContent;
+    }
+    _isLoading = false;
+  }
+
+  /// Refresh content from Supabase
+  Future<void> refresh() async {
+    await _loadFromDatabase();
+  }
+
+  /// Fetch content filtered by category
+  Future<List<SacredContent>> fetchByCategory(String category) async {
+    try {
+      return await ApiService.fetchAllContent(category: category);
+    } catch (e) {
+      // Fallback to filtering local state
+      return state.where((item) => 
+        item.category.toLowerCase() == category.toLowerCase()
+      ).toList();
+    }
+  }
+
+  /// Search content
+  Future<List<SacredContent>> search(String query) async {
+    try {
+      return await ApiService.searchContent(query);
+    } catch (e) {
+      // Fallback to local search
+      final lowerQuery = query.toLowerCase();
+      return state.where((item) =>
+        item.title.toLowerCase().contains(lowerQuery) ||
+        item.sanskritText.toLowerCase().contains(lowerQuery) ||
+        item.hindiMeaning.toLowerCase().contains(lowerQuery) ||
+        item.translation.toLowerCase().contains(lowerQuery)
+      ).toList();
     }
   }
 
