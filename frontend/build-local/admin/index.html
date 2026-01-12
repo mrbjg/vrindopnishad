@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vrindopnishad - Sant-Vaani Admin</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon-wrapper">
+                    <i data-lucide="flame" class="logo-flame"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Vrindopnishad</h1>
+                    <span class="logo-subtitle">Content Admin</span>
+                </div>
+            </div>
+
+            <nav class="nav">
+                <div class="nav-section">
+                    <span class="nav-section-title">Overview</span>
+                    <a href="#" class="nav-item active" data-tab="dashboard">
+                        <i data-lucide="layout-dashboard"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-title">Content</span>
+                    <a href="#" class="nav-item" data-tab="add-content">
+                        <i data-lucide="plus-circle"></i>
+                        <span>Add Content</span>
+                    </a>
+                    <a href="#" class="nav-item" data-tab="bulk-import">
+                        <i data-lucide="upload-cloud"></i>
+                        <span>Bulk Import</span>
+                    </a>
+                    <a href="#" class="nav-item" data-tab="manage">
+                        <i data-lucide="library"></i>
+                        <span>All Content</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-title">Settings</span>
+                    <a href="#" class="nav-item" data-tab="categories">
+                        <i data-lucide="tags"></i>
+                        <span>Categories</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar">
+                        <i data-lucide="user"></i>
+                    </div>
+                    <div class="user-details">
+                        <span class="user-name" id="user-name">Admin</span>
+                        <span class="user-role">Administrator</span>
+                    </div>
+                </div>
+                <button class="btn-icon-only" id="logout-btn" title="Logout">
+                    <i data-lucide="log-out"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="btn-icon-only mobile-menu-btn" id="mobile-menu-btn">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div class="header-title">
+                        <h2 id="page-title">Dashboard</h2>
+                        <div class="breadcrumb">
+                            <span>Home</span>
+                            <i data-lucide="chevron-right"></i>
+                            <span id="breadcrumb-current">Overview</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input type="text" placeholder="Search content..." id="search-input">
+                        <kbd class="search-shortcut">⌘K</kbd>
+                    </div>
+                    <button class="btn-icon-only" title="Refresh">
+                        <i data-lucide="refresh-cw"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Dashboard Tab -->
+                <section id="dashboard-tab" class="tab-content active">
+                    <div class="welcome-banner">
+                        <div class="welcome-text">
+                            <h3>Shri Harivansh</h3>
+                            <p>Manage your sacred content collection with ease.</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="switchTab('add-content')">
+                            <i data-lucide="plus"></i>
+                            Add New Content
+                        </button>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon stat-icon-primary">
+                                <i data-lucide="book-open"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="total-content">0</span>
+                                <span class="stat-label">Total Content</span>
+                            </div>
+                            <div class="stat-trend up">
+                                <i data-lucide="trending-up"></i>
+                                <span>+12%</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon stat-icon-purple">
+                                <i data-lucide="folder"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="total-categories">0</span>
+                                <span class="stat-label">Categories</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon stat-icon-blue">
+                                <i data-lucide="eye"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="total-views">0</span>
+                                <span class="stat-label">Total Views</span>
+                            </div>
+                            <div class="stat-trend up">
+                                <i data-lucide="trending-up"></i>
+                                <span>+8%</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon stat-icon-pink">
+                                <i data-lucide="heart"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="total-favorites">—</span>
+                                <span class="stat-label">Favorites</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="card recent-section">
+                            <div class="card-header">
+                                <h3><i data-lucide="clock"></i> Recent Content</h3>
+                                <a href="#" class="link" onclick="switchTab('manage')">View All</a>
+                            </div>
+                            <div class="content-list" id="recent-content">
+                                <div class="empty-state">
+                                    <i data-lucide="inbox"></i>
+                                    <p>No content yet</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card quick-actions">
+                            <div class="card-header">
+                                <h3><i data-lucide="zap"></i> Quick Actions</h3>
+                            </div>
+                            <div class="actions-grid">
+                                <button class="action-btn" onclick="switchTab('add-content')">
+                                    <i data-lucide="file-plus"></i>
+                                    <span>Add Shloka</span>
+                                </button>
+                                <button class="action-btn" onclick="switchTab('bulk-import')">
+                                    <i data-lucide="file-spreadsheet"></i>
+                                    <span>Import CSV</span>
+                                </button>
+                                <button class="action-btn" onclick="switchTab('categories')">
+                                    <i data-lucide="settings-2"></i>
+                                    <span>Settings</span>
+                                </button>
+                                <button class="action-btn" onclick="downloadBackup()">
+                                    <i data-lucide="download"></i>
+                                    <span>Backup</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Add Content Tab -->
+                <section id="add-content-tab" class="tab-content">
+                    <div class="page-header">
+                        <div>
+                            <h3>Add New Content</h3>
+                            <p>Create a new sacred text entry</p>
+                        </div>
+                    </div>
+
+                    <form id="add-content-form" class="content-form">
+                        <div class="form-grid">
+                            <div class="form-main">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4><i data-lucide="text"></i> Basic Information</h4>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="title">
+                                            <i data-lucide="heading"></i>
+                                            Title <span class="required">*</span>
+                                        </label>
+                                        <input type="text" id="title" name="title" required
+                                            placeholder="e.g., Bhagavad Gita - Chapter 2, Verse 47">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="sanskrit-text">
+                                            <i data-lucide="scroll-text"></i>
+                                            Sanskrit Text (संस्कृत)
+                                        </label>
+                                        <textarea id="sanskrit-text" name="sanskritText" rows="4" class="sanskrit-input"
+                                            placeholder="कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।&#10;मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥"></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="hindi-meaning">
+                                            <i data-lucide="languages"></i>
+                                            Hindi Meaning (हिंदी अर्थ)
+                                        </label>
+                                        <textarea id="hindi-meaning" name="hindiMeaning" rows="3" class="hindi-input"
+                                            placeholder="तेरा कर्म करने में ही अधिकार है..."></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="translation">
+                                            <i data-lucide="globe"></i>
+                                            English Translation
+                                        </label>
+                                        <textarea id="translation" name="translation" rows="3"
+                                            placeholder="You have the right to perform your prescribed duties..."></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="commentary">
+                                            <i data-lucide="message-square-text"></i>
+                                            Commentary / Explanation
+                                        </label>
+                                        <textarea id="commentary" name="commentary" rows="4"
+                                            placeholder="This shloka is the cornerstone of Karma Yoga..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-sidebar">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4><i data-lucide="settings"></i> Settings</h4>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="category">
+                                            <i data-lucide="tag"></i>
+                                            Category <span class="required">*</span>
+                                        </label>
+                                        <select id="category" name="category" required>
+                                            <option value="">Select Category</option>
+                                            <option value="Shloka">Shloka</option>
+                                            <option value="Strotra">Strotra</option>
+                                            <option value="Mantra">Mantra</option>
+                                            <option value="Bhajan">Bhajan</option>
+                                            <option value="Katha">Katha</option>
+                                            <option value="Aarti">Aarti</option>
+                                            <option value="Chalisa">Chalisa</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4><i data-lucide="paperclip"></i> Media</h4>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Image</label>
+                                        <div class="file-upload" id="image-drop-zone">
+                                            <input type="file" id="image-upload" name="image" accept="image/*" hidden>
+                                            <i data-lucide="image-plus"></i>
+                                            <p>Drop image here</p>
+                                            <span class="file-hint">or click to browse</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Audio</label>
+                                        <div class="file-upload" id="audio-drop-zone">
+                                            <input type="file" id="audio-upload" name="audio" accept="audio/*" hidden>
+                                            <i data-lucide="music"></i>
+                                            <p>Drop audio here</p>
+                                            <span class="file-hint">or click to browse</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-actions-sticky">
+                                    <button type="button" class="btn btn-secondary btn-full" id="clear-form-btn">
+                                        <i data-lucide="x"></i>
+                                        Clear
+                                    </button>
+                                    <button type="submit" class="btn btn-primary btn-full">
+                                        <i data-lucide="check"></i>
+                                        Publish Content
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Bulk Import Tab -->
+                <section id="bulk-import-tab" class="tab-content">
+                    <div class="page-header">
+                        <div>
+                            <h3>Bulk Import</h3>
+                            <p>Upload multiple content items at once</p>
+                        </div>
+                    </div>
+
+                    <div class="import-options">
+                        <div class="import-card" id="csv-import">
+                            <div class="import-icon">
+                                <i data-lucide="file-spreadsheet"></i>
+                            </div>
+                            <h4>CSV Import</h4>
+                            <p>Upload a CSV file with columns: title, category, sanskritText, hindiMeaning, translation,
+                                commentary</p>
+                            <input type="file" id="csv-file" accept=".csv" hidden>
+                            <button class="btn btn-outline">
+                                <i data-lucide="upload"></i>
+                                Choose CSV File
+                            </button>
+                        </div>
+
+                        <div class="import-card" id="json-import">
+                            <div class="import-icon">
+                                <i data-lucide="file-json"></i>
+                            </div>
+                            <h4>JSON Import</h4>
+                            <p>Upload a JSON file with an array of content objects</p>
+                            <input type="file" id="json-file" accept=".json" hidden>
+                            <button class="btn btn-outline">
+                                <i data-lucide="upload"></i>
+                                Choose JSON File
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card template-section">
+                        <div class="card-header">
+                            <h4><i data-lucide="file-down"></i> Download Templates</h4>
+                        </div>
+                        <div class="template-buttons">
+                            <button class="btn btn-ghost" id="download-csv-template">
+                                <i data-lucide="table"></i>
+                                CSV Template
+                            </button>
+                            <button class="btn btn-ghost" id="download-json-template">
+                                <i data-lucide="braces"></i>
+                                JSON Template
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Import Preview -->
+                    <div id="import-preview" class="card import-preview hidden">
+                        <div class="card-header">
+                            <h4><i data-lucide="eye"></i> Preview (<span id="preview-count">0</span> items)</h4>
+                        </div>
+                        <div class="preview-table-container">
+                            <table class="preview-table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Category</th>
+                                        <th>Sanskrit</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="preview-body">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="preview-actions">
+                            <button class="btn btn-secondary" id="cancel-import">
+                                <i data-lucide="x"></i>
+                                Cancel
+                            </button>
+                            <button class="btn btn-primary" id="confirm-import">
+                                <i data-lucide="rocket"></i>
+                                Import All
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Manage Content Tab -->
+                <section id="manage-tab" class="tab-content">
+                    <div class="page-header">
+                        <div>
+                            <h3>All Content</h3>
+                            <p>Manage your sacred content library</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="switchTab('add-content')">
+                            <i data-lucide="plus"></i>
+                            Add New
+                        </button>
+                    </div>
+
+                    <div class="filter-bar">
+                        <div class="filter-left">
+                            <div class="filter-group">
+                                <i data-lucide="filter"></i>
+                                <select id="filter-category" class="filter-select">
+                                    <option value="">All Categories</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filter-right">
+                            <div class="search-inline">
+                                <i data-lucide="search"></i>
+                                <input type="text" id="filter-search" placeholder="Search content...">
+                            </div>
+                            <div class="view-toggle">
+                                <button class="view-btn active" data-view="grid">
+                                    <i data-lucide="layout-grid"></i>
+                                </button>
+                                <button class="view-btn" data-view="list">
+                                    <i data-lucide="list"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-grid" id="content-grid">
+                        <div class="empty-state-large">
+                            <i data-lucide="inbox"></i>
+                            <h4>No content found</h4>
+                            <p>Start by adding your first piece of sacred content</p>
+                            <button class="btn btn-primary" onclick="switchTab('add-content')">
+                                <i data-lucide="plus"></i>
+                                Add Content
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Categories Tab -->
+                <section id="categories-tab" class="tab-content">
+                    <div class="page-header">
+                        <div>
+                            <h3>Categories</h3>
+                            <p>Organize your content with categories</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h4><i data-lucide="tags"></i> Available Categories</h4>
+                        </div>
+                        <div class="category-list" id="category-list">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div class="add-category-form">
+                            <div class="input-with-icon">
+                                <i data-lucide="plus"></i>
+                                <input type="text" id="new-category" placeholder="New category name...">
+                            </div>
+                            <button class="btn btn-primary" id="add-category-btn">
+                                <i data-lucide="plus"></i>
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container"></div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i data-lucide="edit"></i> Edit Content</h3>
+                <button class="btn-icon-only modal-close" id="close-modal">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <form id="edit-content-form">
+                <input type="hidden" id="edit-id">
+                <div class="form-group">
+                    <label for="edit-title">Title</label>
+                    <input type="text" id="edit-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-category">Category</label>
+                    <select id="edit-category" required>
+                        <option value="Shloka">Shloka</option>
+                        <option value="Strotra">Strotra</option>
+                        <option value="Mantra">Mantra</option>
+                        <option value="Bhajan">Bhajan</option>
+                        <option value="Katha">Katha</option>
+                        <option value="Aarti">Aarti</option>
+                        <option value="Chalisa">Chalisa</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-sanskrit">Sanskrit Text</label>
+                    <textarea id="edit-sanskrit" rows="3" class="sanskrit-input"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit-hindi">Hindi Meaning</label>
+                    <textarea id="edit-hindi" rows="3" class="hindi-input"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit-translation">English Translation</label>
+                    <textarea id="edit-translation" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit-commentary">Commentary</label>
+                    <textarea id="edit-commentary" rows="3"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-edit">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i data-lucide="save"></i>
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content login-modal">
+            <div class="login-header">
+                <div class="login-logo">
+                    <i data-lucide="flame"></i>
+                </div>
+                <h2>Vrindopnishad Admin</h2>
+                <p>Sign in to manage content</p>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">
+                        <i data-lucide="mail"></i>
+                        Email
+                    </label>
+                    <input type="email" id="login-email" required placeholder="admin@vrindopnishad.in">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">
+                        <i data-lucide="lock"></i>
+                        Password
+                    </label>
+                    <input type="password" id="login-password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i data-lucide="log-in"></i>
+                    Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
