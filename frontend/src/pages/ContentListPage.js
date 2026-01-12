@@ -12,6 +12,7 @@ const ContentListPage = () => {
 
   useEffect(() => {
     fetchContent();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
 
   const fetchContent = async () => {

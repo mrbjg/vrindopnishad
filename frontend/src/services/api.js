@@ -133,7 +133,40 @@ export const apiService = {
     }
   },
 
+  signUp: async (email, password) => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password
+      });
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Sign up error:', error);
+      throw error;
+    }
+  },
+
+  signInWithGoogle: async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin
+        }
+      });
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Google sign in error:', error);
+      throw error;
+    }
+  },
+
   verifyToken: async () => {
+    if (USE_MOCK) {
+      return mockApiService.verifyToken();
+    }
     try {
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error) throw error;

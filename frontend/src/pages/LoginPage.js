@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import {
-    signInWithEmailAndPassword,
-    createUserWithEmailAndPassword,
-    signInWithPopup,
-    GoogleAuthProvider
-} from 'firebase/auth';
-import { auth } from '../firebase';
+import { apiService } from '../services/api';
 import { useLoading } from '../contexts/LoadingContext';
 import Navigation from '../components/Navigation';
 
@@ -25,13 +19,16 @@ const LoginPage = () => {
 
         try {
             if (isLogin) {
-                await signInWithEmailAndPassword(auth, email, password);
+                await apiService.login(email, password);
             } else {
-                await createUserWithEmailAndPassword(auth, email, password);
+                await apiService.signUp(email, password);
+                if (!isLogin) {
+                    alert('Check your email for the confirmation link!');
+                }
             }
             navigate('/');
         } catch (err) {
-            setError(err.message);
+            setError(err.message || 'Authentication failed');
         } finally {
             hideLoading();
         }
@@ -40,12 +37,11 @@ const LoginPage = () => {
     const handleGoogleSignIn = async () => {
         setError('');
         showLoading('Signing in with Google...');
-        const provider = new GoogleAuthProvider();
         try {
-            await signInWithPopup(auth, provider);
-            navigate('/');
+            await apiService.signInWithGoogle();
+            // OAuth redirect will handle the navigation
         } catch (err) {
-            setError(err.message);
+            setError(err.message || 'Google Sign-In failed');
         } finally {
             hideLoading();
         }

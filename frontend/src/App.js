@@ -12,9 +12,9 @@ import LoaderDemo from './pages/LoaderDemo';
 import { LoadingProvider } from './contexts/LoadingContext';
 import { apiService } from './services/api';
 import { ThemeProvider } from './contexts/ThemeContext';
+import Loader from './components/Loader';
 
-import { auth } from './firebase';
-import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
+import { supabase } from './lib/supabase';
 import LoginPage from './pages/LoginPage';
 
 // Backend URL with fallback for development
@@ -37,25 +37,33 @@ function App() {
   useEffect(() => {
     const storedToken = localStorage.getItem('admin_token');
 
-    // Firebase Auth Listener
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      if (!storedToken) {
-        setLoading(false);
+    // Supabase Auth Listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+      if (session) {
+        setToken(session.access_token);
+        // If the user's email is the admin email, consider them admin
+        if (session.user?.email === 'admin@vrindopnishad.com') {
+          setIsAdmin(true);
+        }
+      } else {
+        setToken(null);
+        setIsAdmin(false);
       }
+      setLoading(false);
     });
 
     if (storedToken) {
       verifyToken(storedToken);
     }
 
-    return () => unsubscribe();
+    return () => subscription.unsubscribe();
   }, []);
 
   const verifyToken = async (tk) => {
     try {
       if (USE_MOCK_DATA) {
-        await mockApiService.verifyToken();
+        await apiService.verifyToken();
       } else {
         const response = await axios.get(`${API}/auth/verify`, {
           headers: { Authorization: `Bearer ${tk}` }
@@ -86,7 +94,7 @@ function App() {
     localStorage.removeItem('admin_token');
     setToken(null);
     setIsAdmin(false);
-    await firebaseSignOut(auth);
+    await supabase.auth.signOut();
   };
 
   if (loading) {

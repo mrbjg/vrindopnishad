@@ -113,3 +113,7 @@ Convenience scripts located in the root directory.
     ```bash
     ./start-full.sh
     ```
+*   **Run on Emulator:**
+    ```bash
+    flutter run -d emulator-5554
+    ```

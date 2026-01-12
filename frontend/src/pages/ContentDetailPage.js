@@ -12,6 +12,7 @@ const ContentDetailPage = () => {
 
   useEffect(() => {
     fetchContent();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchContent = async () => {
@@ -151,7 +152,7 @@ const ContentDetailPage = () => {
                   <img
                     key={idx}
                     src={url}
-                    alt={`${content.title} - Image ${idx + 1}`}
+                    alt={`${content.title} ${idx + 1}`}
                     className="gallery-image"
                     data-testid={`gallery-image-${idx}`}
                   />

@@ -76,7 +76,7 @@ const LoaderDemo = () => {
                         <strong>Code:</strong><br />
                         const &#123; showLoading, hideLoading &#125; = useLoading();<br />
                         showLoading('Custom message...');<br />
-            // ... async work ...<br />
+                        {/* ... async work ... */}<br />
                         hideLoading();
                     </div>
                 </div>
