@@ -11,7 +11,7 @@ import 'profile/saved_items_screen.dart';
 import 'profile/reading_history_screen.dart';
 import 'profile/settings_screen.dart';
 import 'profile/about_screen.dart';
-import 'admin_dashboard.dart';
+// import 'admin_dashboard.dart'; // Removed admin from profile
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -114,21 +114,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 ),
                 const SizedBox(height: 28),
 
-                _buildSectionTitle(context, "Admin", isDark),
-                const SizedBox(height: 14),
-                _buildGlassMenuItem(
-                  context,
-                  icon: LucideIcons.layoutDashboard,
-                  title: "Admin Dashboard",
-                  subtitle: "Add or manage content",
-                  gradientColors: [AppTheme.glowPink, const Color(0xFFF472B6)],
-                  isDark: isDark,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const AdminDashboard()),
-                  ),
-                ),
-                const SizedBox(height: 28),
+                // Admin section removed
 
                 // Glass Logout Button
                 _buildGlassLogoutButton(context, ref, isDark),
