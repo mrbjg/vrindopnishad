@@ -10,8 +10,13 @@
 const SUPABASE_URL = 'https://tilimltxgeucefxzerqi.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_0YiM-Q8itRORUDdToracaQ_vzcrjUlC';
 
-// Use a different variable name to avoid shadowing the global 'supabase'
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Use shared auth logic if possible, or initialize local client
+if (typeof supabase === 'undefined') {
+    console.warn('Supabase not loaded');
+} else {
+    window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+const supabaseClient = window.supabaseClient;
 
 // ========================================
 // State
