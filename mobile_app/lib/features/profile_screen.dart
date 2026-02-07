@@ -11,7 +11,7 @@ import 'profile/saved_items_screen.dart';
 import 'profile/reading_history_screen.dart';
 import 'profile/settings_screen.dart';
 import 'profile/about_screen.dart';
-// import 'admin_dashboard.dart'; // Removed admin from profile
+import '../widgets/animated_effects.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -487,73 +487,82 @@ class _ProfileHeader extends StatelessWidget {
         children: [
           // Profile Picture with Animated Glow Ring
           Stack(
-            alignment: Alignment.center,
-            children: [
-              // Animated glow ring
-              Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    colors: [
-                      AppTheme.primaryColor,
-                      AppTheme.glowPurple,
-                      AppTheme.glowTeal,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-              )
-              .animate(onPlay: (c) => c.repeat(reverse: true))
-              .scale(
-                begin: const Offset(1, 1),
-                end: const Offset(1.05, 1.05),
-                duration: 2.seconds,
-                curve: Curves.easeInOut,
-              ),
-              // Profile picture container
-              Container(
-                width: 110,
-                height: 110,
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isDark ? const Color(0xFF0A0A0F) : const Color(0xFFF5F3F0),
-                ),
-                child: ClipOval(
-                  child: _getPhotoUrl(user) != null
-                      ? CachedNetworkImage(
-                          imageUrl: _getPhotoUrl(user)!,
-                          fit: BoxFit.cover,
-                          memCacheWidth: 220,
-                          memCacheHeight: 220,
-                          maxWidthDiskCache: 220,
-                          maxHeightDiskCache: 220,
-                          placeholder: (context, url) => Container(
-                            color: isDark
-                                ? Colors.white.withOpacity(0.05)
-                                : Colors.black.withOpacity(0.05),
-                            child: const Center(
-                              child: SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              ),
-                            ),
+                alignment: Alignment.center,
+                children: [
+                  // Animated glow ring
+                  Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            colors: [
+                              AppTheme.primaryColor,
+                              AppTheme.glowPurple,
+                              AppTheme.glowTeal,
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                          errorWidget: (context, url, error) =>
-                              _buildFallbackAvatar(),
-                        )
-                      : _buildFallbackAvatar(),
-                ),
+                        ),
+                      )
+                      .animate(onPlay: (c) => c.repeat(reverse: true))
+                      .scale(
+                        begin: const Offset(1, 1),
+                        end: const Offset(1.05, 1.05),
+                        duration: 2.seconds,
+                        curve: Curves.easeInOut,
+                      ),
+                  // Profile picture container
+                  Container(
+                    width: 110,
+                    height: 110,
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isDark
+                          ? const Color(0xFF0A0A0F)
+                          : const Color(0xFFF5F3F0),
+                    ),
+                    child: ClipOval(
+                      child: _getPhotoUrl(user) != null
+                          ? CachedNetworkImage(
+                              imageUrl: _getPhotoUrl(user)!,
+                              fit: BoxFit.cover,
+                              memCacheWidth: 220,
+                              memCacheHeight: 220,
+                              maxWidthDiskCache: 220,
+                              maxHeightDiskCache: 220,
+                              placeholder: (context, url) => Container(
+                                color: isDark
+                                    ? Colors.white.withOpacity(0.05)
+                                    : Colors.black.withOpacity(0.05),
+                                child: const Center(
+                                  child: SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  _buildFallbackAvatar(),
+                            )
+                          : _buildFallbackAvatar(),
+                    ),
+                  ),
+                ],
+              )
+              .animate()
+              .fadeIn(duration: 600.ms)
+              .scale(
+                begin: const Offset(0.8, 0.8),
+                end: const Offset(1, 1),
+                duration: 600.ms,
+                curve: Curves.easeOutBack,
               ),
-            ],
-          )
-          .animate()
-          .fadeIn(duration: 600.ms)
-          .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1), duration: 600.ms, curve: Curves.easeOutBack),
           const SizedBox(height: 18),
           // Name
           Text(

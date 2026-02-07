@@ -1,0 +1,222 @@
+Resolving dependencies...
+Downloading packages...
+  _flutterfire_internals 1.3.65 (1.3.66 available)
+  app_links 6.4.1 (7.0.0 available)
+  audio_session 0.1.25 (0.2.2 available)
+  characters 1.4.0 (1.4.1 available)
+  cross_file 0.3.5+1 (0.3.5+2 available)
+  ffi 2.1.4 (2.1.5 available)
+  file_picker 8.3.7 (10.3.10 available)
+  firebase_auth 6.1.3 (6.1.4 available)
+  firebase_auth_platform_interface 8.1.5 (8.1.6 available)
+  firebase_auth_web 6.1.1 (6.1.2 available)
+  firebase_core 4.3.0 (4.4.0 available)
+  firebase_core_web 3.3.1 (3.4.0 available)
+  flutter_launcher_icons 0.13.1 (0.14.4 available)
+  flutter_riverpod 2.6.1 (3.2.1 available)
+  google_fonts 6.3.3 (8.0.0 available)
+  google_sign_in 6.3.0 (7.2.0 available)
+  google_sign_in_android 6.2.1 (7.2.7 available)
+  google_sign_in_ios 5.9.0 (6.2.5 available)
+  google_sign_in_platform_interface 2.5.0 (3.1.0 available)
+  google_sign_in_web 0.12.4+4 (1.1.0 available)
+  image_picker_android 0.8.13+10 (0.8.13+13 available)
+  image_picker_ios 0.8.13+3 (0.8.13+6 available)
+  json_annotation 4.9.0 (4.10.0 available)
+  just_audio 0.9.46 (0.10.5 available)
+  lints 6.0.0 (6.1.0 available)
+  matcher 0.12.17 (0.12.18 available)
+  material_color_utilities 0.11.1 (0.13.0 available)
+  meta 1.17.0 (1.18.1 available)
+  path_provider_foundation 2.5.1 (2.6.0 available)
+  riverpod 2.6.1 (3.2.1 available)
+  share_plus 10.1.4 (12.0.1 available)
+  share_plus_platform_interface 5.0.2 (6.1.0 available)
+  shared_preferences_android 2.4.18 (2.4.20 available)
+  test_api 0.7.7 (0.7.9 available)
+  url_launcher_web 2.4.1 (2.4.2 available)
+  vector_graphics_compiler 1.1.19 (1.1.20 available)
+Got dependencies!
+36 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Analyzing mobile_app...                                         
+
+   info • Don't invoke 'print' in production code • lib/core/auth_provider.dart:36:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/auth_provider.dart:43:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/auth_provider.dart:46:11 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/auth_provider.dart:50:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/auth_provider.dart:55:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/auth_provider.dart:66:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/auth_provider.dart:72:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/auth_provider.dart:76:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/content_provider.dart:83:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/favorites_provider.dart:34:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/favorites_provider.dart:67:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/favorites_provider.dart:88:7 • avoid_print
+  error • The method 'isDark' isn't defined for the type 'AppTheme' • lib/features/admin_dashboard.dart:40:29 • undefined_method
+  error • The method 'primaryGradient' isn't defined for the type 'AppTheme' • lib/features/admin_dashboard.dart:87:56 • undefined_method
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:92:46 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:150:40 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:151:40 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:155:42 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:156:42 • deprecated_member_use
+  error • The method 'primaryGradient' isn't defined for the type 'AppTheme' • lib/features/admin_dashboard.dart:163:42 • undefined_method
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:203:37 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:209:53 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:210:42 • deprecated_member_use
+  error • The method 'PressableScale' isn't defined for the type '_AdminDashboardState' • lib/features/admin_dashboard.dart:237:12 • undefined_method
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:246:30 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:247:30 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:251:32 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:252:32 • deprecated_member_use
+  error • The method 'PressableScale' isn't defined for the type '_AdminDashboardState' • lib/features/admin_dashboard.dart:282:11 • undefined_method
+  error • The method 'primaryGradient' isn't defined for the type 'AppTheme' • lib/features/admin_dashboard.dart:287:36 • undefined_method
+  error • The method 'glowShadow' isn't defined for the type 'AppTheme' • lib/features/admin_dashboard.dart:289:37 • undefined_method
+  error • The method 'PressableScale' isn't defined for the type '_AdminDashboardState' • lib/features/admin_dashboard.dart:378:11 • undefined_method
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:384:36 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:385:36 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:389:38 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:390:38 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:457:38 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:460:40 • deprecated_member_use
+  error • The method 'primaryGradient' isn't defined for the type 'AppTheme' • lib/features/admin_dashboard.dart:469:34 • undefined_method
+  error • The method 'PressableScale' isn't defined for the type '_AdminDashboardState' • lib/features/admin_dashboard.dart:513:12 • undefined_method
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:522:30 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:523:30 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:527:32 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:528:32 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:537:30 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:570:34 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:571:34 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:589:28 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:590:28 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:594:30 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:595:30 • deprecated_member_use
+  error • The method 'primaryGradient' isn't defined for the type 'AppTheme' • lib/features/admin_dashboard.dart:604:34 • undefined_method
+   info • Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check • lib/features/admin_dashboard.dart:710:29 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check • lib/features/admin_dashboard.dart:715:25 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check • lib/features/admin_dashboard.dart:735:29 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check • lib/features/admin_dashboard.dart:740:25 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check • lib/features/admin_dashboard.dart:760:29 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check • lib/features/admin_dashboard.dart:765:25 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check • lib/features/admin_dashboard.dart:785:29 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check • lib/features/admin_dashboard.dart:790:25 • use_build_context_synchronously
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:887:38 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:891:30 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/admin_dashboard.dart:892:30 • deprecated_member_use
+   info • Unnecessary use of multiple underscores • lib/features/category_screen.dart:31:37 • unnecessary_underscores
+warning • The value of the local variable 'isHindi' isn't used • lib/features/content_detail_screen.dart:24:11 • unused_local_variable
+   info • The type of the right operand ('String') isn't a subtype or a supertype of the left operand ('AppLanguage') • lib/features/content_detail_screen.dart:24:49 • unrelated_type_equality_checks
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/content_detail_screen.dart:69:55 • deprecated_member_use
+  error • The getter 'sanskrit' isn't defined for the type 'SacredContent' • lib/features/content_detail_screen.dart:72:25 • undefined_getter
+warning • Unused import: '../core/theme.dart' • lib/features/home_screen.dart:4:8 • unused_import
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/home_screen.dart:131:47 • deprecated_member_use
+warning • Unused import: 'category_screen.dart' • lib/features/library_screen.dart:6:8 • unused_import
+   info • Unnecessary use of multiple underscores • lib/features/library_screen.dart:23:37 • unnecessary_underscores
+  error • The named parameter 'commentary' is required, but there's no corresponding argument • lib/features/profile/reading_history_screen.dart:13:7 • missing_required_argument
+  error • The named parameter 'sanskrit' isn't defined • lib/features/profile/reading_history_screen.dart:17:9 • undefined_named_parameter
+  error • The named parameter 'audiourl' isn't defined • lib/features/profile/reading_history_screen.dart:19:9 • undefined_named_parameter
+  error • The named parameter 'originalText' isn't defined • lib/features/profile/reading_history_screen.dart:21:9 • undefined_named_parameter
+  error • The named parameter 'commentary' is required, but there's no corresponding argument • lib/features/profile/reading_history_screen.dart:24:7 • missing_required_argument
+  error • The named parameter 'sanskrit' isn't defined • lib/features/profile/reading_history_screen.dart:28:9 • undefined_named_parameter
+  error • The named parameter 'audiourl' isn't defined • lib/features/profile/reading_history_screen.dart:30:9 • undefined_named_parameter
+  error • The named parameter 'originalText' isn't defined • lib/features/profile/reading_history_screen.dart:32:9 • undefined_named_parameter
+   info • Unnecessary use of multiple underscores • lib/features/profile/reading_history_screen.dart:48:37 • unnecessary_underscores
+  error • The method 'isDark' isn't defined for the type 'AppTheme' • lib/features/profile/saved_items_screen.dart:11:29 • undefined_method
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/saved_items_screen.dart:38:40 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/saved_items_screen.dart:43:42 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/saved_items_screen.dart:44:42 • deprecated_member_use
+  error • The getter 'primaryDark' isn't defined for the type 'AppTheme' • lib/features/profile/saved_items_screen.dart:56:68 • undefined_getter
+  error • The named parameter 'content' is required, but there's no corresponding argument • lib/features/profile/saved_items_screen.dart:89:49 • missing_required_argument
+  error • The named parameter 'title' isn't defined • lib/features/profile/saved_items_screen.dart:90:29 • undefined_named_parameter
+  error • The named parameter 'category' isn't defined • lib/features/profile/saved_items_screen.dart:91:29 • undefined_named_parameter
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/saved_items_screen.dart:111:44 • deprecated_member_use
+  error • The method 'backgroundColor' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:28:33 • undefined_method
+  error • The method 'textPrimary' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:51:41 • undefined_method
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:59:52 • deprecated_member_use
+  error • The getter 'glowPurple' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:97:45 • undefined_getter
+  error • The getter 'glowBlue' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:97:66 • undefined_getter
+  error • The getter 'glowOrange' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:123:45 • undefined_getter
+  error • The getter 'glowTeal' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:140:45 • undefined_getter
+  error • The getter 'glowBlue' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:149:45 • undefined_getter
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:171:53 • deprecated_member_use
+  error • The getter 'glowPurple' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:172:40 • undefined_getter
+  error • The method 'textPrimary' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:189:43 • undefined_method
+  error • The method 'textMuted' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:197:43 • undefined_method
+  error • The method 'isDark' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:213:29 • undefined_method
+  error • The method 'PressableScale' isn't defined for the type '_SettingsScreenState' • lib/features/profile/settings_screen.dart:215:12 • undefined_method
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:221:30 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:222:30 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:226:32 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:227:32 • deprecated_member_use
+  error • The method 'textPrimary' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:232:27 • undefined_method
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:251:44 • deprecated_member_use
+  error • The method 'isDark' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:281:29 • undefined_method
+  error • The getter 'primaryDark' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:283:60 • undefined_getter
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:288:28 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:289:28 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:293:30 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:294:30 • deprecated_member_use
+  error • The method 'softShadow' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:297:29 • undefined_method
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:314:38 • deprecated_member_use
+  error • The method 'textPrimary' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:333:39 • undefined_method
+  error • The method 'textMuted' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:342:39 • undefined_method
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:369:52 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:373:40 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:393:39 • deprecated_member_use
+  error • The method 'isDark' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:411:29 • undefined_method
+  error • The method 'PressableScale' isn't defined for the type '_SettingsScreenState' • lib/features/profile/settings_screen.dart:413:12 • undefined_method
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:418:30 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:419:30 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:423:32 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:424:32 • deprecated_member_use
+  error • The method 'softShadow' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:427:31 • undefined_method
+  error • The getter 'glowPink' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:439:39 • undefined_getter
+  error • The getter 'glowPink' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:444:39 • undefined_getter
+  error • The method 'textPrimary' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:467:41 • undefined_method
+  error • The method 'textMuted' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:476:41 • undefined_method
+  error • The method 'surfaceColor' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:485:35 • undefined_method
+  error • The method 'isDark' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:502:29 • undefined_method
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:515:32 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:516:32 • deprecated_member_use
+  error • The method 'textMuted' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:530:39 • undefined_method
+  error • The getter 'glowPink' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:542:45 • undefined_getter
+  error • The method 'textPrimary' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:558:41 • undefined_method
+  error • The method 'textMuted' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:568:37 • undefined_method
+  error • The method 'PressableScale' isn't defined for the type '_SettingsScreenState' • lib/features/profile/settings_screen.dart:599:28 • undefined_method
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:610:55 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:612:46 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:613:46 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:617:57 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:628:61 • deprecated_member_use
+  error • The method 'surfaceColor' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:629:48 • undefined_method
+  error • The method 'textMuted' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:637:48 • undefined_method
+  error • The method 'textPrimary' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:654:54 • undefined_method
+  error • The method 'textMuted' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:661:55 • undefined_method
+  error • The method 'isDark' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:704:29 • undefined_method
+  error • The getter 'primaryDark' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:707:62 • undefined_getter
+  error • The method 'PressableScale' isn't defined for the type '_SettingsScreenState' • lib/features/profile/settings_screen.dart:709:12 • undefined_method
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:726:30 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:727:30 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:731:30 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:733:32 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:734:32 • deprecated_member_use
+  error • The method 'softShadow' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:737:31 • undefined_method
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile/settings_screen.dart:754:40 • deprecated_member_use
+  error • The method 'textPrimary' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:772:36 • undefined_method
+  error • The method 'surfaceColor' isn't defined for the type 'AppTheme' • lib/features/profile/settings_screen.dart:780:35 • undefined_method
+warning • Unused import: 'package:cached_network_image/cached_network_image.dart' • lib/features/profile_screen.dart:5:8 • unused_import
+warning • Unused import: '../core/theme.dart' • lib/features/profile_screen.dart:7:8 • unused_import
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/profile_screen.dart:34:34 • deprecated_member_use
+  error • The getter 'photoURL' isn't defined for the type 'User' • lib/features/profile_screen.dart:35:42 • undefined_getter
+  error • The getter 'photoURL' isn't defined for the type 'User' • lib/features/profile_screen.dart:36:44 • undefined_getter
+  error • The getter 'photoURL' isn't defined for the type 'User' • lib/features/profile_screen.dart:38:32 • undefined_getter
+  error • The getter 'displayName' isn't defined for the type 'User' • lib/features/profile_screen.dart:48:25 • undefined_getter
+warning • Unused import: '../core/providers.dart' • lib/features/search_screen.dart:4:8 • unused_import
+   info • Unnecessary use of multiple underscores • lib/features/search_screen.dart:73:37 • unnecessary_underscores
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/widgets/sacred_morph_widget.dart:84:33 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/widgets/sacred_morph_widget.dart:127:23 • deprecated_member_use
+warning • Unused import: 'dart:typed_data' • lib/widgets/share_content_widget.dart:2:8 • unused_import
+  error • The getter 'sanskrit' isn't defined for the type 'SacredContent' • lib/widgets/share_content_widget.dart:49:23 • undefined_getter
+  error • The getter 'sanskrit' isn't defined for the type 'SacredContent' • lib/widgets/share_content_widget.dart:151:62 • undefined_getter
+

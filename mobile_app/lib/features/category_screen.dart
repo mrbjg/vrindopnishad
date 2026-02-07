@@ -8,6 +8,7 @@ import '../core/providers.dart';
 import '../core/localization.dart';
 import '../core/content_provider.dart';
 import 'content_detail_screen.dart';
+import '../widgets/animated_effects.dart';
 
 class CategoryScreen extends ConsumerStatefulWidget {
   final String categoryName;

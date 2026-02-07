@@ -8,6 +8,7 @@ import '../core/content_provider.dart';
 import '../core/theme.dart';
 import '../core/providers.dart';
 import '../core/localization.dart';
+import '../widgets/animated_effects.dart';
 
 class AdminDashboard extends ConsumerStatefulWidget {
   const AdminDashboard({super.key});

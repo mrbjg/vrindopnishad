@@ -53,3 +53,6 @@ final languageProvider = StateNotifierProvider<LanguageNotifier, AppLanguage>((
 ) {
   return LanguageNotifier();
 });
+
+/// Provider for managing visible item count in HomeScreen list (manual pagination)
+final visibleItemCountProvider = StateProvider<int>((ref) => 5);

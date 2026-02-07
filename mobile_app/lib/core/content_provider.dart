@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'database_helper.dart';
+import 'cache_service.dart';
 import '../services/api_service.dart';
 
 class SacredContent {
@@ -56,53 +57,111 @@ class SacredContent {
 
 class ContentNotifier extends StateNotifier<List<SacredContent>> {
   ContentNotifier() : super([]) {
-    _loadFromDatabase();
+    _initAndLoad();
   }
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  Future<void> _loadFromDatabase() async {
-    _isLoading = true;
-    try {
-      // 1. Try to fetch from Supabase (online mode)
-      final apiContent = await ApiService.fetchAllContent();
+  final CacheService _cache = CacheService.instance;
 
+  /// Initialize cache and load data with priority
+  Future<void> _initAndLoad() async {
+    _isLoading = true;
+
+    // 1. Initialize cache service
+    await _cache.init();
+
+    // 2. INSTANT: Load from memory cache if available
+    final cachedContent = _cache.getCachedContent();
+    if (cachedContent != null && cachedContent.isNotEmpty) {
+      state = cachedContent;
+      _isLoading = false;
+
+      // Background refresh from API for freshness
+      _backgroundRefresh();
+      return;
+    }
+
+    // 3. FAST: Load from local SQLite DB
+    final dbContent = await DatabaseHelper.instance.fetchAllContent();
+    if (dbContent.isNotEmpty) {
+      state = dbContent;
+      await _cache.cacheContent(dbContent);
+      _isLoading = false;
+
+      // Background refresh from API
+      _backgroundRefresh();
+      return;
+    }
+
+    // 4. SLOW: Fetch from Supabase API (first load or empty cache)
+    await _fetchFromApi();
+    _isLoading = false;
+  }
+
+  /// Background refresh from API (doesn't block UI)
+  Future<void> _backgroundRefresh() async {
+    try {
+      final apiContent = await ApiService.fetchAllContent();
       if (apiContent.isNotEmpty) {
-        // 2. If successful, update local DB for offline support
+        // Update local DB
         await DatabaseHelper.instance.deleteAllContent();
         for (var item in apiContent) {
           await DatabaseHelper.instance.insertContent(item);
         }
+        // Update cache
+        await _cache.cacheContent(apiContent);
+        // Update state (smooth transition)
         state = apiContent;
-        _isLoading = false;
-        return;
       }
     } catch (e) {
-      // Ignore API errors, fallback to local DB
-      print("Supabase sync failed: $e");
+      // Silent fail - we already have cached data
+      print('Background refresh failed: $e');
     }
+  }
 
-    // 3. Fallback to local DB (offline mode)
-    final dbContent = await DatabaseHelper.instance.fetchAllContent();
-    state = dbContent;
+  /// Fetch from API (blocking)
+  Future<void> _fetchFromApi() async {
+    try {
+      final apiContent = await ApiService.fetchAllContent();
+      if (apiContent.isNotEmpty) {
+        await DatabaseHelper.instance.deleteAllContent();
+        for (var item in apiContent) {
+          await DatabaseHelper.instance.insertContent(item);
+        }
+        await _cache.cacheContent(apiContent);
+        state = apiContent;
+      }
+    } catch (e) {
+      print('API fetch failed: $e');
+    }
+  }
+
+  /// Force refresh content from Supabase
+  Future<void> refresh() async {
+    _isLoading = true;
+    await _fetchFromApi();
     _isLoading = false;
   }
 
-  /// Refresh content from Supabase
-  Future<void> refresh() async {
-    await _loadFromDatabase();
-  }
-
-  /// Fetch content filtered by category
+  /// Fetch content filtered by category (with caching)
   Future<List<SacredContent>> fetchByCategory(String category) async {
+    // Check cache first
+    final cached = _cache.getCachedByCategory(category);
+    if (cached != null && cached.isNotEmpty) {
+      return cached;
+    }
+
     try {
       return await ApiService.fetchAllContent(category: category);
     } catch (e) {
       // Fallback to filtering local state
-      return state.where((item) => 
-        item.category.toLowerCase() == category.toLowerCase()
-      ).toList();
+      return state
+          .where(
+            (item) => item.category.toLowerCase() == category.toLowerCase(),
+          )
+          .toList();
     }
   }
 
@@ -113,25 +172,28 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
     } catch (e) {
       // Fallback to local search
       final lowerQuery = query.toLowerCase();
-      return state.where((item) =>
-        item.title.toLowerCase().contains(lowerQuery) ||
-        item.sanskritText.toLowerCase().contains(lowerQuery) ||
-        item.hindiMeaning.toLowerCase().contains(lowerQuery) ||
-        item.translation.toLowerCase().contains(lowerQuery)
-      ).toList();
+      return state
+          .where(
+            (item) =>
+                item.title.toLowerCase().contains(lowerQuery) ||
+                item.sanskritText.toLowerCase().contains(lowerQuery) ||
+                item.hindiMeaning.toLowerCase().contains(lowerQuery) ||
+                item.translation.toLowerCase().contains(lowerQuery),
+          )
+          .toList();
     }
   }
-
-  // static final List<SacredContent> _initialContent = []; // Removed hardcoded data
 
   Future<void> addContent(SacredContent content) async {
     await DatabaseHelper.instance.insertContent(content);
     state = [...state, content];
+    await _cache.cacheContent(state);
   }
 
   Future<void> removeContent(String id) async {
     await DatabaseHelper.instance.deleteContent(id);
     state = state.where((item) => item.id != id).toList();
+    await _cache.cacheContent(state);
   }
 }
 
