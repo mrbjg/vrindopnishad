@@ -51,7 +51,7 @@ const AdminDashboard = () => {
     e.preventDefault();
     try {
       const headers = { Authorization: `Bearer ${token}` };
-      
+
       if (editingId) {
         await axios.put(`${API}/content/${editingId}`, formData, { headers });
         alert('Content updated successfully!');
@@ -117,7 +117,7 @@ const AdminDashboard = () => {
     try {
       setGeneratingAudio(true);
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await axios.post(
+      await axios.post(
         `${API}/content/${selectedContentId}/generate-audio`,
         { text: audioGenText, language: audioGenLang },
         { headers }
@@ -142,7 +142,7 @@ const AdminDashboard = () => {
     try {
       setGeneratingImage(true);
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await axios.post(
+      await axios.post(
         `${API}/content/${selectedContentId}/generate-image`,
         { prompt: imagePrompt },
         { headers }
@@ -158,6 +158,7 @@ const AdminDashboard = () => {
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handleFileUpload = async (contentId, file, type) => {
     try {
       const headers = { Authorization: `Bearer ${token}` };
@@ -300,7 +301,7 @@ const AdminDashboard = () => {
 
         <div className="card mb-4" style={{ padding: '2rem' }}>
           <h2 className="mb-3">AI Generation Tools</h2>
-          
+
           <div className="mb-4">
             <h3 style={{ fontSize: '1.3rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Music size={24} />

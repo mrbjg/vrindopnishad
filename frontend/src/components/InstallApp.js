@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Download, Monitor, Smartphone, AppWindow } from 'lucide-react';
+import { Smartphone, AppWindow } from 'lucide-react';
 
 const InstallApp = () => {
     const [deferredPrompt, setDeferredPrompt] = useState(null);

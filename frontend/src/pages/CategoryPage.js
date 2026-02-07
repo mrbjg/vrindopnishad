@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { apiService } from '../services/api';
 import Navigation from '../components/Navigation';
@@ -27,11 +27,7 @@ const CategoryPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchContent();
-  }, [category]);
-
-  const fetchContent = async () => {
+  const fetchContent = useCallback(async () => {
     try {
       setLoading(true);
       const data = await apiService.getAllContent(category);
@@ -41,7 +37,11 @@ const CategoryPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [category]);
+
+  useEffect(() => {
+    fetchContent();
+  }, [fetchContent]);
 
   const info = categoryInfo[category] || { name: category, description: '', icon: BookOpen };
   const IconComponent = info.icon;

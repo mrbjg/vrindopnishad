@@ -1,0 +1,23 @@
+{
+    "props": {
+        "pageProps": {},
+        "__N_SSG": true
+    },
+    "page": "/rasik-saints",
+    "query": {},
+    "buildId": "Y543rxvdfDzvMbrA1sZvQ",
+    "isFallback": false,
+    "dynamicIds": [
+        56052,
+        50978,
+        53390
+    ],
+    "gsp": true,
+    "locale": "hi",
+    "locales": [
+        "en",
+        "hi"
+    ],
+    "defaultLocale": "en",
+    "scriptLoader": []
+}
