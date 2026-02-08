@@ -64,6 +64,17 @@ class HomeScreen extends ConsumerWidget {
             ),
 
             // ═══════════════════════════════════════════════════════════════
+            // NAAM JAP COUNTER - Sacred mantra chanting counter
+            // ═══════════════════════════════════════════════════════════════
+            SliverToBoxAdapter(
+              child: Consumer(
+                builder: (context, ref, _) {
+                  return _buildNaamJapCounter(context, ref, isDark);
+                },
+              ),
+            ),
+
+            // ═══════════════════════════════════════════════════════════════
             // CATEGORIES GRID - Stunning gradient cards
             // ═══════════════════════════════════════════════════════════════
             SliverToBoxAdapter(
@@ -195,6 +206,250 @@ class HomeScreen extends ConsumerWidget {
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
+  // NAAM JAP COUNTER - Sacred mantra chanting counter
+  // ═══════════════════════════════════════════════════════════════════════════
+  Widget _buildNaamJapCounter(
+    BuildContext context,
+    WidgetRef ref,
+    bool isDark,
+  ) {
+    final count = ref.watch(naamJapCounterProvider);
+    final malaCount = count ~/ 108; // Number of complete malas
+    final currentInMala = count % 108; // Current position in mala
+    final progress = currentInMala / 108;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppTheme.space20,
+        AppTheme.space20,
+        AppTheme.space20,
+        0,
+      ),
+      child: GlassCard(
+        blur: 12,
+        opacity: isDark ? 0.15 : 0.8,
+        borderRadius: BorderRadius.circular(AppTheme.radiusXL),
+        padding: const EdgeInsets.all(AppTheme.space20),
+        child: Column(
+          children: [
+            // Header row
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [AppTheme.deepSaffron, AppTheme.primaryColor],
+                    ),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.deepSaffron.withOpacity(0.4),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    LucideIcons.repeat,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'नाम जप',
+                      style: GoogleFonts.notoSansDevanagari(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.textPrimary(context),
+                      ),
+                    ),
+                    Text(
+                      'Naam Jap Counter',
+                      style: GoogleFonts.outfit(
+                        fontSize: 11,
+                        color: AppTheme.textMuted(context),
+                      ),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                // Reset button
+                if (count > 0)
+                  PressableScale(
+                    onTap: () {
+                      HapticFeedback.mediumImpact();
+                      ref.read(naamJapCounterProvider.notifier).state = 0;
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppTheme.surfaceColor(context),
+                        borderRadius: BorderRadius.circular(
+                          AppTheme.radiusFull,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            LucideIcons.rotateCcw,
+                            size: 12,
+                            color: AppTheme.textMuted(context),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Reset',
+                            style: GoogleFonts.outfit(
+                              fontSize: 11,
+                              color: AppTheme.textMuted(context),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: AppTheme.space24),
+            // Counter display with tappable ॐ
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Mala counter (left)
+                Column(
+                  children: [
+                    Text(
+                      '$malaCount',
+                      style: GoogleFonts.outfit(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.primaryColor,
+                      ),
+                    ),
+                    Text(
+                      'Mala',
+                      style: GoogleFonts.outfit(
+                        fontSize: 11,
+                        color: AppTheme.textMuted(context),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: AppTheme.space24),
+                // Main tappable ॐ button with progress ring
+                GestureDetector(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    ref.read(naamJapCounterProvider.notifier).state++;
+                  },
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // Progress ring
+                      SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: CircularProgressIndicator(
+                          value: progress,
+                          strokeWidth: 6,
+                          backgroundColor: AppTheme.surfaceColor(context),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppTheme.deepSaffron,
+                          ),
+                        ),
+                      ),
+                      // ॐ button
+                      Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              AppTheme.deepSaffron,
+                              AppTheme.primaryColor,
+                            ],
+                          ),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.deepSaffron.withOpacity(0.5),
+                              blurRadius: 20,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'ॐ',
+                            style: TextStyle(
+                              fontSize: 36,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: AppTheme.space24),
+                // Current count (right)
+                Column(
+                  children: [
+                    Text(
+                      '$currentInMala',
+                      style: GoogleFonts.outfit(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.textPrimary(context),
+                      ),
+                    ),
+                    Text(
+                      '/ 108',
+                      style: GoogleFonts.outfit(
+                        fontSize: 11,
+                        color: AppTheme.textMuted(context),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: AppTheme.space16),
+            // Total count
+            Text(
+              'Total: $count',
+              style: GoogleFonts.outfit(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: AppTheme.textSecondary(context),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Tap ॐ to count',
+              style: GoogleFonts.outfit(
+                fontSize: 11,
+                color: AppTheme.textMuted(context),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
   // CATEGORIES SECTION - Beautiful gradient cards
   // ═══════════════════════════════════════════════════════════════════════════
   Widget _buildCategoriesSection(
@@ -309,7 +564,7 @@ class HomeScreen extends ConsumerWidget {
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // CONTINUE READING - Glassmorphism cards
+  // CONTINUE READING - Premium glassmorphism cards
   // ═══════════════════════════════════════════════════════════════════════════
   Widget _buildContinueReading(
     BuildContext context,
@@ -328,22 +583,57 @@ class HomeScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: AppTheme.space20),
             child: Row(
               children: [
-                Icon(LucideIcons.bookmark, size: 18, color: AppTheme.lotusRose),
-                const SizedBox(width: 8),
-                Text(
-                  'Continue Reading',
-                  style: GoogleFonts.outfit(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.textPrimary(context),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppTheme.lotusRose,
+                        AppTheme.lotusRose.withOpacity(0.7),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.lotusRose.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
+                  child: const Icon(
+                    LucideIcons.bookmark,
+                    size: 16,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Continue Reading',
+                      style: GoogleFonts.outfit(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.textPrimary(context),
+                      ),
+                    ),
+                    Text(
+                      'Pick up where you left off',
+                      style: GoogleFonts.outfit(
+                        fontSize: 11,
+                        color: AppTheme.textMuted(context),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
-          const SizedBox(height: AppTheme.space12),
+          const SizedBox(height: AppTheme.space16),
           SizedBox(
-            height: 100,
+            height: 170, // Increased to accommodate multi-line content
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
@@ -384,10 +674,13 @@ class HomeScreen extends ConsumerWidget {
     double progress,
     bool isDark,
   ) {
+    final progressPercent = (progress * 100).toInt();
+    final categoryColors = _getCategoryGradient(item.category);
+
     return GlassCard(
-      blur: 6,
-      opacity: isDark ? 0.12 : 0.6,
-      borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+      blur: 8,
+      opacity: isDark ? 0.15 : 0.7,
+      borderRadius: BorderRadius.circular(AppTheme.radiusXL),
       onTap: () {
         HapticFeedback.lightImpact();
         Navigator.push(
@@ -396,62 +689,155 @@ class HomeScreen extends ConsumerWidget {
         );
       },
       child: SizedBox(
-        width: 180,
+        width: 220, // Wider cards
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
           children: [
+            // Top: Category badge + ॐ icon
             Row(
               children: [
+                // Category badge with gradient
                 Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    gradient: AppTheme.primaryGradient(context),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
                   ),
-                  child: const Text(
-                    'ॐ',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: categoryColors),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                    boxShadow: [
+                      BoxShadow(
+                        color: categoryColors.first.withOpacity(0.3),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    item.category,
+                    style: GoogleFonts.outfit(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
+                const Spacer(),
+                // Sacred ॐ icon
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor.withOpacity(0.15),
+                    shape: BoxShape.circle,
+                  ),
                   child: Text(
-                    item.title,
-                    style: GoogleFonts.outfit(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.textPrimary(context),
+                    'ॐ',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppTheme.primaryColor,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
-            const Spacer(),
-            // Progress bar
-            ClipRRect(
-              borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-              child: Stack(
-                children: [
-                  Container(height: 4, color: AppTheme.surfaceColor(context)),
-                  FractionallySizedBox(
-                    widthFactor: progress,
-                    child: Container(
-                      height: 4,
-                      decoration: BoxDecoration(
-                        gradient: AppTheme.primaryGradient(context),
-                      ),
-                    ),
-                  ),
-                ],
+            const SizedBox(height: 10),
+            // Title - adaptive: short titles on 1 line, long on 2
+            Text(
+              item.title,
+              style: GoogleFonts.outfit(
+                fontSize: item.title.length > 25 ? 13 : 14,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.textPrimary(context),
+                height: 1.3,
               ),
+              maxLines: item.title.length > 25 ? 2 : 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 6),
+            // Sanskrit preview - split by delimiters for readability
+            Text(
+              _formatSanskritPreview(item.sanskritText, 2),
+              style: GoogleFonts.notoSansDevanagari(
+                fontSize: 10,
+                color: AppTheme.textMuted(context),
+                height: 1.5,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const Spacer(),
+            // Progress section
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Progress bar
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                          AppTheme.radiusFull,
+                        ),
+                        child: Stack(
+                          children: [
+                            Container(
+                              height: 5,
+                              color: AppTheme.surfaceColor(context),
+                            ),
+                            FractionallySizedBox(
+                              widthFactor: progress,
+                              child: Container(
+                                height: 5,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: categoryColors,
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    AppTheme.radiusFull,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 10),
+                // Progress percentage
+                Text(
+                  '$progressPercent%',
+                  style: GoogleFonts.outfit(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: categoryColors.first,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  // Helper to get category-specific gradient colors
+  List<Color> _getCategoryGradient(String category) {
+    switch (category.toLowerCase()) {
+      case 'mantra':
+        return [AppTheme.sacredViolet, const Color(0xFF8B5CF6)];
+      case 'stotra':
+        return [AppTheme.sereneTeal, const Color(0xFF14B8A6)];
+      case 'chalisa':
+        return [AppTheme.deepSaffron, AppTheme.primaryColor];
+      case 'aarti':
+        return [AppTheme.lotusRose, const Color(0xFFF472B6)];
+      case 'bhajan':
+        return [AppTheme.peacockBlue, const Color(0xFF38BDF8)];
+      default:
+        return [AppTheme.primaryColor, AppTheme.primaryDark];
+    }
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -567,9 +953,13 @@ class HomeScreen extends ConsumerWidget {
     SacredContent item,
     bool isDark,
   ) {
+    final categoryColors = _getCategoryGradient(item.category);
+
     return GlassCard(
-      blur: 8,
-      opacity: isDark ? 0.1 : 0.7,
+      blur: 10,
+      opacity: isDark ? 0.12 : 0.75,
+      borderRadius: BorderRadius.circular(AppTheme.radiusXL),
+      borderColor: categoryColors.first.withOpacity(0.15),
       onTap: () {
         HapticFeedback.lightImpact();
         Navigator.push(
@@ -578,67 +968,114 @@ class HomeScreen extends ConsumerWidget {
         );
       },
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ॐ Icon with glow
+          // ॐ Icon with category-specific gradient
           Container(
-            width: 52,
-            height: 52,
+            width: 60,
+            height: 60,
             decoration: BoxDecoration(
-              gradient: AppTheme.primaryGradient(context),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: categoryColors,
+              ),
               borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
-              boxShadow: AppTheme.glowShadow(AppTheme.primaryColor),
+              boxShadow: [
+                BoxShadow(
+                  color: categoryColors.first.withOpacity(0.4),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: const Center(
               child: Text(
                 'ॐ',
                 style: TextStyle(
-                  fontSize: 26,
+                  fontSize: 28,
                   color: Colors.white,
                   fontWeight: FontWeight.w300,
                 ),
               ),
             ),
           ),
-          const SizedBox(width: AppTheme.space12),
+          const SizedBox(width: AppTheme.space16),
           // Content
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Title - adaptive sizing
                 Text(
                   item.title,
                   style: GoogleFonts.outfit(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
+                    fontSize: item.title.length > 30 ? 15 : 16,
+                    fontWeight: FontWeight.w700,
                     color: AppTheme.textPrimary(context),
+                    height: 1.25,
                   ),
-                  maxLines: 1,
+                  maxLines: item.title.length > 30 ? 2 : 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
+                // Sanskrit preview - split by delimiters for readability
+                Text(
+                  _formatSanskritPreview(item.sanskritText, 2),
+                  style: GoogleFonts.notoSansDevanagari(
+                    fontSize: 11,
+                    color: AppTheme.textSecondary(context),
+                    height: 1.5,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+                // Category and meta row
                 Row(
                   children: [
+                    // Category chip with gradient background
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
+                        horizontal: 10,
+                        vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryColor.withOpacity(0.15),
+                        gradient: LinearGradient(
+                          colors: [
+                            categoryColors.first.withOpacity(0.2),
+                            categoryColors.last.withOpacity(0.1),
+                          ],
+                        ),
                         borderRadius: BorderRadius.circular(
                           AppTheme.radiusFull,
                         ),
-                      ),
-                      child: Text(
-                        item.category,
-                        style: GoogleFonts.outfit(
-                          fontSize: 10,
-                          color: AppTheme.primaryColor,
-                          fontWeight: FontWeight.w600,
+                        border: Border.all(
+                          color: categoryColors.first.withOpacity(0.3),
+                          width: 0.5,
                         ),
                       ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            _getCategoryIcon(item.category),
+                            size: 10,
+                            color: categoryColors.first,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            item.category,
+                            style: GoogleFonts.outfit(
+                              fontSize: 10,
+                              color: categoryColors.first,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 10),
                     Icon(
                       LucideIcons.clock,
                       size: 12,
@@ -646,7 +1083,7 @@ class HomeScreen extends ConsumerWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '5 min',
+                      '5 min read',
                       style: GoogleFonts.outfit(
                         fontSize: 11,
                         color: AppTheme.textMuted(context),
@@ -657,21 +1094,61 @@ class HomeScreen extends ConsumerWidget {
               ],
             ),
           ),
-          // Animated chevron
+          // Arrow with gradient background
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppTheme.surfaceColor(context),
+              gradient: LinearGradient(
+                colors: [
+                  categoryColors.first.withOpacity(0.1),
+                  categoryColors.last.withOpacity(0.05),
+                ],
+              ),
               shape: BoxShape.circle,
             ),
             child: Icon(
               LucideIcons.chevronRight,
               size: 16,
-              color: AppTheme.textMuted(context),
+              color: categoryColors.first,
             ),
           ),
         ],
       ),
     );
+  }
+
+  // Helper to get category-specific icon
+  IconData _getCategoryIcon(String category) {
+    switch (category.toLowerCase()) {
+      case 'mantra':
+        return LucideIcons.sparkles;
+      case 'stotra':
+        return LucideIcons.scroll;
+      case 'chalisa':
+        return LucideIcons.book;
+      case 'aarti':
+        return LucideIcons.flame;
+      case 'bhajan':
+        return LucideIcons.music;
+      default:
+        return LucideIcons.fileText;
+    }
+  }
+
+  // Helper to format Sanskrit text by splitting on delimiters
+  // Splits by | || , \n and joins with newlines for display
+  String _formatSanskritPreview(String text, int maxLines) {
+    // Split by common Sanskrit verse delimiters
+    final delimiters = RegExp(r'\s*[\|।॥,\n]+\s*');
+    final parts = text
+        .split(delimiters)
+        .where((s) => s.trim().isNotEmpty)
+        .toList();
+
+    if (parts.isEmpty) return text;
+
+    // Take only first maxLines parts and join with newlines
+    final linesToShow = parts.take(maxLines).join('\n');
+    return linesToShow;
   }
 }

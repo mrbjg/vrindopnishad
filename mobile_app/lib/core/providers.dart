@@ -56,3 +56,6 @@ final languageProvider = StateNotifierProvider<LanguageNotifier, AppLanguage>((
 
 /// Provider for managing visible item count in HomeScreen list (manual pagination)
 final visibleItemCountProvider = StateProvider<int>((ref) => 5);
+
+/// Provider for Naam Jap (mantra chanting) counter
+final naamJapCounterProvider = StateProvider<int>((ref) => 0);
