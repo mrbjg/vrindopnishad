@@ -511,52 +511,108 @@ class HomeScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: AppTheme.space16),
-          SizedBox(
-            height: 130,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: AppTheme.space20),
-              itemCount: categories.length,
-              itemBuilder: (context, index) {
-                final cat = categories[index];
-                final card = RepaintBoundary(
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      right: index < categories.length - 1
-                          ? AppTheme.space12
-                          : 0,
+          Stack(
+            children: [
+              ClipRRect(
+                child: SizedBox(
+                  height: 130,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    clipBehavior: Clip.none,
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.space20,
                     ),
-                    child: SizedBox(
-                      width: 140,
-                      child: GradientCategoryCard(
-                        title: cat['name'] as String,
-                        icon: cat['icon'] as IconData,
-                        gradientColors: cat['gradient'] as List<Color>,
-                        itemCount: cat['count'] as int,
-                        onTap: () {
-                          HapticFeedback.lightImpact();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => CategoryScreen(
-                                categoryName: cat['name'] as String,
-                                gradientColors: cat['gradient'] as List<Color>,
-                              ),
+                    itemCount: categories.length,
+                    itemBuilder: (context, index) {
+                      final cat = categories[index];
+                      final card = RepaintBoundary(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            right: index < categories.length - 1
+                                ? AppTheme.space12
+                                : 0,
+                          ),
+                          child: SizedBox(
+                            width: 140,
+                            child: GradientCategoryCard(
+                              title: cat['name'] as String,
+                              icon: cat['icon'] as IconData,
+                              gradientColors: cat['gradient'] as List<Color>,
+                              itemCount: cat['count'] as int,
+                              onTap: () {
+                                HapticFeedback.lightImpact();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => CategoryScreen(
+                                      categoryName: cat['name'] as String,
+                                      gradientColors:
+                                          cat['gradient'] as List<Color>,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
+                          ),
+                        ),
+                      );
+                      // Only animate first few items to avoid scroll jank
+                      if (index < 4) {
+                        return card.animate().fadeIn(duration: 300.ms);
+                      }
+                      return card;
+                    },
+                  ),
+                ),
+              ),
+              // Left fade gradient
+              Positioned(
+                left: 0,
+                top: 0,
+                bottom: 0,
+                child: IgnorePointer(
+                  child: Container(
+                    width: 20,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          isDark
+                              ? const Color(0xFF0A0A0F)
+                              : const Color(0xFFF8F6F3),
+                          isDark
+                              ? const Color(0xFF0A0A0F).withOpacity(0)
+                              : const Color(0xFFF8F6F3).withOpacity(0),
+                        ],
                       ),
                     ),
                   ),
-                );
-                // Only animate first few items to avoid scroll jank
-                if (index < 4) {
-                  return card.animate().fadeIn(duration: 300.ms);
-                }
-                return card;
-              },
-            ),
+                ),
+              ),
+              // Right fade gradient
+              Positioned(
+                right: 0,
+                top: 0,
+                bottom: 0,
+                child: IgnorePointer(
+                  child: Container(
+                    width: 20,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          isDark
+                              ? const Color(0xFF0A0A0F).withOpacity(0)
+                              : const Color(0xFFF8F6F3).withOpacity(0),
+                          isDark
+                              ? const Color(0xFF0A0A0F)
+                              : const Color(0xFFF8F6F3),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -743,7 +799,7 @@ class HomeScreen extends ConsumerWidget {
             const SizedBox(height: 10),
             // Title - adaptive: short titles on 1 line, long on 2
             Text(
-              item.title,
+              item.title.replaceAll('\n', ', '),
               style: GoogleFonts.outfit(
                 fontSize: item.title.length > 25 ? 13 : 14,
                 fontWeight: FontWeight.w700,
@@ -1008,7 +1064,7 @@ class HomeScreen extends ConsumerWidget {
               children: [
                 // Title - adaptive sizing
                 Text(
-                  item.title,
+                  item.title.replaceAll('\n', ', '),
                   style: GoogleFonts.outfit(
                     fontSize: item.title.length > 30 ? 15 : 16,
                     fontWeight: FontWeight.w700,
@@ -1147,8 +1203,8 @@ class HomeScreen extends ConsumerWidget {
 
     if (parts.isEmpty) return text;
 
-    // Take only first maxLines parts and join with newlines
-    final linesToShow = parts.take(maxLines).join('\n');
+    // Take only first maxLines parts and join with commas
+    final linesToShow = parts.take(maxLines).join(', ');
     return linesToShow;
   }
 }

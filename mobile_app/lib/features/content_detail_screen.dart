@@ -104,7 +104,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     final isDark = AppTheme.isDark(context);
 
     final displayTitle =
-        widget.content?.title ?? widget.title ?? l.translate('sacred_text');
+        (widget.content?.title ?? widget.title ?? l.translate('sacred_text'))
+            .replaceAll('\n', ', ');
     final displayCategory =
         widget.content?.category ?? widget.category ?? "Wisdom";
 
@@ -266,7 +267,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           Center(
             child:
                 Text(
-                      title,
+                      title.replaceAll('\n', ', '),
                       textAlign: TextAlign.center,
                       style: GoogleFonts.spectral(
                         fontSize: 28,
@@ -460,8 +461,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           const SizedBox(height: AppTheme.space20),
           // Sanskrit Text
           Text(
-            widget.content?.sanskritText ??
-                "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥",
+            (widget.content?.sanskritText ??
+                    "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥")
+                .replaceAll('\n', ', '),
             textAlign: TextAlign.center,
             style: GoogleFonts.spectral(
               fontSize: _fontSize + 2,
@@ -551,7 +553,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           const SizedBox(height: AppTheme.space16),
           // Content
           Text(
-            content,
+            content.replaceAll('\n', ', '),
             style: GoogleFonts.outfit(
               fontSize: _fontSize - 2,
               color: AppTheme.textSecondary(context),

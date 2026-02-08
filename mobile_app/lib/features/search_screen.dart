@@ -20,12 +20,14 @@ class SearchScreen extends ConsumerStatefulWidget {
 
 class _SearchScreenState extends ConsumerState<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   String _searchQuery = '';
   bool _isSearching = false;
 
   @override
   void dispose() {
     _searchController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -57,277 +59,396 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     return Scaffold(
       backgroundColor: isDark
           ? const Color(0xFF0A0A0F)
-          : const Color(0xFFF5F3F0),
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          // Header
-          SliverToBoxAdapter(
-            child: Container(
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).padding.top + 20,
-                left: 24,
-                right: 24,
-                bottom: 24,
-              ),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isDark
-                      ? [const Color(0xFF1A1A2E), const Color(0xFF16213E)]
-                      : [const Color(0xFFFEF3C7), const Color(0xFFFBD38D)],
-                ),
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(40),
-                  bottomRight: Radius.circular(40),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l.translate('search'),
-                    style: GoogleFonts.spectral(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : const Color(0xFF1A1A2E),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Find sacred texts, mantras & more",
-                    style: GoogleFonts.outfit(
-                      fontSize: 14,
-                      color: isDark ? Colors.white60 : Colors.black54,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  // Search input
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 18),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? Colors.white.withOpacity(0.08)
-                          : Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: isDark
-                            ? Colors.white.withOpacity(0.1)
-                            : Colors.black.withOpacity(0.05),
-                      ),
-                    ),
-                    child: TextField(
-                      controller: _searchController,
-                      style: GoogleFonts.outfit(
-                        color: isDark ? Colors.white : Colors.black87,
-                        fontSize: 15,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: l.translate('search_hint'),
-                        hintStyle: GoogleFonts.outfit(
-                          color: isDark ? Colors.white54 : Colors.black45,
-                        ),
-                        border: InputBorder.none,
-                        icon: Icon(
-                          LucideIcons.search,
-                          color: AppTheme.primaryColor,
-                          size: 20,
-                        ),
-                        suffixIcon: _searchQuery.isNotEmpty
-                            ? IconButton(
-                                icon: Icon(
-                                  LucideIcons.x,
-                                  size: 18,
-                                  color: isDark
-                                      ? Colors.white54
-                                      : Colors.black45,
-                                ),
-                                onPressed: () {
-                                  _searchController.clear();
-                                  setState(() => _searchQuery = '');
-                                },
-                              )
-                            : null,
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 16,
-                        ),
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          _searchQuery = value;
-                          _isSearching = value.isNotEmpty;
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // Content
-          if (!_isSearching) ...[
-            // Trending section
+          : const Color(0xFFF8F6F3),
+      body: SafeArea(
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            // Header with Search
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Trending Now",
-                      style: GoogleFonts.spectral(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.textPrimary(context),
+                    // Title row
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                AppTheme.primaryColor,
+                                AppTheme.deepSaffron,
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(
+                              AppTheme.radiusMedium,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppTheme.primaryColor.withOpacity(0.4),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            LucideIcons.search,
+                            color: Colors.white,
+                            size: 22,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l.translate('search'),
+                              style: GoogleFonts.spectral(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.textPrimary(context),
+                              ),
+                            ),
+                            Text(
+                              'Find sacred wisdom',
+                              style: GoogleFonts.outfit(
+                                fontSize: 13,
+                                color: AppTheme.textMuted(context),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    // Search input card
+                    GlassCard(
+                      blur: 12,
+                      opacity: isDark ? 0.12 : 0.8,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 4,
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      children:
-                          [
-                                "Bhagavad Gita",
-                                "Hanuman Chalisa",
-                                "Gayatri Mantra",
-                                "Shiv Tandav",
-                              ]
-                              .map(
-                                (tag) =>
-                                    _buildTrendingTag(context, tag, isDark),
-                              )
-                              .toList(),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Quick categories
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Quick Access",
-                      style: GoogleFonts.spectral(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.textPrimary(context),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      children:
-                          [
-                                {
-                                  "label": "Shlokas",
-                                  "icon": LucideIcons.scroll,
-                                  "color": const Color(0xFFE8A838),
-                                },
-                                {
-                                  "label": "Strotras",
-                                  "icon": LucideIcons.music,
-                                  "color": const Color(0xFFEC4899),
-                                },
-                                {
-                                  "label": "Mantras",
-                                  "icon": LucideIcons.sparkles,
-                                  "color": const Color(0xFF8B5CF6),
-                                },
-                                {
-                                  "label": "Vedas",
-                                  "icon": LucideIcons.bookOpen,
-                                  "color": const Color(0xFF3B82F6),
-                                },
-                              ]
-                              .map(
-                                (cat) => _buildCategoryChip(
-                                  context,
-                                  cat['label'] as String,
-                                  cat['icon'] as IconData,
-                                  cat['color'] as Color,
-                                  isDark,
-                                ),
-                              )
-                              .toList(),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-
-          // Search results
-          if (_isSearching) ...[
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
-                child: Text(
-                  "${filteredContent.length} results found",
-                  style: GoogleFonts.outfit(
-                    fontSize: 14,
-                    color: AppTheme.textMuted(context),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
-            filteredContent.isEmpty
-                ? SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(40),
-                      child: Column(
-                        children: [
-                          Icon(
-                            LucideIcons.searchX,
-                            size: 48,
+                      child: TextField(
+                        controller: _searchController,
+                        focusNode: _focusNode,
+                        style: GoogleFonts.outfit(
+                          color: AppTheme.textPrimary(context),
+                          fontSize: 15,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: l.translate('search_hint'),
+                          hintStyle: GoogleFonts.outfit(
                             color: AppTheme.textMuted(context),
                           ),
-                          const SizedBox(height: 16),
-                          Text(
-                            "No results found",
-                            style: GoogleFonts.outfit(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: AppTheme.textPrimary(context),
-                            ),
+                          border: InputBorder.none,
+                          icon: Icon(
+                            LucideIcons.search,
+                            color: AppTheme.primaryColor,
+                            size: 20,
                           ),
-                          const SizedBox(height: 8),
+                          suffixIcon: _searchQuery.isNotEmpty
+                              ? IconButton(
+                                  icon: Icon(
+                                    LucideIcons.x,
+                                    size: 18,
+                                    color: AppTheme.textMuted(context),
+                                  ),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    setState(() => _searchQuery = '');
+                                  },
+                                )
+                              : null,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 14,
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            _searchQuery = value;
+                            _isSearching = value.isNotEmpty;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Content - Trending & Categories when not searching
+            if (!_isSearching) ...[
+              // Trending section
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 28, 20, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            LucideIcons.flame,
+                            size: 18,
+                            color: AppTheme.deepSaffron,
+                          ),
+                          const SizedBox(width: 8),
                           Text(
-                            "Try a different search term",
+                            'Trending Now',
                             style: GoogleFonts.outfit(
-                              color: AppTheme.textMuted(context),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.textPrimary(context),
                             ),
                           ),
                         ],
                       ),
-                    ),
-                  )
-                : SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 100),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) => _buildResultCard(
-                          context,
-                          filteredContent[index],
-                          isDark,
-                        ),
-                        childCount: filteredContent.length,
+                      const SizedBox(height: 16),
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children:
+                            [
+                                  'Bhagavad Gita',
+                                  'Hanuman Chalisa',
+                                  'Gayatri Mantra',
+                                  'Shiv Tandav',
+                                  'Radha Kripa Kataksh',
+                                ]
+                                .map(
+                                  (tag) =>
+                                      _buildTrendingTag(context, tag, isDark),
+                                )
+                                .toList(),
                       ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Quick Access Categories
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 32, 20, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            LucideIcons.layoutGrid,
+                            size: 18,
+                            color: AppTheme.primaryColor,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Browse Categories',
+                            style: GoogleFonts.outfit(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.textPrimary(context),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      // Category grid
+                      GridView.count(
+                        crossAxisCount: 2,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        childAspectRatio: 2.2,
+                        children: [
+                          _buildCategoryCard(
+                            context,
+                            'Shlokas',
+                            LucideIcons.scroll,
+                            [const Color(0xFFE8A838), const Color(0xFFD97706)],
+                            isDark,
+                          ),
+                          _buildCategoryCard(
+                            context,
+                            'Strotras',
+                            LucideIcons.music,
+                            [const Color(0xFFEC4899), const Color(0xFFDB2777)],
+                            isDark,
+                          ),
+                          _buildCategoryCard(
+                            context,
+                            'Mantras',
+                            LucideIcons.sparkles,
+                            [const Color(0xFF8B5CF6), const Color(0xFF7C3AED)],
+                            isDark,
+                          ),
+                          _buildCategoryCard(
+                            context,
+                            'Poems',
+                            LucideIcons.feather,
+                            [const Color(0xFF10B981), const Color(0xFF059669)],
+                            isDark,
+                          ),
+                          _buildCategoryCard(
+                            context,
+                            'Aartis',
+                            LucideIcons.flame,
+                            [const Color(0xFFF97316), const Color(0xFFEA580C)],
+                            isDark,
+                          ),
+                          _buildCategoryCard(
+                            context,
+                            'Vedas',
+                            LucideIcons.bookOpen,
+                            [const Color(0xFF3B82F6), const Color(0xFF2563EB)],
+                            isDark,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Recent searches hint
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 32, 20, 0),
+                  child: GlassCard(
+                    blur: 10,
+                    opacity: isDark ? 0.08 : 0.6,
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryColor.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            LucideIcons.lightbulb,
+                            color: AppTheme.primaryColor,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Search Tip',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppTheme.textPrimary(context),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Try searching by title, category, or meaning',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 12,
+                                  color: AppTheme.textMuted(context),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-          ],
+                ),
+              ),
+            ],
 
-          // Bottom padding
-          const SliverToBoxAdapter(child: SizedBox(height: 100)),
-        ],
+            // Search results
+            if (_isSearching) ...[
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
+                  child: Row(
+                    children: [
+                      Icon(
+                        LucideIcons.fileSearch,
+                        size: 16,
+                        color: AppTheme.textMuted(context),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '${filteredContent.length} results found',
+                        style: GoogleFonts.outfit(
+                          fontSize: 14,
+                          color: AppTheme.textMuted(context),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              filteredContent.isEmpty
+                  ? SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.all(48),
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: AppTheme.surfaceColor(context),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                LucideIcons.searchX,
+                                size: 40,
+                                color: AppTheme.textMuted(context),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            Text(
+                              'No results found',
+                              style: GoogleFonts.outfit(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: AppTheme.textPrimary(context),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Try a different search term',
+                              style: GoogleFonts.outfit(
+                                color: AppTheme.textMuted(context),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) => _buildResultCard(
+                            context,
+                            filteredContent[index],
+                            isDark,
+                          ),
+                          childCount: filteredContent.length,
+                        ),
+                      ),
+                    ),
+            ],
+
+            // Bottom padding
+            const SliverToBoxAdapter(child: SizedBox(height: 100)),
+          ],
+        ),
       ),
     );
   }
@@ -342,25 +463,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           _isSearching = true;
         });
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.06) : Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: isDark
-                ? Colors.white.withOpacity(0.1)
-                : Colors.black.withOpacity(0.05),
-          ),
-        ),
+      child: GlassCard(
+        blur: 8,
+        opacity: isDark ? 0.1 : 0.7,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              LucideIcons.trendingUp,
-              size: 14,
-              color: AppTheme.primaryColor,
-            ),
+            Icon(LucideIcons.trendingUp, size: 14, color: AppTheme.deepSaffron),
             const SizedBox(width: 8),
             Text(
               tag,
@@ -376,11 +486,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     );
   }
 
-  Widget _buildCategoryChip(
+  Widget _buildCategoryCard(
     BuildContext context,
     String label,
     IconData icon,
-    Color color,
+    List<Color> gradientColors,
     bool isDark,
   ) {
     return PressableScale(
@@ -391,40 +501,51 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           MaterialPageRoute(
             builder: (_) => CategoryScreen(
               categoryName: label,
-              gradientColors: [color, color.withOpacity(0.7)],
+              gradientColors: gradientColors,
             ),
           ),
         );
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.06) : Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: isDark
-                ? Colors.white.withOpacity(0.1)
-                : Colors.black.withOpacity(0.05),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: gradientColors,
           ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, size: 16, color: color),
+          borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+          boxShadow: [
+            BoxShadow(
+              color: gradientColors.first.withOpacity(0.4),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
-            const SizedBox(width: 10),
-            Text(
-              label,
-              style: GoogleFonts.outfit(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary(context),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Background pattern
+            Positioned(
+              right: -10,
+              bottom: -10,
+              child: Icon(icon, size: 50, color: Colors.white.withOpacity(0.2)),
+            ),
+            // Content
+            Padding(
+              padding: const EdgeInsets.all(14),
+              child: Row(
+                children: [
+                  Icon(icon, size: 22, color: Colors.white),
+                  const SizedBox(width: 10),
+                  Text(
+                    label,
+                    style: GoogleFonts.outfit(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -438,6 +559,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     SacredContent item,
     bool isDark,
   ) {
+    final categoryColors = _getCategoryColor(item.category);
+
     return PressableScale(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -448,66 +571,97 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: isDark
-                ? Colors.white.withOpacity(0.08)
-                : Colors.black.withOpacity(0.04),
+        child: GlassCard(
+          blur: 10,
+          opacity: isDark ? 0.1 : 0.75,
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: categoryColors),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+                ),
+                child: Center(
+                  child: Text(
+                    'ॐ',
+                    style: TextStyle(
+                      fontSize: 22,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.title.replaceAll('\n', ', '),
+                      style: GoogleFonts.outfit(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.textPrimary(context),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: categoryColors.first.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            item.category,
+                            style: GoogleFonts.outfit(
+                              fontSize: 11,
+                              color: categoryColors.first,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                LucideIcons.chevronRight,
+                size: 18,
+                color: AppTheme.textMuted(context),
+              ),
+            ],
           ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                gradient: AppTheme.primaryGradient(context),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: const Icon(
-                LucideIcons.bookOpen,
-                color: Colors.white,
-                size: 22,
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.title,
-                    style: GoogleFonts.outfit(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.textPrimary(context),
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    item.category,
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
-                      color: AppTheme.primaryColor,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              LucideIcons.chevronRight,
-              size: 18,
-              color: AppTheme.textMuted(context),
-            ),
-          ],
         ),
       ),
     );
+  }
+
+  List<Color> _getCategoryColor(String category) {
+    switch (category.toLowerCase()) {
+      case 'mantra':
+        return [const Color(0xFF8B5CF6), const Color(0xFF7C3AED)];
+      case 'aarti':
+        return [const Color(0xFFF97316), const Color(0xFFEA580C)];
+      case 'shloka':
+        return [const Color(0xFFE8A838), const Color(0xFFD97706)];
+      case 'stotra':
+        return [const Color(0xFFEC4899), const Color(0xFFDB2777)];
+      case 'poem':
+        return [const Color(0xFF10B981), const Color(0xFF059669)];
+      default:
+        return [AppTheme.primaryColor, AppTheme.deepSaffron];
+    }
   }
 }
