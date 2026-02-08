@@ -265,7 +265,7 @@ class HomeScreen extends ConsumerWidget {
               itemCount: categories.length,
               itemBuilder: (context, index) {
                 final cat = categories[index];
-                return RepaintBoundary(
+                final card = RepaintBoundary(
                   child: Padding(
                     padding: EdgeInsets.only(
                       right: index < categories.length - 1
@@ -294,7 +294,12 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                ).animate().fadeIn(delay: (index * 100).ms, duration: 400.ms);
+                );
+                // Only animate first few items to avoid scroll jank
+                if (index < 4) {
+                  return card.animate().fadeIn(duration: 300.ms);
+                }
+                return card;
               },
             ),
           ),
@@ -347,7 +352,7 @@ class HomeScreen extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final item = content[index];
                 final progress = (index + 1) * 0.2;
-                return RepaintBoundary(
+                final card = RepaintBoundary(
                   child: Padding(
                     padding: EdgeInsets.only(
                       right: index < 3 ? AppTheme.space12 : 0,
@@ -359,7 +364,12 @@ class HomeScreen extends ConsumerWidget {
                       isDark,
                     ),
                   ),
-                ).animate().fadeIn(delay: (index * 80).ms, duration: 400.ms);
+                );
+                // Only animate first few items
+                if (index < 4) {
+                  return card.animate().fadeIn(duration: 300.ms);
+                }
+                return card;
               },
             ),
           ),
@@ -490,15 +500,20 @@ class HomeScreen extends ConsumerWidget {
           delegate: SliverChildBuilderDelegate(
             (context, index) {
               final item = itemsToShow[index];
-              return RepaintBoundary(
+              final card = RepaintBoundary(
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: AppTheme.space12),
                   child: _buildGlassContentCard(context, item, isDark),
                 ),
-              ).animate().fadeIn(delay: (index * 60).ms, duration: 400.ms);
+              );
+              // Only animate first 5 items to avoid scroll jank
+              if (index < 5) {
+                return card.animate().fadeIn(duration: 300.ms);
+              }
+              return card;
             },
             childCount: itemsToShow.length,
-            addAutomaticKeepAlives: false,
+            addAutomaticKeepAlives: true,
             addRepaintBoundaries: true,
           ),
         ),
