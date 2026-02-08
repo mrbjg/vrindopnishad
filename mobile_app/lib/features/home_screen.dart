@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
 import '../core/providers.dart';
@@ -10,7 +10,8 @@ import '../core/content_provider.dart';
 import 'content_detail_screen.dart';
 import 'category_screen.dart';
 import 'search_screen.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'profile/saved_items_screen.dart';
+import 'profile/settings_screen.dart';
 import '../widgets/animated_effects.dart';
 import '../widgets/sacred_card.dart';
 
@@ -29,7 +30,7 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       body: AnimatedSacredBackground(
         child: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
+          physics: const ClampingScrollPhysics(),
           slivers: [
             // ═══════════════════════════════════════════════════════════════
             // IMMERSIVE HEADER
@@ -115,7 +116,7 @@ class HomeScreen extends ConsumerWidget {
                       title: l.translate('recent_wisdom'),
                       action: l.translate('view_all'),
                       onAction: () {},
-                      icon: LucideIcons.sparkles,
+                      icon: Iconsax.magic_star,
                     ),
                   );
                 },
@@ -173,7 +174,7 @@ class HomeScreen extends ConsumerWidget {
             RadialMenu(
               items: [
                 RadialMenuItem(
-                  icon: LucideIcons.search,
+                  icon: Iconsax.search_normal_1,
                   label: 'Search',
                   color: AppTheme.peacockBlue,
                   onTap: () => Navigator.push(
@@ -182,16 +183,22 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ),
                 RadialMenuItem(
-                  icon: LucideIcons.bookmark,
+                  icon: Iconsax.archive_tick,
                   label: 'Saved',
                   color: AppTheme.sacredViolet,
-                  onTap: () {},
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SavedItemsScreen()),
+                  ),
                 ),
                 RadialMenuItem(
-                  icon: LucideIcons.settings,
+                  icon: Iconsax.setting_2,
                   label: 'Settings',
                   color: AppTheme.sereneTeal,
-                  onTap: () {},
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                  ),
                 ),
               ],
               child: const PulsingOmButton(size: 56),
@@ -251,7 +258,7 @@ class HomeScreen extends ConsumerWidget {
                     ],
                   ),
                   child: const Icon(
-                    LucideIcons.repeat,
+                    Iconsax.repeat,
                     color: Colors.white,
                     size: 18,
                   ),
@@ -300,7 +307,7 @@ class HomeScreen extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            LucideIcons.rotateCcw,
+                            Iconsax.refresh_left_square,
                             size: 12,
                             color: AppTheme.textMuted(context),
                           ),
@@ -460,25 +467,25 @@ class HomeScreen extends ConsumerWidget {
     final categories = [
       {
         'name': l.translate('shlokas'),
-        'icon': LucideIcons.scroll,
+        'icon': Iconsax.document_text,
         'gradient': [AppTheme.primaryColor, AppTheme.primaryDark],
         'count': 108,
       },
       {
         'name': l.translate('strotras'),
-        'icon': LucideIcons.music,
+        'icon': Iconsax.music,
         'gradient': [AppTheme.lotusRose, const Color(0xFFC2185B)],
         'count': 54,
       },
       {
         'name': l.translate('poems'),
-        'icon': LucideIcons.penTool,
+        'icon': Iconsax.edit,
         'gradient': [AppTheme.sereneTeal, const Color(0xFF00897B)],
         'count': 72,
       },
       {
         'name': l.translate('mantras'),
-        'icon': LucideIcons.sparkles,
+        'icon': Iconsax.magic_star,
         'gradient': [AppTheme.sacredViolet, const Color(0xFF4527A0)],
         'count': 33,
       },
@@ -493,11 +500,7 @@ class HomeScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: AppTheme.space20),
             child: Row(
               children: [
-                Icon(
-                  LucideIcons.layoutGrid,
-                  size: 18,
-                  color: AppTheme.primaryColor,
-                ),
+                Icon(Iconsax.element_4, size: 18, color: AppTheme.primaryColor),
                 const SizedBox(width: 8),
                 Text(
                   'Explore',
@@ -519,7 +522,7 @@ class HomeScreen extends ConsumerWidget {
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     clipBehavior: Clip.none,
-                    physics: const BouncingScrollPhysics(),
+                    physics: const ClampingScrollPhysics(),
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppTheme.space20,
                     ),
@@ -557,10 +560,7 @@ class HomeScreen extends ConsumerWidget {
                           ),
                         ),
                       );
-                      // Only animate first few items to avoid scroll jank
-                      if (index < 4) {
-                        return card.animate().fadeIn(duration: 300.ms);
-                      }
+                      // No animation - show instantly for better performance
                       return card;
                     },
                   ),
@@ -658,7 +658,7 @@ class HomeScreen extends ConsumerWidget {
                     ],
                   ),
                   child: const Icon(
-                    LucideIcons.bookmark,
+                    Iconsax.archive_book,
                     size: 16,
                     color: Colors.white,
                   ),
@@ -692,7 +692,7 @@ class HomeScreen extends ConsumerWidget {
             height: 170, // Increased to accommodate multi-line content
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
+              physics: const ClampingScrollPhysics(),
               padding: const EdgeInsets.symmetric(horizontal: AppTheme.space20),
               itemCount: content.take(4).length,
               itemBuilder: (context, index) {
@@ -711,10 +711,7 @@ class HomeScreen extends ConsumerWidget {
                     ),
                   ),
                 );
-                // Only animate first few items
-                if (index < 4) {
-                  return card.animate().fadeIn(duration: 300.ms);
-                }
+                // No animation - show instantly for better performance
                 return card;
               },
             ),
@@ -914,11 +911,7 @@ class HomeScreen extends ConsumerWidget {
           padding: const EdgeInsets.all(AppTheme.space32),
           child: Column(
             children: [
-              Icon(
-                LucideIcons.inbox,
-                size: 48,
-                color: AppTheme.textMuted(context),
-              ),
+              Icon(Iconsax.box, size: 48, color: AppTheme.textMuted(context)),
               const SizedBox(height: AppTheme.space16),
               Text(
                 'No content available',
@@ -942,17 +935,13 @@ class HomeScreen extends ConsumerWidget {
           delegate: SliverChildBuilderDelegate(
             (context, index) {
               final item = itemsToShow[index];
-              final card = RepaintBoundary(
+              // No animation - instant like Twitter/Instagram
+              return RepaintBoundary(
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: AppTheme.space12),
                   child: _buildGlassContentCard(context, item, isDark),
                 ),
               );
-              // Only animate first 5 items to avoid scroll jank
-              if (index < 5) {
-                return card.animate().fadeIn(duration: 300.ms);
-              }
-              return card;
             },
             childCount: itemsToShow.length,
             addAutomaticKeepAlives: true,
@@ -981,7 +970,7 @@ class HomeScreen extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(
-                        LucideIcons.chevronDown,
+                        Iconsax.arrow_down_2,
                         size: 18,
                         color: AppTheme.primaryColor,
                       ),
@@ -1133,7 +1122,7 @@ class HomeScreen extends ConsumerWidget {
                     ),
                     const SizedBox(width: 10),
                     Icon(
-                      LucideIcons.clock,
+                      Iconsax.clock,
                       size: 12,
                       color: AppTheme.textMuted(context),
                     ),
@@ -1163,7 +1152,7 @@ class HomeScreen extends ConsumerWidget {
               shape: BoxShape.circle,
             ),
             child: Icon(
-              LucideIcons.chevronRight,
+              Iconsax.arrow_right_3,
               size: 16,
               color: categoryColors.first,
             ),
@@ -1177,17 +1166,17 @@ class HomeScreen extends ConsumerWidget {
   IconData _getCategoryIcon(String category) {
     switch (category.toLowerCase()) {
       case 'mantra':
-        return LucideIcons.sparkles;
+        return Iconsax.magic_star;
       case 'stotra':
-        return LucideIcons.scroll;
+        return Iconsax.document_text;
       case 'chalisa':
-        return LucideIcons.book;
+        return Iconsax.book_1;
       case 'aarti':
-        return LucideIcons.flame;
+        return Iconsax.flash;
       case 'bhajan':
-        return LucideIcons.music;
+        return Iconsax.music;
       default:
-        return LucideIcons.fileText;
+        return Iconsax.document;
     }
   }
 

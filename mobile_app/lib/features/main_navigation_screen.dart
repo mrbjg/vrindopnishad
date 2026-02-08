@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:iconsax/iconsax.dart';
 import '../core/theme.dart';
 import 'home_screen.dart';
 import 'search_screen.dart';
@@ -100,31 +100,37 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                     children: [
                       _buildNavItem(
                         index: 0,
-                        icon: LucideIcons.home,
+                        icon: Iconsax.home,
+                        activeIcon: Iconsax.home_2, // Filled home
                         label: 'Home',
                         isDark: isDark,
                       ),
                       _buildNavItem(
                         index: 1,
-                        icon: LucideIcons.search,
+                        icon: Iconsax.search_normal,
+                        activeIcon:
+                            Iconsax.search_favorite, // Search with heart
                         label: 'Search',
                         isDark: isDark,
                       ),
                       _buildNavItem(
                         index: 2,
-                        icon: LucideIcons.heart,
+                        icon: Iconsax.heart,
+                        activeIcon: Iconsax.heart_tick, // Heart with tick
                         label: 'Jap',
                         isDark: isDark,
                       ),
                       _buildNavItem(
                         index: 3,
-                        icon: LucideIcons.bookOpen,
+                        icon: Iconsax.book,
+                        activeIcon: Iconsax.book_saved, // Open/saved book
                         label: 'Library',
                         isDark: isDark,
                       ),
                       _buildNavItem(
                         index: 4,
-                        icon: LucideIcons.user,
+                        icon: Iconsax.user,
+                        activeIcon: Iconsax.user_tick, // User with tick
                         label: 'Profile',
                         isDark: isDark,
                       ),
@@ -142,6 +148,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   Widget _buildNavItem({
     required int index,
     required IconData icon,
+    required IconData activeIcon,
     required String label,
     required bool isDark,
   }) {
@@ -154,21 +161,23 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
         child: SizedBox(
           height: 68,
           child: Center(
-            child:
-                Icon(
-                      icon,
-                      size: isActive ? 24 : 22,
-                      color: isActive
-                          ? AppTheme.primaryColor
-                          : AppTheme.textMuted(context),
-                    )
-                    .animate(target: isActive ? 1 : 0)
-                    .scale(
-                      begin: const Offset(1, 1),
-                      end: const Offset(1.1, 1.1),
-                      duration: 250.ms,
-                      curve: Curves.easeOutBack,
-                    ),
+            // Icon with smooth scale transition only (no rotation, no dot)
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              switchInCurve: Curves.easeOutBack,
+              switchOutCurve: Curves.easeIn,
+              transitionBuilder: (child, animation) {
+                return ScaleTransition(scale: animation, child: child);
+              },
+              child: Icon(
+                isActive ? activeIcon : icon,
+                key: ValueKey<bool>(isActive),
+                size: isActive ? 26 : 24,
+                color: isActive
+                    ? AppTheme.primaryColor
+                    : AppTheme.textMuted(context),
+              ),
+            ),
           ),
         ),
       ),

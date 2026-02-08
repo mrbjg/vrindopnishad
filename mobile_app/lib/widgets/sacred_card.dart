@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'animated_effects.dart';
 import '../core/theme.dart';
@@ -86,7 +86,7 @@ class SacredCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          LucideIcons.sparkles,
+                          Iconsax.magic_star,
                           size: 12,
                           color: isDark ? Colors.white : AppTheme.primaryDark,
                         ),
@@ -136,14 +136,14 @@ class SacredCard extends StatelessWidget {
                 Row(
                   children: [
                     _buildHeroButton(
-                      icon: LucideIcons.bookOpen,
+                      icon: Iconsax.book_1,
                       label: 'Read Now',
                       isPrimary: true,
                       isDark: isDark,
                     ),
                     const SizedBox(width: AppTheme.space12),
                     _buildHeroButton(
-                      icon: LucideIcons.play,
+                      icon: Iconsax.play,
                       label: 'Listen',
                       isPrimary: false,
                       isDark: isDark,
@@ -280,7 +280,7 @@ class SacredCard extends StatelessWidget {
             // Trailing or chevron
             trailing ??
                 Icon(
-                  LucideIcons.chevronRight,
+                  Iconsax.arrow_right_3,
                   size: 20,
                   color: AppTheme.textMuted(context),
                 ),

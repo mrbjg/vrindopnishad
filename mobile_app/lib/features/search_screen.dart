@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../widgets/animated_effects.dart';
 import '../core/theme.dart';
@@ -62,7 +62,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           : const Color(0xFFF8F6F3),
       body: SafeArea(
         child: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
+          physics: const ClampingScrollPhysics(),
           slivers: [
             // Header with Search
             SliverToBoxAdapter(
@@ -95,7 +95,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             ],
                           ),
                           child: const Icon(
-                            LucideIcons.search,
+                            Iconsax.search_normal,
                             color: Colors.white,
                             size: 22,
                           ),
@@ -146,14 +146,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                           ),
                           border: InputBorder.none,
                           icon: Icon(
-                            LucideIcons.search,
+                            Iconsax.search_normal,
                             color: AppTheme.primaryColor,
                             size: 20,
                           ),
                           suffixIcon: _searchQuery.isNotEmpty
                               ? IconButton(
                                   icon: Icon(
-                                    LucideIcons.x,
+                                    Iconsax.close_circle,
                                     size: 18,
                                     color: AppTheme.textMuted(context),
                                   ),
@@ -192,7 +192,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       Row(
                         children: [
                           Icon(
-                            LucideIcons.flame,
+                            Iconsax.flash,
                             size: 18,
                             color: AppTheme.deepSaffron,
                           ),
@@ -240,7 +240,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       Row(
                         children: [
                           Icon(
-                            LucideIcons.layoutGrid,
+                            Iconsax.element_4,
                             size: 18,
                             color: AppTheme.primaryColor,
                           ),
@@ -268,45 +268,36 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                           _buildCategoryCard(
                             context,
                             'Shlokas',
-                            LucideIcons.scroll,
+                            Iconsax.document_text,
                             [const Color(0xFFE8A838), const Color(0xFFD97706)],
                             isDark,
                           ),
                           _buildCategoryCard(
                             context,
                             'Strotras',
-                            LucideIcons.music,
+                            Iconsax.music,
                             [const Color(0xFFEC4899), const Color(0xFFDB2777)],
                             isDark,
                           ),
                           _buildCategoryCard(
                             context,
                             'Mantras',
-                            LucideIcons.sparkles,
+                            Iconsax.magic_star,
                             [const Color(0xFF8B5CF6), const Color(0xFF7C3AED)],
                             isDark,
                           ),
-                          _buildCategoryCard(
-                            context,
-                            'Poems',
-                            LucideIcons.feather,
-                            [const Color(0xFF10B981), const Color(0xFF059669)],
-                            isDark,
-                          ),
-                          _buildCategoryCard(
-                            context,
-                            'Aartis',
-                            LucideIcons.flame,
-                            [const Color(0xFFF97316), const Color(0xFFEA580C)],
-                            isDark,
-                          ),
-                          _buildCategoryCard(
-                            context,
-                            'Vedas',
-                            LucideIcons.bookOpen,
-                            [const Color(0xFF3B82F6), const Color(0xFF2563EB)],
-                            isDark,
-                          ),
+                          _buildCategoryCard(context, 'Poems', Iconsax.edit_2, [
+                            const Color(0xFF10B981),
+                            const Color(0xFF059669),
+                          ], isDark),
+                          _buildCategoryCard(context, 'Aartis', Iconsax.flash, [
+                            const Color(0xFFF97316),
+                            const Color(0xFFEA580C),
+                          ], isDark),
+                          _buildCategoryCard(context, 'Vedas', Iconsax.book_1, [
+                            const Color(0xFF3B82F6),
+                            const Color(0xFF2563EB),
+                          ], isDark),
                         ],
                       ),
                     ],
@@ -331,7 +322,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
-                            LucideIcons.lightbulb,
+                            Iconsax.lamp_charge,
                             color: AppTheme.primaryColor,
                             size: 20,
                           ),
@@ -375,7 +366,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   child: Row(
                     children: [
                       Icon(
-                        LucideIcons.fileSearch,
+                        Iconsax.search_status,
                         size: 16,
                         color: AppTheme.textMuted(context),
                       ),
@@ -405,7 +396,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
-                                LucideIcons.searchX,
+                                Iconsax.search_zoom_out,
                                 size: 40,
                                 color: AppTheme.textMuted(context),
                               ),
@@ -470,7 +461,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(LucideIcons.trendingUp, size: 14, color: AppTheme.deepSaffron),
+            Icon(Iconsax.chart_2, size: 14, color: AppTheme.deepSaffron),
             const SizedBox(width: 8),
             Text(
               tag,
@@ -637,7 +628,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 ),
               ),
               Icon(
-                LucideIcons.chevronRight,
+                Iconsax.arrow_right_3,
                 size: 18,
                 color: AppTheme.textMuted(context),
               ),

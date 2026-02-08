@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
 import '../core/providers.dart';
@@ -104,7 +104,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                       Row(
                         children: [
                           _buildHeaderButton(
-                            icon: LucideIcons.arrowLeft,
+                            icon: Iconsax.arrow_left,
                             onTap: () => Navigator.pop(context),
                           ),
                           const SizedBox(width: 16),
@@ -121,8 +121,8 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                           ),
                           _buildHeaderButton(
                             icon: _isSearching
-                                ? LucideIcons.x
-                                : LucideIcons.search,
+                                ? Iconsax.close_circle
+                                : Iconsax.search_normal,
                             onTap: () => setState(() {
                               _isSearching = !_isSearching;
                               if (!_isSearching) {
@@ -133,38 +133,65 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                           ),
                           const SizedBox(width: 12),
                           _buildHeaderButton(
-                            icon: LucideIcons.sliders,
+                            icon: Iconsax.setting_4,
                             onTap: () => _showFilterSheet(context, l),
                           ),
                         ],
                       ),
                       const SizedBox(height: 16),
-                      // Search bar
+                      // Search bar - modern glassmorphism design
                       if (_isSearching) ...[
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 18),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
-                            borderRadius: BorderRadius.circular(18),
+                            color: Colors.black.withOpacity(0.25),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.2),
+                              width: 1,
+                            ),
                           ),
                           child: TextField(
                             controller: _searchController,
                             autofocus: true,
-                            style: GoogleFonts.outfit(fontSize: 15),
+                            style: GoogleFonts.outfit(
+                              fontSize: 15,
+                              color: Colors.white,
+                            ),
+                            cursorColor: Colors.white,
                             decoration: InputDecoration(
                               hintText:
                                   "${l.translate('search')} in ${widget.categoryName}...",
                               hintStyle: GoogleFonts.outfit(
-                                color: Colors.black45,
+                                color: Colors.white.withOpacity(0.6),
                               ),
                               border: InputBorder.none,
-                              icon: Icon(
-                                LucideIcons.search,
-                                color: widget.gradientColors[0],
+                              prefixIcon: Icon(
+                                Iconsax.search_normal,
+                                color: Colors.white.withOpacity(0.7),
                                 size: 20,
                               ),
+                              prefixIconConstraints: const BoxConstraints(
+                                minWidth: 40,
+                              ),
+                              suffixIcon: _searchQuery.isNotEmpty
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        _searchController.clear();
+                                        setState(() => _searchQuery = '');
+                                      },
+                                      child: Icon(
+                                        Iconsax.close_circle,
+                                        color: Colors.white.withOpacity(0.7),
+                                        size: 18,
+                                      ),
+                                    )
+                                  : null,
                               contentPadding: const EdgeInsets.symmetric(
-                                vertical: 16,
+                                vertical: 12,
                               ),
                             ),
                             onChanged: (value) =>
@@ -187,7 +214,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              LucideIcons.bookOpen,
+                              Iconsax.book_1,
                               size: 16,
                               color: Colors.white.withOpacity(0.9),
                             ),
@@ -363,7 +390,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
               shape: BoxShape.circle,
             ),
             child: Icon(
-              LucideIcons.folderOpen,
+              Iconsax.folder_open,
               size: 52,
               color: AppTheme.primaryColor.withOpacity(0.5),
             ),
@@ -435,11 +462,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                 gradient: LinearGradient(colors: widget.gradientColors),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Icon(
-                LucideIcons.bookOpen,
-                color: Colors.white,
-                size: 28,
-              ),
+              child: const Icon(Iconsax.book_1, color: Colors.white, size: 28),
             ),
             const SizedBox(width: 18),
             Expanded(
@@ -469,7 +492,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
               ),
             ),
             Icon(
-              LucideIcons.chevronRight,
+              Iconsax.arrow_right_3,
               size: 18,
               color: widget.gradientColors[0],
             ),

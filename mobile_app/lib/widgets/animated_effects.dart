@@ -7,7 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
-/// PRESSABLE SCALE - Satisfying press animation with haptic feedback
+/// PRESSABLE SCALE - Immediate press animation with haptic feedback
+/// Uses GestureDetector with proper tap vs scroll handling
 /// ═══════════════════════════════════════════════════════════════════════════
 
 class PressableScale extends StatefulWidget {
@@ -22,7 +23,7 @@ class PressableScale extends StatefulWidget {
     required this.child,
     this.onTap,
     this.onLongPress,
-    this.scaleFactor = 0.96,
+    this.scaleFactor = 0.97,
     this.haptic = true,
   });
 
@@ -30,22 +31,94 @@ class PressableScale extends StatefulWidget {
   State<PressableScale> createState() => _PressableScaleState();
 }
 
-class _PressableScaleState extends State<PressableScale>
+class _PressableScaleState extends State<PressableScale> {
+  bool _isPressed = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() => _isPressed = true);
+    if (widget.haptic) {
+      HapticFeedback.selectionClick();
+    }
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() => _isPressed = false);
+  }
+
+  void _onTapCancel() {
+    setState(() => _isPressed = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapDown: _onTapDown,
+      onTapUp: _onTapUp,
+      onTapCancel: _onTapCancel,
+      onTap: widget.onTap,
+      onLongPress: widget.onLongPress,
+      child: AnimatedScale(
+        scale: _isPressed ? widget.scaleFactor : 1.0,
+        duration: const Duration(milliseconds: 80),
+        curve: Curves.easeOut,
+        child: AnimatedOpacity(
+          opacity: _isPressed ? 0.85 : 1.0,
+          duration: const Duration(milliseconds: 80),
+          child: widget.child,
+        ),
+      ),
+    );
+  }
+}
+
+/// ═══════════════════════════════════════════════════════════════════════════
+/// ANIMATED LOAD ITEM - Plays animation once when item first appears
+/// Used for "Load More" items, doesn't re-animate on scroll
+/// ═══════════════════════════════════════════════════════════════════════════
+
+class AnimatedLoadItem extends StatefulWidget {
+  final Widget child;
+  final int index;
+  final Duration delay;
+
+  const AnimatedLoadItem({
+    super.key,
+    required this.child,
+    required this.index,
+    this.delay = Duration.zero,
+  });
+
+  @override
+  State<AnimatedLoadItem> createState() => _AnimatedLoadItemState();
+}
+
+class _AnimatedLoadItemState extends State<AnimatedLoadItem>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 100),
+      duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: widget.scaleFactor,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    // Stagger the animation based on index within the new batch
+    Future.delayed(Duration(milliseconds: 50 * (widget.index % 5)), () {
+      if (mounted) _controller.forward();
+    });
   }
 
   @override
@@ -54,38 +127,11 @@ class _PressableScaleState extends State<PressableScale>
     super.dispose();
   }
 
-  void _onTapDown(TapDownDetails details) {
-    _controller.forward();
-    if (widget.haptic) {
-      HapticFeedback.lightImpact();
-    }
-  }
-
-  void _onTapUp(TapUpDetails details) {
-    _controller.reverse();
-  }
-
-  void _onTapCancel() {
-    _controller.reverse();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: _onTapDown,
-      onTapUp: _onTapUp,
-      onTapCancel: _onTapCancel,
-      onTap: widget.onTap,
-      onLongPress: widget.onLongPress,
-      child: AnimatedBuilder(
-        animation: _scaleAnimation,
-        builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: widget.child,
-          );
-        },
-      ),
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SlideTransition(position: _slideAnimation, child: widget.child),
     );
   }
 }
@@ -199,7 +245,7 @@ class _FlowerOfLifePainter extends CustomPainter {
 }
 
 /// ═══════════════════════════════════════════════════════════════════════════
-/// GLASSMORPHISM CARD - Frosted glass effect with blur
+/// GLASSMORPHISM CARD - Frosted glass effect with blur (optimized)
 /// ═══════════════════════════════════════════════════════════════════════════
 
 class GlassCard extends StatelessWidget {
@@ -214,7 +260,7 @@ class GlassCard extends StatelessWidget {
   const GlassCard({
     super.key,
     required this.child,
-    this.blur = 4,
+    this.blur = 2, // Reduced from 4 for better performance
     this.opacity = 0.08,
     this.borderRadius,
     this.padding,
@@ -255,8 +301,12 @@ class GlassCard extends StatelessWidget {
           : contents,
     );
 
+    // Wrap with RepaintBoundary to prevent cascading repaints
+    card = RepaintBoundary(child: card);
+
     if (onTap != null) {
-      card = GestureDetector(onTap: onTap, child: card);
+      // Use PressableScale for immediate tap feedback
+      card = PressableScale(onTap: onTap, child: card);
     }
 
     return card;
@@ -520,12 +570,18 @@ class PulsingOmButton extends StatelessWidget {
                   boxShadow: AppTheme.glowShadow(AppTheme.primaryColor),
                 ),
                 child: Center(
-                  child: Text(
-                    'ॐ',
-                    style: TextStyle(
-                      fontSize: size * 0.5,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w300,
+                  child: Padding(
+                    // Small offset to visually center the ॐ character
+                    padding: EdgeInsets.only(top: size * 0.02),
+                    child: Text(
+                      'ॐ',
+                      style: TextStyle(
+                        fontSize: size * 0.5,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w300,
+                        height: 1.0,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),

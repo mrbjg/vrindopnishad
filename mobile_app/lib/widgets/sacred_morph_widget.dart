@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:iconsax/iconsax.dart';
 
 /// A simple animated sacred symbol widget
 class SacredMorphWidget extends StatelessWidget {
@@ -17,7 +17,7 @@ class SacredMorphWidget extends StatelessWidget {
         color: color.withOpacity(0.15),
         shape: BoxShape.circle,
       ),
-      child: Icon(LucideIcons.sparkles, size: size * 0.5, color: color),
+      child: Icon(Iconsax.magic_star, size: size * 0.5, color: color),
     );
   }
 }

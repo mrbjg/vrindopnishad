@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme.dart';
 import '../../core/providers.dart';
@@ -61,7 +61,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Icon(
-                      LucideIcons.settings,
+                      Iconsax.setting_2,
                       color: AppTheme.primaryColor,
                       size: 22,
                     ),
@@ -80,7 +80,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 _buildSectionHeader(
                   context,
                   l.translate('appearance'),
-                  LucideIcons.palette,
+                  Iconsax.colorfilter,
                 ),
                 const SizedBox(height: 12),
 
@@ -89,7 +89,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   context,
                   l.translate('dark_mode'),
                   l.translate('dark_mode_sub'),
-                  LucideIcons.moon,
+                  Iconsax.moon,
                   isDark,
                   (val) {
                     HapticFeedback.lightImpact();
@@ -107,7 +107,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 _buildSectionHeader(
                   context,
                   l.translate('notifications'),
-                  LucideIcons.bell,
+                  Iconsax.notification,
                 ),
                 const SizedBox(height: 12),
 
@@ -115,7 +115,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   context,
                   l.translate('daily_wisdom'),
                   l.translate('daily_wisdom_sub'),
-                  LucideIcons.sparkles,
+                  Iconsax.magic_star,
                   _notifications,
                   (val) {
                     HapticFeedback.lightImpact();
@@ -129,7 +129,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 _buildSectionHeader(
                   context,
                   l.translate('account'),
-                  LucideIcons.user,
+                  Iconsax.user,
                 ),
                 const SizedBox(height: 12),
 
@@ -137,7 +137,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   context,
                   l.translate('privacy_policy'),
                   l.translate('privacy_policy'),
-                  LucideIcons.shield,
+                  Iconsax.shield_tick,
                   gradientColors: [AppTheme.glowTeal, const Color(0xFF06B6D4)],
                 ),
                 const SizedBox(height: 12),
@@ -146,7 +146,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   context,
                   l.translate('terms_service'),
                   l.translate('terms_service'),
-                  LucideIcons.fileText,
+                  Iconsax.document,
                   gradientColors: [AppTheme.glowBlue, const Color(0xFF6366F1)],
                 ),
                 const SizedBox(height: 12),
@@ -155,7 +155,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   context,
                   l.translate('delete_account'),
                   l.translate('delete_account'),
-                  LucideIcons.trash2,
+                  Iconsax.trash,
                   isDestructive: true,
                 ),
                 const SizedBox(height: 48),
@@ -176,7 +176,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Icon(
-                          LucideIcons.heart,
+                          Iconsax.heart,
                           color: AppTheme.primaryColor,
                           size: 24,
                         ),
@@ -229,7 +229,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
         ),
         child: Icon(
-          LucideIcons.arrowLeft,
+          Iconsax.arrow_left,
           color: AppTheme.textPrimary(context),
           size: 20,
         ),
@@ -398,7 +398,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ],
             ),
             child: value
-                ? Icon(LucideIcons.check, size: 14, color: activeColor)
+                ? Icon(Iconsax.tick_circle, size: 14, color: activeColor)
                 : null,
           ),
         ),
@@ -450,7 +450,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ],
                 ),
                 child: const Icon(
-                  LucideIcons.languages,
+                  Iconsax.language_circle,
                   color: Colors.white,
                   size: 20,
                 ),
@@ -487,7 +487,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
-                  LucideIcons.chevronRight,
+                  Iconsax.arrow_right_3,
                   size: 18,
                   color: AppTheme.primaryColor,
                 ),
@@ -545,7 +545,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: const Icon(
-                        LucideIcons.globe,
+                        Iconsax.global,
                         color: Colors.white,
                         size: 22,
                       ),
@@ -575,23 +575,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   final isSelected = ref.watch(languageProvider) == lang;
                   String name = "";
                   String nativeName = "";
-                  IconData flagIcon = LucideIcons.globe;
+                  IconData flagIcon = Iconsax.global;
 
                   switch (lang) {
                     case AppLanguage.english:
                       name = "English";
                       nativeName = "English";
-                      flagIcon = LucideIcons.globe;
+                      flagIcon = Iconsax.global;
                       break;
                     case AppLanguage.hindi:
                       name = "Hindi";
                       nativeName = "हिंदी";
-                      flagIcon = LucideIcons.languages;
+                      flagIcon = Iconsax.language_circle;
                       break;
                     case AppLanguage.sanskrit:
                       name = "Sanskrit";
                       nativeName = "संस्कृत";
-                      flagIcon = LucideIcons.scroll;
+                      flagIcon = Iconsax.document_text;
                       break;
                   }
 
@@ -673,7 +673,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
-                                  LucideIcons.check,
+                                  Iconsax.tick_circle,
                                   color: Colors.white,
                                   size: 14,
                                 ),
@@ -782,7 +782,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
-                  LucideIcons.chevronRight,
+                  Iconsax.arrow_right_3,
                   size: 18,
                   color: isDestructive ? Colors.red : AppTheme.primaryColor,
                 ),

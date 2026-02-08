@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:iconsax/iconsax.dart';
 import '../../core/theme.dart';
 import '../content_detail_screen.dart';
 
@@ -68,7 +68,7 @@ class ReadingHistoryScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
-                        LucideIcons.clock,
+                        Iconsax.clock,
                         color: isDark ? Colors.white60 : Colors.grey,
                         size: 20,
                       ),
@@ -88,7 +88,7 @@ class ReadingHistoryScreen extends StatelessWidget {
                       ),
                     ),
                     trailing: Icon(
-                      LucideIcons.chevronRight,
+                      Iconsax.arrow_right_3,
                       size: 18,
                       color: isDark ? Colors.white38 : Colors.black38,
                     ),
@@ -122,7 +122,7 @@ class ReadingHistoryScreen extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Icon(
-              LucideIcons.history,
+              Iconsax.clock,
               size: 48,
               color: isDark ? Colors.white38 : Colors.grey,
             ),

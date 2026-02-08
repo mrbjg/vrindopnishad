@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme.dart';
 
@@ -26,7 +26,7 @@ class AboutScreen extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
-                  LucideIcons.sparkles,
+                  Iconsax.magic_star,
                   size: 60,
                   color: Colors.white,
                 ),
@@ -65,13 +65,13 @@ class AboutScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildSocialIcon(LucideIcons.instagram),
+                _buildSocialIcon(Iconsax.instagram),
                 const SizedBox(width: 24),
-                _buildSocialIcon(LucideIcons.twitter),
+                _buildSocialIcon(Iconsax.message_2),
                 const SizedBox(width: 24),
-                _buildSocialIcon(LucideIcons.facebook),
+                _buildSocialIcon(Iconsax.direct_right),
                 const SizedBox(width: 24),
-                _buildSocialIcon(LucideIcons.youtube),
+                _buildSocialIcon(Iconsax.video_circle),
               ],
             ),
             const SizedBox(height: 60),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
 import '../core/providers.dart';
@@ -69,7 +69,7 @@ class LibraryScreen extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Icon(
-                          LucideIcons.bookmark,
+                          Iconsax.archive_book,
                           color: isDark ? Colors.white : AppTheme.primaryColor,
                           size: 22,
                         ),
@@ -92,7 +92,7 @@ class LibraryScreen extends ConsumerWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          LucideIcons.library,
+                          Iconsax.book_1,
                           size: 16,
                           color: isDark
                               ? Colors.white70
@@ -164,7 +164,7 @@ class LibraryScreen extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(14),
               ),
               child: const Icon(
-                LucideIcons.bookmark,
+                Iconsax.archive_book,
                 color: Colors.white,
                 size: 22,
               ),
@@ -200,7 +200,7 @@ class LibraryScreen extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              LucideIcons.folder,
+                              Iconsax.folder,
                               size: 11,
                               color: AppTheme.primaryColor,
                             ),
@@ -218,7 +218,7 @@ class LibraryScreen extends ConsumerWidget {
                       ),
                       const SizedBox(width: 10),
                       Icon(
-                        LucideIcons.clock,
+                        Iconsax.clock,
                         size: 12,
                         color: AppTheme.textMuted(context),
                       ),
@@ -236,7 +236,7 @@ class LibraryScreen extends ConsumerWidget {
               ),
             ),
             Icon(
-              LucideIcons.chevronRight,
+              Iconsax.arrow_right_3,
               size: 18,
               color: AppTheme.textMuted(context),
             ),
@@ -260,7 +260,7 @@ class LibraryScreen extends ConsumerWidget {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                LucideIcons.bookmark,
+                Iconsax.archive_book,
                 size: 48,
                 color: AppTheme.primaryColor.withOpacity(0.5),
               ),
@@ -310,7 +310,7 @@ class LibraryScreen extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(
-                      LucideIcons.compass,
+                      Iconsax.discover,
                       size: 18,
                       color: Colors.white,
                     ),

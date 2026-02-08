@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
 import '../core/auth_provider.dart';
@@ -85,7 +85,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   void _showFriendlyError(String errorMsg) {
     String title = "Oops!";
     String message = "Something went wrong. Please try again.";
-    IconData icon = LucideIcons.alertCircle;
+    IconData icon = Iconsax.warning_2;
 
     // Parse common Firebase Auth errors
     if (errorMsg.contains('invalid-credential') ||
@@ -94,23 +94,23 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       title = "Incorrect Details";
       message =
           "The email or password you entered is incorrect. Please check and try again.";
-      icon = LucideIcons.userX;
+      icon = Iconsax.user_remove;
     } else if (errorMsg.contains('email-already-in-use')) {
       title = "Account Exists";
       message = "This email is already registered. Please sign in instead.";
-      icon = LucideIcons.userCheck;
+      icon = Iconsax.user_tick;
     } else if (errorMsg.contains('invalid-email')) {
       title = "Invalid Email";
       message = "Please enter a valid email address.";
-      icon = LucideIcons.mailWarning;
+      icon = Iconsax.sms_notification;
     } else if (errorMsg.contains('weak-password')) {
       title = "Weak Password";
       message = "Your password is too weak. Please use at least 6 characters.";
-      icon = LucideIcons.shieldAlert;
+      icon = Iconsax.shield_cross;
     } else if (errorMsg.contains('network-request-failed')) {
       title = "No Internet";
       message = "Please check your internet connection and try again.";
-      icon = LucideIcons.wifiOff;
+      icon = Iconsax.wifi_square;
     }
 
     showDialog(
@@ -226,7 +226,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   borderRadius: BorderRadius.circular(18),
                 ),
                 child: Icon(
-                  LucideIcons.flame,
+                  Iconsax.flash,
                   size: 32,
                   color: AppTheme.primaryColor,
                 ),
@@ -265,7 +265,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     _buildTextField(
                       controller: _emailController,
                       hint: "Email Address",
-                      icon: LucideIcons.mail,
+                      icon: Iconsax.sms,
                       keyboardType: TextInputType.emailAddress,
                       validator: (v) {
                         if (v == null || v.isEmpty) return 'Enter email';
@@ -279,13 +279,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     _buildTextField(
                       controller: _passwordController,
                       hint: "Password",
-                      icon: LucideIcons.lock,
+                      icon: Iconsax.lock,
                       obscureText: _obscurePassword,
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword
-                              ? LucideIcons.eyeOff
-                              : LucideIcons.eye,
+                              ? Iconsax.eye_slash
+                              : Iconsax.eye,
                           size: 20,
                           color: AppTheme.textMuted(context),
                         ),
@@ -384,7 +384,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   ),
                   const SizedBox(width: 16),
                   _buildSocialButton(
-                    icon: LucideIcons.phone,
+                    icon: Iconsax.call,
                     color: AppTheme.glowTeal,
                     onTap: () {},
                   ),

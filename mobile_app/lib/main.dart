@@ -46,8 +46,13 @@ class SantVaaniApp extends ConsumerWidget {
             child: CircularProgressIndicator(color: AppTheme.primaryColor),
           ),
         ),
-        error: (err, stack) =>
-            Scaffold(body: Center(child: Text('Auth Error: $err'))),
+        error: (err, stack) {
+          // Clear stale session (e.g., refresh_token_already_used) and show login
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Supabase.instance.client.auth.signOut();
+          });
+          return const AuthScreen();
+        },
       ),
     );
   }

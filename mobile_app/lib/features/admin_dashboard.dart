@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:file_picker/file_picker.dart';
 import '../core/content_provider.dart';
@@ -97,7 +97,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                                     ],
                                   ),
                                   child: const Icon(
-                                    LucideIcons.shield,
+                                    Iconsax.shield_tick,
                                     color: Colors.white,
                                     size: 24,
                                   ),
@@ -174,10 +174,10 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                       fontWeight: FontWeight.w600,
                     ),
                     tabs: const [
-                      Tab(icon: Icon(LucideIcons.plus, size: 20)),
-                      Tab(icon: Icon(LucideIcons.uploadCloud, size: 20)),
-                      Tab(icon: Icon(LucideIcons.list, size: 20)),
-                      Tab(icon: Icon(LucideIcons.helpCircle, size: 20)),
+                      Tab(icon: Icon(Iconsax.add, size: 20)),
+                      Tab(icon: Icon(Iconsax.cloud_add, size: 20)),
+                      Tab(icon: Icon(Iconsax.menu_1, size: 20)),
+                      Tab(icon: Icon(Iconsax.message_question, size: 20)),
                     ],
                   ),
                 ),
@@ -254,7 +254,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
           ),
         ),
         child: Icon(
-          LucideIcons.arrowLeft,
+          Iconsax.arrow_left,
           size: 20,
           color: isDark ? Colors.white : Colors.black87,
         ),
@@ -274,7 +274,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
           _buildInfoCard(
             context,
             isDark: isDark,
-            icon: LucideIcons.info,
+            icon: Iconsax.info_circle,
             title: "Single Content Addition",
             description:
                 "Add one piece of sacred content at a time with all details.",
@@ -292,7 +292,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(LucideIcons.plus, color: Colors.white, size: 20),
+                  const Icon(Iconsax.add, color: Colors.white, size: 20),
                   const SizedBox(width: 12),
                   Text(
                     "Add Single Content",
@@ -324,7 +324,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
           _buildInfoCard(
             context,
             isDark: isDark,
-            icon: LucideIcons.upload,
+            icon: Iconsax.export_1,
             title: "Bulk Upload Options",
             description:
                 "Upload multiple content items at once using CSV or JSON files.",
@@ -334,7 +334,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
           _buildUploadCard(
             context,
             isDark: isDark,
-            icon: LucideIcons.fileSpreadsheet,
+            icon: Iconsax.document_text,
             title: "Upload CSV File",
             description: "Import content from a CSV file",
             color: const Color(0xFF10B981),
@@ -345,7 +345,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
           _buildUploadCard(
             context,
             isDark: isDark,
-            icon: LucideIcons.fileCode,
+            icon: Iconsax.code,
             title: "Upload JSON File",
             description: "Import content from a JSON file",
             color: const Color(0xFF3B82F6),
@@ -356,7 +356,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
           _buildUploadCard(
             context,
             isDark: isDark,
-            icon: LucideIcons.image,
+            icon: Iconsax.image,
             title: "Upload Images",
             description: "Add multiple images for content",
             color: const Color(0xFFEC4899),
@@ -367,7 +367,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
           _buildUploadCard(
             context,
             isDark: isDark,
-            icon: LucideIcons.music,
+            icon: Iconsax.music,
             title: "Upload Audio Files",
             description: "Add audio narrations in bulk",
             color: const Color(0xFF8B5CF6),
@@ -395,7 +395,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    LucideIcons.download,
+                    Iconsax.import_1,
                     size: 18,
                     color: AppTheme.primaryColor,
                   ),
@@ -428,7 +428,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
           _buildInfoCard(
             context,
             isDark: isDark,
-            icon: LucideIcons.database,
+            icon: Iconsax.data,
             title: "Content Management",
             description: "${allContent.length} items in database",
           ),
@@ -565,7 +565,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
               ),
             ),
             Icon(
-              LucideIcons.chevronRight,
+              Iconsax.arrow_right_3,
               size: 20,
               color: isDark
                   ? Colors.white.withOpacity(0.4)
@@ -606,7 +606,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(
-              LucideIcons.scroll,
+              Iconsax.document_text,
               color: Colors.white,
               size: 18,
             ),
@@ -639,7 +639,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
             ),
           ),
           IconButton(
-            icon: const Icon(LucideIcons.trash2, size: 18, color: Colors.red),
+            icon: const Icon(Iconsax.trash, size: 18, color: Colors.red),
             onPressed: () => _deleteContent(content),
           ),
         ],
@@ -809,7 +809,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
           _buildInfoCard(
             context,
             isDark: isDark,
-            icon: LucideIcons.bookOpen,
+            icon: Iconsax.book_1,
             title: "Admin Guide & Instructions",
             description: "How to manage and upload content to Sant-Vaani",
           ),
@@ -817,7 +817,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
           _buildGuideSection(
             context,
             isDark: isDark,
-            icon: LucideIcons.fileType,
+            icon: Iconsax.document_1,
             title: "1. Supported Formats",
             content:
                 "• Data: CSV (.csv) or JSON (.json) files.\n"
@@ -828,7 +828,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
           _buildGuideSection(
             context,
             isDark: isDark,
-            icon: LucideIcons.uploadCloud,
+            icon: Iconsax.cloud_add,
             title: "2. Where to Upload Files",
             content:
                 "• Pictures & Audio: Upload to Firebase Storage or a CDN (Cloudinary).\n"
@@ -839,7 +839,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
           _buildGuideSection(
             context,
             isDark: isDark,
-            icon: LucideIcons.link,
+            icon: Iconsax.link,
             title: "3. Linking Files to Database",
             content:
                 "• In your CSV/JSON, add a column/field for 'audioUrl' and 'imageUrl'.\n"
@@ -850,7 +850,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
           _buildGuideSection(
             context,
             isDark: isDark,
-            icon: LucideIcons.server,
+            icon: Iconsax.cpu,
             title: "4. Direct Database Update",
             content:
                 "• When you add content here, it's saved to the global Content Provider.\n"
@@ -861,7 +861,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
           _buildGuideSection(
             context,
             isDark: isDark,
-            icon: LucideIcons.checkSquare,
+            icon: Iconsax.tick_square,
             title: "5. Management Tips",
             content:
                 "• Use the 'Manage' tab (List icon) to delete or edit existing entries.\n"
@@ -929,7 +929,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
       SnackBar(
         content: Row(
           children: [
-            const Icon(LucideIcons.checkCircle, color: Colors.white, size: 18),
+            const Icon(Iconsax.tick_circle, color: Colors.white, size: 18),
             const SizedBox(width: 12),
             Text(message, style: GoogleFonts.outfit()),
           ],
@@ -946,7 +946,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
       SnackBar(
         content: Row(
           children: [
-            const Icon(LucideIcons.alertCircle, color: Colors.white, size: 18),
+            const Icon(Iconsax.warning_2, color: Colors.white, size: 18),
             const SizedBox(width: 12),
             Text(message, style: GoogleFonts.outfit()),
           ],

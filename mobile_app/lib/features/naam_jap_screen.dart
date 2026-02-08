@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
 import '../core/providers.dart';
@@ -108,7 +108,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
                           ],
                         ),
                         child: const Icon(
-                          LucideIcons.heart,
+                          Iconsax.heart,
                           color: Colors.white,
                           size: 24,
                         ),
@@ -160,7 +160,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
-                                  LucideIcons.rotateCcw,
+                                  Iconsax.refresh,
                                   size: 14,
                                   color: AppTheme.textMuted(context),
                                 ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:iconsax/iconsax.dart';
 import '../../core/theme.dart';
 import '../content_detail_screen.dart';
 
@@ -58,7 +58,7 @@ class SavedItemsScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(
-                        LucideIcons.bookmark,
+                        Iconsax.archive_book,
                         color: Colors.white,
                         size: 20,
                       ),
@@ -78,7 +78,7 @@ class SavedItemsScreen extends StatelessWidget {
                       ),
                     ),
                     trailing: Icon(
-                      LucideIcons.chevronRight,
+                      Iconsax.arrow_right_3,
                       size: 18,
                       color: isDark ? Colors.white38 : Colors.black38,
                     ),
@@ -112,7 +112,7 @@ class SavedItemsScreen extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Icon(
-              LucideIcons.folderOpen,
+              Iconsax.folder_open,
               size: 48,
               color: AppTheme.primaryColor,
             ),

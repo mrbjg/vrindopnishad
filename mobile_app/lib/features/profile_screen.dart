@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../core/theme.dart';
@@ -56,7 +56,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 const SizedBox(height: 14),
                 _buildGlassMenuItem(
                   context,
-                  icon: LucideIcons.bookmark,
+                  icon: Iconsax.archive_book,
                   title: "Saved Items",
                   subtitle: "Your personal collection",
                   gradientColors: [AppTheme.primaryColor, AppTheme.primaryDark],
@@ -69,7 +69,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 const SizedBox(height: 12),
                 _buildGlassMenuItem(
                   context,
-                  icon: LucideIcons.clock,
+                  icon: Iconsax.clock,
                   title: "Reading History",
                   subtitle: "Continue where you left off",
                   gradientColors: [AppTheme.glowBlue, const Color(0xFF60A5FA)],
@@ -87,7 +87,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 const SizedBox(height: 14),
                 _buildGlassMenuItem(
                   context,
-                  icon: LucideIcons.settings,
+                  icon: Iconsax.setting_2,
                   title: "Settings",
                   subtitle: "Notifications, Theme, Account",
                   gradientColors: [
@@ -103,7 +103,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 const SizedBox(height: 12),
                 _buildGlassMenuItem(
                   context,
-                  icon: LucideIcons.info,
+                  icon: Iconsax.info_circle,
                   title: "About Sant-Vaani",
                   subtitle: "Our mission and vision",
                   gradientColors: [AppTheme.glowTeal, const Color(0xFF2DD4BF)],
@@ -231,7 +231,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 ),
               ),
               Icon(
-                LucideIcons.chevronRight,
+                Iconsax.arrow_right_3,
                 size: 20,
                 color: isDark
                     ? Colors.white.withOpacity(0.4)
@@ -277,7 +277,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                   ],
                 ),
                 child: const Icon(
-                  LucideIcons.logOut,
+                  Iconsax.logout,
                   color: Colors.white,
                   size: 22,
                 ),
@@ -293,7 +293,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
               ),
               const Spacer(),
               Icon(
-                LucideIcons.chevronRight,
+                Iconsax.arrow_right_3,
                 size: 20,
                 color: Colors.red.withOpacity(0.5),
               ),
@@ -339,7 +339,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
-                      LucideIcons.logOut,
+                      Iconsax.logout,
                       color: Colors.red,
                       size: 32,
                     ),
@@ -401,7 +401,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                                   content: Row(
                                     children: [
                                       const Icon(
-                                        LucideIcons.check,
+                                        Iconsax.tick_circle,
                                         color: Colors.white,
                                         size: 18,
                                       ),
@@ -588,7 +588,7 @@ class _ProfileHeader extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  LucideIcons.mail,
+                  Iconsax.sms,
                   size: 14,
                   color: isDark ? Colors.white60 : Colors.black54,
                 ),
@@ -648,7 +648,7 @@ class _ProfileHeader extends StatelessWidget {
           ? Colors.white.withOpacity(0.1)
           : Colors.white.withOpacity(0.6),
       child: Icon(
-        LucideIcons.user,
+        Iconsax.user,
         size: 40,
         color: isDark ? Colors.white70 : AppTheme.primaryColor,
       ),
