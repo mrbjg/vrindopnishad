@@ -20,3 +20,6 @@ flutter emulators --launch Medium_Phone_API_36.1
 flutter clean && flutter pub get && flutter build apk --release
 
 flutter build apk --release
+
+
+the icon btn is inactive then the light icon is nice but then it is active then use its filled icon please
