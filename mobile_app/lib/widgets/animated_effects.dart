@@ -419,6 +419,9 @@ class AnimatedGreeting extends StatelessWidget {
     'राधे राधे',
     'जय श्री कृष्ण',
     'हरे कृष्ण',
+    'निताई गौर हरि बोल',
+    'श्यामा श्याम',
+    'प्यारी लाल',
   ];
 
   String get _greeting {
