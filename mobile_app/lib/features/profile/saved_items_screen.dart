@@ -65,14 +65,13 @@ class SavedItemsScreen extends StatelessWidget {
                     ),
                     title: Text(
                       item['title']!,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
+                      style: SacredStyles.outfitTitle.copyWith(
                         color: isDark ? Colors.white : Colors.black87,
                       ),
                     ),
                     subtitle: Text(
                       item['category']!,
-                      style: TextStyle(
+                      style: SacredStyles.outfitLabel.copyWith(
                         color: AppTheme.primaryColor,
                         fontSize: 12,
                       ),

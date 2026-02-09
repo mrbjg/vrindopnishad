@@ -38,7 +38,6 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final allContent = ref.watch(sacredContentProvider);
     final currentLanguage = ref.watch(languageProvider);
     final l = AppLocalization(currentLanguage);
     final isDark = AppTheme.isDark(context);
@@ -47,13 +46,12 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
         ? widget.categoryName.substring(0, widget.categoryName.length - 1)
         : widget.categoryName;
 
-    var filteredContent = allContent
-        .where(
-          (item) =>
-              item.category.toLowerCase() == normalizedCategory.toLowerCase(),
-        )
-        .toList();
+    // Use memoized provider for filtered content
+    var filteredContent = ref.watch(
+      filteredContentProvider(normalizedCategory),
+    );
 
+    // Secondary filtering for search within category
     if (_searchQuery.isNotEmpty) {
       filteredContent = filteredContent
           .where(
@@ -443,15 +441,6 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                 ? Colors.white.withOpacity(0.08)
                 : Colors.black.withOpacity(0.04),
           ),
-          boxShadow: isDark
-              ? null
-              : [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
         ),
         child: Row(
           children: [
@@ -470,9 +459,8 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item.title,
-                    style: GoogleFonts.outfit(
-                      fontWeight: FontWeight.w600,
+                    item.displayTitle,
+                    style: SacredStyles.outfitTitle.copyWith(
                       fontSize: 17,
                       color: AppTheme.textPrimary(context),
                     ),
@@ -482,10 +470,9 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                     item.translation,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.outfit(
+                    style: SacredStyles.outfitSubtitle.copyWith(
                       color: AppTheme.textSecondary(context),
                       fontSize: 13,
-                      height: 1.5,
                     ),
                   ),
                 ],

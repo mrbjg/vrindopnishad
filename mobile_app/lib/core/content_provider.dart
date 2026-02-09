@@ -14,6 +14,10 @@ class SacredContent {
   final String? imageUrl;
   final String? audioUrl;
 
+  // Pre-processed display strings for high performance
+  late final String displayTitle;
+  late final String sanskritPreview;
+
   SacredContent({
     required this.id,
     required this.title,
@@ -24,7 +28,25 @@ class SacredContent {
     required this.commentary,
     this.imageUrl,
     this.audioUrl,
-  });
+  }) {
+    _initializePreProcessed();
+  }
+
+  void _initializePreProcessed() {
+    displayTitle = title.replaceAll('\n', ', ');
+
+    // Pre-format sanskrit preview
+    final parts = sanskritText
+        .split(RegExp(r'[।॥\|!?,.\n]'))
+        .where((s) => s.trim().isNotEmpty)
+        .toList();
+
+    if (parts.isEmpty) {
+      sanskritPreview = sanskritText;
+    } else {
+      sanskritPreview = parts.take(2).join(', ');
+    }
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -201,3 +223,39 @@ final sacredContentProvider =
     StateNotifierProvider<ContentNotifier, List<SacredContent>>((ref) {
       return ContentNotifier();
     });
+
+/// ═══════════════════════════════════════════════════════════════════════════
+/// MEMOIZED PROVIDERS - Prevent expensive filtering on every build/frame
+/// ═══════════════════════════════════════════════════════════════════════════
+
+/// Provider that returns content filtered by category name
+final filteredContentProvider = Provider.family<List<SacredContent>, String>((
+  ref,
+  category,
+) {
+  final allContent = ref.watch(sacredContentProvider);
+  if (category.isEmpty || category.toLowerCase() == 'all') return allContent;
+
+  return allContent
+      .where((item) => item.category.toLowerCase() == category.toLowerCase())
+      .toList();
+});
+
+/// Provider that returns content filtered by search query
+final searchedContentProvider = Provider.family<List<SacredContent>, String>((
+  ref,
+  query,
+) {
+  final allContent = ref.watch(sacredContentProvider);
+  if (query.isEmpty) return [];
+
+  final lowerQuery = query.toLowerCase();
+  return allContent
+      .where(
+        (item) =>
+            item.title.toLowerCase().contains(lowerQuery) ||
+            item.translation.toLowerCase().contains(lowerQuery) ||
+            item.category.toLowerCase().contains(lowerQuery),
+      )
+      .toList();
+});

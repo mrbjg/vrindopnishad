@@ -28,124 +28,126 @@ class HomeScreen extends ConsumerWidget {
     final isDark = AppTheme.isDark(context);
 
     return Scaffold(
-      body: AnimatedSacredBackground(
-        child: CustomScrollView(
-          physics: const ClampingScrollPhysics(),
-          slivers: [
-            // ═══════════════════════════════════════════════════════════════
-            // IMMERSIVE HEADER
-            // ═══════════════════════════════════════════════════════════════
-            SliverToBoxAdapter(
-              child: Consumer(
-                builder: (context, ref, _) {
-                  final lang = ref.watch(languageProvider);
-                  final l = AppLocalization(lang);
-                  return _buildImmersiveHeader(context, l, isDark);
-                },
-              ),
-            ),
-
-            // ═══════════════════════════════════════════════════════════════
-            // QUOTE OF THE DAY
-            // ═══════════════════════════════════════════════════════════════
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  AppTheme.space20,
-                  AppTheme.space8,
-                  AppTheme.space20,
-                  0,
-                ),
-                child: QuoteCard(
-                  quote:
-                      "You have the right to work, but never to the fruit of work.",
-                  source: "Bhagavad Gita 2.47",
+      body: RepaintBoundary(
+        child: AnimatedSacredBackground(
+          child: CustomScrollView(
+            physics: const ClampingScrollPhysics(),
+            slivers: [
+              // ═══════════════════════════════════════════════════════════════
+              // IMMERSIVE HEADER
+              // ═══════════════════════════════════════════════════════════════
+              SliverToBoxAdapter(
+                child: Consumer(
+                  builder: (context, ref, _) {
+                    final lang = ref.watch(languageProvider);
+                    final l = AppLocalization(lang);
+                    return _buildImmersiveHeader(context, l, isDark);
+                  },
                 ),
               ),
-            ),
 
-            // ═══════════════════════════════════════════════════════════════
-            // NAAM JAP COUNTER - Sacred mantra chanting counter
-            // ═══════════════════════════════════════════════════════════════
-            SliverToBoxAdapter(
-              child: Consumer(
-                builder: (context, ref, _) {
-                  return _buildNaamJapCounter(context, ref, isDark);
-                },
+              // ═══════════════════════════════════════════════════════════════
+              // QUOTE OF THE DAY
+              // ═══════════════════════════════════════════════════════════════
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    AppTheme.space20,
+                    AppTheme.space8,
+                    AppTheme.space20,
+                    0,
+                  ),
+                  child: QuoteCard(
+                    quote:
+                        "You have the right to work, but never to the fruit of work.",
+                    source: "Bhagavad Gita 2.47",
+                  ),
+                ),
               ),
-            ),
 
-            // ═══════════════════════════════════════════════════════════════
-            // CATEGORIES GRID - Stunning gradient cards
-            // ═══════════════════════════════════════════════════════════════
-            SliverToBoxAdapter(
-              child: Consumer(
-                builder: (context, ref, _) {
-                  final lang = ref.watch(languageProvider);
-                  final l = AppLocalization(lang);
-                  return _buildCategoriesSection(context, l, isDark);
-                },
+              // ═══════════════════════════════════════════════════════════════
+              // NAAM JAP COUNTER - Sacred mantra chanting counter
+              // ═══════════════════════════════════════════════════════════════
+              SliverToBoxAdapter(
+                child: Consumer(
+                  builder: (context, ref, _) {
+                    return _buildNaamJapCounter(context, ref, isDark);
+                  },
+                ),
               ),
-            ),
 
-            // ═══════════════════════════════════════════════════════════════
-            // CONTINUE READING
-            // ═══════════════════════════════════════════════════════════════
-            SliverToBoxAdapter(
-              child: Consumer(
-                builder: (context, ref, _) {
-                  final content = ref.watch(sacredContentProvider);
-                  final lang = ref.watch(languageProvider);
-                  final l = AppLocalization(lang);
-                  return _buildContinueReading(context, content, l, isDark);
-                },
+              // ═══════════════════════════════════════════════════════════════
+              // CATEGORIES GRID - Stunning gradient cards
+              // ═══════════════════════════════════════════════════════════════
+              SliverToBoxAdapter(
+                child: Consumer(
+                  builder: (context, ref, _) {
+                    final lang = ref.watch(languageProvider);
+                    final l = AppLocalization(lang);
+                    return _buildCategoriesSection(context, l, isDark);
+                  },
+                ),
               ),
-            ),
 
-            // ═══════════════════════════════════════════════════════════════
-            // RECENT CONTENT
-            // ═══════════════════════════════════════════════════════════════
-            SliverToBoxAdapter(
-              child: Consumer(
-                builder: (context, ref, _) {
-                  final lang = ref.watch(languageProvider);
-                  final l = AppLocalization(lang);
-                  return Padding(
-                    padding: const EdgeInsets.only(top: AppTheme.space24),
-                    child: SectionHeader(
-                      title: l.translate('recent_wisdom'),
-                      action: l.translate('view_all'),
-                      onAction: () {},
-                      icon: Iconsax.magic_star,
-                    ),
-                  );
-                },
+              // ═══════════════════════════════════════════════════════════════
+              // CONTINUE READING
+              // ═══════════════════════════════════════════════════════════════
+              SliverToBoxAdapter(
+                child: Consumer(
+                  builder: (context, ref, _) {
+                    final content = ref.watch(sacredContentProvider);
+                    final lang = ref.watch(languageProvider);
+                    final l = AppLocalization(lang);
+                    return _buildContinueReading(context, content, l, isDark);
+                  },
+                ),
               ),
-            ),
 
-            // CONTENT LIST with glass cards
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(
-                AppTheme.space20,
-                AppTheme.space16,
-                AppTheme.space20,
-                140,
+              // ═══════════════════════════════════════════════════════════════
+              // RECENT CONTENT
+              // ═══════════════════════════════════════════════════════════════
+              SliverToBoxAdapter(
+                child: Consumer(
+                  builder: (context, ref, _) {
+                    final lang = ref.watch(languageProvider);
+                    final l = AppLocalization(lang);
+                    return Padding(
+                      padding: const EdgeInsets.only(top: AppTheme.space24),
+                      child: SectionHeader(
+                        title: l.translate('recent_wisdom'),
+                        action: l.translate('view_all'),
+                        onAction: () {},
+                        icon: Iconsax.magic_star,
+                      ),
+                    );
+                  },
+                ),
               ),
-              sliver: Consumer(
-                builder: (context, ref, _) {
-                  final content = ref.watch(sacredContentProvider);
-                  final visibleCount = ref.watch(visibleItemCountProvider);
-                  return _buildContentList(
-                    context,
-                    content,
-                    visibleCount,
-                    isDark,
-                    ref,
-                  );
-                },
+
+              // CONTENT LIST with glass cards
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppTheme.space20,
+                  AppTheme.space16,
+                  AppTheme.space20,
+                  140,
+                ),
+                sliver: Consumer(
+                  builder: (context, ref, _) {
+                    final content = ref.watch(sacredContentProvider);
+                    final visibleCount = ref.watch(visibleItemCountProvider);
+                    return _buildContentList(
+                      context,
+                      content,
+                      visibleCount,
+                      isDark,
+                      ref,
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -529,7 +531,8 @@ class HomeScreen extends ConsumerWidget {
                     itemCount: categories.length,
                     itemBuilder: (context, index) {
                       final cat = categories[index];
-                      final card = RepaintBoundary(
+                      // RepaintBoundary here helps isolate scroll updates from other regions
+                      return RepaintBoundary(
                         child: Padding(
                           padding: EdgeInsets.only(
                             right: index < categories.length - 1
@@ -560,8 +563,6 @@ class HomeScreen extends ConsumerWidget {
                           ),
                         ),
                       );
-                      // No animation - show instantly for better performance
-                      return card;
                     },
                   ),
                 ),
@@ -935,16 +936,14 @@ class HomeScreen extends ConsumerWidget {
           delegate: SliverChildBuilderDelegate(
             (context, index) {
               final item = itemsToShow[index];
-              // No animation - instant like Twitter/Instagram
-              return RepaintBoundary(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: AppTheme.space12),
-                  child: _buildGlassContentCard(context, item, isDark),
-                ),
+              return Padding(
+                padding: const EdgeInsets.only(bottom: AppTheme.space12),
+                child: _buildGlassContentCard(context, item, isDark),
               );
             },
             childCount: itemsToShow.length,
             addAutomaticKeepAlives: true,
+            // SliverList already handles repaint boundaries efficiently
             addRepaintBoundaries: true,
           ),
         ),
@@ -1001,12 +1000,14 @@ class HomeScreen extends ConsumerWidget {
     final categoryColors = _getCategoryGradient(item.category);
 
     return GlassCard(
-      blur: 10,
-      opacity: isDark ? 0.12 : 0.75,
-      borderRadius: BorderRadius.circular(AppTheme.radiusXL),
-      borderColor: categoryColors.first.withOpacity(0.15),
+      blur: 0, // Disable blur for individual list items to maximize performance
+      opacity: isDark ? 0.08 : 0.9,
+      borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+      // Use lighter border instead of shadow for performance
+      borderColor: categoryColors.first.withOpacity(0.2),
       onTap: () {
-        HapticFeedback.lightImpact();
+        // Haptic only, no scaling animation in high-speed lists
+        HapticFeedback.selectionClick();
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => ContentDetailScreen(content: item)),
@@ -1053,24 +1054,20 @@ class HomeScreen extends ConsumerWidget {
               children: [
                 // Title - adaptive sizing
                 Text(
-                  item.title.replaceAll('\n', ', '),
-                  style: GoogleFonts.outfit(
-                    fontSize: item.title.length > 30 ? 15 : 16,
-                    fontWeight: FontWeight.w700,
+                  item.displayTitle,
+                  style: SacredStyles.outfitTitle.copyWith(
+                    fontSize: item.displayTitle.length > 30 ? 15 : 16,
                     color: AppTheme.textPrimary(context),
-                    height: 1.25,
                   ),
-                  maxLines: item.title.length > 30 ? 2 : 1,
+                  maxLines: item.displayTitle.length > 30 ? 2 : 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 6),
-                // Sanskrit preview - split by delimiters for readability
+                // Sanskrit preview - using pre-processed string and memoized style
                 Text(
-                  _formatSanskritPreview(item.sanskritText, 2),
-                  style: GoogleFonts.notoSansDevanagari(
-                    fontSize: 11,
+                  item.sanskritPreview,
+                  style: SacredStyles.devanagariPreview.copyWith(
                     color: AppTheme.textSecondary(context),
-                    height: 1.5,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -1111,10 +1108,8 @@ class HomeScreen extends ConsumerWidget {
                           const SizedBox(width: 4),
                           Text(
                             item.category,
-                            style: GoogleFonts.outfit(
-                              fontSize: 10,
+                            style: SacredStyles.outfitLabel.copyWith(
                               color: categoryColors.first,
-                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
@@ -1129,8 +1124,7 @@ class HomeScreen extends ConsumerWidget {
                     const SizedBox(width: 4),
                     Text(
                       '5 min read',
-                      style: GoogleFonts.outfit(
-                        fontSize: 11,
+                      style: SacredStyles.outfitMuted.copyWith(
                         color: AppTheme.textMuted(context),
                       ),
                     ),

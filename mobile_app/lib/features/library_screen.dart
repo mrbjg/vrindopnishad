@@ -52,9 +52,8 @@ class LibraryScreen extends ConsumerWidget {
                     children: [
                       Text(
                         l.translate('my_library'),
-                        style: GoogleFonts.spectral(
+                        style: SacredStyles.spectralHeader.copyWith(
                           fontSize: 28,
-                          fontWeight: FontWeight.bold,
                           color: isDark
                               ? Colors.white
                               : AppTheme.lightTextPrimary,
@@ -101,9 +100,8 @@ class LibraryScreen extends ConsumerWidget {
                         const SizedBox(width: 8),
                         Text(
                           "${savedItems.length} ${l.translate('saved_items')}",
-                          style: GoogleFonts.outfit(
+                          style: SacredStyles.outfitSubtitle.copyWith(
                             fontSize: 13,
-                            fontWeight: FontWeight.w500,
                             color: isDark
                                 ? Colors.white
                                 : AppTheme.lightTextPrimary,
@@ -143,9 +141,9 @@ class LibraryScreen extends ConsumerWidget {
   }
 
   Widget _buildSavedCard(BuildContext context, SacredContent item) {
-    return PressableScale(
+    return GestureDetector(
       onTap: () {
-        HapticFeedback.lightImpact();
+        HapticFeedback.selectionClick();
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => ContentDetailScreen(content: item)),
@@ -153,7 +151,14 @@ class LibraryScreen extends ConsumerWidget {
       },
       child: Container(
         padding: const EdgeInsets.all(14),
-        decoration: AppTheme.cardDecoration(context, borderRadius: 18),
+        decoration: BoxDecoration(
+          color: AppTheme.cardColor(context),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: AppTheme.borderColor(context).withOpacity(0.05),
+            width: 1,
+          ),
+        ),
         child: Row(
           children: [
             Container(
@@ -175,9 +180,8 @@ class LibraryScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item.title,
-                    style: GoogleFonts.outfit(
-                      fontWeight: FontWeight.w600,
+                    item.displayTitle,
+                    style: SacredStyles.outfitTitle.copyWith(
                       fontSize: 15,
                       color: AppTheme.textPrimary(context),
                     ),
@@ -207,10 +211,9 @@ class LibraryScreen extends ConsumerWidget {
                             const SizedBox(width: 4),
                             Text(
                               item.category,
-                              style: GoogleFonts.outfit(
+                              style: SacredStyles.outfitLabel.copyWith(
                                 color: AppTheme.primaryColor,
                                 fontSize: 11,
-                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ],
@@ -225,7 +228,7 @@ class LibraryScreen extends ConsumerWidget {
                       const SizedBox(width: 4),
                       Text(
                         "5 min",
-                        style: GoogleFonts.outfit(
+                        style: SacredStyles.outfitMuted.copyWith(
                           color: AppTheme.textMuted(context),
                           fontSize: 12,
                         ),
@@ -268,22 +271,21 @@ class LibraryScreen extends ConsumerWidget {
             const SizedBox(height: 24),
             Text(
               l.translate('library_empty'),
-              style: GoogleFonts.spectral(
+              style: SacredStyles.spectralHeader.copyWith(
                 fontSize: 22,
-                fontWeight: FontWeight.bold,
                 color: AppTheme.textPrimary(context),
               ),
             ),
             const SizedBox(height: 8),
             Text(
               l.translate('save_favorite'),
-              style: GoogleFonts.outfit(
+              style: SacredStyles.outfitSubtitle.copyWith(
                 color: AppTheme.textMuted(context),
                 fontSize: 14,
               ),
             ),
             const SizedBox(height: 28),
-            PressableScale(
+            GestureDetector(
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -309,16 +311,11 @@ class LibraryScreen extends ConsumerWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
-                      Iconsax.discover,
-                      size: 18,
-                      color: Colors.white,
-                    ),
+                    const Icon(Iconsax.discover, size: 18, color: Colors.white),
                     const SizedBox(width: 10),
                     Text(
                       l.translate('explore_content'),
-                      style: GoogleFonts.outfit(
-                        fontWeight: FontWeight.w600,
+                      style: SacredStyles.outfitTitle.copyWith(
                         color: Colors.white,
                         fontSize: 14,
                       ),

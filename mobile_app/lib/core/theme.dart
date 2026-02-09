@@ -12,7 +12,7 @@ class AppTheme {
   // ═══════════════════════════════════════════════════════════════════════════
   // PERFORMANCE MODE - For low-RAM devices
   // ═══════════════════════════════════════════════════════════════════════════
-  static const bool lowPerformanceMode = false; // Toggle for testing/scaling
+  static const bool lowPerformanceMode = true; // Enabled for extreme smoothness
 
   // ═══════════════════════════════════════════════════════════════════════════
   // PRIMARY PALETTE - "Divine Minimal" Vibrant Marigold
@@ -503,4 +503,39 @@ class AppTheme {
       ),
     );
   }
+}
+
+/// ═══════════════════════════════════════════════════════════════════════════
+/// PRE-MEMOIZED STYLES - Bypasses GoogleFonts overhead in lists
+/// ═══════════════════════════════════════════════════════════════════════════
+class SacredStyles {
+  // Common Outfit styles
+  static final outfitTitle = GoogleFonts.outfit(
+    fontWeight: FontWeight.w700,
+    fontSize: 16,
+    height: 1.25,
+  );
+
+  static final outfitSubtitle = GoogleFonts.outfit(fontSize: 14, height: 1.5);
+
+  static final outfitLabel = GoogleFonts.outfit(
+    fontSize: 10,
+    fontWeight: FontWeight.w600,
+  );
+
+  static final outfitMuted = GoogleFonts.outfit(fontSize: 11);
+
+  // Sacred Devanagari styles
+  static final devanagariPreview = GoogleFonts.notoSansDevanagari(
+    fontSize: 11,
+    height: 1.5,
+  );
+
+  static final devanagariMain = GoogleFonts.notoSansDevanagari();
+
+  // Spectral display styles
+  static final spectralHeader = GoogleFonts.spectral(
+    fontWeight: FontWeight.bold,
+    fontSize: 28,
+  );
 }

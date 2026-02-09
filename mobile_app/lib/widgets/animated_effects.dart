@@ -165,30 +165,39 @@ class _AnimatedSacredBackgroundState extends State<AnimatedSacredBackground> {
 
     return Stack(
       children: [
-        // Elegant gradient background
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: isDark
-                  ? [
-                      const Color(0xFF0F0F14),
-                      const Color(0xFF1A1A28),
-                      const Color(0xFF0F0F14),
-                    ]
-                  : [
-                      const Color(0xFFFDFBF7),
-                      const Color(0xFFFFF8EB),
-                      const Color(0xFFFDFBF7),
-                    ],
-            ),
+        // Elegant gradient background - Isolated with RepaintBoundary
+        RepaintBoundary(
+          child: Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: isDark
+                        ? [
+                            const Color(0xFF0F0F14),
+                            const Color(0xFF1A1A28),
+                            const Color(0xFF0F0F14),
+                          ]
+                        : [
+                            const Color(0xFFFDFBF7),
+                            const Color(0xFFFFF8EB),
+                            const Color(0xFFFDFBF7),
+                          ],
+                  ),
+                ),
+              ),
+              if (widget.showGeometry)
+                Center(child: _SacredGeometry(isDark: isDark)),
+            ],
           ),
         ),
-        // Sacred geometry (optional)
-        if (widget.showGeometry) Center(child: _SacredGeometry(isDark: isDark)),
-        // Child content
-        widget.child,
+        // Child content (typically a scroll view) - Isolated from background
+        RepaintBoundary(
+          key: const ValueKey('sacred_background_content'),
+          child: widget.child,
+        ),
       ],
     );
   }
@@ -290,15 +299,18 @@ class GlassCard extends StatelessWidget {
       child: child,
     );
 
-    // Skip BackdropFilter entirely if in lowPerformanceMode to save memory/CPU
+    // Skip BackdropFilter AND ClipRRect entirely if blur is 0 or lowPerformanceMode is on
+    // This is a CRITICAL optimization for scroll smoothness
+    if (blur <= 0 || AppTheme.lowPerformanceMode) {
+      return contents;
+    }
+
     Widget card = ClipRRect(
       borderRadius: radius,
-      child: (blur > 0 && !AppTheme.lowPerformanceMode)
-          ? BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-              child: contents,
-            )
-          : contents,
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+        child: contents,
+      ),
     );
 
     // Wrap with RepaintBoundary to prevent cascading repaints

@@ -33,28 +33,12 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final allContent = ref.watch(sacredContentProvider);
     final currentLanguage = ref.watch(languageProvider);
     final l = AppLocalization(currentLanguage);
     final isDark = AppTheme.isDark(context);
 
-    // Filter content based on search
-    final filteredContent = _searchQuery.isEmpty
-        ? <SacredContent>[]
-        : allContent
-              .where(
-                (item) =>
-                    item.title.toLowerCase().contains(
-                      _searchQuery.toLowerCase(),
-                    ) ||
-                    item.translation.toLowerCase().contains(
-                      _searchQuery.toLowerCase(),
-                    ) ||
-                    item.category.toLowerCase().contains(
-                      _searchQuery.toLowerCase(),
-                    ),
-              )
-              .toList();
+    // Use memoized provider for search results
+    final filteredContent = ref.watch(searchedContentProvider(_searchQuery));
 
     return Scaffold(
       backgroundColor: isDark
@@ -373,10 +357,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       const SizedBox(width: 8),
                       Text(
                         '${filteredContent.length} results found',
-                        style: GoogleFonts.outfit(
+                        style: SacredStyles.outfitSubtitle.copyWith(
                           fontSize: 14,
                           color: AppTheme.textMuted(context),
-                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
@@ -404,9 +387,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             const SizedBox(height: 20),
                             Text(
                               'No results found',
-                              style: GoogleFonts.outfit(
+                              style: SacredStyles.outfitTitle.copyWith(
                                 fontSize: 18,
-                                fontWeight: FontWeight.w600,
                                 color: AppTheme.textPrimary(context),
                               ),
                             ),
@@ -445,19 +427,28 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   }
 
   Widget _buildTrendingTag(BuildContext context, String tag, bool isDark) {
-    return PressableScale(
+    return GestureDetector(
       onTap: () {
-        HapticFeedback.lightImpact();
+        HapticFeedback.selectionClick();
         _searchController.text = tag;
         setState(() {
           _searchQuery = tag;
           _isSearching = true;
         });
       },
-      child: GlassCard(
-        blur: 8,
-        opacity: isDark ? 0.1 : 0.7,
+      child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: isDark
+              ? Colors.white.withOpacity(0.08)
+              : Colors.white.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withOpacity(0.12)
+                : AppTheme.borderColor(context).withOpacity(0.2),
+          ),
+        ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -465,9 +456,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             const SizedBox(width: 8),
             Text(
               tag,
-              style: GoogleFonts.outfit(
+              style: SacredStyles.outfitLabel.copyWith(
                 fontSize: 13,
-                fontWeight: FontWeight.w500,
                 color: AppTheme.textPrimary(context),
               ),
             ),
@@ -484,9 +474,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     List<Color> gradientColors,
     bool isDark,
   ) {
-    return PressableScale(
+    return GestureDetector(
       onTap: () {
-        HapticFeedback.lightImpact();
+        HapticFeedback.selectionClick();
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -505,13 +495,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             colors: gradientColors,
           ),
           borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
-          boxShadow: [
-            BoxShadow(
-              color: gradientColors.first.withOpacity(0.4),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Stack(
           children: [
@@ -530,9 +513,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   const SizedBox(width: 10),
                   Text(
                     label,
-                    style: GoogleFonts.outfit(
+                    style: SacredStyles.outfitTitle.copyWith(
                       fontSize: 15,
-                      fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
                   ),
@@ -552,9 +534,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   ) {
     final categoryColors = _getCategoryColor(item.category);
 
-    return PressableScale(
+    return GestureDetector(
       onTap: () {
-        HapticFeedback.lightImpact();
+        HapticFeedback.selectionClick();
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => ContentDetailScreen(content: item)),
@@ -563,8 +545,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         child: GlassCard(
-          blur: 10,
-          opacity: isDark ? 0.1 : 0.75,
+          blur: 0,
+          opacity: isDark ? 0.08 : 0.85,
           padding: const EdgeInsets.all(14),
           child: Row(
             children: [
@@ -592,10 +574,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item.title.replaceAll('\n', ', '),
-                      style: GoogleFonts.outfit(
+                      item.displayTitle,
+                      style: SacredStyles.outfitTitle.copyWith(
                         fontSize: 15,
-                        fontWeight: FontWeight.w600,
                         color: AppTheme.textPrimary(context),
                       ),
                       maxLines: 1,
@@ -615,10 +596,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                           ),
                           child: Text(
                             item.category,
-                            style: GoogleFonts.outfit(
+                            style: SacredStyles.outfitLabel.copyWith(
                               fontSize: 11,
                               color: categoryColors.first,
-                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
