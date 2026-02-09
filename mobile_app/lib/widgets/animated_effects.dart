@@ -299,6 +299,14 @@ class GlassCard extends StatelessWidget {
       child: child,
     );
 
+    // Wrap with RepaintBoundary to prevent cascading repaints
+    contents = RepaintBoundary(child: contents);
+
+    if (onTap != null) {
+      // Use PressableScale for immediate tap feedback
+      contents = PressableScale(onTap: onTap, child: contents);
+    }
+
     // Skip BackdropFilter AND ClipRRect entirely if blur is 0 or lowPerformanceMode is on
     // This is a CRITICAL optimization for scroll smoothness
     if (blur <= 0 || AppTheme.lowPerformanceMode) {
@@ -312,14 +320,6 @@ class GlassCard extends StatelessWidget {
         child: contents,
       ),
     );
-
-    // Wrap with RepaintBoundary to prevent cascading repaints
-    card = RepaintBoundary(child: card);
-
-    if (onTap != null) {
-      // Use PressableScale for immediate tap feedback
-      card = PressableScale(onTap: onTap, child: card);
-    }
 
     return card;
   }
