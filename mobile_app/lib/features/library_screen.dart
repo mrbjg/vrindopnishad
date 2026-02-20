@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
 import '../core/providers.dart';
 import '../core/localization.dart';
 import '../core/content_provider.dart';
 import 'content_detail_screen.dart';
 import 'category_screen.dart';
-import '../widgets/animated_effects.dart';
 
 class LibraryScreen extends ConsumerWidget {
   const LibraryScreen({super.key});

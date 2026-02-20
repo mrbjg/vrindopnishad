@@ -579,7 +579,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             size: 18,
                           ),
                           const SizedBox(width: 12),
-                          Text(l.translate('sanskrit_text') + ' copied!'),
+                          Text('${l.translate('sanskrit_text')} copied!'),
                         ],
                       ),
                       backgroundColor: AppTheme.primaryColor,

@@ -8,7 +8,6 @@ import 'search_screen.dart';
 import 'naam_jap_screen.dart';
 import 'library_screen.dart';
 import 'profile_screen.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// MAIN NAVIGATION - Zen Navigation with floating bar
