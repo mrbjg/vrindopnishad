@@ -1,5 +1,13 @@
 import { supabase } from '../lib/supabase';
 import { mockApiService } from './mockData';
+import { auth, contentDb } from '../firebase';
+import { ref, get } from 'firebase/database';
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signInWithPopup, 
+  GoogleAuthProvider 
+} from 'firebase/auth';
 
 const USE_MOCK = process.env.REACT_APP_DEMO_MODE === 'true';
 
@@ -10,22 +18,51 @@ export const apiService = {
       return mockApiService.getAllContent(category);
     }
     try {
-      let query = supabase
-        .from('content')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(limit);
-
-      if (category) {
-        query = query.eq('category', category);
+      const snapshot = await get(ref(contentDb, 'public/content'));
+      if (snapshot.exists()) {
+        const rawData = snapshot.val();
+        
+        let data;
+        // Handle array vs object format just like original bridge
+        if (Array.isArray(rawData)) {
+            data = rawData.filter(Boolean); // Filter out nulls
+        } else {
+            data = Object.keys(rawData).map(key => ({
+                id: key,
+                ...rawData[key]
+            }));
+        }
+        
+        data = data.reverse();
+        
+        if (category) {
+            data = data.filter(item => item.category === category);
+        }
+        
+        if (limit) {
+            data = data.slice(0, limit);
+        }
+        
+        return data;
       }
-
-      const { data, error } = await query;
-      if (error) throw error;
-      return data;
+      return [];
     } catch (error) {
-      console.error('Error fetching content:', error);
-      throw error;
+      console.warn('Firebase connection failed, falling back to Supabase...', error.message);
+      try {
+        let query = supabase.from('content').select('*').order('created_at', { ascending: false });
+        if (category) {
+            query = query.eq('category', category);
+        }
+        if (limit) {
+            query = query.limit(limit);
+        }
+        const { data, error: supaError } = await query;
+        if (supaError) throw supaError;
+        return data || [];
+      } catch (supaErr) {
+        console.error('All database sources failed:', supaErr);
+        throw supaErr;
+      }
     }
   },
 
@@ -34,17 +71,24 @@ export const apiService = {
       return mockApiService.getContentById(id);
     }
     try {
-      const { data, error } = await supabase
-        .from('content')
-        .select('*')
-        .eq('id', id)
-        .single();
-
-      if (error) throw error;
-      return data;
+      const snapshot = await get(ref(contentDb, `public/content/${id}`));
+      if (snapshot.exists()) {
+        return {
+          id,
+          ...snapshot.val()
+        };
+      }
+      throw new Error("Content not found");
     } catch (error) {
-      console.error('Error fetching content:', error);
-      throw error;
+      console.warn('Firebase fetch failed, falling back to Supabase...', error.message);
+      try {
+          const { data, error: supaError } = await supabase.from('content').select('*').eq('id', id).single();
+          if (supaError) throw supaError;
+          return { id, ...data };
+      } catch (supaErr) {
+          console.error('Error fetching content by ID:', supaErr);
+          throw supaErr;
+      }
     }
   },
 
@@ -54,32 +98,37 @@ export const apiService = {
       return mockApiService.getCategories();
     }
     try {
-      // Get unique categories from content table
-      const { data, error } = await supabase
-        .from('content')
-        .select('category');
-
-      if (error) throw error;
-
-      const uniqueCategories = [...new Set(data.map(item => item.category))];
-      return uniqueCategories;
+      const snapshot = await get(ref(contentDb, 'public/content'));
+      if (snapshot.exists()) {
+        const rawData = snapshot.val();
+        let data;
+        if (Array.isArray(rawData)) {
+            data = rawData.filter(Boolean);
+        } else {
+            data = Object.keys(rawData).map(key => rawData[key]);
+        }
+        const uniqueCategories = [...new Set(data.map(item => item.category).filter(Boolean))];
+        return uniqueCategories;
+      }
+      return [];
     } catch (error) {
-      console.error('Error fetching categories:', error);
-      throw error;
+      console.warn('Firebase fetch failed, falling back to Supabase...', error.message);
+      try {
+          const { data, error: supaError } = await supabase.from('content').select('category').not('category', 'is', null);
+          if (supaError) throw supaError;
+          const uniqueCategories = [...new Set(data.map(item => item.category))];
+          return uniqueCategories;
+      } catch (supaErr) {
+          console.error('Error fetching categories:', supaErr);
+          throw supaErr;
+      }
     }
   },
 
   // Admin APIs (In case frontend needs them)
   createContent: async (contentData) => {
     try {
-      const { data, error } = await supabase
-        .from('content')
-        .insert([contentData])
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
+      throw new Error("createContent not implemented yet for Firebase");
     } catch (error) {
       console.error('Error creating content:', error);
       throw error;
@@ -88,15 +137,7 @@ export const apiService = {
 
   updateContent: async (id, contentData) => {
     try {
-      const { data, error } = await supabase
-        .from('content')
-        .update(contentData)
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
+      throw new Error("updateContent not implemented yet for Firebase");
     } catch (error) {
       console.error('Error updating content:', error);
       throw error;
@@ -105,13 +146,7 @@ export const apiService = {
 
   deleteContent: async (id) => {
     try {
-      const { error } = await supabase
-        .from('content')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-      return { success: true };
+      throw new Error("deleteContent not implemented yet for Firebase");
     } catch (error) {
       console.error('Error deleting content:', error);
       throw error;
@@ -121,12 +156,8 @@ export const apiService = {
   // Auth APIs
   login: async (email, password) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-      if (error) throw error;
-      return data;
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      return userCredential.user;
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -135,12 +166,8 @@ export const apiService = {
 
   signUp: async (email, password) => {
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password
-      });
-      if (error) throw error;
-      return data;
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      return userCredential.user;
     } catch (error) {
       console.error('Sign up error:', error);
       throw error;
@@ -149,14 +176,9 @@ export const apiService = {
 
   signInWithGoogle: async () => {
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin
-        }
-      });
-      if (error) throw error;
-      return data;
+      const provider = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(auth, provider);
+      return userCredential.user;
     } catch (error) {
       console.error('Google sign in error:', error);
       throw error;
@@ -168,9 +190,8 @@ export const apiService = {
       return mockApiService.verifyToken();
     }
     try {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) throw error;
-      return session;
+      if (!auth.currentUser) throw new Error("No user signed in");
+      return await auth.currentUser.getIdTokenResult();
     } catch (error) {
       console.error('Token verification error:', error);
       throw error;

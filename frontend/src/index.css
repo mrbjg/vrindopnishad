@@ -186,3 +186,199 @@ code {
         box-shadow: 0 0 25px rgba(232, 168, 56, 0.4);
     }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* SKETCH UI CUSTOM CSS PORTED FROM HTML                                       */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Laila:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --font-headings: 'Laila', serif;
+    --font-body: 'Laila', sans-serif;
+    --line-height: 1.8;
+    --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --border-radius-md: 20px;
+    --blur-effect: blur(20px);
+    --shadow-md: 0 15px 35px rgba(31, 38, 135, 0.5);
+    --star-color: rgba(255, 255, 255, 0.8);
+    --nebula-color-1: rgba(123, 31, 162, 0.15);
+    --nebula-color-2: rgba(32, 84, 174, 0.15);
+    --nebula-color-3: rgb(175, 38, 255, 0.15);
+}
+
+body {
+    font-family: var(--font-body) !important;
+    background: #0a0015 !important;
+    color: white !important;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        linear-gradient(45deg, rgba(0, 8, 45, 0.8), transparent),
+        linear-gradient(-45deg, rgba(63, 0, 125, 0.6), transparent),
+        linear-gradient(135deg, rgba(45, 0, 102, 0.7), transparent),
+        linear-gradient(-135deg, rgba(74, 0, 114, 0.6), transparent);
+    background-size: 400% 400%, 400% 400%, 400% 400%, 400% 400%;
+    z-index: -2;
+    pointer-events: none;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(2px 2px at 20% 30%, var(--star-color) 50%, transparent 50%),
+        radial-gradient(2px 2px at 40% 70%, var(--star-color) 50%, transparent 50%),
+        radial-gradient(2px 2px at 60% 20%, var(--star-color) 50%, transparent 50%),
+        radial-gradient(2px 2px at 80% 90%, var(--star-color) 50%, transparent 50%);
+    background-size: 200px 200px, 300px 300px, 250px 250px, 275px 275px;
+    z-index: -1;
+    opacity: 0.8;
+    mix-blend-mode: screen;
+    pointer-events: none;
+}
+
+.nebula {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background:
+        radial-gradient(circle at 30% 50%, var(--nebula-color-1) 0%, transparent 60%),
+        radial-gradient(circle at 70% 50%, var(--nebula-color-2) 0%, transparent 60%),
+        radial-gradient(circle at 50% 80%, var(--nebula-color-3) 0%, transparent 60%);
+    mix-blend-mode: screen;
+    opacity: 0.3;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.grid-container {
+    max-width: 1200px;
+    margin: 90px auto 0;
+    padding: 0 2rem 8rem;
+    min-height: calc(100vh - 90px);
+}
+
+h1.page-title {
+    font-family: var(--font-headings) !important;
+    font-size: clamp(2rem, 8vw, 4rem) !important;
+    color: white !important;
+    text-align: center !important;
+    margin: clamp(2rem, 10vh, 4rem) 0 2rem !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(clamp(280px, 100%, 400px), 1fr));
+    gap: clamp(1rem, 2vw, 2rem);
+    padding: 0 clamp(1rem, 5vw, 4rem);
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.content-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: var(--blur-effect) !important;
+    -webkit-backdrop-filter: var(--blur-effect) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: var(--border-radius-md) !important;
+    padding: clamp(0.8rem, 2.5vw, 2rem) !important;
+    color: white !important;
+    cursor: pointer;
+    transition: all 0.5s var(--transition-smooth) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    position: relative !important;
+    overflow: hidden !important;
+    text-decoration: none !important;
+}
+
+.content-card:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 15px 30px rgba(139, 92, 246, 0.5) !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(167, 139, 250, 0.4) !important;
+}
+
+.content-card h3 {
+    font-size: 1.5rem !important;
+    margin-bottom: 1rem !important;
+    color: #c4b5fd !important;
+    font-weight: 600 !important;
+    font-family: var(--font-headings) !important;
+}
+
+.content-card p {
+    opacity: 0.95 !important;
+    line-height: 1.7 !important;
+    margin-bottom: 1rem !important;
+    color: #ffffff !important;
+    font-size: 1rem !important;
+    word-wrap: break-word !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 4 !important;
+    line-clamp: 4 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+}
+
+.category-badge {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(217, 70, 239, 0.1)) !important;
+    border: 1px solid rgba(139, 92, 246, 0.3) !important;
+    color: #d8b4fe !important;
+    padding: 0.3rem 0.8rem !important;
+    border-radius: 50px !important;
+    font-size: 0.8rem !important;
+    display: inline-block !important;
+    align-self: flex-start !important;
+    margin-bottom: 1rem !important;
+    font-family: var(--font-body) !important;
+}
+
+.category-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1.2rem !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+    color: white !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    font-family: var(--font-body) !important;
+    font-size: 1rem !important;
+}
+
+.category-btn:hover {
+    background: rgba(139, 92, 246, 0.2) !important;
+    border-color: rgba(139, 92, 246, 0.4) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4) !important;
+}
+
+.category-btn.btn-primary, .category-btn.active {
+    background: linear-gradient(135deg, #5b21b6, #7c3aed) !important;
+    border-color: transparent !important;
+    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4) !important;
+}

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { apiService } from '../services/api';
 import Navigation from '../components/Navigation';
 import Loader from '../components/Loader';
-import { Music, Image as ImageIcon, Video, Layers } from 'lucide-react';
+import { Music, Image as ImageIcon, Video } from 'lucide-react';
 
 const ContentListPage = () => {
   const [content, setContent] = useState([]);
@@ -31,47 +31,41 @@ const ContentListPage = () => {
   return (
     <div>
       <Navigation />
-      <div className="container mt-4">
-        <div className="text-center mb-4">
-          <h1 className="hero-title" style={{ fontSize: 'clamp(1.75rem, 5vw, 3rem)', marginBottom: '1rem' }} data-testid="content-list-title">Sacred Collection</h1>
-          <p className="hero-subtitle" style={{ fontSize: 'clamp(1rem, 3vw, 1.2rem)', marginBottom: 0 }}>Browse our collection of divine texts</p>
-        </div>
+      <div className="nebula"></div>
+      <div className="grid-container" id="gridContainer">
+        
+        <h1 className="page-title" data-testid="content-list-title">वृंदोपनिषद्</h1>
 
-        <div className="mb-4" style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+        <div className="category-filter">
           <button
-            className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-outline'}`}
+            className={`category-btn ${filter === 'all' ? 'active' : ''}`}
             onClick={() => setFilter('all')}
             data-testid="filter-all-btn"
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
-            <Layers size={18} />
-            All
+            All Content
           </button>
           <button
-            className={`btn ${filter === 'shloka' ? 'btn-primary' : 'btn-outline'}`}
+            className={`category-btn ${filter === 'shloka' ? 'active' : ''}`}
             onClick={() => setFilter('shloka')}
             data-testid="filter-shloka-btn"
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 17h4" /><path d="M12 17v4" /><path d="M8 3v9a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V3" /></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px'}}><path d="M10 17h4" /><path d="M12 17v4" /><path d="M8 3v9a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V3" /></svg>
             Shlokas
           </button>
           <button
-            className={`btn ${filter === 'strotra' ? 'btn-primary' : 'btn-outline'}`}
+            className={`category-btn ${filter === 'strotra' ? 'active' : ''}`}
             onClick={() => setFilter('strotra')}
             data-testid="filter-strotra-btn"
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
-            <Music size={18} />
+            <Music size={18} style={{marginRight: '8px'}} />
             Strotras
           </button>
           <button
-            className={`btn ${filter === 'poem' ? 'btn-primary' : 'btn-outline'}`}
+            className={`category-btn ${filter === 'poem' ? 'active' : ''}`}
             onClick={() => setFilter('poem')}
             data-testid="filter-poem-btn"
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /><line x1="16" x2="8" y1="13" y2="13" /><line x1="16" x2="8" y1="17" y2="17" /><line x1="10" x2="8" y1="9" y2="9" /></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px'}}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /><line x1="16" x2="8" y1="13" y2="13" /><line x1="16" x2="8" y1="17" y2="17" /><line x1="10" x2="8" y1="9" y2="9" /></svg>
             Poems
           </button>
         </div>
@@ -81,9 +75,9 @@ const ContentListPage = () => {
             <Loader text="Loading content..." />
           </div>
         ) : content.length === 0 ? (
-          <div className="card text-center" style={{ padding: '3rem' }} data-testid="no-content-message">
-            <h3>No content available yet</h3>
-            <p style={{ color: '#666', marginTop: '1rem' }}>Please check back later or contact the administrator.</p>
+          <div className="card text-center" style={{ padding: '3rem', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px' }}>
+            <h3 style={{fontFamily: 'var(--font-headings)'}}>No content available yet</h3>
+            <p style={{ marginTop: '1rem', opacity: 0.8 }}>Please check back later.</p>
           </div>
         ) : (
           <div className="content-grid">
@@ -91,23 +85,22 @@ const ContentListPage = () => {
               <Link
                 key={item.id}
                 to={`/content/${item.id}`}
-                style={{ textDecoration: 'none' }}
+                className="content-card"
                 data-testid={`content-card-${item.id}`}
               >
-                <div className="card">
-                  <div className={`category-badge category-${item.category} mb-3`}>
+                  <div className={`category-badge category-${item.category}`}>
                     {item.category}
                   </div>
-                  <h3 style={{ marginBottom: '1rem' }}>{item.title}</h3>
+                  <h3>{item.title}</h3>
                   {item.description && (
-                    <p style={{ color: '#666', marginBottom: '1rem' }}>{item.description}</p>
+                    <p style={{ opacity: 0.8, marginBottom: '1rem', fontStyle: 'italic' }}>{item.description}</p>
                   )}
                   {item.sanskrit_text && (
-                    <p className="sanskrit-text" style={{ fontSize: '1rem', marginTop: '1rem' }}>
+                    <p className="sanskrit-text" style={{ fontSize: '1.1rem', marginTop: 'auto' }}>
                       {item.sanskrit_text.substring(0, 100)}{item.sanskrit_text.length > 100 ? '...' : ''}
                     </p>
                   )}
-                  <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <div style={{ marginTop: '1rem', display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
                     {(item.audio_url) && (
                       <span style={{ fontSize: '0.85rem', color: '#ff6b35', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                         <Music size={16} />
@@ -127,7 +120,6 @@ const ContentListPage = () => {
                       </span>
                     )}
                   </div>
-                </div>
               </Link>
             ))}
           </div>

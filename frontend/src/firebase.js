@@ -1,9 +1,10 @@
 // Firebase configuration
 // This file connects the Web App to the same Firebase project as the Mobile App ("santvaanig")
 
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
     apiKey: "AIzaSyC4oSs_XYXyxAyOptMC8yTa1oscW9G16cY",
@@ -15,9 +16,28 @@ const firebaseConfig = {
     measurementId: "G-YKQSX1MCDE"
 };
 
-// Initialize Firebase
+// Initialize Default Firebase App (for Auth / standard Firestore)
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+// Isolated Config for Sketch/SantVaanig Content (Realtime Database)
+const santVaanigConfig = {
+    databaseURL: "https://santvaanig-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "santvaanig"
+};
+
+// Initialize Secondary App for RTDB Content
+let contentApp;
+const contentAppName = "santvaanig_content";
+
+try {
+    contentApp = getApp(contentAppName);
+} catch (e) {
+    contentApp = initializeApp(santVaanigConfig, contentAppName);
+}
+
+// Export the RTDB instance for the API service
+export const contentDb = getDatabase(contentApp);
 
 export default app;

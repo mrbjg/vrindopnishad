@@ -14,7 +14,8 @@ import { apiService } from './services/api';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Loader from './components/Loader';
 
-import { supabase } from './lib/supabase';
+import { auth } from './firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import LoginPage from './pages/LoginPage';
 
 // Backend URL with fallback for development
@@ -37,13 +38,14 @@ function App() {
   useEffect(() => {
     const storedToken = localStorage.getItem('admin_token');
 
-    // Supabase Auth Listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
-      if (session) {
-        setToken(session.access_token);
+    // Firebase Auth Listener
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setUser(firebaseUser);
+      if (firebaseUser) {
+        const token = await firebaseUser.getIdToken();
+        setToken(token);
         // If the user's email is the admin email, consider them admin
-        if (session.user?.email === 'admin@vrindopnishad.com') {
+        if (firebaseUser.email === 'admin@vrindopnishad.com') {
           setIsAdmin(true);
         }
       } else {
@@ -57,7 +59,7 @@ function App() {
       verifyToken(storedToken);
     }
 
-    return () => subscription.unsubscribe();
+    return () => unsubscribe();
   }, []);
 
   const verifyToken = async (tk) => {
@@ -94,7 +96,7 @@ function App() {
     localStorage.removeItem('admin_token');
     setToken(null);
     setIsAdmin(false);
-    await supabase.auth.signOut();
+    await signOut(auth);
   };
 
   if (loading) {
