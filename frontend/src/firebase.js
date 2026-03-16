@@ -24,7 +24,7 @@ export const db = getFirestore(app);
 // Isolated Config for Sketch/SantVaanig Content (Realtime Database)
 const santVaanigConfig = {
     databaseURL: "https://santvaanig-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "vrindavaanig"
+    projectId: "santvaanig"
 };
 
 // Initialize Secondary App for RTDB Content
