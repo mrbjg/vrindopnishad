@@ -30,8 +30,6 @@ export const USE_DEMO_MODE = USE_MOCK_DATA;
 export const AuthContext = React.createContext();
 export const ApiContext = React.createContext();
 
-
-
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [user, setUser] = useState(null);
@@ -103,7 +101,18 @@ function App() {
   };
 
   if (loading) {
-    return <Loader fullScreen text="Loading Vrindopnishad..." />;
+    return (
+      <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-[#0a0015]">
+        <div className="celestial-bg">
+          <div className="stars"></div>
+          <div className="nebula"></div>
+        </div>
+        <div className="flex flex-col items-center gap-8 animate-pulse">
+           <div className="text-6xl text-primary/40">ॐ</div>
+           <div className="skeleton w-48 h-1 rounded-full opacity-20"></div>
+        </div>
+      </div>
+    );
   }
 
   return (

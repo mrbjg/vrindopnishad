@@ -7,13 +7,13 @@ import { getFirestore } from "firebase/firestore";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyC4oSs_XYXyxAyOptMC8yTa1oscW9G16cY",
-    authDomain: "vrindavaanig.firebaseapp.com",
-    projectId: "vrindavaanig",
-    storageBucket: "vrindavaanig.firebasestorage.app",
-    messagingSenderId: "373857631114",
-    appId: "1:373857631114:web:f341d8a54711ca85a82673",
-    measurementId: "G-YKQSX1MCDE"
+    apiKey: "AIzaSyCxBytUXjMdhBQfSjjuaIGfcXZe8N0WkH0",
+    authDomain: "login-me-vrinda.firebaseapp.com",
+    projectId: "login-me-vrinda",
+    storageBucket: "login-me-vrinda.firebasestorage.app",
+    messagingSenderId: "1019370299171",
+    appId: "1:1019370299171:web:1a6df319b2fbfd6fcd3696",
+    measurementId: "G-NN88X7N454"
 };
 
 // Initialize Default Firebase App (for Auth / standard Firestore)

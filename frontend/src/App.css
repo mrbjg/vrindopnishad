@@ -1,41 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Cormorant+Garamond:wght@300;400;600&family=Inter:wght@300;400;500;600&display=swap');
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  /* Prevent horizontal scroll on mobile */
-  overflow-x: hidden;
-}
-
-body {
-  font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #fef5e7 0%, #fdebd0 100%);
-  color: #2c1810;
-  min-height: 100vh;
-  overflow-x: hidden;
-  /* Safe area padding for notched devices */
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-}
+/* Legacy App.css - Cleaned of global overrides to prevent conflicts with index.css */
 
 .App {
   min-height: 100vh;
 }
 
-/* Typography */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: 'Playfair Display', serif;
-  color: #8b2500;
-}
+/* Typography Extensions */
 
 .sanskrit-text {
   font-family: 'Cormorant Garamond', serif;

@@ -5,11 +5,19 @@ import { Search, Filter, ArrowRight, Tag } from 'lucide-react';
 
 const ContentListPage = () => {
   const { apiService } = useContext(ApiContext);
-  const [content, setContent] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [content, setContent] = useState(() => apiService.getCachedData('all_none_50') || []);
+  const [categories, setCategories] = useState(() => apiService.getCachedData('categories') || []);
+  const [loading, setLoading] = useState(!apiService.getCachedData('all_none_50'));
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   useEffect(() => {
     fetchData();
@@ -30,8 +38,8 @@ const ContentListPage = () => {
   };
 
   const filteredContent = content.filter(item => 
-    item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.hindi_text?.toLowerCase().includes(searchTerm.toLowerCase())
+    item.title?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+    item.hindi_text?.toLowerCase().includes(debouncedSearch.toLowerCase())
   );
 
   return (
@@ -76,7 +84,24 @@ const ContentListPage = () => {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[1,2,3,4,5,6].map(i => (
-            <div key={i} className="glass-card h-64 animate-pulse"></div>
+            <div key={i} className="glass-card flex flex-col justify-between h-72">
+              <div>
+                <div className="flex justify-between items-start mb-4">
+                  <div className="skeleton w-20 h-6 rounded-full"></div>
+                  <div className="skeleton w-6 h-6 rounded-full"></div>
+                </div>
+                <div className="skeleton skeleton-title w-3/4 mb-4"></div>
+                <div className="space-y-2">
+                  <div className="skeleton skeleton-text w-full"></div>
+                  <div className="skeleton skeleton-text w-full"></div>
+                  <div className="skeleton skeleton-text w-2/3"></div>
+                </div>
+              </div>
+              <div className="pt-4 border-t border-white/5 flex gap-2">
+                 <div className="skeleton w-12 h-4 rounded opacity-10"></div>
+                 <div className="skeleton w-12 h-4 rounded opacity-10"></div>
+              </div>
+            </div>
           ))}
         </div>
       ) : (
@@ -94,7 +119,7 @@ const ContentListPage = () => {
                   {item.title}
                 </h3>
                 <p className="text-white/60 text-sm line-clamp-3 leading-relaxed mb-6">
-                  {item.hindi_text || item.english_translation}
+                  {item.hindi_text ? <span className="hindi-text">{item.hindi_text}</span> : item.english_translation}
                 </p>
               </div>
               

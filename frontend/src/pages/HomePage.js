@@ -7,7 +7,7 @@ const HomePage = () => {
     <div className="animate-fade-in">
       {/* Hero Section */}
       <div className="text-center py-12 md:py-24 max-w-4xl mx-auto">
-        <div className="om-symbol text-[#c4b5fd] text-4xl mb-6 opacity-80">ॐ</div>
+        <div className="om-symbol text-[#fbbf24] text-4xl mb-6 opacity-80 animate-pulse">ॐ</div>
         <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight text-white drop-shadow-2xl">
           वृंदोपनिषद्
         </h1>

@@ -6,8 +6,9 @@ import { Scroll, Music, FileText, BookOpen, Music as MusicIcon, Image as ImageIc
 const CategoryPage = () => {
   const { category } = useParams();
   const { apiService } = useContext(ApiContext);
-  const [content, setContent] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const cacheKey = `all_${category}_50`;
+  const [content, setContent] = useState(() => apiService.getCachedData(cacheKey) || []);
+  const [loading, setLoading] = useState(!apiService.getCachedData(cacheKey));
 
   const categoryInfo = {
     shloka: {

@@ -10,39 +10,57 @@ import {
 } from 'firebase/auth';
 
 const USE_MOCK = process.env.REACT_APP_DEMO_MODE === 'true';
+const CACHE_PREFIX = 'sv_cache_';
+const CACHE_EXPIRY = 30 * 60 * 1000;
+
+const setCache = (key, data) => {
+    try {
+        sessionStorage.setItem(CACHE_PREFIX + key, JSON.stringify({
+            timestamp: Date.now(),
+            data: data
+        }));
+    } catch (e) {}
+};
+
+const getCache = (key) => {
+    try {
+        const cached = sessionStorage.getItem(CACHE_PREFIX + key);
+        if (!cached) return null;
+        const { timestamp, data } = JSON.parse(cached);
+        if (Date.now() - timestamp > CACHE_EXPIRY) {
+            sessionStorage.removeItem(CACHE_PREFIX + key);
+            return null;
+        }
+        return data;
+    } catch (e) { return null; }
+};
 
 export const apiService = {
+  getCachedData: (key) => getCache(key),
+
   // Content APIs
   getAllContent: async (category = null, limit = 50) => {
+    const cacheKey = `all_${category || 'none'}_${limit}`;
+    const cached = getCache(cacheKey);
+    if (cached) return cached;
+
     if (USE_MOCK) {
-      return mockApiService.getAllContent(category);
+      const data = await mockApiService.getAllContent(category);
+      setCache(cacheKey, data);
+      return data;
     }
     try {
       const snapshot = await get(ref(contentDb, 'public/content'));
       if (snapshot.exists()) {
         const rawData = snapshot.val();
-        
-        let data;
-        // Handle array vs object format just like original bridge
-        if (Array.isArray(rawData)) {
-            data = rawData.filter(Boolean); // Filter out nulls
-        } else {
-            data = Object.keys(rawData).map(key => ({
-                id: key,
-                ...rawData[key]
-            }));
-        }
+        let data = Array.isArray(rawData) ? rawData.filter(Boolean) : 
+                   Object.keys(rawData).map(key => ({ id: key, ...rawData[key] }));
         
         data = data.reverse();
+        if (category) data = data.filter(item => item.category === category);
+        if (limit) data = data.slice(0, limit);
         
-        if (category) {
-            data = data.filter(item => item.category === category);
-        }
-        
-        if (limit) {
-            data = data.slice(0, limit);
-        }
-        
+        setCache(cacheKey, data);
         return data;
       }
       return [];
@@ -50,14 +68,11 @@ export const apiService = {
       console.warn('Firebase connection failed, falling back to Supabase...', error.message);
       try {
         let query = supabase.from('content').select('*').order('created_at', { ascending: false });
-        if (category) {
-            query = query.eq('category', category);
-        }
-        if (limit) {
-            query = query.limit(limit);
-        }
+        if (category) query = query.eq('category', category);
+        if (limit) query = query.limit(limit);
         const { data, error: supaError } = await query;
         if (supaError) throw supaError;
+        setCache(cacheKey, data || []);
         return data || [];
       } catch (supaErr) {
         console.error('All database sources failed:', supaErr);
@@ -67,16 +82,21 @@ export const apiService = {
   },
 
   getContentById: async (id) => {
+    const cacheKey = `id_${id}`;
+    const cached = getCache(cacheKey);
+    if (cached) return cached;
+
     if (USE_MOCK) {
-      return mockApiService.getContentById(id);
+      const data = await mockApiService.getContentById(id);
+      setCache(cacheKey, data);
+      return data;
     }
     try {
       const snapshot = await get(ref(contentDb, `public/content/${id}`));
       if (snapshot.exists()) {
-        return {
-          id,
-          ...snapshot.val()
-        };
+        const data = { id, ...snapshot.val() };
+        setCache(cacheKey, data);
+        return data;
       }
       throw new Error("Content not found");
     } catch (error) {
@@ -84,7 +104,9 @@ export const apiService = {
       try {
           const { data, error: supaError } = await supabase.from('content').select('*').eq('id', id).single();
           if (supaError) throw supaError;
-          return { id, ...data };
+          const contentData = { id, ...data };
+          setCache(cacheKey, contentData);
+          return contentData;
       } catch (supaErr) {
           console.error('Error fetching content by ID:', supaErr);
           throw supaErr;
@@ -94,20 +116,23 @@ export const apiService = {
 
   // Categories API
   getCategories: async () => {
+    const cacheKey = 'categories';
+    const cached = getCache(cacheKey);
+    if (cached) return cached;
+
     if (USE_MOCK) {
-      return mockApiService.getCategories();
+      const data = await mockApiService.getCategories();
+      setCache(cacheKey, data);
+      return data;
     }
     try {
       const snapshot = await get(ref(contentDb, 'public/content'));
       if (snapshot.exists()) {
         const rawData = snapshot.val();
-        let data;
-        if (Array.isArray(rawData)) {
-            data = rawData.filter(Boolean);
-        } else {
-            data = Object.keys(rawData).map(key => rawData[key]);
-        }
+        let data = Array.isArray(rawData) ? rawData.filter(Boolean) : 
+                   Object.keys(rawData).map(key => rawData[key]);
         const uniqueCategories = [...new Set(data.map(item => item.category).filter(Boolean))];
+        setCache(cacheKey, uniqueCategories);
         return uniqueCategories;
       }
       return [];
@@ -117,6 +142,7 @@ export const apiService = {
           const { data, error: supaError } = await supabase.from('content').select('category').not('category', 'is', null);
           if (supaError) throw supaError;
           const uniqueCategories = [...new Set(data.map(item => item.category))];
+          setCache(cacheKey, uniqueCategories);
           return uniqueCategories;
       } catch (supaErr) {
           console.error('Error fetching categories:', supaErr);

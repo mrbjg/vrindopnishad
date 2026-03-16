@@ -7,8 +7,8 @@ import { ArrowLeft, Music, Image as ImageIcon, Video, BookOpen } from 'lucide-re
 const ContentDetailPage = () => {
   const { id } = useParams();
   const { apiService } = useContext(ApiContext);
-  const [content, setContent] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [content, setContent] = useState(() => apiService.getCachedData(`id_${id}`));
+  const [loading, setLoading] = useState(!apiService.getCachedData(`id_${id}`));
 
   useEffect(() => {
     fetchContent();
@@ -28,8 +28,20 @@ const ContentDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <Loader text="Loading sacred verses..." />
+      <div className="animate-fade-in max-w-4xl mx-auto py-12">
+        <div className="skeleton w-32 h-6 mb-8 rounded"></div>
+        <div className="glass-card p-8 md:p-12">
+          <div className="flex justify-between items-start mb-8">
+              <div className="skeleton w-24 h-6 rounded-full"></div>
+              <div className="skeleton w-32 h-6 rounded"></div>
+          </div>
+          <div className="skeleton h-16 w-3/4 mb-10 rounded-xl"></div>
+          <div className="skeleton h-24 w-full mb-12 rounded-xl"></div>
+          <div className="space-y-16">
+            <div className="skeleton h-64 w-full rounded-3xl"></div>
+            <div className="skeleton h-48 w-full rounded-3xl"></div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -59,7 +71,7 @@ const ContentDetailPage = () => {
         Back to Collection
       </Link>
 
-      <div className="glass-card p-8 md:p-12">
+      <div className="glass-card reading-card p-8 md:p-12">
         <div className="flex justify-between items-start mb-8">
             <span className="badge border-primary/30 text-primary/80 uppercase tracking-tighter text-xs">
                 {content.category}
@@ -79,25 +91,25 @@ const ContentDetailPage = () => {
 
         <div className="space-y-16">
           {content.sanskrit_text && (
-            <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-8 md:p-12 relative overflow-hidden group">
+            <div className="relative overflow-hidden group py-12 border-b border-white/5">
               <div className="absolute top-0 right-0 p-8 opacity-5 text-8xl font-serif">ॐ</div>
-              <h3 className="text-xs uppercase tracking-[0.3em] text-white/20 mb-8 flex items-center gap-3">
+              <h3 className="text-xs uppercase tracking-[0.3em] text-white/20 mb-10 flex items-center gap-3">
                 <span className="h-[1px] w-8 bg-white/10"></span>
                 Sanskrit Text
               </h3>
-              <div className="text-2xl md:text-4xl leading-[1.8] text-center font-medium text-white/90 drop-shadow-lg">
+              <div className="text-3xl md:text-5xl leading-[1.8] text-center font-medium text-white/95 drop-shadow-lg hindi-text">
                 {content.sanskrit_text}
               </div>
             </div>
           )}
 
           {content.hindi_text && (
-            <div className="bg-amber-500/[0.03] border border-amber-500/10 rounded-3xl p-8 md:p-12">
-              <h3 className="text-xs uppercase tracking-[0.3em] text-amber-500/40 mb-8 flex items-center gap-3">
+            <div className="py-12 border-b border-white/5">
+              <h3 className="text-xs uppercase tracking-[0.3em] text-amber-500/40 mb-10 flex items-center gap-3">
                 <span className="h-[1px] w-8 bg-amber-500/10"></span>
                 Hindi Meaning
               </h3>
-              <div className="text-xl md:text-2xl leading-[2] text-white/80">
+              <div className="text-xl md:text-3xl leading-[2.2] text-white/85 hindi-text">
                 {content.hindi_text}
               </div>
             </div>
@@ -113,12 +125,12 @@ const ContentDetailPage = () => {
           )}
 
           {content.english_translation && (
-            <div className="bg-blue-500/[0.03] border border-blue-500/10 rounded-3xl p-8 md:p-12">
-              <h3 className="text-xs uppercase tracking-[0.3em] text-blue-400/40 mb-8 flex items-center gap-3">
+            <div className="py-12">
+              <h3 className="text-xs uppercase tracking-[0.3em] text-blue-400/40 mb-10 flex items-center gap-3">
                 <span className="h-[1px] w-8 bg-blue-500/10"></span>
                 English Translation
               </h3>
-              <div className="text-lg md:text-xl leading-relaxed text-white/70">
+              <div className="text-lg md:text-2xl leading-relaxed text-white/70">
                 {content.english_translation}
               </div>
             </div>
