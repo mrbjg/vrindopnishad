@@ -119,7 +119,7 @@ function App() {
       <LoadingProvider>
         <AuthContext.Provider value={{ isAdmin, user, token, login, logout }}>
           <ApiContext.Provider value={{ apiService: apiService, isDemoMode: USE_MOCK_DATA }}>
-            <BrowserRouter basename={process.env.PUBLIC_URL}>
+            <BrowserRouter>
               <Layout>
                 <Routes>
                   <Route path="/" element={<HomePage />} />
