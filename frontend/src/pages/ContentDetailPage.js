@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { ApiContext } from '../App';
 import Loader from '../components/Loader';
 import { ArrowLeft, Music, Image as ImageIcon, Video, BookOpen } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 
 const ContentDetailPage = () => {
   const { id } = useParams();
@@ -74,6 +75,17 @@ const ContentDetailPage = () => {
 
   return (
     <div className="animate-fade-in max-w-4xl mx-auto">
+      <Helmet>
+        <title>{`${content.title} | ${content.author || 'VrindaVaani'}`}</title>
+        <meta name="description" content={`Read ${content.category}: ${content.title} by ${content.author || 'Sant Vaani'}. ${content.sanskrit_text ? content.sanskrit_text.substring(0, 150) : content.description?.substring(0, 150)}`} />
+        <meta name="keywords" content={`${content.title}, ${content.author}, ${content.category}, Hindu Shloka, Sanskrit Verses, Devotional Poetry`} />
+        {/* Open Graph / social media tags */}
+        <meta property="og:title" content={content.title} />
+        <meta property="og:description" content={content.description?.substring(0, 160)} />
+        {content.image_url && <meta property="og:image" content={content.image_url} />}
+        <meta name="twitter:card" content="summary_large_image" />
+      </Helmet>
+
       <Link to="/content" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-8 transition-colors">
         <ArrowLeft size={18} />
         Back to Collection

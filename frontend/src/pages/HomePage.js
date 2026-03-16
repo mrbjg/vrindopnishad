@@ -1,10 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Compass, Scroll, Music, FileText, ArrowRight } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 
 const HomePage = () => {
   return (
     <div className="animate-fade-in">
+      <Helmet>
+        <title>VrindaVaani | Sacred Digital Sanctuary for Shlokas & Poems</title>
+        <meta name="description" content="Discover the spiritual essence of Hindu culture at VrindaVaani. A sacred digital sanctuary for devotional poetry, Sanskrit shlokas, verses, and hymns with deep spiritual insights." />
+        <meta name="keywords" content="VrindaVaani, Bhagavad Gita, Shlokas, Sanskrit, Hindi Poetry, Devotional, Spiritual, Hindu Culture" />
+      </Helmet>
       {/* Hero Section */}
       <div className="text-center py-12 md:py-24 max-w-4xl mx-auto">
         <div className="om-symbol text-[#fbbf24] text-4xl mb-6 opacity-80 animate-pulse">ॐ</div>

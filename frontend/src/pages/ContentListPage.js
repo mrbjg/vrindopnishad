@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { ApiContext } from '../App';
 import { Search, Filter, ArrowRight, Tag } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 
 const ContentListPage = () => {
   const { apiService } = useContext(ApiContext);
@@ -44,6 +45,10 @@ const ContentListPage = () => {
 
   return (
     <div className="animate-fade-in">
+      <Helmet>
+        <title>{selectedCategory ? `${selectedCategory}s Collection` : 'Spiritual Repository'} | VrindaVaani</title>
+        <meta name="description" content={`Browse our collection of ${selectedCategory || 'sacred shlokas, poems, and hymns'}. Discover timeless wisdom and devotional content in our spiritual sanctuary.`} />
+      </Helmet>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
           <h1 className="text-4xl font-bold mb-2 tracking-tight">Spiritual Repository</h1>
