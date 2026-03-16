@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui';
-import '../core/theme.dart';
 import '../core/design_system.dart';
 import 'home_screen.dart';
 import 'naam_jap_screen.dart';
@@ -12,6 +10,7 @@ import 'library_screen.dart';
 import 'journal_screen.dart';
 import 'profile_screen.dart';
 import '../core/providers.dart';
+import 'package:flutter/services.dart';
 
 class MainNavigationScreen extends ConsumerStatefulWidget {
   MainNavigationScreen({super.key});
@@ -39,13 +38,11 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   Widget build(BuildContext context) {
     final currentIndex = ref.watch(navigationIndexProvider);
     final isVoidScreen = currentIndex == 1 || currentIndex == 2;
-    final barBgColor = isVoidScreen 
-        ? PremiumTokens.voidBlack.withValues(alpha: 0.9) 
-        : Color(0x991A160F); 
-    final accentColor = isVoidScreen ? const Color(0xFF256AF4) : PremiumTokens.saffronGlow;
+    final barBgColor = PremiumTokens.voidBlack.withValues(alpha: 0.9);
+    final accentColor = PremiumTokens.nebulaBlue;
 
     return Scaffold(
-      backgroundColor: isVoidScreen ? PremiumTokens.voidBlack : PremiumTokens.charcoal,
+      backgroundColor: PremiumTokens.voidBlack,
       body: IndexedStack(index: currentIndex, children: _screens),
       extendBody: true,
       bottomNavigationBar: Stack(
@@ -94,24 +91,24 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
             child: GestureDetector(
               onTap: () => _onItemTapped(2),
               child: Container(
-                width: 60,
-                height: 60,
+                width: 64,
+                height: 64,
                 decoration: BoxDecoration(
-                  color: accentColor,
+                  gradient: PremiumTokens.nebulaGradient,
                   shape: BoxShape.circle,
-                  border: Border.all(color: isVoidScreen ? PremiumTokens.voidBlack : PremiumTokens.charcoal, width: 4),
+                  border: Border.all(color: Colors.white10, width: 2),
                   boxShadow: [
                     BoxShadow(
-                      color: accentColor.withValues(alpha: 0.4),
-                      blurRadius: 20,
+                      color: accentColor.withValues(alpha: 0.5),
+                      blurRadius: 25,
                       offset: const Offset(0, 4),
                     ),
                   ],
                 ),
                 child: Icon(
                   currentIndex == 2 ? Iconsax.music_play5 : Iconsax.refresh, 
-                  color: isVoidScreen ? Colors.white : PremiumTokens.charcoal, 
-                  size: 30
+                  color: Colors.white, 
+                  size: 32
                 ),
               ),
             ),

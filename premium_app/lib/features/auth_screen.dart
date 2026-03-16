@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,7 +15,6 @@ class AuthScreen extends ConsumerStatefulWidget {
 }
 
 class _AuthScreenState extends ConsumerState<AuthScreen> {
-  bool _isLogin = true;
   bool _isLoading = false;
   bool _obscurePassword = true;
   final _emailController = TextEditingController();
@@ -36,30 +34,44 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
     try {
       final authService = ref.read(authServiceProvider);
-      if (_isLogin) {
-        await authService.signInWithEmail(
-          _emailController.text.trim(),
-          _passwordController.text,
-        );
-      } else {
-        await authService.signUpWithEmail(
-          _emailController.text.trim(),
-          _passwordController.text,
-        );
-      }
+      // Seamlessly Login or Register
+      await authService.loginOrRegister(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
     } on FirebaseAuthException catch (e) {
-      if (mounted) _showFriendlyError(e.code);
+      if (mounted) _showFriendlyError(_getFriendlyErrorMessage(e.code));
     } catch (e) {
-      if (mounted) _showFriendlyError(e.toString());
+      if (mounted) _showFriendlyError("Something unexpected happened on the path.");
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
 
+  String _getFriendlyErrorMessage(String code) {
+    switch (code) {
+      case 'invalid-email':
+        return 'Please provide a valid email to enter the sanctuary.';
+      case 'wrong-password':
+        return 'The password does not resonate. Please try again.';
+      case 'weak-password':
+        return 'Your password should be stronger to protect your journey.';
+      default:
+        return 'The path is momentarily blocked. Please try again.';
+    }
+  }
+
   void _showFriendlyError(String errorMsg) {
-    // Basic error handling - can be expanded
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(errorMsg), backgroundColor: Colors.redAccent),
+      SnackBar(
+        content: Text(
+          errorMsg,
+          style: PremiumTokens.sansStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.redAccent.withValues(alpha: 0.9),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
     );
   }
 
@@ -94,10 +106,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                             height: 100,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: PremiumTokens.saffronGlow.withValues(alpha: 0.2),
+                              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2),
                               boxShadow: [
                                 BoxShadow(
-                                  color: PremiumTokens.saffronGlow.withValues(alpha: 0.5),
+                                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.5),
                                   blurRadius: 60,
                                   spreadRadius: 10,
                                 ),
@@ -116,15 +128,15 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                             height: 80,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
-                              border: Border.all(color: PremiumTokens.saffronGlow.withValues(alpha: 0.3)),
+                              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                              border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
                             ),
                             child: Center(
                               child: Text(
                                 'ॐ',
-                                style: GoogleFonts.manrope(
+                                style: GoogleFonts.newsreader(
                                   fontSize: 48,
-                                  color: PremiumTokens.saffronGlow,
+                                  color: Colors.white,
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),
@@ -139,11 +151,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     // Title Section
                     Text(
                       "Sant-Vaani",
-                      style: GoogleFonts.manrope(
-                        fontSize: 40,
-                        fontWeight: FontWeight.w800,
-                        color: PremiumTokens.saffronGlow,
-                        letterSpacing: -1,
+                      style: GoogleFonts.newsreader(
+                        fontSize: 44,
+                        fontWeight: FontWeight.w300,
+                        color: Colors.white,
+                        letterSpacing: 2,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -193,9 +205,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                             SizedBox(
                               width: double.infinity,
                               child: _isLoading 
-                                ? const Center(child: CircularProgressIndicator(color: PremiumTokens.saffronGlow))
+                                ? const Center(child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue))
                                 : PremiumUI.primaryButton(
-                                    text: _isLogin ? "SIGN IN" : "CREATE ACCOUNT",
+                                    text: "SECURE ENTRY",
                                     onTap: _handleEmailAuth,
                                   ),
                             ),
@@ -206,20 +218,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
                     const SizedBox(height: 40),
 
-                    // Toggle Button
-                    GestureDetector(
-                      onTap: () => setState(() => _isLogin = !_isLogin),
-                      child: RichText(
-                        text: TextSpan(
-                          style: PremiumTokens.sansStyle(color: Colors.white54, fontSize: 15),
-                          children: [
-                            TextSpan(text: _isLogin ? "New seeker? " : "Already walking the path? "),
-                            TextSpan(
-                              text: _isLogin ? "Join Now" : "Sign In",
-                              style: const TextStyle(color: PremiumTokens.saffronGlow, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
+                    const Center(
+                      child: Text(
+                        "Enter your details to continue your journey.",
+                        style: TextStyle(color: Colors.white24, fontSize: 13),
                       ),
                     ),
                     
@@ -244,7 +246,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _buildSocialCircle(
-                          image: "https://lh3.googleusercontent.com/a/ACg8ocJcR2weulAnryBO4-25MppWiQI6nUuLO3h8h504UVVkBQzucX5Z=s96-c", 
+                          image: "https://www.gstatic.com/images/branding/product/2x/googleg_96dp.png", 
                           onTap: () async {
                             setState(() => _isLoading = true);
                             try {
@@ -291,15 +293,15 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         prefixIcon: Icon(icon, color: Colors.white38, size: 20),
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: PremiumTokens.saffronGlow.withValues(alpha: 0.05),
+        fillColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.05),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: PremiumTokens.saffronGlow.withValues(alpha: 0.2)),
+          borderSide: BorderSide(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: PremiumTokens.saffronGlow, width: 1.5),
+          borderSide: const BorderSide(color: PremiumTokens.nebulaBlue, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),

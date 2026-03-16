@@ -15,13 +15,13 @@ class SpiritualLevelingScreen extends ConsumerWidget {
           // Generative Aura Background
           Positioned.fill(
             child: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: RadialGradient(
                   center: Alignment.center,
                   radius: 1.2,
                   colors: [
-                    Color(0x662E0BDA), // primary aura
-                    Color(0x33C0C0C0), // silver aura
+                    PremiumTokens.nebulaBlue.withValues(alpha: 0.2), // primary aura
+                    PremiumTokens.celestialGlow.withValues(alpha: 0.1), // celestial aura
                     Colors.transparent,
                   ],
                 ),
@@ -61,7 +61,7 @@ class SpiritualLevelingScreen extends ConsumerWidget {
       backgroundColor: Colors.transparent,
       elevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+        icon: const Icon(Icons.arrow_back_ios, color: PremiumTokens.nebulaBlue, size: 20),
         onPressed: () => Navigator.pop(context),
       ),
       title: Text(
@@ -70,7 +70,7 @@ class SpiritualLevelingScreen extends ConsumerWidget {
       ),
       actions: [
         IconButton(
-          icon: const Icon(Iconsax.setting_2, color: Colors.white),
+          icon: const Icon(Iconsax.setting_2, color: PremiumTokens.nebulaBlue),
           onPressed: () {},
         ),
       ],
@@ -88,7 +88,7 @@ class SpiritualLevelingScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: PremiumTokens.evolvingAura(
-              color: const Color(0xFF2E0BDA),
+              color: PremiumTokens.nebulaBlue,
               intensity: 1.0,
             ),
             child: Container(
@@ -99,17 +99,17 @@ class SpiritualLevelingScreen extends ConsumerWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Color(0xFFC0C0C0), Color(0xFF2E0BDA), Color(0xFF4B0082)],
+                  colors: [PremiumTokens.nebulaBlue, PremiumTokens.celestialGlow, PremiumTokens.voidBlue],
                 ),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(4),
                 child: Container(
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: PremiumTokens.charcoal,
-                    image: DecorationImage(
-                      image: NetworkImage("https://lh3.googleusercontent.com/aida-public/AB6AXuBWTzLudhMZk2fgMX3OarbSyNvs7vHKhl-A8YGPtySIGOQFhgghoJI2VnyRmu6xNqZU-MxMht92mtqYOsXnb4tUa7PCSEDIUpkF_BvgH3A3Qbs9imOBFJSNd486A7_yhhQ5WNqHLrN2MBOLB4tiT5VSEbQlcp2kPQ8RZcabyayRNmsPzE2Y_KnW8Z2W9-eZyMWAtapcderOpikCaeylT7UjIiHDW1DFCDJBbolD6nb55DXtXsqCl70965wpvTsEDTTPqhjfrxh31Ts"),
+                    image: const DecorationImage(
+                      image: NetworkImage("https://lh3.googleusercontent.com/aida-public/AB6AXuBWTzLudhMZk2fgMX3OarbSyNvs7vHKhl-A8YGPtySIGOQFhgghoJI2VnyRmu6xNqZU-MxMht92mtqYOsXnb4tUa7PCSEDIUpkF_BvgH3A3Qbs5imOBFJSNd486A7_yhhQ5WNqHLrN2MBOLB4tiT5VSEbQlcp2kPQ8RZcabyayRNmsPzE2Y_KnW8Z2W9-eZyMWAtapcderOpikCaeylT7UjIiHDW1DFCDJBbolD6nb55DXtXsqCl70965wpvTsEDTTPqhjfrxh31Ts"),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -126,14 +126,14 @@ class SpiritualLevelingScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: const Color(0xFF2E0BDA).withValues(alpha: 0.3),
+              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(100),
-              border: Border.all(color: const Color(0xFF2E0BDA).withValues(alpha: 0.4)),
+              border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.4)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.auto_awesome, color: Color(0xFFC0C0C0), size: 16),
+                const Icon(Icons.auto_awesome, color: PremiumTokens.nebulaBlue, size: 16),
                 const SizedBox(width: 8),
                 Text(
                   "AURA LEVEL 42",
@@ -202,7 +202,7 @@ class SpiritualLevelingScreen extends ConsumerWidget {
                   borderRadius: 16,
                   child: Row(
                     children: [
-                      Icon(badge['icon'] as IconData, color: const Color(0xFFC0C0C0), size: 20),
+                      Icon(badge['icon'] as IconData, color: PremiumTokens.nebulaBlue, size: 20),
                       const SizedBox(width: 8),
                       Text(
                         badge['name'] as String,
@@ -262,7 +262,7 @@ class SpiritualLevelingScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: const Color(0xFF2E0BDA), size: 32),
+          Icon(icon, color: PremiumTokens.nebulaBlue, size: 32),
           const Spacer(),
           Text(
             value,
@@ -301,7 +301,7 @@ class SpiritualLevelingScreen extends ConsumerWidget {
                   "Last 7 Days",
                   style: PremiumTokens.sansStyle(
                     fontSize: 12,
-                    color: const Color(0xFF2E0BDA),
+                    color: PremiumTokens.nebulaBlue,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -351,9 +351,9 @@ class SpiritualLevelingScreen extends ConsumerWidget {
         child: Container(
           height: 100 * heightFactor,
           decoration: BoxDecoration(
-            color: const Color(0xFF2E0BDA).withValues(alpha: isHighlighted ? 0.7 : 0.3),
+            color: PremiumTokens.nebulaBlue.withValues(alpha: isHighlighted ? 0.7 : 0.3),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-            border: isHighlighted ? Border.all(color: const Color(0xFFC0C0C0), width: 1.5) : null,
+            border: isHighlighted ? Border.all(color: PremiumTokens.nebulaBlue, width: 1.5) : null,
           ),
         ),
       ),

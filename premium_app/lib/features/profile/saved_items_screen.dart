@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import '../../core/theme.dart';
+import '../../core/design_system.dart';
 import '../content_detail_screen.dart';
 
 class SavedItemsScreen extends StatelessWidget {
@@ -8,7 +8,7 @@ class SavedItemsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = AppTheme.isDark(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final savedItems = [
       {'title': 'Bhagavad Gita - Chapter 2', 'category': 'Shloka'},
       {'title': 'Shiva Tandava Stotram', 'category': 'Strotra'},
@@ -16,90 +16,101 @@ class SavedItemsScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: isDark
-          ? const Color(0xFF0A0A0F)
-          : const Color(0xFFF5F3F0),
-      appBar: AppBar(
-        title: const Text("Saved Items"),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: savedItems.isEmpty
-          ? _buildEmptyState(context, isDark)
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: savedItems.length,
-              itemBuilder: (context, index) {
-                final item = savedItems[index];
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.06)
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.08)
-                          : Colors.black.withValues(alpha: 0.05),
-                    ),
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    leading: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppTheme.primaryColor, AppTheme.primaryDark],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Iconsax.archive_book,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ),
-                    title: Text(
-                      item['title']!,
-                      style: SacredStyles.outfitTitle.copyWith(
-                        color: isDark ? Colors.white : Colors.black87,
-                      ),
-                    ),
-                    subtitle: Text(
-                      item['category']!,
-                      style: SacredStyles.outfitLabel.copyWith(
-                        color: AppTheme.primaryColor,
-                        fontSize: 12,
-                      ),
-                    ),
-                    trailing: Icon(
-                      Iconsax.arrow_right_3,
-                      size: 18,
-                      color: isDark ? Colors.white38 : Colors.black38,
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ContentDetailScreen(
-                            title: item['title']!,
-                            category: item['category']!,
+      backgroundColor: Colors.transparent,
+      body: Stack(
+        children: [
+          PremiumUI.voidBackground(),
+          CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              SliverAppBar(
+                title: const Text("Saved Items"),
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                pinned: true,
+                centerTitle: true,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back_ios, color: PremiumTokens.nebulaBlue, size: 20),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+              if (savedItems.isEmpty)
+                SliverFillRemaining(child: _buildEmptyState(context))
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.all(16),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final item = savedItems[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: PremiumUI.voidGlassCard(
+                            padding: EdgeInsets.zero,
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              leading: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  gradient: PremiumTokens.nebulaGradient,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(
+                                  Iconsax.archive_book,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                              title: Text(
+                                item['title']!,
+                                style: PremiumTokens.displayStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              subtitle: Text(
+                                item['category']!,
+                                style: PremiumTokens.sansStyle(
+                                  color: PremiumTokens.nebulaBlue,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              trailing: const Icon(
+                                Iconsax.arrow_right_3,
+                                size: 18,
+                                color: Colors.white24,
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ContentDetailScreen(
+                                      title: item['title']!,
+                                      category: item['category']!,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                      childCount: savedItems.length,
+                    ),
                   ),
-                );
-              },
-            ),
+                ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, bool isDark) {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -107,28 +118,29 @@ class SavedItemsScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withValues(alpha: 0.1),
+              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
               shape: BoxShape.circle,
+              border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
             ),
-            child: Icon(
+            child: const Icon(
               Iconsax.folder_open,
               size: 48,
-              color: AppTheme.primaryColor,
+              color: PremiumTokens.nebulaBlue,
             ),
           ),
           const SizedBox(height: 20),
           Text(
             "No saved items yet",
-            style: TextStyle(
-              color: isDark ? Colors.white60 : Colors.black54,
-              fontSize: 16,
+            style: PremiumTokens.displayStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             "Bookmark your favorite content",
-            style: TextStyle(
-              color: isDark ? Colors.white38 : Colors.black38,
+            style: PremiumTokens.sansStyle(
+              color: Colors.white38,
               fontSize: 14,
             ),
           ),

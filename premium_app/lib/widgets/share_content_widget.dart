@@ -6,8 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import '../core/design_system.dart';
-
 /// Widget and utilities for sharing content as beautiful quote images
 class ShareContentWidget extends StatelessWidget {
   final SacredContent content;

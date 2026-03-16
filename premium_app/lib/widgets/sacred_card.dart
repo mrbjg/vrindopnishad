@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../core/theme.dart';
-import '../core/design_system.dart';
 import 'animated_effects.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════

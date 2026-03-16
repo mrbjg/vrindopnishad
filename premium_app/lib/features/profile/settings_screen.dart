@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/design_system.dart';
 import '../../core/theme.dart';
 import '../../core/providers.dart';
 import '../../core/localization.dart';
@@ -26,8 +27,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final l = AppLocalization(currentLanguage);
 
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor(context),
-      body: CustomScrollView(
+      backgroundColor: Colors.transparent,
+      body: Stack(
+        children: [
+          PremiumUI.voidBackground(),
+          CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
           // Header
@@ -46,23 +50,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Expanded(
                     child: Text(
                       l.translate('settings'),
-                      style: GoogleFonts.spectral(
+                      style: PremiumTokens.displayStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: AppTheme.textPrimary(context),
-                        letterSpacing: -0.5,
                       ),
                     ),
                   ),
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                      color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Icon(
                       Iconsax.setting_2,
-                      color: AppTheme.primaryColor,
+                      color: PremiumTokens.nebulaBlue,
                       size: 22,
                     ),
                   ),
@@ -95,7 +97,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     HapticFeedback.lightImpact();
                     ref.read(themeProvider.notifier).toggleTheme(val);
                   },
-                  gradientColors: [AppTheme.glowPurple, AppTheme.glowBlue],
+                  gradientColors: [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)],
                 ),
                 const SizedBox(height: 12),
 
@@ -121,7 +123,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     HapticFeedback.lightImpact();
                     setState(() => _notifications = val);
                   },
-                  gradientColors: [AppTheme.glowOrange, AppTheme.primaryColor],
+                  gradientColors: [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)],
                 ),
                 const SizedBox(height: 32),
 
@@ -138,7 +140,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   l.translate('privacy_policy'),
                   l.translate('privacy_policy'),
                   Iconsax.shield_tick,
-                  gradientColors: [AppTheme.glowTeal, const Color(0xFF06B6D4)],
+                  gradientColors: [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)],
                 ),
                 const SizedBox(height: 12),
 
@@ -147,7 +149,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   l.translate('terms_service'),
                   l.translate('terms_service'),
                   Iconsax.document,
-                  gradientColors: [AppTheme.glowBlue, const Color(0xFF6366F1)],
+                  gradientColors: [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)],
                 ),
                 const SizedBox(height: 12),
 
@@ -169,15 +171,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              AppTheme.primaryColor.withValues(alpha: 0.1),
-                              AppTheme.glowPurple.withValues(alpha: 0.1),
+                              PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                              PremiumTokens.nebulaBlue.withValues(alpha: 0.05),
                             ],
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Icon(
                           Iconsax.heart,
-                          color: AppTheme.primaryColor,
+                          color: PremiumTokens.nebulaBlue,
                           size: 24,
                         ),
                       ),
@@ -187,7 +189,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         style: GoogleFonts.spectral(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: AppTheme.textPrimary(context),
+                          color: Colors.white,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -195,7 +197,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         "Version 1.0.0",
                         style: GoogleFonts.outfit(
                           fontSize: 13,
-                          color: AppTheme.textMuted(context),
+                          color: Colors.white38,
                         ),
                       ),
                     ],
@@ -207,30 +209,26 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
         ],
       ),
-    );
-  }
+    ],
+  ),
+);
+}
 
   Widget _buildBackButton(BuildContext context) {
-    final isDark = AppTheme.isDark(context);
-
     return PressableScale(
       onTap: () => Navigator.pop(context),
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : Colors.black.withValues(alpha: 0.05),
+          color: Colors.white.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.1)
-                : Colors.black.withValues(alpha: 0.05),
+            color: Colors.white.withValues(alpha: 0.1),
           ),
         ),
-        child: Icon(
+        child: const Icon(
           Iconsax.arrow_left,
-          color: AppTheme.textPrimary(context),
+          color: Colors.white,
           size: 20,
         ),
       ),
@@ -249,18 +247,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withValues(alpha: 0.1),
+              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, size: 16, color: AppTheme.primaryColor),
+            child: Icon(icon, size: 16, color: PremiumTokens.nebulaBlue),
           ),
           SizedBox(width: 12),
           Text(
             title.toUpperCase(),
-            style: GoogleFonts.outfit(
+            style: PremiumTokens.sansStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: AppTheme.primaryColor,
+              color: PremiumTokens.nebulaBlue,
               letterSpacing: 1.5,
             ),
           ),
@@ -279,23 +277,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     Function(bool) onChanged, {
     List<Color>? gradientColors,
   }) {
-    final isDark = AppTheme.isDark(context);
     final colors =
-        gradientColors ?? [AppTheme.primaryColor, AppTheme.primaryDark];
+        gradientColors ?? [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)];
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.06)
-            : Colors.white.withValues(alpha: 0.8),
+        color: Colors.white.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : Colors.black.withValues(alpha: 0.04),
+          color: Colors.white.withValues(alpha: 0.08),
           width: 1.5,
         ),
-        boxShadow: AppTheme.softShadow(context),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -328,19 +320,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.outfit(
-                      fontWeight: FontWeight.w600,
+                    style: PremiumTokens.displayStyle(
                       fontSize: 16,
-                      color: AppTheme.textPrimary(context),
-                      letterSpacing: -0.2,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: GoogleFonts.outfit(
+                    style: PremiumTokens.sansStyle(
                       fontSize: 13,
-                      color: AppTheme.textMuted(context),
+                      color: Colors.white38,
                     ),
                   ),
                 ],
@@ -408,24 +398,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   // Optimized language tile without BackdropFilter
   Widget _buildLanguageTile(BuildContext context, AppLocalization l) {
-    final languageName = ref.read(languageProvider.notifier).languageName;
-    final isDark = AppTheme.isDark(context);
-
     return PressableScale(
       onTap: () => _showLanguageDialog(context, l),
       child: Container(
         decoration: BoxDecoration(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.06)
-              : Colors.white.withValues(alpha: 0.8),
+          color: Colors.white.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.08)
-                : Colors.black.withValues(alpha: 0.04),
+            color: Colors.white.withValues(alpha: 0.08),
             width: 1.5,
           ),
-          boxShadow: AppTheme.softShadow(context),
         ),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -434,17 +416,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [AppTheme.glowPink, Color(0xFFF472B6)],
-                  ),
+                  gradient: PremiumTokens.nebulaGradient,
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.glowPink.withValues(alpha: 0.4),
+                      color: PremiumTokens.nebulaBlue.withValues(alpha: 0.4),
                       blurRadius: 12,
-                      offset: Offset(0, 4),
+                      offset: const Offset(0, 4),
                       spreadRadius: -4,
                     ),
                   ],
@@ -462,19 +440,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   children: [
                     Text(
                       l.translate('language'),
-                      style: GoogleFonts.outfit(
-                        fontWeight: FontWeight.w600,
+                      style: PremiumTokens.displayStyle(
                         fontSize: 16,
-                        color: AppTheme.textPrimary(context),
-                        letterSpacing: -0.2,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      languageName,
-                      style: GoogleFonts.outfit(
+                      ref.read(languageProvider.notifier).languageName,
+                      style: PremiumTokens.sansStyle(
                         fontSize: 13,
-                        color: AppTheme.textMuted(context),
+                        color: Colors.white38,
                       ),
                     ),
                   ],
@@ -483,13 +459,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: AppTheme.surfaceColor(context),
+                  color: Colors.white.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
+                child: const Icon(
                   Iconsax.arrow_right_3,
                   size: 18,
-                  color: AppTheme.primaryColor,
+                  color: PremiumTokens.nebulaBlue,
                 ),
               ),
             ],
@@ -500,8 +476,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   void _showLanguageDialog(BuildContext context, AppLocalization l) {
-    final isDark = AppTheme.isDark(context);
-
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -509,12 +483,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       builder: (context) => Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1A1A2E) : Colors.white,
+          color: const Color(0xFF1A1A2E),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
           border: Border.all(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.1)
-                : Colors.black.withValues(alpha: 0.05),
+            color: Colors.white.withValues(alpha: 0.1),
           ),
         ),
         child: SafeArea(
@@ -528,7 +500,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     width: 48,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: AppTheme.textMuted(context).withValues(alpha: 0.3),
+                      color: Colors.white38.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
@@ -539,9 +511,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppTheme.glowPink, const Color(0xFFF472B6)],
-                        ),
+                        gradient: PremiumTokens.nebulaGradient,
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: const Icon(
@@ -553,11 +523,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     const SizedBox(width: 16),
                     Text(
                       l.translate('language'),
-                      style: GoogleFonts.spectral(
+                      style: PremiumTokens.displayStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
-                        color: AppTheme.textPrimary(context),
-                        letterSpacing: -0.5,
                       ),
                     ),
                   ],
@@ -566,7 +534,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 Text(
                   "Choose your preferred language",
                   style: GoogleFonts.outfit(
-                    color: AppTheme.textMuted(context),
+                    color: Colors.white38,
                     fontSize: 14,
                   ),
                 ),
@@ -608,14 +576,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? AppTheme.primaryColor.withValues(alpha: 0.1)
-                              : isDark
-                              ? Colors.white.withValues(alpha: 0.05)
-                              : Colors.black.withValues(alpha: 0.02),
+                              ? PremiumTokens.nebulaBlue.withValues(alpha: 0.1)
+                              : Colors.white.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
                             color: isSelected
-                                ? AppTheme.primaryColor.withValues(alpha: 0.3)
+                                ? PremiumTokens.nebulaBlue.withValues(alpha: 0.3)
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -626,16 +592,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? AppTheme.primaryColor.withValues(alpha: 0.15)
-                                    : AppTheme.surfaceColor(context),
+                                    ? PremiumTokens.nebulaBlue.withValues(alpha: 0.15)
+                                    : Colors.white.withValues(alpha: 0.05),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Icon(
                                 flagIcon,
                                 size: 20,
                                 color: isSelected
-                                    ? AppTheme.primaryColor
-                                    : AppTheme.textMuted(context),
+                                    ? PremiumTokens.nebulaBlue
+                                    : Colors.white38,
                               ),
                             ),
                             SizedBox(width: 16),
@@ -651,15 +617,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                           : FontWeight.w500,
                                       fontSize: 16,
                                       color: isSelected
-                                          ? AppTheme.primaryColor
-                                          : AppTheme.textPrimary(context),
+                                          ? PremiumTokens.nebulaBlue
+                                          : Colors.white,
                                     ),
                                   ),
                                   Text(
                                     nativeName,
                                     style: GoogleFonts.outfit(
                                       fontSize: 13,
-                                      color: AppTheme.textMuted(context),
+                                      color: Colors.white38,
                                     ),
                                   ),
                                 ],
@@ -669,7 +635,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               Container(
                                 padding: const EdgeInsets.all(6),
                                 decoration: BoxDecoration(
-                                  color: AppTheme.primaryColor,
+                                  color: PremiumTokens.nebulaBlue,
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -702,10 +668,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     bool isDestructive = false,
     List<Color>? gradientColors,
   }) {
-    final isDark = AppTheme.isDark(context);
     final colors = isDestructive
         ? [const Color(0xFFEF4444), const Color(0xFFF87171)]
-        : gradientColors ?? [AppTheme.primaryColor, AppTheme.primaryDark];
+        : gradientColors ?? [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)];
 
     return PressableScale(
       onTap: () {
@@ -717,25 +682,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            backgroundColor: isDestructive ? Colors.red : AppTheme.primaryColor,
+            backgroundColor: isDestructive ? Colors.red : PremiumTokens.nebulaBlue,
           ),
         );
       },
       child: Container(
         decoration: BoxDecoration(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.06)
-              : Colors.white.withValues(alpha: 0.8),
+          color: Colors.white.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
             color: isDestructive
                 ? Colors.red.withValues(alpha: 0.15)
-                : isDark
-                ? Colors.white.withValues(alpha: 0.08)
-                : Colors.black.withValues(alpha: 0.04),
+                : Colors.white.withValues(alpha: 0.08),
             width: 1.5,
           ),
-          boxShadow: AppTheme.softShadow(context),
         ),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -770,7 +730,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     fontSize: 16,
                     color: isDestructive
                         ? Colors.red
-                        : AppTheme.textPrimary(context),
+                        : Colors.white,
                     letterSpacing: -0.2,
                   ),
                 ),
@@ -778,13 +738,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: AppTheme.surfaceColor(context),
+                  color: Colors.white.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   Iconsax.arrow_right_3,
                   size: 18,
-                  color: isDestructive ? Colors.red : AppTheme.primaryColor,
+                  color: isDestructive ? Colors.red : PremiumTokens.nebulaBlue,
                 ),
               ),
             ],

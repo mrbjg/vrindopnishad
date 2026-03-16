@@ -12,7 +12,7 @@ class AuthService {
   // For Android, we must pass the Web Client ID as serverClientId to get a valid ID Token for Supabase
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     serverClientId:
-        '373857631114-tfrl4mn3ivb37f4nrrhrdlk50306v2db.apps.googleusercontent.com',
+        '1019370299171-vdf08iskqktbvrcntf3s1iadvracoued.apps.googleusercontent.com',
   );
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
@@ -33,6 +33,27 @@ class AuthService {
       email: email,
       password: password,
     );
+  }
+
+  // Combined Login or Register
+  Future<UserCredential> loginOrRegister(String email, String password) async {
+    try {
+      // Try to sign in first
+      return await signInWithEmail(email, password);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found' || e.code == 'invalid-credential') {
+        // user-not-found is legacy, invalid-credential is the new standard
+        // But for "login or register", we check if we should create a new account.
+        // NOTE: In production, you might want to verify if they meant to register.
+        // If sign-in fails because user doesn't exist, we sign them up.
+        try {
+          return await signUpWithEmail(email, password);
+        } catch (signUpError) {
+          rethrow;
+        }
+      }
+      rethrow;
+    }
   }
 
   // Google Sign In

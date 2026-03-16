@@ -106,7 +106,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       icon: Iconsax.archive_book,
                       title: "Saved Items",
                       subtitle: "Your spiritual vault",
-                      color: PremiumTokens.saffronGlow,
+                      color: PremiumTokens.nebulaBlue,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const SavedItemsScreen()),
@@ -180,7 +180,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           width: 3,
           height: 16,
           decoration: BoxDecoration(
-            color: PremiumTokens.saffronGlow,
+            color: PremiumTokens.nebulaBlue,
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -277,7 +277,7 @@ class _PremiumProfileHeader extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(4),
             decoration: PremiumTokens.evolvingAura(
-              color: PremiumTokens.saffronGlow,
+              color: PremiumTokens.nebulaBlue,
               intensity: 0.7,
             ),
             child: Container(
@@ -285,7 +285,7 @@ class _PremiumProfileHeader extends StatelessWidget {
               height: 120,
               padding: const EdgeInsets.all(3),
               decoration: const BoxDecoration(shape: BoxShape.circle,
-                gradient: PremiumTokens.saffronPremiumGradient,
+                gradient: PremiumTokens.nebulaGradient,
               ),
               child: Container(
                 decoration: const BoxDecoration(shape: BoxShape.circle, color: PremiumTokens.charcoal),
@@ -319,7 +319,7 @@ class _PremiumProfileHeader extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Iconsax.sms, color: PremiumTokens.saffronGlow, size: 14),
+                const Icon(Iconsax.sms, color: PremiumTokens.nebulaBlue, size: 14),
                 const SizedBox(width: 8),
                   Text(
                     user?.email ?? "Exploring the Path",
@@ -335,7 +335,7 @@ class _PremiumProfileHeader extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildStat("Streaks", "21d", PremiumTokens.saffronGlow),
+              _buildStat("Streaks", "21d", PremiumTokens.nebulaBlue),
               const SizedBox(width: 24),
               _buildStat("Japs", "12.8k", PremiumTokens.celestialGlow),
               const SizedBox(width: 24),

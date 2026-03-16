@@ -45,10 +45,22 @@ class JournalScreen extends ConsumerWidget {
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 80),
-        child: FloatingActionButton(
-          onPressed: () {},
-          backgroundColor: Colors.white,
-          child: const Icon(Icons.add, color: PremiumTokens.voidBlack, size: 32),
+        child: Container(
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(
+            gradient: PremiumTokens.nebulaGradient,
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white10, width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: PremiumTokens.nebulaBlue.withValues(alpha: 0.5),
+                blurRadius: 25,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: const Icon(Icons.add, color: Colors.white, size: 32),
         ),
       ),
     );
@@ -56,11 +68,11 @@ class JournalScreen extends ConsumerWidget {
 
   Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Icon(Icons.menu, color: Colors.white70, size: 28),
+          const Icon(Icons.menu, color: PremiumTokens.nebulaBlue, size: 28),
           Column(
             children: [
               Text(
@@ -82,7 +94,7 @@ class JournalScreen extends ConsumerWidget {
               ),
             ],
           ),
-          const Icon(Icons.search, color: Colors.white70, size: 28),
+          const Icon(Icons.search, color: PremiumTokens.nebulaBlue, size: 28),
         ],
       ),
     );
@@ -98,15 +110,19 @@ class JournalScreen extends ConsumerWidget {
             height: 80,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: const LinearGradient(
+              gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Colors.white, Color(0xFF256AF4)],
+                colors: [
+                  PremiumTokens.nebulaBlue.withValues(alpha: 0.2),
+                  PremiumTokens.nebulaBlue.withValues(alpha: 0.05),
+                ],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF256AF4).withValues(alpha: 0.4),
-                  blurRadius: 20,
+                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.5),
+                  blurRadius: 40,
+                  spreadRadius: 10,
                 ),
               ],
             ),
@@ -117,7 +133,7 @@ class JournalScreen extends ConsumerWidget {
                 height: 60,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: PremiumTokens.voidBlue,
+                  color: PremiumTokens.voidBlack,
                 ),
               ),
             ),

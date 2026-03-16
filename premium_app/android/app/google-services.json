@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1019370299171",
+    "firebase_url": "https://login-me-vrinda-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "login-me-vrinda",
+    "storage_bucket": "login-me-vrinda.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1019370299171:android:421f8669d8a388dfcd3696",
+        "android_client_info": {
+          "package_name": "com.vrindopnishad.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1019370299171-3vtikk8m5henmf0aelrcjm3vde2omcij.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vrindopnishad.app",
+            "certificate_hash": "c40c77794fe0606c02b3ab9d0a90bf8f8243a972"
+          }
+        },
+        {
+          "client_id": "1019370299171-vdf08iskqktbvrcntf3s1iadvracoued.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCU9VuBms1Ss8VzFEqFSWScQgwDTCDwPkw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1019370299171-vdf08iskqktbvrcntf3s1iadvracoued.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1019370299171-47a4uf32auf7rrfoi9oc6pr919q80olo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.santvaani.santVaani"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

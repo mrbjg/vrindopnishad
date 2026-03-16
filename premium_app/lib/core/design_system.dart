@@ -12,16 +12,17 @@ class PremiumTokens {
   // ═══════════════════════════════════════════════════════════════════════════
   // COLORS: Enhanced Palette
   // ═══════════════════════════════════════════════════════════════════════════
-  static const Color charcoal = Color(0xFF1A160F); // Dashboard background-dark
-  static const Color voidBlack = Color(0xFF020205); // Journal void-black
-  static const Color voidPure = Color(0xFF000000); // Audio player background-dark
-  static const Color background = Color(0xFF1A160F);
-  static const Color surfaceCharcoal = Color(0xFF2A2316); // Dashboard surface-dark
-  static const Color accentDark = Color(0xFF1E1B15);
-  static const Color nebulaBlue = Color(0xFF256AF4); // Audio player primary
-  static const Color voidBlue = Color(0xFF0A0A1A); // Journal background-dark
-  static const Color saffronGlow = Color(0xFFF2A60D); // Premium primary
-  static const Color silverCloud = Color(0xFFC0C0CF); // Journal silver
+  static const Color charcoal = Color(0xFF020205); // Unified to voidBlack
+  static const Color voidBlack = Color(0xFF020205); 
+  static const Color voidPure = Color(0xFF000000); 
+  static const Color background = Color(0xFF020205);
+  static const Color surfaceCharcoal = Color(0xFF0A0A1F); // Deep blue-tinted surface
+  static const Color accentDark = Color(0xFF050510);
+  static const Color nebulaBlue = Color(0xFF256AF4); 
+  static const Color voidBlue = Color(0xFF0A0A1A); 
+  static const Color primaryAccent = Color(0xFF256AF4); // Blue is now primary
+  static const Color saffronGlow = Color(0xFFF2A60D); // Kept as subtle accent
+  static const Color silverCloud = Color(0xFFC0C0CF); 
   static const Color deepGold = Color(0xFFC5A059);
   static const Color celestialGlow = Color(0xFFAC92FF);
   
@@ -43,7 +44,7 @@ class PremiumTokens {
   static const LinearGradient saffronPremiumGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFFF2A60D), Color(0xFFD97706)],
+    colors: [Color(0xFF256AF4), Color(0xFF1A1C2E)], // Unified to Nebula
   );
 
   static const LinearGradient goldGlassGradient = LinearGradient(
@@ -202,10 +203,10 @@ class PremiumUI extends StatelessWidget {
           child: Container(
             padding: padding ?? const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: const Color(0x992A2316), // rgba(42, 35, 22, 0.6)
+              color: const Color(0x990A0A1F), // Deep blue-tinted surface
               borderRadius: BorderRadius.circular(borderRadius),
               border: Border.all(
-                color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+                color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
                 width: 1,
               ),
             ),
@@ -333,8 +334,7 @@ class PremiumUI extends StatelessWidget {
   /// Premium bokeh background for immersive screens
   static Widget bokehBackground() {
     return Container(
-      decoration: BoxDecoration(color: PremiumTokens.charcoal,
-      ),
+      decoration: BoxDecoration(color: PremiumTokens.voidBlack),
       child: Stack(
         children: [
           Positioned.fill(
@@ -344,15 +344,16 @@ class PremiumUI extends StatelessWidget {
                   center: Alignment.center,
                   radius: 1.5,
                   colors: [
-                    PremiumTokens.saffronGlow.withValues(alpha: 0.05),
+                    PremiumTokens.nebulaBlue.withValues(alpha: 0.05),
                     Colors.transparent,
                   ],
                 ),
               ),
             ),
           ),
-          _buildBokeh(top: -100, right: -50, size: 300, color: PremiumTokens.saffronGlow.withValues(alpha: 0.08)),
-          _buildBokeh(bottom: -50, left: -50, size: 250, color: PremiumTokens.saffronGlow.withValues(alpha: 0.05)),
+          _buildBokeh(top: -100, right: -50, size: 300, color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1)),
+          _buildBokeh(bottom: -50, left: -50, size: 250, color: PremiumTokens.nebulaBlue.withValues(alpha: 0.08)),
+          _buildBokeh(top: 100, left: 50, size: 150, color: PremiumTokens.celestialGlow.withValues(alpha: 0.05)),
         ],
       ),
     );
@@ -492,7 +493,7 @@ class PremiumUI extends StatelessWidget {
             Text(
               text.toUpperCase(),
               style: GoogleFonts.manrope(
-                color: PremiumTokens.charcoal,
+                color: PremiumTokens.voidBlack,
                 fontWeight: FontWeight.w800,
                 fontSize: 14,
                 letterSpacing: 1,
@@ -545,7 +546,7 @@ class PremiumUI extends StatelessWidget {
           child: const Center(
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation(PremiumTokens.saffronGlow),
+              valueColor: AlwaysStoppedAnimation(PremiumTokens.nebulaBlue),
             ),
           ),
         );

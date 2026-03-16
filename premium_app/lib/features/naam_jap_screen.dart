@@ -182,8 +182,8 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
                   Container(
                     height: 1,
                     width: MediaQuery.of(context).size.width * 0.5,
-                    color: PremiumTokens.nebulaBlue,
                     decoration: BoxDecoration(
+                      color: PremiumTokens.nebulaBlue,
                       boxShadow: [
                         BoxShadow(
                           color: PremiumTokens.nebulaBlue.withValues(alpha: 0.5),
@@ -211,15 +211,23 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
             children: [
               const Icon(Icons.shuffle, color: Colors.white24, size: 24),
               const Icon(Icons.skip_previous, color: Colors.white, size: 40),
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.03),
-                  border: Border.all(color: Colors.white12),
+              GestureDetector(
+                onTap: () {},
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: PremiumTokens.nebulaGradient,
+                    boxShadow: [
+                      BoxShadow(
+                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.4),
+                        blurRadius: 25,
+                      ),
+                    ],
+                  ),
+                  child: const Icon(Icons.play_arrow, color: Colors.white, size: 48),
                 ),
-                child: const Icon(Icons.play_arrow, color: Colors.white, size: 48),
               ),
               const Icon(Icons.skip_next, color: Colors.white, size: 40),
               const Icon(Icons.repeat, color: Colors.white24, size: 24),
@@ -244,7 +252,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
             width: 2,
             height: index == 10 ? 60 : h,
             decoration: BoxDecoration(
-              color: index == 10 ? PremiumTokens.nebulaBlue : Colors.white70,
+              color: index == 10 ? PremiumTokens.nebulaBlue : PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(10),
             ),
           );

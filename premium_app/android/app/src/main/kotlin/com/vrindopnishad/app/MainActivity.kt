@@ -1,4 +1,4 @@
-package com.santvaani.premium_app
+package com.vrindopnishad.app
 
 import io.flutter.embedding.android.FlutterActivity
 

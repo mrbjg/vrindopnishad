@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../core/theme.dart';
+import '../../core/design_system.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -9,8 +9,11 @@ class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("About Sant-Vaani")),
-      body: SingleChildScrollView(
+      backgroundColor: Colors.transparent,
+      body: Stack(
+        children: [
+          PremiumUI.voidBackground(),
+          SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
@@ -20,10 +23,14 @@ class AboutScreen extends StatelessWidget {
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [AppTheme.primaryColor, AppTheme.primaryDark],
-                  ),
+                  gradient: PremiumTokens.nebulaGradient,
                   shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: PremiumTokens.nebulaBlue.withValues(alpha: 0.4),
+                      blurRadius: 25,
+                    ),
+                  ],
                 ),
                 child: const Icon(
                   Iconsax.magic_star,
@@ -35,10 +42,9 @@ class AboutScreen extends StatelessWidget {
             const SizedBox(height: 24),
             Text(
               "Sant-Vaani",
-              style: GoogleFonts.spectral(
+              style: PremiumTokens.displayStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
-                color: AppTheme.primaryColor,
               ),
             ),
             const Text("Version 1.0.0", style: TextStyle(color: Colors.grey)),
@@ -76,13 +82,13 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 60),
             const Text(
-              "© 2025 Vrindopnishad. All rights reserved.",
-              style: TextStyle(color: Colors.grey, fontSize: 12),
+              "© 2026 Vrindopnishad. All rights reserved.",
+              style: TextStyle(color: Colors.white38, fontSize: 12),
             ),
             const Text(
               "Made with ❤️ for Sant-Sanatan",
               style: TextStyle(
-                color: AppTheme.accentColor,
+                color: PremiumTokens.nebulaBlue,
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),
@@ -90,20 +96,18 @@ class AboutScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
+    ],
+  ),
+);
+}
 
   Widget _buildInfoCard(
     BuildContext context,
     String title,
     String description,
   ) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: AppTheme.primaryColor.withValues(alpha: 0.1)),
-      ),
+    return PremiumUI.voidGlassCard(
+      padding: const EdgeInsets.all(20),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -114,7 +118,7 @@ class AboutScreen extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppTheme.primaryColor,
+                color: PremiumTokens.nebulaBlue,
               ),
             ),
             const SizedBox(height: 12),
@@ -129,10 +133,11 @@ class AboutScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppTheme.primaryColor.withValues(alpha: 0.1),
+        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
         shape: BoxShape.circle,
+        border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
       ),
-      child: Icon(icon, color: AppTheme.primaryColor, size: 24),
+      child: Icon(icon, color: PremiumTokens.nebulaBlue, size: 24),
     );
   }
 }

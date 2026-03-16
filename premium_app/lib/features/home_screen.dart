@@ -4,17 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui';
-import '../core/theme.dart';
 import '../core/design_system.dart';
 import '../core/providers.dart';
 import '../core/localization.dart';
 import '../core/content_provider.dart';
-import 'content_detail_screen.dart';
-import 'category_screen.dart';
-import 'search_screen.dart';
-import 'profile/saved_items_screen.dart';
-import 'profile/settings_screen.dart';
-import '../widgets/animated_effects.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -37,7 +30,7 @@ class HomeScreen extends ConsumerWidget {
                 collapsedHeight: 80,
                 pinned: true,
                 floating: false,
-                backgroundColor: PremiumTokens.charcoal.withValues(alpha: 0.8),
+                backgroundColor: PremiumTokens.voidBlack.withValues(alpha: 0.8),
                 flexibleSpace: ClipRect(
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -57,11 +50,11 @@ class HomeScreen extends ConsumerWidget {
                               width: 40,
                               height: 40,
                               decoration: BoxDecoration(
-                                color: PremiumTokens.saffronGlow.withValues(alpha: 0.2),
+                                color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2),
                                 shape: BoxShape.circle,
-                                border: Border.all(color: PremiumTokens.saffronGlow.withValues(alpha: 0.3)),
+                                border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
                               ),
-                              child: const Icon(Icons.person, color: PremiumTokens.saffronGlow, size: 24),
+                              child: const Icon(Icons.person, color: PremiumTokens.nebulaBlue, size: 24),
                             ),
                             const SizedBox(width: 12),
                             Column(
@@ -71,7 +64,7 @@ class HomeScreen extends ConsumerWidget {
                                 Text(
                                   'WELCOME',
                                   style: GoogleFonts.manrope(
-                                    color: PremiumTokens.saffronGlow,
+                                    color: PremiumTokens.nebulaBlue,
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 2,
@@ -102,7 +95,7 @@ class HomeScreen extends ConsumerWidget {
                                   child: Container(
                                     width: 8,
                                     height: 8,
-                                    decoration: BoxDecoration(color: PremiumTokens.saffronGlow,
+                                    decoration: BoxDecoration(color: PremiumTokens.nebulaBlue,
                                       shape: BoxShape.circle,
                                     ),
                                   ),
@@ -164,10 +157,12 @@ class HomeScreen extends ConsumerWidget {
     return Container(
       width: 40,
       height: 40,
-      decoration: BoxDecoration(color: PremiumTokens.surfaceCharcoal,
+      decoration: BoxDecoration(
+        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
         shape: BoxShape.circle,
+        border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
       ),
-      child: Icon(icon, color: Colors.white54, size: 20),
+      child: Icon(icon, color: PremiumTokens.nebulaBlue, size: 20),
     );
   }
 
@@ -177,7 +172,7 @@ class HomeScreen extends ConsumerWidget {
 
     return Padding(
       padding: const EdgeInsets.all(20),
-      child: PremiumUI.saffronGlassCard(
+      child: PremiumUI.voidGlassCard(
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
@@ -189,15 +184,15 @@ class HomeScreen extends ConsumerWidget {
                   children: [
                     Text(
                       'Daily Naam Jap',
-                      style: GoogleFonts.manrope(
-                        fontSize: 18,
+                      style: GoogleFonts.newsreader(
+                        fontSize: 20,
                         color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                     Text(
                       'Enter the Ethereal Void',
-                      style: GoogleFonts.manrope(color: PremiumTokens.saffronGlow, fontSize: 10, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.manrope(color: PremiumTokens.nebulaBlue, fontSize: 10, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -223,7 +218,7 @@ class HomeScreen extends ConsumerWidget {
                       value: progress,
                       strokeWidth: 6,
                       backgroundColor: Colors.white.withValues(alpha: 0.05),
-                      valueColor: const AlwaysStoppedAnimation(PremiumTokens.saffronGlow),
+                      valueColor: const AlwaysStoppedAnimation(PremiumTokens.nebulaBlue),
                     ),
                   ),
                   const Icon(Iconsax.music_play5, color: Colors.white, size: 40),
@@ -255,7 +250,7 @@ class HomeScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 24),
-            PremiumUI.saffronButton(
+            PremiumUI.capsuleButton(
               text: 'OPEN PLAYER',
               onTap: () {
                 ref.read(navigationIndexProvider.notifier).state = 2;
@@ -301,7 +296,7 @@ class HomeScreen extends ConsumerWidget {
               ),
               Text(
                 'View All',
-                style: GoogleFonts.manrope(color: PremiumTokens.saffronGlow, fontSize: 13, fontWeight: FontWeight.bold),
+                style: GoogleFonts.manrope(color: PremiumTokens.nebulaBlue, fontSize: 13, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -443,10 +438,10 @@ class HomeScreen extends ConsumerWidget {
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
-                      color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+                      color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Center(child: Text('ॐ', style: TextStyle(color: PremiumTokens.saffronGlow, fontSize: 24))),
+                    child: const Center(child: Text('ॐ', style: TextStyle(color: PremiumTokens.nebulaBlue, fontSize: 24))),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -460,7 +455,7 @@ class HomeScreen extends ConsumerWidget {
                         const SizedBox(height: 4),
                         Text(
                           item.category,
-                          style: GoogleFonts.manrope(color: PremiumTokens.saffronGlow, fontSize: 12),
+                          style: GoogleFonts.manrope(color: PremiumTokens.nebulaBlue, fontSize: 12),
                         ),
                       ],
                     ),
@@ -516,7 +511,7 @@ class PremiumQuoteCard extends StatelessWidget {
             ),
             child: Column(
               children: [
-                const Icon(Iconsax.quote_up5, color: PremiumTokens.saffronGlow, size: 40),
+                const Icon(Iconsax.quote_up5, color: PremiumTokens.nebulaBlue, size: 40),
                 const SizedBox(height: 24),
                 Text(
                   '"The soul is neither born, nor does it ever die; nor having once existed, does it ever cease to be."',
@@ -533,7 +528,7 @@ class PremiumQuoteCard extends StatelessWidget {
                 Text(
                   'BHAGAVAD GITA 2.20',
                   style: GoogleFonts.manrope(
-                    color: PremiumTokens.saffronGlow,
+                    color: PremiumTokens.nebulaBlue,
                     fontWeight: FontWeight.w800,
                     fontSize: 10,
                     letterSpacing: 2,
