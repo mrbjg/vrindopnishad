@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Profile - Sant-Vaani</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2e0bda",
+                        "background-light": "#f6f5f8",
+                        "background-dark": "#0a0814",
+                        "aura-silver": "#c0c0c0",
+                        "aura-indigo": "#4b0082"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .aura-gradient {
+            background: radial-gradient(circle at center, rgba(46, 11, 218, 0.4) 0%, rgba(192, 192, 192, 0.2) 40%, transparent 70%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<div class="relative flex h-full min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
+<!-- Header Nav -->
+<div class="flex items-center bg-transparent p-4 pb-2 justify-between z-10">
+<div class="text-slate-100 flex size-12 shrink-0 items-center justify-center cursor-pointer">
+<span class="material-symbols-outlined">arrow_back_ios</span>
+</div>
+<h2 class="text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Sanctuary Profile</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-primary/20 text-slate-100">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</div>
+<!-- Evolving Aura Section -->
+<div class="relative flex flex-col items-center justify-center py-10 px-4 overflow-hidden">
+<!-- Generative Aura Background -->
+<div class="absolute inset-0 aura-gradient animate-pulse opacity-60"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-background-dark"></div>
+<div class="relative z-10 flex flex-col items-center gap-6">
+<!-- Profile Image with Silver Border -->
+<div class="relative">
+<div class="absolute -inset-1 rounded-full bg-gradient-to-tr from-aura-silver via-primary to-aura-indigo blur-sm"></div>
+<div class="relative bg-center bg-no-repeat aspect-square bg-cover rounded-full h-32 w-32 border-2 border-aura-silver/50" data-alt="Minimalist profile portrait of a woman in zen state" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBWTzLudhMZk2fgMX3OarbSyNvs7vHKhl-A8YGPtySIGOQFhgghoJI2VnyRmu6xNqZU-MxMht92mtqYOsXnb4tUa7PCSEDIUpkF_BvgH3A3Qbs9imOBFJSNd486A7_yhhQ5WNqHLrN2MBOLB4tiT5VSEbQlcp2kPQ8RZcabyayRNmsPzE2Y_KnW8Z2W9-eZyMWAtapcderOpikCaeylT7UjIiHDW1DFCDJBbolD6nb55DXtXsqCl70965wpvTsEDTTPqhjfrxh31Ts");'>
+</div>
+</div>
+<div class="flex flex-col items-center text-center">
+<h1 class="text-white text-3xl font-extrabold tracking-tight">Void Seeker</h1>
+<div class="mt-2 flex items-center gap-2 px-3 py-1 rounded-full bg-primary/30 border border-primary/40">
+<span class="material-symbols-outlined text-[18px] text-aura-silver">auto_awesome</span>
+<p class="text-slate-200 text-sm font-semibold uppercase tracking-widest">Aura Level 42</p>
+</div>
+<p class="mt-4 text-slate-400 text-sm max-w-[280px] leading-relaxed italic">
+                        "Evolving silver-and-indigo energy field reflecting deep stillness."
+                    </p>
+</div>
+</div>
+</div>
+<!-- Soul Badges Section -->
+<div class="mt-4">
+<h3 class="text-slate-100 text-sm font-bold uppercase tracking-[0.2em] px-6 mb-4">Soul Badges</h3>
+<div class="flex gap-3 px-6 overflow-x-auto no-scrollbar pb-4">
+<div class="flex h-12 shrink-0 items-center justify-center gap-x-3 rounded-xl glass-card px-4 border border-aura-silver/20">
+<span class="material-symbols-outlined text-aura-silver">brightness_7</span>
+<p class="text-slate-100 text-sm font-medium">Void Seeker</p>
+</div>
+<div class="flex h-12 shrink-0 items-center justify-center gap-x-3 rounded-xl glass-card px-4 border border-aura-silver/20">
+<span class="material-symbols-outlined text-aura-silver">dark_mode</span>
+<p class="text-slate-100 text-sm font-medium">Eternal Peace</p>
+</div>
+<div class="flex h-12 shrink-0 items-center justify-center gap-x-3 rounded-xl glass-card px-4 border border-aura-silver/20">
+<span class="material-symbols-outlined text-aura-silver">self_improvement</span>
+<p class="text-slate-100 text-sm font-medium">Stillness Master</p>
+</div>
+<div class="flex h-12 shrink-0 items-center justify-center gap-x-3 rounded-xl glass-card px-4 border border-aura-silver/20">
+<span class="material-symbols-outlined text-aura-silver">groups_3</span>
+<p class="text-slate-100 text-sm font-medium">Sangat Guide</p>
+</div>
+</div>
+</div>
+<!-- Detailed Stats Section -->
+<div class="flex flex-col gap-4 p-6">
+<h3 class="text-slate-100 text-sm font-bold uppercase tracking-[0.2em] mb-2">Sacred Insights</h3>
+<div class="grid grid-cols-2 gap-4">
+<!-- Stat Card 1 -->
+<div class="glass-card rounded-2xl p-5 flex flex-col gap-2">
+<span class="material-symbols-outlined text-primary text-3xl">timer</span>
+<p class="text-3xl font-bold text-slate-100">1,240</p>
+<p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Stillness Minutes</p>
+</div>
+<!-- Stat Card 2 -->
+<div class="glass-card rounded-2xl p-5 flex flex-col gap-2">
+<span class="material-symbols-outlined text-primary text-3xl">hub</span>
+<p class="text-3xl font-bold text-slate-100">84</p>
+<p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Sangat Contributions</p>
+</div>
+</div>
+<!-- Meditation Activity Glass Card -->
+<div class="glass-card rounded-2xl p-6 mt-2">
+<div class="flex justify-between items-center mb-4">
+<p class="text-slate-100 font-bold">Resonance Path</p>
+<span class="text-xs text-primary font-bold">Last 7 Days</span>
+</div>
+<div class="flex items-end justify-between h-20 gap-2">
+<div class="flex-1 bg-primary/20 rounded-t-lg h-[40%]"></div>
+<div class="flex-1 bg-primary/40 rounded-t-lg h-[60%]"></div>
+<div class="flex-1 bg-primary/30 rounded-t-lg h-[30%]"></div>
+<div class="flex-1 bg-primary/60 rounded-t-lg h-[85%] border-t-2 border-aura-silver"></div>
+<div class="flex-1 bg-primary/40 rounded-t-lg h-[50%]"></div>
+<div class="flex-1 bg-primary/70 rounded-t-lg h-[95%] border-t-2 border-aura-silver"></div>
+<div class="flex-1 bg-primary/50 rounded-t-lg h-[70%]"></div>
+</div>
+<div class="flex justify-between mt-2 text-[10px] text-slate-500 uppercase font-bold tracking-tighter">
+<span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+</div>
+</div>
+</div>
+<div class="flex-1"></div>
+<!-- Bottom Navigation Bar -->
+<div class="sticky bottom-0 w-full z-20">
+<div class="flex gap-2 border-t border-slate-800/50 bg-background-dark/90 backdrop-blur-xl px-4 pb-8 pt-3">
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-500" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">home</span>
+</div>
+<p class="text-[10px] font-bold uppercase tracking-wider">Home</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-500" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">self_improvement</span>
+</div>
+<p class="text-[10px] font-bold uppercase tracking-wider">Meditate</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-500" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">groups</span>
+</div>
+<p class="text-[10px] font-bold uppercase tracking-wider">Sangat</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-primary" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">account_circle</span>
+</div>
+<p class="text-[10px] font-bold uppercase tracking-wider">Profile</p>
+</a>
+</div>
+</div>
+</div>
+</body></html>

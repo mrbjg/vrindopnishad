@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&amp;family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2a60d",
+                        "background-dark": "#0a0a0c",
+                        "void-indigo": "#0d0d1a",
+                        "silver": "#c0c0c8",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "serif": ["Cinzel", "serif"]
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .glass-morphism {
+                background: rgba(255, 255, 255, 0.03);
+                backdrop-filter: blur(24px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .indigo-glass {
+                background: rgba(13, 13, 26, 0.7);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(148, 163, 184, 0.2);
+                box-shadow: 0 0 40px rgba(30, 58, 138, 0.3);
+            }
+            .starlight-glow {
+                box-shadow: 0 0 25px rgba(147, 197, 253, 0.15);
+            }
+            .silver-text {
+                background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+        }
+    </style>
+<title>Ritual Reminder Alerts Variant 1</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-[#050507] font-display text-slate-100 antialiased overflow-hidden">
+<div class="relative mx-auto min-h-screen max-w-md flex flex-col bg-background-dark blur-md grayscale-[0.3]">
+<header class="p-6 pt-10 flex items-center justify-between opacity-50">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined !text-3xl">ods</span>
+</div>
+<div>
+<h1 class="text-2xl font-bold tracking-tight">Welcome, Seeker</h1>
+</div>
+</div>
+</header>
+<main class="flex-1 px-6 space-y-8 opacity-40">
+<div class="h-48 rounded-xl bg-gradient-to-br from-primary/10 to-transparent border border-white/5"></div>
+<div class="grid grid-cols-3 gap-4">
+<div class="aspect-square rounded-2xl bg-white/5"></div>
+<div class="aspect-square rounded-2xl bg-white/5"></div>
+<div class="aspect-square rounded-2xl bg-white/5"></div>
+</div>
+<div class="h-24 rounded-xl bg-white/5 border border-white/5"></div>
+</main>
+<div class="absolute inset-0 bg-black/40"></div>
+</div>
+<div class="absolute inset-0 max-w-md mx-auto z-50 flex flex-col p-6 items-center">
+<div class="w-full mb-12 transform translate-y-4">
+<div class="glass-morphism rounded-[2.5rem] p-4 flex items-center gap-4 shadow-2xl">
+<div class="size-12 rounded-2xl bg-white/10 flex items-center justify-center shadow-inner">
+<span class="material-symbols-outlined !text-3xl text-silver">ods</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<span class="text-[10px] font-bold tracking-[0.2em] text-silver uppercase opacity-60">Sant-Vaani</span>
+<span class="text-[10px] text-silver/40">now</span>
+</div>
+<h2 class="font-serif text-lg silver-text">Time for Surya Namaskar</h2>
+<p class="text-xs text-silver/60">Begin your morning sequence to greet the sun.</p>
+</div>
+</div>
+</div>
+<div class="mt-auto mb-20 w-full animate-in fade-in slide-in-from-bottom-8 duration-700">
+<div class="indigo-glass starlight-glow rounded-[3rem] p-8 text-center relative overflow-hidden">
+<div class="absolute top-4 left-10 size-1 bg-blue-300 rounded-full blur-[1px] opacity-40"></div>
+<div class="absolute top-20 right-12 size-1 bg-blue-100 rounded-full blur-[1px] opacity-30"></div>
+<div class="absolute bottom-32 left-16 size-0.5 bg-blue-200 rounded-full opacity-50"></div>
+<div class="relative mb-8">
+<div class="size-20 mx-auto rounded-full bg-blue-500/10 flex items-center justify-center relative">
+<div class="absolute inset-0 rounded-full bg-blue-400/20 blur-xl animate-pulse"></div>
+<span class="material-symbols-outlined !text-5xl text-silver relative z-10">nights_stay</span>
+</div>
+</div>
+<div class="space-y-3 mb-10">
+<h3 class="font-serif text-3xl silver-text tracking-wide">Sacred Call</h3>
+<p class="text-silver/70 font-light leading-relaxed">The celestial alignment is ideal for your Surya Namaskar ritual. Step into the void of peace.</p>
+</div>
+<div class="space-y-4">
+<button class="w-full py-4 rounded-full bg-gradient-to-r from-silver via-white to-silver text-background-dark font-bold text-sm tracking-widest uppercase shadow-[0_0_20px_rgba(255,255,255,0.3)] active:scale-[0.98] transition-transform">
+                        Begin Ritual
+                    </button>
+<button class="w-full py-4 rounded-full border border-silver/20 text-silver/60 font-medium text-xs tracking-widest uppercase hover:bg-white/5 transition-colors">
+                        Remind in 10m
+                    </button>
+</div>
+</div>
+</div>
+<div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-white/20 rounded-full"></div>
+</div>
+<div class="absolute top-2 left-1/2 -translate-x-1/2 w-32 h-6 bg-black rounded-full z-[100] border border-white/5"></div>
+
+</body></html>

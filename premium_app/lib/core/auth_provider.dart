@@ -7,7 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final sb.SupabaseClient _supabase = sb.Supabase.instance.client;
+  sb.SupabaseClient get _supabase => sb.Supabase.instance.client;
 
   // For Android, we must pass the Web Client ID as serverClientId to get a valid ID Token for Supabase
   final GoogleSignIn _googleSignIn = GoogleSignIn(

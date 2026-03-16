@@ -82,7 +82,7 @@ class HomeScreen extends ConsumerWidget {
                       const SizedBox(width: 12),
                       Text(
                         'Recent Wisdom',
-                        style: GoogleFonts.outfit(
+                        style: GoogleFonts.manrope(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -114,30 +114,105 @@ class HomeScreen extends ConsumerWidget {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(24),
-        child: Row(
+        child: Column(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: PremiumTokens.saffronGlow.withOpacity(0.2),
-                    blurRadius: 20,
-                    spreadRadius: 2,
+            Row(
+              children: [
+                Container(
+                  decoration: PremiumTokens.evolvingAura(
+                    color: PremiumTokens.saffronGlow,
+                    intensity: 0.6,
                   ),
-                ],
-              ),
-              child: const PulsingOmButton(size: 60),
+                  child: const PulsingOmButton(size: 60),
+                ),
+                const SizedBox(width: 16),
+                const Expanded(child: AnimatedGreeting()),
+                PremiumUI.glassCard(
+                  padding: const EdgeInsets.all(10),
+                  child: const Icon(Iconsax.notification, color: Colors.white, size: 20),
+                ),
+              ],
             ),
-            const SizedBox(width: 16),
-            const Expanded(child: AnimatedGreeting()),
-            PremiumUI.glassCard(
-              padding: const EdgeInsets.all(10),
-              child: const Icon(Iconsax.notification, color: Colors.white, size: 20),
-            ),
+            const SizedBox(height: 24),
+            _buildJourneyStats(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildJourneyStats() {
+    return Row(
+      children: [
+        Expanded(
+          child: PremiumUI.glassCard(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+            child: Column(
+              children: [
+                Text(
+                  'Celestial Path',
+                  style: GoogleFonts.manrope(color: Colors.white60, fontSize: 10, letterSpacing: 1),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Orbit 4',
+                  style: GoogleFonts.manrope(
+                    color: PremiumTokens.celestialGlow,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: PremiumUI.glassCard(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+            child: Column(
+              children: [
+                Text(
+                  'Total Jap Hours',
+                  style: GoogleFonts.manrope(color: Colors.white60, fontSize: 10, letterSpacing: 1),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '142.5 hrs',
+                  style: GoogleFonts.manrope(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: PremiumUI.glassCard(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+            child: Column(
+              children: [
+                Text(
+                  'Stillness Score',
+                  style: GoogleFonts.manrope(color: Colors.white60, fontSize: 10, letterSpacing: 1),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '84 / 100',
+                  style: GoogleFonts.manrope(
+                    color: PremiumTokens.saffronGlow,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -167,7 +242,7 @@ class HomeScreen extends ConsumerWidget {
                     ),
                     Text(
                       'Active Meditative Chant',
-                      style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13),
+                      style: GoogleFonts.manrope(color: Colors.white70, fontSize: 13),
                     ),
                   ],
                 ),
@@ -223,7 +298,7 @@ class HomeScreen extends ConsumerWidget {
             const SizedBox(height: 24),
             Text(
               '$count',
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.manrope(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -232,7 +307,7 @@ class HomeScreen extends ConsumerWidget {
             ),
             Text(
               'TOTAL JAPS',
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.manrope(
                 fontSize: 12,
                 color: PremiumTokens.saffronGlow,
                 fontWeight: FontWeight.bold,
@@ -282,7 +357,7 @@ class HomeScreen extends ConsumerWidget {
                       const SizedBox(height: 12),
                       Text(
                         cat['name'] as String,
-                        style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.w600),
+                        style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.w600),
                       ),
                     ],
                   ),
@@ -343,7 +418,7 @@ class HomeScreen extends ConsumerWidget {
                       const SizedBox(height: 16),
                       Text(
                         item.title,
-                        style: GoogleFonts.outfit(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                        style: GoogleFonts.manrope(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -352,7 +427,7 @@ class HomeScreen extends ConsumerWidget {
                         children: [
                           const Icon(Iconsax.clock, color: Colors.white30, size: 14),
                           const SizedBox(width: 4),
-                          Text('5 min left', style: GoogleFonts.outfit(color: Colors.white30, fontSize: 12)),
+                          Text('5 min left', style: GoogleFonts.manrope(color: Colors.white30, fontSize: 12)),
                         ],
                       ),
                     ],
@@ -395,12 +470,12 @@ class HomeScreen extends ConsumerWidget {
                       children: [
                         Text(
                           item.title,
-                          style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
+                          style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           item.category,
-                          style: GoogleFonts.outfit(color: PremiumTokens.saffronGlow, fontSize: 12),
+                          style: GoogleFonts.manrope(color: PremiumTokens.saffronGlow, fontSize: 12),
                         ),
                       ],
                     ),
@@ -431,7 +506,7 @@ class PremiumQuoteCard extends StatelessWidget {
           Text(
             "The soul is never born nor dies at any time. It has not come into being, does not come into being, and will not come into being.",
             textAlign: TextAlign.center,
-            style: GoogleFonts.outfit(
+            style: GoogleFonts.manrope(
               color: Colors.white,
               fontSize: 16,
               fontStyle: FontStyle.italic,
@@ -441,7 +516,7 @@ class PremiumQuoteCard extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             "— Bhagavad Gita 2.20",
-            style: GoogleFonts.outfit(
+            style: GoogleFonts.manrope(
               color: PremiumTokens.saffronGlow,
               fontWeight: FontWeight.bold,
               fontSize: 12,

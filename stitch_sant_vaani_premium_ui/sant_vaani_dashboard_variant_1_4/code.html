@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "void-black": "#020408",
+                        "void-deep": "#05070f",
+                        "moon-white": "#fcfcfc",
+                        "silver-mist": "#b0b8c1",
+                        "starlight-blue": "#4361ee",
+                        "glass-white": "rgba(255, 255, 255, 0.03)",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+<title>Structured Void Mantra Library</title>
+<style type="text/tailwindcss">
+        :root {
+            --void-gradient: radial-gradient(circle at 50% -20%, #0a0e1a 0%, #020408 100%);
+            --aurora-glow: radial-gradient(circle at 80% 20%, rgba(67, 97, 238, 0.08) 0%, transparent 50%),
+                           radial-gradient(circle at 20% 80%, rgba(67, 97, 238, 0.05) 0%, transparent 50%);
+        }
+        body {
+            background: var(--void-gradient);
+            background-attachment: fixed;
+            min-height: 100dvh;
+        }
+        .aurora-overlay {
+            background: var(--aurora-glow);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .silver-outline {
+            border: 1px solid rgba(176, 184, 193, 0.15);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .waveform-bar {
+            width: 2px;
+            background-color: #4361ee;
+            border-radius: 1px;
+            margin: 0 1px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display text-silver-mist antialiased">
+<div class="relative mx-auto min-h-screen max-w-md flex flex-col aurora-overlay overflow-hidden">
+<div class="h-12 w-full"></div>
+<header class="px-6 py-4 space-y-6">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-2xl font-light text-moon-white tracking-tight">Mantra Library</h1>
+<p class="text-[10px] text-silver-mist/50 uppercase tracking-widest font-bold mt-1">Vocal Sanctuary</p>
+</div>
+<div class="size-10 rounded-full border border-white/10 overflow-hidden bg-void-deep">
+<img alt="Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDLybFPX7_sRm50fm0vYsjpU2IH71er3f38pQyCiH1ZszoQx4gi3ZJViu1RyBZSg9flXKJA7rBoHdRfYMsB2gJQdSnX_vIaUN2XYpCpEl4aGeAMGEFFRhOBcq7u-7TtFVNbOxo81-P5fnRrRp-gBymJ6jlqZZkYCrfkeo_uzrZhG00Rmu1KGuDzVYVoVTHXFqvChR3O6-_eVOTQk1-BzEivnCtWSF4B_v-7KMIxVLxHx7h1Lk3NALnb8hnTh6CNHC4_aotweCi06Y"/>
+</div>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-silver-mist/40 text-xl">search</span>
+</div>
+<input class="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-sm text-moon-white placeholder:text-silver-mist/30 focus:outline-none focus:border-starlight-blue/50 focus:ring-0 transition-all backdrop-blur-md" placeholder="Search Mantras..." type="text"/>
+</div>
+</header>
+<div class="flex overflow-x-auto gap-3 px-6 pb-6 hide-scrollbar">
+<button class="px-5 py-2.5 rounded-full bg-moon-white text-void-black text-[11px] font-bold uppercase tracking-wider whitespace-nowrap">All</button>
+<button class="px-5 py-2.5 rounded-full silver-outline text-silver-mist/70 text-[11px] font-bold uppercase tracking-wider whitespace-nowrap hover:bg-white/5">Peace</button>
+<button class="px-5 py-2.5 rounded-full silver-outline text-silver-mist/70 text-[11px] font-bold uppercase tracking-wider whitespace-nowrap hover:bg-white/5">Focus</button>
+<button class="px-5 py-2.5 rounded-full silver-outline text-silver-mist/70 text-[11px] font-bold uppercase tracking-wider whitespace-nowrap hover:bg-white/5">Protection</button>
+<button class="px-5 py-2.5 rounded-full silver-outline text-silver-mist/70 text-[11px] font-bold uppercase tracking-wider whitespace-nowrap hover:bg-white/5">Healing</button>
+<button class="px-5 py-2.5 rounded-full silver-outline text-silver-mist/70 text-[11px] font-bold uppercase tracking-wider whitespace-nowrap hover:bg-white/5">Abundance</button>
+</div>
+<main class="flex-1 overflow-y-auto px-6 pb-40 space-y-4">
+<div class="flex items-center justify-between mb-2">
+<h2 class="text-[10px] font-bold uppercase tracking-[0.25em] text-silver-mist/30">Most Chanted</h2>
+</div>
+<div class="glass-card silver-outline rounded-3xl p-4 flex items-center justify-between group active:scale-[0.98] transition-all">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-2xl bg-starlight-blue/10 flex items-center justify-center border border-starlight-blue/20">
+<span class="material-symbols-outlined text-starlight-blue/80">graphic_eq</span>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-moon-white tracking-wide">Om Namah Shivaya</h3>
+<p class="text-[10px] text-silver-mist/40 uppercase tracking-widest mt-0.5">108 Reps • 11 mins</p>
+</div>
+</div>
+<button class="size-10 rounded-full bg-white/5 flex items-center justify-center text-moon-white group-hover:bg-starlight-blue group-hover:text-white transition-all">
+<span class="material-symbols-outlined">play_arrow</span>
+</button>
+</div>
+<div class="glass-card silver-outline rounded-3xl p-4 flex items-center justify-between group active:scale-[0.98] transition-all">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5">
+<span class="material-symbols-outlined text-silver-mist/40">self_improvement</span>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-moon-white tracking-wide">Gayatri Mantra</h3>
+<p class="text-[10px] text-silver-mist/40 uppercase tracking-widest mt-0.5">24 Reps • 15 mins</p>
+</div>
+</div>
+<button class="size-10 rounded-full bg-white/5 flex items-center justify-center text-moon-white group-hover:bg-starlight-blue transition-all">
+<span class="material-symbols-outlined">play_arrow</span>
+</button>
+</div>
+<div class="glass-card silver-outline rounded-3xl p-4 flex items-center justify-between group active:scale-[0.98] transition-all">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5">
+<span class="material-symbols-outlined text-silver-mist/40">spa</span>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-moon-white tracking-wide">Mahamrityunjaya</h3>
+<p class="text-[10px] text-silver-mist/40 uppercase tracking-widest mt-0.5">108 Reps • 20 mins</p>
+</div>
+</div>
+<button class="size-10 rounded-full bg-white/5 flex items-center justify-center text-moon-white group-hover:bg-starlight-blue transition-all">
+<span class="material-symbols-outlined">play_arrow</span>
+</button>
+</div>
+<div class="glass-card silver-outline rounded-3xl p-4 flex items-center justify-between group active:scale-[0.98] transition-all">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5">
+<span class="material-symbols-outlined text-silver-mist/40">auto_awesome</span>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-moon-white tracking-wide">Hare Krishna Mahamantra</h3>
+<p class="text-[10px] text-silver-mist/40 uppercase tracking-widest mt-0.5">Infinite • 30 mins</p>
+</div>
+</div>
+<button class="size-10 rounded-full bg-white/5 flex items-center justify-center text-moon-white group-hover:bg-starlight-blue transition-all">
+<span class="material-symbols-outlined">play_arrow</span>
+</button>
+</div>
+<div class="glass-card silver-outline rounded-3xl p-4 flex items-center justify-between group active:scale-[0.98] transition-all">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5">
+<span class="material-symbols-outlined text-silver-mist/40">diamond</span>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-moon-white tracking-wide">Om Mani Padme Hum</h3>
+<p class="text-[10px] text-silver-mist/40 uppercase tracking-widest mt-0.5">21 Reps • 5 mins</p>
+</div>
+</div>
+<button class="size-10 rounded-full bg-white/5 flex items-center justify-center text-moon-white group-hover:bg-starlight-blue transition-all">
+<span class="material-symbols-outlined">play_arrow</span>
+</button>
+</div>
+</main>
+<div class="absolute bottom-[92px] left-4 right-4 z-40">
+<div class="glass-card border border-starlight-blue/30 rounded-2xl px-4 py-3 shadow-2xl flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="flex items-end gap-[2px] h-4">
+<div class="waveform-bar h-2"></div>
+<div class="waveform-bar h-4"></div>
+<div class="waveform-bar h-3"></div>
+<div class="waveform-bar h-5"></div>
+<div class="waveform-bar h-3"></div>
+</div>
+<div>
+<h4 class="text-[11px] font-bold text-moon-white tracking-wide">Om Namah Shivaya</h4>
+<p class="text-[9px] text-starlight-blue font-bold uppercase tracking-widest">Active Vibration</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="size-9 rounded-full flex items-center justify-center text-moon-white hover:bg-white/5">
+<span class="material-symbols-outlined !text-xl">skip_next</span>
+</button>
+<button class="size-9 rounded-full bg-starlight-blue flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined !text-xl">pause</span>
+</button>
+</div>
+</div>
+</div>
+<nav class="absolute bottom-0 w-full border-t border-white/[0.05] bg-void-black/80 backdrop-blur-3xl px-8 pb-9 pt-4 z-30">
+<div class="flex items-center justify-between">
+<a class="flex flex-col items-center gap-1.5 text-silver-mist/40 hover:text-silver-mist transition-colors" href="#">
+<span class="material-symbols-outlined !text-2xl">home</span>
+<span class="text-[9px] font-bold uppercase tracking-widest">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 text-moon-white" href="#">
+<span class="material-symbols-outlined !text-2xl">explore</span>
+<span class="text-[9px] font-bold uppercase tracking-widest">Library</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 text-silver-mist/40 hover:text-silver-mist transition-colors" href="#">
+<span class="material-symbols-outlined !text-2xl">spa</span>
+<span class="text-[9px] font-bold uppercase tracking-widest">Rituals</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 text-silver-mist/40 hover:text-silver-mist transition-colors" href="#">
+<span class="material-symbols-outlined !text-2xl">person</span>
+<span class="text-[9px] font-bold uppercase tracking-widest">You</span>
+</a>
+</div>
+</nav>
+<div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1 bg-white/10 rounded-full z-50"></div>
+</div>
+
+</body></html>

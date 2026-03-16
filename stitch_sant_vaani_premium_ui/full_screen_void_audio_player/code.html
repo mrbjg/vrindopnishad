@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#000000",
+                    },
+                    fontFamily: {
+                        "display": ["Newsreader", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .nebula-glow {
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(37,106,244,0.05) 50%, rgba(0,0,0,0) 100%);
+        }
+        .starlight-ring {
+            border: 2px solid transparent;
+            border-top-color: #256af4;
+            border-right-color: #256af4;
+            filter: drop-shadow(0 0 8px #256af4);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark font-display text-slate-100 overflow-hidden">
+<div class="relative flex h-screen w-full flex-col bg-background-dark overflow-hidden">
+<!-- Top Navigation -->
+<div class="flex items-center p-6 justify-between z-20">
+<div class="text-slate-300 flex items-center cursor-pointer">
+<span class="material-symbols-outlined text-3xl">expand_more</span>
+</div>
+<h2 class="text-slate-300 text-sm font-light tracking-[0.2em] uppercase">Sant-Vaani</h2>
+<div class="flex items-center">
+<button class="text-slate-300">
+<span class="material-symbols-outlined text-3xl">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Main Meditative Area -->
+<div class="flex-1 flex flex-col items-center justify-center relative">
+<!-- Central Nebula Effect -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-[400px] h-[400px] nebula-glow rounded-full blur-3xl opacity-60"></div>
+<div class="absolute w-[300px] h-[300px] bg-slate-100/5 rounded-full blur-2xl"></div>
+</div>
+<!-- Om Symbol & Progress Ring -->
+<div class="relative flex items-center justify-center w-72 h-72 z-10">
+<!-- Starlight Progress Ring -->
+<div class="absolute inset-0 rounded-full starlight-ring rotate-[45deg]"></div>
+<div class="absolute inset-2 rounded-full border border-slate-100/10"></div>
+<!-- Glassmorphism Disk -->
+<div class="w-56 h-56 rounded-full glass-panel flex items-center justify-center shadow-2xl">
+<div class="text-slate-100 opacity-90 drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">
+<svg fill="currentColor" height="80" viewbox="0 0 100 100" width="80">
+<path d="M50 15c-15 0-25 10-25 20 0 5 3 10 10 10s10-5 10-10c0-5-5-10-10-10 0-5 10-10 15-10 10 0 15 5 15 15s-5 15-15 15c-5 0-10-2-15-5-5-3-10-5-15-5s-10 5-10 10 5 10 10 10 15-5 25-10c10-5 20-5 30 0 5 3 10 5 15 5s10-5 10-10-5-10-10-10c-5 0-10 2-15 5-5 3-10 5-15 5-5 0-10-5-10-15s10-20 25-20c15 0 25 10 25 25s-10 25-25 35c-15 10-30 15-45 15s-25-5-25-15c0-5 5-10 10-10s10 5 10 10c0 5-5 10-10 10 5 5 15 5 25 5 15 0 30-5 45-15 15-10 25-20 25-35s-10-25-25-25z"></path>
+</svg>
+</div>
+</div>
+</div>
+</div>
+<!-- Typography Section -->
+<div class="flex flex-col items-center px-8 z-20">
+<h1 class="text-slate-100 text-2xl font-light tracking-[0.15em] mb-2 text-center">
+                Mahamrityunjaya Mantra
+            </h1>
+<p class="text-slate-400 text-sm font-light tracking-[0.2em] uppercase mb-8">
+                Divine Resonance
+            </p>
+</div>
+<!-- Controls Section -->
+<div class="px-10 pb-12 z-20">
+<!-- Progress Bar -->
+<div class="w-full flex flex-col gap-2 mb-10">
+<div class="h-[1px] w-full bg-slate-100/10 relative">
+<div class="absolute h-[1px] bg-primary w-[65%]" style="box-shadow: 0 0 10px #256af4;"></div>
+<div class="absolute h-1 w-1 bg-white rounded-full left-[65%] -top-[1.5px] shadow-[0_0_8px_white]"></div>
+</div>
+<div class="flex justify-between text-[10px] text-slate-500 tracking-widest uppercase">
+<span>05:30</span>
+<span>08:45</span>
+</div>
+</div>
+<!-- Playback Buttons -->
+<div class="flex items-center justify-between">
+<button class="text-slate-400 hover:text-slate-100">
+<span class="material-symbols-outlined text-2xl">shuffle</span>
+</button>
+<div class="flex items-center gap-10">
+<button class="text-slate-100">
+<span class="material-symbols-outlined text-4xl">skip_previous</span>
+</button>
+<button class="w-20 h-20 rounded-full glass-panel flex items-center justify-center text-slate-100 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+<span class="material-symbols-outlined text-5xl translate-x-0.5">play_arrow</span>
+</button>
+<button class="text-slate-100">
+<span class="material-symbols-outlined text-4xl">skip_next</span>
+</button>
+</div>
+<button class="text-slate-400 hover:text-slate-100">
+<span class="material-symbols-outlined text-2xl">repeat</span>
+</button>
+</div>
+</div>
+<!-- Bottom Waveform (Aesthetic) -->
+<div class="w-full h-16 flex items-end justify-center gap-1.5 px-6 pb-2 opacity-30">
+<div class="w-1 h-4 bg-slate-100/40 rounded-full"></div>
+<div class="w-1 h-8 bg-slate-100/50 rounded-full"></div>
+<div class="w-1 h-12 bg-slate-100/60 rounded-full"></div>
+<div class="w-1 h-10 bg-slate-100/50 rounded-full"></div>
+<div class="w-1 h-14 bg-slate-100/70 rounded-full"></div>
+<div class="w-1 h-8 bg-slate-100/50 rounded-full"></div>
+<div class="w-1 h-16 bg-slate-100/80 rounded-full"></div>
+<div class="w-1 h-12 bg-slate-100/60 rounded-full"></div>
+<div class="w-1 h-20 bg-primary/80 rounded-full"></div>
+<div class="w-1 h-14 bg-slate-100/70 rounded-full"></div>
+<div class="w-1 h-18 bg-slate-100/80 rounded-full"></div>
+<div class="w-1 h-12 bg-slate-100/60 rounded-full"></div>
+<div class="w-1 h-15 bg-slate-100/70 rounded-full"></div>
+<div class="w-1 h-9 bg-slate-100/50 rounded-full"></div>
+<div class="w-1 h-13 bg-slate-100/60 rounded-full"></div>
+<div class="w-1 h-7 bg-slate-100/40 rounded-full"></div>
+<div class="w-1 h-5 bg-slate-100/30 rounded-full"></div>
+</div>
+<!-- Background Subtle Elements -->
+<div class="absolute top-1/4 left-1/4 w-1 h-1 bg-white rounded-full opacity-20 blur-[1px]"></div>
+<div class="absolute top-1/3 right-1/4 w-0.5 h-0.5 bg-white rounded-full opacity-40 blur-[0.5px]"></div>
+<div class="absolute bottom-1/4 left-1/2 w-1.5 h-1.5 bg-primary/40 rounded-full blur-[2px]"></div>
+</div>
+</body></html>

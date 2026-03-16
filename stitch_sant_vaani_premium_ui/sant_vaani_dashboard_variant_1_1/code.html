@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2a60d",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#121212",
+                        "accent-dark": "#1e1b15",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>Sant-Vaani Dashboard Variant 1</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<!-- Mobile Container -->
+<div class="relative mx-auto min-h-screen max-w-md flex flex-col bg-background-light dark:bg-background-dark overflow-hidden">
+<!-- Header Section -->
+<header class="p-6 pt-10 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center text-primary shadow-xl">
+<span class="material-symbols-outlined !text-3xl">ods</span>
+</div>
+<div>
+<h1 class="text-2xl font-bold tracking-tight">Welcome, Seeker</h1>
+<p class="text-primary/70 text-sm font-medium">Aaradhya Path • Premium</p>
+</div>
+</div>
+<button class="size-10 rounded-full bg-accent-dark border border-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</header>
+<!-- Main Scrollable Area -->
+<main class="flex-1 overflow-y-auto px-6 pb-24 space-y-8">
+<!-- Featured Shloka/Quote Card -->
+<section>
+<div class="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary/20 to-accent-dark border border-primary/30 p-6 shadow-2xl">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined !text-8xl">format_quote</span>
+</div>
+<div class="relative z-10 space-y-4">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-primary text-background-dark text-[10px] font-bold uppercase tracking-wider">Bhagavad Gita 2.20</span>
+</div>
+<p class="text-xl font-medium leading-relaxed italic text-slate-100">
+                            "The soul is neither born, nor does it ever die; nor having once existed, does it ever cease to be."
+                        </p>
+<div class="flex items-center justify-between pt-2">
+<span class="text-sm text-primary/80 font-medium tracking-wide italic">— Lord Krishna</span>
+<button class="bg-primary hover:bg-primary/90 text-background-dark px-4 py-2 rounded-lg text-xs font-bold transition-colors">
+                                Reflect
+                            </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Categorical Grid -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-lg font-bold tracking-tight">Sacred Wisdom</h2>
+<a class="text-primary text-xs font-bold uppercase tracking-widest" href="#">View All</a>
+</div>
+<div class="grid grid-cols-3 gap-4">
+<!-- Category 1 -->
+<div class="flex flex-col items-center gap-3">
+<div class="w-full aspect-square rounded-2xl bg-gradient-to-tr from-accent-dark to-primary/10 border border-white/5 flex items-center justify-center shadow-lg group cursor-pointer">
+<span class="material-symbols-outlined !text-3xl text-primary group-hover:scale-110 transition-transform">auto_stories</span>
+</div>
+<span class="text-xs font-semibold text-slate-400">Shlokas</span>
+</div>
+<!-- Category 2 -->
+<div class="flex flex-col items-center gap-3">
+<div class="w-full aspect-square rounded-2xl bg-gradient-to-tr from-accent-dark to-primary/10 border border-white/5 flex items-center justify-center shadow-lg group cursor-pointer">
+<span class="material-symbols-outlined !text-3xl text-primary group-hover:scale-110 transition-transform">graphic_eq</span>
+</div>
+<span class="text-xs font-semibold text-slate-400">Mantras</span>
+</div>
+<!-- Category 3 -->
+<div class="flex flex-col items-center gap-3">
+<div class="w-full aspect-square rounded-2xl bg-gradient-to-tr from-accent-dark to-primary/10 border border-white/5 flex items-center justify-center shadow-lg group cursor-pointer">
+<span class="material-symbols-outlined !text-3xl text-primary group-hover:scale-110 transition-transform">history_edu</span>
+</div>
+<span class="text-xs font-semibold text-slate-400">Stories</span>
+</div>
+</div>
+</section>
+<!-- Naam Jap Widget -->
+<section>
+<div class="bg-accent-dark rounded-xl border border-white/5 p-5 flex items-center justify-between shadow-lg">
+<div class="flex items-center gap-4">
+<div class="relative flex items-center justify-center">
+<!-- Circular Progress Simulation -->
+<div class="size-16 rounded-full border-4 border-primary/20 flex items-center justify-center">
+<div class="size-16 rounded-full border-4 border-primary border-t-transparent absolute animate-[spin_4s_linear_infinite]"></div>
+<span class="material-symbols-outlined text-primary !text-2xl">fingerprint</span>
+</div>
+</div>
+<div>
+<p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Daily Naam Jap</p>
+<p class="text-xl font-bold">1,008 <span class="text-sm font-normal text-slate-500">/ 1,008</span></p>
+</div>
+</div>
+<button class="bg-white/5 hover:bg-white/10 size-12 rounded-xl flex items-center justify-center text-primary transition-all">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</section>
+<!-- Featured Content List -->
+<section class="space-y-4">
+<h2 class="text-lg font-bold tracking-tight">Evening Meditation</h2>
+<div class="group relative rounded-xl overflow-hidden aspect-[16/9] shadow-2xl">
+<img alt="Peaceful meditation in nature" class="w-full h-full object-cover brightness-75 group-hover:scale-105 transition-transform duration-500" data-alt="Serene person meditating in front of mountains" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjwIwCmrNMJYP97hHcnGRg2EvKQXq6eb3hN-WuZZi86qREU2G1ogTkK7g6YQUUxcjrZav6RZgxMwrfGeZ7cTCV8I6S7l8MSweZnxgl8flVHL_P3o1vVxYHjTxhk3W0NagY3T2ueRtzDiE_hzR7VTtKDpfI-9xjsTNYAJG4qEALeIdt5Ox5mskMIcA_VqwuTjIc2FqhPNmJynjLpfcVu5NGw7PZ8LRPxnq-8JYGcRGFHAkFulMUcdiBPdOs-tH0vMH8fCvLm_g7iD0"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-4">
+<h3 class="text-lg font-bold text-white">Inner Silence Journey</h3>
+<p class="text-xs text-white/70">15 mins • Guided Meditation</p>
+</div>
+<div class="absolute bottom-4 right-4 bg-primary text-background-dark p-2 rounded-full shadow-lg">
+<span class="material-symbols-outlined !text-2xl">play_arrow</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="absolute bottom-0 w-full border-t border-white/5 bg-background-dark/80 backdrop-blur-xl px-6 pb-8 pt-4">
+<div class="flex items-center justify-between">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined fill-1">home</span>
+<span class="text-[10px] font-bold">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="text-[10px] font-bold">Explore</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined">music_note</span>
+<span class="text-[10px] font-bold">Listen</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold">Profile</span>
+</a>
+</div>
+</nav>
+<!-- Dynamic Island / Top Notch Decor -->
+<div class="absolute top-2 left-1/2 -translate-x-1/2 w-32 h-6 bg-black rounded-full z-50"></div>
+</div>
+</body></html>

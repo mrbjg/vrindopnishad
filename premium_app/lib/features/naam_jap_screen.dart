@@ -183,16 +183,11 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
                             Container(
                               width: 190,
                               height: 190,
-                              decoration: BoxDecoration(
+                              decoration: PremiumTokens.evolvingAura(
+                                color: PremiumTokens.saffronGlow,
+                                intensity: 0.8,
+                              ).copyWith(
                                 gradient: PremiumTokens.saffronPremiumGradient,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: PremiumTokens.saffronGlow.withOpacity(0.3),
-                                    blurRadius: 40,
-                                    spreadRadius: 5,
-                                  ),
-                                ],
                               ),
                               child: const Center(
                                 child: Text(

@@ -12,18 +12,30 @@ class PremiumTokens {
   // ═══════════════════════════════════════════════════════════════════════════
   // COLORS: Enhanced Palette
   // ═══════════════════════════════════════════════════════════════════════════
-  static const Color charcoal = Color(0xFF0F0F1A);
-  static const Color deepGold = Color(0xFFC5A059);
+  static const Color charcoal = Color(0xFF0F0F0F); // Matches background-dark
+  static const Color background = Color(0xFF0F0F0F);
+  static const Color accentDark = Color(0xFF1E1B15);
+  static const Color voidBlue = Color(0xFF0A0C1A);
+  static const Color voidAccent = Color(0xFFA5B4FC);
   static const Color saffronGlow = Color(0xFFF2A60D);
+  static const Color deepGold = Color(0xFFC5A059);
   static const Color divineTeal = Color(0xFF00897B);
+  static const Color celestialGlow = Color(0xFFAC92FF);
+  static const Color voidDeep = Color(0xFF020205);
   
   // ═══════════════════════════════════════════════════════════════════════════
   // GRADIENTS: Immersive & Smooth
   // ═══════════════════════════════════════════════════════════════════════════
   static const LinearGradient divineDarkGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [Color(0xFF050510), Color(0xFF1A1A2E)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [Color(0xFF1A160F), Color(0xFF2D2516), Color(0xFF40341A)],
+  );
+
+  static const LinearGradient spaceVoidGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [Color(0xFF0A0814), Color(0xFF1A1C2E), Color(0xFF020205)],
   );
 
   static const LinearGradient saffronPremiumGradient = LinearGradient(
@@ -61,12 +73,66 @@ class PremiumTokens {
     );
   }
 
+  static BoxDecoration evolvingAura({
+    required Color color,
+    double intensity = 0.5,
+  }) {
+    return BoxDecoration(
+      shape: BoxShape.circle,
+      boxShadow: [
+        BoxShadow(
+          color: color.withOpacity(0.4 * intensity),
+          blurRadius: 20 * intensity,
+          spreadRadius: 2 * intensity,
+        ),
+        BoxShadow(
+          color: const Color(0xFFC0C0C0).withOpacity(0.2 * intensity), // aura-silver
+          blurRadius: 40 * intensity,
+          spreadRadius: 5 * intensity,
+        ),
+        BoxShadow(
+          color: const Color(0xFF4B0082).withOpacity(0.15 * intensity), // aura-indigo
+          blurRadius: 60 * intensity,
+          spreadRadius: 10 * intensity,
+        ),
+      ],
+    );
+  }
+
   // ═══════════════════════════════════════════════════════════════════════════
   // ANIMATIONS: Meditative Pacing
   // ═══════════════════════════════════════════════════════════════════════════
   static const Duration slowPulse = Duration(milliseconds: 3000);
   static const Duration fastPulse = Duration(milliseconds: 1500);
   static const Curve meditationCurve = Curves.easeInOutSine;
+
+  static TextStyle displayStyle({
+    double fontSize = 24,
+    Color color = Colors.white,
+    FontWeight fontWeight = FontWeight.bold,
+    double? letterSpacing,
+  }) {
+    return GoogleFonts.notoSerif(
+      fontSize: fontSize,
+      color: color,
+      fontWeight: fontWeight,
+      letterSpacing: letterSpacing,
+    );
+  }
+
+  static TextStyle sansStyle({
+    double fontSize = 16,
+    Color color = Colors.white,
+    FontWeight fontWeight = FontWeight.normal,
+    double? letterSpacing,
+  }) {
+    return GoogleFonts.manrope(
+      fontSize: fontSize,
+      color: color,
+      fontWeight: fontWeight,
+      letterSpacing: letterSpacing,
+    );
+  }
 }
 
 class PremiumUI extends StatelessWidget {
@@ -105,6 +171,60 @@ class PremiumUI extends StatelessWidget {
     );
   }
 
+  /// Web-safe Network Image Loader to resolve "EncodingError"
+  static Widget networkImage({
+    required String? url,
+    BoxFit fit = BoxFit.cover,
+    double? width,
+    double? height,
+    Widget? placeholder,
+    BorderRadius? borderRadius,
+  }) {
+    if (url == null || url.isEmpty) {
+      return Container(
+        width: width,
+        height: height,
+        color: PremiumTokens.accentDark,
+        child: const Icon(Icons.person, color: Colors.white24),
+      );
+    }
+
+    final imageWidget = Image.network(
+      url,
+      fit: fit,
+      width: width,
+      height: height,
+      errorBuilder: (context, error, stackTrace) {
+        print("Image Loading Error: $error");
+        return Container(
+          width: width,
+          height: height,
+          color: PremiumTokens.accentDark,
+          child: const Icon(Icons.broken_image, color: Colors.redAccent, size: 20),
+        );
+      },
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return placeholder ?? Container(
+          width: width,
+          height: height,
+          color: PremiumTokens.accentDark.withOpacity(0.5),
+          child: const Center(
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation(PremiumTokens.saffronGlow),
+            ),
+          ),
+        );
+      },
+    );
+
+    if (borderRadius != null) {
+      return ClipRRect(borderRadius: borderRadius, child: imageWidget);
+    }
+    return imageWidget;
+  }
+
   /// Premium Button with Saffron Gradient
   static Widget primaryButton({
     required String text,
@@ -136,7 +256,7 @@ class PremiumUI extends StatelessWidget {
             ],
             Text(
               text,
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.manrope(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,

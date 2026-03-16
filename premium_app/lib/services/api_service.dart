@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import '../core/content_provider.dart';
 
 /// API Service that fetches data directly from Supabase
 class ApiService {
-  static final SupabaseClient _supabase = Supabase.instance.client;
+  static sb.SupabaseClient get _supabase => sb.Supabase.instance.client;
 
   /// Fetch all content from the Supabase 'content' table
   static Future<List<SacredContent>> fetchAllContent({String? category}) async {

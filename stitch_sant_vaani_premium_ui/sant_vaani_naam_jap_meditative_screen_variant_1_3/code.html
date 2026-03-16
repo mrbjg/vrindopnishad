@@ -1,0 +1,133 @@
+<html class="dark"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,200..800&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "void-black": "#020205",
+            "moonlight": "#e2e8f0",
+            "starlight": "#93c5fd",
+            "nebula": "#2e1065",
+            "silver-white": "#f8fafc",
+          },
+          fontFamily: {
+            "display": ["Newsreader", "serif"]
+          },
+          borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style type="text/tailwindcss">
+    @layer components {
+      .frozen-glass {
+        background: rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .nebula-glow {
+        background: radial-gradient(circle at center, rgba(46, 16, 101, 0.12) 0%, transparent 70%);
+      }
+      .glow-moonlight {
+        text-shadow: 0 0 30px rgba(226, 232, 240, 0.4);
+      }
+      .starlight-ring {
+        filter: drop-shadow(0 0 8px rgba(147, 197, 253, 0.3));
+      }
+      .active-nav-glow {
+        box-shadow: 0 0 20px rgba(46, 16, 101, 0.6);
+      }
+    }
+  </style>
+<style>
+    body {
+      min-height: 100dvh;
+      background-color: #020205;
+      overflow: hidden;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-void-black font-display text-slate-100 antialiased selection:bg-starlight/30">
+<div class="relative flex h-screen w-full flex-col overflow-hidden">
+<div class="absolute inset-0 pointer-events-none">
+<div class="absolute top-[-10%] left-[-10%] w-[120%] h-[120%] nebula-glow"></div>
+<div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-nebula/10 rounded-full blur-[140px]"></div>
+<div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-nebula/5 rounded-full blur-[120px]"></div>
+</div>
+<header class="relative z-20 px-6 pt-14 pb-4 flex flex-col items-center gap-6">
+<div class="w-full flex items-center justify-between">
+<button class="text-moonlight/50 hover:text-moonlight transition-colors">
+<span class="material-symbols-outlined text-3xl font-light">chevron_left</span>
+</button>
+<h1 class="text-moonlight/40 text-[10px] uppercase tracking-[0.5em] font-medium ml-4">Sant-Vaani</h1>
+<button class="text-moonlight/50 hover:text-moonlight transition-colors">
+<span class="material-symbols-outlined text-2xl font-light">more_horiz</span>
+</button>
+</div>
+<div class="frozen-glass px-10 py-3.5 rounded-full flex items-center gap-10 shadow-2xl">
+<div class="flex flex-col items-center">
+<span class="text-[8px] uppercase tracking-[0.25em] text-moonlight/40 font-bold mb-0.5">Mala Count</span>
+<span class="text-xl font-light text-moonlight tracking-widest">2</span>
+</div>
+<div class="w-[1px] h-6 bg-white/10"></div>
+<div class="flex flex-col items-center">
+<span class="text-[8px] uppercase tracking-[0.25em] text-moonlight/40 font-bold mb-0.5">Remaining</span>
+<span class="text-xl font-light text-moonlight tracking-widest">84</span>
+</div>
+</div>
+</header>
+<main class="flex-1 flex flex-col items-center justify-center relative px-6">
+<div class="relative flex items-center justify-center w-72 h-72 sm:w-80 sm:h-80">
+<svg class="absolute inset-0 w-full h-full -rotate-90 starlight-ring p-1">
+<circle class="text-white/5" cx="50%" cy="50%" fill="none" r="48%" stroke="currentColor" stroke-width="1"></circle>
+<circle class="text-starlight" cx="50%" cy="50%" fill="none" r="48%" stroke="currentColor" stroke-dasharray="1000" stroke-dashoffset="350" stroke-linecap="round" stroke-width="1.5"></circle>
+</svg>
+<div class="w-full h-full rounded-full flex items-center justify-center border border-white/5 relative bg-white/[0.01]">
+<div class="text-[110px] sm:text-[130px] text-moonlight glow-moonlight select-none font-light opacity-80 pb-2">ॐ</div>
+</div>
+</div>
+<div class="mt-12 flex flex-col items-center gap-8">
+<div class="text-center">
+<p class="text-moonlight/30 text-[9px] tracking-[0.45em] uppercase font-bold mb-3">Deep Stillness</p>
+<p class="text-6xl font-extralight text-moonlight/90 tracking-tighter">65%</p>
+</div>
+<button class="frozen-glass px-12 py-3.5 rounded-full text-moonlight/50 text-[10px] font-bold tracking-[0.35em] uppercase hover:text-moonlight hover:bg-white/10 transition-all active:scale-95">
+        Reset Void
+      </button>
+</div>
+</main>
+<footer class="relative z-20 p-8 pb-10">
+<div class="w-full frozen-glass rounded-full flex items-center justify-around p-1.5 shadow-2xl">
+<a class="flex flex-col items-center justify-center gap-1 text-silver-white/40 hover:text-silver-white/70 transition-colors w-16 py-3" href="#">
+<span class="material-symbols-outlined text-2xl font-light">blur_on</span>
+<p class="text-[8px] font-medium tracking-[0.2em] uppercase">Space</p>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-silver-white bg-nebula/40 active-nav-glow rounded-full w-20 py-3 border border-white/10" href="#">
+<span class="material-symbols-outlined text-2xl font-light" style="font-variant-settings: 'FILL' 1">adjust</span>
+<p class="text-[8px] font-bold tracking-[0.2em] uppercase">Jap</p>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-silver-white/40 hover:text-silver-white/70 transition-colors w-16 py-3" href="#">
+<span class="material-symbols-outlined text-2xl font-light">all_inclusive</span>
+<p class="text-[8px] font-medium tracking-[0.2em] uppercase">Flow</p>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-silver-white/40 hover:text-silver-white/70 transition-colors w-16 py-3" href="#">
+<span class="material-symbols-outlined text-2xl font-light">settings_motion_mode</span>
+<p class="text-[8px] font-medium tracking-[0.2em] uppercase">Soul</p>
+</a>
+</div>
+</footer>
+</div>
+
+</body></html>

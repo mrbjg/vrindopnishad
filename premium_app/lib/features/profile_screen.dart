@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../core/theme.dart';
 import '../core/design_system.dart';
 import '../core/auth_provider.dart';
@@ -138,15 +137,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           ),
         ),
         const SizedBox(width: 12),
-        Text(
-          title.toUpperCase(),
-          style: GoogleFonts.outfit(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: Colors.white38,
-            letterSpacing: 2,
+          Text(
+            title.toUpperCase(),
+            style: GoogleFonts.manrope(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: Colors.white38,
+              letterSpacing: 2,
+            ),
           ),
-        ),
       ],
     );
   }
@@ -175,11 +174,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
         ),
         title: Text(
           title,
-          style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+          style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
         ),
         subtitle: Text(
           subtitle,
-          style: GoogleFonts.outfit(color: Colors.white38, fontSize: 13),
+          style: GoogleFonts.manrope(color: Colors.white38, fontSize: 13),
         ),
         trailing: const Icon(Iconsax.arrow_right_3, color: Colors.white12, size: 18),
       ),
@@ -192,8 +191,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
       builder: (ctx) => AlertDialog(
         backgroundColor: PremiumTokens.charcoal,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24), side: const BorderSide(color: Colors.white10)),
-        title: Text("Spiritual Rest?", style: GoogleFonts.spectral(color: Colors.white, fontWeight: FontWeight.bold)),
-        content: Text("Are you sure you want to pause your journey for now?", style: GoogleFonts.outfit(color: Colors.white70)),
+        title: Text("Spiritual Rest?", style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.bold)),
+        content: Text("Are you sure you want to pause your journey for now?", style: GoogleFonts.manrope(color: Colors.white70)),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("Continue")),
           ElevatedButton(
@@ -226,27 +225,29 @@ class _PremiumProfileHeader extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Elegant Avatar
+          // Elegant Avatar with Evolving Aura
           Container(
-            width: 120,
-            height: 120,
-            padding: const EdgeInsets.all(3),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: PremiumTokens.saffronPremiumGradient,
-              boxShadow: [
-                BoxShadow(
-                  color: PremiumTokens.saffronGlow.withOpacity(0.3),
-                  blurRadius: 30,
-                  spreadRadius: 2,
-                ),
-              ],
+            padding: const EdgeInsets.all(4),
+            decoration: PremiumTokens.evolvingAura(
+              color: PremiumTokens.saffronGlow,
+              intensity: 0.7,
             ),
             child: Container(
-              decoration: const BoxDecoration(shape: BoxShape.circle, color: PremiumTokens.charcoal),
-              child: ClipOval(
+              width: 120,
+              height: 120,
+              padding: const EdgeInsets.all(3),
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: PremiumTokens.saffronPremiumGradient,
+              ),
+              child: Container(
+                decoration: const BoxDecoration(shape: BoxShape.circle, color: PremiumTokens.charcoal),
                 child: user?.photoURL != null
-                    ? CachedNetworkImage(imageUrl: user!.photoURL!, fit: BoxFit.cover)
+                    ? PremiumUI.networkImage(
+                        url: user!.photoURL!,
+                        fit: BoxFit.cover,
+                        borderRadius: BorderRadius.circular(60),
+                      )
                     : const Icon(Iconsax.user, color: Colors.white24, size: 48),
               ),
             ),
@@ -256,7 +257,7 @@ class _PremiumProfileHeader extends StatelessWidget {
           
           Text(
             user?.displayName ?? "Dedicated Seeker",
-            style: GoogleFonts.spectral(
+            style: GoogleFonts.manrope(
               fontSize: 28,
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -273,15 +274,54 @@ class _PremiumProfileHeader extends StatelessWidget {
               children: [
                 const Icon(Iconsax.sms, color: PremiumTokens.saffronGlow, size: 14),
                 const SizedBox(width: 8),
-                Text(
-                  user?.email ?? "Exploring the Path",
-                  style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13),
-                ),
+                  Text(
+                    user?.email ?? "Exploring the Path",
+                    style: GoogleFonts.manrope(color: Colors.white70, fontSize: 13),
+                  ),
               ],
             ),
           ),
+
+          const SizedBox(height: 32),
+
+          // Journey Overview Stats
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildStat("Streaks", "21d", PremiumTokens.saffronGlow),
+              const SizedBox(width: 24),
+              _buildStat("Japs", "12.8k", PremiumTokens.celestialGlow),
+              const SizedBox(width: 24),
+              _buildStat("Level", "Orbit 4", Colors.tealAccent),
+            ],
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildStat(String label, String value, Color color) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: GoogleFonts.manrope(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label.toUpperCase(),
+          style: GoogleFonts.manrope(
+            color: color.withOpacity(0.7),
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
+        ),
+      ],
     );
   }
 }

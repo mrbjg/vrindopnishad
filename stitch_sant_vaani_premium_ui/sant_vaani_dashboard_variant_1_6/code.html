@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2a60d",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#0f0f0f",
+                        "accent-dark": "#1e1b15",
+                        "void-blue": "#0a0c1a",
+                        "void-accent": "#a5b4fc",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<title>Vibe Selector - Sant-Vaani</title>
+<style type="text/tailwindcss">
+        body {
+            min-height: max(884px, 100dvh);
+        }
+        .theme-card-glow-gold {
+            box-shadow: 0 0 30px -10px rgba(242, 166, 13, 0.3);
+        }
+        .theme-card-glow-void {
+            box-shadow: 0 0 30px -10px rgba(165, 180, 252, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark font-display text-slate-100 antialiased">
+<div class="relative mx-auto min-h-screen max-w-md flex flex-col bg-background-dark overflow-hidden">
+<div class="absolute top-2 left-1/2 -translate-x-1/2 w-32 h-6 bg-black rounded-full z-50"></div>
+<header class="p-6 pt-12 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<button class="size-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-300">
+<span class="material-symbols-outlined">arrow_back_ios_new</span>
+</button>
+<h1 class="text-xl font-bold tracking-tight">Choose Your Vibe</h1>
+</div>
+<button class="text-primary text-sm font-bold uppercase tracking-widest">Reset</button>
+</header>
+<main class="flex-1 overflow-y-auto px-6 pb-32 space-y-8">
+<div class="space-y-2">
+<p class="text-slate-400 text-sm leading-relaxed">
+                    Personalize your spiritual journey with a theme that resonates with your current state of mind.
+                </p>
+</div>
+<div class="space-y-10">
+<div class="group relative">
+<div class="relative rounded-2xl overflow-hidden border-2 border-primary/40 bg-accent-dark theme-card-glow-gold transition-transform active:scale-[0.98]">
+<div class="h-64 relative bg-gradient-to-br from-accent-dark to-[#2a2418] p-6 overflow-hidden">
+<div class="absolute -top-10 -right-10 size-40 rounded-full bg-primary/10 blur-3xl"></div>
+<div class="relative z-10 space-y-4">
+<div class="size-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">ods</span>
+</div>
+<div class="h-4 w-32 bg-primary/20 rounded"></div>
+<div class="space-y-2">
+<div class="h-3 w-full bg-white/5 rounded"></div>
+<div class="h-3 w-4/5 bg-white/5 rounded"></div>
+</div>
+<div class="pt-4 flex gap-2">
+<div class="size-12 rounded-xl bg-primary/10 border border-primary/20"></div>
+<div class="size-12 rounded-xl bg-primary/10 border border-primary/20"></div>
+<div class="size-12 rounded-xl bg-primary/10 border border-primary/20"></div>
+</div>
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6">
+<div class="flex items-center justify-between">
+<div>
+<h3 class="text-lg font-bold text-primary">Golden Divine</h3>
+<p class="text-xs text-primary/70">Saffron, Gold, Warmth</p>
+</div>
+<div class="bg-primary text-background-dark size-6 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined !text-sm font-bold">check</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-4 flex items-center justify-between">
+<p class="text-sm text-slate-400 max-w-[70%]">Traditional warmth and radiant energy for deep devotion.</p>
+<button class="px-6 py-2 rounded-full bg-primary text-background-dark font-bold text-xs uppercase tracking-wider">Active</button>
+</div>
+</div>
+<div class="group relative">
+<div class="relative rounded-2xl overflow-hidden border-2 border-white/5 bg-void-blue theme-card-glow-void transition-transform active:scale-[0.98]">
+<div class="h-64 relative bg-gradient-to-br from-void-blue to-[#1a1c2e] p-6 overflow-hidden">
+<div class="absolute -bottom-10 -left-10 size-48 rounded-full bg-void-accent/10 blur-3xl"></div>
+<div class="relative z-10 space-y-4">
+<div class="size-10 rounded-lg bg-void-accent/20 flex items-center justify-center text-void-accent">
+<span class="material-symbols-outlined">brightness_2</span>
+</div>
+<div class="h-4 w-32 bg-void-accent/20 rounded"></div>
+<div class="space-y-2">
+<div class="h-3 w-full bg-white/5 rounded"></div>
+<div class="h-3 w-4/5 bg-white/5 rounded"></div>
+</div>
+<div class="pt-4 flex gap-2">
+<div class="size-12 rounded-xl bg-void-accent/10 border border-void-accent/20"></div>
+<div class="size-12 rounded-xl bg-void-accent/10 border border-void-accent/20"></div>
+<div class="size-12 rounded-xl bg-void-accent/10 border border-void-accent/20"></div>
+</div>
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6">
+<div class="flex items-center justify-between">
+<div>
+<h3 class="text-lg font-bold text-void-accent">Cool Void</h3>
+<p class="text-xs text-void-accent/70">Midnight, Silver, Aurora</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-4 flex items-center justify-between">
+<p class="text-sm text-slate-400 max-w-[70%]">Tranquil stillness and cosmic clarity for focused meditation.</p>
+<button class="px-6 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider transition-colors">Select</button>
+</div>
+</div>
+</div>
+<div class="p-4 rounded-xl bg-primary/5 border border-primary/10">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+<p class="text-xs text-slate-400 leading-relaxed">
+<span class="text-primary font-bold">Tip:</span> Your chosen vibe affects all icons, typography, and ambient sounds across the app.
+                    </p>
+</div>
+</div>
+</main>
+<nav class="absolute bottom-0 w-full border-t border-white/5 bg-background-dark/80 backdrop-blur-xl px-6 pb-8 pt-4">
+<div class="flex items-center justify-between">
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-bold">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="text-[10px] font-bold">Explore</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined">music_note</span>
+<span class="text-[10px] font-bold">Listen</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined fill-1">person</span>
+<span class="text-[10px] font-bold">Profile</span>
+</a>
+</div>
+</nav>
+</div>
+
+</body></html>

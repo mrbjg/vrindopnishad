@@ -51,17 +51,11 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
               child: Container(
                 height: 70,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: Colors.white.withOpacity(0.1)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 20,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
+                decoration: PremiumTokens.glassDecoration(
+                  blur: 20,
+                  opacity: 0.12,
+                  borderRadius: 30,
+                  border: Border.all(color: Colors.white.withOpacity(0.12)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,

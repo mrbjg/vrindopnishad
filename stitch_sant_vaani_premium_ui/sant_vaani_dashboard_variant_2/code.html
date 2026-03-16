@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sant-Vaani Dashboard Variant 2</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2a60d",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#1a160f", // Dark charcoal derived from saffron hue
+                        "surface-dark": "#2a2316",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(42, 35, 22, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(242, 166, 13, 0.1);
+        }
+        .saffron-glow {
+            box-shadow: 0 0 20px rgba(242, 166, 13, 0.15);
+        }
+        .bokeh-bg {
+            background: radial-gradient(circle at 20% 30%, rgba(242, 166, 13, 0.15) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 70%, rgba(242, 166, 13, 0.1) 0%, transparent 40%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen pb-24">
+<!-- Top Header -->
+<header class="flex items-center justify-between px-6 py-4 sticky top-0 z-50 bg-background-dark/80 backdrop-blur-md">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
+<span class="material-symbols-outlined text-primary">person</span>
+</div>
+<div>
+<p class="text-[10px] uppercase tracking-widest text-primary font-bold">Welcome</p>
+<h2 class="text-sm font-bold tracking-tight">Arjun Singh</h2>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="size-10 rounded-full bg-surface-dark flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="size-10 rounded-full bg-surface-dark flex items-center justify-center text-slate-400 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-primary rounded-full"></span>
+</button>
+</div>
+</header>
+<!-- Ethereal Quote of the Day -->
+<section class="px-6 py-4">
+<div class="relative overflow-hidden rounded-xl aspect-[16/10] flex flex-col justify-center items-center text-center p-8 border border-white/5 bokeh-bg" data-alt="Ethereal bokeh background with soft golden spiritual light particles" style="background-image: linear-gradient(135deg, rgba(26,22,15,0.9) 0%, rgba(42,35,22,0.7) 100%), url('https://lh3.googleusercontent.com/aida-public/AB6AXuDactqYO6CbwQGgpXvjo0DgkESwH0VMyPzgUmW4lxWwigZrkL3hrpWO0GV55qftuaynG8hIGsNOSf0jyS_jbiyw5ICe60cRZF6CddbBypU9dsLavW8_kOkCYxHF7pTRhvL6Wfr2octpa0b_jMExeQV1Lotlx7iz8g0mW810-RDEKM5t2WNkYO8l4JdqMizl99LC83J63eCUMj940jv-a6uWL3suEKZHb5WQeBGmSzatYFzPn_F95l_tE6xxWZljmCNgJcSdqbypQVU'); background-size: cover; background-position: center;">
+<span class="material-symbols-outlined text-primary text-4xl mb-4">format_quote</span>
+<h1 class="text-xl md:text-2xl font-light leading-relaxed italic text-slate-100">
+                "The soul is neither born, nor does it ever die; nor having once existed, does it ever cease to be."
+            </h1>
+<p class="mt-4 text-primary text-sm font-semibold tracking-widest uppercase">Bhagavad Gita 2.20</p>
+</div>
+</section>
+<!-- Naam Jap Counter Widget -->
+<section class="px-6 py-6">
+<div class="glass-card rounded-xl p-6 saffron-glow relative overflow-hidden">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-bold text-lg">Daily Naam Jap</h3>
+<span class="text-xs text-slate-400">Goal: 1008</span>
+</div>
+<div class="flex flex-col items-center justify-center py-4">
+<div class="relative size-48 flex items-center justify-center">
+<!-- Circular Progress Background -->
+<svg class="absolute size-full -rotate-90">
+<circle class="text-white/5" cx="96" cy="96" fill="transparent" r="88" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary" cx="96" cy="96" fill="transparent" r="88" stroke="currentColor" stroke-dasharray="552" stroke-dashoffset="150" stroke-width="8"></circle>
+</svg>
+<div class="text-center">
+<span class="text-4xl font-extrabold text-white">742</span>
+<p class="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Chants done</p>
+</div>
+</div>
+<button class="mt-8 bg-primary hover:bg-primary/90 text-background-dark font-bold py-3 px-10 rounded-full transition-all flex items-center gap-2">
+<span class="material-symbols-outlined">add_circle</span>
+                    TAP TO CHANT
+                </button>
+</div>
+</div>
+</section>
+<!-- Categories Grid -->
+<section class="px-6 py-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-bold text-lg">Sacred Wisdom</h3>
+<a class="text-primary text-xs font-semibold" href="#">View All</a>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+<!-- Shlokas -->
+<div class="glass-card rounded-xl p-1 overflow-hidden group">
+<div class="relative aspect-square rounded-lg overflow-hidden">
+<img class="object-cover w-full h-full opacity-60 group-hover:scale-110 transition-transform duration-500" data-alt="Ancient sanskrit manuscript on textured parchment paper" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEFZ1NeG5QqGTXKSJv1rV8rLDhQhlx1UHhyfelWZwIv73jJc27pWCgFEVnAWsEtoztQzjpYfB4Ta-gdVXO8nGW3TZv6gz2VVNiXQ0bAuPAU0A2EET6kwzroKFi6QyMx_iL6hT5-nJmaJG4g5yeUcs228Qz43Q7oWwJVkCXGRh71Rj96lkX3FqW2AKzNfIzMtF4NrnJwqilFitnulwwrvmJQl5WzvK75f9qBeesP1Y_X9MsagiJDCEJtxSHRCThUFQP20TqBpHXqug"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent"></div>
+<div class="absolute bottom-3 left-3">
+<p class="text-white font-bold">Shlokas</p>
+<p class="text-[10px] text-slate-400">124 Verses</p>
+</div>
+</div>
+</div>
+<!-- Mantras -->
+<div class="glass-card rounded-xl p-1 overflow-hidden group">
+<div class="relative aspect-square rounded-lg overflow-hidden">
+<img class="object-cover w-full h-full opacity-60 group-hover:scale-110 transition-transform duration-500" data-alt="Peaceful meditation setting with incense smoke" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBn4KXlGdM09V_vyL6FYniGawEBhjjVTHPtWkncMv7AsR6PnDmJx7em82khx96o3tU2b3i1Xv29wn9YRQoYyoZeajegx50mvb2FhsVMMSfaFhybyyp4s5nWVhvjM-Xy_QSV-yOBYDJ2x9MEKcOFTdGbZgUrn0UE6v0p2K2PQWyKunglhZdM8Zl3m2CwulCpccA2dLrSOn__UtnRnXD-8qj4bbhKvT8rR2TwLW9SujHlkdwDM9eRnU6XwEIsGvxdMY1xt3PWf0sISOE"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent"></div>
+<div class="absolute bottom-3 left-3">
+<p class="text-white font-bold">Mantras</p>
+<p class="text-[10px] text-slate-400">48 Audio</p>
+</div>
+</div>
+</div>
+<!-- Stories -->
+<div class="glass-card rounded-xl p-1 overflow-hidden group col-span-2 md:col-span-1">
+<div class="relative aspect-[2/1] md:aspect-square rounded-lg overflow-hidden">
+<img class="object-cover w-full h-full opacity-60 group-hover:scale-110 transition-transform duration-500" data-alt="Silhouette of a person meditating during a golden sunrise" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6E9OTyxnJhrda-g9daQdFXrAz4TJmD0Cewd-uAJHe99lzEGrtQBZP2OLvO0-zle7gi0JAFr95Tuwe2uWVQZenYjMMg2aZuepRChhSJhrehrkL8F20BMPRedP3DHsihlTPFzXTa-TuUVlfqdV5EB1ua7JyiQrF5wAlg7lPsHMoeptGeQ5PPyMp2W0dTyvoQ3AJ_GKnESg4LjlHvVxlQm2NA-rJFW5whrIw9unR7N2UVzqZuXGSWUcnIiHviA2FeNwKnx98C7l2Eds"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent"></div>
+<div class="absolute bottom-3 left-3">
+<p class="text-white font-bold">Stories</p>
+<p class="text-[10px] text-slate-400">12 Series</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Floating Bottom Navigation -->
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md z-50">
+<nav class="glass-card rounded-full px-6 py-3 flex items-center justify-between saffron-glow">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined fill-1">home</span>
+<span class="text-[10px] font-bold">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="text-[10px] font-medium">Library</span>
+</a>
+<div class="relative -mt-12">
+<button class="size-14 rounded-full bg-primary text-background-dark shadow-lg shadow-primary/40 flex items-center justify-center border-4 border-background-dark">
+<span class="material-symbols-outlined text-3xl font-bold">sync</span>
+</button>
+</div>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span class="text-[10px] font-medium">Daily</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="text-[10px] font-medium">Profile</span>
+</a>
+</nav>
+</div>
+</body></html>

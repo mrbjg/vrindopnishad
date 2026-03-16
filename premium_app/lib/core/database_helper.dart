@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'content_provider.dart';
@@ -8,13 +9,15 @@ class DatabaseHelper {
 
   DatabaseHelper._init();
 
-  Future<Database> get database async {
+  Future<Database?> get database async {
+    if (kIsWeb) return null; // sqflite is not supported on web natively
     if (_database != null) return _database!;
     _database = await _initDB('sacred_wisdom.db');
-    return _database!;
+    return _database;
   }
 
-  Future<Database> _initDB(String filePath) async {
+  Future<Database?> _initDB(String filePath) async {
+    if (kIsWeb) return null;
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
@@ -50,6 +53,7 @@ class DatabaseHelper {
 
   Future<void> insertContent(SacredContent content) async {
     final db = await instance.database;
+    if (db == null) return;
     await db.insert(
       'sacred_content',
       content.toMap(),
@@ -59,6 +63,7 @@ class DatabaseHelper {
 
   Future<List<SacredContent>> fetchAllContent() async {
     final db = await instance.database;
+    if (db == null) return [];
     final result = await db.query('sacred_content');
 
     return result.map((json) => SacredContent.fromMap(json)).toList();
@@ -66,11 +71,13 @@ class DatabaseHelper {
 
   Future<void> deleteContent(String id) async {
     final db = await instance.database;
+    if (db == null) return;
     await db.delete('sacred_content', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<void> deleteAllContent() async {
     final db = await instance.database;
+    if (db == null) return;
     await db.delete('sacred_content');
   }
 }

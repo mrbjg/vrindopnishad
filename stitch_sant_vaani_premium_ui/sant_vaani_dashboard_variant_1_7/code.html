@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "void-black": "#020408",
+                        "void-deep": "#0a0f1d",
+                        "starlight": "#93c5fd",
+                        "silver": "#e2e8f0",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --starlight-glow: 0 0 15px rgba(147, 197, 253, 0.4);
+        }
+        .constellation-bg {
+            background: radial-gradient(circle at 50% 50%, #0a0f1d 0%, #020408 100%);
+            position: relative;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+        }
+        .starlight-glow-check {
+            box-shadow: var(--starlight-glow);
+        }
+    </style>
+<title>Daily Rituals Planner - Sant-Vaani</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-void-black font-display text-slate-100 antialiased">
+<div class="relative mx-auto min-h-screen max-w-md flex flex-col constellation-bg overflow-hidden shadow-2xl">
+<div class="absolute inset-0 pointer-events-none">
+<div class="star w-0.5 h-0.5 top-20 left-10"></div>
+<div class="star w-1 h-1 top-40 right-20"></div>
+<div class="star w-0.5 h-0.5 bottom-60 left-1/4"></div>
+<div class="star w-1 h-1 top-1/2 right-10"></div>
+<div class="star w-0.5 h-0.5 top-10 right-1/3"></div>
+</div>
+<header class="relative z-10 p-8 pt-12 flex flex-col items-center gap-2">
+<div class="text-silver/60">
+<span class="material-symbols-outlined !text-4xl">brightness_4</span>
+</div>
+<h1 class="text-3xl font-light tracking-[0.2em] text-silver uppercase text-center mt-2">My Sacred Rituals</h1>
+<div class="h-px w-12 bg-gradient-to-r from-transparent via-silver/30 to-transparent mt-4"></div>
+</header>
+<main class="relative z-10 flex-1 overflow-y-auto px-6 pb-32 space-y-10">
+<section class="relative">
+<div class="flex items-center gap-3 mb-6">
+<span class="text-[10px] font-bold uppercase tracking-[0.3em] text-starlight/60">Morning</span>
+<div class="h-px flex-1 bg-white/5"></div>
+</div>
+<div class="space-y-4">
+<div class="glass-card rounded-2xl p-5 flex items-center justify-between group transition-all">
+<div class="space-y-1">
+<h3 class="text-silver font-medium tracking-wide">Surya Namaskar</h3>
+<p class="text-[11px] text-slate-500 font-medium">06:30 AM • 12 Rounds</p>
+</div>
+<div class="size-6 rounded-full border border-starlight/40 flex items-center justify-center cursor-pointer starlight-glow-check bg-starlight/10">
+<span class="material-symbols-outlined !text-lg text-starlight">check</span>
+</div>
+</div>
+<div class="glass-card rounded-2xl p-5 flex items-center justify-between opacity-80">
+<div class="space-y-1">
+<h3 class="text-silver font-medium tracking-wide">Pranayama</h3>
+<p class="text-[11px] text-slate-500 font-medium">07:00 AM • 15 Mins</p>
+</div>
+<div class="size-6 rounded-full border border-white/20 flex items-center justify-center cursor-pointer">
+<span class="material-symbols-outlined !text-lg text-transparent">check</span>
+</div>
+</div>
+</div>
+</section>
+<section class="relative">
+<div class="flex items-center gap-3 mb-6">
+<span class="text-[10px] font-bold uppercase tracking-[0.3em] text-starlight/60">Afternoon</span>
+<div class="h-px flex-1 bg-white/5"></div>
+</div>
+<div class="space-y-4">
+<div class="glass-card rounded-2xl p-5 flex items-center justify-between">
+<div class="space-y-1">
+<h3 class="text-silver font-medium tracking-wide">Afternoon Stillness</h3>
+<p class="text-[11px] text-slate-500 font-medium">01:30 PM • 10 Mins</p>
+</div>
+<div class="size-6 rounded-full border border-white/20 flex items-center justify-center cursor-pointer">
+<span class="material-symbols-outlined !text-lg text-transparent">check</span>
+</div>
+</div>
+</div>
+</section>
+<section class="relative">
+<div class="flex items-center gap-3 mb-6">
+<span class="text-[10px] font-bold uppercase tracking-[0.3em] text-starlight/60">Evening</span>
+<div class="h-px flex-1 bg-white/5"></div>
+</div>
+<div class="space-y-4">
+<div class="glass-card rounded-2xl p-5 flex items-center justify-between">
+<div class="space-y-1">
+<h3 class="text-silver font-medium tracking-wide">Bedtime Mantra</h3>
+<p class="text-[11px] text-slate-500 font-medium">09:45 PM • Om Shanti</p>
+</div>
+<div class="size-6 rounded-full border border-white/20 flex items-center justify-center cursor-pointer">
+<span class="material-symbols-outlined !text-lg text-transparent">check</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<div class="fixed bottom-28 right-8 z-50">
+<button class="size-14 rounded-full bg-gradient-to-br from-silver to-slate-400 shadow-[0_0_20px_rgba(255,255,255,0.2)] flex items-center justify-center text-void-black active:scale-95 transition-transform">
+<span class="material-symbols-outlined !text-3xl">add</span>
+</button>
+</div>
+<nav class="absolute bottom-0 w-full border-t border-white/5 bg-void-black/80 backdrop-blur-2xl px-8 pb-8 pt-5 z-40">
+<div class="flex items-center justify-between">
+<a class="flex flex-col items-center gap-1.5 text-slate-500 hover:text-silver transition-colors" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Journal</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 text-slate-500 hover:text-silver transition-colors" href="#">
+<span class="material-symbols-outlined">self_improvement</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Meditate</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 text-starlight" href="#">
+<span class="material-symbols-outlined fill-1">potted_plant</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Rituals</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 text-slate-500 hover:text-silver transition-colors" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Wisdom</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 text-slate-500 hover:text-silver transition-colors" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Profile</span>
+</a>
+</div>
+</nav>
+<div class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1 bg-white/20 rounded-full z-50"></div>
+</div>
+
+</body></html>

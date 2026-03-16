@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sant-Vaani Mantra Library</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2a60d",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#1a160f",
+                        "neutral-gold": "#cbb790",
+                        "surface-dark": "#2a2418",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>.glass-card {
+    background: rgba(42, 36, 24, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(242, 166, 13, 0.1)
+    }
+.mandala-bg {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuAlkj3O7NFZBKe8eyN54xg__VK3dUjeZzuuN7pzaQnWQEFTsJ3jd2nRXkZv5LqcEfluYYxbFANuoLn4keIP7riDMCsjhFIFkYXDC3Cn02j1ewQyFfPrBTlXDX7bBR5S7tOJh3MR3dle7Zch3GulHBj1obBo_pjEJOHirdXuyT0CfclNrmdA10uCmoBNDjB17qAhU4JvINS7t11129EBGuFAnQZhz4oFAFCPcVfMrUS3WwusyJ4JfTdrwufzpvbyEJvAACCLmSwRNyw);
+    background-blend-mode: overlay;
+    background-size: cover;
+    opacity: 0.05
+    }</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex h-screen w-full flex-col overflow-hidden max-w-md mx-auto border-x border-primary/10">
+<!-- Mandala Watermark Background -->
+<div class="absolute inset-0 mandala-bg pointer-events-none" data-alt="Faint elegant golden mandala pattern watermark"></div>
+<!-- Header -->
+<header class="relative z-10 flex items-center justify-between px-6 pt-12 pb-4 bg-background-dark/80 backdrop-blur-md">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-2xl">menu</span>
+<h1 class="text-xl font-extrabold tracking-tight text-slate-100">Sant-Vaani</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center size-10 rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="size-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Portrait of a spiritual practitioner" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkQJsMLqDCMwi1jqTeWSOOqq3Wz9ZIpqA9usLZAS95EcvHTBag2RoKJxY0vI0ignkQJ8N7UDe1CbmOARjpZ4djVMMi7DYNHPxPNoYSkcaHePL2qyHdLar7mUl0CW6gMbXv788itHF2vxM4sZWWsBBAQUG96RO8rYlrZNHgfYgQ6IfsKE6u5jOS_QRQe0dd2Fy-5dU6VL7ZLOg1jCrXoMsqJDXEiKCcCuT1CctHQ72_ivF3Rc94CqJae0t_M1fKLDyKMLPrbTHwr8I"/>
+</div>
+</div>
+</header>
+<!-- Search Bar -->
+<div class="relative z-10 px-6 py-4">
+<div class="group relative flex items-center">
+<span class="material-symbols-outlined absolute left-4 text-neutral-gold group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-surface-dark/50 border border-primary/20 rounded-xl py-3.5 pl-12 pr-4 text-slate-100 placeholder:text-neutral-gold/60 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="Search sacred mantras..." type="text"/>
+</div>
+</div>
+<!-- Sticky Now Playing -->
+<div class="relative z-20 px-6 py-2">
+<div class="glass-card rounded-xl p-3 flex items-center gap-4 border-l-4 border-l-primary">
+<div class="size-12 rounded-lg overflow-hidden shrink-0 shadow-lg shadow-black/40 relative">
+<img alt="Gayatri Mantra cover" class="w-full h-full object-cover" data-alt="Golden light glowing behind a silhouette of a meditator" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjQJTEsIPehLdGJWjz8TSfCs7o0uifTz1QfDnl0xe93A5gwv8Ccp6F6nm2FkjhjUj-lsuWJp_6-RmW3i55zjk4S3YdTRrnK9JmL9XsZSc-iTnTfSCX7_p5yEUkOkxMU3MemeaubUJtFNFJYkdACZTW5tDjmWG-00z4idxNYyHwoXDU0xQ0aLM7iRJHndrXYnv81TX6k4McMTD-djipl40MQhHU1yqz82hU_EPJxc4L3nXERe5g9bmTm34Ofr96MF0fmtSB5VA-PLg"/>
+<div class="absolute inset-0 bg-primary/10 flex items-center justify-center">
+<div class="w-1 h-3 bg-primary rounded-full animate-pulse mx-0.5"></div>
+<div class="w-1 h-5 bg-primary rounded-full animate-pulse mx-0.5" style="animation-delay: 0.2s"></div>
+<div class="w-1 h-2 bg-primary rounded-full animate-pulse mx-0.5" style="animation-delay: 0.4s"></div>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-xs font-semibold text-primary uppercase tracking-wider">Now Playing</p>
+<p class="text-sm font-bold text-slate-100 truncate">Gayatri Mantra (Divine Peace)</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="size-10 rounded-full bg-primary text-background-dark flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined fill-1">pause</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Mantra List Content -->
+<main class="relative z-10 flex-1 overflow-y-auto px-6 py-4 space-y-6 scrollbar-hide">
+<section>
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-lg font-bold text-slate-100">Sacred Library</h2>
+<span class="text-xs font-medium text-neutral-gold uppercase tracking-widest">42 Mantras</span>
+</div>
+<div class="space-y-3">
+<!-- Mantra Item 1 -->
+<div class="glass-card rounded-xl p-4 flex items-center gap-4 transition-transform active:scale-[0.98]">
+<div class="size-14 rounded-lg bg-surface-dark flex items-center justify-center text-primary border border-primary/10">
+<span class="material-symbols-outlined text-3xl">ods</span>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="text-base font-bold text-primary truncate">Om Namah Shivaya</h3>
+<div class="flex items-center gap-2 text-xs text-neutral-gold mt-1">
+<span class="material-symbols-outlined text-xs">schedule</span>
+<span>10:45</span>
+<span class="mx-1">•</span>
+<span>Chanting</span>
+</div>
+</div>
+<button class="size-9 rounded-full border border-primary/30 flex items-center justify-center text-primary hover:bg-primary hover:text-background-dark transition-colors">
+<span class="material-symbols-outlined fill-1 text-xl">play_arrow</span>
+</button>
+</div>
+<!-- Mantra Item 2 -->
+<div class="glass-card rounded-xl p-4 flex items-center gap-4 transition-transform active:scale-[0.98]">
+<div class="size-14 rounded-lg bg-surface-dark flex items-center justify-center text-primary border border-primary/10">
+<span class="material-symbols-outlined text-3xl">temple_hindu</span>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="text-base font-bold text-primary truncate">Maha Mrityunjaya</h3>
+<div class="flex items-center gap-2 text-xs text-neutral-gold mt-1">
+<span class="material-symbols-outlined text-xs">schedule</span>
+<span>15:20</span>
+<span class="mx-1">•</span>
+<span>Healing</span>
+</div>
+</div>
+<button class="size-9 rounded-full border border-primary/30 flex items-center justify-center text-primary hover:bg-primary hover:text-background-dark transition-colors">
+<span class="material-symbols-outlined fill-1 text-xl">play_arrow</span>
+</button>
+</div>
+<!-- Mantra Item 3 -->
+<div class="glass-card rounded-xl p-4 flex items-center gap-4 transition-transform active:scale-[0.98]">
+<div class="size-14 rounded-lg bg-surface-dark flex items-center justify-center text-primary border border-primary/10">
+<span class="material-symbols-outlined text-3xl">spa</span>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="text-base font-bold text-primary truncate">Shanti Paath</h3>
+<div class="flex items-center gap-2 text-xs text-neutral-gold mt-1">
+<span class="material-symbols-outlined text-xs">schedule</span>
+<span>05:30</span>
+<span class="mx-1">•</span>
+<span>Serenity</span>
+</div>
+</div>
+<button class="size-9 rounded-full border border-primary/30 flex items-center justify-center text-primary hover:bg-primary hover:text-background-dark transition-colors">
+<span class="material-symbols-outlined fill-1 text-xl">play_arrow</span>
+</button>
+</div>
+<!-- Mantra Item 4 -->
+<div class="glass-card rounded-xl p-4 flex items-center gap-4 transition-transform active:scale-[0.98]">
+<div class="size-14 rounded-lg bg-surface-dark flex items-center justify-center text-primary border border-primary/10">
+<span class="material-symbols-outlined text-3xl">flowsheet</span>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="text-base font-bold text-primary truncate">Ganesh Atharvashirsha</h3>
+<div class="flex items-center gap-2 text-xs text-neutral-gold mt-1">
+<span class="material-symbols-outlined text-xs">schedule</span>
+<span>21:12</span>
+<span class="mx-1">•</span>
+<span>Obstacle Removal</span>
+</div>
+</div>
+<button class="size-9 rounded-full border border-primary/30 flex items-center justify-center text-primary hover:bg-primary hover:text-background-dark transition-colors">
+<span class="material-symbols-outlined fill-1 text-xl">play_arrow</span>
+</button>
+</div>
+<!-- Mantra Item 5 -->
+<div class="glass-card rounded-xl p-4 flex items-center gap-4 transition-transform active:scale-[0.98]">
+<div class="size-14 rounded-lg bg-surface-dark flex items-center justify-center text-primary border border-primary/10">
+<span class="material-symbols-outlined text-3xl">self_improvement</span>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="text-base font-bold text-primary truncate">Lalitha Sahasranamam</h3>
+<div class="flex items-center gap-2 text-xs text-neutral-gold mt-1">
+<span class="material-symbols-outlined text-xs">schedule</span>
+<span>45:00</span>
+<span class="mx-1">•</span>
+<span>Devotion</span>
+</div>
+</div>
+<button class="size-9 rounded-full border border-primary/30 flex items-center justify-center text-primary hover:bg-primary hover:text-background-dark transition-colors">
+<span class="material-symbols-outlined fill-1 text-xl">play_arrow</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation -->
+<nav class="relative z-10 flex border-t border-primary/10 bg-surface-dark/95 backdrop-blur-lg px-4 pb-8 pt-3 justify-around items-center">
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-neutral-gold group-hover:text-primary transition-colors">home</span>
+<span class="text-[10px] font-medium text-neutral-gold group-hover:text-primary">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-primary fill-1">auto_stories</span>
+<span class="text-[10px] font-bold text-primary">Library</span>
+</a>
+<div class="relative -top-6 flex flex-col items-center">
+<div class="size-14 rounded-full bg-primary flex items-center justify-center shadow-xl shadow-primary/20 border-4 border-background-dark">
+<span class="material-symbols-outlined text-background-dark text-3xl font-bold">self_improvement</span>
+</div>
+<span class="text-[10px] font-medium text-primary mt-1">Meditate</span>
+</div>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-neutral-gold group-hover:text-primary transition-colors">favorite</span>
+<span class="text-[10px] font-medium text-neutral-gold group-hover:text-primary">Saved</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-neutral-gold group-hover:text-primary transition-colors">person</span>
+<span class="text-[10px] font-medium text-neutral-gold group-hover:text-primary">Soul</span>
+</a>
+</nav>
+</div>
+</body></html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "midnight": "#02040a",
+                        "indigo-deep": "#1a1b3a",
+                        "violet-deep": "#2a1b3d",
+                        "silver": "#c0c0c8",
+                        "primary": "#818cf8",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        :root {
+            --nebula-silver: rgba(192, 192, 200, 0.05);
+            --glow-silver: 0 0 30px rgba(192, 192, 200, 0.3);
+            --glow-indigo: 0 0 30px rgba(79, 70, 229, 0.4);
+            --glow-violet: 0 0 30px rgba(139, 92, 246, 0.4);
+        }
+        .nebula-wisp {
+            background: radial-gradient(circle at center, var(--nebula-silver) 0%, transparent 70%);
+            filter: blur(40px);
+        }
+        .sphere-glass {
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<title>Sant-Vaani Explore Variant 2</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-midnight font-display text-slate-100 antialiased overflow-hidden">
+<div class="relative mx-auto h-screen max-w-md flex flex-col bg-midnight overflow-hidden">
+<div class="absolute top-20 -left-20 w-80 h-80 nebula-wisp pointer-events-none"></div>
+<div class="absolute top-1/2 -right-20 w-96 h-96 nebula-wisp pointer-events-none"></div>
+<div class="absolute -bottom-20 left-1/4 w-64 h-64 nebula-wisp pointer-events-none"></div>
+<div class="absolute top-2 left-1/2 -translate-x-1/2 w-32 h-6 bg-black rounded-full z-50"></div>
+<header class="p-6 pt-12 z-20">
+<div class="relative group">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-silver/40 text-xl">search</span>
+</div>
+<input class="w-full bg-white/5 border border-white/10 rounded-full py-3.5 pl-12 pr-4 text-sm focus:outline-none focus:border-silver/30 focus:bg-white/10 transition-all placeholder:text-slate-500 backdrop-blur-md" placeholder="Search celestial realms..." type="text"/>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto px-6 pb-32 relative z-10 hide-scrollbar">
+<div class="mt-4 mb-8">
+<h2 class="text-xs uppercase tracking-[0.3em] text-silver/60 font-bold">Divine Spheres</h2>
+</div>
+<div class="grid grid-cols-1 gap-12 py-4">
+<div class="flex flex-col items-center group cursor-pointer">
+<div class="relative w-48 h-48 rounded-full sphere-glass bg-gradient-to-br from-silver/20 to-silver/5 flex flex-col items-center justify-center transition-all duration-500 hover:scale-105 active:scale-95 group-hover:shadow-[var(--glow-silver)] border-silver/20">
+<div class="absolute inset-0 rounded-full bg-white/5 opacity-50 overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.1)_0%,transparent_50%)]"></div>
+</div>
+<span class="material-symbols-outlined !text-4xl text-silver mb-2">auto_awesome</span>
+<span class="text-sm font-bold tracking-widest uppercase text-silver">Vedic</span>
+</div>
+<p class="mt-4 text-sm font-medium text-silver/80">Vedic Chants</p>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div class="flex flex-col items-center group cursor-pointer">
+<div class="relative w-36 h-36 rounded-full sphere-glass bg-gradient-to-br from-indigo-500/20 to-midnight flex flex-col items-center justify-center transition-all duration-500 hover:scale-105 active:scale-95 group-hover:shadow-[var(--glow-indigo)] border-indigo-500/30">
+<span class="material-symbols-outlined !text-3xl text-indigo-300 mb-1">self_improvement</span>
+</div>
+<p class="mt-3 text-xs font-semibold text-slate-400">Guided Stillness</p>
+</div>
+<div class="flex flex-col items-center group cursor-pointer">
+<div class="relative w-36 h-36 rounded-full sphere-glass bg-gradient-to-br from-violet-500/20 to-midnight flex flex-col items-center justify-center transition-all duration-500 hover:scale-105 active:scale-95 group-hover:shadow-[var(--glow-violet)] border-violet-500/30">
+<span class="material-symbols-outlined !text-3xl text-violet-300 mb-1">forum</span>
+</div>
+<p class="mt-3 text-xs font-semibold text-slate-400">Satsang Archives</p>
+</div>
+</div>
+</div>
+<section class="mt-12">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-sm font-bold tracking-widest uppercase text-silver/60">Recently Discovered</h3>
+<span class="material-symbols-outlined text-silver/40">arrow_forward_ios</span>
+</div>
+<div class="flex overflow-x-auto gap-4 hide-scrollbar -mx-2 px-2 pb-4">
+<div class="flex-shrink-0 w-64 p-4 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-sm group hover:border-silver/20 transition-all">
+<div class="aspect-video rounded-lg overflow-hidden mb-3 relative">
+<img alt="Meditation" class="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBc_lpEpOVV7P_nNgyLeMQV6OMoZsxqji55jD-SEQMGhr18F0FLw7sIQRrDLCB37vAVswQjU2gmaOio6XRpgQB6J0bWzES93cuE5Z0Q_imX2r6zHfWNxRLxscHKOtKa1h6KHDGpWIqKZlup-xHN6t6z6cmR17MkbqQBzQ5xu7CDOS6LZYzZA1WAq-JMnHDNSNnX0vDSSYQJpqVdtIDzuHoYuux7CkBTth2fqt86MLUnq8NssPvNQDwEUz4TZ27pRyBlUgRkVyUgV0E"/>
+<div class="absolute inset-0 bg-gradient-to-t from-midnight/80 to-transparent"></div>
+</div>
+<h4 class="text-sm font-bold text-silver/90">Pancha Suktam</h4>
+<p class="text-[10px] text-slate-500 uppercase tracking-widest mt-1">45 min • Sacred Ritual</p>
+</div>
+<div class="flex-shrink-0 w-64 p-4 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-sm group hover:border-silver/20 transition-all">
+<div class="aspect-video rounded-lg overflow-hidden mb-3 relative">
+<img alt="Temple" class="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5RD-EmEE0xjEz0r7s1LKoE9d3OeAa-f8mf1c_KMLCDFr0k9jACmayAZ4tAFjEVPk8XekRf_-tfDxVJ3He_bFEqhDhkBtLm-Js0TT9u0_p3XST00lRQKW9tfi-cS2Ubm1-zHvSHni-_OuTouk8gGyIhqLoNzA_3ti3QcJHwRJDKbL-XdPDSXpU77DqUmSHhGcJDf70NvsQ3sP_9u6L37zXsm0QAAqRPajqpFUR3otgtmbR3tD-oRMTF0YzUfuxowcdoELW48meaWA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-midnight/80 to-transparent"></div>
+</div>
+<h4 class="text-sm font-bold text-silver/90">Void Echoes</h4>
+<p class="text-[10px] text-slate-500 uppercase tracking-widest mt-1">12 min • Soundscape</p>
+</div>
+</div>
+</section>
+</main>
+<nav class="absolute bottom-0 w-full border-t border-white/5 bg-midnight/80 backdrop-blur-2xl px-8 pb-8 pt-4 z-30">
+<div class="flex items-center justify-between max-w-xs mx-auto">
+<a class="flex flex-col items-center gap-1 text-slate-500 hover:text-silver transition-colors" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-silver" href="#">
+<span class="material-symbols-outlined fill-1">explore</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Explore</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500 hover:text-silver transition-colors" href="#">
+<span class="material-symbols-outlined">auto_awesome_motion</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Wisdom</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500 hover:text-silver transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Soul</span>
+</a>
+</div>
+</nav>
+</div>
+
+</body></html>

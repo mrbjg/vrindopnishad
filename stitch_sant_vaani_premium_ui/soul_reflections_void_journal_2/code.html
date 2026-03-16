@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@300;400;700&amp;family=Noto+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b2bee",
+                        "void-black": "#020205",
+                        "silver": "#c0c0cf",
+                    },
+                    fontFamily: {
+                        "display": ["Noto Serif", "serif"],
+                        "sans": ["Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .void-bg {
+                background: radial-gradient(circle at 50% 50%, #0a0a1a 0%, #020205 100%);
+                position: relative;
+                overflow: hidden;
+            }
+            .void-bg::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: 
+                    radial-gradient(white, rgba(255,255,255,.1) 1px, transparent 20px),
+                    radial-gradient(white, rgba(255,255,255,.05) 1px, transparent 40px);
+                background-size: 200px 200px, 350px 350px;
+                opacity: 0.2;
+            }
+            .glass-card {
+                background: rgba(255, 255, 255, 0.03);
+                backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+            }
+            .portal-glow {
+                box-shadow: 0 0 60px rgba(192, 192, 207, 0.15), inset 0 0 40px rgba(192, 192, 207, 0.1);
+            }
+            .silver-capsule-glow {
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            }
+            .aurora-glow {
+                box-shadow: 0 0 12px rgba(100, 200, 255, 0.4);
+                border: 1px solid rgba(100, 200, 255, 0.6);
+            }
+            .nebula-gradient {
+                background: radial-gradient(circle at center, rgba(192,192,207,0.2) 0%, transparent 70%);
+            }
+            .waveform-bar {
+                @apply bg-silver/40 rounded-full transition-all duration-300;
+                width: 3px;
+            }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-void-black font-sans text-slate-100 antialiased overflow-hidden">
+<div class="relative flex h-screen w-full flex-col void-bg overflow-hidden">
+<header class="flex items-center p-6 justify-between z-10">
+<div class="flex size-12 items-center justify-center">
+<span class="material-symbols-outlined text-silver text-2xl opacity-70">arrow_back_ios_new</span>
+</div>
+<div class="flex flex-col items-center">
+<h1 class="text-silver text-lg font-light tracking-[0.2em] uppercase">Sant-Vaani</h1>
+<p class="text-silver/40 text-[9px] tracking-[0.4em] font-medium">LIVE SANGAT</p>
+</div>
+<div class="flex size-12 items-center justify-end">
+<div class="size-2 rounded-full bg-red-500 animate-pulse"></div>
+</div>
+</header>
+<main class="flex-1 flex flex-col items-center px-6 z-10 overflow-y-auto no-scrollbar pb-32">
+<div class="relative mt-4 mb-8">
+<div class="size-64 rounded-full border border-silver/10 flex items-center justify-center portal-glow relative">
+<div class="absolute inset-4 rounded-full nebula-gradient opacity-60"></div>
+<div class="size-48 rounded-full border border-silver/5 flex flex-col items-center justify-center bg-black/20 backdrop-blur-sm">
+<span class="material-symbols-outlined text-silver/80 text-5xl font-light">all_inclusive</span>
+<div class="mt-4 flex flex-col items-center">
+<span class="text-silver text-xl font-light tracking-widest">1,248</span>
+<span class="text-silver/40 text-[9px] uppercase tracking-widest">Seekers in the Void</span>
+</div>
+</div>
+</div>
+</div>
+<div class="w-full max-w-xs grid grid-cols-6 gap-4 mb-12">
+<div class="size-10 rounded-full glass-card flex items-center justify-center overflow-hidden aurora-glow">
+<img alt="Seeker" class="size-full opacity-60" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7NjyfPGvIFBZsdTV_AJnNdKKwkWhN2d61VJ9l43c4UmrO0VEsP5cGrY8i9E6Wpmf-cpygNbc_2DwCRMbHN-hLx-GE9WxQ80YBEXLk_HgXxiQXZKtPAR_H0RYrw55zQh8rA7YpoCx3SWmPZk-0lBa1JkPA1FwP3W2iLghmYE6EzCiV_DSRrpApwvsqUuEZtDFF7lixaP4Wy2BztI6RvHgUnzfmCwH6I01eveRbb1ElvI_SuReIUnQ1m1XIxqkSrm_5opJBL3ZYuvE"/>
+</div>
+<div class="size-10 rounded-full glass-card flex items-center justify-center overflow-hidden">
+<img alt="Seeker" class="size-full opacity-40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxGOiiGAquCK_yPOOns9VvMQBign0sYkab-YPjsI2pD9zVSgsYvQhz6d-5lWM95Byu5nPhTR75TZOZDzD_4NvAQbQiExvoY6QTkaLSC9oQZL7pifsRZMFxRZ5iRYK_2waXWNP6GlxP_wE5rkBgE97GJynO6egmJdWV9N9-A3TwQXJX6lzwqdPlvm6YG0HXXGVFmuuPOBOaAlXrstjYZ-Y5e-g3lhp6Frub-5aL526HVwMKAhYpssIg84153LLf2D4v-Ru6brthMq0"/>
+</div>
+<div class="size-10 rounded-full glass-card flex items-center justify-center overflow-hidden aurora-glow">
+<img alt="Seeker" class="size-full opacity-60" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5-JNlCwPQ1eBqJeg-HqSoPbV8C7JLsnFmLRtffj1UpO-5HwaXlCVGW0daQQ28glEwLaQhaFykzKKw4eyI2AcrBTAWefhzvwfLHT2wuUqLRYeISjxgvmnkCrxZ-L-bnU-VlttyEtktIMgw84y6onWXsEnIp-k-JXIhuO8RQ8rixuvpUd3Kpi0hiJ3l0rZTzGv9DYIkJ8oTvHnTPnM_U9ROKF1XiK8da0KDGEArGOOvlhWvfxBuSvclhBMyO5vdglbPdAWeF6JeqHc"/>
+</div>
+<div class="size-10 rounded-full glass-card flex items-center justify-center overflow-hidden">
+<img alt="Seeker" class="size-full opacity-40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_rnuuAfyiOXAT4RxZMljr034Qbs1InhQseGmsGXqJv46GQyp-Tv570vDf6KA1v_wOrgLbysuc-ulxrgK6lQYLFdVNUR0_7HQQTH2FbqNmZlwMTCtJZbZXvXyVjOqOSk-eS9v_IF4uEoM9V-6JEGAqhlkAtX086X7zdL4LBbpbEveSeL5iF1nrBtLW0FykgTSmtd7XCcDY_5GKxfQs9DyeOIlaikakLH75zEUABqgBKTjLZZn-gmhgiTXTIZ7X4uCdwaaL8D4tB5U"/>
+</div>
+<div class="size-10 rounded-full glass-card flex items-center justify-center overflow-hidden aurora-glow">
+<img alt="Seeker" class="size-full opacity-60" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCdYyCkcSlN2oItKDI8Y1aE2L53tpbrPv9K9bT2AXqFE25R0LlG2qHJao_sLR76fz42yMLO06sZbaOM17WnNJiaa1ulZwrPtU7AeZqVkyBJjuYenvBb7tsiz40GRCYFUlJzQ2PgXPoP1ssjFlp4BNaj5hUqnSNZ2WOdb3x1Y9V0gwukd1wGzSVZiMr6iHaX6yk1FvtoI7b_AXBYcb7Wcp_pkRsUEM4DxPPhQZd3BxLCeJ2BzTVUEy-1ip_ygzU7NbRUTYFl2SulTA"/>
+</div>
+<div class="size-10 rounded-full glass-card flex items-center justify-center overflow-hidden bg-silver/5">
+<span class="text-[8px] text-silver/60">+1.2k</span>
+</div>
+</div>
+<div class="flex flex-col items-center w-full space-y-8">
+<div class="text-center px-4">
+<h2 class="font-display text-silver text-3xl font-light italic tracking-wide mb-2 leading-relaxed">Om Mani Padme Hum</h2>
+<p class="text-silver/30 text-[10px] uppercase tracking-[0.3em]">The Jewel in the Lotus</p>
+</div>
+<div class="flex items-end justify-center gap-1 h-12 w-full max-w-[200px]">
+<div class="waveform-bar h-4"></div>
+<div class="waveform-bar h-6"></div>
+<div class="waveform-bar h-10"></div>
+<div class="waveform-bar h-8"></div>
+<div class="waveform-bar h-12"></div>
+<div class="waveform-bar h-7"></div>
+<div class="waveform-bar h-9"></div>
+<div class="waveform-bar h-5"></div>
+<div class="waveform-bar h-3"></div>
+<div class="waveform-bar h-6"></div>
+<div class="waveform-bar h-4"></div>
+</div>
+</div>
+</main>
+<div class="fixed bottom-28 left-0 w-full flex justify-center z-20 px-6">
+<button class="w-full max-w-sm py-4 rounded-full bg-gradient-to-r from-silver/90 to-white text-void-black font-sans font-semibold tracking-[0.2em] uppercase text-xs silver-capsule-glow flex items-center justify-center gap-3 active:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined text-lg">graphic_eq</span>
+                Join Stillness
+            </button>
+</div>
+<nav class="fixed bottom-0 w-full flex gap-2 border-t border-white/5 glass-card px-4 pb-8 pt-4 z-30">
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-silver/40" href="#">
+<span class="material-symbols-outlined text-2xl font-light">book_5</span>
+<p class="text-[9px] font-medium tracking-widest uppercase">Journal</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-silver" href="#">
+<span class="material-symbols-outlined text-2xl font-light" style="font-variation-settings: 'FILL' 1">air</span>
+<p class="text-[9px] font-medium tracking-widest uppercase">Meditate</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-silver/40" href="#">
+<span class="material-symbols-outlined text-2xl font-light">auto_awesome</span>
+<p class="text-[9px] font-medium tracking-widest uppercase">Wisdom</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-silver/40" href="#">
+<span class="material-symbols-outlined text-2xl font-light">person</span>
+<p class="text-[9px] font-medium tracking-widest uppercase">Profile</p>
+</a>
+</nav>
+</div>
+
+</body></html>

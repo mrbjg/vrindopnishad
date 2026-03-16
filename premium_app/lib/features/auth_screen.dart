@@ -95,40 +95,61 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   children: [
                     // Logo Section
                     Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
+                      width: 120,
+                      height: 120,
+                      decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: PremiumTokens.saffronPremiumGradient,
-                        boxShadow: [
-                          BoxShadow(
-                            color: PremiumTokens.saffronGlow.withOpacity(0.4),
-                            blurRadius: 30,
-                            spreadRadius: 5,
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: PremiumTokens.saffronGlow.withOpacity(0.2),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: PremiumTokens.saffronGlow,
+                                  blurRadius: 40,
+                                  spreadRadius: 2,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            'ॐ',
+                            style: PremiumTokens.displayStyle(
+                              fontSize: 80,
+                              color: PremiumTokens.saffronGlow,
+                              fontWeight: FontWeight.normal,
+                            ),
                           ),
                         ],
                       ),
-                      child: const Center(
-                        child: Text('ॐ', style: TextStyle(fontSize: 56, color: Colors.white)),
-                      ),
                     ),
-                    const SizedBox(height: 48),
+                    const SizedBox(height: 24),
 
                     // Title Section
                     Text(
-                      _isLogin ? "Welcome Divine" : "Begin Your Journey",
-                      style: GoogleFonts.spectral(
-                        fontSize: 36,
+                      "Sant-Vaani",
+                      style: PremiumTokens.displayStyle(
+                        fontSize: 42,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        letterSpacing: 1,
+                        letterSpacing: -0.5,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 4),
                     Text(
-                      _isLogin ? "Sign in to connect with the sacred" : "Establish your spiritual gateway",
+                      "Divine Connection Awaits",
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.outfit(color: Colors.white54, fontSize: 16),
+                      style: PremiumTokens.displayStyle(
+                        color: PremiumTokens.saffronGlow.withOpacity(0.8),
+                        fontSize: 18,
+                        fontWeight: FontWeight.normal,
+                      ).copyWith(fontStyle: FontStyle.italic),
                     ),
                     const SizedBox(height: 48),
 
@@ -184,7 +205,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       onTap: () => setState(() => _isLogin = !_isLogin),
                       child: RichText(
                         text: TextSpan(
-                          style: GoogleFonts.outfit(color: Colors.white54, fontSize: 15),
+                          style: PremiumTokens.sansStyle(color: Colors.white54, fontSize: 15),
                           children: [
                             TextSpan(text: _isLogin ? "New seeker? " : "Already walking the path? "),
                             TextSpan(
@@ -216,18 +237,21 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _buildSocialCircle(Icons.g_mobiledata, Colors.redAccent, () async {
-                          setState(() => _isLoading = true);
-                          try {
-                            await ref.read(authServiceProvider).signInWithGoogle();
-                          } catch (e) {
-                            _showFriendlyError(e.toString());
-                          } finally {
-                            if (mounted) setState(() => _isLoading = false);
+                        _buildSocialCircle(
+                          image: "https://lh3.googleusercontent.com/a/ACg8ocJcR2weulAnryBO4-25MppWiQI6nUuLO3h8h504UVVkBQzucX5Z=s96-c", 
+                          onTap: () async {
+                            setState(() => _isLoading = true);
+                            try {
+                              await ref.read(authServiceProvider).signInWithGoogle();
+                            } catch (e) {
+                              _showFriendlyError(e.toString());
+                            } finally {
+                              if (mounted) setState(() => _isLoading = false);
+                            }
                           }
-                        }),
-                        const SizedBox(width: 20),
-                        _buildSocialCircle(Icons.apple, Colors.white, () {}),
+                        ),
+                        const SizedBox(width: 24),
+                        _buildSocialCircle(icon: Icons.apple, onTap: () {}),
                       ],
                     ),
                   ],
@@ -254,18 +278,18 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       obscureText: obscureText,
       keyboardType: keyboardType,
       validator: validator,
-      style: GoogleFonts.outfit(color: Colors.white, fontSize: 15),
+      style: PremiumTokens.sansStyle(color: Colors.white, fontSize: 15),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: const TextStyle(color: Colors.white30),
         prefixIcon: Icon(icon, color: Colors.white38, size: 20),
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: Colors.white.withOpacity(0.05),
+        fillColor: PremiumTokens.saffronGlow.withOpacity(0.05),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.08)),
+          borderSide: BorderSide(color: PremiumTokens.saffronGlow.withOpacity(0.2)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
@@ -279,17 +303,22 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     );
   }
 
-  Widget _buildSocialCircle(IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildSocialCircle({IconData? icon, String? image, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        width: 56,
+        height: 56,
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.05),
           shape: BoxShape.circle,
           border: Border.all(color: Colors.white.withOpacity(0.1)),
         ),
-        child: Icon(icon, color: color, size: 24),
+        child: Center(
+          child: image != null 
+            ? PremiumUI.networkImage(url: image, width: 24, height: 24)
+            : Icon(icon, color: Colors.white, size: 24),
+        ),
       ),
     );
   }
