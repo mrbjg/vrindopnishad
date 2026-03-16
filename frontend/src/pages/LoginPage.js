@@ -1,166 +1,113 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { apiService } from '../services/api';
-import { useLoading } from '../contexts/LoadingContext';
-import Navigation from '../components/Navigation';
+import { AuthContext } from '../App';
+import { auth } from '../firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import Loader from '../components/Loader';
+import { Mail, Lock, LogIn, ArrowLeft } from 'lucide-react';
 
 const LoginPage = () => {
-    const [isLogin, setIsLogin] = useState(true);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const { showLoading, hideLoading } = useLoading();
-    const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-    const handleEmailAuth = async (e) => {
-        e.preventDefault();
-        setError('');
-        showLoading(isLogin ? 'Signing in...' : 'Creating account...');
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
-        try {
-            if (isLogin) {
-                await apiService.login(email, password);
-            } else {
-                await apiService.signUp(email, password);
-                if (!isLogin) {
-                    alert('Check your email for the confirmation link!');
-                }
-            }
-            navigate('/');
-        } catch (err) {
-            setError(err.message || 'Authentication failed');
-        } finally {
-            hideLoading();
-        }
-    };
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
-    const handleGoogleSignIn = async () => {
-        setError('');
-        showLoading('Signing in with Google...');
-        try {
-            await apiService.signInWithGoogle();
-            // OAuth redirect will handle the navigation
-        } catch (err) {
-            setError(err.message || 'Google Sign-In failed');
-        } finally {
-            hideLoading();
-        }
-    };
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate('/');
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('Invalid email or password. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return (
-        <div>
-            <Navigation />
-            <div className="container mt-5" style={{ maxWidth: '500px' }}>
-                <div className="card" style={{ padding: '3rem' }}>
-                    <div className="text-center mb-4">
-                        <div className="om-symbol mb-3" style={{ fontSize: '3rem', color: '#f59e0b' }}>ॐ</div>
-                        <h2>{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
-                        <p style={{ color: '#666', marginTop: '0.5rem' }}>
-                            {isLogin
-                                ? 'Sign in to continue your spiritual journey'
-                                : 'Begin your path to enlightenment'}
-                        </p>
-                    </div>
-
-                    <form onSubmit={handleEmailAuth}>
-                        <div className="form-group">
-                            <label className="form-label">Email</label>
-                            <input
-                                type="email"
-                                className="form-input"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="name@example.com"
-                                required
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label className="form-label">Password</label>
-                            <input
-                                type="password"
-                                className="form-input"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="Min 6 characters"
-                                required
-                            />
-                        </div>
-
-                        {error && (
-                            <div style={{
-                                padding: '1rem',
-                                background: '#ffebee',
-                                borderRadius: '8px',
-                                color: '#c62828',
-                                marginBottom: '1rem',
-                                fontSize: '0.9rem'
-                            }}>
-                                {error}
-                            </div>
-                        )}
-
-                        <button
-                            type="submit"
-                            className="btn btn-primary"
-                            style={{ width: '100%', marginBottom: '1rem' }}
-                        >
-                            {isLogin ? 'Sign In' : 'Create Account'}
-                        </button>
-                    </form>
-
-                    <div className="text-center mb-4">
-                        <span style={{ color: '#999', fontSize: '0.9rem' }}>OR</span>
-                    </div>
-
-                    <button
-                        onClick={handleGoogleSignIn}
-                        className="btn"
-                        style={{
-                            width: '100%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            background: 'white',
-                            border: '1px solid #ddd',
-                            color: '#333'
-                        }}
-                    >
-                        <img
-                            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                            alt="Google"
-                            style={{ width: '18px', marginRight: '10px' }}
-                        />
-                        Continue with Google
-                    </button>
-
-                    <div className="mt-4 text-center">
-                        <p style={{ fontSize: '0.9rem', color: '#666' }}>
-                            {isLogin ? "Don't have an account? " : "Already have an account? "}
-                            <button
-                                onClick={() => setIsLogin(!isLogin)}
-                                style={{
-                                    background: 'none',
-                                    border: 'none',
-                                    color: '#f59e0b',
-                                    fontWeight: 'bold',
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                {isLogin ? 'Sign Up' : 'Sign In'}
-                            </button>
-                        </p>
-                    </div>
-
-                    <div className="mt-3 text-center border-t pt-3">
-                        <Link to="/admin/login" style={{ fontSize: '0.8rem', color: '#999' }}>
-                            Admin Login
-                        </Link>
-                    </div>
-                </div>
-            </div>
+  return (
+    <div className="animate-fade-in flex items-center justify-center py-12">
+      <div className="glass-card w-full max-w-md p-8 md:p-12">
+        <div className="text-center mb-10">
+           <Link to="/" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-6 transition-colors">
+             <ArrowLeft size={16} />
+             Back to Home
+           </Link>
+           <div className="text-4xl mb-4">ॐ</div>
+           <h1 className="text-3xl font-bold mb-2">Devotee Login</h1>
+           <p className="text-white/40">Access your sacred digital library</p>
         </div>
-    );
+
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div className="space-y-2">
+            <label className="text-xs uppercase tracking-widest text-white/40 ml-1">Email Address</label>
+            <div className="relative">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={18} />
+              <input 
+                type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-6 outline-none focus:border-primary/50 transition-colors"
+                placeholder="email@example.com"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs uppercase tracking-widest text-white/40 ml-1">Password</label>
+            <div className="relative">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={18} />
+              <input 
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-6 outline-none focus:border-primary/50 transition-colors"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+          </div>
+
+          {error && (
+            <div className="text-red-400 text-sm bg-red-400/10 p-3 rounded-xl border border-red-400/20 flex items-center gap-2">
+               <span>⚠️</span> {error}
+            </div>
+          )}
+
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="btn-premium w-full h-13 justify-center text-base"
+          >
+            {loading ? 'Entering...' : (
+              <>
+                Sign In
+                <LogIn size={20} />
+              </>
+            )}
+          </button>
+        </form>
+
+        <div className="mt-10 pt-6 border-t border-white/5 text-center">
+            <p className="text-sm text-white/30">
+                Authorized Personnel? <Link to="/admin-old/login" className="text-primary hover:underline">Admin Portal</Link>
+            </p>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default LoginPage;

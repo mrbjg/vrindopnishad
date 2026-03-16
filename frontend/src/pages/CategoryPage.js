@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { apiService } from '../services/api';
-import Navigation from '../components/Navigation';
-import { Scroll, Music, FileText, BookOpen, Music as MusicIcon, Image as ImageIcon, Video } from 'lucide-react';
+import { ApiContext } from '../App';
+import { Scroll, Music, FileText, BookOpen, Music as MusicIcon, Image as ImageIcon, Video, ArrowLeft, ArrowRight } from 'lucide-react';
 
 const CategoryPage = () => {
   const { category } = useParams();
+  const { apiService } = useContext(ApiContext);
   const [content, setContent] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -13,17 +13,20 @@ const CategoryPage = () => {
     shloka: {
       name: 'Shlokas',
       description: 'Sacred verses from Hindu scriptures',
-      icon: Scroll
+      icon: Scroll,
+      color: 'text-primary'
     },
     strotra: {
       name: 'Strotras',
       description: 'Devotional hymns and prayers',
-      icon: Music
+      icon: Music,
+      color: 'text-blue-400'
     },
     poem: {
       name: 'Poems',
       description: 'Spiritual and devotional poetry',
-      icon: FileText
+      icon: FileText,
+      color: 'text-purple-400'
     }
   };
 
@@ -37,84 +40,79 @@ const CategoryPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [category]);
+  }, [category, apiService]);
 
   useEffect(() => {
     fetchContent();
   }, [fetchContent]);
 
-  const info = categoryInfo[category] || { name: category, description: '', icon: BookOpen };
+  const info = categoryInfo[category] || { name: category, description: '', icon: BookOpen, color: 'text-white' };
   const IconComponent = info.icon;
 
   return (
-    <div>
-      <Navigation />
-      <div className="container mt-4">
-        <div className="text-center mb-4">
-          <div className="category-icon-large" style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'center', color: '#ff6b35' }}>
-            <IconComponent size={60} strokeWidth={1.5} />
-          </div>
-          <h1 className="hero-title" style={{ fontSize: 'clamp(1.75rem, 5vw, 3rem)', marginBottom: '0.5rem' }} data-testid="category-title">{info.name}</h1>
-          <p className="hero-subtitle" style={{ fontSize: 'clamp(1rem, 3vw, 1.2rem)', marginBottom: 0 }}>{info.description}</p>
+    <div className="animate-fade-in">
+      <div className="mb-12">
+        <Link to="/" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-8 transition-colors">
+          <ArrowLeft size={18} />
+          Back to Home
+        </Link>
+        
+        <div className="flex flex-col items-center text-center">
+            <div className={`mb-6 p-6 rounded-full bg-white/5 border border-white/10 ${info.color}`}>
+                <IconComponent size={48} />
+            </div>
+            <h1 className="text-5xl font-bold mb-4 capitalize">{info.name}</h1>
+            <p className="text-white/50 max-w-lg mx-auto">{info.description}</p>
         </div>
+      </div>
 
-        {loading ? (
-          <div className="text-center mt-5">
-            <div className="spinner"></div>
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[1,2,3].map(i => (
+            <div key={i} className="glass-card h-64 animate-pulse"></div>
+          ))}
+        </div>
+      ) : content.length === 0 ? (
+        <div className="glass-card text-center py-24">
+          <div className="text-white/20 mb-6 flex justify-center">
+             <IconComponent size={64} />
           </div>
-        ) : content.length === 0 ? (
-          <div className="card text-center" style={{ padding: '3rem' }} data-testid="no-content-message">
-            <h3>No {info.name.toLowerCase()} available yet</h3>
-            <p style={{ color: '#666', marginTop: '1rem' }}>Please check back later or explore other categories.</p>
-            <Link to="/" className="btn btn-primary mt-3" data-testid="back-home-btn">
-              Back to Home
-            </Link>
-          </div>
-        ) : (
-          <div className="content-grid">
-            {content.map((item) => (
-              <Link
-                key={item.id}
-                to={`/content/${item.id}`}
-                style={{ textDecoration: 'none' }}
-                data-testid={`content-card-${item.id}`}
-              >
-                <div className="card">
-                  <h3 style={{ marginBottom: '1rem' }}>{item.title}</h3>
-                  {item.description && (
-                    <p style={{ color: '#666', marginBottom: '1rem' }}>{item.description}</p>
-                  )}
-                  {item.sanskrit_text && (
-                    <p className="sanskrit-text" style={{ fontSize: '1rem', marginTop: '1rem' }}>
-                      {item.sanskrit_text.substring(0, 100)}{item.sanskrit_text.length > 100 ? '...' : ''}
-                    </p>
-                  )}
-                  <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    {item.audio_url && (
-                      <span style={{ fontSize: '0.85rem', color: '#ff6b35', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                        <MusicIcon size={16} />
-                        Audio
-                      </span>
-                    )}
-                    {item.image_urls && item.image_urls.length > 0 && (
-                      <span style={{ fontSize: '0.85rem', color: '#ff6b35', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                        <ImageIcon size={16} />
-                        Images
-                      </span>
-                    )}
-                    {item.video_urls && item.video_urls.length > 0 && (
-                      <span style={{ fontSize: '0.85rem', color: '#ff6b35', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                        <Video size={16} />
-                        Videos
-                      </span>
-                    )}
+          <h3 className="text-2xl font-bold mb-4">No {info.name.toLowerCase()} available yet</h3>
+          <p className="text-white/40 mb-10">Please check back later or explore other categories.</p>
+          <Link to="/" className="btn-premium px-10 py-3">
+             Back to Home
+          </Link>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {content.map((item) => (
+            <Link key={item.id} to={`/content/${item.id}`} className="glass-card group flex flex-col justify-between">
+              <div>
+                <div className="flex justify-between items-start mb-4">
+                  <span className={`badge border-white/10 text-white/60 group-hover:border-primary/30 group-hover:text-primary transition-all`}>
+                    {category}
+                  </span>
+                  <div className="text-white/10 group-hover:text-primary transition-colors">
+                    <ArrowRight size={20} />
                   </div>
                 </div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
+                <h3 className="text-xl font-bold mb-4 line-clamp-2 leading-tight group-hover:text-primary/90 transition-colors">
+                  {item.title}
+                </h3>
+                <p className="text-white/50 text-sm line-clamp-4 leading-relaxed">
+                  {item.hindi_text || item.english_translation || item.description}
+                </p>
+              </div>
+
+              <div className="pt-6 mt-6 border-t border-white/5 flex gap-4">
+                {item.audio_url && <MusicIcon size={16} className="text-white/20" />}
+                {item.image_urls && item.image_urls.length > 0 && <ImageIcon size={16} className="text-white/20" />}
+                {item.video_urls && item.video_urls.length > 0 && <Video size={16} className="text-white/20" />}
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

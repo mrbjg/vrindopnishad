@@ -13,6 +13,7 @@ import { LoadingProvider } from './contexts/LoadingContext';
 import { apiService } from './services/api';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Loader from './components/Loader';
+import Layout from './components/Layout';
 
 import { auth } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
@@ -28,6 +29,8 @@ export const USE_DEMO_MODE = USE_MOCK_DATA;
 
 export const AuthContext = React.createContext();
 export const ApiContext = React.createContext();
+
+
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -108,13 +111,8 @@ function App() {
       <LoadingProvider>
         <AuthContext.Provider value={{ isAdmin, user, token, login, logout }}>
           <ApiContext.Provider value={{ apiService: apiService, isDemoMode: USE_MOCK_DATA }}>
-            <div className="App min-h-screen bg-background text-foreground">
-              {USE_MOCK_DATA && (
-                <div className="fixed top-2.5 right-2.5 bg-amber-500 text-white px-4 py-2 rounded-lg z-[1000] text-xs font-bold shadow-lg">
-                  📋 Demo Mode (No Backend)
-                </div>
-              )}
-              <BrowserRouter basename={process.env.PUBLIC_URL}>
+            <BrowserRouter basename={process.env.PUBLIC_URL}>
+              <Layout>
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/content" element={<ContentListPage />} />
@@ -128,8 +126,8 @@ function App() {
                     element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin-old/login" />}
                   />
                 </Routes>
-              </BrowserRouter>
-            </div>
+              </Layout>
+            </BrowserRouter>
           </ApiContext.Provider>
         </AuthContext.Provider>
       </LoadingProvider>

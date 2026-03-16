@@ -2,204 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-    margin: 0;
-    font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-        "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-        sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-code {
-    font-family:
-        source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
-}
-
-@layer base {
-    /* ═══════════════════════════════════════════════════════════════════════════ */
-    /* SANT-VAANI LIGHT THEME - Warm Golden Spiritual                             */
-    /* ═══════════════════════════════════════════════════════════════════════════ */
-    :root {
-        /* Core colors */
-        --background: 40 33% 98%;           /* Warm off-white */
-        --foreground: 240 10% 12%;          /* Deep navy text */
-        
-        /* Card & surfaces */
-        --card: 0 0% 100%;
-        --card-foreground: 240 10% 12%;
-        --popover: 0 0% 100%;
-        --popover-foreground: 240 10% 12%;
-        
-        /* Primary - Golden Saffron */
-        --primary: 38 85% 55%;              /* Sant-Vaani golden */
-        --primary-foreground: 0 0% 100%;
-        
-        /* Secondary */
-        --secondary: 40 20% 96%;
-        --secondary-foreground: 240 10% 12%;
-        
-        /* Muted */
-        --muted: 40 15% 94%;
-        --muted-foreground: 240 5% 45%;
-        
-        /* Accent */
-        --accent: 38 70% 92%;
-        --accent-foreground: 38 85% 35%;
-        
-        /* Destructive */
-        --destructive: 0 84% 60%;
-        --destructive-foreground: 0 0% 98%;
-        
-        /* Border & Input */
-        --border: 40 15% 88%;
-        --input: 40 15% 90%;
-        --ring: 38 85% 55%;
-        
-        /* Chart colors */
-        --chart-1: 38 85% 55%;
-        --chart-2: 173 58% 39%;
-        --chart-3: 197 37% 24%;
-        --chart-4: 43 74% 66%;
-        --chart-5: 27 87% 67%;
-        
-        --radius: 0.75rem;
-    }
-
-    /* ═══════════════════════════════════════════════════════════════════════════ */
-    /* SANT-VAANI DARK THEME - Deep Spiritual Night                               */
-    /* ═══════════════════════════════════════════════════════════════════════════ */
-    .dark {
-        /* Core colors */
-        --background: 240 15% 5%;           /* Deep dark blue-black */
-        --foreground: 40 10% 95%;           /* Warm white text */
-        
-        /* Card & surfaces */
-        --card: 240 12% 9%;                 /* Slightly lighter than bg */
-        --card-foreground: 40 10% 95%;
-        --popover: 240 12% 9%;
-        --popover-foreground: 40 10% 95%;
-        
-        /* Primary - Golden Saffron (brighter in dark) */
-        --primary: 38 90% 58%;
-        --primary-foreground: 240 15% 5%;
-        
-        /* Secondary */
-        --secondary: 240 10% 15%;
-        --secondary-foreground: 40 10% 95%;
-        
-        /* Muted */
-        --muted: 240 10% 15%;
-        --muted-foreground: 240 5% 60%;
-        
-        /* Accent */
-        --accent: 38 50% 15%;
-        --accent-foreground: 38 90% 70%;
-        
-        /* Destructive */
-        --destructive: 0 62% 35%;
-        --destructive-foreground: 0 0% 98%;
-        
-        /* Border & Input */
-        --border: 240 10% 18%;
-        --input: 240 10% 18%;
-        --ring: 38 90% 58%;
-        
-        /* Chart colors (brighter for dark mode) */
-        --chart-1: 38 90% 60%;
-        --chart-2: 160 60% 50%;
-        --chart-3: 30 80% 60%;
-        --chart-4: 280 65% 65%;
-        --chart-5: 340 75% 60%;
-    }
-}
-
-@layer base {
-    * {
-        @apply border-border;
-    }
-    body {
-        @apply bg-background text-foreground;
-    }
-    
-    /* Smooth transitions for theme switching */
-    *, *::before, *::after {
-        transition: background-color 0.2s ease, border-color 0.2s ease, color 0.15s ease;
-    }
-}
-
-@layer base {
-    [data-debug-wrapper="true"] {
-        display: contents !important;
-    }
-
-    [data-debug-wrapper="true"] > * {
-        margin-left: inherit;
-        margin-right: inherit;
-        margin-top: inherit;
-        margin-bottom: inherit;
-        padding-left: inherit;
-        padding-right: inherit;
-        padding-top: inherit;
-        padding-bottom: inherit;
-        column-gap: inherit;
-        row-gap: inherit;
-        gap: inherit;
-        border-left-width: inherit;
-        border-right-width: inherit;
-        border-top-width: inherit;
-        border-bottom-width: inherit;
-        border-left-style: inherit;
-        border-right-style: inherit;
-        border-top-style: inherit;
-        border-bottom-style: inherit;
-        border-left-color: inherit;
-        border-right-color: inherit;
-        border-top-color: inherit;
-        border-bottom-color: inherit;
-    }
-}
-
 /* ═══════════════════════════════════════════════════════════════════════════ */
-/* CUSTOM UTILITY CLASSES FOR SANT-VAANI                                       */
+/* VRINDOPNISHAD DESIGN SYSTEM - PREMIUM DARK GLASSMORPHISM                    */
 /* ═══════════════════════════════════════════════════════════════════════════ */
-@layer utilities {
-    .text-gradient-primary {
-        @apply bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent;
-    }
-    
-    .dark .text-gradient-primary {
-        @apply bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent;
-    }
-    
-    .glass-card {
-        @apply bg-white/80 dark:bg-white/5 backdrop-blur-lg border border-white/20 dark:border-white/10;
-    }
-    
-    .glow-primary {
-        box-shadow: 0 0 20px rgba(232, 168, 56, 0.3);
-    }
-    
-    .dark .glow-primary {
-        box-shadow: 0 0 25px rgba(232, 168, 56, 0.4);
-    }
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* SKETCH UI CUSTOM CSS PORTED FROM HTML                                       */
-/* ═══════════════════════════════════════════════════════════════════════════ */
-
-@import url('https://fonts.googleapis.com/css2?family=Laila:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 :root {
+    --background: 240 15% 5%;           /* Deep dark blue-black */
+    --foreground: 40 10% 95%;           /* Warm white text */
+    
+    --primary-color: #2c3e50;
+    --text-color: #ffffff;
     --font-headings: 'Laila', serif;
     --font-body: 'Laila', sans-serif;
     --line-height: 1.8;
     --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
     --border-radius-md: 20px;
     --blur-effect: blur(20px);
     --shadow-md: 0 15px 35px rgba(31, 38, 135, 0.5);
@@ -209,176 +26,259 @@ code {
     --nebula-color-3: rgb(175, 38, 255, 0.15);
 }
 
-body {
-    font-family: var(--font-body) !important;
-    background: #0a0015 !important;
-    color: white !important;
-    overflow-x: hidden;
-    min-height: 100vh;
+@import url('https://fonts.googleapis.com/css2?family=Laila:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Reset and Globals */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
-body::after {
-    content: '';
+html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    background: #0a0015;
+    font-size: clamp(14px, 1.2vw, 18px);
+}
+
+body {
+    font-family: var(--font-body);
+    line-height: var(--line-height);
+    color: var(--text-color);
+    min-height: 100vh;
+    background: #0a0015;
+    overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* ANIMATED BACKGROUND                                                         */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+.celestial-bg {
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    background: #0a0015;
+}
+
+.celestial-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
     background:
         linear-gradient(45deg, rgba(0, 8, 45, 0.8), transparent),
         linear-gradient(-45deg, rgba(63, 0, 125, 0.6), transparent),
         linear-gradient(135deg, rgba(45, 0, 102, 0.7), transparent),
         linear-gradient(-135deg, rgba(74, 0, 114, 0.6), transparent);
-    background-size: 400% 400%, 400% 400%, 400% 400%, 400% 400%;
-    z-index: -2;
-    pointer-events: none;
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
 }
 
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.stars {
+    position: absolute;
+    inset: 0;
     background:
-        radial-gradient(2px 2px at 20% 30%, var(--star-color) 50%, transparent 50%),
+        radial-gradient(1.5px 1.5px at 20% 30%, var(--star-color) 50%, transparent 50%),
         radial-gradient(2px 2px at 40% 70%, var(--star-color) 50%, transparent 50%),
-        radial-gradient(2px 2px at 60% 20%, var(--star-color) 50%, transparent 50%),
+        radial-gradient(1.5px 1.5px at 60% 20%, var(--star-color) 50%, transparent 50%),
         radial-gradient(2px 2px at 80% 90%, var(--star-color) 50%, transparent 50%);
     background-size: 200px 200px, 300px 300px, 250px 250px, 275px 275px;
-    z-index: -1;
     opacity: 0.8;
     mix-blend-mode: screen;
-    pointer-events: none;
 }
 
 .nebula {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
+    position: absolute;
+    inset: 0;
     background:
         radial-gradient(circle at 30% 50%, var(--nebula-color-1) 0%, transparent 60%),
         radial-gradient(circle at 70% 50%, var(--nebula-color-2) 0%, transparent 60%),
         radial-gradient(circle at 50% 80%, var(--nebula-color-3) 0%, transparent 60%);
     mix-blend-mode: screen;
     opacity: 0.3;
-    z-index: -1;
-    pointer-events: none;
 }
 
-.grid-container {
-    max-width: 1200px;
-    margin: 90px auto 0;
-    padding: 0 2rem 8rem;
-    min-height: calc(100vh - 90px);
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* GLASSMORPHISM UTILITIES                                                     */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+.glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: var(--blur-effect);
+    -webkit-backdrop-filter: var(--blur-effect);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-h1.page-title {
-    font-family: var(--font-headings) !important;
-    font-size: clamp(2rem, 8vw, 4rem) !important;
-    color: white !important;
-    text-align: center !important;
-    margin: clamp(2rem, 10vh, 4rem) 0 2rem !important;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+.glass-card {
+    @extend .glass;
+    border-radius: var(--border-radius-md);
+    padding: 2rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    transition: all 0.3s var(--transition-smooth);
 }
 
-.content-grid {
+.glass-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 15px 45px rgba(139, 92, 246, 0.3);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* COMPONENTS                                                                  */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+/* App Layout Structure */
+.app-layout {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(clamp(280px, 100%, 400px), 1fr));
-    gap: clamp(1rem, 2vw, 2rem);
-    padding: 0 clamp(1rem, 5vw, 4rem);
-    max-width: 1600px;
-    margin: 0 auto;
+    grid-template-columns: 80px 1fr;
+    min-height: 100vh;
 }
 
-.content-card {
-    background: rgba(255, 255, 255, 0.05) !important;
-    backdrop-filter: var(--blur-effect) !important;
-    -webkit-backdrop-filter: var(--blur-effect) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: var(--border-radius-md) !important;
-    padding: clamp(0.8rem, 2.5vw, 2rem) !important;
-    color: white !important;
-    cursor: pointer;
-    transition: all 0.5s var(--transition-smooth) !important;
-    display: flex !important;
-    flex-direction: column !important;
-    word-wrap: break-word !important;
-    overflow-wrap: break-word !important;
-    position: relative !important;
-    overflow: hidden !important;
-    text-decoration: none !important;
+@media (min-width: 1024px) {
+    .app-layout {
+        grid-template-columns: 280px 1fr;
+    }
 }
 
-.content-card:hover {
-    transform: translateY(-1px) !important;
-    box-shadow: 0 15px 30px rgba(139, 92, 246, 0.5) !important;
-    background: rgba(255, 255, 255, 0.12) !important;
-    border-color: rgba(167, 139, 250, 0.4) !important;
+.main-content {
+    padding: 2rem;
+    margin-top: 80px; /* Space for Header */
 }
 
-.content-card h3 {
-    font-size: 1.5rem !important;
-    margin-bottom: 1rem !important;
-    color: #c4b5fd !important;
-    font-weight: 600 !important;
-    font-family: var(--font-headings) !important;
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 70px;
+    height: auto;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: var(--blur-effect);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 40px;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 0;
+    gap: 1rem;
+    align-items: center;
+    z-index: 100;
 }
 
-.content-card p {
-    opacity: 0.95 !important;
-    line-height: 1.7 !important;
-    margin-bottom: 1rem !important;
-    color: #ffffff !important;
-    font-size: 1rem !important;
-    word-wrap: break-word !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 4 !important;
-    line-clamp: 4 !important;
-    -webkit-box-orient: vertical !important;
-    overflow: hidden !important;
-}
-
-.category-badge {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(217, 70, 239, 0.1)) !important;
-    border: 1px solid rgba(139, 92, 246, 0.3) !important;
-    color: #d8b4fe !important;
-    padding: 0.3rem 0.8rem !important;
-    border-radius: 50px !important;
-    font-size: 0.8rem !important;
-    display: inline-block !important;
-    align-self: flex-start !important;
-    margin-bottom: 1rem !important;
-    font-family: var(--font-body) !important;
-}
-
-.category-btn {
+.side-item {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.6);
+    transition: all 0.3s var(--transition-bounce);
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.side-item:hover, .side-item.active {
+    background: linear-gradient(135deg, #7c3aed, #5b21b6);
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(124, 58, 237, 0.5);
+}
+
+/* Header */
+header.app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    background: rgba(10, 0, 21, 0.2);
+    backdrop-filter: var(--blur-effect);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.app-logo {
+    height: 45px;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+.app-title {
+    font-family: var(--font-headings);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: white;
+    letter-spacing: 1px;
+}
+
+/* Typgraphy and Buttons Extension */
+h1, h2, h3 {
+    font-family: var(--font-headings);
+    color: white;
+}
+
+.btn-premium {
+    background: linear-gradient(135deg, #7c3aed, #5b21b6);
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 30px;
+    border: none;
+    font-family: var(--font-body);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s var(--transition-bounce);
+    display: inline-flex;
+    align-items: center;
     gap: 0.5rem;
-    padding: 1rem 1.2rem !important;
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 12px !important;
-    color: white !important;
-    cursor: pointer !important;
-    transition: all 0.3s ease !important;
-    font-family: var(--font-body) !important;
-    font-size: 1rem !important;
+    text-decoration: none;
 }
 
-.category-btn:hover {
-    background: rgba(139, 92, 246, 0.2) !important;
-    border-color: rgba(139, 92, 246, 0.4) !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4) !important;
+.btn-premium:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(124, 58, 237, 0.6);
 }
 
-.category-btn.btn-primary, .category-btn.active {
-    background: linear-gradient(135deg, #5b21b6, #7c3aed) !important;
-    border-color: transparent !important;
-    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4) !important;
+/* Feed Grid */
+.content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+/* Category Badges */
+.badge {
+    padding: 0.4rem 1.2rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 1rem;
+    display: inline-block;
 }
