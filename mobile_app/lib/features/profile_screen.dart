@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -456,7 +457,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
 
 // Separate widget for profile header to optimize rebuilds
 class _ProfileHeader extends StatelessWidget {
-  final dynamic user;
+  final User? user;
   final bool isDark;
 
   const _ProfileHeader({required this.user, required this.isDark});
@@ -608,38 +609,14 @@ class _ProfileHeader extends StatelessWidget {
     );
   }
 
-  String? _getPhotoUrl(dynamic user) {
+  String? _getPhotoUrl(User? user) {
     if (user == null) return null;
-    try {
-      // Try Supabase metadata
-      final metadata = user.userMetadata;
-      if (metadata != null && metadata is Map) {
-        return metadata['avatar_url'] ??
-            metadata['picture'] ??
-            metadata['photo_url'];
-      }
-      // Fallback for direct property (if any)
-      return user.photoURL;
-    } catch (_) {
-      return null;
-    }
+    return user.photoURL;
   }
 
-  String? _getDisplayName(dynamic user) {
+  String? _getDisplayName(User? user) {
     if (user == null) return null;
-    try {
-      // Try Supabase metadata
-      final metadata = user.userMetadata;
-      if (metadata != null && metadata is Map) {
-        return metadata['full_name'] ??
-            metadata['name'] ??
-            metadata['display_name'];
-      }
-      // Fallback
-      return user.displayName;
-    } catch (_) {
-      return null;
-    }
+    return user.displayName;
   }
 
   Widget _buildFallbackAvatar() {

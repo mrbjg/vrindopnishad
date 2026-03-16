@@ -41,11 +41,12 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBgJ5hLlX6_yV3AJOL1u6zSy2G5FlNOc3s',
-    appId: '1:373857631114:android:4651683427acc6caa82673',
-    messagingSenderId: '373857631114',
-    projectId: 'vrindavaanig',
-    storageBucket: 'vrindavaanig.firebasestorage.app',
+    apiKey: 'AIzaSyCU9VuBms1Ss8VzFEqFSWScQgwDTCDwPkw',
+    appId: '1:1019370299171:android:421f8669d8a388dfcd3696',
+    messagingSenderId: '1019370299171',
+    projectId: 'login-me-vrinda',
+    databaseURL: 'https://login-me-vrinda-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'login-me-vrinda.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -58,13 +59,14 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyC4oSs_XYXyxAyOptMC8yTa1oscW9G16cY',
-    appId: '1:373857631114:web:f341d8a54711ca85a82673',
-    messagingSenderId: '373857631114',
-    projectId: 'vrindavaanig',
-    authDomain: 'vrindavaanig.firebaseapp.com',
-    storageBucket: 'vrindavaanig.firebasestorage.app',
-    measurementId: 'G-YKQSX1MCDE',
+    apiKey: 'AIzaSyCxBytUXjMdhBQfSjjuaIGfcXZe8N0WkH0',
+    appId: '1:1019370299171:web:1a6df319b2fbfd6fcd3696',
+    messagingSenderId: '1019370299171',
+    projectId: 'login-me-vrinda',
+    authDomain: 'login-me-vrinda.firebaseapp.com',
+    databaseURL: 'https://login-me-vrinda-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'login-me-vrinda.firebasestorage.app',
+    measurementId: 'G-NN88X7N454',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(

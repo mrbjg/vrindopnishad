@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,6 +48,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           _passwordController.text,
         );
       }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        _showFriendlyError(e.code);
+      }
     } catch (e) {
       if (mounted) {
         _showFriendlyError(e.toString());
@@ -60,6 +65,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     setState(() => _isLoading = true);
     try {
       await ref.read(authServiceProvider).signInWithGoogle();
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        _showFriendlyError(e.code);
+      }
     } catch (e) {
       if (mounted) {
         _showFriendlyError(e.toString());
