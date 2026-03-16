@@ -9,6 +9,7 @@ import 'profile/saved_items_screen.dart';
 import 'profile/reading_history_screen.dart';
 import 'profile/settings_screen.dart';
 import 'profile/about_screen.dart';
+import 'spiritual_leveling_screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/services.dart';
 
@@ -49,6 +50,56 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 padding: const EdgeInsets.all(24),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
+                    _buildPremiumSectionTitle("Sacred Journey"),
+                    const SizedBox(height: 16),
+                    GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const SpiritualLevelingScreen()),
+                      ),
+                      child: PremiumUI.glassCard(
+                        padding: const EdgeInsets.all(20),
+                        borderRadius: 24,
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: PremiumTokens.evolvingAura(
+                                color: const Color(0xFF2E0BDA),
+                                intensity: 0.6,
+                              ),
+                              child: const Icon(Icons.auto_awesome, color: Color(0xFFC0C0C0), size: 24),
+                            ),
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Level 42 Seeker",
+                                    style: PremiumTokens.sansStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    "Evolving Silver-Indigo Aura",
+                                    style: PremiumTokens.sansStyle(
+                                      fontSize: 12,
+                                      color: Colors.white38,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(Iconsax.arrow_right_3, color: Colors.white24, size: 20),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+
                     _buildPremiumSectionTitle("Your Sacred Collection"),
                     const SizedBox(height: 16),
                     _buildPremiumMenuItem(
@@ -134,15 +185,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           ),
         ),
         const SizedBox(width: 12),
-          Text(
-            title.toUpperCase(),
-            style: GoogleFonts.manrope(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: Colors.white38,
-              letterSpacing: 2,
-            ),
+        Text(
+          title.toUpperCase(),
+          style: GoogleFonts.manrope(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.white38,
+            letterSpacing: 2,
           ),
+        ),
       ],
     );
   }
@@ -177,7 +228,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           subtitle,
           style: GoogleFonts.manrope(color: Colors.white38, fontSize: 13),
         ),
-        trailing: Icon(Iconsax.arrow_right_3, color: Colors.white12, size: 18),
+        trailing: const Icon(Iconsax.arrow_right_3, color: Colors.white12, size: 18),
       ),
     );
   }
@@ -233,11 +284,11 @@ class _PremiumProfileHeader extends StatelessWidget {
               width: 120,
               height: 120,
               padding: const EdgeInsets.all(3),
-              decoration: BoxDecoration(shape: BoxShape.circle,
+              decoration: const BoxDecoration(shape: BoxShape.circle,
                 gradient: PremiumTokens.saffronPremiumGradient,
               ),
               child: Container(
-                decoration: BoxDecoration(shape: BoxShape.circle, color: PremiumTokens.charcoal),
+                decoration: const BoxDecoration(shape: BoxShape.circle, color: PremiumTokens.charcoal),
                 child: user?.photoURL != null
                     ? PremiumUI.networkImage(
                         url: user!.photoURL!,

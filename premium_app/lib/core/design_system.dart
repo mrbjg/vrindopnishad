@@ -144,12 +144,14 @@ class PremiumTokens {
     double fontSize = 16,
     Color color = Colors.white,
     FontWeight fontWeight = FontWeight.normal,
+    FontStyle fontStyle = FontStyle.normal,
     double? letterSpacing,
   }) {
     return GoogleFonts.manrope(
       fontSize: fontSize,
       color: color,
       fontWeight: fontWeight,
+      fontStyle: fontStyle,
       letterSpacing: letterSpacing,
     );
   }

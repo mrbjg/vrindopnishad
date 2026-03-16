@@ -79,7 +79,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                         _buildNavItem(0, Iconsax.home_1, "Home", accentColor, currentIndex),
                         _buildNavItem(1, Iconsax.book_1, "Library", accentColor, currentIndex),
                         const SizedBox(width: 56), // Space for FAB
-                        _buildNavItem(3, Iconsax.book_5, "Journal", accentColor, currentIndex),
+                        _buildNavItem(3, Iconsax.book, "Journal", accentColor, currentIndex),
                         _buildNavItem(4, Iconsax.user, "Profile", accentColor, currentIndex),
                       ],
                     ),

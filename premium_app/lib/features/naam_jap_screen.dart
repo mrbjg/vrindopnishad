@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../core/design_system.dart';
 
 class NaamJapScreen extends ConsumerStatefulWidget {
@@ -19,9 +17,8 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
   void initState() {
     super.initState();
     _rotationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 20),
-    )..repeat();
+        vsync: this, duration: const Duration(seconds: 30))
+      ..repeat();
   }
 
   @override
@@ -33,185 +30,29 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: PremiumTokens.voidBlack,
+      backgroundColor: Colors.black,
       body: Stack(
         children: [
+          // Background Nebula & Starlight Effects
           Positioned.fill(child: PremiumUI.voidBackground()),
-          
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.2,
+            left: 0,
+            right: 0,
+            child: Center(child: PremiumUI.nebulaGlow(size: 450, opacity: 0.8)),
+          ),
+
           SafeArea(
             child: Column(
               children: [
-                // Top Navigation Bar
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildCircleIconButton(Iconsax.arrow_left_2),
-                      Column(
-                        children: [
-                          Text(
-                            'NOW PLAYING',
-                            style: GoogleFonts.manrope(
-                              color: PremiumTokens.saffronGlow,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 3,
-                            ),
-                          ),
-                          Text(
-                            'Shrimad Bhagavad Gita',
-                            style: GoogleFonts.newsreader(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                      _buildCircleIconButton(Iconsax.more_2),
-                    ],
-                  ),
-                ),
-
+                _buildTopNav(context),
                 const Spacer(),
-
-                // Central Nebula Disk with Rotation
-                RotationTransition(
-                  turns: _rotationController,
-                  child: PremiumUI.nebulaDisk(
-                    size: 280,
-                    child: ClipOval(
-                      child: PremiumUI.networkImage(
-                        url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBn4KXlGdM09V_vyL6FYniGawEBhjjVTHPtWkncMv7AsR6PnDmJx7em82khx96o3tU2b3i1Xv29wn9YRQoYyoZeajegx50mvb2FhsVMMSfaFhybyyp4s5nWVhvjM-Xy_QSV-yOBYDJ2x9MEKcOFTdGbZgUrn0UE6v0p2K2PQWyKunglhZdM8Zl3m2CwulCpccA2dLrSOn__UtnRnXD-8qj4bbhKvT8rR2TwLW9SujHlkdwDM9eRnU6XwEIsGvxdMY1xt3PWf0sISOE',
-                      ),
-                    ),
-                  ),
-                ),
-
+                _buildCentralDisk(),
                 const Spacer(),
-
-                // Track Info
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: Column(
-                    children: [
-                      Text(
-                        'CHAPTER 02, VERSE 20',
-                        style: GoogleFonts.manrope(
-                          color: PremiumTokens.saffronGlow,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 12,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Eternal Soul',
-                        style: GoogleFonts.newsreader(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontStyle: FontStyle.italic,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                      Text(
-                        'The nature of the self',
-                        style: GoogleFonts.manrope(
-                          color: Colors.white38,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 48),
-
-                // Playback Controls
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: Column(
-                    children: [
-                      // Progress Bar
-                      Row(
-                        children: [
-                          Text('01:24', style: GoogleFonts.manrope(color: Colors.white38, fontSize: 12)),
-                          Expanded(
-                            child: SliderTheme(
-                              data: SliderTheme.of(context).copyWith(
-                                trackHeight: 4,
-                                activeTrackColor: PremiumTokens.saffronGlow,
-                                inactiveTrackColor: Colors.white.withValues(alpha: 0.1),
-                                thumbColor: Colors.white,
-                                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                                overlayColor: PremiumTokens.saffronGlow.withValues(alpha: 0.2),
-                              ),
-                              child: Slider(value: 0.45, onChanged: (_) {}),
-                            ),
-                          ),
-                          Text('04:52', style: GoogleFonts.manrope(color: Colors.white38, fontSize: 12)),
-                        ],
-                      ),
-                      
-                      const SizedBox(height: 32),
-
-                      // Main Buttons
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Icon(Iconsax.repeate_one, color: Colors.white38, size: 24),
-                          Icon(Iconsax.previous5, color: Colors.white, size: 32),
-                          Container(
-                            width: 80,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.white.withValues(alpha: 0.2),
-                                  blurRadius: 30,
-                                ),
-                              ],
-                            ),
-                            child: const Icon(Iconsax.play5, color: PremiumTokens.voidBlack, size: 40),
-                          ),
-                          Icon(Iconsax.next5, color: Colors.white, size: 32),
-                          Icon(Iconsax.shuffle, color: Colors.white38, size: 24),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 48),
-
-                // Bottom Panel Shortcut
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: PremiumUI.voidGlassCard(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      children: [
-                        const Icon(Iconsax.music_playlist, color: PremiumTokens.saffronGlow, size: 20),
-                        const SizedBox(width: 16),
-                        Text(
-                          'UP NEXT: CHAPTER 02, VERSE 21',
-                          style: GoogleFonts.manrope(
-                            color: Colors.white70,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                        const Spacer(),
-                        const Icon(Iconsax.arrow_up_2, color: Colors.white24, size: 16),
-                      ],
-                    ),
-                  ),
-                ),
-                
-                const SizedBox(height: 40),
+                _buildTrackInfo(),
+                _buildPlaybackControls(),
+                _buildAestheticWaveform(),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -220,16 +61,216 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
     );
   }
 
-  Widget _buildCircleIconButton(IconData icon) {
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+  Widget _buildTopNav(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Icon(Icons.expand_more, color: Colors.white70, size: 32),
+          Text(
+            "SANT-VAANI",
+            style: PremiumTokens.sansStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w300,
+              letterSpacing: 4,
+              color: Colors.white38,
+            ),
+          ),
+          const Icon(Icons.more_horiz, color: Colors.white70, size: 32),
+        ],
       ),
-      child: Icon(icon, color: Colors.white, size: 20),
     );
   }
+
+  Widget _buildCentralDisk() {
+    return RotationTransition(
+      turns: _rotationController,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Outer Glow/Progress Ring Simulation
+          Container(
+            width: 280,
+            height: 280,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2),
+                width: 1,
+              ),
+            ),
+          ),
+          // "Starlight Ring"
+          Container(
+            width: 260,
+            height: 260,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.transparent,
+                width: 2,
+              ),
+            ),
+            child: CustomPaint(
+              painter: _StarlightRingPainter(color: PremiumTokens.nebulaBlue),
+            ),
+          ),
+          // Glass Disk
+          PremiumUI.voidGlassCard(
+            blur: 20,
+            borderRadius: 140,
+            padding: EdgeInsets.zero,
+            child: Container(
+              width: 220,
+              height: 220,
+              alignment: Alignment.center,
+              child: const Text(
+                'ॐ',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 80,
+                  shadows: [
+                    Shadow(color: Colors.white54, blurRadius: 20),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTrackInfo() {
+    return Column(
+      children: [
+        Text(
+          "Mahamrityunjaya Mantra",
+          style: PremiumTokens.soulStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.w300,
+            letterSpacing: 2,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          "DIVINE RESONANCE",
+          style: PremiumTokens.sansStyle(
+            fontSize: 10,
+            color: Colors.white38,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 3,
+          ),
+        ),
+        const SizedBox(height: 48),
+      ],
+    );
+  }
+
+  Widget _buildPlaybackControls() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40),
+      child: Column(
+        children: [
+          // Custom Progress Bar
+          Column(
+            children: [
+              Stack(
+                children: [
+                  Container(height: 1, color: Colors.white10),
+                  Container(
+                    height: 1,
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    color: PremiumTokens.nebulaBlue,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: PremiumTokens.nebulaBlue.withValues(alpha: 0.5),
+                          blurRadius: 10,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("05:30", style: PremiumTokens.sansStyle(fontSize: 10, color: Colors.white24)),
+                  Text("08:45", style: PremiumTokens.sansStyle(fontSize: 10, color: Colors.white24)),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 40),
+          // Buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Icon(Icons.shuffle, color: Colors.white24, size: 24),
+              const Icon(Icons.skip_previous, color: Colors.white, size: 40),
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.03),
+                  border: Border.all(color: Colors.white12),
+                ),
+                child: const Icon(Icons.play_arrow, color: Colors.white, size: 48),
+              ),
+              const Icon(Icons.skip_next, color: Colors.white, size: 40),
+              const Icon(Icons.repeat, color: Colors.white24, size: 24),
+            ],
+          ),
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAestheticWaveform() {
+    return Opacity(
+      opacity: 0.3,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: List.generate(20, (index) {
+          final double h = (index % 5 + 1) * 10.0 + (index % 3) * 5.0;
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 2),
+            width: 2,
+            height: index == 10 ? 60 : h,
+            decoration: BoxDecoration(
+              color: index == 10 ? PremiumTokens.nebulaBlue : Colors.white70,
+              borderRadius: BorderRadius.circular(10),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+}
+
+class _StarlightRingPainter extends CustomPainter {
+  final Color color;
+  _StarlightRingPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
+
+    final rect = Rect.fromCircle(center: Offset(size.width / 2, size.height / 2), radius: size.width / 2);
+    canvas.drawArc(rect, 0.4, 1.5, false, paint);
+    canvas.drawArc(rect, 3.5, 1.2, false, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
