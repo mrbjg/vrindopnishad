@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,9 +6,10 @@ import '../../core/theme.dart';
 import '../../core/providers.dart';
 import '../../core/localization.dart';
 import '../../widgets/animated_effects.dart';
+import 'package:flutter/services.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
-  const SettingsScreen({super.key});
+  SettingsScreen({super.key});
 
   @override
   ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
@@ -57,7 +57,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryColor.withOpacity(0.1),
+                      color: AppTheme.primaryColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Icon(
@@ -82,7 +82,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   l.translate('appearance'),
                   Iconsax.colorfilter,
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
 
                 // Dark Mode Toggle
                 _buildToggleCard(
@@ -169,8 +169,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              AppTheme.primaryColor.withOpacity(0.1),
-                              AppTheme.glowPurple.withOpacity(0.1),
+                              AppTheme.primaryColor.withValues(alpha: 0.1),
+                              AppTheme.glowPurple.withValues(alpha: 0.1),
                             ],
                           ),
                           borderRadius: BorderRadius.circular(20),
@@ -181,7 +181,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           size: 24,
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
                       Text(
                         "Sant-Vaani",
                         style: GoogleFonts.spectral(
@@ -219,13 +219,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isDark
-              ? Colors.white.withOpacity(0.08)
-              : Colors.black.withOpacity(0.05),
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isDark
-                ? Colors.white.withOpacity(0.1)
-                : Colors.black.withOpacity(0.05),
+                ? Colors.white.withValues(alpha: 0.1)
+                : Colors.black.withValues(alpha: 0.05),
           ),
         ),
         child: Icon(
@@ -249,12 +249,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(0.1),
+              color: AppTheme.primaryColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, size: 16, color: AppTheme.primaryColor),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Text(
             title.toUpperCase(),
             style: GoogleFonts.outfit(
@@ -286,13 +286,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Container(
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.white.withOpacity(0.06)
-            : Colors.white.withOpacity(0.8),
+            ? Colors.white.withValues(alpha: 0.06)
+            : Colors.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
           color: isDark
-              ? Colors.white.withOpacity(0.08)
-              : Colors.black.withOpacity(0.04),
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.04),
           width: 1.5,
         ),
         boxShadow: AppTheme.softShadow(context),
@@ -312,9 +312,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
-                    color: colors[0].withOpacity(0.4),
+                    color: colors[0].withValues(alpha: 0.4),
                     blurRadius: 12,
-                    offset: const Offset(0, 4),
+                    offset: Offset(0, 4),
                     spreadRadius: -4,
                   ),
                 ],
@@ -367,11 +367,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         height: 32,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: value ? activeColor : Colors.grey.withOpacity(0.3),
+          color: value ? activeColor : Colors.grey.withValues(alpha: 0.3),
           boxShadow: value
               ? [
                   BoxShadow(
-                    color: activeColor.withOpacity(0.4),
+                    color: activeColor.withValues(alpha: 0.4),
                     blurRadius: 12,
                     spreadRadius: -4,
                   ),
@@ -379,7 +379,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               : null,
         ),
         child: AnimatedAlign(
-          duration: const Duration(milliseconds: 250),
+          duration: Duration(milliseconds: 250),
           curve: Curves.easeOutBack,
           alignment: value ? Alignment.centerRight : Alignment.centerLeft,
           child: Container(
@@ -391,9 +391,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
+                  color: Colors.black.withValues(alpha: 0.15),
                   blurRadius: 8,
-                  offset: const Offset(0, 2),
+                  offset: Offset(0, 2),
                 ),
               ],
             ),
@@ -416,13 +416,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       child: Container(
         decoration: BoxDecoration(
           color: isDark
-              ? Colors.white.withOpacity(0.06)
-              : Colors.white.withOpacity(0.8),
+              ? Colors.white.withValues(alpha: 0.06)
+              : Colors.white.withValues(alpha: 0.8),
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
             color: isDark
-                ? Colors.white.withOpacity(0.08)
-                : Colors.black.withOpacity(0.04),
+                ? Colors.white.withValues(alpha: 0.08)
+                : Colors.black.withValues(alpha: 0.04),
             width: 1.5,
           ),
           boxShadow: AppTheme.softShadow(context),
@@ -437,14 +437,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [AppTheme.glowPink, const Color(0xFFF472B6)],
+                    colors: [AppTheme.glowPink, Color(0xFFF472B6)],
                   ),
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.glowPink.withOpacity(0.4),
+                      color: AppTheme.glowPink.withValues(alpha: 0.4),
                       blurRadius: 12,
-                      offset: const Offset(0, 4),
+                      offset: Offset(0, 4),
                       spreadRadius: -4,
                     ),
                   ],
@@ -513,8 +513,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
           border: Border.all(
             color: isDark
-                ? Colors.white.withOpacity(0.1)
-                : Colors.black.withOpacity(0.05),
+                ? Colors.white.withValues(alpha: 0.1)
+                : Colors.black.withValues(alpha: 0.05),
           ),
         ),
         child: SafeArea(
@@ -528,12 +528,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     width: 48,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: AppTheme.textMuted(context).withOpacity(0.3),
+                      color: AppTheme.textMuted(context).withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
                 Row(
                   children: [
                     Container(
@@ -608,14 +608,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? AppTheme.primaryColor.withOpacity(0.1)
+                              ? AppTheme.primaryColor.withValues(alpha: 0.1)
                               : isDark
-                              ? Colors.white.withOpacity(0.05)
-                              : Colors.black.withOpacity(0.02),
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.black.withValues(alpha: 0.02),
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
                             color: isSelected
-                                ? AppTheme.primaryColor.withOpacity(0.3)
+                                ? AppTheme.primaryColor.withValues(alpha: 0.3)
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -626,7 +626,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? AppTheme.primaryColor.withOpacity(0.15)
+                                    ? AppTheme.primaryColor.withValues(alpha: 0.15)
                                     : AppTheme.surfaceColor(context),
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -638,7 +638,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                     : AppTheme.textMuted(context),
                               ),
                             ),
-                            const SizedBox(width: 16),
+                            SizedBox(width: 16),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -724,15 +724,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       child: Container(
         decoration: BoxDecoration(
           color: isDark
-              ? Colors.white.withOpacity(0.06)
-              : Colors.white.withOpacity(0.8),
+              ? Colors.white.withValues(alpha: 0.06)
+              : Colors.white.withValues(alpha: 0.8),
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
             color: isDestructive
-                ? Colors.red.withOpacity(0.15)
+                ? Colors.red.withValues(alpha: 0.15)
                 : isDark
-                ? Colors.white.withOpacity(0.08)
-                : Colors.black.withOpacity(0.04),
+                ? Colors.white.withValues(alpha: 0.08)
+                : Colors.black.withValues(alpha: 0.04),
             width: 1.5,
           ),
           boxShadow: AppTheme.softShadow(context),
@@ -752,7 +752,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
-                      color: colors[0].withOpacity(0.4),
+                      color: colors[0].withValues(alpha: 0.4),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                       spreadRadius: -4,

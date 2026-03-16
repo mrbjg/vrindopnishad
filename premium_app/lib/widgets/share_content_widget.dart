@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import '../core/content_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import '../core/content_provider.dart';
+import '../core/design_system.dart';
 
 /// Widget and utilities for sharing content as beautiful quote images
 class ShareContentWidget extends StatelessWidget {
@@ -34,7 +35,7 @@ class ShareContentWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFEDA638).withOpacity(0.2),
+              color: Color(0xFFEDA638).withValues(alpha: 0.2),
               blurRadius: 30,
               spreadRadius: 5,
             ),
@@ -58,7 +59,7 @@ class ShareContentWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               decoration: BoxDecoration(
-                color: const Color(0xFFEDA638).withOpacity(0.15),
+                color: Color(0xFFEDA638).withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -92,7 +93,7 @@ class ShareContentWidget extends StatelessWidget {
             Container(
               width: 80,
               height: 1,
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
             ),
 
             const SizedBox(height: 20),
@@ -103,7 +104,7 @@ class ShareContentWidget extends StatelessWidget {
                 content.translation,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
-                  color: Colors.white.withOpacity(0.75),
+                  color: Colors.white.withValues(alpha: 0.75),
                   fontSize: 14,
                   fontStyle: FontStyle.italic,
                   height: 1.6,
@@ -151,7 +152,7 @@ class ShareContentWidget extends StatelessWidget {
                 Text(
                   'Vrindopnishad',
                   style: GoogleFonts.inter(
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withValues(alpha: 0.6),
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),

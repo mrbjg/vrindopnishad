@@ -25,25 +25,101 @@ class HomeScreen extends ConsumerWidget {
       backgroundColor: PremiumTokens.charcoal,
       body: Stack(
         children: [
-          // Ambient backgrounds
-          const Positioned.fill(child: AnimatedSacredBackground()),
+          // Ambient bokeh backgrounds from template
+          Positioned.fill(child: PremiumUI.bokehBackground()),
           
           CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
-              SliverToBoxAdapter(
-                child: Consumer(
+              // Sticky Header (matching bg-background-dark/80 backdrop-blur-md)
+              SliverAppBar(
+                expandedHeight: 0,
+                collapsedHeight: 80,
+                pinned: true,
+                floating: false,
+                backgroundColor: PremiumTokens.charcoal.withValues(alpha: 0.8),
+                flexibleSpace: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: FlexibleSpaceBar(
+                      background: Container(color: Colors.transparent),
+                    ),
+                  ),
+                ),
+                title: Consumer(
                   builder: (context, ref, _) {
-                    final lang = ref.watch(languageProvider);
-                    final l = AppLocalization(lang);
-                    return _buildPremiumHeader(context, l);
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: PremiumTokens.saffronGlow.withValues(alpha: 0.2),
+                                shape: BoxShape.circle,
+                                border: Border.all(color: PremiumTokens.saffronGlow.withValues(alpha: 0.3)),
+                              ),
+                              child: const Icon(Icons.person, color: PremiumTokens.saffronGlow, size: 24),
+                            ),
+                            const SizedBox(width: 12),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'WELCOME',
+                                  style: GoogleFonts.manrope(
+                                    color: PremiumTokens.saffronGlow,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 2,
+                                  ),
+                                ),
+                                Text(
+                                  'Arjun Singh', // Placeholder and template name
+                                  style: GoogleFonts.manrope(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            _buildCircleButton(Iconsax.search_normal),
+                            const SizedBox(width: 8),
+                            Stack(
+                              children: [
+                                _buildCircleButton(Iconsax.notification),
+                                Positioned(
+                                  top: 8,
+                                  right: 8,
+                                  child: Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: BoxDecoration(color: PremiumTokens.saffronGlow,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
                   },
                 ),
               ),
 
               const SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
                   child: PremiumQuoteCard(),
                 ),
               ),
@@ -57,44 +133,18 @@ class HomeScreen extends ConsumerWidget {
                   builder: (context, ref, _) {
                     final lang = ref.watch(languageProvider);
                     final l = AppLocalization(lang);
-                    return _buildPremiumCategories(context, l);
+                    return Column(
+                      children: [
+                        _buildPremiumCategories(context, l),
+                        _buildRecentReflectionPreview(context, ref),
+                      ],
+                    );
                   },
-                ),
-              ),
-
-              SliverToBoxAdapter(
-                child: Consumer(
-                  builder: (context, ref, _) {
-                    final content = ref.watch(sacredContentProvider);
-                    final lang = ref.watch(languageProvider);
-                    final l = AppLocalization(lang);
-                    return _buildPremiumContinueReading(context, content, l);
-                  },
-                ),
-              ),
-
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 32, left: 24, right: 24),
-                  child: Row(
-                    children: [
-                      const Icon(Iconsax.magic_star, color: PremiumTokens.saffronGlow, size: 20),
-                      const SizedBox(width: 12),
-                      Text(
-                        'Recent Wisdom',
-                        style: GoogleFonts.manrope(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
 
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
+                padding: const EdgeInsets.fromLTRB(20, 32, 20, 120),
                 sliver: Consumer(
                   builder: (context, ref, _) {
                     final content = ref.watch(sacredContentProvider);
@@ -110,119 +160,24 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildPremiumHeader(BuildContext context, AppLocalization l) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                  decoration: PremiumTokens.evolvingAura(
-                    color: PremiumTokens.saffronGlow,
-                    intensity: 0.6,
-                  ),
-                  child: const PulsingOmButton(size: 60),
-                ),
-                const SizedBox(width: 16),
-                const Expanded(child: AnimatedGreeting()),
-                PremiumUI.glassCard(
-                  padding: const EdgeInsets.all(10),
-                  child: const Icon(Iconsax.notification, color: Colors.white, size: 20),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            _buildJourneyStats(),
-          ],
-        ),
+  Widget _buildCircleButton(IconData icon) {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(color: PremiumTokens.surfaceCharcoal,
+        shape: BoxShape.circle,
       ),
-    );
-  }
-
-  Widget _buildJourneyStats() {
-    return Row(
-      children: [
-        Expanded(
-          child: PremiumUI.glassCard(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-            child: Column(
-              children: [
-                Text(
-                  'Celestial Path',
-                  style: GoogleFonts.manrope(color: Colors.white60, fontSize: 10, letterSpacing: 1),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Orbit 4',
-                  style: GoogleFonts.manrope(
-                    color: PremiumTokens.celestialGlow,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: PremiumUI.glassCard(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-            child: Column(
-              children: [
-                Text(
-                  'Total Jap Hours',
-                  style: GoogleFonts.manrope(color: Colors.white60, fontSize: 10, letterSpacing: 1),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '142.5 hrs',
-                  style: GoogleFonts.manrope(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: PremiumUI.glassCard(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-            child: Column(
-              children: [
-                Text(
-                  'Stillness Score',
-                  style: GoogleFonts.manrope(color: Colors.white60, fontSize: 10, letterSpacing: 1),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '84 / 100',
-                  style: GoogleFonts.manrope(
-                    color: PremiumTokens.saffronGlow,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
+      child: Icon(icon, color: Colors.white54, size: 20),
     );
   }
 
   Widget _buildPremiumNaamJap(BuildContext context, WidgetRef ref) {
     final count = ref.watch(naamJapCounterProvider);
-    final progress = (count % 108) / 108;
+    final progress = (count % 1008) / 1008; 
 
     return Padding(
       padding: const EdgeInsets.all(20),
-      child: PremiumUI.glassCard(
+      child: PremiumUI.saffronGlassCard(
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
@@ -233,86 +188,79 @@ class HomeScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'नाम जप',
-                      style: SacredStyles.devanagariMain.copyWith(
-                        fontSize: 20,
+                      'Daily Naam Jap',
+                      style: GoogleFonts.manrope(
+                        fontSize: 18,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      'Active Meditative Chant',
-                      style: GoogleFonts.manrope(color: Colors.white70, fontSize: 13),
+                      'Enter the Ethereal Void',
+                      style: GoogleFonts.manrope(color: PremiumTokens.saffronGlow, fontSize: 10, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
-                if (count > 0)
-                  IconButton(
-                    icon: const Icon(Iconsax.refresh, color: Colors.white54, size: 20),
-                    onPressed: () => ref.read(naamJapCounterProvider.notifier).state = 0,
-                  ),
+                Text(
+                  'Goal: 1008',
+                  style: GoogleFonts.manrope(color: Colors.white54, fontSize: 12),
+                ),
               ],
             ),
             const SizedBox(height: 32),
-            Stack(
-              alignment: Alignment.center,
+            GestureDetector(
+              onTap: () {
+                HapticFeedback.lightImpact();
+                ref.read(navigationIndexProvider.notifier).state = 2; // Naam Jap index
+              },
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: 150,
+                    height: 150,
+                    child: CircularProgressIndicator(
+                      value: progress,
+                      strokeWidth: 6,
+                      backgroundColor: Colors.white.withValues(alpha: 0.05),
+                      valueColor: const AlwaysStoppedAnimation(PremiumTokens.saffronGlow),
+                    ),
+                  ),
+                  const Icon(Iconsax.music_play5, color: Colors.white, size: 40),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
-                  width: 140,
-                  height: 140,
-                  child: CircularProgressIndicator(
-                    value: progress,
-                    strokeWidth: 4,
-                    backgroundColor: Colors.white12,
-                    valueColor: const AlwaysStoppedAnimation(PremiumTokens.saffronGlow),
+                Text(
+                  '$count',
+                  style: GoogleFonts.manrope(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    ref.read(naamJapCounterProvider.notifier).state++;
-                  },
-                  child: Container(
-                    width: 110,
-                    height: 110,
-                    decoration: BoxDecoration(
-                      gradient: PremiumTokens.saffronPremiumGradient,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: PremiumTokens.saffronGlow.withOpacity(0.4),
-                          blurRadius: 25,
-                        ),
-                      ],
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'ॐ',
-                        style: TextStyle(fontSize: 48, color: Colors.white, fontWeight: FontWeight.normal),
-                      ),
-                    ),
+                const SizedBox(width: 8),
+                Text(
+                  'CHANTS',
+                  style: GoogleFonts.manrope(
+                    fontSize: 10,
+                    color: Colors.white38,
+                    letterSpacing: 1.5,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 24),
-            Text(
-              '$count',
-              style: GoogleFonts.manrope(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                letterSpacing: 2,
-              ),
-            ),
-            Text(
-              'TOTAL JAPS',
-              style: GoogleFonts.manrope(
-                fontSize: 12,
-                color: PremiumTokens.saffronGlow,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.5,
-              ),
+            PremiumUI.saffronButton(
+              text: 'OPEN PLAYER',
+              onTap: () {
+                ref.read(navigationIndexProvider.notifier).state = 2;
+              },
+              icon: Iconsax.music_play,
             ),
           ],
         ),
@@ -322,45 +270,97 @@ class HomeScreen extends ConsumerWidget {
 
   Widget _buildPremiumCategories(BuildContext context, AppLocalization l) {
     final categories = [
-      {'name': 'Shlokas', 'icon': Iconsax.document_text, 'color': PremiumTokens.saffronGlow},
-      {'name': 'Stotras', 'icon': Iconsax.music, 'color': Colors.pinkAccent},
-      {'name': 'Mantras', 'icon': Iconsax.magic_star, 'color': Colors.purpleAccent},
-      {'name': 'Poems', 'icon': Iconsax.edit, 'color': Colors.tealAccent},
+      {
+        'name': 'Shlokas',
+        'count': '124 Verses',
+        'image': 'https://lh3.googleusercontent.com/aida-public/AB6AXuAEFZ1NeG5QqGTXKSJv1rV8rLDhQhlx1UHhyfelWZwIv73jJc27pWCgFEVnAWsEtoztQzjpYfB4Ta-gdVXO8nGW3TZv6gz2VVNiXQ0bAuPAU0A2EET6kwzroKFi6QyMx_iL6hT5-nJmaJG4g5yeUcs228Qz43Q7oWwJVkCXGRh71Rj96lkX3FqW2AKzNfIzMtF4NrnJwqilFitnulwwrvmJQl5WzvK75f9qBeesP1Y_X9MsagiJDCEJtxSHRCThUFQP20TqBpHXqug'
+      },
+      {
+        'name': 'Mantras',
+        'count': '48 Audio',
+        'image': 'https://lh3.googleusercontent.com/aida-public/AB6AXuBn4KXlGdM09V_vyL6FYniGawEBhjjVTHPtWkncMv7AsR6PnDmJx7em82khx96o3tU2b3i1Xv29wn9YRQoYyoZeajegx50mvb2FhsVMMSfaFhybyyp4s5nWVhvjM-Xy_QSV-yOBYDJ2x9MEKcOFTdGbZgUrn0UE6v0p2K2PQWyKunglhZdM8Zl3m2CwulCpccA2dLrSOn__UtnRnXD-8qj4bbhKvT8rR2TwLW9SujHlkdwDM9eRnU6XwEIsGvxdMY1xt3PWf0sISOE'
+      },
+      {
+        'name': 'Stories',
+        'count': '12 Series',
+        'image': 'https://lh3.googleusercontent.com/aida-public/AB6AXuD6E9OTyxnJhrda-g9daQdFXrAz4TJmD0Cewd-uAJHe99lzEGrtQBZP2OLvO0-zle7gi0JAFr95Tuwe2uWVQZenYjMMg2aZuepRChhSJhrehrkL8F20BMPRedP3DHsihlTPFzXTa-TuUVlfqdV5EB1ua7JyiQrF5wAlg7lPsHMoeptGeQ5PPyMp2W0dTyvoQ3AJ_GKnESg4LjlHvVxlQm2NA-rJFW5whrIw9unR7N2UVzqZuXGSWUcnIiHviA2FeNwKnx98C7l2Eds'
+      },
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          child: Text(
-            'Explore Sacred Wisdom',
-            style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Sacred Wisdom',
+                style: GoogleFonts.manrope(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'View All',
+                style: GoogleFonts.manrope(color: PremiumTokens.saffronGlow, fontSize: 13, fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
         ),
-        SizedBox(
-          height: 140,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 1.0,
+            ),
             itemCount: categories.length,
             itemBuilder: (context, index) {
               final cat = categories[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: PremiumUI.glassCard(
-                  width: 120,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(cat['icon'] as IconData, color: cat['color'] as Color, size: 32),
-                      const SizedBox(height: 12),
-                      Text(
-                        cat['name'] as String,
-                        style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.w600),
+              return PremiumUI.saffronGlassCard(
+                padding: EdgeInsets.zero,
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: PremiumUI.networkImage(
+                        url: cat['image'],
+                        borderRadius: BorderRadius.circular(24),
                       ),
-                    ],
-                  ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(24),
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [
+                            PremiumTokens.charcoal.withValues(alpha: 0.9),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 16,
+                      left: 16,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            cat['name']!,
+                            style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                          ),
+                          Text(
+                            cat['count']!,
+                            style: GoogleFonts.manrope(color: Colors.white54, fontSize: 10),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               );
             },
@@ -370,74 +370,59 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildPremiumContinueReading(BuildContext context, List<SacredContent> content, AppLocalization l) {
-    if (content.isEmpty) return const SizedBox.shrink();
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(top: 32, left: 24, bottom: 16),
-          child: Text(
-            'Keep Journeying',
-            style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+
+  Widget _buildRecentReflectionPreview(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'LATEST REFLECTION',
+            style: GoogleFonts.manrope(
+              color: Colors.white38,
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 2,
+            ),
           ),
-        ),
-        SizedBox(
-          height: 180,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: content.take(3).length,
-            itemBuilder: (context, index) {
-              final item = content[index];
-              return Container(
-                width: 280,
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: PremiumUI.glassCard(
+          const SizedBox(height: 16),
+          PremiumUI.voidGlassCard(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                const Icon(Iconsax.moon5, color: Color(0xFFC0C0CF), size: 24),
+                const SizedBox(width: 16),
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: PremiumTokens.saffronGlow.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              item.category,
-                              style: const TextStyle(color: PremiumTokens.saffronGlow, fontSize: 10, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          const Spacer(),
-                          const Icon(Iconsax.book_1, color: Colors.white38, size: 16),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
                       Text(
-                        item.title,
-                        style: GoogleFonts.manrope(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                        'Stillness in the Void',
+                        style: GoogleFonts.newsreader(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      const Spacer(),
-                      Row(
-                        children: [
-                          const Icon(Iconsax.clock, color: Colors.white30, size: 14),
-                          const SizedBox(width: 4),
-                          Text('5 min left', style: GoogleFonts.manrope(color: Colors.white30, fontSize: 12)),
-                        ],
+                      Text(
+                        'Mar 14 • 3 min read',
+                        style: GoogleFonts.manrope(color: Colors.white38, fontSize: 11),
                       ),
                     ],
                   ),
                 ),
-              );
-            },
+                IconButton(
+                  icon: const Icon(Iconsax.arrow_right_3, color: Colors.white24, size: 20),
+                  onPressed: () {
+                    ref.read(navigationIndexProvider.notifier).state = 1; // Library index
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -458,7 +443,7 @@ class HomeScreen extends ConsumerWidget {
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
-                      color: PremiumTokens.saffronGlow.withOpacity(0.1),
+                      color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Center(child: Text('ॐ', style: TextStyle(color: PremiumTokens.saffronGlow, fontSize: 24))),
@@ -497,30 +482,64 @@ class PremiumQuoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PremiumUI.glassCard(
-      opacity: 0.12,
-      child: Column(
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+      ),
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          const Icon(Iconsax.quote_up, color: PremiumTokens.saffronGlow, size: 24),
-          const SizedBox(height: 16),
-          Text(
-            "The soul is never born nor dies at any time. It has not come into being, does not come into being, and will not come into being.",
-            textAlign: TextAlign.center,
-            style: GoogleFonts.manrope(
-              color: Colors.white,
-              fontSize: 16,
-              fontStyle: FontStyle.italic,
-              height: 1.5,
+          // Ethereal Bokeh Background from template
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.8,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: PremiumUI.networkImage(
+                  url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDactqYO6CbwQGgpXvjo0DgkESwH0VMyPzgUmW4lxWwigZrkL3hrpWO0GV55qftuaynG8hIGsNOSf0jyS_jbiyw5ICe60cRZF6CddbBypU9dsLavW8_kOkCYxHF7pTRhvL6Wfr2octpa0b_jMExeQV1Lotlx7iz8g0mW810-RDEKM5t2WNkYO8l4JdqMizl99LC83J63eCUMj940jv-a6uWL3suEKZHb5WQeBGmSzatYFzPn_F95l_tE6xxWZljmCNgJcSdqbypQVU',
+                ),
+              ),
             ),
           ),
-          const SizedBox(height: 16),
-          Text(
-            "— Bhagavad Gita 2.20",
-            style: GoogleFonts.manrope(
-              color: PremiumTokens.saffronGlow,
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-              letterSpacing: 1,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              gradient: LinearGradient(
+                colors: [
+                  PremiumTokens.charcoal.withValues(alpha: 0.9),
+                  PremiumTokens.surfaceCharcoal.withValues(alpha: 0.7),
+                ],
+              ),
+            ),
+            child: Column(
+              children: [
+                const Icon(Iconsax.quote_up5, color: PremiumTokens.saffronGlow, size: 40),
+                const SizedBox(height: 24),
+                Text(
+                  '"The soul is neither born, nor does it ever die; nor having once existed, does it ever cease to be."',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.newsreader(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontStyle: FontStyle.italic,
+                    height: 1.4,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'BHAGAVAD GITA 2.20',
+                  style: GoogleFonts.manrope(
+                    color: PremiumTokens.saffronGlow,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 10,
+                    letterSpacing: 2,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

@@ -1,14 +1,12 @@
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../core/theme.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../core/design_system.dart';
 import '../core/auth_provider.dart';
-import '../widgets/animated_effects.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
@@ -71,21 +69,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       backgroundColor: PremiumTokens.charcoal,
       body: Stack(
         children: [
-          const Positioned.fill(child: AnimatedSacredBackground()),
+          Positioned.fill(child: PremiumUI.bokehBackground()),
+          Positioned.fill(child: PremiumUI.mandalaOverlay(opacity: 0.05)),
           
-          Positioned(
-            top: -50,
-            left: -50,
-            child: Container(
-              width: 300,
-              height: 300,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: PremiumTokens.saffronGlow.withOpacity(0.05),
-              ),
-            ),
-          ),
-
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
@@ -93,63 +79,83 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Logo Section
+                    // Logo Section with Glowing Aura
                     Container(
-                      width: 120,
-                      height: 120,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
+                      width: 140,
+                      height: 140,
+                      decoration: BoxDecoration(shape: BoxShape.circle,
                       ),
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
+                          // Glowing Aura
+                          Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: PremiumTokens.saffronGlow.withValues(alpha: 0.2),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: PremiumTokens.saffronGlow.withValues(alpha: 0.5),
+                                  blurRadius: 60,
+                                  spreadRadius: 10,
+                                ),
+                              ],
+                            ),
+                          ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
+                            begin: const Offset(1, 1),
+                            end: const Offset(1.2, 1.2),
+                            duration: 3.seconds,
+                            curve: Curves.easeInOut,
+                          ),
+                          
+                          // Om Icon
                           Container(
                             width: 80,
                             height: 80,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: PremiumTokens.saffronGlow.withOpacity(0.2),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: PremiumTokens.saffronGlow,
-                                  blurRadius: 40,
-                                  spreadRadius: 2,
-                                ),
-                              ],
+                              color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+                              border: Border.all(color: PremiumTokens.saffronGlow.withValues(alpha: 0.3)),
                             ),
-                          ),
-                          Text(
-                            'ॐ',
-                            style: PremiumTokens.displayStyle(
-                              fontSize: 80,
-                              color: PremiumTokens.saffronGlow,
-                              fontWeight: FontWeight.normal,
+                            child: Center(
+                              child: Text(
+                                'ॐ',
+                                style: GoogleFonts.manrope(
+                                  fontSize: 48,
+                                  color: PremiumTokens.saffronGlow,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
+
                     const SizedBox(height: 24),
 
                     // Title Section
                     Text(
                       "Sant-Vaani",
-                      style: PremiumTokens.displayStyle(
-                        fontSize: 42,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        letterSpacing: -0.5,
+                      style: GoogleFonts.manrope(
+                        fontSize: 40,
+                        fontWeight: FontWeight.w800,
+                        color: PremiumTokens.saffronGlow,
+                        letterSpacing: -1,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 8),
                     Text(
-                      "Divine Connection Awaits",
+                      "THE VOICE OF SAINTS",
                       textAlign: TextAlign.center,
-                      style: PremiumTokens.displayStyle(
-                        color: PremiumTokens.saffronGlow.withOpacity(0.8),
-                        fontSize: 18,
-                        fontWeight: FontWeight.normal,
-                      ).copyWith(fontStyle: FontStyle.italic),
+                      style: GoogleFonts.manrope(
+                        color: Colors.white38,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 4,
+                      ),
                     ),
                     const SizedBox(height: 48),
 
@@ -285,11 +291,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         prefixIcon: Icon(icon, color: Colors.white38, size: 20),
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: PremiumTokens.saffronGlow.withOpacity(0.05),
+        fillColor: PremiumTokens.saffronGlow.withValues(alpha: 0.05),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: PremiumTokens.saffronGlow.withOpacity(0.2)),
+          borderSide: BorderSide(color: PremiumTokens.saffronGlow.withValues(alpha: 0.2)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
@@ -310,9 +316,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         width: 56,
         height: 56,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withOpacity(0.1)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         ),
         child: Center(
           child: image != null 

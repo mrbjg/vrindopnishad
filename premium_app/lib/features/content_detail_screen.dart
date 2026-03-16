@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import '../core/content_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio/just_audio.dart';
-import '../core/theme.dart';
 import '../core/design_system.dart';
-import '../core/providers.dart';
-import '../core/localization.dart';
-import '../core/content_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../core/favorites_provider.dart';
 import '../widgets/share_content_widget.dart';
+import '../core/localization.dart';
+import '../core/providers.dart';
 import '../widgets/animated_effects.dart';
+import 'package:flutter/services.dart';
 
 class ContentDetailScreen extends ConsumerStatefulWidget {
   final SacredContent? content;
   final String? title;
   final String? category;
 
-  const ContentDetailScreen({
+  ContentDetailScreen({
     super.key,
     this.content,
     this.title,
@@ -199,9 +198,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: PremiumTokens.saffronGlow.withOpacity(0.1),
+              color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: PremiumTokens.saffronGlow.withOpacity(0.2)),
+              border: Border.all(color: PremiumTokens.saffronGlow.withValues(alpha: 0.2)),
             ),
             child: Text(
               category.toUpperCase(),
@@ -213,7 +212,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             title,
             textAlign: TextAlign.center,
@@ -242,12 +241,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           right: 12,
         ),
         decoration: BoxDecoration(
-          color: _showCompactHeader ? PremiumTokens.charcoal.withOpacity(0.9) : Colors.transparent,
+          color: _showCompactHeader ? PremiumTokens.charcoal.withValues(alpha: 0.9) : Colors.transparent,
         ),
         child: Row(
           children: [
             _buildHeaderCircleButton(Iconsax.arrow_left, () => Navigator.pop(context)),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
               child: AnimatedOpacity(
                 duration: 200.ms,
@@ -354,7 +353,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             content,
             style: GoogleFonts.outfit(
               fontSize: _fontSize,
-              color: Colors.white.withOpacity(0.85),
+              color: Colors.white.withValues(alpha: 0.85),
               height: 1.8,
             ),
           ),
@@ -370,7 +369,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Iconsax.text, color: Colors.white24, size: 16),
+          Icon(Iconsax.text, color: Colors.white24, size: 16),
           const SizedBox(width: 16),
           _buildFontToolButton(Iconsax.minus, () {
             if (_fontSize > 14) setState(() => _fontSize -= 2);
@@ -415,7 +414,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           decoration: BoxDecoration(
             gradient: PremiumTokens.saffronPremiumGradient,
             shape: BoxShape.circle,
-            boxShadow: [BoxShadow(color: PremiumTokens.saffronGlow.withOpacity(0.3), blurRadius: 20)],
+            boxShadow: [BoxShadow(color: PremiumTokens.saffronGlow.withValues(alpha: 0.3), blurRadius: 20)],
           ),
           child: const Icon(Iconsax.music, color: Colors.white, size: 24),
         ),

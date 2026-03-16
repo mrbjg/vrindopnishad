@@ -1,22 +1,19 @@
-import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../core/theme.dart';
 import '../core/design_system.dart';
 import '../core/auth_provider.dart';
 import 'profile/saved_items_screen.dart';
 import 'profile/reading_history_screen.dart';
 import 'profile/settings_screen.dart';
 import 'profile/about_screen.dart';
-import '../widgets/animated_effects.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter/services.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
-  const ProfileScreen({super.key});
+  ProfileScreen({super.key});
 
   @override
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
@@ -37,7 +34,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
       backgroundColor: PremiumTokens.charcoal,
       body: Stack(
         children: [
-          const Positioned.fill(child: AnimatedSacredBackground()),
+          Positioned.fill(child: PremiumUI.bokehBackground()),
           
           CustomScrollView(
             physics: const BouncingScrollPhysics(),
@@ -72,7 +69,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       color: Colors.blueAccent,
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const ReadingHistoryScreen()),
+                        MaterialPageRoute(builder: (_) => ReadingHistoryScreen()),
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -86,7 +83,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       color: Colors.purpleAccent,
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                        MaterialPageRoute(builder: (_) => SettingsScreen()),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -97,7 +94,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       color: Colors.tealAccent,
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const AboutScreen()),
+                        MaterialPageRoute(builder: (_) => AboutScreen()),
                       ),
                     ),
                     const SizedBox(height: 48),
@@ -167,7 +164,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
         leading: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, color: color, size: 22),
@@ -180,7 +177,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           subtitle,
           style: GoogleFonts.manrope(color: Colors.white38, fontSize: 13),
         ),
-        trailing: const Icon(Iconsax.arrow_right_3, color: Colors.white12, size: 18),
+        trailing: Icon(Iconsax.arrow_right_3, color: Colors.white12, size: 18),
       ),
     );
   }
@@ -236,12 +233,11 @@ class _PremiumProfileHeader extends StatelessWidget {
               width: 120,
               height: 120,
               padding: const EdgeInsets.all(3),
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
+              decoration: BoxDecoration(shape: BoxShape.circle,
                 gradient: PremiumTokens.saffronPremiumGradient,
               ),
               child: Container(
-                decoration: const BoxDecoration(shape: BoxShape.circle, color: PremiumTokens.charcoal),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: PremiumTokens.charcoal),
                 child: user?.photoURL != null
                     ? PremiumUI.networkImage(
                         url: user!.photoURL!,
@@ -315,7 +311,7 @@ class _PremiumProfileHeader extends StatelessWidget {
         Text(
           label.toUpperCase(),
           style: GoogleFonts.manrope(
-            color: color.withOpacity(0.7),
+            color: color.withValues(alpha: 0.7),
             fontSize: 10,
             fontWeight: FontWeight.bold,
             letterSpacing: 1,

@@ -2,116 +2,147 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui';
 import '../core/theme.dart';
 import '../core/design_system.dart';
 import 'home_screen.dart';
-import 'search_screen.dart';
 import 'naam_jap_screen.dart';
 import 'library_screen.dart';
+import 'journal_screen.dart';
 import 'profile_screen.dart';
+import '../core/providers.dart';
 
 class MainNavigationScreen extends ConsumerStatefulWidget {
-  const MainNavigationScreen({super.key});
+  MainNavigationScreen({super.key});
 
   @override
   ConsumerState<MainNavigationScreen> createState() => _MainNavigationScreenState();
 }
 
 class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
-  int _currentIndex = 0;
-
-  final List<Widget> _screens = const [
+  final List<Widget> _screens = [
     HomeScreen(),
-    SearchScreen(),
+    LibraryScreen(), 
     NaamJapScreen(),
-    LibraryScreen(),
+    JournalScreen(),
     ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
-    if (index == _currentIndex) return;
+    if (index == ref.read(navigationIndexProvider)) return;
     HapticFeedback.selectionClick();
-    setState(() => _currentIndex = index);
+    ref.read(navigationIndexProvider.notifier).state = index;
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentIndex = ref.watch(navigationIndexProvider);
+    final isVoidScreen = currentIndex == 1 || currentIndex == 2;
+    final barBgColor = isVoidScreen 
+        ? PremiumTokens.voidBlack.withValues(alpha: 0.9) 
+        : Color(0x991A160F); 
+    final accentColor = isVoidScreen ? const Color(0xFF256AF4) : PremiumTokens.saffronGlow;
+
     return Scaffold(
-      backgroundColor: PremiumTokens.charcoal,
-      body: IndexedStack(index: _currentIndex, children: _screens),
+      backgroundColor: isVoidScreen ? PremiumTokens.voidBlack : PremiumTokens.charcoal,
+      body: IndexedStack(index: currentIndex, children: _screens),
       extendBody: true,
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(30),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-              child: Container(
-                height: 70,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: PremiumTokens.glassDecoration(
-                  blur: 20,
-                  opacity: 0.12,
-                  borderRadius: 30,
-                  border: Border.all(color: Colors.white.withOpacity(0.12)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildNavItem(0, Iconsax.home_1, "Home"),
-                    _buildNavItem(1, Iconsax.search_normal, "Search"),
-                    _buildNavItem(2, Iconsax.heart, "Jap"),
-                    _buildNavItem(3, Iconsax.book, "Library"),
-                    _buildNavItem(4, Iconsax.user, "Profile"),
-                  ],
+      bottomNavigationBar: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          // Floating Bar
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(100),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                child: Container(
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: barBgColor,
+                    borderRadius: BorderRadius.circular(100),
+                    border: Border.all(color: accentColor.withValues(alpha: 0.1)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: accentColor.withValues(alpha: 0.1),
+                        blurRadius: 20,
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildNavItem(0, Iconsax.home_1, "Home", accentColor, currentIndex),
+                        _buildNavItem(1, Iconsax.book_1, "Library", accentColor, currentIndex),
+                        const SizedBox(width: 56), // Space for FAB
+                        _buildNavItem(3, Iconsax.book_5, "Journal", accentColor, currentIndex),
+                        _buildNavItem(4, Iconsax.user, "Profile", accentColor, currentIndex),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+          // Center FAB
+          Positioned(
+            bottom: 48,
+            child: GestureDetector(
+              onTap: () => _onItemTapped(2),
+              child: Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: accentColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: isVoidScreen ? PremiumTokens.voidBlack : PremiumTokens.charcoal, width: 4),
+                  boxShadow: [
+                    BoxShadow(
+                      color: accentColor.withValues(alpha: 0.4),
+                      blurRadius: 20,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  currentIndex == 2 ? Iconsax.music_play5 : Iconsax.refresh, 
+                  color: isVoidScreen ? Colors.white : PremiumTokens.charcoal, 
+                  size: 30
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon, String label) {
-    final isActive = _currentIndex == index;
+  Widget _buildNavItem(int index, IconData icon, String label, Color accentColor, int currentIndex) {
+    final isActive = currentIndex == index;
     return GestureDetector(
       onTap: () => _onItemTapped(index),
       behavior: HitTestBehavior.opaque,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: isActive ? PremiumTokens.saffronGlow.withOpacity(0.15) : Colors.transparent,
-              boxShadow: isActive ? [
-                BoxShadow(
-                  color: PremiumTokens.saffronGlow.withOpacity(0.2),
-                  blurRadius: 15,
-                )
-              ] : [],
-            ),
-            child: Icon(
-              icon,
-              color: isActive ? PremiumTokens.saffronGlow : Colors.white38,
-              size: 24,
+          Icon(
+            icon,
+            color: isActive ? accentColor : Colors.white38,
+            size: 24,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: GoogleFonts.manrope(
+              fontSize: 10,
+              color: isActive ? accentColor : Colors.white38,
+              fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
             ),
           ),
-          if (isActive)
-            Container(
-              margin: const EdgeInsets.only(top: 4),
-              width: 4,
-              height: 4,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: PremiumTokens.saffronGlow,
-              ),
-            ),
         ],
       ),
     );

@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import '../core/content_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../widgets/animated_effects.dart';
-import '../core/theme.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../core/design_system.dart';
 import '../core/providers.dart';
-import '../core/localization.dart';
-import '../core/content_provider.dart';
-import 'content_detail_screen.dart';
-import 'category_screen.dart';
+import '../features/content_detail_screen.dart';
+import 'package:flutter/services.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
-  const SearchScreen({super.key});
+  SearchScreen({super.key});
 
   @override
   ConsumerState<SearchScreen> createState() => _SearchScreenState();
@@ -34,138 +31,233 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currentLanguage = ref.watch(languageProvider);
-    final l = AppLocalization(currentLanguage);
-
-    final filteredContent = ref.watch(searchedContentProvider(_searchQuery));
+    
+    final currentCategory = ref.watch(libraryCategoryProvider);
+    
+    // Logic: If searching, show search results. If not searching, show category-filtered content.
+    final List<SacredContent> displayItems = _isSearching
+        ? ref.watch(searchedContentProvider(_searchQuery))
+        : ref.watch(filteredContentProvider(currentCategory));
 
     return Scaffold(
       backgroundColor: PremiumTokens.charcoal,
       body: Stack(
         children: [
-          const Positioned.fill(child: AnimatedSacredBackground()),
+          Positioned.fill(child: PremiumUI.bokehBackground()),
+          Positioned.fill(child: PremiumUI.mandalaOverlay(opacity: 0.03)),
           
           SafeArea(
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [
-                // Header with Search bar
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l.translate('search'),
-                          style: GoogleFonts.spectral(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                // Premium Integrated Header
+                SliverAppBar(
+                  floating: true,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  centerTitle: true,
+                  title: Text(
+                    "Sacred Library",
+                    style: GoogleFonts.manrope(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Iconsax.notification, color: Colors.white54),
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+
+                // Immersive Search Section
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  sliver: SliverToBoxAdapter(
+                    child: PremiumUI.glassCard(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      borderRadius: 16,
+                      child: TextField(
+                        controller: _searchController,
+                        focusNode: _focusNode,
+                        style: GoogleFonts.manrope(color: Colors.white),
+                        decoration: InputDecoration(
+                          hintText: "Search mantras, stories, shlokas...",
+                          hintStyle: GoogleFonts.manrope(color: Colors.white24, fontSize: 14),
+                          border: InputBorder.none,
+                          icon: const Icon(Iconsax.search_normal, color: PremiumTokens.saffronGlow, size: 20),
+                          suffixIcon: _searchQuery.isNotEmpty
+                              ? IconButton(
+                                  icon: const Icon(Iconsax.close_circle, size: 18, color: Colors.white38),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    setState(() {
+                                      _searchQuery = '';
+                                      _isSearching = false;
+                                    });
+                                  },
+                                )
+                              : null,
                         ),
-                        const SizedBox(height: 24),
-                        PremiumUI.glassCard(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          borderRadius: 20,
-                          child: TextField(
-                            controller: _searchController,
-                            focusNode: _focusNode,
-                            style: GoogleFonts.outfit(color: Colors.white),
-                            decoration: InputDecoration(
-                              hintText: l.translate('search_hint'),
-                              hintStyle: GoogleFonts.outfit(color: Colors.white24),
-                              border: InputBorder.none,
-                              icon: const Icon(Iconsax.search_normal, color: PremiumTokens.saffronGlow, size: 20),
-                              suffixIcon: _searchQuery.isNotEmpty
-                                  ? IconButton(
-                                      icon: const Icon(Iconsax.close_circle, size: 18, color: Colors.white38),
-                                      onPressed: () {
-                                        _searchController.clear();
-                                        setState(() {
-                                          _searchQuery = '';
-                                          _isSearching = false;
-                                        });
-                                      },
-                                    )
-                                  : null,
-                            ),
-                            onChanged: (v) => setState(() {
-                              _searchQuery = v;
-                              _isSearching = v.isNotEmpty;
-                            }),
-                          ),
-                        ),
-                      ],
+                        onChanged: (v) => setState(() {
+                          _searchQuery = v;
+                          _isSearching = v.isNotEmpty;
+                        }),
+                      ),
                     ),
                   ),
                 ),
 
                 if (!_isSearching) ...[
-                  // Trending tags
+                  // Featured Content Card
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      padding: const EdgeInsets.all(24),
+                      child: Stack(
                         children: [
-                          _buildSectionLabel("Trending Wisdom"),
-                          const SizedBox(height: 16),
-                          Wrap(
-                            spacing: 12,
-                            runSpacing: 12,
-                            children: [
-                              'Bhagavad Gita',
-                              'Hanuman Chalisa',
-                              'Gayatri Mantra',
-                              'Shiv Tandav',
-                            ].map((tag) => _buildTrendingTag(tag)).toList(),
+                          PremiumUI.saffronGlassCard(
+                            padding: EdgeInsets.zero,
+                            borderRadius: 24,
+                            child: Stack(
+                              children: [
+                                // Featured Image with Overlay
+                                Container(
+                                  height: 200,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
+                                  child: PremiumUI.networkImage(
+                                    url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBHu8Eu-IeZXmdDyP9CGIYZOUdk_ADEEcjbsJd_ERe8TJLT3bqNwsEF1qd2GIc52oBip9aRZZDzDNBprKDu5y207MDsU76yeRRf3XYO2ckGgQheqCBn0KAhdLascnDZP8F98XNQ9C3TmOV1CgjrJEjniTKhkeNACkVMntZbA8c5IqPYst5pK_IM2XxlgMHNS1UuBOjGAQ-Rf0Jthy4ZQeoOcjBE4OSo8F2lFNBeRiSW-BgFyqXmAUwhFtXOfZ7lGaH9CfX1J_YyFUg',
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
+                                ),
+                                Container(
+                                  height: 200,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(24),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.bottomCenter,
+                                      end: Alignment.topCenter,
+                                      colors: [
+                                        PremiumTokens.charcoal.withValues(alpha: 0.9),
+                                        Colors.transparent,
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                
+                                // Text Content
+                                Positioned(
+                                  left: 20,
+                                  bottom: 20,
+                                  right: 20,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: PremiumTokens.saffronGlow,
+                                          borderRadius: BorderRadius.circular(100),
+                                        ),
+                                        child: Text(
+                                          "FEATURED MANTRA",
+                                          style: GoogleFonts.manrope(
+                                            color: PremiumTokens.charcoal,
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.w900,
+                                            letterSpacing: 1.5,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 8),
+                                      Text(
+                                        "Maha Mrityunjaya",
+                                        style: GoogleFonts.manrope(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w800,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ),
 
-                  // Quick Access Categories
+                  // Horizontal Categories
                   SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildSectionLabel("Sacred Categories"),
-                          const SizedBox(height: 16),
-                          GridView.count(
-                            crossAxisCount: 2,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            mainAxisSpacing: 16,
-                            crossAxisSpacing: 16,
-                            childAspectRatio: 2.5,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                          child: Text(
+                            "CATEGORIES",
+                            style: GoogleFonts.manrope(
+                              color: Colors.white38,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 2,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 50,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
                             children: [
-                              _buildCategoryTile('Shlokas', Iconsax.document_text, [const Color(0xFFE8A838), const Color(0xFFD97706)]),
-                              _buildCategoryTile('Strotras', Iconsax.music, [const Color(0xFFEC4899), const Color(0xFFDB2777)]),
-                              _buildCategoryTile('Mantras', Iconsax.magic_star, [const Color(0xFF8B5CF6), const Color(0xFF7C3AED)]),
-                              _buildCategoryTile('Poems', Iconsax.edit_2, [const Color(0xFF10B981), const Color(0xFF059669)]),
+                              _buildPremiumPill("ALL", currentCategory == "ALL"),
+                              _buildPremiumPill("PEACE", currentCategory == "PEACE"),
+                              _buildPremiumPill("PROSPERITY", currentCategory == "PROSPERITY"),
+                              _buildPremiumPill("PROTECTION", currentCategory == "PROTECTION"),
+                              _buildPremiumPill("HEALING", currentCategory == "HEALING"),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
+                  ),
+
+                  // Recommended List
+                  SliverPadding(
+                    padding: const EdgeInsets.all(24),
+                    sliver: displayItems.isEmpty
+                        ? SliverToBoxAdapter(child: Center(child: _buildEmptyResults()))
+                        : SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child: _buildSacredListItem(context, displayItems[index]),
+                                );
+                              },
+                              childCount: displayItems.length,
+                            ),
+                          ),
                   ),
                 ] else ...[
                   // Search Results
                   SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    sliver: filteredContent.isEmpty
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                    sliver: displayItems.isEmpty
                         ? SliverFillRemaining(hasScrollBody: false, child: _buildEmptyResults())
                         : SliverList(
                             delegate: SliverChildBuilderDelegate(
                               (context, index) => Padding(
                                 padding: const EdgeInsets.only(bottom: 12),
-                                child: _buildSearchResultCard(context, filteredContent[index]),
+                                child: _buildSacredListItem(context, displayItems[index]),
                               ),
-                              childCount: filteredContent.length,
+                              childCount: displayItems.length,
                             ),
                           ),
                   ),
@@ -180,80 +272,47 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     );
   }
 
-  Widget _buildSectionLabel(String label) {
-    return Text(
-      label.toUpperCase(),
-      style: GoogleFonts.outfit(
-        color: Colors.white24,
-        fontSize: 12,
-        fontWeight: FontWeight.bold,
-        letterSpacing: 2,
-      ),
-    );
-  }
-
-  Widget _buildTrendingTag(String tag) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.lightImpact();
-        _searchController.text = tag;
-        setState(() {
-          _searchQuery = tag;
-          _isSearching = true;
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(100),
-          border: Border.all(color: Colors.white10),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Iconsax.chart_2, size: 14, color: PremiumTokens.saffronGlow),
-            const SizedBox(width: 8),
-            Text(tag, style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCategoryTile(String label, IconData icon, List<Color> colors) {
+  Widget _buildPremiumPill(String label, bool isSelected) {
     return GestureDetector(
       onTap: () {
         HapticFeedback.selectionClick();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => CategoryScreen(categoryName: label, gradientColors: colors),
-          ),
-        );
+        ref.read(libraryCategoryProvider.notifier).state = label;
       },
-      child: PremiumUI.glassCard(
-        padding: const EdgeInsets.all(12),
-        borderRadius: 16,
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: colors[0].withOpacity(0.2),
-                borderRadius: BorderRadius.circular(10),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            decoration: BoxDecoration(
+              color: isSelected ? PremiumTokens.saffronGlow : PremiumTokens.saffronGlow.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(100),
+              border: Border.all(
+                color: isSelected ? Colors.transparent : PremiumTokens.saffronGlow.withValues(alpha: 0.1),
               ),
-              child: Icon(icon, color: colors[0], size: 18),
+              boxShadow: isSelected ? [
+                BoxShadow(
+                  color: PremiumTokens.saffronGlow.withValues(alpha: 0.3),
+                  blurRadius: 15,
+                  spreadRadius: -2,
+                )
+              ] : null,
             ),
-            const SizedBox(width: 12),
-            Text(label, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-          ],
+            child: Text(
+              label,
+              style: GoogleFonts.manrope(
+                color: isSelected ? PremiumTokens.charcoal : Colors.white60,
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1,
+              ),
+            ),
+          ),
         ),
       ),
-    );
+    ).animate().fadeIn(duration: 400.ms).slideX(begin: 0.2);
   }
 
-  Widget _buildSearchResultCard(BuildContext context, SacredContent item) {
+  Widget _buildSacredListItem(BuildContext context, SacredContent item) {
     return GestureDetector(
       onTap: () {
         HapticFeedback.selectionClick();
@@ -263,42 +322,72 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         );
       },
       child: PremiumUI.glassCard(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(12),
+        borderRadius: 20,
         child: Row(
           children: [
+            // Thumbnail
             Container(
-              width: 50,
-              height: 50,
+              width: 64,
+              height: 64,
               decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(14),
                 gradient: PremiumTokens.saffronPremiumGradient,
-                borderRadius: BorderRadius.circular(12),
               ),
-              child: const Center(child: Text('ॐ', style: TextStyle(color: Colors.white, fontSize: 20))),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: PremiumUI.networkImage(
+                  url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBYgYpRIViZa_gs2-nCpkN1icsC_3pKdUI9kLKymK91_Hm6B-jfE2Pe3E0-_ZbwyIhJ2fR284qfSjio3EB9NlauKKMN9rDWkm5XkNbYRNgOG18SbA22nyjAoz28MOPuLnLR-CKQv__Z_w8NTW9tn3PiV_USrXL7kOcOCAOTfPacSJscNJP6wY9Z8NdE0TPeJ9J5OHWc8xY6s0Jf2CmGkAWAb2D50TcF-X-eaRb9_yYjEvphxoNmVLQXbc11L34Myzi3Ziyz0C9vOoE',
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
             ),
-            const SizedBox(width: 14),
+            SizedBox(width: 16),
+            
+            // Info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     item.displayTitle,
-                    style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
+                    style: GoogleFonts.manrope(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    item.category,
-                    style: GoogleFonts.outfit(color: PremiumTokens.saffronGlow, fontSize: 11),
+                  Row(
+                    children: [
+                      Icon(Iconsax.music, size: 10, color: PremiumTokens.saffronGlow.withValues(alpha: 0.5)),
+                      SizedBox(width: 4),
+                      Text(
+                        item.category.toUpperCase(),
+                        style: GoogleFonts.manrope(
+                          color: PremiumTokens.saffronGlow.withValues(alpha: 0.7),
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-            const Icon(Iconsax.arrow_right_3, color: Colors.white12, size: 16),
+            
+            // Actions
+            IconButton(
+              icon: const Icon(Iconsax.play_circle5, color: PremiumTokens.saffronGlow, size: 28),
+              onPressed: () {},
+            ),
           ],
         ),
       ),
-    );
+    ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1);
   }
 
   Widget _buildEmptyResults() {
@@ -309,7 +398,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         const SizedBox(height: 16),
         Text(
           "No results found on this path",
-          style: GoogleFonts.outfit(color: Colors.white38, fontSize: 15),
+          style: GoogleFonts.manrope(color: Colors.white38, fontSize: 15),
         ),
       ],
     );

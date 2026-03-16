@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import '../core/content_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../core/theme.dart';
 import '../core/design_system.dart';
-import '../core/providers.dart';
 import '../core/localization.dart';
-import '../core/content_provider.dart';
-import 'content_detail_screen.dart';
+import '../core/providers.dart';
+import '../features/content_detail_screen.dart';
 import '../widgets/animated_effects.dart';
+import 'package:flutter/services.dart';
 
 class CategoryScreen extends ConsumerStatefulWidget {
   final String categoryName;
   final List<Color> gradientColors;
 
-  const CategoryScreen({
+  CategoryScreen({
     super.key,
     required this.categoryName,
     required this.gradientColors,
@@ -72,8 +71,8 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        widget.gradientColors[0].withOpacity(0.3),
-                        widget.gradientColors[1].withOpacity(0.1),
+                        widget.gradientColors[0].withValues(alpha: 0.3),
+                        widget.gradientColors[1].withValues(alpha: 0.1),
                         Colors.transparent,
                       ],
                     ),
@@ -88,7 +87,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                           Row(
                             children: [
                               _buildGlassIcon(Iconsax.arrow_left, () => Navigator.pop(context)),
-                              const SizedBox(width: 16),
+                              SizedBox(width: 16),
                               Expanded(
                                 child: Text(
                                   widget.categoryName,
@@ -136,7 +135,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.05),
+                              color: Colors.white.withValues(alpha: 0.05),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(color: Colors.white10),
                             ),
@@ -171,7 +170,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                       ),
                     ),
               
-              const SliverToBoxAdapter(child: SizedBox(height: 100)),
+              SliverToBoxAdapter(child: SizedBox(height: 100)),
             ],
           ),
         ],
@@ -237,7 +236,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
               ),
             ),
             const SizedBox(width: 8),
-            Icon(Iconsax.arrow_right_3, color: widget.gradientColors[0].withOpacity(0.5), size: 18),
+            Icon(Iconsax.arrow_right_3, color: widget.gradientColors[0].withValues(alpha: 0.5), size: 18),
           ],
         ),
       ),

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'animated_effects.dart';
 import '../core/theme.dart';
+import '../core/design_system.dart';
+import 'animated_effects.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// SACRED CARD - Modern content card with ॐ decoration
@@ -61,7 +62,7 @@ class SacredCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 120,
                   color: (isDark ? Colors.white : AppTheme.primaryColor)
-                      .withOpacity(0.06),
+                      .withValues(alpha: 0.06),
                   fontWeight: FontWeight.w300,
                 ),
               ),
@@ -79,7 +80,7 @@ class SacredCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: (isDark ? Colors.white : AppTheme.primaryColor)
-                          .withOpacity(0.12),
+                          .withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(AppTheme.radiusFull),
                     ),
                     child: Row(
@@ -124,7 +125,7 @@ class SacredCard extends StatelessWidget {
                       fontSize: 14,
                       color:
                           (isDark ? Colors.white : AppTheme.lightTextSecondary)
-                              .withOpacity(0.8),
+                              .withValues(alpha: 0.8),
                       height: 1.5,
                     ),
                     maxLines: 2,
@@ -174,7 +175,7 @@ class SacredCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
         border: isPrimary
             ? null
-            : Border.all(color: AppTheme.primaryColor.withOpacity(0.25)),
+            : Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.25)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

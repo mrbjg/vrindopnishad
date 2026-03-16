@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../features/home_screen.dart';
 
 final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
 
@@ -62,3 +63,11 @@ final previouslyAnimatedCountProvider = StateProvider<int>((ref) => 5);
 
 /// Provider for Naam Jap (mantra chanting) counter
 final naamJapCounterProvider = StateProvider<int>((ref) => 0);
+
+/// Provider to track if the user has completed the onboarding flow
+final hasSeenOnboardingProvider = StateProvider<bool>((ref) => false);
+
+/// Provider for the selected category in the Sacred Library
+final navigationIndexProvider = StateProvider<int>((ref) => 0);
+
+final libraryCategoryProvider = StateProvider<String>((ref) => "ALL");

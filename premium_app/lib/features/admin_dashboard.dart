@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import '../core/theme.dart';
+import '../core/content_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:file_picker/file_picker.dart';
-import '../core/content_provider.dart';
-import '../core/theme.dart';
-import '../core/providers.dart';
 import '../core/localization.dart';
+import '../core/providers.dart';
 import '../widgets/animated_effects.dart';
+import 'package:flutter/services.dart';
 
 class AdminDashboard extends ConsumerStatefulWidget {
-  const AdminDashboard({super.key});
+  AdminDashboard({super.key});
 
   @override
   ConsumerState<AdminDashboard> createState() => _AdminDashboardState();
@@ -90,9 +90,9 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                                     boxShadow: [
                                       BoxShadow(
                                         color: AppTheme.primaryColor
-                                            .withOpacity(0.3),
+                                            .withValues(alpha: 0.3),
                                         blurRadius: 12,
-                                        offset: const Offset(0, 4),
+                                        offset: Offset(0, 4),
                                       ),
                                     ],
                                   ),
@@ -148,13 +148,13 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
                     color: isDark
-                        ? Colors.white.withOpacity(0.06)
-                        : Colors.white.withOpacity(0.8),
+                        ? Colors.white.withValues(alpha: 0.06)
+                        : Colors.white.withValues(alpha: 0.8),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: isDark
-                          ? Colors.white.withOpacity(0.1)
-                          : Colors.black.withOpacity(0.05),
+                          ? Colors.white.withValues(alpha: 0.1)
+                          : Colors.black.withValues(alpha: 0.05),
                       width: 1.5,
                     ),
                   ),
@@ -173,7 +173,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                     ),
-                    tabs: const [
+                    tabs: [
                       Tab(icon: Icon(Iconsax.add, size: 20)),
                       Tab(icon: Icon(Iconsax.cloud_add, size: 20)),
                       Tab(icon: Icon(Iconsax.menu_1, size: 20)),
@@ -201,20 +201,20 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
           if (_isProcessing)
             Positioned.fill(
               child: Container(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withValues(alpha: 0.5),
                 child: Center(
                   child: Container(
                     padding: const EdgeInsets.all(32),
                     decoration: BoxDecoration(
                       color: isDark
-                          ? const Color(0xFF1A1A2E).withOpacity(0.95)
-                          : Colors.white.withOpacity(0.95),
+                          ? Color(0xFF1A1A2E).withValues(alpha: 0.95)
+                          : Colors.white.withValues(alpha: 0.95),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const CircularProgressIndicator(),
+                        CircularProgressIndicator(),
                         const SizedBox(height: 20),
                         Text(
                           "Processing...",
@@ -244,13 +244,13 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: isDark
-              ? Colors.white.withOpacity(0.08)
-              : Colors.black.withOpacity(0.05),
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isDark
-                ? Colors.white.withOpacity(0.1)
-                : Colors.black.withOpacity(0.05),
+                ? Colors.white.withValues(alpha: 0.1)
+                : Colors.black.withValues(alpha: 0.05),
           ),
         ),
         child: Icon(
@@ -279,7 +279,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
             description:
                 "Add one piece of sacred content at a time with all details.",
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           PressableScale(
             onTap: () => _showSingleAddDialog(context, l, isDark),
             child: Container(
@@ -382,13 +382,13 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: isDark
-                    ? Colors.white.withOpacity(0.06)
-                    : Colors.black.withOpacity(0.04),
+                    ? Colors.white.withValues(alpha: 0.06)
+                    : Colors.black.withValues(alpha: 0.04),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: isDark
-                      ? Colors.white.withOpacity(0.1)
-                      : Colors.black.withOpacity(0.1),
+                      ? Colors.white.withValues(alpha: 0.1)
+                      : Colors.black.withValues(alpha: 0.1),
                 ),
               ),
               child: Row(
@@ -399,7 +399,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                     size: 18,
                     color: AppTheme.primaryColor,
                   ),
-                  const SizedBox(width: 10),
+                  SizedBox(width: 10),
                   Text(
                     "Download CSV Template",
                     style: GoogleFonts.outfit(
@@ -455,10 +455,10 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: AppTheme.primaryColor.withOpacity(isDark ? 0.12 : 0.08),
+        color: AppTheme.primaryColor.withValues(alpha: isDark ? 0.12 : 0.08),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppTheme.primaryColor.withOpacity(0.25),
+          color: AppTheme.primaryColor.withValues(alpha: 0.25),
           width: 1.5,
         ),
       ),
@@ -472,7 +472,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
             ),
             child: Icon(icon, color: Colors.white, size: 20),
           ),
-          const SizedBox(width: 14),
+          SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -520,13 +520,13 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
           color: isDark
-              ? Colors.white.withOpacity(0.06)
-              : Colors.white.withOpacity(0.8),
+              ? Colors.white.withValues(alpha: 0.06)
+              : Colors.white.withValues(alpha: 0.8),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDark
-                ? Colors.white.withOpacity(0.1)
-                : Colors.black.withOpacity(0.05),
+                ? Colors.white.withValues(alpha: 0.1)
+                : Colors.black.withValues(alpha: 0.05),
             width: 1.5,
           ),
         ),
@@ -535,12 +535,12 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
+                color: color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: color, size: 22),
             ),
-            const SizedBox(width: 14),
+            SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -568,8 +568,8 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
               Iconsax.arrow_right_3,
               size: 20,
               color: isDark
-                  ? Colors.white.withOpacity(0.4)
-                  : Colors.black.withOpacity(0.26),
+                  ? Colors.white.withValues(alpha: 0.4)
+                  : Colors.black.withValues(alpha: 0.26),
             ),
           ],
         ),
@@ -587,13 +587,13 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.white.withOpacity(0.06)
-            : Colors.white.withOpacity(0.8),
+            ? Colors.white.withValues(alpha: 0.06)
+            : Colors.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: isDark
-              ? Colors.white.withOpacity(0.1)
-              : Colors.black.withOpacity(0.05),
+              ? Colors.white.withValues(alpha: 0.1)
+              : Colors.black.withValues(alpha: 0.05),
         ),
       ),
       child: Row(
@@ -605,8 +605,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
               gradient: AppTheme.primaryGradient(context),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(
-              Iconsax.document_text,
+            child: Icon(Iconsax.document_text,
               color: Colors.white,
               size: 18,
             ),
@@ -885,12 +884,12 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.04) : Colors.white,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: isDark
-              ? Colors.white.withOpacity(0.06)
-              : Colors.black.withOpacity(0.05),
+              ? Colors.white.withValues(alpha: 0.06)
+              : Colors.black.withValues(alpha: 0.05),
         ),
       ),
       child: Column(

@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../core/theme.dart';
 import '../core/design_system.dart';
-import '../core/providers.dart';
-import '../widgets/animated_effects.dart';
 
 class NaamJapScreen extends ConsumerStatefulWidget {
   const NaamJapScreen({super.key});
@@ -17,215 +13,223 @@ class NaamJapScreen extends ConsumerStatefulWidget {
 
 class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
     with SingleTickerProviderStateMixin {
-  bool _canTap = true;
-  late AnimationController _pulseController;
-  static const int _cooldownMs = 300;
+  late AnimationController _rotationController;
 
   @override
   void initState() {
     super.initState();
-    _pulseController = AnimationController(
+    _rotationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 200),
-    );
+      duration: const Duration(seconds: 20),
+    )..repeat();
   }
 
   @override
   void dispose() {
-    _pulseController.dispose();
+    _rotationController.dispose();
     super.dispose();
-  }
-
-  void _onTap() {
-    if (!_canTap) return;
-    _pulseController.forward().then((_) => _pulseController.reverse());
-    HapticFeedback.lightImpact();
-    ref.read(naamJapCounterProvider.notifier).state++;
-    setState(() => _canTap = false);
-    Future.delayed(const Duration(milliseconds: _cooldownMs), () {
-      if (mounted) setState(() => _canTap = true);
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final count = ref.watch(naamJapCounterProvider);
-    final malaCount = count ~/ 108;
-    final currentInMala = count % 108;
-    final progress = currentInMala / 108;
-
     return Scaffold(
-      backgroundColor: PremiumTokens.charcoal,
-      body: GestureDetector(
-        onTap: _onTap,
-        behavior: HitTestBehavior.translucent,
-        child: Stack(
-          children: [
-            const Positioned.fill(child: AnimatedSacredBackground()),
-            
-            // Decorative elements
-            Positioned(
-              bottom: -150,
-              left: -100,
-              child: Container(
-                width: 400,
-                height: 400,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: PremiumTokens.saffronGlow.withOpacity(0.03),
-                ),
-              ),
-            ),
-
-            SafeArea(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  child: Column(
+      backgroundColor: PremiumTokens.voidBlack,
+      body: Stack(
+        children: [
+          Positioned.fill(child: PremiumUI.voidBackground()),
+          
+          SafeArea(
+            child: Column(
+              children: [
+                // Top Navigation Bar
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Header
-                      Row(
+                      _buildCircleIconButton(Iconsax.arrow_left_2),
+                      Column(
                         children: [
-                          PremiumUI.glassCard(
-                            padding: const EdgeInsets.all(12),
-                            child: const Icon(Iconsax.heart, color: PremiumTokens.saffronGlow, size: 24),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'नाम जप',
-                                  style: SacredStyles.devanagariMain.copyWith(
-                                    fontSize: 24,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  'Tap anywhere to chant',
-                                  style: GoogleFonts.outfit(color: Colors.white38, fontSize: 13),
-                                ),
-                              ],
+                          Text(
+                            'NOW PLAYING',
+                            style: GoogleFonts.manrope(
+                              color: PremiumTokens.saffronGlow,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 3,
                             ),
                           ),
-                          if (count > 0)
-                            IconButton(
-                              icon: const Icon(Iconsax.refresh, color: Colors.white24),
-                              onPressed: () {
-                                HapticFeedback.mediumImpact();
-                                ref.read(naamJapCounterProvider.notifier).state = 0;
-                              },
-                            ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 48),
-
-                      // Stat Cards
-                      Row(
-                        children: [
-                          Expanded(
-                            child: PremiumUI.glassCard(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    '$malaCount',
-                                    style: GoogleFonts.outfit(fontSize: 36, fontWeight: FontWeight.bold, color: PremiumTokens.saffronGlow),
-                                  ),
-                                  const Text('MALAS', style: TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 1)),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: PremiumUI.glassCard(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    '$currentInMala',
-                                    style: GoogleFonts.outfit(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white),
-                                  ),
-                                  const Text('CURRENT', style: TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 1)),
-                                ],
-                              ),
+                          Text(
+                            'Shrimad Bhagavad Gita',
+                            style: GoogleFonts.newsreader(
+                              color: Colors.white,
+                              fontSize: 16,
                             ),
                           ),
                         ],
                       ),
-
-                      const SizedBox(height: 80),
-
-                      // Main Sacred Button
-                      AnimatedBuilder(
-                        animation: _pulseController,
-                        builder: (context, child) {
-                          final scale = 1.0 - (_pulseController.value * 0.1);
-                          return Transform.scale(scale: scale, child: child);
-                        },
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            SizedBox(
-                              width: 240,
-                              height: 240,
-                              child: CircularProgressIndicator(
-                                value: progress,
-                                strokeWidth: 4,
-                                backgroundColor: Colors.white12,
-                                valueColor: const AlwaysStoppedAnimation(PremiumTokens.saffronGlow),
-                                strokeCap: StrokeCap.round,
-                              ),
-                            ),
-                            Container(
-                              width: 190,
-                              height: 190,
-                              decoration: PremiumTokens.evolvingAura(
-                                color: PremiumTokens.saffronGlow,
-                                intensity: 0.8,
-                              ).copyWith(
-                                gradient: PremiumTokens.saffronPremiumGradient,
-                              ),
-                              child: const Center(
-                                child: Text(
-                                  'ॐ',
-                                  style: TextStyle(fontSize: 84, color: Colors.white, fontWeight: FontWeight.normal),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 60),
-
-                      // Total counter
-                      PremiumUI.glassCard(
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                        child: Column(
-                          children: [
-                            const Text('TOTAL CHANTS', style: TextStyle(color: Colors.white54, fontSize: 12, letterSpacing: 2)),
-                            const SizedBox(height: 8),
-                            Text(
-                              '$count',
-                              style: GoogleFonts.outfit(fontSize: 48, fontWeight: FontWeight.bold, color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
-                      
-                      const SizedBox(height: 120),
+                      _buildCircleIconButton(Iconsax.more_2),
                     ],
                   ),
                 ),
-              ),
+
+                const Spacer(),
+
+                // Central Nebula Disk with Rotation
+                RotationTransition(
+                  turns: _rotationController,
+                  child: PremiumUI.nebulaDisk(
+                    size: 280,
+                    child: ClipOval(
+                      child: PremiumUI.networkImage(
+                        url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBn4KXlGdM09V_vyL6FYniGawEBhjjVTHPtWkncMv7AsR6PnDmJx7em82khx96o3tU2b3i1Xv29wn9YRQoYyoZeajegx50mvb2FhsVMMSfaFhybyyp4s5nWVhvjM-Xy_QSV-yOBYDJ2x9MEKcOFTdGbZgUrn0UE6v0p2K2PQWyKunglhZdM8Zl3m2CwulCpccA2dLrSOn__UtnRnXD-8qj4bbhKvT8rR2TwLW9SujHlkdwDM9eRnU6XwEIsGvxdMY1xt3PWf0sISOE',
+                      ),
+                    ),
+                  ),
+                ),
+
+                const Spacer(),
+
+                // Track Info
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Column(
+                    children: [
+                      Text(
+                        'CHAPTER 02, VERSE 20',
+                        style: GoogleFonts.manrope(
+                          color: PremiumTokens.saffronGlow,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 12,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Eternal Soul',
+                        style: GoogleFonts.newsreader(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      Text(
+                        'The nature of the self',
+                        style: GoogleFonts.manrope(
+                          color: Colors.white38,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 48),
+
+                // Playback Controls
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Column(
+                    children: [
+                      // Progress Bar
+                      Row(
+                        children: [
+                          Text('01:24', style: GoogleFonts.manrope(color: Colors.white38, fontSize: 12)),
+                          Expanded(
+                            child: SliderTheme(
+                              data: SliderTheme.of(context).copyWith(
+                                trackHeight: 4,
+                                activeTrackColor: PremiumTokens.saffronGlow,
+                                inactiveTrackColor: Colors.white.withValues(alpha: 0.1),
+                                thumbColor: Colors.white,
+                                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                                overlayColor: PremiumTokens.saffronGlow.withValues(alpha: 0.2),
+                              ),
+                              child: Slider(value: 0.45, onChanged: (_) {}),
+                            ),
+                          ),
+                          Text('04:52', style: GoogleFonts.manrope(color: Colors.white38, fontSize: 12)),
+                        ],
+                      ),
+                      
+                      const SizedBox(height: 32),
+
+                      // Main Buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Icon(Iconsax.repeate_one, color: Colors.white38, size: 24),
+                          Icon(Iconsax.previous5, color: Colors.white, size: 32),
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.white.withValues(alpha: 0.2),
+                                  blurRadius: 30,
+                                ),
+                              ],
+                            ),
+                            child: const Icon(Iconsax.play5, color: PremiumTokens.voidBlack, size: 40),
+                          ),
+                          Icon(Iconsax.next5, color: Colors.white, size: 32),
+                          Icon(Iconsax.shuffle, color: Colors.white38, size: 24),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 48),
+
+                // Bottom Panel Shortcut
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: PremiumUI.voidGlassCard(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        const Icon(Iconsax.music_playlist, color: PremiumTokens.saffronGlow, size: 20),
+                        const SizedBox(width: 16),
+                        Text(
+                          'UP NEXT: CHAPTER 02, VERSE 21',
+                          style: GoogleFonts.manrope(
+                            color: Colors.white70,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                        const Spacer(),
+                        const Icon(Iconsax.arrow_up_2, color: Colors.white24, size: 16),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 40),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget _buildCircleIconButton(IconData icon) {
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+      ),
+      child: Icon(icon, color: Colors.white, size: 20),
     );
   }
 }
