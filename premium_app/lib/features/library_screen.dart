@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/design_system.dart';
 import '../core/content_provider.dart';
 import '../core/providers.dart';
+import 'content_detail_screen.dart';
+import 'package:flutter/services.dart';
 
 class LibraryScreen extends ConsumerWidget {
   const LibraryScreen({super.key});
@@ -18,34 +20,38 @@ class LibraryScreen extends ConsumerWidget {
           PremiumUI.bokehBackground(),
           PremiumUI.mandalaOverlay(),
           SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(),
-                _buildSearchBar(ref),
-                _buildNowPlaying(),
-                Expanded(
-                  child: Consumer(
-                    builder: (context, ref, child) {
-                      final query = ref.watch(libraryCategoryProvider);
-                      final List<SacredContent> items;
-                      
-                      if (query.startsWith("SEARCH:")) {
-                        items = ref.watch(searchedContentProvider(query.replaceFirst("SEARCH:", "")));
-                      } else if (query == "ALL") {
-                        items = content;
-                      } else {
-                        items = ref.watch(filteredContentProvider(query));
-                      }
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(child: _buildHeader()),
+                SliverToBoxAdapter(child: _buildSearchBar(ref)),
+                SliverToBoxAdapter(child: _buildNowPlaying()),
+                Consumer(
+                  builder: (context, ref, child) {
+                    final content = ref.watch(sacredContentProvider);
+                    final query = ref.watch(libraryCategoryProvider);
+                    final List<SacredContent> items;
+                    
+                    if (query.startsWith("SEARCH:")) {
+                      items = ref.watch(searchedContentProvider(query.replaceFirst("SEARCH:", "")));
+                    } else if (query == "ALL") {
+                      items = content;
+                    } else {
+                      items = ref.watch(filteredContentProvider(query));
+                    }
 
-                      return ListView.builder(
-                        padding: const EdgeInsets.all(24),
-                        itemCount: items.length,
-                        itemBuilder: (context, index) {
-                          return _buildLibraryItem(items[index]);
-                        },
-                      );
-                    },
-                  ),
+                    return SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 120), // Extra bottom padding for FAB
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            return _buildLibraryItem(context, items[index]);
+                          },
+                          childCount: items.length,
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -57,36 +63,43 @@ class LibraryScreen extends ConsumerWidget {
 
   Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Icon(Icons.menu, color: PremiumTokens.nebulaBlue, size: 28),
-          Text(
-            "Sant-Vaani",
-            style: PremiumTokens.displayStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 1,
-            ),
-          ),
-          Row(
+          Column(
             children: [
-              const Icon(Icons.notifications_none, color: PremiumTokens.nebulaBlue, size: 24),
-              const SizedBox(width: 16),
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
-                  image: const DecorationImage(
-                    image: NetworkImage('https://lh3.googleusercontent.com/aida-public/AB6AXuAkQJsMLqDCMwi1jqTeWSOOqq3Wz9ZIpqA9usLZAS95EcvHTBag2RoKJxY0vI0ignkQJ8N7UDe1CbmOARjpZ4djVMMi7DYNHPxPNoYSkcaHePL2qyHdLar7mUl0CW6gMbXv788itHF2vxM4sZWWsBBAQUG96RO8rYlrZNHgfYgQ6IfsKE6u5jOS_QRQe0dd2Fy-5dU6VL7ZLOg1jCrXoMsqJDXEiKCcCuT1CctHQ72_ivF3Rc94CqJae0t_M1fKLDyKMLPrbTHwr8I'),
-                    fit: BoxFit.cover,
-                  ),
+              Text(
+                "SANT-VAANI",
+                style: PremiumTokens.sansStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w300,
+                  letterSpacing: 4,
+                ),
+              ),
+              Text(
+                "SACRED LIBRARY",
+                style: PremiumTokens.sansStyle(
+                  fontSize: 10,
+                  color: PremiumTokens.nebulaBlue,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 2,
                 ),
               ),
             ],
+          ),
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
+              image: const DecorationImage(
+                image: NetworkImage('https://lh3.googleusercontent.com/aida-public/AB6AXuAkQJsMLqDCMwi1jqTeWSOOqq3Wz9ZIpqA9usLZAS95EcvHTBag2RoKJxY0vI0ignkQJ8N7UDe1CbmOARjpZ4djVMMi7DYNHPxPNoYSkcaHePL2qyHdLar7mUl0CW6gMbXv788itHF2vxM4sZWWsBBAQUG96RO8rYlrZNHgfYgQ6IfsKE6u5jOS_QRQe0dd2Fy-5dU6VL7ZLOg1jCrXoMsqJDXEiKCcCuT1CctHQ72_ivF3Rc94CqJae0t_M1fKLDyKMLPrbTHwr8I'),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
         ],
       ),
@@ -177,67 +190,80 @@ class LibraryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildLibraryItem(SacredContent item) {
+  Widget _buildLibraryItem(BuildContext context, SacredContent item) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: PremiumUI.voidGlassCard(
-        padding: const EdgeInsets.all(16),
-        borderRadius: 16,
-        optimized: true,
-        child: Row(
-          children: [
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: PremiumTokens.surfaceCharcoal,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1)),
-              ),
-              child: const Center(
-                child: Icon(Icons.spa, color: PremiumTokens.nebulaBlue, size: 28),
-              ),
+      child: GestureDetector(
+        onTap: () {
+          HapticFeedback.lightImpact();
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ContentDetailScreen(content: item),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.title,
-                    style: PremiumTokens.sansStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: PremiumTokens.nebulaBlue,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Icon(Icons.schedule, color: Colors.white24, size: 12),
-                      const SizedBox(width: 4),
-                      Text(
-                        "10:45 • ${item.category}",
-                        style: PremiumTokens.sansStyle(
-                          fontSize: 12,
-                          color: Colors.white38,
-                        ),
+          );
+        },
+        child: PremiumUI.voidGlassCard(
+          padding: const EdgeInsets.all(16),
+          borderRadius: 16,
+          optimized: true,
+          child: Row(
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: PremiumTokens.surfaceCharcoal,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1)),
+                ),
+                child: Center(
+                  child: item.imageUrl != null 
+                    ? PremiumUI.networkImage(url: item.imageUrl, borderRadius: BorderRadius.circular(8))
+                    : const Icon(Icons.spa, color: PremiumTokens.nebulaBlue, size: 28),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.title,
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(Icons.schedule, color: Colors.white24, size: 12),
+                        const SizedBox(width: 4),
+                        Text(
+                          "10:45 • ${item.category}",
+                          style: PremiumTokens.sansStyle(
+                            fontSize: 12,
+                            color: Colors.white38,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
+                ),
+                child: const Icon(Icons.play_arrow, color: PremiumTokens.nebulaBlue, size: 20),
               ),
-              child: const Icon(Icons.play_arrow, color: PremiumTokens.nebulaBlue, size: 20),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

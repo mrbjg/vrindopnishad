@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/design_system.dart';
 import '../core/providers.dart';
+import 'package:flutter/services.dart';
 
 class NaamJapScreen extends ConsumerStatefulWidget {
   const NaamJapScreen({super.key});
@@ -30,6 +31,8 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isFocusMode = ref.watch(focusModeProvider);
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -40,19 +43,26 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
             top: MediaQuery.of(context).size.height * 0.2,
             left: 0,
             right: 0,
-            child: Center(child: PremiumUI.nebulaGlow(size: 450, opacity: 0.8)),
+            child: Center(child: PremiumUI.nebulaGlow(size: isFocusMode ? 550 : 450, opacity: isFocusMode ? 1.0 : 0.8)),
           ),
 
           SafeArea(
             child: Column(
               children: [
-                _buildTopNav(context),
+                _buildTopNav(context, isFocusMode),
                 const Spacer(),
-                _buildCentralDisk(),
+                _buildCentralDisk(isFocusMode),
                 const Spacer(),
-                _buildTrackInfo(),
-                _buildPlaybackControls(),
-                _buildAestheticWaveform(),
+                PremiumUI.focusContainer(
+                  isFocusMode: isFocusMode,
+                  child: Column(
+                    children: [
+                      _buildTrackInfo(),
+                      _buildPlaybackControls(),
+                      _buildAestheticWaveform(),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 20),
               ],
             ),
@@ -62,83 +72,104 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
     );
   }
 
-  Widget _buildTopNav(BuildContext context) {
+  Widget _buildTopNav(BuildContext context, bool isFocusMode) {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Icon(Icons.expand_more, color: Colors.white70, size: 32),
-          Text(
-            "SANT-VAANI",
-            style: PremiumTokens.sansStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w300,
-              letterSpacing: 4,
-              color: Colors.white38,
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: const Icon(Icons.expand_more, color: Colors.white70, size: 32)
+          ),
+          PremiumUI.focusContainer(
+            isFocusMode: isFocusMode,
+            child: Text(
+              "SANT-VAANI",
+              style: PremiumTokens.sansStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w300,
+                letterSpacing: 4,
+                color: Colors.white38,
+              ),
             ),
           ),
-          const Icon(Icons.more_horiz, color: Colors.white70, size: 32),
+          // Focus Toggle
+          GestureDetector(
+            onTap: () {
+              HapticFeedback.mediumImpact();
+              ref.read(focusModeProvider.notifier).state = !isFocusMode;
+            },
+            child: Icon(
+              isFocusMode ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
+              color: isFocusMode ? PremiumTokens.nebulaBlue : Colors.white70,
+              size: 28,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildCentralDisk() {
-    return RotationTransition(
-      turns: _rotationController,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Outer Glow/Progress Ring Simulation
-          Container(
-            width: 280,
-            height: 280,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2),
-                width: 1,
-              ),
-            ),
-          ),
-          // "Starlight Ring"
-          Container(
-            width: 260,
-            height: 260,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.transparent,
-                width: 2,
-              ),
-            ),
-            child: CustomPaint(
-              painter: _StarlightRingPainter(color: PremiumTokens.nebulaBlue),
-            ),
-          ),
-          // Glass Disk
-          PremiumUI.voidGlassCard(
-            blur: 20,
-            borderRadius: 140,
-            padding: EdgeInsets.zero,
-            child: Container(
-              width: 220,
-              height: 220,
-              alignment: Alignment.center,
-              child: const Text(
-                'ॐ',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 80,
-                  shadows: [
-                    Shadow(color: Colors.white54, blurRadius: 20),
-                  ],
+  Widget _buildCentralDisk(bool isFocusMode) {
+    return PremiumUI.auraBreathing(
+      beginScale: 1.0,
+      endScale: isFocusMode ? 1.1 : 1.05,
+      child: RotationTransition(
+        turns: _rotationController,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Outer Glow/Progress Ring Simulation
+            Container(
+              width: isFocusMode ? 320 : 280,
+              height: isFocusMode ? 320 : 280,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: PremiumTokens.nebulaBlue.withValues(alpha: isFocusMode ? 0.4 : 0.2),
+                  width: 1,
                 ),
               ),
             ),
-          ),
-        ],
+            // "Starlight Ring"
+            Container(
+              width: isFocusMode ? 300 : 260,
+              height: isFocusMode ? 300 : 260,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.transparent,
+                  width: 2,
+                ),
+              ),
+              child: CustomPaint(
+                painter: _StarlightRingPainter(color: PremiumTokens.nebulaBlue),
+              ),
+            ),
+            // Glass Disk
+            PremiumUI.voidGlassCard(
+              blur: isFocusMode ? 30 : 20,
+              borderRadius: isFocusMode ? 140 : 110,
+              padding: EdgeInsets.zero,
+              child: Container(
+                width: isFocusMode ? 260 : 220,
+                height: isFocusMode ? 260 : 220,
+                alignment: Alignment.center,
+                child: Text(
+                  'ॐ',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isFocusMode ? 100 : 80,
+                    shadows: [
+                      Shadow(color: Colors.white54, blurRadius: isFocusMode ? 40 : 20),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

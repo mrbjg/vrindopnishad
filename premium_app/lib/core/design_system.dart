@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'theme.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
@@ -397,6 +398,10 @@ class PremiumUI extends StatelessWidget {
           _buildBokeh(top: -100, right: -50, size: 300, color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1)),
           _buildBokeh(bottom: -50, left: -50, size: 250, color: PremiumTokens.nebulaBlue.withValues(alpha: 0.08)),
           _buildBokeh(top: 100, left: 50, size: 150, color: PremiumTokens.celestialGlow.withValues(alpha: 0.05)),
+          
+          // Recognizable Celestial Elements
+          _buildPlanet(top: 120, right: 60, size: 40, color: Colors.blueAccent.withValues(alpha: 0.3)),
+          _buildMoon(top: 60, left: 40, size: 80),
         ],
       ),
     );
@@ -427,6 +432,11 @@ class PremiumUI extends StatelessWidget {
           // Nebula flares
           _buildBokeh(top: -150, left: -100, size: 500, color: Color(0xFF256AF4).withValues(alpha: 0.1)),
           _buildBokeh(bottom: -100, right: -150, size: 400, color: Color(0xFF256AF4).withValues(alpha: 0.05)),
+          
+          // Celestial Elements
+          _buildMoon(bottom: 100, left: 60, size: 100),
+          _buildPlanet(top: 200, right: 80, size: 30, color: Colors.deepPurpleAccent.withValues(alpha: 0.2)),
+          
           // Star dust (simulated with small faint bokeh)
           _buildBokeh(top: 200, right: 100, size: 200, color: Colors.white.withValues(alpha: 0.02)),
         ],
@@ -462,6 +472,84 @@ class PremiumUI extends StatelessWidget {
           shape: BoxShape.circle,
           gradient: RadialGradient(
             colors: [color, Colors.transparent],
+          ),
+        ),
+      ),
+    );
+  }
+
+  static Widget _buildMoon({double? top, double? bottom, double? left, double? right, required double size}) {
+    return Positioned(
+      top: top,
+      bottom: bottom,
+      left: left,
+      right: right,
+      child: Opacity(
+        opacity: 0.6,
+        child: Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.white.withValues(alpha: 0.2),
+                blurRadius: 30,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: Stack(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white70,
+                ),
+              ),
+              Positioned(
+                left: size * 0.2, // Offset to create crescent
+                child: Container(
+                  width: size,
+                  height: size,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: PremiumTokens.voidBlack,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  static Widget _buildPlanet({double? top, double? bottom, double? left, double? right, required double size, required Color color}) {
+    return Positioned(
+      top: top,
+      bottom: bottom,
+      left: left,
+      right: right,
+      child: Opacity(
+        opacity: 0.4,
+        child: Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: RadialGradient(
+              colors: [color.withValues(alpha: 0.8), color.withValues(alpha: 0.1), Colors.transparent],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: color.withValues(alpha: 0.3),
+                blurRadius: 20,
+              ),
+            ],
+          ),
+          child: CustomPaint(
+            painter: _PlanetRingsPainter(color: color.withValues(alpha: 0.2)),
           ),
         ),
       ),
@@ -600,6 +688,59 @@ class PremiumUI extends StatelessWidget {
     return imageWidget;
   }
 
+  /// FocusContainer: Fades children based on focus mode
+  static Widget focusContainer({
+    required bool isFocusMode,
+    required Widget child,
+    Duration duration = const Duration(milliseconds: 600),
+  }) {
+    return AnimatedOpacity(
+      duration: duration,
+      opacity: isFocusMode ? 0.0 : 1.0,
+      curve: Curves.easeInOut,
+      child: IgnorePointer(
+        ignoring: isFocusMode,
+        child: child,
+      ),
+    );
+  }
+
+  /// SacredDivider: A spiritual separator with a central icon
+  static Widget sacredDivider({Color? color, double width = 60}) {
+    final activeColor = color ?? Colors.white.withValues(alpha: 0.1);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(width: width, height: 1, decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [Colors.transparent, activeColor])
+        )),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text("ॐ", style: GoogleFonts.spectral(color: activeColor, fontSize: 18)),
+        ),
+        Container(width: width, height: 1, decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [activeColor, Colors.transparent])
+        )),
+      ],
+    );
+  }
+
+  /// AuraBreathingAnimation: A subtle pulse effect for immersive screens
+  static Widget auraBreathing({
+    required Widget child,
+    double beginScale = 1.0,
+    double endScale = 1.05,
+    Duration duration = const Duration(milliseconds: 4000),
+  }) {
+    return child.animate(onPlay: (c) => c.repeat(reverse: true))
+        .scale(
+          begin: Offset(beginScale, beginScale),
+          end: Offset(endScale, endScale),
+          duration: duration,
+          curve: Curves.easeInOutSine,
+        );
+  }
+
   /// Premium Button with Saffron Gradient
   static Widget primaryButton({
     required String text,
@@ -648,4 +789,31 @@ class PremiumUI extends StatelessWidget {
   Widget build(BuildContext context) {
     return const SizedBox.shrink();
   }
+}
+
+class _PlanetRingsPainter extends CustomPainter {
+  final Color color;
+  _PlanetRingsPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+
+    final center = Offset(size.width / 2, size.height / 2);
+    final rect = Rect.fromCenter(center: center, width: size.width * 1.8, height: size.height * 0.4);
+    
+    // Rotate the rings slightly
+    canvas.save();
+    canvas.translate(center.dx, center.dy);
+    canvas.rotate(0.5);
+    canvas.translate(-center.dx, -center.dy);
+    canvas.drawOval(rect, paint);
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

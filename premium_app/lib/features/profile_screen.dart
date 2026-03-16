@@ -208,6 +208,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   }) {
     return PremiumUI.glassCard(
       padding: const EdgeInsets.all(12),
+      optimized: true,
       child: ListTile(
         onTap: () {
           HapticFeedback.lightImpact();

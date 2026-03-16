@@ -14,14 +14,15 @@ class JournalScreen extends ConsumerWidget {
         children: [
           PremiumUI.voidBackground(),
           SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(),
-                _buildMoonPhase(),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    children: [
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(child: _buildHeader()),
+                SliverToBoxAdapter(child: _buildMoonPhase()),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
                       _buildTimelineItem(
                         title: "Eternal Stillness",
                         time: "11:44 PM",
@@ -35,7 +36,8 @@ class JournalScreen extends ConsumerWidget {
                         content: "The darkness is not empty, it is full of potential. Today I realized that letting go is not losing; it is simply making space for the infinite...",
                         date: "Oct 22",
                       ),
-                    ],
+                      const SizedBox(height: 120), // Padding for FAB
+                    ]),
                   ),
                 ),
               ],

@@ -39,75 +39,53 @@ class HomeScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-                title: Consumer(
-                  builder: (context, ref, _) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Icon(Iconsax.menu, color: PremiumTokens.nebulaBlue, size: 28),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2),
-                                shape: BoxShape.circle,
-                                border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
-                              ),
-                              child: const Icon(Icons.person, color: PremiumTokens.nebulaBlue, size: 24),
-                            ),
-                            const SizedBox(width: 12),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'WELCOME',
-                                  style: GoogleFonts.manrope(
-                                    color: PremiumTokens.nebulaBlue,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 2,
-                                  ),
-                                ),
-                                Text(
-                                  'Arjun Singh', // Placeholder and template name
-                                  style: GoogleFonts.manrope(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                        Text(
+                          "SANT-VAANI",
+                          style: PremiumTokens.sansStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w300,
+                            letterSpacing: 4,
+                          ),
                         ),
-                        Row(
-                          children: [
-                            _buildCircleButton(Iconsax.search_normal),
-                            const SizedBox(width: 8),
-                            Stack(
-                              children: [
-                                _buildCircleButton(Iconsax.notification),
-                                Positioned(
-                                  top: 8,
-                                  right: 8,
-                                  child: Container(
-                                    width: 8,
-                                    height: 8,
-                                    decoration: BoxDecoration(color: PremiumTokens.nebulaBlue,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                        Text(
+                          "ETHEREAL DASHBOARD",
+                          style: PremiumTokens.sansStyle(
+                            fontSize: 10,
+                            color: PremiumTokens.nebulaBlue,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 2,
+                          ),
                         ),
                       ],
-                    );
-                  },
+                    ),
+                    Row(
+                      children: [
+                        const Icon(Iconsax.notification, color: PremiumTokens.nebulaBlue, size: 24),
+                        const SizedBox(width: 16),
+                        Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
+                            image: const DecorationImage(
+                              image: NetworkImage('https://lh3.googleusercontent.com/aida-public/AB6AXuAkQJsMLqDCMwi1jqTeWSOOqq3Wz9ZIpqA9usLZAS95EcvHTBag2RoKJxY0vI0ignkQJ8N7UDe1CbmOARjpZ4djVMMi7DYNHPxPNoYSkcaHePL2qyHdLar7mUl0CW6gMbXv788itHF2vxM4sZWWsBBAQUG96RO8rYlrZNHgfYgQ6IfsKE6u5jOS_QRQe0dd2Fy-5dU6VL7ZLOg1jCrXoMsqJDXEiKCcCuT1CctHQ72_ivF3Rc94CqJae0t_M1fKLDyKMLPrbTHwr8I'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
+                automaticallyImplyLeading: false,
               ),
 
               const SliverToBoxAdapter(
@@ -174,6 +152,7 @@ class HomeScreen extends ConsumerWidget {
       padding: const EdgeInsets.all(20),
       child: PremiumUI.voidGlassCard(
         padding: const EdgeInsets.all(24),
+        optimized: true,
         child: Column(
           children: [
             Row(

@@ -96,3 +96,6 @@ final hasSeenOnboardingProvider = StateProvider<bool>((ref) => false);
 final navigationIndexProvider = StateProvider<int>((ref) => 0);
 
 final libraryCategoryProvider = StateProvider<String>((ref) => "ALL");
+
+/// Global Focus Mode provider for immersive spiritual experience
+final focusModeProvider = StateProvider<bool>((ref) => false);

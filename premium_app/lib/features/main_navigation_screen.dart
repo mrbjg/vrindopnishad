@@ -45,75 +45,64 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
       backgroundColor: PremiumTokens.voidBlack,
       body: IndexedStack(index: currentIndex, children: _screens),
       extendBody: true,
-      bottomNavigationBar: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          // Floating Bar
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(100),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                child: Container(
-                  height: 72,
-                  decoration: BoxDecoration(
-                    color: barBgColor,
-                    borderRadius: BorderRadius.circular(100),
-                    border: Border.all(color: accentColor.withValues(alpha: 0.1)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: accentColor.withValues(alpha: 0.1),
-                        blurRadius: 20,
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildNavItem(0, Iconsax.home_1, "Home", accentColor, currentIndex),
-                        _buildNavItem(1, Iconsax.book_1, "Library", accentColor, currentIndex),
-                        const SizedBox(width: 56), // Space for FAB
-                        _buildNavItem(3, Iconsax.book, "Journal", accentColor, currentIndex),
-                        _buildNavItem(4, Iconsax.user, "Profile", accentColor, currentIndex),
-                      ],
-                    ),
-                  ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(top: 24),
+        child: GestureDetector(
+          onTap: () => _onItemTapped(2),
+          child: Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              gradient: PremiumTokens.nebulaGradient,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white10, width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: accentColor.withValues(alpha: 0.5),
+                  blurRadius: 25,
+                  offset: const Offset(0, 4),
                 ),
-              ),
+              ],
+            ),
+            child: Icon(
+              currentIndex == 2 ? Iconsax.music_play5 : Iconsax.refresh, 
+              color: Colors.white, 
+              size: 32
             ),
           ),
-          // Center FAB
-          Positioned(
-            bottom: 48,
-            child: GestureDetector(
-              onTap: () => _onItemTapped(2),
-              child: Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  gradient: PremiumTokens.nebulaGradient,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white10, width: 2),
-                  boxShadow: [
-                    BoxShadow(
-                      color: accentColor.withValues(alpha: 0.5),
-                      blurRadius: 25,
-                      offset: const Offset(0, 4),
-                    ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        height: 100,
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(30),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            child: BottomAppBar(
+              height: 72,
+              color: barBgColor,
+              shape: const CircularNotchedRectangle(),
+              notchMargin: 8,
+              padding: EdgeInsets.zero,
+              elevation: 0,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildNavItem(0, Iconsax.home_1, "Home", accentColor, currentIndex),
+                    _buildNavItem(1, Iconsax.book_1, "Library", accentColor, currentIndex),
+                    const SizedBox(width: 56), // Notch space
+                    _buildNavItem(3, Iconsax.book, "Journal", accentColor, currentIndex),
+                    _buildNavItem(4, Iconsax.user, "Profile", accentColor, currentIndex),
                   ],
                 ),
-                child: Icon(
-                  currentIndex == 2 ? Iconsax.music_play5 : Iconsax.refresh, 
-                  color: Colors.white, 
-                  size: 32
-                ),
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

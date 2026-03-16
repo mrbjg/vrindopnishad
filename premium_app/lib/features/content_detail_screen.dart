@@ -96,6 +96,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final currentLanguage = ref.watch(languageProvider);
+    final isFocusMode = ref.watch(focusModeProvider);
     final l = AppLocalization(currentLanguage);
 
     final displayTitle =
@@ -119,43 +120,62 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               ),
 
               SliverToBoxAdapter(
-                child: _buildPremiumHero(displayTitle, displayCategory),
+                child: PremiumUI.focusContainer(
+                  isFocusMode: isFocusMode,
+                  child: _buildPremiumHero(displayTitle, displayCategory),
+                ),
               ),
 
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 32, 20, 200),
+                padding: EdgeInsets.fromLTRB(20, isFocusMode ? 60 : 32, 20, 200),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
-                    // Sanskrit Card
-                    _buildPremiumSanskritCard(l),
-                    const SizedBox(height: 24),
+                    // Sanskrit Card - Always visible but styled for focus
+                    _buildPremiumSanskritCard(l, isFocusMode),
+                    
+                    const SizedBox(height: 32),
+                    PremiumUI.sacredDivider(color: Colors.white.withValues(alpha: isFocusMode ? 0.3 : 0.05)),
+                    const SizedBox(height: 32),
 
-                    // Meaning Sections
-                    _buildPremiumContentSection(
-                      title: l.translate('hindi_meaning'),
-                      content: widget.content?.hindiMeaning ?? "",
-                      icon: Iconsax.heart,
-                      accentColor: Colors.redAccent,
+                    // Meaning Sections - Hidden/Simplified in Focus Mode
+                    PremiumUI.focusContainer(
+                      isFocusMode: isFocusMode,
+                      child: Column(
+                        children: [
+                          _buildPremiumContentSection(
+                            title: l.translate('hindi_meaning'),
+                            content: widget.content?.hindiMeaning ?? "",
+                            icon: Iconsax.heart,
+                            accentColor: Colors.redAccent,
+                          ),
+                          const SizedBox(height: 16),
+
+                          _buildPremiumContentSection(
+                            title: l.translate('english_translation'),
+                            content: widget.content?.translation ?? "",
+                            icon: Iconsax.language_circle,
+                            accentColor: Colors.blueAccent,
+                          ),
+                        ],
+                      ),
                     ),
+                    
                     const SizedBox(height: 16),
-
-                    _buildPremiumContentSection(
-                      title: l.translate('english_translation'),
-                      content: widget.content?.translation ?? "",
-                      icon: Iconsax.language_circle,
-                      accentColor: Colors.blueAccent,
-                    ),
-                    const SizedBox(height: 16),
-
+                    
+                    // Commentary remains but simplified
                     _buildPremiumContentSection(
                       title: l.translate('commentary'),
                       content: widget.content?.commentary ?? "",
                       icon: Iconsax.lamp_charge,
                       accentColor: PremiumTokens.saffronGlow,
+                      isFocusMode: isFocusMode,
                     ),
                     const SizedBox(height: 32),
 
-                    Center(child: _buildPremiumFontControls()),
+                    PremiumUI.focusContainer(
+                      isFocusMode: isFocusMode,
+                      child: Center(child: _buildPremiumFontControls()),
+                    ),
                     
                     const SizedBox(height: 48),
                     Center(
@@ -171,18 +191,21 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           ),
 
           // Floating Header
-          _buildPremiumHeader(displayTitle),
+          _buildPremiumHeader(displayTitle, isFocusMode),
 
-          // Audio Toggle
+          // Audio Toggle - Fades in Focus Mode
           Positioned(
             left: 20,
             right: 20,
             bottom: 32,
-            child: AnimatedSwitcher(
-              duration: 300.ms,
-              child: _showAudioPlayer
-                  ? _buildPremiumAudioPlayer()
-                  : _buildAudioFloatingToggle(),
+            child: PremiumUI.focusContainer(
+              isFocusMode: isFocusMode,
+              child: AnimatedSwitcher(
+                duration: 300.ms,
+                child: _showAudioPlayer
+                    ? _buildPremiumAudioPlayer()
+                    : _buildAudioFloatingToggle(),
+              ),
             ),
           ),
         ],
@@ -228,7 +251,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  Widget _buildPremiumHeader(String title) {
+  Widget _buildPremiumHeader(String title, bool isFocusMode) {
     return Positioned(
       top: 0,
       left: 0,
@@ -241,7 +264,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           right: 12,
         ),
         decoration: BoxDecoration(
-          color: _showCompactHeader ? PremiumTokens.charcoal.withValues(alpha: 0.9) : Colors.transparent,
+          color: (_showCompactHeader && !isFocusMode) ? PremiumTokens.charcoal.withValues(alpha: 0.9) : Colors.transparent,
         ),
         child: Row(
           children: [
@@ -250,7 +273,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             Expanded(
               child: AnimatedOpacity(
                 duration: 200.ms,
-                opacity: _showCompactHeader ? 1.0 : 0.0,
+                opacity: (_showCompactHeader && !isFocusMode) ? 1.0 : 0.0,
                 child: Text(
                   title,
                   style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
@@ -259,15 +282,32 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 ),
               ),
             ),
+            // Focus Mode Toggle
             _buildHeaderCircleButton(
-              widget.content != null && ref.watch(isFavoriteProvider(widget.content!.id))
-                  ? Iconsax.heart5
-                  : Iconsax.heart,
-              _toggleFavorite,
-              isActive: widget.content != null && ref.watch(isFavoriteProvider(widget.content!.id)),
+              isFocusMode ? Iconsax.eye : Iconsax.eye_slash,
+              () {
+                HapticFeedback.mediumImpact();
+                ref.read(focusModeProvider.notifier).state = !isFocusMode;
+              },
+              isActive: isFocusMode,
             ),
             const SizedBox(width: 8),
-            _buildHeaderCircleButton(Iconsax.send_2, _shareContent),
+            PremiumUI.focusContainer(
+              isFocusMode: isFocusMode,
+              child: Row(
+                children: [
+                  _buildHeaderCircleButton(
+                    widget.content != null && ref.watch(isFavoriteProvider(widget.content!.id))
+                        ? Iconsax.heart5
+                        : Iconsax.heart,
+                    _toggleFavorite,
+                    isActive: widget.content != null && ref.watch(isFavoriteProvider(widget.content!.id)),
+                  ),
+                  const SizedBox(width: 8),
+                  _buildHeaderCircleButton(Iconsax.send_2, _shareContent),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -288,37 +328,43 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  Widget _buildPremiumSanskritCard(AppLocalization l) {
+  Widget _buildPremiumSanskritCard(AppLocalization l, bool isFocusMode) {
     final text = widget.content?.sanskritText ?? "";
     return PremiumUI.glassCard(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(isFocusMode ? 32 : 24),
+      blur: isFocusMode ? 25 : 15,
+      opacity: isFocusMode ? 0.05 : 0.1,
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "MANTRA / SLOKA",
-                style: GoogleFonts.outfit(color: PremiumTokens.saffronGlow, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 2),
-              ),
-              IconButton(
-                onPressed: () {
-                  Clipboard.setData(ClipboardData(text: text));
-                  HapticFeedback.mediumImpact();
-                },
-                icon: const Icon(Iconsax.copy, color: Colors.white38, size: 18),
-              ),
-            ],
+          PremiumUI.focusContainer(
+            isFocusMode: isFocusMode,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "MANTRA / SLOKA",
+                  style: GoogleFonts.outfit(color: PremiumTokens.saffronGlow, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 2),
+                ),
+                IconButton(
+                  onPressed: () {
+                    Clipboard.setData(ClipboardData(text: text));
+                    HapticFeedback.mediumImpact();
+                  },
+                  icon: const Icon(Iconsax.copy, color: Colors.white38, size: 18),
+                ),
+              ],
+            ),
           ),
-          const Divider(color: Colors.white10, height: 24),
+          if (!isFocusMode) const Divider(color: Colors.white10, height: 24),
           SelectableText(
             text,
             textAlign: TextAlign.center,
             style: GoogleFonts.spectral(
-              fontSize: _fontSize + 4,
+              fontSize: _fontSize + (isFocusMode ? 8 : 4),
               color: PremiumTokens.saffronGlow,
               fontWeight: FontWeight.bold,
               height: 1.8,
+              letterSpacing: isFocusMode ? 0.5 : 0,
             ),
           ),
         ],
@@ -331,30 +377,37 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     required String content,
     required IconData icon,
     required Color accentColor,
+    bool isFocusMode = false,
   }) {
     if (content.isEmpty) return const SizedBox.shrink();
     return PremiumUI.glassCard(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: isFocusMode ? 32 : 20),
+      opacity: isFocusMode ? 0.03 : 0.1,
+      blur: isFocusMode ? 20 : 15,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(icon, color: accentColor, size: 18),
-              const SizedBox(width: 12),
-              Text(
-                title.toUpperCase(),
-                style: GoogleFonts.outfit(color: accentColor, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1),
-              ),
-            ],
+          PremiumUI.focusContainer(
+            isFocusMode: isFocusMode,
+            child: Row(
+              children: [
+                Icon(icon, color: accentColor, size: 18),
+                const SizedBox(width: 12),
+                Text(
+                  title.toUpperCase(),
+                  style: GoogleFonts.outfit(color: accentColor, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 16),
+          if (!isFocusMode) const SizedBox(height: 16),
           SelectableText(
             content,
             style: GoogleFonts.outfit(
-              fontSize: _fontSize,
-              color: Colors.white.withValues(alpha: 0.85),
+              fontSize: isFocusMode ? _fontSize + 2 : _fontSize,
+              color: Colors.white.withValues(alpha: isFocusMode ? 0.95 : 0.85),
               height: 1.8,
+              letterSpacing: isFocusMode ? 0.2 : 0,
             ),
           ),
         ],

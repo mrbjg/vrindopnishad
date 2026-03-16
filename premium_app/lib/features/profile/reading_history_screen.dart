@@ -57,6 +57,7 @@ class ReadingHistoryScreen extends StatelessWidget {
                           padding: const EdgeInsets.only(bottom: 12),
                           child: PremiumUI.voidGlassCard(
                             padding: EdgeInsets.zero,
+                            optimized: true,
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
