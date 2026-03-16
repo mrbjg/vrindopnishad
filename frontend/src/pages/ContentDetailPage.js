@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ApiContext } from '../App';
-import Loader from '../components/Loader';
-import { ArrowLeft, Music, Image as ImageIcon, Video, BookOpen } from 'lucide-react';
+import { ArrowLeft, Music, Image as ImageIcon, Video } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 
 const ContentDetailPage = () => {
@@ -12,20 +11,19 @@ const ContentDetailPage = () => {
   const [loading, setLoading] = useState(!apiService.getCachedData(`id_${id}`));
 
   useEffect(() => {
-    fetchContent();
+    const fetchContentData = async () => {
+      try {
+        setLoading(true);
+        const data = await apiService.getContentById(id);
+        setContent(data);
+      } catch (error) {
+        console.error('Error fetching content:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchContentData();
   }, [id, apiService]);
-
-  const fetchContent = async () => {
-    try {
-      setLoading(true);
-      const data = await apiService.getContentById(id);
-      setContent(data);
-    } catch (error) {
-      console.error('Error fetching content:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (loading) {
     return (

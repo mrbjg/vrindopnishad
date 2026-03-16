@@ -12,7 +12,6 @@ import LoaderDemo from './pages/LoaderDemo';
 import { LoadingProvider } from './contexts/LoadingContext';
 import { apiService } from './services/api';
 import { ThemeProvider } from './contexts/ThemeContext';
-import Loader from './components/Loader';
 import Layout from './components/Layout';
 
 import { auth } from './firebase';

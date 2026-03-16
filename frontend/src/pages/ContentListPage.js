@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { ApiContext } from '../App';
-import { Search, Filter, ArrowRight, Tag } from 'lucide-react';
+import { Search, ArrowRight, Tag } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 
 const ContentListPage = () => {
@@ -21,22 +21,21 @@ const ContentListPage = () => {
   }, [searchTerm]);
 
   useEffect(() => {
-    fetchData();
-  }, [selectedCategory]);
-
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const data = await apiService.getAllContent(selectedCategory);
-      const cats = await apiService.getCategories();
-      setContent(data);
-      setCategories(cats);
-    } catch (error) {
-      console.error('Error fetching content:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const fetchDataContent = async () => {
+      setLoading(true);
+      try {
+        const data = await apiService.getAllContent(selectedCategory);
+        const cats = await apiService.getCategories();
+        setContent(data);
+        setCategories(cats);
+      } catch (error) {
+        console.error('Error fetching content:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDataContent();
+  }, [selectedCategory, apiService]);
 
   const filteredContent = content.filter(item => 
     item.title?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
