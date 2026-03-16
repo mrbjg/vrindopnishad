@@ -1,0 +1,287 @@
+import 'dart:ui';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import '../core/theme.dart';
+import '../core/design_system.dart';
+import '../core/auth_provider.dart';
+import 'profile/saved_items_screen.dart';
+import 'profile/reading_history_screen.dart';
+import 'profile/settings_screen.dart';
+import 'profile/about_screen.dart';
+import '../widgets/animated_effects.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+
+class ProfileScreen extends ConsumerStatefulWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends ConsumerState<ProfileScreen>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    final authState = ref.watch(authStateProvider);
+    final user = authState.value;
+
+    return Scaffold(
+      backgroundColor: PremiumTokens.charcoal,
+      body: Stack(
+        children: [
+          const Positioned.fill(child: AnimatedSacredBackground()),
+          
+          CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              // Premium Header
+              SliverToBoxAdapter(
+                child: _PremiumProfileHeader(user: user),
+              ),
+
+              // Menu Sections
+              SliverPadding(
+                padding: const EdgeInsets.all(24),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    _buildPremiumSectionTitle("Your Sacred Collection"),
+                    const SizedBox(height: 16),
+                    _buildPremiumMenuItem(
+                      icon: Iconsax.archive_book,
+                      title: "Saved Items",
+                      subtitle: "Your spiritual vault",
+                      color: PremiumTokens.saffronGlow,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const SavedItemsScreen()),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildPremiumMenuItem(
+                      icon: Iconsax.clock,
+                      title: "Journey History",
+                      subtitle: "Continue your reflections",
+                      color: Colors.blueAccent,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const ReadingHistoryScreen()),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+
+                    _buildPremiumSectionTitle("Preferences & Self"),
+                    const SizedBox(height: 16),
+                    _buildPremiumMenuItem(
+                      icon: Iconsax.setting_2,
+                      title: "Settings",
+                      subtitle: "Notifications & Account",
+                      color: Colors.purpleAccent,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildPremiumMenuItem(
+                      icon: Iconsax.info_circle,
+                      title: "About Divine Path",
+                      subtitle: "Vision & Mission",
+                      color: Colors.tealAccent,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const AboutScreen()),
+                      ),
+                    ),
+                    const SizedBox(height: 48),
+
+                    // Premium Logout
+                    Center(
+                      child: TextButton.icon(
+                        onPressed: () => _handleLogout(context, ref),
+                        icon: const Icon(Iconsax.logout, color: Colors.white24, size: 20),
+                        label: Text(
+                          "Sign Out from Path",
+                          style: GoogleFonts.outfit(color: Colors.white24, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 120),
+                  ]),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPremiumSectionTitle(String title) {
+    return Row(
+      children: [
+        Container(
+          width: 3,
+          height: 16,
+          decoration: BoxDecoration(
+            color: PremiumTokens.saffronGlow,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Text(
+          title.toUpperCase(),
+          style: GoogleFonts.outfit(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.white38,
+            letterSpacing: 2,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPremiumMenuItem({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return PremiumUI.glassCard(
+      padding: const EdgeInsets.all(12),
+      child: ListTile(
+        onTap: () {
+          HapticFeedback.lightImpact();
+          onTap();
+        },
+        leading: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: color, size: 22),
+        ),
+        title: Text(
+          title,
+          style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: GoogleFonts.outfit(color: Colors.white38, fontSize: 13),
+        ),
+        trailing: const Icon(Iconsax.arrow_right_3, color: Colors.white12, size: 18),
+      ),
+    );
+  }
+
+  void _handleLogout(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: PremiumTokens.charcoal,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24), side: const BorderSide(color: Colors.white10)),
+        title: Text("Spiritual Rest?", style: GoogleFonts.spectral(color: Colors.white, fontWeight: FontWeight.bold)),
+        content: Text("Are you sure you want to pause your journey for now?", style: GoogleFonts.outfit(color: Colors.white70)),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("Continue")),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+            onPressed: () {
+              Navigator.pop(ctx);
+              ref.read(authServiceProvider).signOut();
+            },
+            child: const Text("Sign Out", style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PremiumProfileHeader extends StatelessWidget {
+  final User? user;
+
+  const _PremiumProfileHeader({required this.user});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + 20,
+        left: 24,
+        right: 24,
+        bottom: 40,
+      ),
+      child: Column(
+        children: [
+          // Elegant Avatar
+          Container(
+            width: 120,
+            height: 120,
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: PremiumTokens.saffronPremiumGradient,
+              boxShadow: [
+                BoxShadow(
+                  color: PremiumTokens.saffronGlow.withOpacity(0.3),
+                  blurRadius: 30,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: Container(
+              decoration: const BoxDecoration(shape: BoxShape.circle, color: PremiumTokens.charcoal),
+              child: ClipOval(
+                child: user?.photoURL != null
+                    ? CachedNetworkImage(imageUrl: user!.photoURL!, fit: BoxFit.cover)
+                    : const Icon(Iconsax.user, color: Colors.white24, size: 48),
+              ),
+            ),
+          ).animate().scale(delay: 200.ms, duration: 600.ms, curve: Curves.easeOutBack),
+          
+          const SizedBox(height: 24),
+          
+          Text(
+            user?.displayName ?? "Dedicated Seeker",
+            style: GoogleFonts.spectral(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              letterSpacing: 1,
+            ),
+          ),
+          const SizedBox(height: 8),
+          
+          PremiumUI.glassCard(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            borderRadius: 100,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Iconsax.sms, color: PremiumTokens.saffronGlow, size: 14),
+                const SizedBox(width: 8),
+                Text(
+                  user?.email ?? "Exploring the Path",
+                  style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
