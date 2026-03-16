@@ -66,7 +66,7 @@ const Layout = ({ children }) => {
                 </Link>
               )}
               
-              {!isAuthPage && (
+              {isAdmin && (
                  <Link to="/admin-old/dashboard" className="p-2.5 bg-white/5 border border-white/10 rounded-full hover:bg-primary/20 hover:border-primary/40 transition-all">
                    <LayoutDashboard size={20} className="text-primary-light" />
                  </Link>

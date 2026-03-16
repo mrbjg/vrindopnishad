@@ -29,17 +29,25 @@ const ContentDetailPage = () => {
   if (loading) {
     return (
       <div className="animate-fade-in max-w-4xl mx-auto py-12">
-        <div className="skeleton w-32 h-6 mb-8 rounded"></div>
-        <div className="glass-card p-8 md:p-12">
-          <div className="flex justify-between items-start mb-8">
-              <div className="skeleton w-24 h-6 rounded-full"></div>
-              <div className="skeleton w-32 h-6 rounded"></div>
-          </div>
+        <div className="skeleton w-32 h-6 mb-12 rounded"></div>
+        
+        <div className="space-y-12">
+          {/* Title skeleton */}
           <div className="skeleton h-16 w-3/4 mb-10 rounded-xl"></div>
+          
+          {/* Description skeleton */}
           <div className="skeleton h-24 w-full mb-12 rounded-xl"></div>
+          
+          {/* Content sections skeletons */}
           <div className="space-y-16">
-            <div className="skeleton h-64 w-full rounded-3xl"></div>
-            <div className="skeleton h-48 w-full rounded-3xl"></div>
+            <div className="py-12 border-b border-white/5">
+              <div className="skeleton h-8 w-40 mb-8 rounded"></div>
+              <div className="skeleton h-32 w-full rounded-2xl"></div>
+            </div>
+            <div className="py-12">
+              <div className="skeleton h-8 w-40 mb-8 rounded"></div>
+              <div className="skeleton h-48 w-full rounded-2xl"></div>
+            </div>
           </div>
         </div>
       </div>
