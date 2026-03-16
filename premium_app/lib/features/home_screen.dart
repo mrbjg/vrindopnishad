@@ -167,7 +167,7 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _buildPremiumNaamJap(BuildContext context, WidgetRef ref) {
-    final count = ref.watch(naamJapCounterProvider);
+    final count = ref.watch(naamJapStateProvider);
     final progress = (count % 1008) / 1008; 
 
     return Padding(
@@ -432,6 +432,7 @@ class HomeScreen extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: 16),
             child: PremiumUI.glassCard(
               padding: const EdgeInsets.all(16),
+              optimized: true,
               child: Row(
                 children: [
                   Container(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/design_system.dart';
+import '../core/providers.dart';
 
 class NaamJapScreen extends ConsumerStatefulWidget {
   const NaamJapScreen({super.key});
@@ -143,6 +144,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
   }
 
   Widget _buildTrackInfo() {
+    final count = ref.watch(naamJapStateProvider);
     return Column(
       children: [
         Text(
@@ -155,12 +157,12 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
         ),
         const SizedBox(height: 8),
         Text(
-          "DIVINE RESONANCE",
+          "COUNT: $count",
           style: PremiumTokens.sansStyle(
-            fontSize: 10,
-            color: Colors.white38,
+            fontSize: 16,
+            color: PremiumTokens.nebulaBlue,
             fontWeight: FontWeight.bold,
-            letterSpacing: 3,
+            letterSpacing: 4,
           ),
         ),
         const SizedBox(height: 48),
@@ -212,7 +214,9 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
               const Icon(Icons.shuffle, color: Colors.white24, size: 24),
               const Icon(Icons.skip_previous, color: Colors.white, size: 40),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  ref.read(naamJapStateProvider.notifier).increment();
+                },
                 child: Container(
                   width: 80,
                   height: 80,

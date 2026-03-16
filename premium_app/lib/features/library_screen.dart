@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/design_system.dart';
 import '../core/content_provider.dart';
+import '../core/providers.dart';
 
 class LibraryScreen extends ConsumerWidget {
   const LibraryScreen({super.key});
@@ -20,15 +21,29 @@ class LibraryScreen extends ConsumerWidget {
             child: Column(
               children: [
                 _buildHeader(),
-                _buildSearchBar(),
+                _buildSearchBar(ref),
                 _buildNowPlaying(),
                 Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(24),
-                    itemCount: content.length,
-                    itemBuilder: (context, index) {
-                      final item = content[index];
-                      return _buildLibraryItem(item);
+                  child: Consumer(
+                    builder: (context, ref, child) {
+                      final query = ref.watch(libraryCategoryProvider);
+                      final List<SacredContent> items;
+                      
+                      if (query.startsWith("SEARCH:")) {
+                        items = ref.watch(searchedContentProvider(query.replaceFirst("SEARCH:", "")));
+                      } else if (query == "ALL") {
+                        items = content;
+                      } else {
+                        items = ref.watch(filteredContentProvider(query));
+                      }
+
+                      return ListView.builder(
+                        padding: const EdgeInsets.all(24),
+                        itemCount: items.length,
+                        itemBuilder: (context, index) {
+                          return _buildLibraryItem(items[index]);
+                        },
+                      );
                     },
                   ),
                 ),
@@ -78,7 +93,7 @@ class LibraryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Container(
@@ -89,6 +104,10 @@ class LibraryScreen extends ConsumerWidget {
           border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
         ),
         child: TextField(
+          onChanged: (value) {
+            // Future: Implement debounced search here
+            ref.read(libraryCategoryProvider.notifier).state = value.isEmpty ? "ALL" : "SEARCH:$value";
+          },
           decoration: InputDecoration(
             hintText: "Search sacred mantras...",
             hintStyle: PremiumTokens.sansStyle(color: Colors.white24),
@@ -164,6 +183,7 @@ class LibraryScreen extends ConsumerWidget {
       child: PremiumUI.voidGlassCard(
         padding: const EdgeInsets.all(16),
         borderRadius: 16,
+        optimized: true,
         child: Row(
           children: [
             Container(

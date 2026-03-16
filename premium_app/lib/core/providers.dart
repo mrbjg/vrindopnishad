@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../features/home_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
 
@@ -61,8 +62,32 @@ final visibleItemCountProvider = StateProvider<int>((ref) => 5);
 /// Provider to track previously animated count (items before this index won't re-animate)
 final previouslyAnimatedCountProvider = StateProvider<int>((ref) => 5);
 
-/// Provider for Naam Jap (mantra chanting) counter
-final naamJapCounterProvider = StateProvider<int>((ref) => 0);
+class NaamJapNotifier extends StateNotifier<int> {
+  NaamJapNotifier() : super(0) {
+    _loadCount();
+  }
+
+  Future<void> _loadCount() async {
+    final prefs = await SharedPreferences.getInstance();
+    state = prefs.getInt('naam_jap_count') ?? 0;
+  }
+
+  Future<void> increment() async {
+    state++;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('naam_jap_count', state);
+  }
+
+  Future<void> reset() async {
+    state = 0;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('naam_jap_count', 0);
+  }
+}
+
+final naamJapStateProvider = StateNotifierProvider<NaamJapNotifier, int>((ref) {
+  return NaamJapNotifier();
+});
 
 /// Provider to track if the user has completed the onboarding flow
 final hasSeenOnboardingProvider = StateProvider<bool>((ref) => false);

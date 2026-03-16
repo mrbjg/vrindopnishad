@@ -5,6 +5,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/design_system.dart';
 import '../core/auth_provider.dart';
+import '../core/providers.dart';
 import 'profile/saved_items_screen.dart';
 import 'profile/reading_history_screen.dart';
 import 'profile/settings_screen.dart';
@@ -257,13 +258,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   }
 }
 
-class _PremiumProfileHeader extends StatelessWidget {
+class _PremiumProfileHeader extends ConsumerWidget {
   final User? user;
 
   const _PremiumProfileHeader({required this.user});
 
+  String _formatCount(int count) {
+    if (count < 1000) return count.toString();
+    if (count < 1000000) return "${(count / 1000).toStringAsFixed(1)}k";
+    return "${(count / 1000000).toStringAsFixed(1)}m";
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final japCount = ref.watch(naamJapStateProvider);
     return Container(
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top + 20,
@@ -337,7 +345,7 @@ class _PremiumProfileHeader extends StatelessWidget {
             children: [
               _buildStat("Streaks", "21d", PremiumTokens.nebulaBlue),
               const SizedBox(width: 24),
-              _buildStat("Japs", "12.8k", PremiumTokens.celestialGlow),
+              _buildStat("Japs", _formatCount(japCount), PremiumTokens.celestialGlow),
               const SizedBox(width: 24),
               _buildStat("Level", "Orbit 4", Colors.tealAccent),
             ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'theme.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
@@ -183,6 +184,7 @@ class PremiumUI extends StatelessWidget {
     double borderRadius = 24,
     EdgeInsets? padding,
     EdgeInsets? margin,
+    bool optimized = false,
   }) {
     return Container(
       margin: margin,
@@ -198,21 +200,34 @@ class PremiumUI extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-          child: Container(
-            padding: padding ?? const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: const Color(0x990A0A1F), // Deep blue-tinted surface
-              borderRadius: BorderRadius.circular(borderRadius),
-              border: Border.all(
-                color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
-                width: 1,
+        child: optimized 
+          ? Container(
+              padding: padding ?? const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: const Color(0xCC0A0A1F), // Higher opacity, no blur
+                borderRadius: BorderRadius.circular(borderRadius),
+                border: Border.all(
+                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                  width: 1,
+                ),
+              ),
+              child: child,
+            )
+          : BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+              child: Container(
+                padding: padding ?? const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: const Color(0x990A0A1F),
+                  borderRadius: BorderRadius.circular(borderRadius),
+                  border: Border.all(
+                    color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                    width: 1,
+                  ),
+                ),
+                child: child,
               ),
             ),
-            child: child,
-          ),
-        ),
       ),
     );
   }
@@ -224,26 +239,40 @@ class PremiumUI extends StatelessWidget {
     double borderRadius = 24,
     EdgeInsets? padding,
     EdgeInsets? margin,
+    bool optimized = false,
   }) {
     return Container(
       margin: margin,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-          child: Container(
-            padding: padding ?? const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: const Color(0x1A2B2BEE), // rgba(43, 43, 238, 0.1)
-              borderRadius: BorderRadius.circular(borderRadius),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.1),
-                width: 1,
+        child: optimized
+          ? Container(
+              padding: padding ?? const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: const Color(0xFF14143D), // Solid blue-ish charcoal
+                borderRadius: BorderRadius.circular(borderRadius),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.1),
+                  width: 1,
+                ),
+              ),
+              child: child,
+            )
+          : BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+              child: Container(
+                padding: padding ?? const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: const Color(0x1A2B2BEE),
+                  borderRadius: BorderRadius.circular(borderRadius),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.1),
+                    width: 1,
+                  ),
+                ),
+                child: child,
               ),
             ),
-            child: child,
-          ),
-        ),
       ),
     );
   }
@@ -286,23 +315,37 @@ class PremiumUI extends StatelessWidget {
     double borderRadius = 24,
     EdgeInsets? padding,
     EdgeInsets? margin,
+    bool optimized = false,
   }) {
     return Container(
       margin: margin,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-          child: Container(
-            padding: padding ?? const EdgeInsets.all(20),
-            decoration: PremiumTokens.glassDecoration(
-              blur: blur,
-              opacity: opacity,
-              borderRadius: borderRadius,
+        child: optimized
+          ? Container(
+              padding: padding ?? const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: opacity * 2), // Slightly more opaque
+                borderRadius: BorderRadius.circular(borderRadius),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.1),
+                  width: 1,
+                ),
+              ),
+              child: child,
+            )
+          : BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+              child: Container(
+                padding: padding ?? const EdgeInsets.all(20),
+                decoration: PremiumTokens.glassDecoration(
+                  blur: blur,
+                  opacity: opacity,
+                  borderRadius: borderRadius,
+                ),
+                child: child,
+              ),
             ),
-            child: child,
-          ),
-        ),
       ),
     );
   }
@@ -505,7 +548,7 @@ class PremiumUI extends StatelessWidget {
     );
   }
 
-  /// Web-safe Network Image Loader to resolve "EncodingError"
+  /// Web-safe Network Image Loader with Caching
   static Widget networkImage({
     required String? url,
     BoxFit fit = BoxFit.cover,
@@ -523,12 +566,13 @@ class PremiumUI extends StatelessWidget {
       );
     }
 
-    final imageWidget = Image.network(
-      url,
+    final imageWidget = CachedNetworkImage(
+      imageUrl: url,
       fit: fit,
       width: width,
       height: height,
-      errorBuilder: (context, error, stackTrace) {
+      memCacheWidth: width != null ? (width * 2).toInt() : null, // Limit memory cache
+      errorWidget: (context, url, error) {
         print("Image Loading Error: $error");
         return Container(
           width: width,
@@ -537,20 +581,17 @@ class PremiumUI extends StatelessWidget {
           child: const Icon(Icons.broken_image, color: Colors.redAccent, size: 20),
         );
       },
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return placeholder ?? Container(
-          width: width,
-          height: height,
-          color: PremiumTokens.accentDark.withValues(alpha: 0.5),
-          child: const Center(
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation(PremiumTokens.nebulaBlue),
-            ),
+      placeholder: (context, url) => placeholder ?? Container(
+        width: width,
+        height: height,
+        color: PremiumTokens.accentDark.withValues(alpha: 0.5),
+        child: const Center(
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            valueColor: AlwaysStoppedAnimation(PremiumTokens.nebulaBlue),
           ),
-        );
-      },
+        ),
+      ),
     );
 
     if (borderRadius != null) {
