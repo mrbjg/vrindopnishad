@@ -9,7 +9,7 @@ import '../core/providers.dart';
 final onboardingPageIndexProvider = StateProvider<int>((ref) => 0);
 
 class OnboardingScreen extends ConsumerWidget {
-  OnboardingScreen({super.key});
+  const OnboardingScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -87,7 +87,7 @@ class OnboardingScreen extends ConsumerWidget {
                       ? PremiumUI.saffronButton(
                           text: "BEGIN THE JOURNEY",
                           onTap: () {
-                            ref.read(hasSeenOnboardingProvider.notifier).state = true;
+                            ref.read(hasSeenOnboardingProvider.notifier).completeOnboarding();
                           },
                         ).animate().fade(duration: 400.ms).scale(begin: const Offset(0.9, 0.9))
                       : PremiumUI.capsuleButton(
@@ -105,7 +105,7 @@ class OnboardingScreen extends ConsumerWidget {
                   const SizedBox(height: 20),
                   TextButton(
                     onPressed: () {
-                      ref.read(hasSeenOnboardingProvider.notifier).state = true;
+                      ref.read(hasSeenOnboardingProvider.notifier).completeOnboarding();
                     },
                     child: Text(
                       "SKIP",
@@ -139,6 +139,9 @@ class OnboardingSlide extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          PremiumUI.logoAnimated(height: 60),
+          const SizedBox(height: 48),
+          
           // Icon with Aura
           Container(
             padding: const EdgeInsets.all(32),

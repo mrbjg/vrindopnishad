@@ -106,10 +106,10 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         widget.content?.category ?? widget.category ?? "Wisdom";
 
     return Scaffold(
-      backgroundColor: PremiumTokens.charcoal,
+      backgroundColor: Colors.black,
       body: Stack(
         children: [
-          const Positioned.fill(child: AnimatedSacredBackground()),
+          Positioned.fill(child: PremiumUI.masterBackground(index: 3)), // Ethereal Depth
           
           CustomScrollView(
             controller: _scrollController,
@@ -127,7 +127,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               ),
 
               SliverPadding(
-                padding: EdgeInsets.fromLTRB(20, isFocusMode ? 60 : 32, 20, 200),
+                padding: EdgeInsets.fromLTRB(20, isFocusMode ? 100 : 32, 20, 200),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
                     // Sanskrit Card - Always visible but styled for focus
@@ -178,10 +178,14 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     ),
                     
                     const SizedBox(height: 48),
-                    Center(
-                      child: Opacity(
-                        opacity: 0.2,
-                        child: Text("ॐ", style: GoogleFonts.spectral(fontSize: 48, color: Colors.white)),
+                    RepaintBoundary(
+                      child: Center(
+                        child: Text("ॐ", style: GoogleFonts.spectral(fontSize: 48, color: Colors.white))
+                          .animate(onPlay: (c) => c.repeat(reverse: true))
+                          .fadeIn(duration: 2.seconds)
+                          .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.1, 1.1), duration: 3.seconds)
+                          .blur(begin: const Offset(0, 0), end: const Offset(2, 2), duration: 3.seconds)
+                          .custom(builder: (c, v, child) => Opacity(opacity: 0.1 + (v * 0.1), child: child)),
                       ),
                     ),
                   ]),
@@ -264,13 +268,27 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           right: 12,
         ),
         decoration: BoxDecoration(
-          color: (_showCompactHeader && !isFocusMode) ? PremiumTokens.charcoal.withValues(alpha: 0.9) : Colors.transparent,
+          color: (_showCompactHeader && !isFocusMode) 
+            ? const Color(0xFF03030F).withValues(alpha: 0.85) 
+            : Colors.transparent,
+          border: Border(
+            bottom: BorderSide(
+              color: (_showCompactHeader && !isFocusMode) 
+                ? Colors.white.withValues(alpha: 0.1) 
+                : Colors.transparent,
+              width: 1,
+            ),
+          ),
         ),
         child: Row(
           children: [
             _buildHeaderCircleButton(
               null, 
-              () => Navigator.pop(context),
+              () async {
+                HapticFeedback.mediumImpact();
+                await Future.delayed(200.ms); // Allow pulse to be seen
+                if (mounted) Navigator.pop(context);
+              },
               isAnimated: true,
               animFolder: 'Chevron-left',
               animFile: 'chevron-left.json',
@@ -342,69 +360,114 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     return PremiumUI.glassCard(
       padding: const EdgeInsets.all(10),
       borderRadius: 14,
-      child: InkWell(
-        onTap: () {
-          HapticFeedback.lightImpact();
-          onTap();
-        },
-        child: isAnimated 
-          ? PremiumUI.animatedIcon(
-              folder: animFolder!, 
-              fileName: animFile!, 
-              size: 20, 
-              color: isActive ? PremiumTokens.saffronGlow : Colors.white
-            )
-          : isCustomSvg
-            ? PremiumUI.customIcon(
-                fileName: svgFile!,
-                size: 20,
-                color: isActive ? PremiumTokens.saffronGlow : Colors.white,
-              )
-            : Icon(icon, color: isActive ? PremiumTokens.saffronGlow : Colors.white, size: 20),
-      ),
+      child: isAnimated 
+        ? PremiumUI.animatedIcon(
+            folder: animFolder!, 
+            fileName: animFile!, 
+            size: 20, 
+            color: isActive ? PremiumTokens.saffronGlow : Colors.white,
+            resetAfterPlay: !isActive,
+            onTap: () {
+              HapticFeedback.lightImpact();
+              onTap();
+            },
+          )
+        : InkWell(
+            onTap: () {
+              HapticFeedback.lightImpact();
+              onTap();
+            },
+            child: isCustomSvg
+              ? PremiumUI.customIcon(
+                  fileName: svgFile!,
+                  size: 20,
+                  color: isActive ? PremiumTokens.saffronGlow : Colors.white,
+                )
+              : Icon(icon, color: isActive ? PremiumTokens.saffronGlow : Colors.white, size: 20),
+          ),
     );
   }
 
   Widget _buildPremiumSanskritCard(AppLocalization l, bool isFocusMode) {
     final text = widget.content?.sanskritText ?? "";
-    return PremiumUI.glassCard(
-      padding: EdgeInsets.all(isFocusMode ? 32 : 24),
-      blur: isFocusMode ? 25 : 15,
-      opacity: isFocusMode ? 0.05 : 0.1,
-      child: Column(
-        children: [
-          PremiumUI.focusContainer(
-            isFocusMode: isFocusMode,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "MANTRA / SLOKA",
-                  style: GoogleFonts.outfit(color: PremiumTokens.saffronGlow, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 2),
-                ),
-                IconButton(
-                  onPressed: () {
-                    Clipboard.setData(ClipboardData(text: text));
-                    HapticFeedback.mediumImpact();
-                  },
-                  icon: Icon(Iconsax.copy, color: Colors.white38, size: 18),
-                ),
-              ],
-            ),
+    return RepaintBoundary(
+      child: AnimatedContainer(
+        duration: 500.ms,
+        curve: Curves.easeInOut,
+        padding: EdgeInsets.all(isFocusMode ? 32 : 28),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: isFocusMode ? 0.04 : 0.08),
+          borderRadius: BorderRadius.circular(32),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: isFocusMode ? 0.1 : 0.05),
+            width: 0.5,
           ),
-          if (!isFocusMode) const Divider(color: Colors.white10, height: 24),
-          SelectableText(
-            text,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.spectral(
-              fontSize: _fontSize + (isFocusMode ? 8 : 4),
-              color: PremiumTokens.saffronGlow,
-              fontWeight: FontWeight.bold,
-              height: 1.8,
-              letterSpacing: isFocusMode ? 0.5 : 0,
+          boxShadow: isFocusMode ? [
+            BoxShadow(
+              color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+              blurRadius: 40,
+              spreadRadius: 10,
+            )
+          ] : [],
+        ),
+        child: Column(
+          children: [
+            PremiumUI.focusContainer(
+              isFocusMode: isFocusMode,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      "MANTRA / SLOKA",
+                      style: GoogleFonts.outfit(
+                        color: PremiumTokens.saffronGlow, 
+                        fontSize: 10, 
+                        fontWeight: FontWeight.w900, 
+                        letterSpacing: 3,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            if (!isFocusMode) const SizedBox(height: 24),
+            SelectableText(
+              text,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.spectral(
+                fontSize: _fontSize + (isFocusMode ? 10 : 6),
+                color: Colors.white.withValues(alpha: 0.95),
+                fontWeight: FontWeight.bold,
+                height: 1.6,
+                fontStyle: FontStyle.italic,
+                shadows: [
+                  Shadow(
+                    color: PremiumTokens.saffronGlow.withValues(alpha: 0.3),
+                    blurRadius: 15,
+                  ),
+                ],
+              ),
+            )
+            .animate(onPlay: (controller) => controller.repeat(reverse: true))
+            .shimmer(
+              duration: 3.seconds,
+              color: Colors.white.withValues(alpha: 0.1),
+              blendMode: BlendMode.srcOver,
+            )
+            .scale(
+              duration: 4.seconds,
+              begin: const Offset(1, 1),
+              end: const Offset(1.02, 1.02),
+              curve: Curves.easeInOut,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -417,37 +480,52 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     bool isFocusMode = false,
   }) {
     if (content.isEmpty) return const SizedBox.shrink();
-    return PremiumUI.glassCard(
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: isFocusMode ? 32 : 20),
-      opacity: isFocusMode ? 0.03 : 0.1,
-      blur: isFocusMode ? 20 : 15,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          PremiumUI.focusContainer(
-            isFocusMode: isFocusMode,
-            child: Row(
-              children: [
-                Icon(icon, color: accentColor, size: 18),
-                const SizedBox(width: 12),
-                Text(
-                  title.toUpperCase(),
-                  style: GoogleFonts.outfit(color: accentColor, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1),
-                ),
-              ],
+    return RepaintBoundary(
+      child: PremiumUI.glassCard(
+        padding: EdgeInsets.symmetric(horizontal: 28, vertical: isFocusMode ? 36 : 24),
+        opacity: isFocusMode ? 0.04 : 0.08,
+        blur: isFocusMode ? 25 : 18,
+        borderRadius: 24,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            PremiumUI.focusContainer(
+              isFocusMode: isFocusMode,
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(icon, color: accentColor, size: 14),
+                  ),
+                  const SizedBox(width: 14),
+                  Text(
+                    title.toUpperCase(),
+                    style: GoogleFonts.outfit(
+                      color: accentColor, 
+                      fontSize: 11, 
+                      fontWeight: FontWeight.w900, 
+                      letterSpacing: 2,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          if (!isFocusMode) const SizedBox(height: 16),
-          SelectableText(
-            content,
-            style: GoogleFonts.outfit(
-              fontSize: isFocusMode ? _fontSize + 2 : _fontSize,
-              color: Colors.white.withValues(alpha: isFocusMode ? 0.95 : 0.85),
-              height: 1.8,
-              letterSpacing: isFocusMode ? 0.2 : 0,
+            if (!isFocusMode) const SizedBox(height: 20),
+            Text(
+              content,
+              style: GoogleFonts.outfit(
+                fontSize: isFocusMode ? _fontSize + 3 : _fontSize,
+                color: Colors.white.withValues(alpha: isFocusMode ? 0.95 : 0.85),
+                height: 1.7,
+                letterSpacing: 0.1,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -514,7 +592,10 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
   Widget _buildPremiumAudioPlayer() {
     return PremiumUI.glassCard(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
+      borderRadius: 32,
+      blur: 30,
+      opacity: 0.15,
       child: StreamBuilder<PlayerState>(
         stream: _audioPlayer.playerStateStream,
         builder: (context, snapshot) {
@@ -527,35 +608,83 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Iconsax.music_play, color: PremiumTokens.saffronGlow, size: 16),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(Iconsax.music_play, color: PremiumTokens.saffronGlow, size: 14),
+                      ),
                       const SizedBox(width: 12),
-                      Text("Divine Recitation", style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold)),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "DIVINE RECITATION", 
+                            style: GoogleFonts.outfit(
+                              color: Colors.white.withValues(alpha: 0.5), 
+                              fontWeight: FontWeight.w900, 
+                              fontSize: 9, 
+                              letterSpacing: 2,
+                            ),
+                          ),
+                          Text(
+                            widget.content?.title ?? "Sacred Verse", 
+                            style: GoogleFonts.outfit(
+                              color: Colors.white, 
+                              fontWeight: FontWeight.bold, 
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                   IconButton(
                     onPressed: () => setState(() => _showAudioPlayer = false),
-                    icon: Icon(Iconsax.arrow_down_1, color: Colors.white38, size: 20),
+                    icon: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.05),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Iconsax.arrow_down_1, color: Colors.white, size: 16),
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               Row(
                 children: [
                   GestureDetector(
-                    onTap: () => isPlaying ? _audioPlayer.pause() : _audioPlayer.play(),
+                    onTap: () {
+                      HapticFeedback.mediumImpact();
+                      isPlaying ? _audioPlayer.pause() : _audioPlayer.play();
+                    },
                     child: Container(
-                      width: 52,
-                      height: 52,
-                      decoration: const BoxDecoration(shape: BoxShape.circle, gradient: PremiumTokens.saffronPremiumGradient),
-                      child: Icon(isPlaying ? Iconsax.pause : Iconsax.play, color: Colors.white, size: 22),
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle, 
+                        gradient: PremiumTokens.saffronPremiumGradient,
+                        boxShadow: [
+                          BoxShadow(
+                            color: PremiumTokens.saffronGlow.withValues(alpha: 0.3),
+                            blurRadius: 20,
+                            spreadRadius: -2,
+                          ),
+                        ],
+                      ),
+                      child: Icon(isPlaying ? Iconsax.pause : Iconsax.play, color: Colors.white, size: 24),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 20),
                   Expanded(
                     child: Column(
                       children: [
                         _buildPremiumProgressBar(),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 10),
                         _buildPremiumAudioTime(),
                       ],
                     ),

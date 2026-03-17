@@ -117,63 +117,65 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
   }
 
   Widget _buildCentralDisk(bool isFocusMode) {
-    return PremiumUI.auraBreathing(
-      beginScale: 1.0,
-      endScale: isFocusMode ? 1.1 : 1.05,
-      child: RotationTransition(
-        turns: _rotationController,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            // Outer Glow/Progress Ring Simulation
-            Container(
-              width: isFocusMode ? 320 : 280,
-              height: isFocusMode ? 320 : 280,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: PremiumTokens.nebulaBlue.withValues(alpha: isFocusMode ? 0.4 : 0.2),
-                  width: 1,
-                ),
-              ),
-            ),
-            // "Starlight Ring"
-            Container(
-              width: isFocusMode ? 300 : 260,
-              height: isFocusMode ? 300 : 260,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.transparent,
-                  width: 2,
-                ),
-              ),
-              child: CustomPaint(
-                painter: _StarlightRingPainter(color: PremiumTokens.nebulaBlue),
-              ),
-            ),
-            // Glass Disk
-            PremiumUI.voidGlassCard(
-              blur: isFocusMode ? 30 : 20,
-              borderRadius: isFocusMode ? 140 : 110,
-              padding: EdgeInsets.zero,
-              child: Container(
-                width: isFocusMode ? 260 : 220,
-                height: isFocusMode ? 260 : 220,
-                alignment: Alignment.center,
-                child: Text(
-                  'ॐ',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: isFocusMode ? 100 : 80,
-                    shadows: [
-                      Shadow(color: Colors.white54, blurRadius: isFocusMode ? 40 : 20),
-                    ],
+    return RepaintBoundary(
+      child: PremiumUI.auraBreathing(
+        beginScale: 1.0,
+        endScale: isFocusMode ? 1.1 : 1.05,
+        child: RotationTransition(
+          turns: _rotationController,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Outer Glow/Progress Ring Simulation
+              Container(
+                width: isFocusMode ? 320 : 280,
+                height: isFocusMode ? 320 : 280,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: PremiumTokens.nebulaBlue.withValues(alpha: isFocusMode ? 0.4 : 0.2),
+                    width: 1,
                   ),
                 ),
               ),
-            ),
-          ],
+              // "Starlight Ring"
+              Container(
+                width: isFocusMode ? 300 : 260,
+                height: isFocusMode ? 300 : 260,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.transparent,
+                    width: 2,
+                  ),
+                ),
+                child: CustomPaint(
+                  painter: _StarlightRingPainter(color: PremiumTokens.nebulaBlue),
+                ),
+              ),
+              // Glass Disk
+              PremiumUI.voidGlassCard(
+                blur: isFocusMode ? 30 : 20,
+                borderRadius: isFocusMode ? 140 : 110,
+                padding: EdgeInsets.zero,
+                child: Container(
+                  width: isFocusMode ? 260 : 220,
+                  height: isFocusMode ? 260 : 220,
+                  alignment: Alignment.center,
+                  child: Text(
+                    'ॐ',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: isFocusMode ? 100 : 80,
+                      shadows: [
+                        Shadow(color: Colors.white54, blurRadius: isFocusMode ? 40 : 20),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

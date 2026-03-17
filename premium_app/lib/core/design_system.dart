@@ -171,6 +171,52 @@ class PremiumTokens {
 class PremiumUI extends StatelessWidget {
   const PremiumUI({super.key});
 
+  static Widget logo({double height = 40, Color? color}) {
+    // Matrix to convert luminance to alpha (removes black backgrounds)
+    const luminanceToAlpha = ColorFilter.matrix([
+      1, 0, 0, 0, 0,
+      0, 1, 0, 0, 0,
+      0, 0, 1, 0, 0,
+      0.2126, 0.7152, 0.0722, 0, 0,
+    ]);
+
+    Widget logoImage = SvgPicture.asset(
+      'assets/logo.svg',
+      height: height,
+      colorFilter: color != null ? ColorFilter.mode(color, BlendMode.srcIn) : luminanceToAlpha,
+    );
+
+    // If a color is provided, we must strip the black background FIRST, 
+    // and THEN apply the srcIn tint filter to the resulting transparency.
+    if (color != null) {
+      return ColorFiltered(
+        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+        child: ColorFiltered(
+          colorFilter: luminanceToAlpha,
+          child: SvgPicture.asset(
+            'assets/logo.svg',
+            height: height,
+          ),
+        ),
+      );
+    }
+
+    return logoImage;
+  }
+
+  static Widget logoAnimated({double height = 60, Color? color}) {
+    final effectiveColor = color ?? Colors.white;
+    return logo(height: height, color: color)
+        .animate(onPlay: (controller) => controller.repeat(reverse: true))
+        .shimmer(duration: 3.seconds, color: effectiveColor.withValues(alpha: 0.3))
+        .scale(
+          begin: const Offset(1, 1),
+          end: const Offset(1.05, 1.05),
+          duration: 3.seconds,
+          curve: Curves.easeInOutSine,
+        );
+  }
+
 
   /// Specific glass card for the Saffron Dashboard V2
   static Widget saffronGlassCard({
@@ -420,32 +466,11 @@ class PremiumUI extends StatelessWidget {
                         if (index == 2) return const Expanded(child: SizedBox());
 
                         return Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              HapticFeedback.lightImpact();
-                              onTap(index);
-                            },
-                            behavior: HitTestBehavior.opaque,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                PremiumUI.customIcon(
-                                  fileName: isSelected ? item.activeIconSvg : item.iconSvg,
-                                  color: isSelected ? Colors.white : Colors.white24,
-                                  size: 24,
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  item.label,
-                                  style: GoogleFonts.manrope(
-                                    fontSize: 8,
-                                    color: isSelected ? Colors.white : Colors.white24,
-                                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                              ],
-                            ),
+                          child: _PremiumAnimatedNavButton(
+                            index: index,
+                            isSelected: isSelected,
+                            item: item,
+                            onTap: onTap,
                           ),
                         );
                       }),
@@ -773,8 +798,8 @@ class PremiumUI extends StatelessWidget {
   // ICONS: Animated & Custom Assets
   // ═══════════════════════════════════════════════════════════════════════════
   
-  static const String _animRoot = 'assets/animated_icons/';
-  static const String _svgRoot = 'assets/iconsax/';
+  static const String animRoot = 'assets/animated_icons/';
+  static const String svgRoot = 'assets/iconsax/';
 
   /// Premium Animated Icon (Lottie)
   /// Automatically handles color tinting via delegates
@@ -783,26 +808,18 @@ class PremiumUI extends StatelessWidget {
     required String fileName,
     double size = 24,
     Color? color,
-    bool repeat = true,
+    bool autoPlay = false,
+    bool resetAfterPlay = true,
+    VoidCallback? onTap,
   }) {
-    return SizedBox(
-      width: size,
-      height: size,
-      child: Lottie.asset(
-        '$_animRoot$folder/$fileName',
-        repeat: repeat,
-        fit: BoxFit.contain,
-        delegates: color != null
-            ? LottieDelegates(
-                values: [
-                  ValueDelegate.color(
-                    const ['**'],
-                    value: color,
-                  ),
-                ],
-              )
-            : null,
-      ),
+    return _PremiumInteractiveIcon(
+      folder: folder,
+      fileName: fileName,
+      size: size,
+      color: color,
+      autoPlay: autoPlay,
+      resetAfterPlay: resetAfterPlay,
+      onTap: onTap,
     );
   }
 
@@ -812,7 +829,7 @@ class PremiumUI extends StatelessWidget {
     double size = 24,
     Color? color,
   }) {
-    final String path = fileName.startsWith('assets/') ? fileName : '$_svgRoot$fileName';
+    final String path = fileName.startsWith('assets/') ? fileName : '$svgRoot$fileName';
     return SvgPicture.asset(
       path,
       width: size,
@@ -1163,6 +1180,167 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal> wi
           ),
           
         ],
+      ),
+    );
+  }
+}
+
+class _PremiumAnimatedNavButton extends StatefulWidget {
+  final int index;
+  final bool isSelected;
+  final ({String iconSvg, String activeIconSvg, String label}) item;
+  final Function(int) onTap;
+
+  const _PremiumAnimatedNavButton({
+    required this.index,
+    required this.isSelected,
+    required this.item,
+    required this.onTap,
+  });
+
+  @override
+  State<_PremiumAnimatedNavButton> createState() => _PremiumAnimatedNavButtonState();
+}
+
+class _PremiumAnimatedNavButtonState extends State<_PremiumAnimatedNavButton> with SingleTickerProviderStateMixin {
+  late AnimationController _pulseController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _scaleAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.2).chain(CurveTween(curve: Curves.easeOut)), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: 1.2, end: 1.0).chain(CurveTween(curve: Curves.easeIn)), weight: 50),
+    ]).animate(_pulseController);
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
+
+  void _handleTap() {
+    HapticFeedback.lightImpact();
+    widget.onTap(widget.index);
+    _pulseController.forward(from: 0.0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _handleTap,
+      behavior: HitTestBehavior.opaque,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ScaleTransition(
+            scale: _scaleAnimation,
+            child: PremiumUI.customIcon(
+              fileName: widget.isSelected ? widget.item.activeIconSvg : widget.item.iconSvg,
+              color: widget.isSelected ? Colors.white : Colors.white24,
+              size: 24,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            widget.item.label,
+            style: GoogleFonts.manrope(
+              fontSize: 8,
+              color: widget.isSelected ? Colors.white : Colors.white24,
+              fontWeight: widget.isSelected ? FontWeight.w800 : FontWeight.w500,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PremiumInteractiveIcon extends StatefulWidget {
+  final String folder;
+  final String fileName;
+  final double size;
+  final Color? color;
+  final bool autoPlay;
+  final bool resetAfterPlay;
+  final VoidCallback? onTap;
+
+  const _PremiumInteractiveIcon({
+    required this.folder,
+    required this.fileName,
+    this.size = 24,
+    this.color,
+    this.autoPlay = false,
+    this.resetAfterPlay = true,
+    this.onTap,
+  });
+
+  @override
+  State<_PremiumInteractiveIcon> createState() => _PremiumInteractiveIconState();
+}
+
+class _PremiumInteractiveIconState extends State<_PremiumInteractiveIcon> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleTap() {
+    if (widget.onTap != null) widget.onTap!();
+    _controller.forward(from: 0.0).then((_) {
+      if (widget.resetAfterPlay && mounted) {
+        _controller.value = 0.0;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget lottie = Lottie.asset(
+      '${PremiumUI.animRoot}${widget.folder}/${widget.fileName}',
+      controller: _controller,
+      repeat: false,
+      animate: widget.autoPlay,
+      onLoaded: (composition) {
+        _controller.duration = composition.duration;
+        if (widget.autoPlay) {
+          _controller.forward();
+        } else if (mounted) {
+          _controller.value = 0.0;
+        }
+      },
+    );
+
+    if (widget.color != null) {
+      lottie = ColorFiltered(
+        colorFilter: ColorFilter.mode(widget.color!, BlendMode.srcIn),
+        child: lottie,
+      );
+    }
+
+    return GestureDetector(
+      onTap: _handleTap,
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        width: widget.size,
+        height: widget.size,
+        child: lottie,
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../core/design_system.dart';
 import '../core/providers.dart';
 import '../core/localization.dart';
@@ -39,24 +40,24 @@ class HomeScreen extends ConsumerWidget {
                       size: 28,
                       color: PremiumTokens.nebulaBlue,
                     ),
-                    Column(
+                    Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          "SANT-VAANI",
-                          style: PremiumTokens.sansStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w300,
-                            letterSpacing: 4,
-                          ),
+                        PremiumUI.logo(height: 32),
+                        const SizedBox(width: 12),
+                        Container(
+                          height: 16,
+                          width: 1,
+                          color: Colors.white.withValues(alpha: 0.1),
                         ),
+                        const SizedBox(width: 12),
                         Text(
                           "ETHEREAL DASHBOARD",
-                          style: PremiumTokens.sansStyle(
+                          style: GoogleFonts.inter(
                             fontSize: 10,
-                            color: PremiumTokens.nebulaBlue,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 2,
+                            color: Colors.white70,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 2.0,
                           ),
                         ),
                       ],

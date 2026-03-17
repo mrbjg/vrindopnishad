@@ -8,6 +8,7 @@ import 'core/providers.dart';
 import 'features/main_navigation_screen.dart';
 import 'features/auth_screen.dart';
 import 'features/onboarding_screen.dart';
+import 'features/splash_screen.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:firebase_core/firebase_core.dart';
@@ -30,11 +31,18 @@ void main() async {
   runApp(const ProviderScope(child: SantVaaniPremiumApp()));
 }
 
-class SantVaaniPremiumApp extends ConsumerWidget {
+class SantVaaniPremiumApp extends ConsumerStatefulWidget {
   const SantVaaniPremiumApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SantVaaniPremiumApp> createState() => _SantVaaniPremiumAppState();
+}
+
+class _SantVaaniPremiumAppState extends ConsumerState<SantVaaniPremiumApp> {
+  bool _showSplash = true;
+
+  @override
+  Widget build(BuildContext context) {
     // Force dark mode for premium spiritual aesthetic
     final authState = ref.watch(authStateProvider);
     final hasSeenOnboarding = ref.watch(hasSeenOnboardingProvider);
@@ -49,12 +57,14 @@ class SantVaaniPremiumApp extends ConsumerWidget {
         scaffoldBackgroundColor: PremiumTokens.charcoal,
       ),
       themeMode: ThemeMode.dark, // Defaulting to dark for premium feel
-      home: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 800),
-        switchInCurve: Curves.easeInOut,
-        switchOutCurve: Curves.easeInOut,
-        child: _buildEntryPoint(ref, authState, hasSeenOnboarding),
-      ),
+      home: _showSplash 
+        ? SplashScreen(onComplete: () => setState(() => _showSplash = false))
+        : AnimatedSwitcher(
+            duration: const Duration(milliseconds: 800),
+            switchInCurve: Curves.easeInOut,
+            switchOutCurve: Curves.easeInOut,
+            child: _buildEntryPoint(ref, authState, hasSeenOnboarding),
+          ),
     );
   }
 

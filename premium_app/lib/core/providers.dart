@@ -89,8 +89,28 @@ final naamJapStateProvider = StateNotifierProvider<NaamJapNotifier, int>((ref) {
   return NaamJapNotifier();
 });
 
+class OnboardingNotifier extends StateNotifier<bool> {
+  OnboardingNotifier() : super(false) {
+    _loadState();
+  }
+
+  Future<void> _loadState() async {
+    final prefs = await SharedPreferences.getInstance();
+    state = prefs.getBool('has_seen_onboarding') ?? false;
+  }
+
+  Future<void> completeOnboarding() async {
+    state = true;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('has_seen_onboarding', true);
+  }
+}
+
 /// Provider to track if the user has completed the onboarding flow
-final hasSeenOnboardingProvider = StateProvider<bool>((ref) => false);
+final hasSeenOnboardingProvider =
+    StateNotifierProvider<OnboardingNotifier, bool>((ref) {
+  return OnboardingNotifier();
+});
 
 /// Provider for the selected category in the Sacred Library
 final navigationIndexProvider = StateProvider<int>((ref) => 0);

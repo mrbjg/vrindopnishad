@@ -92,59 +92,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Logo Section with Glowing Aura
-                    Container(
-                      width: 140,
-                      height: 140,
-                      decoration: BoxDecoration(shape: BoxShape.circle,
-                      ),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          // Glowing Aura
-                          Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.5),
-                                  blurRadius: 60,
-                                  spreadRadius: 10,
-                                ),
-                              ],
-                            ),
-                          ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
-                            begin: const Offset(1, 1),
-                            end: const Offset(1.2, 1.2),
-                            duration: 3.seconds,
-                            curve: Curves.easeInOut,
-                          ),
-                          
-                          // Om Icon
-                          Container(
-                            width: 80,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
-                              border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
-                            ),
-                            child: Center(
-                              child: Text(
-                                'ॐ',
-                                style: GoogleFonts.newsreader(
-                                  fontSize: 48,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w300,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    PremiumUI.logoAnimated(height: 100),
 
                     const SizedBox(height: 24),
 

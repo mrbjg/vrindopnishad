@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
-import '../core/design_system.dart';
 import 'package:flutter/services.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
@@ -19,7 +18,7 @@ class PressableScale extends StatefulWidget {
   final double scaleFactor;
   final bool haptic;
 
-  PressableScale({
+  const PressableScale({
     super.key,
     required this.child,
     this.onTap,
@@ -332,7 +331,7 @@ class ShimmerLoading extends StatelessWidget {
   final double height;
   final BorderRadius? borderRadius;
 
-  ShimmerLoading({
+  const ShimmerLoading({
     super.key,
     this.width = double.infinity,
     this.height = 20,
@@ -375,7 +374,7 @@ class GradientCategoryCard extends StatelessWidget {
   final VoidCallback? onTap;
   final int itemCount;
 
-  GradientCategoryCard({
+  const GradientCategoryCard({
     super.key,
     required this.title,
     required this.icon,
@@ -469,7 +468,7 @@ class GradientCategoryCard extends StatelessWidget {
 /// ═══════════════════════════════════════════════════════════════════════════
 
 class AnimatedGreeting extends StatelessWidget {
-  AnimatedGreeting({super.key});
+  const AnimatedGreeting({super.key});
 
   // Sacred greetings that rotate based on time
   static const List<String> _sacredGreetings = [
@@ -729,7 +728,7 @@ class QuoteCard extends StatelessWidget {
   final String quote;
   final String? source;
 
-  QuoteCard({super.key, required this.quote, this.source});
+  const QuoteCard({super.key, required this.quote, this.source});
 
   @override
   Widget build(BuildContext context) {
