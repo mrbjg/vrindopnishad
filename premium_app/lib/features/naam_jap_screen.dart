@@ -34,11 +34,10 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
     final isFocusMode = ref.watch(focusModeProvider);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // Background Nebula & Starlight Effects
-          Positioned.fill(child: PremiumUI.voidBackground()),
+          // Core background handled by Master Layer
           Positioned(
             top: MediaQuery.of(context).size.height * 0.2,
             left: 0,
@@ -80,7 +79,12 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
         children: [
           GestureDetector(
             onTap: () => Navigator.pop(context),
-            child: const Icon(Icons.expand_more, color: Colors.white70, size: 32)
+            child: PremiumUI.animatedIcon(
+              folder: 'Chevron-left',
+              fileName: 'chevron-left.json',
+              size: 32,
+              color: Colors.white70,
+            ),
           ),
           PremiumUI.focusContainer(
             isFocusMode: isFocusMode,
@@ -100,10 +104,11 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
               HapticFeedback.mediumImpact();
               ref.read(focusModeProvider.notifier).state = !isFocusMode;
             },
-            child: Icon(
-              isFocusMode ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
-              color: isFocusMode ? PremiumTokens.nebulaBlue : Colors.white70,
+            child: PremiumUI.animatedIcon(
+              folder: 'Visibility V2',
+              fileName: 'visibilityV2.json',
               size: 28,
+              color: isFocusMode ? PremiumTokens.nebulaBlue : Colors.white70,
             ),
           ),
         ],
@@ -196,7 +201,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
             letterSpacing: 4,
           ),
         ),
-        const SizedBox(height: 48),
+        const SizedBox(height: 24),
       ],
     );
   }
@@ -237,13 +242,17 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
               ),
             ],
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 24),
           // Buttons
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Icon(Icons.shuffle, color: Colors.white24, size: 24),
-              const Icon(Icons.skip_previous, color: Colors.white, size: 40),
+              PremiumUI.customIcon(
+                fileName: 'iconsax-arrow-left-01-fslvef72-.svg',
+                color: Colors.white,
+                size: 40,
+              ),
               GestureDetector(
                 onTap: () {
                   ref.read(naamJapStateProvider.notifier).increment();
@@ -261,14 +270,22 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
                       ),
                     ],
                   ),
-                  child: const Icon(Icons.play_arrow, color: Colors.white, size: 48),
+                  child: PremiumUI.customIcon(
+                    fileName: 'iconsax-musical-note-ai-dpa2ppnn-.svg',
+                    color: Colors.white,
+                    size: 48,
+                  ),
                 ),
               ),
-              const Icon(Icons.skip_next, color: Colors.white, size: 40),
+              PremiumUI.customIcon(
+                fileName: 'iconsax-export-arrow-01-gkvet824-.svg', // Using an export arrow as next for vibe
+                color: Colors.white,
+                size: 40,
+              ),
               const Icon(Icons.repeat, color: Colors.white24, size: 24),
             ],
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 24),
         ],
       ),
     );

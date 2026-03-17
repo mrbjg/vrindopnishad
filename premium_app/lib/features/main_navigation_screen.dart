@@ -43,66 +43,40 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
 
     return Scaffold(
       backgroundColor: PremiumTokens.voidBlack,
-      body: IndexedStack(index: currentIndex, children: _screens),
-      extendBody: true,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(top: 24),
-        child: GestureDetector(
-          onTap: () => _onItemTapped(2),
-          child: Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              gradient: PremiumTokens.nebulaGradient,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white10, width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: accentColor.withValues(alpha: 0.5),
-                  blurRadius: 25,
-                  offset: const Offset(0, 4),
+      body: Stack(
+        children: [
+          Positioned.fill(child: PremiumUI.masterBackground(index: currentIndex)),
+          IndexedStack(index: currentIndex, children: _screens),
+          // Mind-Blowing Ethereal NavBar
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                PremiumUI.floatingNavBar(
+                  selectedIndex: currentIndex,
+                  onTap: (index) => ref.read(navigationIndexProvider.notifier).state = index,
+                  items: const [
+                    (iconSvg: 'iconsax-ai-housing-jbqdn4s3-.svg', activeIconSvg: 'iconsax-ai-housing-1etziexn-.svg', label: "Home"),
+                    (iconSvg: 'iconsax-book-saved-cf2vpsqx-.svg', activeIconSvg: 'iconsax-book-saved-bg1ra9cv-.svg', label: "Library"),
+                    (iconSvg: 'iconsax-archive-27ilzneb-.svg', activeIconSvg: 'iconsax-archive-27ilzneb-.svg', label: ""), // Placeholder for center
+                    (iconSvg: 'iconsax-ai-send-message-m26q6m1j-.svg', activeIconSvg: 'iconsax-ai-send-message-2njcmr24-.svg', label: "Journal"),
+                    (iconSvg: 'iconsax-ai-users-rcrm13gd-.svg', activeIconSvg: 'iconsax-ai-users-uj3awqug-.svg', label: "Profile"),
+                  ],
+                ),
+                Positioned(
+                  bottom: 26, // Locked to navbar midline
+                  child: PremiumUI.sacredVoidButton(
+                    isActive: currentIndex == 2,
+                    onTap: () => ref.read(navigationIndexProvider.notifier).state = 2,
+                  ),
                 ),
               ],
             ),
-            child: Icon(
-              currentIndex == 2 ? Iconsax.music_play5 : Iconsax.refresh, 
-              color: Colors.white, 
-              size: 32
-            ),
           ),
-        ),
-      ),
-      bottomNavigationBar: Container(
-        height: 100,
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(30),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-            child: BottomAppBar(
-              height: 72,
-              color: barBgColor,
-              shape: const CircularNotchedRectangle(),
-              notchMargin: 8,
-              padding: EdgeInsets.zero,
-              elevation: 0,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildNavItem(0, Iconsax.home_1, "Home", accentColor, currentIndex),
-                    _buildNavItem(1, Iconsax.book_1, "Library", accentColor, currentIndex),
-                    const SizedBox(width: 56), // Notch space
-                    _buildNavItem(3, Iconsax.book, "Journal", accentColor, currentIndex),
-                    _buildNavItem(4, Iconsax.user, "Profile", accentColor, currentIndex),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
+        ],
       ),
     );
   }

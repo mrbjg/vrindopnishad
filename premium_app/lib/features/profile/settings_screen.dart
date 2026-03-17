@@ -62,8 +62,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Icon(
-                      Iconsax.setting_2,
+                    child: PremiumUI.customIcon(
+                      fileName: 'iconsax-chart-2-jqsol9gq-.svg',
                       color: PremiumTokens.nebulaBlue,
                       size: 22,
                     ),
@@ -177,8 +177,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Icon(
-                          Iconsax.heart,
+                        child: PremiumUI.animatedIcon(
+                          folder: 'Heart',
+                          fileName: 'heart.json',
                           color: PremiumTokens.nebulaBlue,
                           size: 24,
                         ),
@@ -226,10 +227,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             color: Colors.white.withValues(alpha: 0.1),
           ),
         ),
-        child: const Icon(
-          Iconsax.arrow_left,
-          color: Colors.white,
+        child: PremiumUI.animatedIcon(
+          folder: 'Chevron-left',
+          fileName: 'chevron-left.json',
           size: 20,
+          color: Colors.white,
         ),
       ),
     );

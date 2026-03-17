@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../core/design_system.dart';
+import '../../core/content_provider.dart';
+import '../../core/favorites_provider.dart';
 import '../content_detail_screen.dart';
 
-class SavedItemsScreen extends StatelessWidget {
+class SavedItemsScreen extends ConsumerWidget {
   const SavedItemsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final savedItems = [
-      {'title': 'Bhagavad Gita - Chapter 2', 'category': 'Shloka'},
-      {'title': 'Shiva Tandava Stotram', 'category': 'Strotra'},
-      {'title': 'Hanuman Chalisa', 'category': 'Poem'},
-    ];
+  Widget build(BuildContext context, WidgetRef ref) {
+    final allContent = ref.watch(sacredContentProvider);
+    final favoriteIds = ref.watch(favoritesProvider);
+    
+    // Filter content to only show favorites
+    final savedItems = allContent.where((c) => favoriteIds.contains(c.id)).toList();
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -30,7 +32,12 @@ class SavedItemsScreen extends StatelessWidget {
                 pinned: true,
                 centerTitle: true,
                 leading: IconButton(
-                  icon: const Icon(Icons.arrow_back_ios, color: PremiumTokens.nebulaBlue, size: 20),
+                  icon: PremiumUI.animatedIcon(
+                    folder: 'Chevron-left',
+                    fileName: 'chevron-left.json',
+                    size: 20,
+                    color: PremiumTokens.nebulaBlue,
+                  ),
                   onPressed: () => Navigator.pop(context),
                 ),
               ),
@@ -59,21 +66,21 @@ class SavedItemsScreen extends StatelessWidget {
                                   gradient: PremiumTokens.nebulaGradient,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: const Icon(
-                                  Iconsax.archive_book,
+                                child: PremiumUI.customIcon(
+                                  fileName: 'iconsax-archive-27ilzneb-.svg',
                                   color: Colors.white,
                                   size: 20,
                                 ),
                               ),
                               title: Text(
-                                item['title']!,
+                                item.title,
                                 style: PremiumTokens.displayStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               subtitle: Text(
-                                item['category']!,
+                                item.category,
                                 style: PremiumTokens.sansStyle(
                                   color: PremiumTokens.nebulaBlue,
                                   fontSize: 12,
@@ -90,8 +97,8 @@ class SavedItemsScreen extends StatelessWidget {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => ContentDetailScreen(
-                                      title: item['title']!,
-                                      category: item['category']!,
+                                      title: item.title,
+                                      category: item.category,
                                     ),
                                   ),
                                 );
@@ -123,9 +130,10 @@ class SavedItemsScreen extends StatelessWidget {
               shape: BoxShape.circle,
               border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
             ),
-            child: const Icon(
-              Iconsax.folder_open,
-              size: 48,
+            child: PremiumUI.animatedIcon(
+              folder: 'Heart',
+              fileName: 'heart.json',
+              size: 80,
               color: PremiumTokens.nebulaBlue,
             ),
           ),

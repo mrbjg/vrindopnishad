@@ -124,7 +124,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                                   hintText: "${l.translate('search')}...",
                                   hintStyle: GoogleFonts.outfit(color: Colors.white38),
                                   border: InputBorder.none,
-                                  icon: const Icon(Iconsax.search_normal, color: Colors.white38, size: 20),
+                                  icon: Icon(Iconsax.search_normal, color: Colors.white38, size: 20),
                                 ),
                                 onChanged: (v) => setState(() => _searchQuery = v),
                               ),
@@ -212,7 +212,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                 gradient: LinearGradient(colors: widget.gradientColors),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(Iconsax.book_1, color: Colors.white, size: 24),
+              child: Icon(Iconsax.book_1, color: Colors.white, size: 24),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -248,7 +248,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Iconsax.folder_open, size: 64, color: Colors.white10),
+          Icon(Iconsax.folder_open, size: 64, color: Colors.white10),
           const SizedBox(height: 16),
           Text(
             l.translate('no_content'),

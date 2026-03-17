@@ -33,10 +33,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     final user = authState.value;
 
     return Scaffold(
-      backgroundColor: PremiumTokens.charcoal,
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          Positioned.fill(child: PremiumUI.bokehBackground()),
+          // Background handled by MainNavigationScreen
           
           CustomScrollView(
             physics: const BouncingScrollPhysics(),
@@ -58,9 +58,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                         context,
                         MaterialPageRoute(builder: (_) => const SpiritualLevelingScreen()),
                       ),
-                      child: PremiumUI.glassCard(
+                      child: PremiumUI.voidCard(
                         padding: const EdgeInsets.all(20),
                         borderRadius: 24,
+                        accentColor: const Color(0xFF2E0BDA),
                         child: Row(
                           children: [
                             Container(
@@ -69,7 +70,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                                 color: const Color(0xFF2E0BDA),
                                 intensity: 0.6,
                               ),
-                              child: const Icon(Icons.auto_awesome, color: Color(0xFFC0C0C0), size: 24),
+                              child: PremiumUI.animatedIcon(
+                                folder: 'Star',
+                                fileName: 'star.json',
+                                size: 24,
+                                color: const Color(0xFFC0C0C0),
+                              ),
                             ),
                             const SizedBox(width: 20),
                             Expanded(
@@ -155,7 +161,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                     Center(
                       child: TextButton.icon(
                         onPressed: () => _handleLogout(context, ref),
-                        icon: const Icon(Iconsax.logout, color: Colors.white24, size: 20),
+                        icon: Icon(Iconsax.logout, color: Colors.white24, size: 20),
                         label: Text(
                           "Sign Out from Path",
                           style: GoogleFonts.outfit(color: Colors.white24, fontWeight: FontWeight.bold),
@@ -200,15 +206,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   }
 
   Widget _buildPremiumMenuItem({
-    required IconData icon,
+    IconData? icon,
+    String? customIconFile,
     required String title,
     required String subtitle,
     required Color color,
     required VoidCallback onTap,
   }) {
-    return PremiumUI.glassCard(
+    return PremiumUI.voidCard(
       padding: const EdgeInsets.all(12),
-      optimized: true,
       child: ListTile(
         onTap: () {
           HapticFeedback.lightImpact();
@@ -220,7 +226,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
             color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: color, size: 22),
+          child: customIconFile != null
+              ? PremiumUI.customIcon(fileName: customIconFile, color: color, size: 22)
+              : Icon(icon, color: color, size: 22),
         ),
         title: Text(
           title,

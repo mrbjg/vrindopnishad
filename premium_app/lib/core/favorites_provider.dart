@@ -1,22 +1,53 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Provider for managing favorites with Supabase sync
 class FavoritesNotifier extends StateNotifier<Set<String>> {
   final SupabaseClient _supabase = Supabase.instance.client;
+  static const String _storageKey = 'saved_sacred_content_ids';
 
   FavoritesNotifier() : super({}) {
-    _loadFavorites();
+    _initAndLoad();
   }
 
   User? get _currentUser => _supabase.auth.currentUser;
 
-  /// Load favorites from Supabase for the current user
-  Future<void> _loadFavorites() async {
-    if (_currentUser == null) {
-      state = {};
-      return;
+  /// Initialize and load favorites with multi-tier priority
+  Future<void> _initAndLoad() async {
+    // 1. FAST: Load from local storage immediately
+    await _loadFromLocal();
+    
+    // 2. SYNC: Load from Supabase in background
+    if (_currentUser != null) {
+      _loadFromSupabase();
     }
+  }
+
+  Future<void> _loadFromLocal() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final saved = prefs.getStringList(_storageKey);
+      if (saved != null) {
+        state = saved.toSet();
+      }
+    } catch (e) {
+      print('Local favorites load error: $e');
+    }
+  }
+
+  Future<void> _saveToLocal() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList(_storageKey, state.toList());
+    } catch (e) {
+      print('Local favorites save error: $e');
+    }
+  }
+
+  /// Load favorites from Supabase for the current user
+  Future<void> _loadFromSupabase() async {
+    if (_currentUser == null) return;
 
     try {
       final response = await _supabase
@@ -28,11 +59,12 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
           .map((item) => item['content_id'] as String)
           .toSet();
 
-      state = favoriteIds;
+      if (favoriteIds.isNotEmpty) {
+        state = {...state, ...favoriteIds};
+        await _saveToLocal();
+      }
     } catch (e) {
-      // Gracefully handle missing table - use local-only favorites
-      print('Favorites sync unavailable (table may not exist): $e');
-      // Keep current state, don't reset to empty
+      print('Favorites sync unavailable: $e');
     }
   }
 
@@ -56,6 +88,7 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
 
     // Optimistic update
     state = {...state, contentId};
+    await _saveToLocal();
 
     try {
       await _supabase.from('favorites').insert({
@@ -63,7 +96,6 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
         'content_id': contentId,
       });
     } catch (e) {
-      // Keep local state even if server sync fails
       print('Favorites sync failed (continuing locally): $e');
     }
   }
@@ -76,6 +108,7 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
     final newState = {...state};
     newState.remove(contentId);
     state = newState;
+    await _saveToLocal();
 
     try {
       await _supabase
@@ -84,14 +117,13 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
           .eq('user_id', _currentUser!.id)
           .eq('content_id', contentId);
     } catch (e) {
-      // Keep local state even if server sync fails
       print('Favorites sync failed (continuing locally): $e');
     }
   }
 
   /// Refresh favorites from server
   Future<void> refresh() async {
-    await _loadFavorites();
+    await _loadFromSupabase();
   }
 
   /// Get all favorite content IDs

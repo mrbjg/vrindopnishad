@@ -67,7 +67,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   ),
                   actions: [
                     IconButton(
-                      icon: const Icon(Iconsax.notification, color: Colors.white54),
+                      icon: Icon(Iconsax.notification, color: Colors.white54),
                       onPressed: () {},
                     ),
                   ],
@@ -88,10 +88,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                           hintText: "Search mantras, stories, shlokas...",
                           hintStyle: GoogleFonts.manrope(color: Colors.white24, fontSize: 14),
                           border: InputBorder.none,
-                          icon: const Icon(Iconsax.search_normal, color: PremiumTokens.saffronGlow, size: 20),
+                          icon: Icon(Iconsax.search_normal, color: PremiumTokens.saffronGlow, size: 20),
                           suffixIcon: _searchQuery.isNotEmpty
                               ? IconButton(
-                                  icon: const Icon(Iconsax.close_circle, size: 18, color: Colors.white38),
+                                  icon: Icon(Iconsax.close_circle, size: 18, color: Colors.white38),
                                   onPressed: () {
                                     _searchController.clear();
                                     setState(() {
@@ -381,7 +381,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             
             // Actions
             IconButton(
-              icon: const Icon(Iconsax.play_circle5, color: PremiumTokens.saffronGlow, size: 28),
+              icon: Icon(Iconsax.play_circle5, color: PremiumTokens.saffronGlow, size: 28),
               onPressed: () {},
             ),
           ],
@@ -394,7 +394,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Icon(Iconsax.search_zoom_out, size: 48, color: Colors.white10),
+        Icon(Iconsax.search_zoom_out, size: 48, color: Colors.white10),
         const SizedBox(height: 16),
         Text(
           "No results found on this path",

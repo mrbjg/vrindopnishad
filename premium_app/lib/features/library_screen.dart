@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:iconsax/iconsax.dart';
 import '../core/design_system.dart';
 import '../core/content_provider.dart';
 import '../core/providers.dart';
@@ -17,8 +18,7 @@ class LibraryScreen extends ConsumerWidget {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          PremiumUI.bokehBackground(),
-          PremiumUI.mandalaOverlay(),
+          // Background handled by Master Layer
           SafeArea(
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
@@ -67,7 +67,12 @@ class LibraryScreen extends ConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Icon(Icons.menu, color: PremiumTokens.nebulaBlue, size: 28),
+          PremiumUI.animatedIcon(
+            folder: 'Filter',
+            fileName: 'filter.json',
+            size: 28,
+            color: PremiumTokens.nebulaBlue,
+          ),
           Column(
             children: [
               Text(
@@ -125,7 +130,7 @@ class LibraryScreen extends ConsumerWidget {
             hintText: "Search sacred mantras...",
             hintStyle: PremiumTokens.sansStyle(color: Colors.white24),
             border: InputBorder.none,
-            icon: const Icon(Icons.search, color: PremiumTokens.nebulaBlue),
+            icon: Icon(Iconsax.search_normal, color: PremiumTokens.nebulaBlue, size: 20),
           ),
           style: PremiumTokens.sansStyle(),
         ),
@@ -182,7 +187,12 @@ class LibraryScreen extends ConsumerWidget {
                 shape: BoxShape.circle,
                 color: PremiumTokens.nebulaBlue,
               ),
-              child: const Icon(Icons.pause, color: PremiumTokens.charcoal),
+              child: PremiumUI.animatedIcon(
+                folder: 'Refresh',
+                fileName: 'refresh.json',
+                size: 24,
+                color: PremiumTokens.charcoal,
+              ),
             ),
           ],
         ),
@@ -203,7 +213,7 @@ class LibraryScreen extends ConsumerWidget {
             ),
           );
         },
-        child: PremiumUI.voidGlassCard(
+        child: PremiumUI.voidCard(
           padding: const EdgeInsets.all(16),
           borderRadius: 16,
           optimized: true,

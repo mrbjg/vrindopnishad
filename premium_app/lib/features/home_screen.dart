@@ -15,11 +15,10 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: PremiumTokens.charcoal,
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // Ambient bokeh backgrounds from template
-          Positioned.fill(child: PremiumUI.bokehBackground()),
+          // Background handled by MainNavigationScreen to prevent overdraw
           
           CustomScrollView(
             physics: const BouncingScrollPhysics(),
@@ -30,19 +29,16 @@ class HomeScreen extends ConsumerWidget {
                 collapsedHeight: 80,
                 pinned: true,
                 floating: false,
-                backgroundColor: PremiumTokens.voidBlack.withValues(alpha: 0.8),
-                flexibleSpace: ClipRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: FlexibleSpaceBar(
-                      background: Container(color: Colors.transparent),
-                    ),
-                  ),
-                ),
+                backgroundColor: PremiumTokens.voidBlack.withValues(alpha: 0.95),
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Icon(Iconsax.menu, color: PremiumTokens.nebulaBlue, size: 28),
+                    PremiumUI.animatedIcon(
+                      folder: 'Filter',
+                      fileName: 'filter.json',
+                      size: 28,
+                      color: PremiumTokens.nebulaBlue,
+                    ),
                     Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -67,7 +63,7 @@ class HomeScreen extends ConsumerWidget {
                     ),
                     Row(
                       children: [
-                        const Icon(Iconsax.notification, color: PremiumTokens.nebulaBlue, size: 24),
+                        Icon(Iconsax.notification, color: PremiumTokens.nebulaBlue, size: 24),
                         const SizedBox(width: 16),
                         Container(
                           width: 32,
@@ -104,14 +100,18 @@ class HomeScreen extends ConsumerWidget {
                   builder: (context, ref, _) {
                     final lang = ref.watch(languageProvider);
                     final l = AppLocalization(lang);
-                    return Column(
-                      children: [
-                        _buildPremiumCategories(context, l),
-                        _buildRecentReflectionPreview(context, ref),
-                      ],
-                    );
+                    return _buildCategoriesHeader(context, l);
                   },
                 ),
+              ),
+
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                sliver: _buildCategoriesGrid(context),
+              ),
+
+              SliverToBoxAdapter(
+                child: _buildRecentReflectionPreview(context, ref),
               ),
 
               SliverPadding(
@@ -150,9 +150,9 @@ class HomeScreen extends ConsumerWidget {
 
     return Padding(
       padding: const EdgeInsets.all(20),
-      child: PremiumUI.voidGlassCard(
+      child: PremiumUI.voidCard(
         padding: const EdgeInsets.all(24),
-        optimized: true,
+        accentColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
         child: Column(
           children: [
             Row(
@@ -171,7 +171,12 @@ class HomeScreen extends ConsumerWidget {
                     ),
                     Text(
                       'Enter the Ethereal Void',
-                      style: GoogleFonts.manrope(color: PremiumTokens.nebulaBlue, fontSize: 10, fontWeight: FontWeight.bold),
+                      style: PremiumTokens.sansStyle(
+                        color: PremiumTokens.nebulaBlue, 
+                        fontSize: 11, 
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5,
+                      ),
                     ),
                   ],
                 ),
@@ -191,16 +196,16 @@ class HomeScreen extends ConsumerWidget {
                 alignment: Alignment.center,
                 children: [
                   SizedBox(
-                    width: 150,
-                    height: 150,
+                    width: 120,
+                    height: 120,
                     child: CircularProgressIndicator(
                       value: progress,
-                      strokeWidth: 6,
+                      strokeWidth: 3,
                       backgroundColor: Colors.white.withValues(alpha: 0.05),
                       valueColor: const AlwaysStoppedAnimation(PremiumTokens.nebulaBlue),
                     ),
                   ),
-                  const Icon(Iconsax.music_play5, color: Colors.white, size: 40),
+                  Icon(Iconsax.music, color: Colors.white, size: 40),
                 ],
               ),
             ),
@@ -242,7 +247,26 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildPremiumCategories(BuildContext context, AppLocalization l) {
+  Widget _buildCategoriesHeader(BuildContext context, AppLocalization l) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Sacred Wisdom',
+            style: GoogleFonts.manrope(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            'View All',
+            style: GoogleFonts.manrope(color: PremiumTokens.nebulaBlue, fontSize: 13, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoriesGrid(BuildContext context) {
     final categories = [
       {
         'name': 'Shlokas',
@@ -261,86 +285,63 @@ class HomeScreen extends ConsumerWidget {
       },
     ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Sacred Wisdom',
-                style: GoogleFonts.manrope(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'View All',
-                style: GoogleFonts.manrope(color: PremiumTokens.nebulaBlue, fontSize: 13, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 1.0,
-            ),
-            itemCount: categories.length,
-            itemBuilder: (context, index) {
-              final cat = categories[index];
-              return PremiumUI.saffronGlassCard(
-                padding: EdgeInsets.zero,
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: PremiumUI.networkImage(
-                        url: cat['image'],
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        gradient: LinearGradient(
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                          colors: [
-                            PremiumTokens.charcoal.withValues(alpha: 0.9),
-                            Colors.transparent,
-                          ],
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 16,
-                      left: 16,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            cat['name']!,
-                            style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-                          ),
-                          Text(
-                            cat['count']!,
-                            style: GoogleFonts.manrope(color: Colors.white54, fontSize: 10),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 1.0,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          final cat = categories[index];
+          return PremiumUI.saffronGlassCard(
+            padding: EdgeInsets.zero,
+            optimized: true,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: PremiumUI.networkImage(
+                    url: cat['image'],
+                    borderRadius: BorderRadius.circular(24),
+                  ),
                 ),
-              );
-            },
-          ),
-        ),
-      ],
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [
+                        PremiumTokens.charcoal.withValues(alpha: 0.9),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 16,
+                  left: 16,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        cat['name']!,
+                        style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                      Text(
+                        cat['count']!,
+                        style: GoogleFonts.manrope(color: Colors.white54, fontSize: 10),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+        childCount: categories.length,
+      ),
     );
   }
 
@@ -361,11 +362,10 @@ class HomeScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16),
-          PremiumUI.voidGlassCard(
-            padding: const EdgeInsets.all(20),
+          PremiumUI.voidCard(
             child: Row(
               children: [
-                const Icon(Iconsax.moon5, color: Color(0xFFC0C0CF), size: 24),
+                Icon(Iconsax.moon, color: Color(0xFFC0C0CF), size: 24),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -387,7 +387,7 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Iconsax.arrow_right_3, color: Colors.white24, size: 20),
+                  icon: Icon(Iconsax.arrow_right_3, color: Colors.white24, size: 20),
                   onPressed: () {
                     ref.read(navigationIndexProvider.notifier).state = 1; // Library index
                   },
@@ -409,9 +409,9 @@ class HomeScreen extends ConsumerWidget {
           final item = items[index];
           return Padding(
             padding: const EdgeInsets.only(bottom: 16),
-            child: PremiumUI.glassCard(
+            child: PremiumUI.voidCard(
               padding: const EdgeInsets.all(16),
-              optimized: true,
+              accentColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
               child: Row(
                 children: [
                   Container(
@@ -440,7 +440,7 @@ class HomeScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const Icon(Iconsax.arrow_right_3, color: Colors.white24, size: 16),
+                  Icon(Iconsax.arrow_right_3, color: Colors.white24, size: 16),
                 ],
               ),
             ),
@@ -491,7 +491,7 @@ class PremiumQuoteCard extends StatelessWidget {
             ),
             child: Column(
               children: [
-                const Icon(Iconsax.quote_up5, color: PremiumTokens.nebulaBlue, size: 40),
+                Icon(Iconsax.quote_up5, color: PremiumTokens.nebulaBlue, size: 40),
                 const SizedBox(height: 24),
                 Text(
                   '"The soul is neither born, nor does it ever die; nor having once existed, does it ever cease to be."',

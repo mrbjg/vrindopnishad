@@ -3,6 +3,10 @@ import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter/services.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:lottie/lottie.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'theme.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
@@ -104,19 +108,9 @@ class PremiumTokens {
       shape: BoxShape.circle,
       boxShadow: [
         BoxShadow(
-          color: color.withValues(alpha: 0.4 * intensity),
-          blurRadius: 20 * intensity,
+          color: color.withValues(alpha: 0.3 * intensity),
+          blurRadius: 30 * intensity,
           spreadRadius: 2 * intensity,
-        ),
-        BoxShadow(
-          color: Color(0xFFC0C0C0).withValues(alpha: 0.2 * intensity), // aura-silver
-          blurRadius: 40 * intensity,
-          spreadRadius: 5 * intensity,
-        ),
-        BoxShadow(
-          color: Color(0xFF4B0082).withValues(alpha: 0.15 * intensity), // aura-indigo
-          blurRadius: 60 * intensity,
-          spreadRadius: 10 * intensity,
         ),
       ],
     );
@@ -185,7 +179,7 @@ class PremiumUI extends StatelessWidget {
     double borderRadius = 24,
     EdgeInsets? padding,
     EdgeInsets? margin,
-    bool optimized = false,
+    bool optimized = true,
   }) {
     return Container(
       margin: margin,
@@ -193,8 +187,8 @@ class PremiumUI extends StatelessWidget {
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
           BoxShadow(
-            color: PremiumTokens.saffronGlow.withValues(alpha: 0.15),
-            blurRadius: 20,
+            color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+            blurRadius: 15,
             spreadRadius: -5,
           ),
         ],
@@ -205,7 +199,7 @@ class PremiumUI extends StatelessWidget {
           ? Container(
               padding: padding ?? const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color(0xCC0A0A1F), // Higher opacity, no blur
+                color: const Color(0xCC0A0A1F), // Solid high-performance surface
                 borderRadius: BorderRadius.circular(borderRadius),
                 border: Border.all(
                   color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
@@ -240,7 +234,7 @@ class PremiumUI extends StatelessWidget {
     double borderRadius = 24,
     EdgeInsets? padding,
     EdgeInsets? margin,
-    bool optimized = false,
+    bool optimized = true,
   }) {
     return Container(
       margin: margin,
@@ -250,10 +244,10 @@ class PremiumUI extends StatelessWidget {
           ? Container(
               padding: padding ?? const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color(0xFF14143D), // Solid blue-ish charcoal
+                color: const Color(0xFF0F0F2D), // Deep solid void
                 borderRadius: BorderRadius.circular(borderRadius),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.1),
+                  color: Colors.white.withValues(alpha: 0.08),
                   width: 1,
                 ),
               ),
@@ -308,6 +302,173 @@ class PremiumUI extends StatelessWidget {
     );
   }
 
+  /// Stitch-Inspired VoidCard Component
+  /// High-performance card with left accent, blue-tinted glass, and optimized rendering
+  static Widget voidCard({
+    required Widget child,
+    Color accentColor = PremiumTokens.nebulaBlue,
+    double borderRadius = 16,
+    EdgeInsets padding = const EdgeInsets.all(16),
+    EdgeInsets? margin,
+    bool optimized = true,
+  }) {
+    return Container(
+      margin: margin ?? const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(borderRadius),
+        color: const Color(0x0DFFFFFF), // Subtle glass base
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Stitch Accent Bar
+              Container(
+                width: 4,
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.6),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    bottomLeft: Radius.circular(16),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: padding,
+                  child: child,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Mind-Blowing Ethereal Floating NavBar
+  static Widget floatingNavBar({
+    required int selectedIndex,
+    required List<({String iconSvg, String activeIconSvg, String label})> items,
+    required Function(int) onTap,
+  }) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        final slotWidth = width / 5;
+        final capsuleWidth = 58.0;
+        final capsuleHeight = 44.0;
+
+        return Container(
+          height: 100, // Safe height for bar + Sacred Void overlap
+          padding: const EdgeInsets.only(bottom: 20),
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            clipBehavior: Clip.none,
+            children: [
+              // Glass Bar Container
+              Container(
+                height: 70,
+                decoration: BoxDecoration(
+                  color: const Color(0xE60A0A1F),
+                  borderRadius: BorderRadius.circular(35),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.1),
+                    width: 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.5),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: Stack(
+                  children: [
+                    // Capsule Indicator
+                    AnimatedPositioned(
+                      duration: const Duration(milliseconds: 350),
+                      curve: Curves.fastOutSlowIn,
+                      left: (selectedIndex * slotWidth) + (slotWidth - capsuleWidth) / 2,
+                      top: (70 - capsuleHeight) / 2,
+                      child: Container(
+                        width: capsuleWidth,
+                        height: capsuleHeight,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(22),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.white.withValues(alpha: 0.05),
+                              blurRadius: 10,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    // Navigation Icons Row
+                    Row(
+                      children: List.generate(items.length, (index) {
+                        final item = items[index];
+                        final isSelected = selectedIndex == index;
+                        
+                        if (index == 2) return const Expanded(child: SizedBox());
+
+                        return Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              onTap(index);
+                            },
+                            behavior: HitTestBehavior.opaque,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                PremiumUI.customIcon(
+                                  fileName: isSelected ? item.activeIconSvg : item.iconSvg,
+                                  color: isSelected ? Colors.white : Colors.white24,
+                                  size: 24,
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  item.label,
+                                  style: GoogleFonts.manrope(
+                                    fontSize: 8,
+                                    color: isSelected ? Colors.white : Colors.white24,
+                                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// Sacred Void Center Button - Minimal "Glass-Void" Version
+  static Widget sacredVoidButton({
+    required VoidCallback onTap,
+    bool isActive = false,
+  }) {
+    return _SacredVoidButtonInternal(onTap: onTap, isActive: isActive);
+  }
+
+
   /// Generic glass card
   static Widget glassCard({
     required Widget child,
@@ -316,7 +477,7 @@ class PremiumUI extends StatelessWidget {
     double borderRadius = 24,
     EdgeInsets? padding,
     EdgeInsets? margin,
-    bool optimized = false,
+    bool optimized = true,
   }) {
     return Container(
       margin: margin,
@@ -326,10 +487,10 @@ class PremiumUI extends StatelessWidget {
           ? Container(
               padding: padding ?? const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: opacity * 2), // Slightly more opaque
+                color: Colors.white.withValues(alpha: opacity * 1.5), // High-perf opacity
                 borderRadius: BorderRadius.circular(borderRadius),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.1),
+                  color: Colors.white.withValues(alpha: 0.08),
                   width: 1,
                 ),
               ),
@@ -375,12 +536,17 @@ class PremiumUI extends StatelessWidget {
     );
   }
 
-  /// Premium bokeh background for immersive screens
-  static Widget bokehBackground() {
+  /// Optimized Master Background switcher to prevent overdraw
+  static Widget masterBackground({required int index}) {
+    // 0: Home, 1: Library, 4: Profile -> Bokeh
+    // 2: Naam Jap, 3: Journal -> Void
+    final isVoid = index == 2 || index == 3;
+    
     return Container(
-      decoration: BoxDecoration(color: PremiumTokens.voidBlack),
+      decoration: const BoxDecoration(color: PremiumTokens.voidBlack),
       child: Stack(
         children: [
+          // Base Ambient Glow (Always present)
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
@@ -388,61 +554,46 @@ class PremiumUI extends StatelessWidget {
                   center: Alignment.center,
                   radius: 1.5,
                   colors: [
-                    PremiumTokens.nebulaBlue.withValues(alpha: 0.05),
+                    PremiumTokens.nebulaBlue.withValues(alpha: 0.08),
                     Colors.transparent,
                   ],
                 ),
               ),
             ),
           ),
-          _buildBokeh(top: -100, right: -50, size: 300, color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1)),
-          _buildBokeh(bottom: -50, left: -50, size: 250, color: PremiumTokens.nebulaBlue.withValues(alpha: 0.08)),
-          _buildBokeh(top: 100, left: 50, size: 150, color: PremiumTokens.celestialGlow.withValues(alpha: 0.05)),
           
-          // Recognizable Celestial Elements
-          _buildPlanet(top: 120, right: 60, size: 40, color: Colors.blueAccent.withValues(alpha: 0.3)),
-          _buildMoon(top: 60, left: 40, size: 80),
+          // Primary Nebula Flare
+          _buildBokeh(
+            top: -100, 
+            right: -50, 
+            size: 400, 
+            color: PremiumTokens.nebulaBlue.withValues(alpha: isVoid ? 0.12 : 0.08)
+          ),
+          
+          // Transitionary Elements
+          if (isVoid) ...[
+            _buildBokeh(bottom: -50, left: -50, size: 350, color: PremiumTokens.nebulaBlue.withValues(alpha: 0.06)),
+            _buildMoon(bottom: 120, left: 60, size: 80),
+          ] else ...[
+             _buildBokeh(bottom: -100, left: -50, size: 300, color: PremiumTokens.celestialGlow.withValues(alpha: 0.04)),
+             _buildMoon(top: 60, left: 40, size: 60),
+          ],
+          
+          // Unified Planet (Subtle)
+          _buildPlanet(
+            top: isVoid ? 200 : 120, 
+            right: isVoid ? 80 : 60, 
+            size: 30, 
+            color: isVoid ? Colors.deepPurpleAccent.withValues(alpha: 0.2) : Colors.blueAccent.withValues(alpha: 0.15)
+          ),
         ],
       ),
     );
   }
 
-  /// Ethereal Void background for meditation/journal
-  static Widget voidBackground() {
-    return Container(
-      decoration: BoxDecoration(color: PremiumTokens.voidBlack,
-      ),
-      child: Stack(
-        children: [
-          // Deep space radial glow
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment.center,
-                  radius: 1.2,
-                  colors: [
-                    Color(0xFF256AF4).withValues(alpha: 0.08),
-                    PremiumTokens.voidBlack,
-                  ],
-                ),
-              ),
-            ),
-          ),
-          // Nebula flares
-          _buildBokeh(top: -150, left: -100, size: 500, color: Color(0xFF256AF4).withValues(alpha: 0.1)),
-          _buildBokeh(bottom: -100, right: -150, size: 400, color: Color(0xFF256AF4).withValues(alpha: 0.05)),
-          
-          // Celestial Elements
-          _buildMoon(bottom: 100, left: 60, size: 100),
-          _buildPlanet(top: 200, right: 80, size: 30, color: Colors.deepPurpleAccent.withValues(alpha: 0.2)),
-          
-          // Star dust (simulated with small faint bokeh)
-          _buildBokeh(top: 200, right: 100, size: 200, color: Colors.white.withValues(alpha: 0.02)),
-        ],
-      ),
-    );
-  }
+  /// Deprecated in favor of masterBackground, kept for single-screen use if needed
+  static Widget bokehBackground() => masterBackground(index: 0);
+  static Widget voidBackground() => masterBackground(index: 2);
 
   /// Subtle mandala pattern overlay for sacred screens
   static Widget mandalaOverlay({double opacity = 0.03}) {
@@ -484,44 +635,25 @@ class PremiumUI extends StatelessWidget {
       bottom: bottom,
       left: left,
       right: right,
-      child: Opacity(
-        opacity: 0.6,
-        child: Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.white.withValues(alpha: 0.2),
-                blurRadius: 30,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
-          child: Stack(
-            children: [
-              Container(
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white70,
-                ),
-              ),
-              Positioned(
-                left: size * 0.2, // Offset to create crescent
-                child: Container(
-                  width: size,
-                  height: size,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: PremiumTokens.voidBlack,
-                  ),
-                ),
-              ),
-            ],
-          ),
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.white.withValues(alpha: 0.15),
+              blurRadius: 40,
+              spreadRadius: 5,
+            ),
+          ],
         ),
-      ),
+        child: CustomPaint(
+          painter: _CrescentMoonPainter(),
+        ),
+      ).animate(onPlay: (c) => c.repeat(reverse: true))
+       .fadeIn(duration: 2.seconds)
+       .moveY(begin: 0, end: -10, duration: 4.seconds, curve: Curves.easeInOut),
     );
   }
 
@@ -637,6 +769,59 @@ class PremiumUI extends StatelessWidget {
   }
 
   /// Web-safe Network Image Loader with Caching
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ICONS: Animated & Custom Assets
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  static const String _animRoot = 'assets/animated_icons/';
+  static const String _svgRoot = 'assets/iconsax/';
+
+  /// Premium Animated Icon (Lottie)
+  /// Automatically handles color tinting via delegates
+  static Widget animatedIcon({
+    required String folder,
+    required String fileName,
+    double size = 24,
+    Color? color,
+    bool repeat = true,
+  }) {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Lottie.asset(
+        '$_animRoot$folder/$fileName',
+        repeat: repeat,
+        fit: BoxFit.contain,
+        delegates: color != null
+            ? LottieDelegates(
+                values: [
+                  ValueDelegate.color(
+                    const ['**'],
+                    value: color,
+                  ),
+                ],
+              )
+            : null,
+      ),
+    );
+  }
+
+  /// Premium Custom Icon (SVG)
+  static Widget customIcon({
+    required String fileName,
+    double size = 24,
+    Color? color,
+  }) {
+    final String path = fileName.startsWith('assets/') ? fileName : '$_svgRoot$fileName';
+    return SvgPicture.asset(
+      path,
+      width: size,
+      height: size,
+      colorFilter: color != null ? ColorFilter.mode(color, BlendMode.srcIn) : null,
+      fit: BoxFit.contain,
+    );
+  }
+
   static Widget networkImage({
     required String? url,
     BoxFit fit = BoxFit.cover,
@@ -816,4 +1001,169 @@ class _PlanetRingsPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class _CrescentMoonPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2.5;
+
+    final moonPaint = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          Colors.white,
+          Colors.white.withValues(alpha: 0.8),
+          Colors.white.withValues(alpha: 0.1),
+        ],
+        stops: const [0.0, 0.5, 1.0],
+      ).createShader(Rect.fromCircle(center: center, radius: radius))
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
+
+    final path1 = Path()
+      ..addOval(Rect.fromCircle(center: center, radius: radius));
+
+    final path2 = Path()
+      ..addOval(Rect.fromCircle(
+        center: center.translate(radius * 0.4, -radius * 0.15),
+        radius: radius * 0.95,
+      ));
+
+    // Subtract path2 from path1 to create a crescent
+    final crescentPath = Path.combine(PathOperation.difference, path1, path2);
+
+    canvas.drawPath(crescentPath, moonPaint);
+    
+    // Add a tiny glow to the tips
+    final glowPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.3)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+    canvas.drawPath(crescentPath, glowPaint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class _SacredVoidButtonInternal extends StatefulWidget {
+  final VoidCallback onTap;
+  final bool isActive;
+
+  const _SacredVoidButtonInternal({
+    required this.onTap,
+    this.isActive = false,
+  });
+
+  @override
+  State<_SacredVoidButtonInternal> createState() => _SacredVoidButtonInternalState();
+}
+
+class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(_SacredVoidButtonInternal oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isActive != oldWidget.isActive) {
+      if (widget.isActive) {
+        _controller.forward(from: _controller.value);
+      } else {
+        _controller.reverse(from: _controller.value);
+      }
+    }
+  }
+
+  void _handleTap() {
+    HapticFeedback.heavyImpact();
+    widget.onTap();
+    _controller.forward(from: 0.0).then((_) {
+      // Reset to outline frame after animation completes ONLY IF not active
+      if (mounted && !widget.isActive) {
+        _controller.value = 0.0;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _handleTap,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Outer Glow Aura (Subtle Breathing)
+          Container(
+            width: 75,
+            height: 75,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: (widget.isActive ? PremiumTokens.saffronGlow : PremiumTokens.nebulaBlue)
+                      .withValues(alpha: widget.isActive ? 0.3 : 0.25),
+                  blurRadius: widget.isActive ? 30 : 25,
+                  spreadRadius: widget.isActive ? 2 : 1,
+                ),
+              ],
+            ),
+          ),
+
+          // Main Button Body
+          Container(
+            width: 58,
+            height: 58,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: const Color(0xFF03030F).withValues(alpha: 0.9), // Near-black void
+              border: Border.all(
+                color: (widget.isActive ? PremiumTokens.saffronGlow : Colors.white).withValues(alpha: 0.4),
+                width: 1.5,
+              ),
+              boxShadow: [
+                if (widget.isActive)
+                  BoxShadow(
+                    color: PremiumTokens.saffronGlow.withValues(alpha: 0.5),
+                    blurRadius: 15,
+                    spreadRadius: -2,
+                  ),
+              ],
+            ),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: ColorFiltered(
+                  colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                  child: Lottie.asset(
+                    'assets/animated_icons/Heart/heart.json',
+                    controller: _controller,
+                    width: 44,
+                    height: 44,
+                    repeat: false,
+                    animate: false,
+                    onLoaded: (composition) {
+                      _controller.duration = composition.duration;
+                      _controller.value = 0.0;
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ),
+          
+        ],
+      ),
+    );
+  }
 }

@@ -268,7 +268,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         ),
         child: Row(
           children: [
-            _buildHeaderCircleButton(Iconsax.arrow_left, () => Navigator.pop(context)),
+            _buildHeaderCircleButton(
+              null, 
+              () => Navigator.pop(context),
+              isAnimated: true,
+              animFolder: 'Chevron-left',
+              animFile: 'chevron-left.json',
+            ),
             SizedBox(width: 12),
             Expanded(
               child: AnimatedOpacity(
@@ -284,12 +290,15 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             ),
             // Focus Mode Toggle
             _buildHeaderCircleButton(
-              isFocusMode ? Iconsax.eye : Iconsax.eye_slash,
+              null,
               () {
                 HapticFeedback.mediumImpact();
                 ref.read(focusModeProvider.notifier).state = !isFocusMode;
               },
               isActive: isFocusMode,
+              isAnimated: true,
+              animFolder: 'Visibility V2',
+              animFile: 'visibilityV2.json',
             ),
             const SizedBox(width: 8),
             PremiumUI.focusContainer(
@@ -297,14 +306,20 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               child: Row(
                 children: [
                   _buildHeaderCircleButton(
-                    widget.content != null && ref.watch(isFavoriteProvider(widget.content!.id))
-                        ? Iconsax.heart5
-                        : Iconsax.heart,
+                    null,
                     _toggleFavorite,
                     isActive: widget.content != null && ref.watch(isFavoriteProvider(widget.content!.id)),
+                    isAnimated: true,
+                    animFolder: 'Heart',
+                    animFile: 'heart.json',
                   ),
                   const SizedBox(width: 8),
-                  _buildHeaderCircleButton(Iconsax.send_2, _shareContent),
+                  _buildHeaderCircleButton(
+                    null, 
+                    _shareContent,
+                    isCustomSvg: true,
+                    svgFile: 'iconsax-ai-send-message-m26q6m1j-.svg',
+                  ),
                 ],
               ),
             ),
@@ -314,7 +329,16 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  Widget _buildHeaderCircleButton(IconData icon, VoidCallback onTap, {bool isActive = false}) {
+  Widget _buildHeaderCircleButton(
+    IconData? icon, 
+    VoidCallback onTap, {
+    bool isActive = false,
+    bool isAnimated = false,
+    String? animFolder,
+    String? animFile,
+    bool isCustomSvg = false,
+    String? svgFile,
+  }) {
     return PremiumUI.glassCard(
       padding: const EdgeInsets.all(10),
       borderRadius: 14,
@@ -323,7 +347,20 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           HapticFeedback.lightImpact();
           onTap();
         },
-        child: Icon(icon, color: isActive ? PremiumTokens.saffronGlow : Colors.white, size: 20),
+        child: isAnimated 
+          ? PremiumUI.animatedIcon(
+              folder: animFolder!, 
+              fileName: animFile!, 
+              size: 20, 
+              color: isActive ? PremiumTokens.saffronGlow : Colors.white
+            )
+          : isCustomSvg
+            ? PremiumUI.customIcon(
+                fileName: svgFile!,
+                size: 20,
+                color: isActive ? PremiumTokens.saffronGlow : Colors.white,
+              )
+            : Icon(icon, color: isActive ? PremiumTokens.saffronGlow : Colors.white, size: 20),
       ),
     );
   }
@@ -350,7 +387,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     Clipboard.setData(ClipboardData(text: text));
                     HapticFeedback.mediumImpact();
                   },
-                  icon: const Icon(Iconsax.copy, color: Colors.white38, size: 18),
+                  icon: Icon(Iconsax.copy, color: Colors.white38, size: 18),
                 ),
               ],
             ),
@@ -469,7 +506,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             shape: BoxShape.circle,
             boxShadow: [BoxShadow(color: PremiumTokens.saffronGlow.withValues(alpha: 0.3), blurRadius: 20)],
           ),
-          child: const Icon(Iconsax.music, color: Colors.white, size: 24),
+          child: Icon(Iconsax.music, color: Colors.white, size: 24),
         ),
       ),
     ).animate().scale();
@@ -490,14 +527,14 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Iconsax.music_play, color: PremiumTokens.saffronGlow, size: 16),
+                      Icon(Iconsax.music_play, color: PremiumTokens.saffronGlow, size: 16),
                       const SizedBox(width: 12),
                       Text("Divine Recitation", style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold)),
                     ],
                   ),
                   IconButton(
                     onPressed: () => setState(() => _showAudioPlayer = false),
-                    icon: const Icon(Iconsax.arrow_down_1, color: Colors.white38, size: 20),
+                    icon: Icon(Iconsax.arrow_down_1, color: Colors.white38, size: 20),
                   ),
                 ],
               ),

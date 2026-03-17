@@ -70,7 +70,7 @@ class SpiritualLevelingScreen extends ConsumerWidget {
       ),
       actions: [
         IconButton(
-          icon: const Icon(Iconsax.setting_2, color: PremiumTokens.nebulaBlue),
+          icon: Icon(Iconsax.setting_2, color: PremiumTokens.nebulaBlue),
           onPressed: () {},
         ),
       ],

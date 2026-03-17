@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/design_system.dart';
 
@@ -12,7 +13,7 @@ class JournalScreen extends ConsumerWidget {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          PremiumUI.voidBackground(),
+          // Background managed at navigation level
           SafeArea(
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
@@ -74,7 +75,12 @@ class JournalScreen extends ConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Icon(Icons.menu, color: PremiumTokens.nebulaBlue, size: 28),
+          PremiumUI.animatedIcon(
+            folder: 'Filter',
+            fileName: 'filter.json',
+            size: 28,
+            color: PremiumTokens.nebulaBlue,
+          ),
           Column(
             children: [
               Text(
@@ -96,7 +102,7 @@ class JournalScreen extends ConsumerWidget {
               ),
             ],
           ),
-          const Icon(Icons.search, color: PremiumTokens.nebulaBlue, size: 28),
+          Icon(Iconsax.search_normal, color: PremiumTokens.nebulaBlue, size: 28),
         ],
       ),
     );
@@ -198,8 +204,8 @@ class JournalScreen extends ConsumerWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(bottom: 24),
-              child: PremiumUI.voidGlassCard(
-                padding: const EdgeInsets.all(20),
+              child: PremiumUI.voidCard(
+                accentColor: isActive ? PremiumTokens.nebulaBlue : Colors.white10,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
