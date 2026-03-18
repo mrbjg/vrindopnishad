@@ -29,6 +29,10 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
     ProfileScreen(),
   ];
 
+  // Pinterest-style Menu State
+  final ValueNotifier<Offset?> _menuPointerPosition = ValueNotifier<Offset?>(null);
+  final GlobalKey<SacredActionMenuState> _menuKey = GlobalKey<SacredActionMenuState>();
+
 
   @override
   Widget build(BuildContext context) {
@@ -97,12 +101,13 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                               ref.read(naamJapStateProvider.notifier).increment();
                             },
                             onLongPressStart: (details) {
+                              _menuPointerPosition.value = details.globalPosition;
                               showSacredMenu(
                                 context,
                                 details.globalPosition,
                                 [
                                   SacredMenuItem(
-                                    icon: Iconsax.heart, // Or Iconsax.book
+                                    icon: Iconsax.heart, 
                                     label: "Naam Jap",
                                     color: PremiumTokens.saffronGlow,
                                     onTap: () {
@@ -133,7 +138,17 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                                     onTap: () {},
                                   ),
                                 ],
+                                _menuPointerPosition,
+                                key: _menuKey,
                               );
+                            },
+                            onLongPressMoveUpdate: (details) {
+                              _menuPointerPosition.value = details.globalPosition;
+                            },
+                            onLongPressEnd: (details) {
+                              // Notify the menu to trigger the highlighted action and close
+                              _menuKey.currentState?.handleRelease();
+                              _menuPointerPosition.value = null;
                             },
                           );
                         },
