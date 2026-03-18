@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:iconsax/iconsax.dart';
 import '../core/design_system.dart';
 import 'home_screen.dart';
 import 'naam_jap_screen.dart';
@@ -92,24 +93,47 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                             count: count,
                             onTap: () {
                               HapticFeedback.heavyImpact();
-                              // 1. Increment Count (Naam Jap)
+                              // Only increment count (Naam Jap) as requested
                               ref.read(naamJapStateProvider.notifier).increment();
-                              
-                              // 2. Audio Control: If currently silent, start the featured track
-                              final audio = ref.read(audioProvider);
-                              if (audio.currentContent == null) {
-                                final content = ref.read(sacredContentProvider);
-                                if (content.isNotEmpty) {
-                                  ref.read(audioProvider.notifier).play(content.first);
-                                }
-                              } else {
-                                // If already playing/loaded, just toggle
-                                ref.read(audioProvider.notifier).togglePlayPause();
-                              }
                             },
-                            onLongPress: () {
-                              HapticFeedback.vibrate();
-                              ref.read(navigationIndexProvider.notifier).state = 2; // Expand to Naam Jap Screen
+                            onLongPressStart: (details) {
+                              showSacredMenu(
+                                context,
+                                details.globalPosition,
+                                [
+                                  SacredMenuItem(
+                                    icon: Iconsax.heart, // Or Iconsax.book
+                                    label: "Naam Jap",
+                                    color: PremiumTokens.saffronGlow,
+                                    onTap: () {
+                                      ref.read(navigationIndexProvider.notifier).state = 2;
+                                    },
+                                  ),
+                                  SacredMenuItem(
+                                    icon: Iconsax.rotate_left,
+                                    label: "Reset",
+                                    color: Colors.redAccent,
+                                    onTap: () {
+                                      ref.read(naamJapStateProvider.notifier).reset();
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text("Naam Jap counter reset")),
+                                      );
+                                    },
+                                  ),
+                                  SacredMenuItem(
+                                    icon: Icons.vibration,
+                                    label: "Haptics",
+                                    color: PremiumTokens.nebulaBlue,
+                                    onTap: () => HapticFeedback.vibrate(),
+                                  ),
+                                  SacredMenuItem(
+                                    icon: Iconsax.send_2,
+                                    label: "Share",
+                                    color: Colors.greenAccent,
+                                    onTap: () {},
+                                  ),
+                                ],
+                              );
                             },
                           );
                         },

@@ -576,13 +576,13 @@ class PremiumUI extends StatelessWidget {
   /// Sacred Void Center Button - Minimal "Glass-Void" Version
   static Widget sacredVoidButton({
     required VoidCallback onTap,
-    VoidCallback? onLongPress,
+    void Function(LongPressStartDetails)? onLongPressStart,
     bool isActive = false,
     int? count,
   }) {
     return _SacredVoidButtonInternal(
       onTap: onTap, 
-      onLongPress: onLongPress, 
+      onLongPressStart: onLongPressStart, 
       isActive: isActive,
       count: count,
     );
@@ -1159,13 +1159,13 @@ class _CrescentMoonPainter extends CustomPainter {
 
 class _SacredVoidButtonInternal extends StatefulWidget {
   final VoidCallback onTap;
-  final VoidCallback? onLongPress;
+  final void Function(LongPressStartDetails)? onLongPressStart;
   final bool isActive;
   final int? count;
 
   const _SacredVoidButtonInternal({
     required this.onTap,
-    this.onLongPress,
+    this.onLongPressStart,
     this.isActive = false,
     this.count,
   });
@@ -1218,10 +1218,10 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal> wi
     }
   }
 
-  void _handleLongPress() {
-    if (widget.onLongPress != null) {
+  void _handleLongPressStart(LongPressStartDetails details) {
+    if (widget.onLongPressStart != null) {
       HapticFeedback.heavyImpact();
-      widget.onLongPress!();
+      widget.onLongPressStart!(details);
     }
   }
 
@@ -1229,7 +1229,7 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal> wi
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _handleTap,
-      onLongPress: _handleLongPress,
+      onLongPressStart: _handleLongPressStart,
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -1436,6 +1436,7 @@ class _PremiumInteractiveIconState extends State<_PremiumInteractiveIcon> with S
   }
 
   void _handleTap() {
+    HapticFeedback.lightImpact();
     if (widget.onTap != null) widget.onTap!();
     if (_controller.duration != null) {
       _controller.forward(from: 0.0).then((_) {
@@ -1480,4 +1481,198 @@ class _PremiumInteractiveIconState extends State<_PremiumInteractiveIcon> with S
       ),
     );
   }
+}
+
+/// ═══════════════════════════════════════════════════════════════════════════
+/// SACRED ACTION MENU - Pinterest-style Circular Menu for High-End UX
+/// ═══════════════════════════════════════════════════════════════════════════
+
+class SacredActionMenu extends StatefulWidget {
+  final Offset position;
+  final List<SacredMenuItem> items;
+  final VoidCallback onClose;
+
+  const SacredActionMenu({
+    super.key,
+    required this.position,
+    required this.items,
+    required this.onClose,
+  });
+
+  @override
+  State<SacredActionMenu> createState() => _SacredActionMenuState();
+}
+
+class _SacredActionMenuState extends State<SacredActionMenu> {
+  bool _isVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Tiny delay to trigger entry animation
+    Future.delayed(const Duration(milliseconds: 10), () {
+      if (mounted) setState(() => _isVisible = true);
+    });
+  }
+
+  void _handleClose() {
+    setState(() => _isVisible = false);
+    // Wait for exit animation before removing from overlay
+    Future.delayed(const Duration(milliseconds: 300), widget.onClose);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: Stack(
+        children: [
+          // Blur/Dim Background
+          GestureDetector(
+            onTap: _handleClose,
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0, end: _isVisible ? 1 : 0),
+              duration: const Duration(milliseconds: 300),
+              builder: (context, value, child) => Container(
+                color: Colors.black.withOpacity(value * 0.7),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: value * 5, sigmaY: value * 5),
+                  child: Container(color: Colors.transparent),
+                ),
+              ),
+            ),
+          ),
+          
+          // Menu Items in an Arc
+          ...List.generate(widget.items.length, (index) {
+            final item = widget.items[index];
+            
+            // Layout logic: Items spread in an arc above the tap point
+            const double startAngle = 3.14159 + 0.5; // Top-leftish
+            const double endAngle = 2 * 3.14159 - 0.5; // Top-rightish
+            final double angleStep = (endAngle - startAngle) / (widget.items.length - 1);
+            final double angle = startAngle + (index * angleStep);
+            const double radius = 110.0;
+
+            final double offsetX = radius * math.cos(angle);
+            final double offsetY = radius * math.sin(angle);
+
+            return AnimatedPositioned(
+              duration: Duration(milliseconds: 300 + (index * 60)),
+              curve: Curves.elasticOut,
+              left: widget.position.dx + (_isVisible ? offsetX : 0) - 35,
+              top: widget.position.dy + (_isVisible ? offsetY : 0) - 35,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: _isVisible ? 1 : 0,
+                child: _buildMenuItem(item),
+              ),
+            );
+          }),
+          
+          // Original Tap Point Indicator / Close Button
+          Positioned(
+            left: widget.position.dx - 30,
+            top: widget.position.dy - 30,
+            child: GestureDetector(
+              onTap: _handleClose,
+              child: Hero(
+                tag: 'sacred_void_center',
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.1),
+                    border: Border.all(color: Colors.white.withOpacity(0.3)),
+                  ),
+                  child: const Icon(Icons.close, color: Colors.white, size: 24),
+                ),
+              ),
+            ),
+          ).animate(target: _isVisible ? 1 : 0).scale(begin: const Offset(0.5, 0.5), end: const Offset(1, 1)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuItem(SacredMenuItem item) {
+    return GestureDetector(
+      onTapDown: (_) => HapticFeedback.lightImpact(),
+      onTap: () {
+        HapticFeedback.mediumImpact();
+        item.onTap();
+        _handleClose();
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 65,
+            height: 65,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: PremiumTokens.voidBlack.withOpacity(0.9),
+              border: Border.all(color: item.color.withOpacity(0.4), width: 1.5),
+              boxShadow: [
+                BoxShadow(
+                  color: item.color.withOpacity(0.2),
+                  blurRadius: 15,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: Center(
+              child: Icon(item.icon, color: Colors.white, size: 26),
+            ),
+          ).animate(target: _isVisible ? 1 : 0)
+           .scale(begin: const Offset(0, 0), end: const Offset(1, 1), curve: Curves.elasticOut, duration: 500.ms)
+           .fadeIn(duration: 200.ms)
+           .then()
+           .shimmer(duration: 3.seconds, color: item.color.withOpacity(0.1)),
+          const SizedBox(height: 8),
+          Material(
+            color: Colors.transparent,
+            child: Text(
+              item.label.toUpperCase(),
+              style: PremiumTokens.sansStyle(
+                fontSize: 9,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.5,
+                color: Colors.white.withOpacity(0.8),
+              ),
+            ),
+          ).animate(target: _isVisible ? 1 : 0).fadeIn(delay: 200.ms),
+        ],
+      ),
+    );
+  }
+}
+
+class SacredMenuItem {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+
+  SacredMenuItem({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
+}
+
+/// Helper to trigger the Pinterest-style Overlay Menu
+void showSacredMenu(BuildContext context, Offset position, List<SacredMenuItem> items) {
+  HapticFeedback.heavyImpact();
+  late OverlayEntry entry;
+  entry = OverlayEntry(
+    builder: (context) => SacredActionMenu(
+      position: position,
+      items: items,
+      onClose: () => entry.remove(),
+    ),
+  );
+  Overlay.of(context).insert(entry);
 }

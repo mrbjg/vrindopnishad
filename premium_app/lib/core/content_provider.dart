@@ -81,6 +81,8 @@ class SacredContent {
 
 class ContentNotifier extends StateNotifier<List<SacredContent>> {
   ContentNotifier() : super([]) {
+    // Start with the featured sample so it's never truly empty
+    state = [_featuredSample];
     _initAndLoad();
   }
 
@@ -104,7 +106,7 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
     // 3. INSTANT: Load from memory cache if available
     final cachedContent = _cache.getCachedContent();
     if (cachedContent != null && cachedContent.isNotEmpty) {
-      state = cachedContent;
+      state = [_featuredSample, ...cachedContent];
       _isLoading = false;
 
       // Background refresh from API for freshness
@@ -115,7 +117,7 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
     // 4. FAST: Load from local SQLite DB
     final dbContent = await DatabaseHelper.instance.fetchAllContent();
     if (dbContent.isNotEmpty) {
-      state = dbContent;
+      state = [_featuredSample, ...dbContent];
       await _cache.cacheContent(dbContent);
       _isLoading = false;
 
@@ -140,11 +142,12 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
         }
         // Update cache
         await _cache.cacheContent(apiContent);
-        // Update state (smooth transition) with featured sample
+        // Update state (smooth transition)
         state = [_featuredSample, ...apiContent];
       }
     } catch (e) {
-      // Silent fail - we already have cached data
+      // Silent fail - ensure we at least keep the sample if state was empty
+      if (state.isEmpty) state = [_featuredSample];
       print('Background refresh failed: $e');
     }
   }
@@ -160,8 +163,11 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
         }
         await _cache.cacheContent(apiContent);
         state = [_featuredSample, ...apiContent];
+      } else if (state.isEmpty) {
+        state = [_featuredSample];
       }
     } catch (e) {
+      if (state.isEmpty) state = [_featuredSample];
       print('API fetch failed: $e');
     }
   }

@@ -64,54 +64,57 @@ class LibraryScreen extends ConsumerWidget {
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          PremiumUI.animatedIcon(
-            folder: 'Filter',
-            fileName: 'filter.json',
-            size: 28,
-            color: PremiumTokens.nebulaBlue,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "SANT-VAANI",
-                  style: PremiumTokens.sansStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w300,
-                    letterSpacing: 4,
-                  ),
-                ),
-                Text(
-                  "SACRED LIBRARY",
-                  style: PremiumTokens.sansStyle(
-                    fontSize: 10,
-                    color: PremiumTokens.nebulaBlue,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2,
-                  ),
-                ),
-              ],
+      child: SizedBox(
+        width: double.infinity, // Robust bounding
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            PremiumUI.animatedIcon(
+              folder: 'Filter',
+              fileName: 'filter.json',
+              size: 28,
+              color: PremiumTokens.nebulaBlue,
             ),
-          ),
-          const SizedBox(width: 8),
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.3)),
-              image: const DecorationImage(
-                image: NetworkImage('https://lh3.googleusercontent.com/aida-public/AB6AXuAkQJsMLqDCMwi1jqTeWSOOqq3Wz9ZIpqA9usLZAS95EcvHTBag2RoKJxY0vI0ignkQJ8N7UDe1CbmOARjpZ4djVMMi7DYNHPxPNoYSkcaHePL2qyHdLar7mUl0CW6gMbXv788itHF2vxM4sZWWsBBAQUG96RO8rYlrZNHgfYgQ6IfsKE6u5jOS_QRQe0dd2Fy-5dU6VL7ZLOg1jCrXoMsqJDXEiKCcCuT1CctHQ72_ivF3Rc94CqJae0t_M1fKLDyKMLPrbTHwr8I'),
-                fit: BoxFit.cover,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "SANT-VAANI",
+                    style: PremiumTokens.sansStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w300,
+                      letterSpacing: 4,
+                    ),
+                  ),
+                  Text(
+                    "SACRED LIBRARY",
+                    style: PremiumTokens.sansStyle(
+                      fontSize: 10,
+                      color: PremiumTokens.nebulaBlue,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+            const SizedBox(width: 12),
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.3)),
+                image: const DecorationImage(
+                  image: NetworkImage('https://lh3.googleusercontent.com/aida-public/AB6AXuAkQJsMLqDCMwi1jqTeWSOOqq3Wz9ZIpqA9usLZAS95EcvHTBag2RoKJxY0vI0ignkQJ8N7UDe1CbmOARjpZ4djVMMi7DYNHPxPNoYSkcaHePL2qyHdLar7mUl0CW6gMbXv788itHF2vxM4sZWWsBBAQUG96RO8rYlrZNHgfYgQ6IfsKE6u5jOS_QRQe0dd2Fy-5dU6VL7ZLOg1jCrXoMsqJDXEiKCcCuT1CctHQ72_ivF3Rc94CqJae0t_M1fKLDyKMLPrbTHwr8I'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -173,16 +176,14 @@ class LibraryScreen extends ConsumerWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Flexible(
-                    child: Text(
-                      "Gayatri Mantra (Divine Peace)",
-                      style: PremiumTokens.sansStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                  Text(
+                    "Gayatri Mantra (Divine Peace)",
+                    style: PremiumTokens.sansStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
