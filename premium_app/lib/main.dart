@@ -12,6 +12,7 @@ import 'features/splash_screen.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:firebase_core/firebase_core.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -26,6 +27,13 @@ void main() async {
   await sb.Supabase.initialize(
     url: 'https://tilimltxgeucefxzerqi.supabase.co',
     anonKey: 'sb_publishable_0YiM-Q8itRORUDdToracaQ_vzcrjUlC',
+  );
+
+  // Initialize Background Audio
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+    androidNotificationChannelName: 'Audio playback',
+    androidNotificationOngoing: true,
   );
 
   runApp(const ProviderScope(child: SantVaaniPremiumApp()));

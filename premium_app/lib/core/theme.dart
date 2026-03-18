@@ -162,8 +162,8 @@ class AppTheme {
   static List<BoxShadow> softShadow(BuildContext context) => [
     BoxShadow(
       color: isDark(context)
-          ? Colors.black.withValues(alpha: 0.4)
-          : Colors.black.withValues(alpha: 0.06),
+          ? Colors.black.withOpacity(0.4)
+          : Colors.black.withOpacity(0.06),
       blurRadius: 16,
       offset: Offset(0, 4),
     ),
@@ -172,15 +172,15 @@ class AppTheme {
   static List<BoxShadow> cardShadow(BuildContext context) => [
     BoxShadow(
       color: isDark(context)
-          ? Colors.black.withValues(alpha: 0.3)
-          : Colors.black.withValues(alpha: 0.04),
+          ? Colors.black.withOpacity(0.3)
+          : Colors.black.withOpacity(0.04),
       blurRadius: 12,
       offset: Offset(0, 2),
     ),
   ];
 
   static List<BoxShadow> glowShadow(Color color) => [
-    BoxShadow(color: color.withValues(alpha: 0.4), blurRadius: 20, spreadRadius: -4),
+    BoxShadow(color: color.withOpacity(0.4), blurRadius: 20, spreadRadius: -4),
   ];
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -199,8 +199,8 @@ class AppTheme {
       borderRadius: BorderRadius.circular(borderRadius),
       border: Border.all(
         color: dark
-            ? Colors.white.withValues(alpha: 0.06)
-            : Colors.black.withValues(alpha: 0.04),
+            ? Colors.white.withOpacity(0.06)
+            : Colors.black.withOpacity(0.04),
         width: 1,
       ),
       boxShadow: cardShadow(context),
@@ -236,13 +236,13 @@ class AppTheme {
             padding: padding,
             decoration: BoxDecoration(
               color: dark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.white.withValues(alpha: 0.75),
+                  ? Colors.white.withOpacity(0.08)
+                  : Colors.white.withOpacity(0.75),
               borderRadius: BorderRadius.circular(borderRadius),
               border: Border.all(
                 color: dark
-                    ? Colors.white.withValues(alpha: 0.12)
-                    : Colors.white.withValues(alpha: 0.6),
+                    ? Colors.white.withOpacity(0.12)
+                    : Colors.white.withOpacity(0.6),
                 width: 0.5,
               ),
             ),

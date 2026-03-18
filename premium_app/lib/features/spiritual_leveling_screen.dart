@@ -20,8 +20,8 @@ class SpiritualLevelingScreen extends ConsumerWidget {
                   center: Alignment.center,
                   radius: 1.2,
                   colors: [
-                    PremiumTokens.nebulaBlue.withValues(alpha: 0.2), // primary aura
-                    PremiumTokens.celestialGlow.withValues(alpha: 0.1), // celestial aura
+                    PremiumTokens.nebulaBlue.withOpacity(0.2), // primary aura
+                    PremiumTokens.celestialGlow.withOpacity(0.1), // celestial aura
                     Colors.transparent,
                   ],
                 ),
@@ -126,9 +126,9 @@ class SpiritualLevelingScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
+              color: PremiumTokens.nebulaBlue.withOpacity(0.3),
               borderRadius: BorderRadius.circular(100),
-              border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.4)),
+              border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.4)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -351,7 +351,7 @@ class SpiritualLevelingScreen extends ConsumerWidget {
         child: Container(
           height: 100 * heightFactor,
           decoration: BoxDecoration(
-            color: PremiumTokens.nebulaBlue.withValues(alpha: isHighlighted ? 0.7 : 0.3),
+            color: PremiumTokens.nebulaBlue.withOpacity(isHighlighted ? 0.7 : 0.3),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
             border: isHighlighted ? Border.all(color: PremiumTokens.nebulaBlue, width: 1.5) : null,
           ),

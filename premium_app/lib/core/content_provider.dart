@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'database_helper.dart';
 import 'cache_service.dart';
 import '../services/api_service.dart';
+import '../services/realtime_service.dart';
 import '../core/providers.dart';
 
 class SacredContent {
@@ -95,7 +96,12 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
     // 1. Initialize cache service
     await _cache.init();
 
-    // 2. INSTANT: Load from memory cache if available
+    // 2. Start Realtime Listener (Sync with Supabase)
+    RealtimeService.instance.subscribeToContentChanges(() {
+      _backgroundRefresh();
+    });
+
+    // 3. INSTANT: Load from memory cache if available
     final cachedContent = _cache.getCachedContent();
     if (cachedContent != null && cachedContent.isNotEmpty) {
       state = cachedContent;
@@ -106,19 +112,18 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
       return;
     }
 
-    // 3. FAST: Load from local SQLite DB
+    // 4. FAST: Load from local SQLite DB
     final dbContent = await DatabaseHelper.instance.fetchAllContent();
     if (dbContent.isNotEmpty) {
       state = dbContent;
       await _cache.cacheContent(dbContent);
       _isLoading = false;
 
-      // Background refresh from API
       _backgroundRefresh();
       return;
     }
 
-    // 4. SLOW: Fetch from Supabase API (first load or empty cache)
+    // 5. SLOW: Fetch from Supabase API (first load or empty cache)
     await _fetchFromApi();
     _isLoading = false;
   }
@@ -135,8 +140,8 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
         }
         // Update cache
         await _cache.cacheContent(apiContent);
-        // Update state (smooth transition)
-        state = apiContent;
+        // Update state (smooth transition) with featured sample
+        state = [_featuredSample, ...apiContent];
       }
     } catch (e) {
       // Silent fail - we already have cached data
@@ -154,7 +159,7 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
           await DatabaseHelper.instance.insertContent(item);
         }
         await _cache.cacheContent(apiContent);
-        state = apiContent;
+        state = [_featuredSample, ...apiContent];
       }
     } catch (e) {
       print('API fetch failed: $e');
@@ -218,6 +223,19 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
     state = state.where((item) => item.id != id).toList();
     await _cache.cacheContent(state);
   }
+
+  /// User-requested featured streaming content
+  final SacredContent _featuredSample = SacredContent(
+    id: 'stream-sample-001',
+    title: 'Aise Kaal Bitayo Nis Din',
+    category: 'Featured Bhajan',
+    sanskritText: 'ऐसे काल बितायो निस दिन...',
+    translation: 'How time was spent, day and night...',
+    hindiMeaning: 'इस प्रकार दिन-रात काल व्यतीत हुआ। ब्रज के रसिक संत श्री वंशी अली जी का भजन भाव।',
+    commentary: 'A soulful bhajan expressing devotion and the passage of time in spiritual practice.',
+    audioUrl: 'https://archive.org/download/aise-kaal-bitayo-nis-din/aise%20kaal%20bitayo%20nis%20din.mp3',
+    imageUrl: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=2574&auto=format&fit=crop',
+  );
 }
 
 final sacredContentProvider =

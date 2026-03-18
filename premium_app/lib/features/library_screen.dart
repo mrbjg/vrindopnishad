@@ -99,7 +99,7 @@ class LibraryScreen extends ConsumerWidget {
             height: 36,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
+              border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.3)),
               image: const DecorationImage(
                 image: NetworkImage('https://lh3.googleusercontent.com/aida-public/AB6AXuAkQJsMLqDCMwi1jqTeWSOOqq3Wz9ZIpqA9usLZAS95EcvHTBag2RoKJxY0vI0ignkQJ8N7UDe1CbmOARjpZ4djVMMi7DYNHPxPNoYSkcaHePL2qyHdLar7mUl0CW6gMbXv788itHF2vxM4sZWWsBBAQUG96RO8rYlrZNHgfYgQ6IfsKE6u5jOS_QRQe0dd2Fy-5dU6VL7ZLOg1jCrXoMsqJDXEiKCcCuT1CctHQ72_ivF3Rc94CqJae0t_M1fKLDyKMLPrbTHwr8I'),
                 fit: BoxFit.cover,
@@ -117,9 +117,9 @@ class LibraryScreen extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         decoration: BoxDecoration(
-          color: PremiumTokens.surfaceCharcoal.withValues(alpha: 0.5),
+          color: PremiumTokens.surfaceCharcoal.withOpacity(0.5),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
+          border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.2)),
         ),
         child: TextField(
           onChanged: (value) {
@@ -225,7 +225,7 @@ class LibraryScreen extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: PremiumTokens.surfaceCharcoal,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1)),
+                  border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.1)),
                 ),
                 child: Center(
                   child: item.imageUrl != null 
@@ -268,7 +268,7 @@ class LibraryScreen extends ConsumerWidget {
                 height: 36,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
+                  border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.3)),
                 ),
                 child: const Icon(Icons.play_arrow, color: PremiumTokens.nebulaBlue, size: 20),
               ),

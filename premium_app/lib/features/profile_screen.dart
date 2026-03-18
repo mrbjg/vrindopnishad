@@ -223,7 +223,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
         leading: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
+            color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: customIconFile != null
@@ -379,7 +379,7 @@ class _PremiumProfileHeader extends ConsumerWidget {
         Text(
           label.toUpperCase(),
           style: GoogleFonts.manrope(
-            color: color.withValues(alpha: 0.7),
+            color: color.withOpacity(0.7),
             fontSize: 10,
             fontWeight: FontWeight.bold,
             letterSpacing: 1,

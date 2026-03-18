@@ -14,7 +14,7 @@ class SacredMorphWidget extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
+        color: color.withOpacity(0.15),
         shape: BoxShape.circle,
       ),
       child: Icon(Iconsax.magic_star, size: size * 0.5, color: color),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'dart:math' as math;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -73,8 +74,8 @@ class PremiumTokens {
       center: Alignment.center,
       radius: 0.8 * intensity,
       colors: [
-        Color(0xFF256AF4).withValues(alpha: 0.15 * intensity),
-        Color(0xFF256AF4).withValues(alpha: 0.05 * intensity),
+        Color(0xFF256AF4).withOpacity(0.15 * intensity),
+        Color(0xFF256AF4).withOpacity(0.05 * intensity),
         Colors.transparent,
       ],
     );
@@ -91,10 +92,10 @@ class PremiumTokens {
     Border? border,
   }) {
     return BoxDecoration(
-      color: (color ?? Colors.white).withValues(alpha: opacity),
+      color: (color ?? Colors.white).withOpacity(opacity),
       borderRadius: BorderRadius.circular(borderRadius),
       border: border ?? Border.all(
-        color: Colors.white.withValues(alpha: 0.1),
+        color: Colors.white.withOpacity(0.1),
         width: 1.0,
       ),
     );
@@ -108,7 +109,7 @@ class PremiumTokens {
       shape: BoxShape.circle,
       boxShadow: [
         BoxShadow(
-          color: color.withValues(alpha: 0.3 * intensity),
+          color: color.withOpacity(0.3 * intensity),
           blurRadius: 30 * intensity,
           spreadRadius: 2 * intensity,
         ),
@@ -119,9 +120,24 @@ class PremiumTokens {
   // ═══════════════════════════════════════════════════════════════════════════
   // ANIMATIONS: Meditative Pacing
   // ═══════════════════════════════════════════════════════════════════════════
+  static const LinearGradient glassReflection = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Color(0x80FFFFFF),
+      Color(0x00FFFFFF),
+    ],
+    stops: [0.0, 0.5],
+  );
+
   static const Duration slowPulse = Duration(milliseconds: 3000);
   static const Duration fastPulse = Duration(milliseconds: 1500);
   static const Curve meditationCurve = Curves.easeInOutSine;
+  static const Curve breathingSine = _CelestialBreathingCurve();
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TYPOGRAPHY: Soulful & Modern
+  // ═══════════════════════════════════════════════════════════════════════════
 
   static TextStyle displayStyle({
     double fontSize = 24,
@@ -168,6 +184,15 @@ class PremiumTokens {
   }
 }
 
+class _CelestialBreathingCurve extends Curve {
+  const _CelestialBreathingCurve();
+
+  @override
+  double transformInternal(double t) {
+    return (math.sin(t * math.pi * 2 - math.pi / 2) + 1) / 2;
+  }
+}
+
 class PremiumUI extends StatelessWidget {
   const PremiumUI({super.key});
 
@@ -208,7 +233,7 @@ class PremiumUI extends StatelessWidget {
     final effectiveColor = color ?? Colors.white;
     return logo(height: height, color: color)
         .animate(onPlay: (controller) => controller.repeat(reverse: true))
-        .shimmer(duration: 3.seconds, color: effectiveColor.withValues(alpha: 0.3))
+        .shimmer(duration: 3.seconds, color: effectiveColor.withOpacity(0.3))
         .scale(
           begin: const Offset(1, 1),
           end: const Offset(1.05, 1.05),
@@ -233,7 +258,7 @@ class PremiumUI extends StatelessWidget {
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
           BoxShadow(
-            color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+            color: PremiumTokens.saffronGlow.withOpacity(0.1),
             blurRadius: 15,
             spreadRadius: -5,
           ),
@@ -248,7 +273,7 @@ class PremiumUI extends StatelessWidget {
                 color: const Color(0xCC0A0A1F), // Solid high-performance surface
                 borderRadius: BorderRadius.circular(borderRadius),
                 border: Border.all(
-                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                  color: PremiumTokens.nebulaBlue.withOpacity(0.1),
                   width: 1,
                 ),
               ),
@@ -262,7 +287,7 @@ class PremiumUI extends StatelessWidget {
                   color: const Color(0x990A0A1F),
                   borderRadius: BorderRadius.circular(borderRadius),
                   border: Border.all(
-                    color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                    color: PremiumTokens.nebulaBlue.withOpacity(0.1),
                     width: 1,
                   ),
                 ),
@@ -293,7 +318,7 @@ class PremiumUI extends StatelessWidget {
                 color: const Color(0xFF0F0F2D), // Deep solid void
                 borderRadius: BorderRadius.circular(borderRadius),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.08),
+                  color: Colors.white.withOpacity(0.08),
                   width: 1,
                 ),
               ),
@@ -307,7 +332,7 @@ class PremiumUI extends StatelessWidget {
                   color: const Color(0x1A2B2BEE),
                   borderRadius: BorderRadius.circular(borderRadius),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: Colors.white.withOpacity(0.1),
                     width: 1,
                   ),
                 ),
@@ -321,8 +346,11 @@ class PremiumUI extends StatelessWidget {
   /// Rotating Nebula Disk for Audio Player
   static Widget nebulaDisk({
     required Widget child,
-    double size = 224, // 56 * 4
+    double size = 224, 
+    bool isPlaying = false,
+    Color? accentColor,
   }) {
+    final activeColor = accentColor ?? const Color(0xFF256AF4);
     return Container(
       width: size,
       height: size,
@@ -330,20 +358,71 @@ class PremiumUI extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF256AF4).withValues(alpha: 0.3),
-            blurRadius: 40,
-            spreadRadius: 10,
+            color: activeColor.withOpacity(isPlaying ? 0.4 : 0.2),
+            blurRadius: isPlaying ? 60 : 40,
+            spreadRadius: isPlaying ? 15 : 5,
           ),
         ],
       ),
-      child: Container(
-        margin: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white.withValues(alpha: 0.03),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-        ),
-        child: Center(child: child),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Outer Glow Ring
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: activeColor.withOpacity(0.2),
+                width: 1.5,
+              ),
+            ),
+          ).animate(onPlay: (c) => isPlaying ? c.repeat() : c.stop())
+           .scale(begin: const Offset(1, 1), end: const Offset(1.1, 1.1), duration: 2.seconds, curve: Curves.easeInOut),
+          
+          Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.black,
+              border: Border.all(color: activeColor.withOpacity(0.3)),
+              image: const DecorationImage(
+                image: NetworkImage('https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=2662&auto=format&fit=crop'),
+                fit: BoxFit.cover,
+                opacity: 0.3,
+              ),
+            ),
+            child: Center(child: child),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Aesthetic Waveform Visualization
+  static Widget aestheticWaveform({bool isPlaying = false, Color? color}) {
+    final activeColor = color ?? PremiumTokens.nebulaBlue;
+    return SizedBox(
+      height: 40,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: List.generate(30, (index) {
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 1.5),
+            width: 2.5,
+            decoration: BoxDecoration(
+              color: activeColor.withOpacity(0.5 + (index % 5 / 10)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ).animate(onPlay: (c) => isPlaying ? c.repeat(reverse: true) : c.stop())
+           .custom(
+             duration: (500 + index * 50).ms,
+             builder: (context, value, child) {
+               final double h = 10 + (value * (15 + (index % 7) * 4));
+               return SizedBox(height: h, child: child);
+             }
+           );
+        }),
       ),
     );
   }
@@ -363,7 +442,7 @@ class PremiumUI extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
         color: const Color(0x0DFFFFFF), // Subtle glass base
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
@@ -375,7 +454,7 @@ class PremiumUI extends StatelessWidget {
               Container(
                 width: 4,
                 decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: 0.6),
+                  color: accentColor.withOpacity(0.6),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(16),
                     bottomLeft: Radius.circular(16),
@@ -404,13 +483,16 @@ class PremiumUI extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
-        final slotWidth = width / 5;
+        // Ensure width is bounded for web/desktop or large screens
+        final effectiveWidth = width.isFinite ? width : MediaQuery.sizeOf(context).width;
+        final slotWidth = (effectiveWidth - 32) / 5; // Accounting for 16px horizontal padding
         final capsuleWidth = 58.0;
         final capsuleHeight = 44.0;
 
         return Container(
-          height: 100, // Safe height for bar + Sacred Void overlap
-          padding: const EdgeInsets.only(bottom: 20),
+          height: 100, 
+          width: effectiveWidth,
+          padding: const EdgeInsets.only(bottom: 20, left: 16, right: 16),
           child: Stack(
             alignment: Alignment.bottomCenter,
             clipBehavior: Clip.none,
@@ -418,16 +500,17 @@ class PremiumUI extends StatelessWidget {
               // Glass Bar Container
               Container(
                 height: 70,
+                width: effectiveWidth - 32, // Strictly bound to parent width
                 decoration: BoxDecoration(
                   color: const Color(0xE60A0A1F),
                   borderRadius: BorderRadius.circular(35),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: Colors.white.withOpacity(0.1),
                     width: 1,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.5),
+                      color: Colors.black.withOpacity(0.5),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -445,11 +528,11 @@ class PremiumUI extends StatelessWidget {
                         width: capsuleWidth,
                         height: capsuleHeight,
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.1),
+                          color: Colors.white.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(22),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.white.withValues(alpha: 0.05),
+                              color: Colors.white.withOpacity(0.05),
                               blurRadius: 10,
                               spreadRadius: 2,
                             ),
@@ -458,22 +541,26 @@ class PremiumUI extends StatelessWidget {
                       ),
                     ),
                     // Navigation Icons Row
-                    Row(
-                      children: List.generate(items.length, (index) {
-                        final item = items[index];
-                        final isSelected = selectedIndex == index;
-                        
-                        if (index == 2) return const Expanded(child: SizedBox());
+                    SizedBox(
+                      width: double.infinity,
+                      height: 70,
+                      child: Row(
+                        children: List.generate(items.length, (index) {
+                          final item = items[index];
+                          final isSelected = selectedIndex == index;
+                          
+                          if (index == 2) return const Expanded(child: SizedBox());
 
-                        return Expanded(
-                          child: _PremiumAnimatedNavButton(
-                            index: index,
-                            isSelected: isSelected,
-                            item: item,
-                            onTap: onTap,
-                          ),
-                        );
-                      }),
+                          return Expanded(
+                            child: _PremiumAnimatedNavButton(
+                              index: index,
+                              isSelected: isSelected,
+                              item: item,
+                              onTap: onTap,
+                            ),
+                          );
+                        }),
+                      ),
                     ),
                   ],
                 ),
@@ -488,9 +575,16 @@ class PremiumUI extends StatelessWidget {
   /// Sacred Void Center Button - Minimal "Glass-Void" Version
   static Widget sacredVoidButton({
     required VoidCallback onTap,
+    VoidCallback? onLongPress,
     bool isActive = false,
+    int? count,
   }) {
-    return _SacredVoidButtonInternal(onTap: onTap, isActive: isActive);
+    return _SacredVoidButtonInternal(
+      onTap: onTap, 
+      onLongPress: onLongPress, 
+      isActive: isActive,
+      count: count,
+    );
   }
 
 
@@ -512,10 +606,10 @@ class PremiumUI extends StatelessWidget {
           ? Container(
               padding: padding ?? const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: opacity * 1.5), // High-perf opacity
+                color: Colors.white.withOpacity(opacity * 1.5), // High-perf opacity
                 borderRadius: BorderRadius.circular(borderRadius),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.08),
+                  color: Colors.white.withOpacity(0.08),
                   width: 1,
                 ),
               ),
@@ -546,14 +640,14 @@ class PremiumUI extends StatelessWidget {
         shape: BoxShape.circle,
         gradient: RadialGradient(
           colors: [
-            Colors.white.withValues(alpha: 0.15 * opacity),
-            Color(0xFF256AF4).withValues(alpha: 0.05 * opacity),
+            Colors.white.withOpacity(0.15 * opacity),
+            Color(0xFF256AF4).withOpacity(0.05 * opacity),
             Colors.transparent,
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF256AF4).withValues(alpha: 0.1 * opacity),
+            color: Color(0xFF256AF4).withOpacity(0.1 * opacity),
             blurRadius: 80 * opacity,
           ),
         ],
@@ -579,7 +673,7 @@ class PremiumUI extends StatelessWidget {
                   center: Alignment.center,
                   radius: 1.5,
                   colors: [
-                    PremiumTokens.nebulaBlue.withValues(alpha: 0.08),
+                    PremiumTokens.nebulaBlue.withOpacity(0.08),
                     Colors.transparent,
                   ],
                 ),
@@ -592,15 +686,15 @@ class PremiumUI extends StatelessWidget {
             top: -100, 
             right: -50, 
             size: 400, 
-            color: PremiumTokens.nebulaBlue.withValues(alpha: isVoid ? 0.12 : 0.08)
+            color: PremiumTokens.nebulaBlue.withOpacity(isVoid ? 0.12 : 0.08)
           ),
           
           // Transitionary Elements
           if (isVoid) ...[
-            _buildBokeh(bottom: -50, left: -50, size: 350, color: PremiumTokens.nebulaBlue.withValues(alpha: 0.06)),
+            _buildBokeh(bottom: -50, left: -50, size: 350, color: PremiumTokens.nebulaBlue.withOpacity(0.06)),
             _buildMoon(bottom: 120, left: 60, size: 80),
           ] else ...[
-             _buildBokeh(bottom: -100, left: -50, size: 300, color: PremiumTokens.celestialGlow.withValues(alpha: 0.04)),
+             _buildBokeh(bottom: -100, left: -50, size: 300, color: PremiumTokens.celestialGlow.withOpacity(0.04)),
              _buildMoon(top: 60, left: 40, size: 60),
           ],
           
@@ -609,7 +703,7 @@ class PremiumUI extends StatelessWidget {
             top: isVoid ? 200 : 120, 
             right: isVoid ? 80 : 60, 
             size: 30, 
-            color: isVoid ? Colors.deepPurpleAccent.withValues(alpha: 0.2) : Colors.blueAccent.withValues(alpha: 0.15)
+            color: isVoid ? Colors.deepPurpleAccent.withOpacity(0.2) : Colors.blueAccent.withOpacity(0.15)
           ),
         ],
       ),
@@ -667,7 +761,7 @@ class PremiumUI extends StatelessWidget {
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Colors.white.withValues(alpha: 0.15),
+              color: Colors.white.withOpacity(0.15),
               blurRadius: 40,
               spreadRadius: 5,
             ),
@@ -696,17 +790,17 @@ class PremiumUI extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: RadialGradient(
-              colors: [color.withValues(alpha: 0.8), color.withValues(alpha: 0.1), Colors.transparent],
+              colors: [color.withOpacity(0.8), color.withOpacity(0.1), Colors.transparent],
             ),
             boxShadow: [
               BoxShadow(
-                color: color.withValues(alpha: 0.3),
+                color: color.withOpacity(0.3),
                 blurRadius: 20,
               ),
             ],
           ),
           child: CustomPaint(
-            painter: _PlanetRingsPainter(color: color.withValues(alpha: 0.2)),
+            painter: _PlanetRingsPainter(color: color.withOpacity(0.2)),
           ),
         ),
       ),
@@ -730,7 +824,7 @@ class PremiumUI extends StatelessWidget {
           borderRadius: BorderRadius.circular(100),
           boxShadow: [
             BoxShadow(
-              color: Colors.white.withValues(alpha: 0.3),
+              color: Colors.white.withOpacity(0.3),
               blurRadius: 20,
             ),
           ],
@@ -874,7 +968,7 @@ class PremiumUI extends StatelessWidget {
       placeholder: (context, url) => placeholder ?? Container(
         width: width,
         height: height,
-        color: PremiumTokens.accentDark.withValues(alpha: 0.5),
+        color: PremiumTokens.accentDark.withOpacity(0.5),
         child: const Center(
           child: CircularProgressIndicator(
             strokeWidth: 2,
@@ -909,7 +1003,7 @@ class PremiumUI extends StatelessWidget {
 
   /// SacredDivider: A spiritual separator with a central icon
   static Widget sacredDivider({Color? color, double width = 60}) {
-    final activeColor = color ?? Colors.white.withValues(alpha: 0.1);
+    final activeColor = color ?? Colors.white.withOpacity(0.1);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -958,7 +1052,7 @@ class PremiumUI extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: PremiumTokens.saffronGlow.withValues(alpha: 0.3),
+              color: PremiumTokens.saffronGlow.withOpacity(0.3),
               blurRadius: 15,
               offset: const Offset(0, 8),
             ),
@@ -1030,8 +1124,8 @@ class _CrescentMoonPainter extends CustomPainter {
       ..shader = RadialGradient(
         colors: [
           Colors.white,
-          Colors.white.withValues(alpha: 0.8),
-          Colors.white.withValues(alpha: 0.1),
+          Colors.white.withOpacity(0.8),
+          Colors.white.withOpacity(0.1),
         ],
         stops: const [0.0, 0.5, 1.0],
       ).createShader(Rect.fromCircle(center: center, radius: radius))
@@ -1053,7 +1147,7 @@ class _CrescentMoonPainter extends CustomPainter {
     
     // Add a tiny glow to the tips
     final glowPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.3)
+      ..color = Colors.white.withOpacity(0.3)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
     canvas.drawPath(crescentPath, glowPaint);
   }
@@ -1064,11 +1158,15 @@ class _CrescentMoonPainter extends CustomPainter {
 
 class _SacredVoidButtonInternal extends StatefulWidget {
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
   final bool isActive;
+  final int? count;
 
   const _SacredVoidButtonInternal({
     required this.onTap,
+    this.onLongPress,
     this.isActive = false,
+    this.count,
   });
 
   @override
@@ -1081,7 +1179,10 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal> wi
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this);
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000), // Default duration
+    );
   }
 
   @override
@@ -1091,32 +1192,43 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal> wi
   }
 
   @override
-  void didUpdateWidget(_SacredVoidButtonInternal oldWidget) {
+  void didUpdateWidget(covariant _SacredVoidButtonInternal oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isActive != oldWidget.isActive) {
-      if (widget.isActive) {
-        _controller.forward(from: _controller.value);
-      } else {
-        _controller.reverse(from: _controller.value);
+      if (_controller.duration != null) {
+        if (widget.isActive) {
+          _controller.forward(from: _controller.value);
+        } else {
+          _controller.reverse(from: _controller.value);
+        }
       }
     }
   }
 
   void _handleTap() {
-    HapticFeedback.heavyImpact();
+    HapticFeedback.mediumImpact(); 
     widget.onTap();
-    _controller.forward(from: 0.0).then((_) {
-      // Reset to outline frame after animation completes ONLY IF not active
-      if (mounted && !widget.isActive) {
-        _controller.value = 0.0;
-      }
-    });
+    if (_controller.duration != null) {
+      _controller.forward(from: 0.0).then((_) {
+        if (mounted && !widget.isActive) {
+          _controller.value = 0.0;
+        }
+      });
+    }
+  }
+
+  void _handleLongPress() {
+    if (widget.onLongPress != null) {
+      HapticFeedback.heavyImpact();
+      widget.onLongPress!();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _handleTap,
+      onLongPress: _handleLongPress,
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -1129,7 +1241,7 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal> wi
               boxShadow: [
                 BoxShadow(
                   color: (widget.isActive ? PremiumTokens.saffronGlow : PremiumTokens.nebulaBlue)
-                      .withValues(alpha: widget.isActive ? 0.3 : 0.25),
+                      .withOpacity(widget.isActive ? 0.3 : 0.25),
                   blurRadius: widget.isActive ? 30 : 25,
                   spreadRadius: widget.isActive ? 2 : 1,
                 ),
@@ -1143,39 +1255,57 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal> wi
             height: 58,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFF03030F).withValues(alpha: 0.9), // Near-black void
+              color: const Color(0xFF03030F).withOpacity(0.9), // Near-black void
               border: Border.all(
-                color: (widget.isActive ? PremiumTokens.saffronGlow : Colors.white).withValues(alpha: 0.4),
+                color: (widget.isActive ? PremiumTokens.saffronGlow : Colors.white).withOpacity(0.4),
                 width: 1.5,
               ),
               boxShadow: [
                 if (widget.isActive)
                   BoxShadow(
-                    color: PremiumTokens.saffronGlow.withValues(alpha: 0.5),
+                    color: PremiumTokens.saffronGlow.withOpacity(0.5),
                     blurRadius: 15,
                     spreadRadius: -2,
                   ),
               ],
             ),
             child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: ColorFiltered(
-                  colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                  child: Lottie.asset(
-                    'assets/animated_icons/Heart/heart.json',
-                    controller: _controller,
-                    width: 44,
-                    height: 44,
-                    repeat: false,
-                    animate: false,
-                    onLoaded: (composition) {
-                      _controller.duration = composition.duration;
-                      _controller.value = 0.0;
-                    },
-                  ),
-                ),
-              ),
+              child: widget.count != null && widget.count! > 0
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Iconsax.heart5, color: Colors.white, size: 24)
+                              .animate(onPlay: (c) => c.repeat(reverse: true))
+                              .scale(begin: const Offset(1,1), end: const Offset(1.2, 1.2), duration: 800.ms),
+                          const SizedBox(height: 2),
+                          Text(
+                            widget.count.toString(),
+                            style: GoogleFonts.spectral(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: ColorFiltered(
+                          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                          child: Lottie.asset(
+                            'assets/animated_icons/Heart/heart.json',
+                            controller: _controller,
+                            width: 44,
+                            height: 44,
+                            repeat: false,
+                            animate: false,
+                            onLoaded: (composition) {
+                              _controller.duration = composition.duration;
+                              _controller.value = 0.0;
+                            },
+                          ),
+                        ),
+                      ),
             ),
           ),
           
@@ -1292,7 +1422,10 @@ class _PremiumInteractiveIconState extends State<_PremiumInteractiveIcon> with S
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this);
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000), // Default duration
+    );
   }
 
   @override
@@ -1303,11 +1436,13 @@ class _PremiumInteractiveIconState extends State<_PremiumInteractiveIcon> with S
 
   void _handleTap() {
     if (widget.onTap != null) widget.onTap!();
-    _controller.forward(from: 0.0).then((_) {
-      if (widget.resetAfterPlay && mounted) {
-        _controller.value = 0.0;
-      }
-    });
+    if (_controller.duration != null) {
+      _controller.forward(from: 0.0).then((_) {
+        if (widget.resetAfterPlay && mounted) {
+          _controller.value = 0.0;
+        }
+      });
+    }
   }
 
   @override

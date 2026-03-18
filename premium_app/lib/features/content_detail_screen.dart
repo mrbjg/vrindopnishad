@@ -5,6 +5,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio/just_audio.dart';
 import '../core/design_system.dart';
+import '../core/audio_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../core/favorites_provider.dart';
 import '../widgets/share_content_widget.dart';
@@ -41,8 +42,6 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _audioPlayer = AudioPlayer();
-    _initAudio();
     _scrollController.addListener(_onScroll);
   }
 
@@ -53,21 +52,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     }
   }
 
-  Future<void> _initAudio() async {
-    try {
-      String audioUrl =
-          widget.content?.audioUrl ??
-          'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
-      await _audioPlayer.setUrl(audioUrl);
-    } catch (e) {
-      debugPrint('Error loading audio: $e');
-    }
-  }
+  // Audio is now managed globally via audioProvider
 
   @override
   void dispose() {
     _scrollController.dispose();
-    _audioPlayer.dispose();
     super.dispose();
   }
 
@@ -134,7 +123,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     _buildPremiumSanskritCard(l, isFocusMode),
                     
                     const SizedBox(height: 32),
-                    PremiumUI.sacredDivider(color: Colors.white.withValues(alpha: isFocusMode ? 0.3 : 0.05)),
+                    PremiumUI.sacredDivider(color: Colors.white.withOpacity(isFocusMode ? 0.3 : 0.05)),
                     const SizedBox(height: 32),
 
                     // Meaning Sections - Hidden/Simplified in Focus Mode
@@ -225,9 +214,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+              color: PremiumTokens.saffronGlow.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: PremiumTokens.saffronGlow.withValues(alpha: 0.2)),
+              border: Border.all(color: PremiumTokens.saffronGlow.withOpacity(0.2)),
             ),
             child: Text(
               category.toUpperCase(),
@@ -269,12 +258,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         ),
         decoration: BoxDecoration(
           color: (_showCompactHeader && !isFocusMode) 
-            ? const Color(0xFF03030F).withValues(alpha: 0.85) 
+            ? const Color(0xFF03030F).withOpacity(0.85) 
             : Colors.transparent,
           border: Border(
             bottom: BorderSide(
               color: (_showCompactHeader && !isFocusMode) 
-                ? Colors.white.withValues(alpha: 0.1) 
+                ? Colors.white.withOpacity(0.1) 
                 : Colors.transparent,
               width: 1,
             ),
@@ -396,15 +385,15 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         curve: Curves.easeInOut,
         padding: EdgeInsets.all(isFocusMode ? 32 : 28),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: isFocusMode ? 0.04 : 0.08),
+          color: Colors.white.withOpacity(isFocusMode ? 0.04 : 0.08),
           borderRadius: BorderRadius.circular(32),
           border: Border.all(
-            color: Colors.white.withValues(alpha: isFocusMode ? 0.1 : 0.05),
+            color: Colors.white.withOpacity(isFocusMode ? 0.1 : 0.05),
             width: 0.5,
           ),
           boxShadow: isFocusMode ? [
             BoxShadow(
-              color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+              color: PremiumTokens.saffronGlow.withOpacity(0.1),
               blurRadius: 40,
               spreadRadius: 10,
             )
@@ -420,7 +409,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
-                      color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+                      color: PremiumTokens.saffronGlow.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -442,13 +431,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               textAlign: TextAlign.center,
               style: GoogleFonts.spectral(
                 fontSize: _fontSize + (isFocusMode ? 10 : 6),
-                color: Colors.white.withValues(alpha: 0.95),
+                color: Colors.white.withOpacity(0.95),
                 fontWeight: FontWeight.bold,
                 height: 1.6,
                 fontStyle: FontStyle.italic,
                 shadows: [
                   Shadow(
-                    color: PremiumTokens.saffronGlow.withValues(alpha: 0.3),
+                    color: PremiumTokens.saffronGlow.withOpacity(0.3),
                     blurRadius: 15,
                   ),
                 ],
@@ -457,7 +446,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             .animate(onPlay: (controller) => controller.repeat(reverse: true))
             .shimmer(
               duration: 3.seconds,
-              color: Colors.white.withValues(alpha: 0.1),
+              color: Colors.white.withOpacity(0.1),
               blendMode: BlendMode.srcOver,
             )
             .scale(
@@ -496,7 +485,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: accentColor.withValues(alpha: 0.1),
+                      color: accentColor.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(icon, color: accentColor, size: 14),
@@ -519,7 +508,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               content,
               style: GoogleFonts.outfit(
                 fontSize: isFocusMode ? _fontSize + 3 : _fontSize,
-                color: Colors.white.withValues(alpha: isFocusMode ? 0.95 : 0.85),
+                color: Colors.white.withOpacity(isFocusMode ? 0.95 : 0.85),
                 height: 1.7,
                 letterSpacing: 0.1,
               ),
@@ -582,7 +571,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           decoration: BoxDecoration(
             gradient: PremiumTokens.saffronPremiumGradient,
             shape: BoxShape.circle,
-            boxShadow: [BoxShadow(color: PremiumTokens.saffronGlow.withValues(alpha: 0.3), blurRadius: 20)],
+            boxShadow: [BoxShadow(color: PremiumTokens.saffronGlow.withOpacity(0.3), blurRadius: 20)],
           ),
           child: Icon(Iconsax.music, color: Colors.white, size: 24),
         ),
@@ -596,10 +585,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       borderRadius: 32,
       blur: 30,
       opacity: 0.15,
-      child: StreamBuilder<PlayerState>(
-        stream: _audioPlayer.playerStateStream,
-        builder: (context, snapshot) {
-          final isPlaying = snapshot.data?.playing ?? false;
+      child: Consumer(
+        builder: (context, ref, child) {
+          final audioState = ref.watch(audioProvider);
+          final isPlaying = audioState.isPlaying;
+          final isLoading = audioState.isLoading;
+          
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -611,33 +602,43 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+                          color: PremiumTokens.saffronGlow.withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(Iconsax.music_play, color: PremiumTokens.saffronGlow, size: 14),
+                        child: isLoading 
+                          ? const SizedBox(
+                              width: 14, 
+                              height: 14, 
+                              child: CircularProgressIndicator(strokeWidth: 2, color: PremiumTokens.saffronGlow)
+                            )
+                          : Icon(Iconsax.music_play, color: PremiumTokens.saffronGlow, size: 14),
                       ),
                       const SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "DIVINE RECITATION", 
-                            style: GoogleFonts.outfit(
-                              color: Colors.white.withValues(alpha: 0.5), 
-                              fontWeight: FontWeight.w900, 
-                              fontSize: 9, 
-                              letterSpacing: 2,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              isLoading ? "PREPARING DIVINE VIBRATIONS..." : "DIVINE RECITATION",
+                              style: GoogleFonts.outfit(
+                                color: Colors.white.withOpacity(0.5),
+                                fontWeight: FontWeight.w900,
+                                fontSize: 9,
+                                letterSpacing: 2,
+                              ),
                             ),
-                          ),
-                          Text(
-                            widget.content?.title ?? "Sacred Verse", 
-                            style: GoogleFonts.outfit(
-                              color: Colors.white, 
-                              fontWeight: FontWeight.bold, 
-                              fontSize: 14,
+                            Text(
+                              widget.content?.title ?? "Sacred Verse",
+                              style: GoogleFonts.outfit(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -646,7 +647,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     icon: Container(
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.05),
+                        color: Colors.white.withOpacity(0.05),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(Iconsax.arrow_down_1, color: Colors.white, size: 16),
@@ -654,40 +655,56 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
+              // Progress Slider
+              _buildPremiumProgressBar(audioState),
+              const SizedBox(height: 8),
+              _buildPremiumAudioTime(audioState),
+              const SizedBox(height: 16),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  _buildPlayerCircleButton(
+                    Iconsax.backward_10_seconds, 
+                    () => ref.read(audioProvider.notifier).skipBackward(),
+                    size: 40,
+                    iconSize: 18,
+                  ),
+                  const SizedBox(width: 24),
                   GestureDetector(
                     onTap: () {
                       HapticFeedback.mediumImpact();
-                      isPlaying ? _audioPlayer.pause() : _audioPlayer.play();
+                      if (widget.content != null) {
+                        ref.read(audioProvider.notifier).play(widget.content!);
+                      }
                     },
                     child: Container(
-                      width: 56,
-                      height: 56,
+                      width: 64,
+                      height: 64,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle, 
                         gradient: PremiumTokens.saffronPremiumGradient,
                         boxShadow: [
                           BoxShadow(
-                            color: PremiumTokens.saffronGlow.withValues(alpha: 0.3),
+                            color: PremiumTokens.saffronGlow.withOpacity(0.3),
                             blurRadius: 20,
                             spreadRadius: -2,
                           ),
                         ],
                       ),
-                      child: Icon(isPlaying ? Iconsax.pause : Iconsax.play, color: Colors.white, size: 24),
+                      child: Center(
+                        child: isLoading 
+                          ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 3)
+                          : Icon(isPlaying ? Iconsax.pause : Iconsax.play, color: Colors.white, size: 28),
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        _buildPremiumProgressBar(),
-                        const SizedBox(height: 10),
-                        _buildPremiumAudioTime(),
-                      ],
-                    ),
+                  const SizedBox(width: 24),
+                  _buildPlayerCircleButton(
+                    Iconsax.forward_10_seconds, 
+                    () => ref.read(audioProvider.notifier).skipForward(),
+                    size: 40,
+                    iconSize: 18,
                   ),
                 ],
               ),
@@ -698,51 +715,60 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  Widget _buildPremiumProgressBar() {
-    return StreamBuilder<Duration?>(
-      stream: _audioPlayer.durationStream,
-      builder: (context, dSnap) {
-        final duration = dSnap.data ?? Duration.zero;
-        return StreamBuilder<Duration>(
-          stream: _audioPlayer.positionStream,
-          builder: (context, pSnap) {
-            final position = pSnap.data ?? Duration.zero;
-            final progress = duration.inMilliseconds > 0 ? position.inMilliseconds / duration.inMilliseconds : 0.0;
-            return Container(
-              height: 4,
-              width: double.infinity,
-              decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(2)),
-              child: FractionallySizedBox(
-                alignment: Alignment.centerLeft,
-                widthFactor: progress.clamp(0.0, 1.0),
-                child: Container(decoration: const BoxDecoration(color: PremiumTokens.saffronGlow, borderRadius: BorderRadius.all(Radius.circular(2)))),
-              ),
-            );
-          },
-        );
+  Widget _buildPlayerCircleButton(IconData icon, VoidCallback onTap, {double size = 44, double iconSize = 20}) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
       },
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.05),
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white.withOpacity(0.1)),
+        ),
+        child: Icon(icon, color: Colors.white70, size: iconSize),
+      ),
     );
   }
 
-  Widget _buildPremiumAudioTime() {
-    return StreamBuilder<Duration?>(
-      stream: _audioPlayer.durationStream,
-      builder: (context, dSnap) {
-        final duration = dSnap.data ?? Duration.zero;
-        return StreamBuilder<Duration>(
-          stream: _audioPlayer.positionStream,
-          builder: (context, pSnap) {
-            final position = pSnap.data ?? Duration.zero;
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(_formatDuration(position), style: GoogleFonts.outfit(color: Colors.white38, fontSize: 10)),
-                Text(_formatDuration(duration), style: GoogleFonts.outfit(color: Colors.white38, fontSize: 10)),
-              ],
-            );
-          },
-        );
-      },
+  Widget _buildPremiumProgressBar(AudioState audioState) {
+    final duration = audioState.duration;
+    final position = audioState.position;
+    final progress = duration.inMilliseconds > 0 ? position.inMilliseconds / duration.inMilliseconds : 0.0;
+    
+    return SliderTheme(
+      data: SliderTheme.of(context).copyWith(
+        trackHeight: 3,
+        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+        overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
+        activeTrackColor: PremiumTokens.saffronGlow,
+        inactiveTrackColor: Colors.white.withOpacity(0.1),
+        thumbColor: Colors.white,
+        overlayColor: PremiumTokens.saffronGlow.withOpacity(0.2),
+      ),
+      child: Slider(
+        value: progress.clamp(0.0, 1.0),
+        onChanged: (value) {
+          final newPos = Duration(milliseconds: (value * duration.inMilliseconds).toInt());
+          ref.read(audioProvider.notifier).seek(newPos);
+        },
+      ),
+    );
+  }
+
+  Widget _buildPremiumAudioTime(AudioState audioState) {
+    final duration = audioState.duration;
+    final position = audioState.position;
+    
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(_formatDuration(position), style: GoogleFonts.outfit(color: Colors.white38, fontSize: 10)),
+        Text(_formatDuration(duration), style: GoogleFonts.outfit(color: Colors.white38, fontSize: 10)),
+      ],
     );
   }
 

@@ -66,9 +66,9 @@ class ReadingHistoryScreen extends StatelessWidget {
                               leading: Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                                  color: PremiumTokens.nebulaBlue.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1)),
+                                  border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.1)),
                                 ),
                                 child: const Icon(
                                   Iconsax.clock,
@@ -129,9 +129,9 @@ class ReadingHistoryScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+              color: PremiumTokens.nebulaBlue.withOpacity(0.1),
               shape: BoxShape.circle,
-              border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
+              border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.2)),
             ),
             child: const Icon(
               Iconsax.clock,

@@ -142,7 +142,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                       begin: Alignment.bottomCenter,
                                       end: Alignment.topCenter,
                                       colors: [
-                                        PremiumTokens.charcoal.withValues(alpha: 0.9),
+                                        PremiumTokens.charcoal.withOpacity(0.9),
                                         Colors.transparent,
                                       ],
                                     ),
@@ -284,14 +284,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
-              color: isSelected ? PremiumTokens.saffronGlow : PremiumTokens.saffronGlow.withValues(alpha: 0.05),
+              color: isSelected ? PremiumTokens.saffronGlow : PremiumTokens.saffronGlow.withOpacity(0.05),
               borderRadius: BorderRadius.circular(100),
               border: Border.all(
-                color: isSelected ? Colors.transparent : PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+                color: isSelected ? Colors.transparent : PremiumTokens.saffronGlow.withOpacity(0.1),
               ),
               boxShadow: isSelected ? [
                 BoxShadow(
-                  color: PremiumTokens.saffronGlow.withValues(alpha: 0.3),
+                  color: PremiumTokens.saffronGlow.withOpacity(0.3),
                   blurRadius: 15,
                   spreadRadius: -2,
                 )
@@ -362,12 +362,12 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(Iconsax.music, size: 10, color: PremiumTokens.saffronGlow.withValues(alpha: 0.5)),
+                      Icon(Iconsax.music, size: 10, color: PremiumTokens.saffronGlow.withOpacity(0.5)),
                       SizedBox(width: 4),
                       Text(
                         item.category.toUpperCase(),
                         style: GoogleFonts.manrope(
-                          color: PremiumTokens.saffronGlow.withValues(alpha: 0.7),
+                          color: PremiumTokens.saffronGlow.withOpacity(0.7),
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 1,

@@ -9,6 +9,8 @@ import '../core/design_system.dart';
 import '../core/providers.dart';
 import '../core/localization.dart';
 import '../core/content_provider.dart';
+import '../core/audio_provider.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -30,7 +32,7 @@ class HomeScreen extends ConsumerWidget {
                 collapsedHeight: 80,
                 pinned: true,
                 floating: false,
-                backgroundColor: PremiumTokens.voidBlack.withValues(alpha: 0.95),
+                backgroundColor: PremiumTokens.voidBlack.withOpacity(0.95),
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -39,39 +41,54 @@ class HomeScreen extends ConsumerWidget {
                       fileName: 'filter.json',
                       size: 28,
                       color: PremiumTokens.nebulaBlue,
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        // Filter logic
+                      },
                     ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        PremiumUI.logo(height: 32),
-                        const SizedBox(width: 12),
-                        Container(
-                          height: 16,
-                          width: 1,
-                          color: Colors.white.withValues(alpha: 0.1),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          "ETHEREAL DASHBOARD",
-                          style: GoogleFonts.inter(
-                            fontSize: 10,
-                            color: Colors.white70,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 2.0,
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          PremiumUI.logo(height: 28),
+                          const SizedBox(width: 8),
+                          Container(
+                            height: 12,
+                            width: 1,
+                            color: Colors.white.withOpacity(0.1),
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              "ETHEREAL DASHBOARD",
+                              style: GoogleFonts.inter(
+                                fontSize: 9,
+                                color: Colors.white70,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1.5,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     Row(
                       children: [
-                        Icon(Iconsax.notification, color: PremiumTokens.nebulaBlue, size: 24),
+                        GestureDetector(
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                          },
+                          child: Icon(Iconsax.notification, color: PremiumTokens.nebulaBlue, size: 24),
+                        ),
                         const SizedBox(width: 16),
                         Container(
                           width: 32,
                           height: 32,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
+                            border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.3)),
                             image: const DecorationImage(
                               image: NetworkImage('https://lh3.googleusercontent.com/aida-public/AB6AXuAkQJsMLqDCMwi1jqTeWSOOqq3Wz9ZIpqA9usLZAS95EcvHTBag2RoKJxY0vI0ignkQJ8N7UDe1CbmOARjpZ4djVMMi7DYNHPxPNoYSkcaHePL2qyHdLar7mUl0CW6gMbXv788itHF2vxM4sZWWsBBAQUG96RO8rYlrZNHgfYgQ6IfsKE6u5jOS_QRQe0dd2Fy-5dU6VL7ZLOg1jCrXoMsqJDXEiKCcCuT1CctHQ72_ivF3Rc94CqJae0t_M1fKLDyKMLPrbTHwr8I'),
                               fit: BoxFit.cover,
@@ -116,7 +133,7 @@ class HomeScreen extends ConsumerWidget {
               ),
 
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 32, 20, 120),
+                padding: const EdgeInsets.fromLTRB(20, 32, 20, 180), // Increased to 180 for MiniPlayer + NavBar
                 sliver: Consumer(
                   builder: (context, ref, _) {
                     final content = ref.watch(sacredContentProvider);
@@ -137,9 +154,9 @@ class HomeScreen extends ConsumerWidget {
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+        color: PremiumTokens.nebulaBlue.withOpacity(0.1),
         shape: BoxShape.circle,
-        border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
+        border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.2)),
       ),
       child: Icon(icon, color: PremiumTokens.nebulaBlue, size: 20),
     );
@@ -147,13 +164,12 @@ class HomeScreen extends ConsumerWidget {
 
   Widget _buildPremiumNaamJap(BuildContext context, WidgetRef ref) {
     final count = ref.watch(naamJapStateProvider);
-    final progress = (count % 1008) / 1008; 
 
     return Padding(
-      padding: const EdgeInsets.all(20),
-      child: PremiumUI.voidCard(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: PremiumUI.glassCard(
         padding: const EdgeInsets.all(24),
-        accentColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
+        borderRadius: 32,
         child: Column(
           children: [
             Row(
@@ -163,84 +179,131 @@ class HomeScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Daily Naam Jap',
-                      style: GoogleFonts.newsreader(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w400,
+                      'DAILY CHANTS',
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
+                        color: Colors.white38,
                       ),
                     ),
+                    const SizedBox(height: 4),
                     Text(
-                      'Enter the Ethereal Void',
-                      style: PremiumTokens.sansStyle(
-                        color: PremiumTokens.nebulaBlue, 
-                        fontSize: 11, 
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 0.5,
+                      'Sacred Counter',
+                      style: GoogleFonts.spectral(
+                        fontSize: 22,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w300,
                       ),
                     ),
                   ],
                 ),
-                Text(
-                  'Goal: 1008',
-                  style: GoogleFonts.manrope(color: Colors.white54, fontSize: 12),
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
-            GestureDetector(
-              onTap: () {
-                HapticFeedback.lightImpact();
-                ref.read(navigationIndexProvider.notifier).state = 2; // Naam Jap index
-              },
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  SizedBox(
-                    width: 120,
-                    height: 120,
-                    child: CircularProgressIndicator(
-                      value: progress,
-                      strokeWidth: 3,
-                      backgroundColor: Colors.white.withValues(alpha: 0.05),
-                      valueColor: const AlwaysStoppedAnimation(PremiumTokens.nebulaBlue),
-                    ),
-                  ),
-                  Icon(Iconsax.music, color: Colors.white, size: 40),
-                ],
-              ),
-            ),
-            const SizedBox(height: 32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '$count',
-                  style: GoogleFonts.manrope(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'CHANTS',
-                  style: GoogleFonts.manrope(
-                    fontSize: 10,
-                    color: Colors.white38,
-                    letterSpacing: 1.5,
-                    fontWeight: FontWeight.bold,
+                PremiumUI.glassCard(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  borderRadius: 12,
+                  child: Text(
+                    "GOAL: 1008",
+                    style: PremiumTokens.sansStyle(fontSize: 10, color: PremiumTokens.nebulaBlue, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 24),
-            PremiumUI.capsuleButton(
-              text: 'OPEN PLAYER',
+            
+            // Professional Central Counter
+            GestureDetector(
               onTap: () {
+                HapticFeedback.mediumImpact();
+                ref.read(naamJapStateProvider.notifier).increment();
+              },
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Aura
+                  Animate(
+                    onPlay: (c) => c.repeat(reverse: true),
+                    effects: [
+                      ScaleEffect(begin: const Offset(1, 1), end: const Offset(1.2, 1.2), duration: 2.seconds),
+                    ],
+                    child: Container(
+                      width: 140,
+                      height: 140,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [
+                            PremiumTokens.nebulaBlue.withOpacity(0.1),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  
+                  // Counter Disk
+                  Container(
+                    width: 110,
+                    height: 110,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.03),
+                      border: Border.all(color: Colors.white.withOpacity(0.1)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Animate(
+                        target: count > 0 ? 1 : 0,
+                        effects: [
+                          ScaleEffect(duration: 200.ms),
+                        ],
+                        child: Text(
+                          count.toString(),
+                          style: GoogleFonts.spectral(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 24),
+            
+            GestureDetector(
+              onTap: () {
+                HapticFeedback.mediumImpact();
                 ref.read(navigationIndexProvider.notifier).state = 2;
               },
-              icon: Iconsax.music_play,
+              child: PremiumUI.glassCard(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                borderRadius: 20,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Iconsax.music_play, color: Colors.white, size: 18),
+                    const SizedBox(width: 12),
+                    Text(
+                      "EXPAND PLAYER",
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
@@ -296,48 +359,54 @@ class HomeScreen extends ConsumerWidget {
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           final cat = categories[index];
-          return PremiumUI.saffronGlassCard(
-            padding: EdgeInsets.zero,
-            optimized: true,
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: PremiumUI.networkImage(
-                    url: cat['image'],
-                    borderRadius: BorderRadius.circular(24),
+          return GestureDetector(
+            onTap: () {
+              HapticFeedback.lightImpact();
+              // Navigation or category logic
+            },
+            child: PremiumUI.saffronGlassCard(
+              padding: EdgeInsets.zero,
+              optimized: true,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: PremiumUI.networkImage(
+                      url: cat['image'],
+                      borderRadius: BorderRadius.circular(24),
+                    ),
                   ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                      colors: [
-                        PremiumTokens.charcoal.withValues(alpha: 0.9),
-                        Colors.transparent,
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24),
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [
+                          PremiumTokens.charcoal.withOpacity(0.9),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 16,
+                    left: 16,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          cat['name']!,
+                          style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                        ),
+                        Text(
+                          cat['count']!,
+                          style: GoogleFonts.manrope(color: Colors.white54, fontSize: 10),
+                        ),
                       ],
                     ),
                   ),
-                ),
-                Positioned(
-                  bottom: 16,
-                  left: 16,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        cat['name']!,
-                        style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-                      ),
-                      Text(
-                        cat['count']!,
-                        style: GoogleFonts.manrope(color: Colors.white54, fontSize: 10),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
@@ -363,37 +432,44 @@ class HomeScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16),
-          PremiumUI.voidCard(
-            child: Row(
-              children: [
-                Icon(Iconsax.moon, color: Color(0xFFC0C0CF), size: 24),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Stillness in the Void',
-                        style: GoogleFonts.newsreader(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+          GestureDetector(
+            onTap: () {
+              // Select the latest reflection for audio playback if it has a URL
+              // For now, expand the player or navigate
+              ref.read(navigationIndexProvider.notifier).state = 1;
+            },
+            child: PremiumUI.voidCard(
+              child: Row(
+                children: [
+                  const Icon(Iconsax.moon, color: Color(0xFFC0C0CF), size: 24),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Stillness in the Void',
+                          style: GoogleFonts.newsreader(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'Mar 14 • 3 min read',
-                        style: GoogleFonts.manrope(color: Colors.white38, fontSize: 11),
-                      ),
-                    ],
+                        Text(
+                          'Mar 14 • 3 min read',
+                          style: GoogleFonts.manrope(color: Colors.white38, fontSize: 11),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                IconButton(
-                  icon: Icon(Iconsax.arrow_right_3, color: Colors.white24, size: 20),
-                  onPressed: () {
-                    ref.read(navigationIndexProvider.notifier).state = 1; // Library index
-                  },
-                ),
-              ],
+                  IconButton(
+                    icon: const Icon(Iconsax.arrow_right_3, color: Colors.white24, size: 20),
+                    onPressed: () {
+                      ref.read(navigationIndexProvider.notifier).state = 1; // Library index
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -410,39 +486,45 @@ class HomeScreen extends ConsumerWidget {
           final item = items[index];
           return Padding(
             padding: const EdgeInsets.only(bottom: 16),
-            child: PremiumUI.voidCard(
-              padding: const EdgeInsets.all(16),
-              accentColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
-              child: Row(
-                children: [
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
+            child: GestureDetector(
+              onTap: () {
+                HapticFeedback.heavyImpact();
+                ref.read(audioProvider.notifier).play(item);
+              },
+              child: PremiumUI.voidCard(
+                padding: const EdgeInsets.all(16),
+                accentColor: PremiumTokens.nebulaBlue.withOpacity(0.3),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: PremiumTokens.nebulaBlue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Center(child: Text('ॐ', style: TextStyle(color: PremiumTokens.nebulaBlue, fontSize: 24))),
                     ),
-                    child: const Center(child: Text('ॐ', style: TextStyle(color: PremiumTokens.nebulaBlue, fontSize: 24))),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.title,
-                          style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          item.category,
-                          style: GoogleFonts.manrope(color: PremiumTokens.nebulaBlue, fontSize: 12),
-                        ),
-                      ],
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.title,
+                            style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            item.category,
+                            style: GoogleFonts.manrope(color: PremiumTokens.nebulaBlue, fontSize: 12),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Icon(Iconsax.arrow_right_3, color: Colors.white24, size: 16),
-                ],
+                    const Icon(Iconsax.arrow_right_3, color: Colors.white24, size: 16),
+                  ],
+                ),
               ),
             ),
           );
@@ -462,7 +544,7 @@ class PremiumQuoteCard extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Stack(
         alignment: Alignment.center,
@@ -485,8 +567,8 @@ class PremiumQuoteCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(24),
               gradient: LinearGradient(
                 colors: [
-                  PremiumTokens.charcoal.withValues(alpha: 0.9),
-                  PremiumTokens.surfaceCharcoal.withValues(alpha: 0.7),
+                  PremiumTokens.charcoal.withOpacity(0.9),
+                  PremiumTokens.surfaceCharcoal.withOpacity(0.7),
                 ],
               ),
             ),

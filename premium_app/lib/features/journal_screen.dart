@@ -57,7 +57,7 @@ class JournalScreen extends ConsumerWidget {
             border: Border.all(color: Colors.white10, width: 2),
             boxShadow: [
               BoxShadow(
-                color: PremiumTokens.nebulaBlue.withValues(alpha: 0.5),
+                color: PremiumTokens.nebulaBlue.withOpacity(0.5),
                 blurRadius: 25,
                 offset: const Offset(0, 4),
               ),
@@ -122,13 +122,13 @@ class JournalScreen extends ConsumerWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  PremiumTokens.nebulaBlue.withValues(alpha: 0.2),
-                  PremiumTokens.nebulaBlue.withValues(alpha: 0.05),
+                  PremiumTokens.nebulaBlue.withOpacity(0.2),
+                  PremiumTokens.nebulaBlue.withOpacity(0.05),
                 ],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.5),
+                  color: PremiumTokens.nebulaBlue.withOpacity(0.5),
                   blurRadius: 40,
                   spreadRadius: 10,
                 ),
