@@ -73,27 +73,32 @@ class LibraryScreen extends ConsumerWidget {
             size: 28,
             color: PremiumTokens.nebulaBlue,
           ),
-          Column(
-            children: [
-              Text(
-                "SANT-VAANI",
-                style: PremiumTokens.sansStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w300,
-                  letterSpacing: 4,
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "SANT-VAANI",
+                  style: PremiumTokens.sansStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w300,
+                    letterSpacing: 4,
+                  ),
                 ),
-              ),
-              Text(
-                "SACRED LIBRARY",
-                style: PremiumTokens.sansStyle(
-                  fontSize: 10,
-                  color: PremiumTokens.nebulaBlue,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
+                Text(
+                  "SACRED LIBRARY",
+                  style: PremiumTokens.sansStyle(
+                    fontSize: 10,
+                    color: PremiumTokens.nebulaBlue,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
+          const SizedBox(width: 8),
           Container(
             width: 36,
             height: 36,
@@ -168,14 +173,16 @@ class LibraryScreen extends ConsumerWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(
-                    "Gayatri Mantra (Divine Peace)",
-                    style: PremiumTokens.sansStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
+                  Flexible(
+                    child: Text(
+                      "Gayatri Mantra (Divine Peace)",
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
