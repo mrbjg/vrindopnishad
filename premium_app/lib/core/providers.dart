@@ -5,6 +5,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
 
+final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
+  throw UnimplementedError();
+});
+
 class ThemeNotifier extends StateNotifier<ThemeMode> {
   ThemeNotifier() : super(ThemeMode.system);
 
@@ -63,45 +67,37 @@ final visibleItemCountProvider = StateProvider<int>((ref) => 5);
 final previouslyAnimatedCountProvider = StateProvider<int>((ref) => 5);
 
 class NaamJapNotifier extends StateNotifier<int> {
-  NaamJapNotifier() : super(0) {
-    _loadCount();
-  }
+  final SharedPreferences prefs;
 
-  Future<void> _loadCount() async {
-    final prefs = await SharedPreferences.getInstance();
+  NaamJapNotifier(this.prefs) : super(0) {
     state = prefs.getInt('naam_jap_count') ?? 0;
   }
 
   Future<void> increment() async {
     state++;
-    final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('naam_jap_count', state);
   }
 
   Future<void> reset() async {
     state = 0;
-    final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('naam_jap_count', 0);
   }
 }
 
 final naamJapStateProvider = StateNotifierProvider<NaamJapNotifier, int>((ref) {
-  return NaamJapNotifier();
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return NaamJapNotifier(prefs);
 });
 
 class OnboardingNotifier extends StateNotifier<bool> {
-  OnboardingNotifier() : super(false) {
-    _loadState();
-  }
+  final SharedPreferences prefs;
 
-  Future<void> _loadState() async {
-    final prefs = await SharedPreferences.getInstance();
+  OnboardingNotifier(this.prefs) : super(0.0 != 0.0) { // Using a dummy bool for super as it's set in constructor
     state = prefs.getBool('has_seen_onboarding') ?? false;
   }
 
   Future<void> completeOnboarding() async {
     state = true;
-    final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('has_seen_onboarding', true);
   }
 }
@@ -109,7 +105,8 @@ class OnboardingNotifier extends StateNotifier<bool> {
 /// Provider to track if the user has completed the onboarding flow
 final hasSeenOnboardingProvider =
     StateNotifierProvider<OnboardingNotifier, bool>((ref) {
-  return OnboardingNotifier();
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return OnboardingNotifier(prefs);
 });
 
 /// Provider for the selected category in the Sacred Library

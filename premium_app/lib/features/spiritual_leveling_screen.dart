@@ -109,7 +109,7 @@ class SpiritualLevelingScreen extends ConsumerWidget {
                     shape: BoxShape.circle,
                     color: PremiumTokens.charcoal,
                     image: const DecorationImage(
-                      image: NetworkImage("https://lh3.googleusercontent.com/aida-public/AB6AXuBWTzLudhMZk2fgMX3OarbSyNvs7vHKhl-A8YGPtySIGOQFhgghoJI2VnyRmu6xNqZU-MxMht92mtqYOsXnb4tUa7PCSEDIUpkF_BvgH3A3Qbs5imOBFJSNd486A7_yhhQ5WNqHLrN2MBOLB4tiT5VSEbQlcp2kPQ8RZcabyayRNmsPzE2Y_KnW8Z2W9-eZyMWAtapcderOpikCaeylT7UjIiHDW1DFCDJBbolD6nb55DXtXsqCl70965wpvTsEDTTPqhjfrxh31Ts"),
+                      image: CachedNetworkImageProvider("https://lh3.googleusercontent.com/aida-public/AB6AXuBWTzLudhMZk2fgMX3OarbSyNvs7vHKhl-A8YGPtySIGOQFhgghoJI2VnyRmu6xNqZU-MxMht92mtqYOsXnb4tUa7PCSEDIUpkF_BvgH3A3Qbs5imOBFJSNd486A7_yhhQ5WNqHLrN2MBOLB4tiT5VSEbQlcp2kPQ8RZcabyayRNmsPzE2Y_KnW8Z2W9-eZyMWAtapcderOpikCaeylT7UjIiHDW1DFCDJBbolD6nb55DXtXsqCl70965wpvTsEDTTPqhjfrxh31Ts"),
                       fit: BoxFit.cover,
                     ),
                   ),

@@ -13,6 +13,8 @@ import 'features/splash_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'core/cache_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -36,7 +38,15 @@ void main() async {
     androidNotificationOngoing: true,
   );
 
-  runApp(const ProviderScope(child: SantVaaniPremiumApp()));
+  // Pre-initialize SharedPreferences for instant cache access
+  final prefs = await SharedPreferences.getInstance();
+  
+  runApp(ProviderScope(
+    overrides: [
+      sharedPreferencesProvider.overrideWithValue(prefs),
+    ],
+    child: const SantVaaniPremiumApp(),
+  ));
 }
 
 class SantVaaniPremiumApp extends ConsumerStatefulWidget {

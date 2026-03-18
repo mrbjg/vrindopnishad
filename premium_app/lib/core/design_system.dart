@@ -387,7 +387,7 @@ class PremiumUI extends StatelessWidget {
               color: Colors.black,
               border: Border.all(color: activeColor.withOpacity(0.3)),
               image: const DecorationImage(
-                image: NetworkImage('https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=2662&auto=format&fit=crop'),
+                image: CachedNetworkImageProvider('https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=2662&auto=format&fit=crop'),
                 fit: BoxFit.cover,
                 opacity: 0.3,
               ),

@@ -64,6 +64,27 @@ class SacredContent {
     };
   }
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SacredContent &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          title == other.title &&
+          category == other.category &&
+          sanskritText == other.sanskritText &&
+          imageUrl == other.imageUrl &&
+          audioUrl == other.audioUrl;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      title.hashCode ^
+      category.hashCode ^
+      sanskritText.hashCode ^
+      imageUrl.hashCode ^
+      audioUrl.hashCode;
+
   factory SacredContent.fromMap(Map<String, dynamic> map) {
     return SacredContent(
       id: map['id'],
@@ -135,15 +156,30 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
     try {
       final apiContent = await ApiService.fetchAllContent();
       if (apiContent.isNotEmpty) {
-        // Update local DB
-        await DatabaseHelper.instance.deleteAllContent();
-        for (var item in apiContent) {
-          await DatabaseHelper.instance.insertContent(item);
+        // Compare with current state (excluding the sample) to avoid unnecessary rebuilds
+        final currentContent = state.where((item) => item.id != _featuredSample.id).toList();
+        
+        bool isChanged = apiContent.length != currentContent.length;
+        if (!isChanged) {
+          for (int i = 0; i < apiContent.length; i++) {
+            if (apiContent[i] != currentContent[i]) {
+              isChanged = true;
+              break;
+            }
+          }
         }
-        // Update cache
-        await _cache.cacheContent(apiContent);
-        // Update state (smooth transition)
-        state = [_featuredSample, ...apiContent];
+
+        if (isChanged) {
+          // Update local DB
+          await DatabaseHelper.instance.deleteAllContent();
+          for (var item in apiContent) {
+            await DatabaseHelper.instance.insertContent(item);
+          }
+          // Update cache
+          await _cache.cacheContent(apiContent);
+          // Update state (smooth transition)
+          state = [_featuredSample, ...apiContent];
+        }
       }
     } catch (e) {
       // Silent fail - ensure we at least keep the sample if state was empty
