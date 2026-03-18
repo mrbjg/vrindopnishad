@@ -1099,11 +1099,11 @@ class PremiumUI extends StatelessWidget {
       backgroundColor: Colors.transparent,
       elevation: 0,
       behavior: SnackBarBehavior.floating,
-      margin: const EdgeInsets.only(bottom: 110, left: 24, right: 24),
+      margin: const EdgeInsets.only(bottom: 92, left: 24, right: 24),
       duration: const Duration(seconds: 3),
       content: _SacredNotification(
         message: message,
-        icon: icon ?? Iconsax.info_circle,
+        icon: icon, // Passed icon or null
         color: color ?? PremiumTokens.nebulaBlue,
       ),
     );
@@ -1120,64 +1120,82 @@ class PremiumUI extends StatelessWidget {
 
 class _SacredNotification extends StatelessWidget {
   final String message;
-  final IconData icon;
+  final IconData? icon;
   final Color color;
 
   const _SacredNotification({
     required this.message,
-    required this.icon,
+    this.icon,
     required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0xE60A0A1F), // Deep void-glass
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.3), width: 1.5),
+        color: const Color(0xF208081A), // Ultra-deep void glass
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: color.withOpacity(0.25), width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.2),
-            blurRadius: 20,
-            spreadRadius: 2,
+            color: color.withOpacity(0.15),
+            blurRadius: 25,
+            spreadRadius: -2,
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
+            color: Colors.black.withOpacity(0.6),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
+          // Branded Icon or Provided Icon
           Container(
-            padding: const EdgeInsets.all(8),
+            width: 38,
+            height: 38,
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
               shape: BoxShape.circle,
+              border: Border.all(color: color.withOpacity(0.2), width: 1),
             ),
-            child: Icon(icon, color: color, size: 20),
+            child: Center(
+              child: icon != null 
+                ? Icon(icon, color: color, size: 18)
+                : Text(
+                    "व", // Branded Vrindopnishad Symbol
+                    style: GoogleFonts.notoSansDevanagari(
+                      color: color,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      shadows: [Shadow(color: color.withOpacity(0.5), blurRadius: 8)],
+                    ),
+                  ),
+            ),
           ).animate(onPlay: (controller) => controller.repeat())
            .shimmer(duration: 2.seconds, color: color.withOpacity(0.2)),
-          const SizedBox(width: 16),
+          
+          const SizedBox(width: 14),
+          
           Expanded(
             child: Text(
               message,
               style: PremiumTokens.sansStyle(
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
-                letterSpacing: 0.5,
+                color: Colors.white.withOpacity(0.95),
+                letterSpacing: 0.2,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
       ),
-    ).animate().slideY(begin: 1.0, end: 0.0, curve: Curves.easeOutCubic, duration: 450.ms)
-               .fadeIn(duration: 250.ms);
+    ).animate().slideY(begin: 0.8, end: 0.0, curve: Curves.easeOutQuart, duration: 400.ms)
+               .fadeIn(duration: 200.ms);
   }
 }
 

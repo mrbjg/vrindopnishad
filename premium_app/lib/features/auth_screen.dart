@@ -62,16 +62,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   void _showFriendlyError(String errorMsg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          errorMsg,
-          style: PremiumTokens.sansStyle(fontSize: 14, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.redAccent.withOpacity(0.9),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
+    PremiumUI.showNotification(
+      context, 
+      errorMsg,
+      icon: Iconsax.info_circle,
+      color: Colors.redAccent,
     );
   }
 

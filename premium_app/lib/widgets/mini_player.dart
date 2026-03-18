@@ -42,9 +42,9 @@ class MiniPlayer extends ConsumerWidget {
           final width = constraints.maxWidth.isFinite ? constraints.maxWidth : MediaQuery.sizeOf(context).width;
           
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            height: 72, 
-            width: width - 32, // Accommodate margin
+            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            height: 68, 
+            width: width - 24, // Accommodate margin
             child: ClipRRect(
               borderRadius: BorderRadius.circular(24),
               child: BackdropFilter(

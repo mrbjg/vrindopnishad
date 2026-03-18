@@ -61,7 +61,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
           Positioned(
             left: 0,
             right: 0,
-            bottom: 120, // Increased more to clear the Nav Button's glow (101px)
+            bottom: 102, // Tightened from 120 to clear the Nav Button while feeling more compact
             child: const MiniPlayer(),
           ),
 
@@ -88,7 +88,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                       ],
                     ),
                     Positioned(
-                      bottom: 26, 
+                      bottom: 22, // Tightened from 26 for a more compact look
                       child: Consumer(
                         builder: (context, ref, child) {
                           final count = ref.watch(naamJapStateProvider);

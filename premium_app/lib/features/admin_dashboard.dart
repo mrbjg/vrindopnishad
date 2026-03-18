@@ -9,6 +9,7 @@ import '../core/localization.dart';
 import '../core/providers.dart';
 import '../widgets/animated_effects.dart';
 import 'package:flutter/services.dart';
+import '../core/design_system.dart';
 
 class AdminDashboard extends ConsumerStatefulWidget {
   AdminDashboard({super.key});
@@ -924,36 +925,20 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
   }
 
   void _showSuccessMessage(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Iconsax.tick_circle, color: Colors.white, size: 18),
-            const SizedBox(width: 12),
-            Text(message, style: GoogleFonts.outfit()),
-          ],
-        ),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: const Color(0xFF10B981),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
+    PremiumUI.showNotification(
+      context, 
+      message,
+      icon: Iconsax.tick_circle,
+      color: const Color(0xFF10B981),
     );
   }
 
   void _showErrorMessage(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Iconsax.warning_2, color: Colors.white, size: 18),
-            const SizedBox(width: 12),
-            Text(message, style: GoogleFonts.outfit()),
-          ],
-        ),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.red,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
+    PremiumUI.showNotification(
+      context, 
+      message,
+      icon: Iconsax.warning_2,
+      color: Colors.red,
     );
   }
 }
