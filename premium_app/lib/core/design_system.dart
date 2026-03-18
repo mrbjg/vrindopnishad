@@ -905,6 +905,7 @@ class PremiumUI extends StatelessWidget {
     Color? color,
     bool autoPlay = false,
     bool resetAfterPlay = true,
+    bool isToggled = false,
     VoidCallback? onTap,
   }) {
     return _PremiumInteractiveIcon(
@@ -914,6 +915,7 @@ class PremiumUI extends StatelessWidget {
       color: color,
       autoPlay: autoPlay,
       resetAfterPlay: resetAfterPlay,
+      isToggled: isToggled,
       onTap: onTap,
     );
   }
@@ -1401,6 +1403,7 @@ class _PremiumInteractiveIcon extends StatefulWidget {
   final Color? color;
   final bool autoPlay;
   final bool resetAfterPlay;
+  final bool isToggled;
   final VoidCallback? onTap;
 
   const _PremiumInteractiveIcon({
@@ -1410,6 +1413,7 @@ class _PremiumInteractiveIcon extends StatefulWidget {
     this.color,
     this.autoPlay = false,
     this.resetAfterPlay = true,
+    this.isToggled = false,
     this.onTap,
   });
 
@@ -1435,12 +1439,32 @@ class _PremiumInteractiveIconState extends State<_PremiumInteractiveIcon> with S
     super.dispose();
   }
 
+  @override
+  void didUpdateWidget(_PremiumInteractiveIcon oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isToggled != oldWidget.isToggled) {
+      if (_controller.duration != null) {
+        if (widget.isToggled) {
+          _controller.forward();
+        } else {
+          _controller.reverse();
+        }
+      } else if (widget.isToggled) {
+        _controller.value = 1.0;
+      } else {
+        _controller.value = 0.0;
+      }
+    }
+  }
+
   void _handleTap() {
     HapticFeedback.lightImpact();
     if (widget.onTap != null) widget.onTap!();
-    if (_controller.duration != null) {
+    
+    // If not using toggle logic, play once
+    if (!widget.isToggled && _controller.duration != null) {
       _controller.forward(from: 0.0).then((_) {
-        if (widget.resetAfterPlay && mounted) {
+        if (widget.resetAfterPlay && mounted && !widget.isToggled) {
           _controller.value = 0.0;
         }
       });
@@ -1456,7 +1480,9 @@ class _PremiumInteractiveIconState extends State<_PremiumInteractiveIcon> with S
       animate: widget.autoPlay,
       onLoaded: (composition) {
         _controller.duration = composition.duration;
-        if (widget.autoPlay) {
+        if (widget.isToggled) {
+          _controller.value = 1.0;
+        } else if (widget.autoPlay) {
           _controller.forward();
         } else if (mounted) {
           _controller.value = 0.0;

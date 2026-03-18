@@ -278,6 +278,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 await Future.delayed(200.ms); // Allow pulse to be seen
                 if (mounted) Navigator.pop(context);
               },
+              isToggled: false,
               isAnimated: true,
               animFolder: 'Chevron-left',
               animFile: 'chevron-left.json',
@@ -303,6 +304,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 ref.read(focusModeProvider.notifier).state = !isFocusMode;
               },
               isActive: isFocusMode,
+              isToggled: false,
               isAnimated: true,
               animFolder: 'Visibility V2',
               animFile: 'visibilityV2.json',
@@ -310,12 +312,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             const SizedBox(width: 8),
             PremiumUI.focusContainer(
               isFocusMode: isFocusMode,
-              child: Row(
+              child: Row(mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildHeaderCircleButton(
                     null,
                     _toggleFavorite,
-                    isActive: widget.content != null && ref.watch(isFavoriteProvider(widget.content!.id)),
+                    isToggled: widget.content != null && ref.watch(isFavoriteProvider(widget.content!.id)),
                     isAnimated: true,
                     animFolder: 'Heart',
                     animFile: 'heart.json',
@@ -341,6 +343,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     VoidCallback onTap, {
     bool isActive = false,
     bool isAnimated = false,
+    bool isToggled = false,
     String? animFolder,
     String? animFile,
     bool isCustomSvg = false,
@@ -354,8 +357,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             folder: animFolder!, 
             fileName: animFile!, 
             size: 20, 
-            color: isActive ? PremiumTokens.saffronGlow : Colors.white,
-            resetAfterPlay: !isActive,
+            color: (isActive || isToggled) ? PremiumTokens.saffronGlow : Colors.white,
+            isToggled: isToggled,
             onTap: () {
               HapticFeedback.lightImpact();
               onTap();
@@ -370,9 +373,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               ? PremiumUI.customIcon(
                   fileName: svgFile!,
                   size: 20,
-                  color: isActive ? PremiumTokens.saffronGlow : Colors.white,
+                  color: (isActive || isToggled) ? PremiumTokens.saffronGlow : Colors.white,
                 )
-              : Icon(icon, color: isActive ? PremiumTokens.saffronGlow : Colors.white, size: 20),
+              : Icon(icon, color: (isActive || isToggled) ? PremiumTokens.saffronGlow : Colors.white, size: 20),
           ),
     );
   }
