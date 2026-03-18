@@ -106,10 +106,18 @@ class LibraryScreen extends ConsumerWidget {
               height: 38,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
+                color: PremiumTokens.surfaceCharcoal,
                 border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.3)),
-                image: const DecorationImage(
-                  image: NetworkImage('https://lh3.googleusercontent.com/aida-public/AB6AXuAkQJsMLqDCMwi1jqTeWSOOqq3Wz9ZIpqA9usLZAS95EcvHTBag2RoKJxY0vI0ignkQJ8N7UDe1CbmOARjpZ4djVMMi7DYNHPxPNoYSkcaHePL2qyHdLar7mUl0CW6gMbXv788itHF2vxM4sZWWsBBAQUG96RO8rYlrZNHgfYgQ6IfsKE6u5jOS_QRQe0dd2Fy-5dU6VL7ZLOg1jCrXoMsqJDXEiKCcCuT1CctHQ72_ivF3Rc94CqJae0t_M1fKLDyKMLPrbTHwr8I'),
+              ),
+              child: ClipOval(
+                child: Image.network(
+                  'https://lh3.googleusercontent.com/aida-public/AB6AXuAkQJsMLqDCMwi1jqTeWSOOqq3Wz9ZIpqA9usLZAS95EcvHTBag2RoKJxY0vI0ignkQJ8N7UDe1CbmOARjpZ4djVMMi7DYNHPxPNoYSkcaHePL2qyHdLar7mUl0CW6gMbXv788itHF2vxM4sZWWsBBAQUG96RO8rYlrZNHgfYgQ6IfsKE6u5jOS_QRQe0dd2Fy-5dU6VL7ZLOg1jCrXoMsqJDXEiKCcCuT1CctHQ72_ivF3Rc94CqJae0t_M1fKLDyKMLPrbTHwr8I',
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => const Icon(
+                    Icons.person,
+                    color: PremiumTokens.nebulaBlue,
+                    size: 20,
+                  ),
                 ),
               ),
             ),
@@ -154,22 +162,33 @@ class LibraryScreen extends ConsumerWidget {
         borderRadius: 16,
         child: Row(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                'https://lh3.googleusercontent.com/aida-public/AB6AXuCjQJTEsIPehLdGJWjz8TSfCs7o0uifTz1QfDnl0xe93A5gwv8Ccp6F6nm2FkjhjUj-lsuWJp_6-RmW3i55zjk4S3YdTRrnK9JmL9XsZSc-iTnTfSCX7_p5yEUkOkxMU3MemeaubUJtFNFJYkdACZTW5tDjmWG-00z4idxNYyHwoXDU0xQ0aLM7iRJHndrXYnv81TX6k4McMTD-djipl40MQhHU1yqz82hU_EPJxc4L3nXERe5g9bmTm34Ofr96MF0fmtSB5VA-PLg',
-                width: 48,
-                height: 48,
-                fit: BoxFit.cover,
+            SizedBox(
+              width: 48,
+              height: 48,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  'https://lh3.googleusercontent.com/aida-public/AB6AXuCjQJTEsIPehLdGJWjz8TSfCs7o0uifTz1QfDnl0xe93A5gwv8Ccp6F6nm2FkjhjUj-lsuWJp_6-RmW3i55zjk4S3YdTRrnK9JmL9XsZSc-iTnTfSCX7_p5yEUkOkxMU3MemeaubUJtFNFJYkdACZTW5tDjmWG-00z4idxNYyHwoXDU0xQ0aLM7iRJHndrXYnv81TX6k4McMTD-djipl40MQhHU1yqz82hU_EPJxc4L3nXERe5g9bmTm34Ofr96MF0fmtSB5VA-PLg',
+                  width: 48,
+                  height: 48,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: PremiumTokens.surfaceCharcoal,
+                    child: const Icon(Icons.music_note, color: PremiumTokens.nebulaBlue),
+                  ),
+                ),
               ),
             ),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "NOW PLAYING",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: PremiumTokens.sansStyle(
                       fontSize: 10,
                       color: PremiumTokens.nebulaBlue,
@@ -248,6 +267,8 @@ class LibraryScreen extends ConsumerWidget {
                   children: [
                     Text(
                       item.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: PremiumTokens.sansStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -259,11 +280,15 @@ class LibraryScreen extends ConsumerWidget {
                       children: [
                         const Icon(Icons.schedule, color: Colors.white24, size: 12),
                         const SizedBox(width: 4),
-                        Text(
-                          "10:45 • ${item.category}",
-                          style: PremiumTokens.sansStyle(
-                            fontSize: 12,
-                            color: Colors.white38,
+                        Expanded(
+                          child: Text(
+                            "10:45 • ${item.category}",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: PremiumTokens.sansStyle(
+                              fontSize: 12,
+                              color: Colors.white38,
+                            ),
                           ),
                         ),
                       ],
