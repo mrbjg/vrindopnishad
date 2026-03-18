@@ -597,7 +597,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
+                  Expanded(
+                    child: Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.all(8),
@@ -642,7 +643,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                       ),
                     ],
                   ),
-                  IconButton(
+                ),
+                IconButton(
                     onPressed: () => setState(() => _showAudioPlayer = false),
                     icon: Container(
                       padding: const EdgeInsets.all(6),
