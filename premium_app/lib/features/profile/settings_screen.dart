@@ -677,15 +677,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return PressableScale(
       onTap: () {
         HapticFeedback.lightImpact();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Action: $title", style: GoogleFonts.outfit()),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            backgroundColor: isDestructive ? Colors.red : PremiumTokens.nebulaBlue,
-          ),
+        PremiumUI.showNotification(
+          context, 
+          "Action: $title",
+          icon: icon,
+          color: isDestructive ? Colors.red : PremiumTokens.nebulaBlue,
         );
       },
       child: Container(

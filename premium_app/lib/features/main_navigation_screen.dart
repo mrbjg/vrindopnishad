@@ -120,8 +120,11 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                                     color: Colors.redAccent,
                                     onTap: () {
                                       ref.read(naamJapStateProvider.notifier).reset();
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text("Naam Jap counter reset")),
+                                      PremiumUI.showNotification(
+                                        context, 
+                                        "Naam Jap counter reset",
+                                        icon: Iconsax.rotate_left,
+                                        color: Colors.redAccent,
                                       );
                                     },
                                   ),
@@ -129,13 +132,28 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                                     icon: Icons.vibration,
                                     label: "Haptics",
                                     color: PremiumTokens.nebulaBlue,
-                                    onTap: () => HapticFeedback.vibrate(),
+                                    onTap: () {
+                                      HapticFeedback.vibrate();
+                                      PremiumUI.showNotification(
+                                        context, 
+                                        "Haptic Feedback: Heavy",
+                                        icon: Icons.vibration,
+                                        color: PremiumTokens.nebulaBlue,
+                                      );
+                                    },
                                   ),
                                   SacredMenuItem(
                                     icon: Iconsax.send_2,
                                     label: "Share",
                                     color: Colors.greenAccent,
-                                    onTap: () {},
+                                    onTap: () {
+                                      PremiumUI.showNotification(
+                                        context, 
+                                        "Sharing Sant-Vaani...",
+                                        icon: Iconsax.send_2,
+                                        color: Colors.greenAccent,
+                                      );
+                                    },
                                   ),
                                 ],
                                 _menuPointerPosition,

@@ -1088,9 +1088,96 @@ class PremiumUI extends StatelessWidget {
     );
   }
 
+  /// Premium Notification / Custom SnackBar
+  static void showNotification(
+    BuildContext context, 
+    String message, {
+    IconData? icon, 
+    Color? color,
+  }) {
+    final snackBar = SnackBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      behavior: SnackBarBehavior.floating,
+      margin: const EdgeInsets.only(bottom: 110, left: 24, right: 24),
+      duration: const Duration(seconds: 3),
+      content: _SacredNotification(
+        message: message,
+        icon: icon ?? Iconsax.info_circle,
+        color: color ?? PremiumTokens.nebulaBlue,
+      ),
+    );
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     return const SizedBox.shrink();
+  }
+}
+
+class _SacredNotification extends StatelessWidget {
+  final String message;
+  final IconData icon;
+  final Color color;
+
+  const _SacredNotification({
+    required this.message,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: BoxDecoration(
+        color: const Color(0xE60A0A1F), // Deep void-glass
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withOpacity(0.3), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.2),
+            blurRadius: 20,
+            spreadRadius: 2,
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 20),
+          ).animate(onPlay: (controller) => controller.repeat())
+           .shimmer(duration: 2.seconds, color: color.withOpacity(0.2)),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              message,
+              style: PremiumTokens.sansStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ).animate().slideY(begin: 1.0, end: 0.0, curve: Curves.easeOutCubic, duration: 450.ms)
+               .fadeIn(duration: 250.ms);
   }
 }
 

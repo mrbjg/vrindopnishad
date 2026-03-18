@@ -69,8 +69,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           .toggleFavorite(widget.content!.id);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.redAccent),
+        PremiumUI.showNotification(
+          context, 
+          'Error: $e',
+          icon: Iconsax.info_circle,
+          color: Colors.redAccent,
         );
       }
     }
