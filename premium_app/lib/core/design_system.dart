@@ -1667,12 +1667,18 @@ class SacredActionMenuState extends State<SacredActionMenu> {
             return AnimatedPositioned(
               duration: Duration(milliseconds: 300 + (index * 60)),
               curve: Curves.elasticOut,
-              left: widget.position.dx + (_isVisible ? offsetX : 0) - 35,
-              top: widget.position.dy + (_isVisible ? offsetY : 0) - 35,
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 200),
-                opacity: _isVisible ? 1 : 0,
-                child: _buildMenuItem(item, index == _hoveredIndex),
+              left: widget.position.dx + (_isVisible ? offsetX : 0) - 60,
+              top: widget.position.dy + (_isVisible ? offsetY : 0) - 60,
+              child: SizedBox(
+                width: 120,
+                height: 120,
+                child: Center(
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: _isVisible ? 1 : 0,
+                    child: _buildMenuItem(item, index == _hoveredIndex),
+                  ),
+                ),
               ),
             );
           }),
