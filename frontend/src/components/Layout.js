@@ -39,7 +39,13 @@ const Layout = ({ children }) => {
         <header className="app-header animate-fade-in-down">
           <div className="logo-container">
             <Link to="/">
-              <img src={VLogo} alt="Logo" className="app-logo hover:scale-110 transition-transform duration-500" />
+              <img 
+                src="https://vrindopnishad.in/Vrindopnishad%20Web/class/v-logo-rounded/android-chrome-192x192.png" 
+                alt="Vrindopnishad Logo" 
+                className="app-logo hover:scale-110 transition-transform duration-500" 
+                width="70"
+                height="70"
+              />
             </Link>
             <span className="app-title hidden md:block">वृंदोपनिषद्</span>
           </div>

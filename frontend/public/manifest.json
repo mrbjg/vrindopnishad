@@ -1,21 +1,21 @@
 {
     "short_name": "Vrindopnishad",
-    "name": "Vrindopnishad - Sant Vaani",
+    "name": "Vrindopnishad — Authentic Spiritual & Vedic Knowledge",
     "icons": [
         {
-            "src": "icon-192.png",
+            "src": "https://vrindopnishad.in/Vrindopnishad%20Web/class/v-logo-rounded/android-chrome-192x192.png",
             "type": "image/png",
             "sizes": "192x192"
         },
         {
-            "src": "icon-512.png",
+            "src": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png",
             "type": "image/png",
             "sizes": "512x512"
         }
     ],
     "start_url": ".",
     "display": "standalone",
-    "theme_color": "#D2691E",
-    "background_color": "#fef5e7",
+    "theme_color": "#8E7F7F",
+    "background_color": "#0D0D12",
     "orientation": "portrait"
 }
