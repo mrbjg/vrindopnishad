@@ -9,6 +9,8 @@ import { LoadingProvider } from './contexts/LoadingContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { apiService } from './services/api';
 import Layout from './components/Layout';
+import Lenis from 'lenis';
+import 'lenis/dist/lenis.css';
 
 // Performance: Route-based Code Splitting
 const HomePage = React.lazy(() => import('./pages/HomePage'));
@@ -61,7 +63,43 @@ function App() {
       verifyToken(storedToken);
     }
 
-    return () => unsubscribe();
+    // Initialize Lenis Smooth Scroll
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      smoothTouch: true, // Enabled for mobile fluidity
+      touchMultiplier: 1.5,
+      infinite: false,
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    // Performance optimization: toggling class during scroll to disable heavy CSS
+    let scrollTimeout;
+    lenis.on('scroll', () => {
+      if (!document.body.classList.contains('is-scrolling')) {
+        document.body.classList.add('is-scrolling');
+      }
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        document.body.classList.remove('is-scrolling');
+      }, 150); // Remove after scroll stops
+    });
+
+    requestAnimationFrame(raf);
+
+    return () => {
+      unsubscribe();
+      lenis.destroy();
+      clearTimeout(scrollTimeout);
+    };
   }, []);
 
   const verifyToken = async (tk) => {
@@ -109,8 +147,8 @@ function App() {
           <div className="nebula"></div>
         </div>
         <div className="flex flex-col items-center gap-8 animate-pulse">
-           <div className="text-6xl text-primary/40">ॐ</div>
-           <div className="skeleton w-48 h-1 rounded-full opacity-20"></div>
+          <div className="text-6xl text-primary/40">ॐ</div>
+          <div className="skeleton w-48 h-1 rounded-full opacity-20"></div>
         </div>
       </div>
     );

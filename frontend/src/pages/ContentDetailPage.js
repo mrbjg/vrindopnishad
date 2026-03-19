@@ -14,8 +14,8 @@ const ContentDetailPage = () => {
   useEffect(() => {
     const fetchContentData = async () => {
       try {
-        setLoading(true);
-        const data = await apiService.getContentById(id);
+        const decodedId = decodeURIComponent(id);
+        const data = await apiService.getContentById(decodedId);
         setContent(data);
       } catch (error) {
         console.error('Error fetching content:', error);

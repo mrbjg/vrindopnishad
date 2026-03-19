@@ -16,12 +16,13 @@ const CACHE_EXPIRY = 30 * 60 * 1000;
 // Helper to generate a URL-friendly slug from a title
 const generateSlug = (text) => {
   if (!text) return '';
+  // Support Hindi characters in slugs for better SEO and readability
   return text
     .toString()
     .toLowerCase()
     .trim()
     .replace(/\s+/g, '-')     // Replace spaces with -
-    .replace(/[^\w-]+/g, '')  // Remove all non-word chars
+    .replace(/[^\u0900-\u097F\w-]+/g, '')  // Remove non-word and non-Hindi chars
     .replace(/--+/g, '-')     // Replace multiple - with single -
     .replace(/^-+/, '')        // Trim - from start of text
     .replace(/-+$/, '');       // Trim - from end of text
@@ -118,42 +119,60 @@ export const apiService = {
         const rawData = snapshot.val();
         let contentItem = null;
         
-        // Search by ID or Slug
-        if (rawData[id]) {
-          contentItem = { id, ...rawData[id] };
-        } else {
-          // If not found by key, search by slug
-          const items = Object.keys(rawData).map(key => ({ id: key, ...rawData[key] }));
-          contentItem = items.find(item => generateSlug(item.title) === id || item.slug === id);
-        }
+        // Normalize to array for consistent searching
+        const items = Array.isArray(rawData) 
+          ? rawData.map((item, index) => ({ id: item.id || index.toString(), ...item })).filter(i => i.title)
+          : Object.keys(rawData).map(key => ({ id: key, ...rawData[key] }));
+
+        console.log(`Searching for content with ID/Slug: "${id}" in ${items.length} items`);
+
+        // Search by exact ID, stored Slug, or derived Title-Slug
+        contentItem = items.find(item => {
+          const s1 = item.id?.toString() === id.toString();
+          const s2 = item.slug === id;
+          const s3 = generateSlug(item.title) === id;
+          const s4 = generateSlug(item.title) === decodeURIComponent(id);
+          return s1 || s2 || s3 || s4;
+        });
 
         if (contentItem) {
-          const data = { ...contentItem, slug: contentItem.slug || generateSlug(contentItem.title) };
+          console.log(`Found content: ${contentItem.title}`);
+          const data = { 
+            ...contentItem, 
+            slug: contentItem.slug || generateSlug(contentItem.title) 
+          };
           setCache(cacheKey, data);
           return data;
+        } else {
+          console.warn(`Content not found for ID/Slug: "${id}"`);
         }
       }
       throw new Error("Content not found");
     } catch (error) {
       console.warn('Firebase fetch failed, falling back to Supabase...', error.message);
       try {
-          const { data, error: supaError } = await supabase.from('content').select('*').or(`id.eq.${id},slug.eq.${id}`).single();
-          if (supaError) {
-             // Second attempt: Search by title-slug if direct slug match fails
-             const { data: allData } = await supabase.from('content').select('*');
-             const found = allData.find(item => generateSlug(item.title) === id);
-             if (found) {
-                const contentData = { ...found, slug: generateSlug(found.title) };
-                setCache(cacheKey, contentData);
-                return contentData;
-             }
-             throw supaError;
+          // Try lookup by ID first (safe across all tables)
+          let { data, error: supaError } = await supabase.from('content').select('*').eq('id', id).maybeSingle();
+          
+          if (!data) {
+             // If not found by ID, it might be a slug. Fetch all and search by generated slug
+             console.log('Not found by ID in Supabase, searching by generated slug...');
+             const { data: allData, error: allErr } = await supabase.from('content').select('*');
+             if (allErr) throw allErr;
+             
+             data = allData.find(item => 
+                generateSlug(item.title) === id || 
+                generateSlug(item.title) === decodeURIComponent(id)
+             );
           }
+
+          if (!data) throw new Error("Content not found in Supabase");
+
           const contentData = { ...data, slug: data.slug || generateSlug(data.title) };
           setCache(cacheKey, contentData);
           return contentData;
       } catch (supaErr) {
-          console.error('Error fetching content by ID/Slug:', supaErr);
+          console.error('Error fetching content from Supabase:', supaErr);
           throw supaErr;
       }
     }

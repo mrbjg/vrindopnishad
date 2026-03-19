@@ -59,10 +59,31 @@ body {
     min-height: 100vh;
     background: #0a0015;
     overflow-x: hidden;
+    overscroll-behavior-y: none;
+    /* Prevent elastic bounce flicker */
+}
+
+/* HIGH-SPEED SCROLL OPTIMIZATIONS */
+body.is-scrolling * {
+    pointer-events: none !important;
+    /* Disable hover effects during scroll */
+}
+
+body.is-scrolling .glass,
+body.is-scrolling .glass-card,
+body.is-scrolling .sidebar,
+body.is-scrolling header.app-header {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.is-scrolling .glass-card {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    transition: none !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
-/* ANIMATED BACKGROUND                                                         */
+/* LIGHTWEIGHT CELESTIAL BACKGROUND                                            */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 .celestial-bg {
@@ -73,113 +94,43 @@ body {
     height: 100%;
     z-index: -10;
     pointer-events: none;
-    background: #050010;
+    background: radial-gradient(circle at center, #0F0025 0%, #050010 100%);
     overflow: hidden;
-    /* transform: translate3d(0, 0, 0); Force GPU acceleration */
+    transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
+    will-change: transform;
+    /* Extra stability for mobile */
+    -webkit-transform: translate3d(0, 0, 0);
 }
 
-.celestial-bg::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(45deg, #00082d, transparent),
-        linear-gradient(-45deg, #3f007d, transparent),
-        linear-gradient(135deg, #2d0066, transparent),
-        linear-gradient(-135deg, #4a0072, transparent);
-    background-size: 400% 400%;
-    animation: gradientShift 25s ease infinite;
-    /* Slowed down for performance */
-    z-index: -1;
-    will-change: background-position;
-}
-
-@keyframes gradientShift {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
-}
-
+/* Static, high-performance stars */
 .stars {
     position: absolute;
     inset: 0;
-    background:
-        radial-gradient(2px 2px at 20% 30%, #ffffff 50%, transparent 50%),
-        radial-gradient(2px 2px at 40% 70%, #ffffff 50%, transparent 50%),
-        radial-gradient(2px 2px at 60% 20%, #ffffff 50%, transparent 50%),
-        radial-gradient(2px 2px at 80% 90%, #ffffff 50%, transparent 50%),
-        radial-gradient(1.5px 1.5px at 15% 15%, #ffffff 50%, transparent 50%),
-        radial-gradient(1.5px 1.5px at 85% 85%, #ffffff 50%, transparent 50%);
-    background-size: 250px 250px, 350px 350px, 300px 300px, 280px 280px, 200px 200px, 200px 200px;
-    opacity: 0.8;
-    mix-blend-mode: screen;
-    animation: twinkle 4s ease-in-out infinite;
+    background-image:
+        radial-gradient(1px 1px at 15% 15%, rgba(255, 255, 255, 0.4) 50%, transparent 50%),
+        radial-gradient(1px 1px at 35% 45%, rgba(255, 255, 255, 0.4) 50%, transparent 50%),
+        radial-gradient(1px 1px at 65% 25%, rgba(255, 255, 255, 0.4) 50%, transparent 50%),
+        radial-gradient(1.5px 1.5px at 85% 75%, rgba(255, 255, 255, 0.4) 50%, transparent 50%),
+        radial-gradient(1px 1px at 25% 85%, rgba(255, 255, 255, 0.4) 50%, transparent 50%),
+        radial-gradient(1px 1px at 75% 15%, rgba(255, 255, 255, 0.4) 50%, transparent 50%),
+        radial-gradient(1.5px 1.5px at 50% 50%, rgba(255, 255, 255, 0.5) 50%, transparent 50%);
+    background-size: 350px 350px;
+    opacity: 0.6;
     z-index: 1;
 }
 
-@keyframes twinkle {
-
-    0%,
-    100% {
-        opacity: 0.5;
-    }
-
-    50% {
-        opacity: 0.8;
-    }
-}
-
+/* Static, low-filter nebula */
 .nebula {
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(circle at 30% 50%, var(--nebula-color-1) 0%, transparent 60%),
-        radial-gradient(circle at 70% 50%, var(--nebula-color-2) 0%, transparent 60%);
-    opacity: 0.3;
-    filter: blur(25px);
-    /* Reduced from 50px */
+        radial-gradient(circle at 20% 40%, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 60%, rgba(32, 84, 174, 0.08) 0%, transparent 50%);
     z-index: 0;
-    transform: translateZ(0);
+    pointer-events: none;
 }
 
-.shooting-star {
-    position: absolute;
-    width: 200px;
-    height: 2px;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 1), transparent);
-    animation: shooting-star 4s linear infinite;
-    opacity: 0;
-    z-index: 2;
-}
-
-@keyframes shooting-star {
-    0% {
-        transform: translateX(-500px) translateY(-500px) rotate(45deg);
-        opacity: 0;
-    }
-
-    10% {
-        opacity: 1;
-    }
-
-    30% {
-        transform: translateX(1200px) translateY(1200px) rotate(45deg);
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 0;
-    }
-}
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /* GLASSMORPHISM UTILITIES                                                     */

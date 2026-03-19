@@ -79,7 +79,14 @@ export const mockApiService = {
 
   getContentById: async (id) => {
     await new Promise(resolve => setTimeout(resolve, 300));
-    const content = mockContent.find(c => c.id === id);
+    
+    // Simple helper for mock slugs (non-Hindi for simplicity in mock)
+    const mockSlug = (t) => t.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+    
+    const content = mockContent.find(c => 
+      c.id === id || 
+      mockSlug(c.title) === id
+    );
     if (!content) {
       throw new Error("Content not found");
     }

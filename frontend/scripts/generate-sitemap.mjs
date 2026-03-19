@@ -7,15 +7,16 @@ const DOMAIN = 'https://path.vrindopnishad.in';
 
 const generateSlug = (text) => {
   if (!text) return '';
+  // Support Hindi characters in slugs for better SEO and readability
   return text
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w-]+/g, '')
-    .replace(/--+/g, '-')
-    .replace(/^-+/, '')
-    .replace(/-+$/, '');
+    .replace(/\s+/g, '-')     // Replace spaces with -
+    .replace(/[^\u0900-\u097F\w-]+/g, '')  // Remove non-word and non-Hindi chars
+    .replace(/--+/g, '-')     // Replace multiple - with single -
+    .replace(/^-+/, '')        // Trim - from start of text
+    .replace(/-+$/, '');       // Trim - from end of text
 };
 
 async function generateSitemap() {
