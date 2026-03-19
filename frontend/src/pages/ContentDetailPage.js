@@ -75,8 +75,8 @@ const ContentDetailPage = () => {
   return (
     <div className="animate-fade-in max-w-4xl mx-auto">
       <Helmet>
-        <title>{`${content.title} | ${content.author || 'VrindaVaani'}`}</title>
-        <meta name="description" content={`Experience Divine Wisdom: ${content.title} by ${content.author || 'Sant Vaani'}. ${content.sanskrit_text ? content.sanskrit_text.substring(0, 160) : content.description?.substring(0, 160)}`} />
+        <title>{`${content.title} | Sacred Verses & Sant-Vaani`}</title>
+        <meta name="description" content={`${content.title} - ${content.category} by ${content.author || 'Sant Vaani'}. ${content.sanskrit_text ? content.sanskrit_text.substring(0, 160) : content.description?.substring(0, 160)}`} />
         <meta name="keywords" content={`${content.title}, ${content.author}, ${content.category}, Padma Purana, Vrindavan Dham, Hindu Shloka, Sanskrit Verses, Devotional Poetry, Spiritual Wisdom`} />
         
         {/* Canonical Link */}

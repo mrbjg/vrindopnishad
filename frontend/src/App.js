@@ -2,21 +2,21 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
-import HomePage from './pages/HomePage';
-import ContentListPage from './pages/ContentListPage';
-import ContentDetailPage from './pages/ContentDetailPage';
-import AdminLoginPage from './pages/AdminLoginPage';
-import AdminDashboard from './pages/AdminDashboard';
-import CategoryPage from './pages/CategoryPage';
-import LoaderDemo from './pages/LoaderDemo';
-import { LoadingProvider } from './contexts/LoadingContext';
-import { apiService } from './services/api';
-import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/Layout';
+
+// Performance: Route-based Code Splitting
+const HomePage = React.lazy(() => import('./pages/HomePage'));
+const ContentListPage = React.lazy(() => import('./pages/ContentListPage'));
+const ContentDetailPage = React.lazy(() => import('./pages/ContentDetailPage'));
+const CategoryPage = React.lazy(() => import('./pages/CategoryPage'));
+const LoginPage = React.lazy(() => import('./pages/LoginPage'));
+const AdminLoginPage = React.lazy(() => import('./pages/AdminLoginPage'));
+const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
+const LoaderDemo = React.lazy(() => import('./pages/LoaderDemo'));
 
 import { auth } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import LoginPage from './pages/LoginPage';
+// import LoginPage from './pages/LoginPage';
 import { AudioProvider } from './contexts/AudioContext';
 
 // Backend URL with fallback for development
@@ -123,19 +123,25 @@ function App() {
             <ApiContext.Provider value={{ apiService: apiService, isDemoMode: USE_MOCK_DATA }}>
               <BrowserRouter>
                 <Layout>
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/content" element={<ContentListPage />} />
-                    <Route path="/content/:id" element={<ContentDetailPage />} />
-                    <Route path="/category/:category" element={<CategoryPage />} />
-                    <Route path="/loader-demo" element={<LoaderDemo />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/admin-old/login" element={<AdminLoginPage />} />
-                    <Route
-                      path="/admin-old/dashboard"
-                      element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin-old/login" />}
-                    />
-                  </Routes>
+                  <React.Suspense fallback={
+                    <div className="min-h-[60vh] flex items-center justify-center">
+                      <div className="text-4xl text-primary/20 animate-pulse">ॐ</div>
+                    </div>
+                  }>
+                    <Routes>
+                      <Route path="/" element={<HomePage />} />
+                      <Route path="/content" element={<ContentListPage />} />
+                      <Route path="/content/:id" element={<ContentDetailPage />} />
+                      <Route path="/category/:category" element={<CategoryPage />} />
+                      <Route path="/loader-demo" element={<LoaderDemo />} />
+                      <Route path="/login" element={<LoginPage />} />
+                      <Route path="/admin-old/login" element={<AdminLoginPage />} />
+                      <Route
+                        path="/admin-old/dashboard"
+                        element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin-old/login" />}
+                      />
+                    </Routes>
+                  </React.Suspense>
                 </Layout>
               </BrowserRouter>
             </ApiContext.Provider>
