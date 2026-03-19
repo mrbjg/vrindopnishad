@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ApiContext } from '../App';
 import { ArrowLeft, Music, Image as ImageIcon, Video } from 'lucide-react';
+import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { Helmet } from 'react-helmet-async';
 
 const ContentDetailPage = () => {
@@ -161,10 +162,16 @@ const ContentDetailPage = () => {
                 <Music size={24} className="text-primary" />
                 Listen to Audio
               </h3>
-              <div className="bg-white/5 rounded-2xl p-4">
-                <audio controls className="w-full">
-                  <source src={content.audio_url} type="audio/mpeg" />
-                </audio>
+              <div className="bg-white/5 rounded-2xl p-6 flex items-center gap-6 group hover:bg-white/10 transition-all border border-white/5 hover:border-primary/20">
+                <AudioPlayButton 
+                  track={content} 
+                  size={32} 
+                  className="w-16 h-16 bg-primary text-white shadow-lg shadow-primary/20" 
+                />
+                <div>
+                  <h4 className="font-bold text-lg mb-1">Divine Rendition</h4>
+                  <p className="text-white/40 text-sm">Experience the sacred vibrations of this {content.category}</p>
+                </div>
               </div>
             </div>
           )}

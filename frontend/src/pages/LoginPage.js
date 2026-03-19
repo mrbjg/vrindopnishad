@@ -117,7 +117,7 @@ const LoginPage = () => {
                 type="email" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-13 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-6 outline-none focus:border-primary/40 focus:bg-white/10 transition-all duration-300"
+                className="w-full h-14 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl pl-12 pr-6 outline-none focus:border-primary/60 focus:bg-white/10 focus:ring-4 focus:ring-primary/10 transition-all duration-300 placeholder:text-white/20"
                 placeholder="name@example.com"
                 required
               />
@@ -143,7 +143,7 @@ const LoginPage = () => {
                 type="password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full h-13 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-6 outline-none focus:border-primary/40 focus:bg-white/10 transition-all duration-300"
+                className="w-full h-14 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl pl-12 pr-6 outline-none focus:border-primary/60 focus:bg-white/10 focus:ring-4 focus:ring-primary/10 transition-all duration-300 placeholder:text-white/20"
                 placeholder="••••••••"
                 required
               />
@@ -169,17 +169,17 @@ const LoginPage = () => {
             <span className="w-full border-t border-white/5"></span>
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-[#0f0a1f] px-4 text-white/20 tracking-widest font-bold">OR</span>
+            <span className="bg-[#0a0015] px-4 text-white/30 tracking-[0.3em] font-bold">OR</span>
           </div>
         </div>
 
         <button 
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="w-full h-13 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center gap-3 hover:bg-white/10 hover:border-white/20 transition-all duration-300 active:scale-95 mb-10"
+          className="w-full h-14 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl flex items-center justify-center gap-3 hover:bg-white/10 hover:border-white/30 hover:shadow-lg hover:shadow-white/5 transition-all duration-300 active:scale-[0.98] mb-10 group"
         >
-          <Chrome size={20} className="text-white/60" />
-          <span className="text-sm font-semibold tracking-wide">Continue with Google</span>
+          <Chrome size={20} className="text-white/60 group-hover:text-white transition-colors" />
+          <span className="text-sm font-bold tracking-wider">Continue with Google</span>
         </button>
 
         <div className="pt-6 border-t border-white/5 text-center relative z-10">

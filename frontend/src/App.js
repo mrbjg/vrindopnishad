@@ -17,6 +17,7 @@ import Layout from './components/Layout';
 import { auth } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import LoginPage from './pages/LoginPage';
+import { AudioProvider } from './contexts/AudioContext';
 
 // Backend URL with fallback for development
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -116,29 +117,31 @@ function App() {
 
   return (
     <ThemeProvider>
-      <LoadingProvider>
-        <AuthContext.Provider value={{ isAdmin, user, token, login, logout }}>
-          <ApiContext.Provider value={{ apiService: apiService, isDemoMode: USE_MOCK_DATA }}>
-            <BrowserRouter>
-              <Layout>
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/content" element={<ContentListPage />} />
-                  <Route path="/content/:id" element={<ContentDetailPage />} />
-                  <Route path="/category/:category" element={<CategoryPage />} />
-                  <Route path="/loader-demo" element={<LoaderDemo />} />
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/admin-old/login" element={<AdminLoginPage />} />
-                  <Route
-                    path="/admin-old/dashboard"
-                    element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin-old/login" />}
-                  />
-                </Routes>
-              </Layout>
-            </BrowserRouter>
-          </ApiContext.Provider>
-        </AuthContext.Provider>
-      </LoadingProvider>
+      <AudioProvider>
+        <LoadingProvider>
+          <AuthContext.Provider value={{ isAdmin, user, token, login, logout }}>
+            <ApiContext.Provider value={{ apiService: apiService, isDemoMode: USE_MOCK_DATA }}>
+              <BrowserRouter>
+                <Layout>
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/content" element={<ContentListPage />} />
+                    <Route path="/content/:id" element={<ContentDetailPage />} />
+                    <Route path="/category/:category" element={<CategoryPage />} />
+                    <Route path="/loader-demo" element={<LoaderDemo />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/admin-old/login" element={<AdminLoginPage />} />
+                    <Route
+                      path="/admin-old/dashboard"
+                      element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin-old/login" />}
+                    />
+                  </Routes>
+                </Layout>
+              </BrowserRouter>
+            </ApiContext.Provider>
+          </AuthContext.Provider>
+        </LoadingProvider>
+      </AudioProvider>
     </ThemeProvider>
   );
 }

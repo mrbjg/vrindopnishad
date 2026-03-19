@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { ApiContext } from '../App';
 import { Search, ArrowRight, Tag } from 'lucide-react';
+import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { Helmet } from 'react-helmet-async';
 
 const ContentListPage = () => {
@@ -115,7 +116,8 @@ const ContentListPage = () => {
               <div>
                 <div className="flex justify-between items-start mb-4">
                   <span className="badge border-primary/20 text-primary/70">{item.category}</span>
-                  <div className="text-white/20 group-hover:text-primary transition-colors">
+                  <div className="flex items-center gap-3 text-white/20 group-hover:text-primary transition-all">
+                    <AudioPlayButton track={item} />
                     <ArrowRight size={20} />
                   </div>
                 </div>
