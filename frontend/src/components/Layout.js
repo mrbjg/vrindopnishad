@@ -42,8 +42,6 @@ const Layout = ({ children }) => {
                 src="https://vrindopnishad.in/Vrindopnishad%20Web/class/v-logo-rounded/android-chrome-192x192.png" 
                 alt="Vrindopnishad Logo" 
                 className="app-logo hover:scale-110 transition-transform duration-500" 
-                width="70"
-                height="70"
               />
             </Link>
             <span className="app-title hidden md:block">वृंदोपनिषद्</span>
