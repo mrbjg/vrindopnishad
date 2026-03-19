@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vrindopnishad-v1';
+const CACHE_NAME = 'vrindopnishad-v2';
 const urlsToCache = [
     '/',
     '/index.html',

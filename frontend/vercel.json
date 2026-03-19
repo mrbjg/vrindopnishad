@@ -1,7 +1,8 @@
 {
+  "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/((?!static|manifest.json|robots.txt|sitemap.xml|favicon.*|VLogo.*|logo.*).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
