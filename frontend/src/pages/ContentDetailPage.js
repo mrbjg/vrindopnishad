@@ -1,20 +1,21 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ApiContext } from '../App';
-import { 
-  ArrowLeft, 
-  Music, 
-  Image as ImageIcon, 
-  Video 
+import {
+  ArrowLeft,
+  Music,
+  Image as ImageIcon,
+  Video
 } from 'lucide-react';
 import { useSettings } from '../contexts/SettingsContext';
+import FontWheel from '../components/FontWheel';
 import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { Helmet } from 'react-helmet-async';
 
 const ContentDetailPage = () => {
   const { id } = useParams();
   const { apiService } = useContext(ApiContext);
-  const { settings } = useSettings();
+  const { settings, updateSetting } = useSettings();
   const [content, setContent] = useState(() => apiService.getCachedData(`id_${id}`));
   const [loading, setLoading] = useState(!apiService.getCachedData(`id_${id}`));
 
@@ -37,14 +38,14 @@ const ContentDetailPage = () => {
     return (
       <div className="animate-fade-in max-w-4xl mx-auto py-12">
         <div className="skeleton w-32 h-6 mb-12 rounded"></div>
-        
+
         <div className="space-y-12">
           {/* Title skeleton */}
           <div className="skeleton h-16 w-3/4 mb-10 rounded-xl"></div>
-          
+
           {/* Description skeleton */}
           <div className="skeleton h-24 w-full mb-12 rounded-xl"></div>
-          
+
           {/* Content sections skeletons */}
           <div className="space-y-16">
             <div className="py-12 border-b border-white/5">
@@ -63,18 +64,18 @@ const ContentDetailPage = () => {
 
   const formatVerseText = (text) => {
     if (!text) return null;
-    
+
     // Feature Check: Line-by-Line Reading
     if (!settings.lineByLine) {
       return <div>{text}</div>;
     }
 
-    // Split by । or ॥ (with optional verse numbers) or comma followed by space 
+    // Split by । or ॥ (with optional verse numbers) or comma followed by space
     const parts = text.split(/([।॥]\s*(?:\[\d+\]|\(?\d+\)?)?|,\s)/g);
-    
+
     const lines = [];
     let currentLine = "";
-    
+
     for (let i = 0; i < parts.length; i++) {
       if (i % 2 === 0) {
         currentLine = parts[i];
@@ -86,12 +87,12 @@ const ContentDetailPage = () => {
         currentLine = "";
       }
     }
-    
+
     // Catch any trailing text
     if (currentLine.trim()) {
       lines.push(currentLine.trim());
     }
-    
+
     // If no punctuation was found, just return original but trimmed
     if (lines.length === 0) return <div>{text}</div>;
 
@@ -126,7 +127,7 @@ const ContentDetailPage = () => {
         <title>{`${content.title} | Sacred Verses & Sant-Vaani`}</title>
         <meta name="description" content={`${content.title} - ${content.category} by ${content.author || 'Sant Vaani'}. ${content.sanskrit_text ? content.sanskrit_text.substring(0, 160) : content.description?.substring(0, 160)}`} />
         <meta name="keywords" content={`${content.title}, ${content.author}, ${content.category}, Padma Purana, Vrindavan Dham, Hindu Shloka, Sanskrit Verses, Devotional Poetry, Spiritual Wisdom`} />
-        
+
         {/* Canonical Link */}
         <link rel="canonical" href={`https://path.vrindopnishad.in/content/${content.slug || id}`} />
 
@@ -138,64 +139,65 @@ const ContentDetailPage = () => {
         {content.image_url && <meta property="og:image" content={content.image_url} />}
         <meta property="article:section" content={content.category} />
         {content.author && <meta property="article:author" content={content.author} />}
-        
+
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={content.title} />
         <meta name="twitter:description" content={content.description?.substring(0, 160)} />
 
         {/* JSON-LD Structured Data for Search Ranking */}
         <script type="application/ld+json">
-          {JSON.stringify([
-            {
-              "@context": "https://schema.org",
-              "@type": "BreadcrumbList",
-              "itemListElement": [
-                {
-                  "@type": "ListItem",
-                  "position": 1,
-                  "name": "Collection",
-                  "item": "https://path.vrindopnishad.in/content"
-                },
-                {
-                  "@type": "ListItem",
-                  "position": 2,
-                  "name": content.category,
-                  "item": `https://path.vrindopnishad.in/category/${content.category?.toLowerCase()}`
-                },
-                {
-                  "@type": "ListItem",
-                  "position": 3,
-                  "name": content.title,
-                  "item": `https://path.vrindopnishad.in/content/${content.slug || id}`
-                }
-              ]
-            },
-            {
-              "@context": "https://schema.org",
-              "@type": "ScholarlyArticle",
-              "headline": content.title,
-              "description": content.description || `A sacred ${content.category} from the Sant-Vaani repository.`,
-              "author": {
-                "@type": "Person",
-                "name": content.author || "Sant Vaani"
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Collection",
+                "item": "https://path.vrindopnishad.in/content"
               },
-              "genre": content.category,
-              "keywords": `${content.title}, ${content.category}, Spiritual, Sanskrit, Divine Verses`,
-              "articleBody": `${content.sanskrit_text ? content.sanskrit_text + ' ' : ''}${content.hindi_text ? content.hindi_text + ' ' : ''}${content.english_translation || ''}`,
-              "publisher": {
-                "@type": "Organization",
-                "name": "VrindaVaani",
-                "logo": {
-                  "@type": "ImageObject",
-                  "url": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png"
-                }
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": content.category || "Category",
+                "item": `https://path.vrindopnishad.in/category/${(content.category || "").toLowerCase()}`
               },
-              "mainEntityOfPage": {
-                "@type": "WebPage",
-                "@id": `https://path.vrindopnishad.in/content/${content.slug || id}`
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": content.title || "Verse",
+                "item": `https://path.vrindopnishad.in/content/${content.slug || id}`
               }
+            ]
+          })}
+        </script>
+
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ScholarlyArticle",
+            "headline": content.title || "Sacred Verse",
+            "description": content.description || `A sacred ${content.category || 'text'} from the Sant-Vaani repository.`,
+            "author": {
+              "@type": "Person",
+              "name": content.author || "Sant Vaani"
+            },
+            "genre": content.category || "Sacred Literature",
+            "keywords": `${content.title || ''}, ${content.category || ''}, Spiritual, Sanskrit, Divine Verses`,
+            "articleBody": `${content.sanskrit_text ? content.sanskrit_text + ' ' : ''}${content.hindi_text ? content.hindi_text + ' ' : ''}${content.english_translation || ''}`,
+            "publisher": {
+              "@type": "Organization",
+              "name": "VrindaVaani",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png"
+              }
+            },
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "@id": `https://path.vrindopnishad.in/content/${content.slug || id}`
             }
-          ])}
+          })}
         </script>
       </Helmet>
 
@@ -205,15 +207,32 @@ const ContentDetailPage = () => {
           Back to Collection
         </Link>
 
-        <div className="glass-card reading-card p-8 md:p-12">
-          <div className="flex justify-between items-start mb-8">
-            <span className="badge border-primary/30 text-primary/80 uppercase tracking-tighter text-xs">
-              {content.category}
-            </span>
-            {content.author && <span className="text-white/40 font-medium">By {content.author}</span>}
+        <div className="glass-card reading-card p-8 md:p-14 mb-12 relative overflow-hidden">
+          {/* Main Content Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 mb-12 border-b border-white/5 pb-10">
+            <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-10 w-full sm:w-auto">
+              <span className="sacred-badge shrink-0">
+                {content.category}
+              </span>
+              {content.author && (
+                <div className="flex items-center gap-3 text-white/70 font-medium">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary/40 shrink-0 hidden sm:block"></span>
+                  <span className={`tracking-wider leading-relaxed text-center sm:text-left ${content.author.length > 25 ? 'text-xs sm:text-sm' : 'text-sm sm:text-base'}`}>
+                    By {content.author}
+                  </span>
+                </div>
+              )}
+            </div>
+            {/* Quick Settings - Sanctuary Font Wheel */}
+            <div className="flex flex-col items-center sm:items-end gap-2 w-full sm:w-auto">
+              <FontWheel 
+                value={settings.fontSize} 
+                onChange={(size) => updateSetting('fontSize', size)} 
+              />
+            </div>
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold mb-10 leading-tight">
+          <h1 className="text-4xl md:text-6xl font-bold mb-12 leading-relaxed pt-6 text-sacred-gradient">
             {content.title}
           </h1>
 
@@ -225,22 +244,23 @@ const ContentDetailPage = () => {
 
           <div className="space-y-16">
             {content.sanskrit_text && (
-              <div className="relative overflow-hidden group py-16 sm:py-20 border-b border-white/5">
+              <div className="relative group py-16 sm:py-20 border-b border-white/5">
                 <div className="absolute top-0 right-0 p-8 opacity-5 text-9xl font-serif pointer-events-none">ॐ</div>
                 <h3 className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-white/30 mb-12 sm:mb-16 flex items-center justify-center sm:justify-start gap-4">
                   <span className="h-[1px] w-12 bg-gradient-to-r from-transparent to-white/10 hidden sm:block"></span>
                   Sanskrit Text
                   <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-white/10 hidden sm:block"></span>
                 </h3>
-                <div className={`leading-[1.6] text-center font-medium text-white/95 drop-shadow-lg hindi-text ${
-                  settings.fontSize === 'xlarge' ? 'text-4xl md:text-7xl' : 
-                  settings.fontSize === 'large' ? 'text-3xl md:text-6xl' : 
-                  'text-2xl md:text-5xl'
-                } ${
-                  settings.fontStyle === 'Sans' ? 'font-sans' : 
-                  settings.fontStyle === 'Inter' ? 'font-inter' : 
+                <div className={`text-center font-medium text-white/95 drop-shadow-lg hindi-text ${
+                  settings.fontStyle === 'Sans' ? 'font-sans' :
+                  settings.fontStyle === 'Inter' ? 'font-inter' :
                   'font-headings'
-                }`}>
+                }`} style={{
+                  fontSize: settings.fontSize === 1 ? '1.5rem' :
+                            settings.fontSize === 2 ? '2.5rem' :
+                            settings.fontSize === 3 ? '3.5rem' :
+                            settings.fontSize === 4 ? '5rem' : '7rem'
+                }}>
                   {formatVerseText(content.sanskrit_text)}
                 </div>
               </div>
@@ -253,15 +273,16 @@ const ContentDetailPage = () => {
                   Hindi Meaning
                   <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-amber-500/10 hidden sm:block"></span>
                 </h3>
-                <div className={`leading-[2] text-white/85 hindi-text ${
-                  settings.fontSize === 'xlarge' ? 'text-2xl md:text-4xl' : 
-                  settings.fontSize === 'large' ? 'text-xl md:text-3xl' : 
-                  'text-lg md:text-2xl'
-                } ${
-                  settings.fontStyle === 'Sans' ? 'font-sans' : 
-                  settings.fontStyle === 'Inter' ? 'font-inter' : 
+                <div className={`text-white/85 hindi-text ${
+                  settings.fontStyle === 'Sans' ? 'font-sans' :
+                  settings.fontStyle === 'Inter' ? 'font-inter' :
                   'font-headings'
-                }`}>
+                }`} style={{
+                  fontSize: settings.fontSize === 1 ? '1rem' :
+                            settings.fontSize === 2 ? '1.25rem' :
+                            settings.fontSize === 3 ? '1.75rem' :
+                            settings.fontSize === 4 ? '2.5rem' : '3.5rem'
+                }}>
                   {formatVerseText(content.hindi_text)}
                 </div>
               </div>

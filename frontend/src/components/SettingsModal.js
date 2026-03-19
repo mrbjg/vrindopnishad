@@ -38,18 +38,18 @@ const SettingsModal = ({ isOpen, onClose }) => {
             <h3 className="text-xs uppercase tracking-[0.2em] text-white/30 font-bold flex items-center gap-2">
               <Type size={14} /> Font Size
             </h3>
-            <div className="grid grid-cols-3 gap-3">
-              {['normal', 'large', 'xlarge'].map((size) => (
+            <div className="grid grid-cols-5 gap-2">
+              {[1, 2, 3, 4, 5].map((size) => (
                 <button
                   key={size}
                   onClick={() => updateSetting('fontSize', size)}
-                  className={`py-3 rounded-xl text-sm font-semibold transition-all border ${
+                  className={`py-3 rounded-xl text-xs font-bold transition-all border ${
                     settings.fontSize === size 
                       ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20' 
-                      : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10'
+                      : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10'
                   }`}
                 >
-                  {size.toUpperCase()}
+                  {size === 1 ? 'XS' : size === 2 ? 'SM' : size === 3 ? 'MD' : size === 4 ? 'LG' : 'XL'}
                 </button>
               ))}
             </div>

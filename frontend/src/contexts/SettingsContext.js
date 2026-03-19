@@ -5,11 +5,19 @@ const SettingsContext = createContext();
 export const SettingsProvider = ({ children }) => {
   const [settings, setSettings] = useState(() => {
     const saved = localStorage.getItem('user_settings');
-    return saved ? JSON.parse(saved) : {
-      fontSize: 'normal', // normal, large, xlarge
+    let initial = saved ? JSON.parse(saved) : {
+      fontSize: 2, // 1-5 scale
       fontStyle: 'Serif', // Serif (Laila), Sans (Poppins), Inter
       lineByLine: true
     };
+    
+    // Migration from old string-based font sizes
+    if (typeof initial.fontSize === 'string') {
+      const mapping = { 'normal': 2, 'large': 3, 'xlarge': 4 };
+      initial.fontSize = mapping[initial.fontSize] || 2;
+    }
+    
+    return initial;
   });
 
   useEffect(() => {
