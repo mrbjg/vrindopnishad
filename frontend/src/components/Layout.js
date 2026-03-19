@@ -11,7 +11,6 @@ import {
   LogOut,
   Settings
 } from 'lucide-react';
-import VLogo from '../assets/VLogo.png';
 import GlobalAudioPlayer from './GlobalAudioPlayer';
 import SettingsModal from './SettingsModal';
 
