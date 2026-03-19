@@ -83,7 +83,7 @@ const Layout = ({ children }) => {
                   {/* User Name Section - Hidden on Mobile for clean look */}
                   <div className="hidden sm:flex flex-col">
                     <span className="text-[10px] uppercase tracking-widest text-white/30 font-bold leading-none mb-0.5">Devotee</span>
-                    <span className="text-[13px] font-bold truncate max-w-[100px] leading-none">
+                    <span className="text-[13px] font-bold truncate max-w-[140px] leading-none">
                       {user.displayName || (user.email?.split('@')[0].match(/^[a-zA-Z]/) ? user.email?.split('@')[0] : 'Member')}
                     </span>
                   </div>

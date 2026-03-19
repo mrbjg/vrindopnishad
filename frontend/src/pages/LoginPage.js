@@ -16,6 +16,7 @@ const LoginPage = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
+  const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
@@ -34,7 +35,10 @@ const LoginPage = () => {
 
     try {
       if (isSignUp) {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        if (fullName) {
+          await updateProfile(userCredential.user, { displayName: fullName });
+        }
       } else {
         await signInWithEmailAndPassword(auth, email, password);
       }
@@ -110,6 +114,22 @@ const LoginPage = () => {
         )}
 
         <form onSubmit={handleAuth} className="space-y-6 relative z-10">
+          {isSignUp && (
+            <div className="space-y-2 animate-in fade-in slide-in-from-left-4 duration-500">
+              <label className="text-xs uppercase tracking-[0.2em] text-white/40 ml-1 font-semibold">Full Name</label>
+              <div className="relative group">
+                <input 
+                  type="text" 
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full h-14 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl pl-6 pr-6 outline-none focus:border-primary/60 focus:bg-white/10 focus:ring-4 focus:ring-primary/10 transition-all duration-300 placeholder:text-white/20"
+                  placeholder="Your Name"
+                  required={isSignUp}
+                />
+              </div>
+            </div>
+          )}
+
           <div className="space-y-2">
             <label className="text-xs uppercase tracking-[0.2em] text-white/40 ml-1 font-semibold">Email Address</label>
             <div className="relative group">

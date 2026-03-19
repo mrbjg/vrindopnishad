@@ -140,6 +140,13 @@ function App() {
     await signOut(auth);
   };
 
+  const refreshUser = () => {
+    if (auth.currentUser) {
+      // Create a new object reference to trigger re-render
+      setUser({ ...auth.currentUser });
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-[#0a0015]">
@@ -160,7 +167,7 @@ function App() {
       <ThemeProvider>
         <AudioProvider>
           <LoadingProvider>
-            <AuthContext.Provider value={{ isAdmin, user, token, login, logout }}>
+            <AuthContext.Provider value={{ isAdmin, user, token, login, logout, refreshUser }}>
               <ApiContext.Provider value={{ apiService: apiService, isDemoMode: USE_MOCK_DATA }}>
                 <BrowserRouter>
                   <Layout>

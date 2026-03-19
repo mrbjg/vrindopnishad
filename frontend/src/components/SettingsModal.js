@@ -1,9 +1,34 @@
-import React from 'react';
-import { X, Type, Layout, AlignLeft } from 'lucide-react';
+import React, { useState, useContext } from 'react';
+import { X, Type, Layout, AlignLeft, User, Check, AlertCircle } from 'lucide-react';
 import { useSettings } from '../contexts/SettingsContext';
+import { AuthContext } from '../App';
+import { updateProfile } from 'firebase/auth';
 
 const SettingsModal = ({ isOpen, onClose }) => {
   const { settings, updateSetting } = useSettings();
+  const { user, refreshUser } = useContext(AuthContext);
+  const [displayName, setDisplayName] = useState(user?.displayName || '');
+  const [updateStatus, setUpdateStatus] = useState({ type: '', message: '' });
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    if (!user) return;
+    setIsUpdating(true);
+    setUpdateStatus({ type: '', message: '' });
+
+    try {
+      await updateProfile(user, { displayName });
+      if (refreshUser) refreshUser();
+      setUpdateStatus({ type: 'success', message: 'Profile updated successfully!' });
+      setTimeout(() => setUpdateStatus({ type: '', message: '' }), 3000);
+    } catch (error) {
+      console.error('Update profile error:', error);
+      setUpdateStatus({ type: 'error', message: 'Failed to update profile.' });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -33,6 +58,46 @@ const SettingsModal = ({ isOpen, onClose }) => {
         </div>
 
         <div className="space-y-10">
+          {/* Personal Profile Section */}
+          <div className="space-y-4">
+            <h3 className="text-xs uppercase tracking-[0.2em] text-white/30 font-bold flex items-center gap-2">
+              <User size={14} /> Personal Profile
+            </h3>
+            <form onSubmit={handleUpdateProfile} className="space-y-3">
+              <div className="relative group">
+                <input
+                  type="text"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 outline-none focus:border-primary/60 focus:bg-white/10 transition-all text-sm"
+                  placeholder="Your Full Name"
+                />
+                <button
+                  type="submit"
+                  disabled={isUpdating || displayName === user?.displayName}
+                  className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-all ${
+                    displayName !== user?.displayName && !isUpdating
+                      ? 'bg-primary text-white shadow-lg'
+                      : 'bg-white/5 text-white/20'
+                  }`}
+                >
+                  {isUpdating ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  ) : (
+                    <Check size={16} />
+                  )}
+                </button>
+              </div>
+              {updateStatus.message && (
+                <div className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider animate-in fade-in slide-in-from-top-1 ${
+                  updateStatus.type === 'success' ? 'text-green-400' : 'text-red-400'
+                }`}>
+                  {updateStatus.type === 'success' ? <Check size={12} /> : <AlertCircle size={12} />}
+                  {updateStatus.message}
+                </div>
+              )}
+            </form>
+          </div>
           {/* Font Size */}
           <div className="space-y-4">
             <h3 className="text-xs uppercase tracking-[0.2em] text-white/30 font-bold flex items-center gap-2">
