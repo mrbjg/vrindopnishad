@@ -96,9 +96,9 @@ export const apiService = {
         if (supaError) throw supaError;
         setCache(cacheKey, data || []);
         return data || [];
-      } catch (supaErr) {
-        console.error('All database sources failed:', supaErr);
-        throw supaErr;
+      } catch (error) {
+        console.error('All database sources failed:', error);
+        throw error;
       }
     }
   },
@@ -152,7 +152,7 @@ export const apiService = {
       console.warn('Firebase fetch failed, falling back to Supabase...', error.message);
       try {
           // Try lookup by ID first (safe across all tables)
-          let { data, error: supaError } = await supabase.from('content').select('*').eq('id', id).maybeSingle();
+          let { data } = await supabase.from('content').select('*').eq('id', id).maybeSingle();
           
           if (!data) {
              // If not found by ID, it might be a slug. Fetch all and search by generated slug

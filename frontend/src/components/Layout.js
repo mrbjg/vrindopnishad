@@ -8,13 +8,16 @@ import {
   Music, 
   FileText, 
   LayoutDashboard, 
-  LogOut
+  LogOut,
+  Settings
 } from 'lucide-react';
 import VLogo from '../assets/VLogo.png';
 import GlobalAudioPlayer from './GlobalAudioPlayer';
+import SettingsModal from './SettingsModal';
 
 const Layout = ({ children }) => {
   const { isAdmin, user, logout } = useContext(AuthContext);
+  const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
@@ -53,28 +56,55 @@ const Layout = ({ children }) => {
 
             <div className="flex items-center gap-4">
               {user ? (
-                <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md border border-white/10 p-1.5 pr-4 rounded-full hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer group">
+                <div className="flex items-center gap-2 sm:gap-3 bg-white/5 backdrop-blur-xl border border-white/10 p-1 sm:p-1.5 sm:pr-4 rounded-full hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer group shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
                   {/* Avatar Section */}
-                  <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-white/20 shadow-inner bg-gradient-to-br from-primary/40 to-primary/10 flex items-center justify-center">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden flex-shrink-0 border border-white/20 shadow-inner bg-gradient-to-br from-primary/40 to-primary/10 flex items-center justify-center relative">
                     {user.photoURL ? (
-                      <img src={user.photoURL} alt="User" className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-xs font-bold text-white uppercase tracking-wider">
-                        {(user.displayName || user.email || 'V')[0]}
-                      </span>
-                    )}
+                      <img 
+                        src={user.photoURL} 
+                        alt="User" 
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          // Show the sibling span
+                          if (e.target.nextSibling) {
+                            e.target.nextSibling.style.display = 'flex';
+                          }
+                        }}
+                      />
+                    ) : null}
+                    <span 
+                      className={`text-xs font-bold text-white uppercase tracking-wider flex items-center justify-center w-full h-full ${user.photoURL ? 'hidden' : 'flex'}`}
+                    >
+                      {(user.displayName || user.email || 'V')[0]}
+                    </span>
                   </div>
                   
-                  {/* User Name Section */}
-                  <div className="flex flex-col">
+                  {/* User Name Section - Hidden on Mobile for clean look */}
+                  <div className="hidden sm:flex flex-col">
                     <span className="text-[10px] uppercase tracking-widest text-white/30 font-bold leading-none mb-0.5">Devotee</span>
                     <span className="text-[13px] font-bold truncate max-w-[100px] leading-none">
                       {user.displayName || (user.email?.split('@')[0].match(/^[a-zA-Z]/) ? user.email?.split('@')[0] : 'Member')}
                     </span>
                   </div>
 
+                  {/* Divider - Hidden on Mobile */}
+                  <div className="hidden sm:block w-[1px] h-4 bg-white/10 mx-1"></div>
+                  
+                  {/* Settings Button */}
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsSettingsOpen(true);
+                    }}
+                    className="text-white/40 hover:text-primary hover:scale-110 active:scale-95 transition-all p-1.5 sm:p-1"
+                    title="Settings"
+                  >
+                    <Settings size={18} className="sm:w-[16px] sm:h-[16px]" />
+                  </button>
+
                   {/* Divider */}
-                  <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
+                  <div className="w-[1px] h-4 bg-white/10 mx-0.5"></div>
                   
                   {/* Logout Button */}
                   <button 
@@ -82,10 +112,10 @@ const Layout = ({ children }) => {
                       e.stopPropagation();
                       logout();
                     }} 
-                    className="text-white/20 hover:text-red-400 hover:scale-110 active:scale-95 transition-all p-1"
+                    className="text-white/40 hover:text-red-400 hover:scale-110 active:scale-95 transition-all p-1.5 sm:p-1"
                     title="Logout"
                   >
-                    <LogOut size={16} />
+                    <LogOut size={18} className="sm:w-[16px] sm:h-[16px]" />
                   </button>
                 </div>
               ) : (
@@ -152,6 +182,12 @@ const Layout = ({ children }) => {
       )}
       {/* Global Audio Player */}
       <GlobalAudioPlayer />
+
+      {/* Settings Modal */}
+      <SettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+      />
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { AudioProvider } from './contexts/AudioContext';
 import { LoadingProvider } from './contexts/LoadingContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { SettingsProvider } from './contexts/SettingsContext';
 import { apiService } from './services/api';
 import Layout from './components/Layout';
 import Lenis from 'lenis';
@@ -155,39 +156,41 @@ function App() {
   }
 
   return (
-    <ThemeProvider>
-      <AudioProvider>
-        <LoadingProvider>
-          <AuthContext.Provider value={{ isAdmin, user, token, login, logout }}>
-            <ApiContext.Provider value={{ apiService: apiService, isDemoMode: USE_MOCK_DATA }}>
-              <BrowserRouter>
-                <Layout>
-                  <React.Suspense fallback={
-                    <div className="min-h-[60vh] flex items-center justify-center">
-                      <div className="text-4xl text-primary/20 animate-pulse">ॐ</div>
-                    </div>
-                  }>
-                    <Routes>
-                      <Route path="/" element={<HomePage />} />
-                      <Route path="/content" element={<ContentListPage />} />
-                      <Route path="/content/:id" element={<ContentDetailPage />} />
-                      <Route path="/category/:category" element={<CategoryPage />} />
-                      <Route path="/loader-demo" element={<LoaderDemo />} />
-                      <Route path="/login" element={<LoginPage />} />
-                      <Route path="/admin-old/login" element={<AdminLoginPage />} />
-                      <Route
-                        path="/admin-old/dashboard"
-                        element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin-old/login" />}
-                      />
-                    </Routes>
-                  </React.Suspense>
-                </Layout>
-              </BrowserRouter>
-            </ApiContext.Provider>
-          </AuthContext.Provider>
-        </LoadingProvider>
-      </AudioProvider>
-    </ThemeProvider>
+    <SettingsProvider>
+      <ThemeProvider>
+        <AudioProvider>
+          <LoadingProvider>
+            <AuthContext.Provider value={{ isAdmin, user, token, login, logout }}>
+              <ApiContext.Provider value={{ apiService: apiService, isDemoMode: USE_MOCK_DATA }}>
+                <BrowserRouter>
+                  <Layout>
+                    <React.Suspense fallback={
+                      <div className="min-h-[60vh] flex items-center justify-center">
+                        <div className="text-4xl text-primary/20 animate-pulse">ॐ</div>
+                      </div>
+                    }>
+                      <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/content" element={<ContentListPage />} />
+                        <Route path="/content/:id" element={<ContentDetailPage />} />
+                        <Route path="/category/:category" element={<CategoryPage />} />
+                        <Route path="/loader-demo" element={<LoaderDemo />} />
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/admin-old/login" element={<AdminLoginPage />} />
+                        <Route
+                          path="/admin-old/dashboard"
+                          element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin-old/login" />}
+                        />
+                      </Routes>
+                    </React.Suspense>
+                  </Layout>
+                </BrowserRouter>
+              </ApiContext.Provider>
+            </AuthContext.Provider>
+          </LoadingProvider>
+        </AudioProvider>
+      </ThemeProvider>
+    </SettingsProvider>
   );
 }
 

@@ -1,13 +1,20 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ApiContext } from '../App';
-import { ArrowLeft, Music, Image as ImageIcon, Video } from 'lucide-react';
+import { 
+  ArrowLeft, 
+  Music, 
+  Image as ImageIcon, 
+  Video 
+} from 'lucide-react';
+import { useSettings } from '../contexts/SettingsContext';
 import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { Helmet } from 'react-helmet-async';
 
 const ContentDetailPage = () => {
   const { id } = useParams();
   const { apiService } = useContext(ApiContext);
+  const { settings } = useSettings();
   const [content, setContent] = useState(() => apiService.getCachedData(`id_${id}`));
   const [loading, setLoading] = useState(!apiService.getCachedData(`id_${id}`));
 
@@ -53,6 +60,47 @@ const ContentDetailPage = () => {
       </div>
     );
   }
+
+  const formatVerseText = (text) => {
+    if (!text) return null;
+    
+    // Feature Check: Line-by-Line Reading
+    if (!settings.lineByLine) {
+      return <div>{text}</div>;
+    }
+
+    // Split by । or ॥ (with optional verse numbers) or comma followed by space 
+    const parts = text.split(/([।॥]\s*(?:\[\d+\]|\(?\d+\)?)?|,\s)/g);
+    
+    const lines = [];
+    let currentLine = "";
+    
+    for (let i = 0; i < parts.length; i++) {
+      if (i % 2 === 0) {
+        currentLine = parts[i];
+      } else {
+        currentLine += parts[i];
+        if (currentLine.trim()) {
+          lines.push(currentLine.trim());
+        }
+        currentLine = "";
+      }
+    }
+    
+    // Catch any trailing text
+    if (currentLine.trim()) {
+      lines.push(currentLine.trim());
+    }
+    
+    // If no punctuation was found, just return original but trimmed
+    if (lines.length === 0) return <div>{text}</div>;
+
+    return lines.map((line, idx) => (
+      <div key={idx} className="mb-3 last:mb-0">
+        {line}
+      </div>
+    ));
+  };
 
   if (!content) {
     return (
@@ -177,26 +225,44 @@ const ContentDetailPage = () => {
 
           <div className="space-y-16">
             {content.sanskrit_text && (
-              <div className="relative overflow-hidden group py-12 border-b border-white/5">
-                <div className="absolute top-0 right-0 p-8 opacity-5 text-8xl font-serif">ॐ</div>
-                <h3 className="text-xs uppercase tracking-[0.3em] text-white/20 mb-10 flex items-center gap-3">
-                  <span className="h-[1px] w-8 bg-white/10"></span>
+              <div className="relative overflow-hidden group py-16 sm:py-20 border-b border-white/5">
+                <div className="absolute top-0 right-0 p-8 opacity-5 text-9xl font-serif pointer-events-none">ॐ</div>
+                <h3 className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-white/30 mb-12 sm:mb-16 flex items-center justify-center sm:justify-start gap-4">
+                  <span className="h-[1px] w-12 bg-gradient-to-r from-transparent to-white/10 hidden sm:block"></span>
                   Sanskrit Text
+                  <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-white/10 hidden sm:block"></span>
                 </h3>
-                <div className="text-3xl md:text-5xl leading-[1.8] text-center font-medium text-white/95 drop-shadow-lg hindi-text">
-                  {content.sanskrit_text}
+                <div className={`leading-[1.6] text-center font-medium text-white/95 drop-shadow-lg hindi-text ${
+                  settings.fontSize === 'xlarge' ? 'text-4xl md:text-7xl' : 
+                  settings.fontSize === 'large' ? 'text-3xl md:text-6xl' : 
+                  'text-2xl md:text-5xl'
+                } ${
+                  settings.fontStyle === 'Sans' ? 'font-sans' : 
+                  settings.fontStyle === 'Inter' ? 'font-inter' : 
+                  'font-headings'
+                }`}>
+                  {formatVerseText(content.sanskrit_text)}
                 </div>
               </div>
             )}
 
             {content.hindi_text && (
-              <div className="py-12 border-b border-white/5">
-                <h3 className="text-xs uppercase tracking-[0.3em] text-amber-500/40 mb-10 flex items-center gap-3">
-                  <span className="h-[1px] w-8 bg-amber-500/10"></span>
+              <div className="py-16 sm:py-20 border-b border-white/5">
+                <h3 className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-amber-500/50 mb-12 sm:mb-16 flex items-center justify-center sm:justify-start gap-4">
+                  <span className="h-[1px] w-12 bg-gradient-to-r from-transparent to-amber-500/10 hidden sm:block"></span>
                   Hindi Meaning
+                  <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-amber-500/10 hidden sm:block"></span>
                 </h3>
-                <div className="text-xl md:text-3xl leading-[2.2] text-white/85 hindi-text">
-                  {content.hindi_text}
+                <div className={`leading-[2] text-white/85 hindi-text ${
+                  settings.fontSize === 'xlarge' ? 'text-2xl md:text-4xl' : 
+                  settings.fontSize === 'large' ? 'text-xl md:text-3xl' : 
+                  'text-lg md:text-2xl'
+                } ${
+                  settings.fontStyle === 'Sans' ? 'font-sans' : 
+                  settings.fontStyle === 'Inter' ? 'font-inter' : 
+                  'font-headings'
+                }`}>
+                  {formatVerseText(content.hindi_text)}
                 </div>
               </div>
             )}

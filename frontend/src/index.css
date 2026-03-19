@@ -143,16 +143,40 @@ body.is-scrolling .glass-card {
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Glass Header Polish */
+.app-header {
+    backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(10, 0, 21, 0.7);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Improved Glassmorphism for profile pill on mobile */
+.app-header .flex.items-center.rounded-full {
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.05),
+        0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Font Scaling for mobile content */
+@media (max-width: 640px) {
+    .hindi-text {
+        line-height: 1.8;
+        letter-spacing: 0.01em;
+    }
+}
+
 .glass-card {
     position: relative;
     background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: var(--blur-effect);
-    -webkit-backdrop-filter: var(--blur-effect);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--border-radius-md);
+    backdrop-filter: blur(40px); /* Enhanced blur */
+    -webkit-backdrop-filter: blur(40px); /* Enhanced blur */
+    border: 1px solid rgba(255, 255, 255, 0.08); /* Adjusted border */
+    border-radius: 2rem; /* Adjusted border-radius */
     padding: 2rem;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
     transition:
+        all 0.4s cubic-bezier(0.16, 1, 0.3, 1), /* Adjusted transition */
         transform 0.6s var(--transition-smooth),
         background 0.4s ease,
         border-color 0.4s ease,
