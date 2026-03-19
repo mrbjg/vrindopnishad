@@ -370,21 +370,19 @@ const ContentDetailPage = () => {
                 </div>
               </div>
             )}
-            {/* Spacing for Mobile Bottom Dial */}
-            <div className="h-32 lg:hidden"></div>
+            {/* End of Content - Mobile Appearance Dial */}
+            <div className="lg:hidden mt-20 pt-10 border-t border-white/5 flex flex-col items-center gap-6">
+              <span className="text-[10px] uppercase tracking-[0.3em] text-white/30 font-bold">Reading Settings</span>
+              <div className="w-full max-w-[320px]">
+                <FontWheel 
+                  value={settings.fontSize} 
+                  onChange={(size) => updateSetting('fontSize', size)} 
+                />
+              </div>
+            </div>
           </div>
         </div>
       </article>
-
-      {/* Mobile-Only Bottom Appearance Dial */}
-      <div className="lg:hidden fixed bottom-24 left-0 right-0 z-[900] px-6 animate-fade-in-up">
-        <div className="glass-card !bg-black/60 !backdrop-blur-2xl !p-2 !rounded-full border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
-          <FontWheel 
-            value={settings.fontSize} 
-            onChange={(size) => updateSetting('fontSize', size)} 
-          />
-        </div>
-      </div>
     </div>
   );
 };
