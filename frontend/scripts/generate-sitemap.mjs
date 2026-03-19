@@ -41,9 +41,10 @@ async function generateSitemap() {
 
     const urls = content.map(item => {
       const slug = generateSlug(item.title); // Generate from title since slug column is missing
+      const encodedSlug = slug ? slug.split('/').map(segment => encodeURIComponent(segment)).join('/') : item.id;
       return `
   <url>
-    <loc>${DOMAIN}/content/${slug || item.id}</loc>
+    <loc>${DOMAIN}/content/${encodedSlug}</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>`;
