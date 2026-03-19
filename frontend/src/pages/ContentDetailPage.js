@@ -238,12 +238,22 @@ const ContentDetailPage = () => {
             </div>
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold mb-12 leading-relaxed pt-6 text-sacred-gradient">
+          <h1 
+            className="text-4xl md:text-6xl font-bold mb-12 leading-tight lg:leading-snug pt-6 text-sacred-gradient"
+            style={{ paddingBottom: '0.2em' }}
+          >
             {content.title}
           </h1>
 
           {content.description && (
-            <p className="text-xl text-white/60 font-light leading-relaxed mb-12 italic border-l-4 border-white/10 pl-6">
+            <p 
+              className="text-white/60 font-light leading-relaxed mb-12 italic border-l-4 border-white/10 pl-6 break-words"
+              style={{ 
+                fontSize: `${Math.max(14, settings.fontSize * 1.2)}px`,
+                wordBreak: 'break-word',
+                paddingBottom: '0.1em' 
+              }}
+            >
               {content.description}
             </p>
           )}
@@ -297,7 +307,12 @@ const ContentDetailPage = () => {
             {content.english_text && (
               <div>
                 <h3 className="text-xs uppercase tracking-[0.3em] text-white/20 mb-6 font-semibold">Transliteration</h3>
-                <div className="text-lg md:text-xl leading-relaxed text-white/60 font-inter">
+                <div className="leading-relaxed text-white/60 font-inter" style={{
+                  fontSize: settings.fontSize === 1 ? '0.9rem' :
+                            settings.fontSize === 2 ? '1.1rem' :
+                            settings.fontSize === 3 ? '1.4rem' :
+                            settings.fontSize === 4 ? '1.8rem' : '2.4rem'
+                }}>
                   {content.english_text}
                 </div>
               </div>
@@ -309,7 +324,12 @@ const ContentDetailPage = () => {
                   <span className="h-[1px] w-8 bg-blue-500/10"></span>
                   English Translation
                 </h3>
-                <div className="text-lg md:text-2xl leading-relaxed text-white/70">
+                <div className="leading-relaxed text-white/70 font-light" style={{
+                  fontSize: settings.fontSize === 1 ? '1rem' :
+                            settings.fontSize === 2 ? '1.2rem' :
+                            settings.fontSize === 3 ? '1.6rem' :
+                            settings.fontSize === 4 ? '2.2rem' : '3rem'
+                }}>
                   {content.english_translation}
                 </div>
               </div>

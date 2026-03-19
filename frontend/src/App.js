@@ -91,7 +91,7 @@ function App() {
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(() => {
         document.body.classList.remove('is-scrolling');
-      }, 150); // Remove after scroll stops
+      }, 100); // Faster recovery
     });
 
     requestAnimationFrame(raf);
