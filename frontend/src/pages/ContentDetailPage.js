@@ -273,9 +273,9 @@ const ContentDetailPage = () => {
                   'font-headings'
                 }`} style={{
                   fontSize: settings.fontSize === 1 ? '1.5rem' :
-                            settings.fontSize === 2 ? '2.5rem' :
-                            settings.fontSize === 3 ? '3.5rem' :
-                            settings.fontSize === 4 ? '5rem' : '7rem'
+                            settings.fontSize === 2 ? '2.2rem' :
+                            settings.fontSize === 3 ? '3rem' :
+                            settings.fontSize === 4 ? '4.5rem' : '6rem'
                 }}>
                   {formatVerseText(content.sanskrit_text)}
                 </div>
@@ -294,10 +294,10 @@ const ContentDetailPage = () => {
                   settings.fontStyle === 'Inter' ? 'font-inter' :
                   'font-headings'
                 }`} style={{
-                  fontSize: settings.fontSize === 1 ? '1rem' :
-                            settings.fontSize === 2 ? '1.25rem' :
-                            settings.fontSize === 3 ? '1.75rem' :
-                            settings.fontSize === 4 ? '2.5rem' : '3.5rem'
+                  fontSize: settings.fontSize === 1 ? '1.2rem' :
+                            settings.fontSize === 2 ? '1.8rem' :
+                            settings.fontSize === 3 ? '2.5rem' :
+                            settings.fontSize === 4 ? '3.8rem' : '5rem'
                 }}>
                   {formatVerseText(content.hindi_text)}
                 </div>
@@ -325,10 +325,10 @@ const ContentDetailPage = () => {
                   English Translation
                 </h3>
                 <div className="leading-relaxed text-white/70 font-light" style={{
-                  fontSize: settings.fontSize === 1 ? '1rem' :
-                            settings.fontSize === 2 ? '1.2rem' :
-                            settings.fontSize === 3 ? '1.6rem' :
-                            settings.fontSize === 4 ? '2.2rem' : '3rem'
+                  fontSize: settings.fontSize === 1 ? '1.2rem' :
+                            settings.fontSize === 2 ? '1.8rem' :
+                            settings.fontSize === 3 ? '2.5rem' :
+                            settings.fontSize === 4 ? '3.8rem' : '5rem'
                 }}>
                   {content.english_translation}
                 </div>
