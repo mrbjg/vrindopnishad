@@ -13,6 +13,20 @@ const USE_MOCK = process.env.REACT_APP_DEMO_MODE === 'true';
 const CACHE_PREFIX = 'sv_cache_';
 const CACHE_EXPIRY = 30 * 60 * 1000;
 
+// Helper to generate a URL-friendly slug from a title
+const generateSlug = (text) => {
+  if (!text) return '';
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')     // Replace spaces with -
+    .replace(/[^\w-]+/g, '')  // Remove all non-word chars
+    .replace(/--+/g, '-')     // Replace multiple - with single -
+    .replace(/^-+/, '')        // Trim - from start of text
+    .replace(/-+$/, '');       // Trim - from end of text
+};
+
 const setCache = (key, data) => {
     try {
         sessionStorage.setItem(CACHE_PREFIX + key, JSON.stringify({
@@ -58,6 +72,13 @@ export const apiService = {
         
         data = data.reverse();
         if (category) data = data.filter(item => item.category === category);
+        
+        // Enhance data with slugs for SEO
+        data = data.map(item => ({
+          ...item,
+          slug: item.slug || generateSlug(item.title)
+        }));
+
         if (limit) data = data.slice(0, limit);
         
         setCache(cacheKey, data);
@@ -92,23 +113,47 @@ export const apiService = {
       return data;
     }
     try {
-      const snapshot = await get(ref(contentDb, `public/content/${id}`));
+      const snapshot = await get(ref(contentDb, 'public/content'));
       if (snapshot.exists()) {
-        const data = { id, ...snapshot.val() };
-        setCache(cacheKey, data);
-        return data;
+        const rawData = snapshot.val();
+        let contentItem = null;
+        
+        // Search by ID or Slug
+        if (rawData[id]) {
+          contentItem = { id, ...rawData[id] };
+        } else {
+          // If not found by key, search by slug
+          const items = Object.keys(rawData).map(key => ({ id: key, ...rawData[key] }));
+          contentItem = items.find(item => generateSlug(item.title) === id || item.slug === id);
+        }
+
+        if (contentItem) {
+          const data = { ...contentItem, slug: contentItem.slug || generateSlug(contentItem.title) };
+          setCache(cacheKey, data);
+          return data;
+        }
       }
       throw new Error("Content not found");
     } catch (error) {
       console.warn('Firebase fetch failed, falling back to Supabase...', error.message);
       try {
-          const { data, error: supaError } = await supabase.from('content').select('*').eq('id', id).single();
-          if (supaError) throw supaError;
-          const contentData = { id, ...data };
+          const { data, error: supaError } = await supabase.from('content').select('*').or(`id.eq.${id},slug.eq.${id}`).single();
+          if (supaError) {
+             // Second attempt: Search by title-slug if direct slug match fails
+             const { data: allData } = await supabase.from('content').select('*');
+             const found = allData.find(item => generateSlug(item.title) === id);
+             if (found) {
+                const contentData = { ...found, slug: generateSlug(found.title) };
+                setCache(cacheKey, contentData);
+                return contentData;
+             }
+             throw supaError;
+          }
+          const contentData = { ...data, slug: data.slug || generateSlug(data.title) };
           setCache(cacheKey, contentData);
           return contentData;
       } catch (supaErr) {
-          console.error('Error fetching content by ID:', supaErr);
+          console.error('Error fetching content by ID/Slug:', supaErr);
           throw supaErr;
       }
     }

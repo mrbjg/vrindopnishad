@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
+import { auth } from './firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { AudioProvider } from './contexts/AudioContext';
+import { LoadingProvider } from './contexts/LoadingContext';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { apiService } from './services/api';
 import Layout from './components/Layout';
 
 // Performance: Route-based Code Splitting
@@ -13,11 +19,6 @@ const LoginPage = React.lazy(() => import('./pages/LoginPage'));
 const AdminLoginPage = React.lazy(() => import('./pages/AdminLoginPage'));
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const LoaderDemo = React.lazy(() => import('./pages/LoaderDemo'));
-
-import { auth } from './firebase';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-// import LoginPage from './pages/LoginPage';
-import { AudioProvider } from './contexts/AudioContext';
 
 // Backend URL with fallback for development
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;

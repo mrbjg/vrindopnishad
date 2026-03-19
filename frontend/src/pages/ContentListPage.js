@@ -112,7 +112,7 @@ const ContentListPage = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredContent.map(item => (
-            <Link to={`/content/${item.id}`} key={item.id} className="glass-card group flex flex-col justify-between">
+            <Link to={`/content/${item.slug || item.id}`} key={item.id} className="glass-card group flex flex-col justify-between">
               <div>
                 <div className="flex justify-between items-start mb-4">
                   <span className="badge border-primary/20 text-primary/70">{item.category}</span>
