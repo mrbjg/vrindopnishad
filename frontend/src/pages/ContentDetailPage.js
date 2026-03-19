@@ -208,23 +208,29 @@ const ContentDetailPage = () => {
         </Link>
 
         <div className="glass-card reading-card p-8 md:p-14 mb-12 relative overflow-hidden">
-          {/* Main Content Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 mb-12 border-b border-white/5 pb-10">
-            <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-10 w-full sm:w-auto">
-              <span className="sacred-badge shrink-0">
-                {content.category}
-              </span>
-              {content.author && (
-                <div className="flex items-center gap-3 text-white/70 font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary/40 shrink-0 hidden sm:block"></span>
-                  <span className={`tracking-wider leading-relaxed text-center sm:text-left ${content.author.length > 25 ? 'text-xs sm:text-sm' : 'text-sm sm:text-base'}`}>
-                    By {content.author}
-                  </span>
-                </div>
-              )}
+          {/* Main Content Header - Overhauled for Mobile Relatability */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10 mb-12 border-b border-white/5 pb-10">
+            <div className="flex flex-col gap-6 w-full lg:w-auto">
+              <div className="flex flex-col items-center lg:items-start gap-4">
+                <span className="sacred-badge">
+                  {content.category}
+                </span>
+                
+                {content.author && (
+                  <div className="flex flex-col items-center lg:items-start">
+                    <span className="text-[10px] uppercase tracking-[0.3em] text-white/30 mb-1 font-bold">Written By</span>
+                    <span className={`text-sacred-gradient font-headings font-bold tracking-wide text-center lg:text-left ${
+                      content.author.length > 25 ? 'text-lg' : 'text-xl sm:text-2xl'
+                    }`}>
+                      {content.author}
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
-            {/* Quick Settings - Sanctuary Font Wheel */}
-            <div className="flex flex-col items-center sm:items-end gap-2 w-full sm:w-auto">
+
+            {/* Reading Controls - Integrated Appearance Dial */}
+            <div className="flex flex-col items-center lg:items-end w-full lg:w-auto">
               <FontWheel 
                 value={settings.fontSize} 
                 onChange={(size) => updateSetting('fontSize', size)} 

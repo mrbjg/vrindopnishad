@@ -7,7 +7,8 @@ import {
   createUserWithEmailAndPassword, 
   sendPasswordResetEmail,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  updateProfile
 } from 'firebase/auth';
 import { Mail, Lock, LogIn, ArrowLeft, Chrome, UserPlus, Info } from 'lucide-react';
 
