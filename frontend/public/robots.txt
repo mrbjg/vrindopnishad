@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://path.vrindopnishad.in/sitemap.xml
+Sitemap: https://sant-vaani.vercel.app/sitemap.xml
+
+# Official Site: https://path.vrindopnishad.in

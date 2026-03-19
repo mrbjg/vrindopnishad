@@ -76,13 +76,52 @@ const ContentDetailPage = () => {
     <div className="animate-fade-in max-w-4xl mx-auto">
       <Helmet>
         <title>{`${content.title} | ${content.author || 'VrindaVaani'}`}</title>
-        <meta name="description" content={`Read ${content.category}: ${content.title} by ${content.author || 'Sant Vaani'}. ${content.sanskrit_text ? content.sanskrit_text.substring(0, 150) : content.description?.substring(0, 150)}`} />
-        <meta name="keywords" content={`${content.title}, ${content.author}, ${content.category}, Hindu Shloka, Sanskrit Verses, Devotional Poetry`} />
+        <meta name="description" content={`Experience Divine Wisdom: ${content.title} by ${content.author || 'Sant Vaani'}. ${content.sanskrit_text ? content.sanskrit_text.substring(0, 160) : content.description?.substring(0, 160)}`} />
+        <meta name="keywords" content={`${content.title}, ${content.author}, ${content.category}, Padma Purana, Vrindavan Dham, Hindu Shloka, Sanskrit Verses, Devotional Poetry, Spiritual Wisdom`} />
+        
+        {/* Canonical Link */}
+        <link rel="canonical" href={`https://path.vrindopnishad.in/content/${id}`} />
+
         {/* Open Graph / social media tags */}
-        <meta property="og:title" content={content.title} />
-        <meta property="og:description" content={content.description?.substring(0, 160)} />
+        <meta property="og:type" content="article" />
+        <meta property="og:title" content={`${content.title} - ${content.category}`} />
+        <meta property="og:description" content={content.description?.substring(0, 160) || `Read and listen to ${content.title} in the Sant-Vaani Sanctuary.`} />
         {content.image_url && <meta property="og:image" content={content.image_url} />}
+        <meta property="article:section" content={content.category} />
+        {content.author && <meta property="article:author" content={content.author} />}
+        
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={content.title} />
+        <meta name="twitter:description" content={content.description?.substring(0, 160)} />
+
+        {/* JSON-LD Structured Data for Search Ranking */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ScholarlyArticle",
+            "headline": content.title,
+            "description": content.description || `A sacred ${content.category} from the Sant-Vaani repository.`,
+            "author": {
+              "@type": "Person",
+              "name": content.author || "Sant Vaani"
+            },
+            "genre": content.category,
+            "keywords": `${content.title}, ${content.category}, Spiritual, Sanskrit`,
+            "articleBody": `${content.sanskrit_text ? content.sanskrit_text + ' ' : ''}${content.hindi_text ? content.hindi_text + ' ' : ''}${content.english_translation || ''}`,
+            "publisher": {
+              "@type": "Organization",
+              "name": "VrindaVaani",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png"
+              }
+            },
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "@id": `https://path.vrindopnishad.in/content/${id}`
+            }
+          })}
+        </script>
       </Helmet>
 
       <Link to="/content" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-8 transition-colors">
