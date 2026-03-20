@@ -72,7 +72,7 @@ class OnboardingScreen extends ConsumerWidget {
                       decoration: BoxDecoration(
                         color: currentIndex == index 
                             ? PremiumTokens.saffronGlow 
-                            : Colors.white.withOpacity(0.2),
+                            : Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     );
@@ -147,8 +147,8 @@ class OnboardingSlide extends StatelessWidget {
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: PremiumTokens.saffronGlow.withOpacity(0.05),
-              border: Border.all(color: PremiumTokens.saffronGlow.withOpacity(0.1)),
+              color: PremiumTokens.saffronGlow.withValues(alpha: 0.05),
+              border: Border.all(color: PremiumTokens.saffronGlow.withValues(alpha: 0.1)),
             ),
             child: Icon(
               data.icon,
@@ -190,7 +190,7 @@ class OnboardingSlide extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: BoxDecoration(
-              border: Border(left: BorderSide(color: PremiumTokens.saffronGlow.withOpacity(0.3), width: 2)),
+              border: Border(left: BorderSide(color: PremiumTokens.saffronGlow.withValues(alpha: 0.3), width: 2)),
             ),
             child: Text(
               data.quote,

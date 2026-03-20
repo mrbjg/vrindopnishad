@@ -74,8 +74,8 @@ class PremiumTokens {
       center: Alignment.center,
       radius: 0.8 * intensity,
       colors: [
-        Color(0xFF256AF4).withOpacity(0.15 * intensity),
-        Color(0xFF256AF4).withOpacity(0.05 * intensity),
+        Color(0xFF256AF4).withValues(alpha: 0.15 * intensity),
+        Color(0xFF256AF4).withValues(alpha: 0.05 * intensity),
         Colors.transparent,
       ],
     );
@@ -92,10 +92,10 @@ class PremiumTokens {
     Border? border,
   }) {
     return BoxDecoration(
-      color: (color ?? Colors.white).withOpacity(opacity),
+      color: (color ?? Colors.white).withValues(alpha: opacity),
       borderRadius: BorderRadius.circular(borderRadius),
       border: border ?? Border.all(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         width: 1.0,
       ),
     );
@@ -109,7 +109,7 @@ class PremiumTokens {
       shape: BoxShape.circle,
       boxShadow: [
         BoxShadow(
-          color: color.withOpacity(0.3 * intensity),
+          color: color.withValues(alpha: 0.3 * intensity),
           blurRadius: 30 * intensity,
           spreadRadius: 2 * intensity,
         ),
@@ -246,7 +246,7 @@ class PremiumUI extends StatelessWidget {
     final effectiveColor = color ?? Colors.white;
     return logo(height: height, color: color)
         .animate(onPlay: (controller) => controller.repeat(reverse: true))
-        .shimmer(duration: 3.seconds, color: effectiveColor.withOpacity(0.3))
+        .shimmer(duration: 3.seconds, color: effectiveColor.withValues(alpha: 0.3))
         .scale(
           begin: const Offset(1, 1),
           end: const Offset(1.05, 1.05),
@@ -271,7 +271,7 @@ class PremiumUI extends StatelessWidget {
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
           BoxShadow(
-            color: PremiumTokens.saffronGlow.withOpacity(0.1),
+            color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
             blurRadius: 15,
             spreadRadius: -5,
           ),
@@ -286,7 +286,7 @@ class PremiumUI extends StatelessWidget {
                 color: const Color(0xCC0A0A1F), // Solid high-performance surface
                 borderRadius: BorderRadius.circular(borderRadius),
                 border: Border.all(
-                  color: PremiumTokens.nebulaBlue.withOpacity(0.1),
+                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
@@ -300,7 +300,7 @@ class PremiumUI extends StatelessWidget {
                   color: const Color(0x990A0A1F),
                   borderRadius: BorderRadius.circular(borderRadius),
                   border: Border.all(
-                    color: PremiumTokens.nebulaBlue.withOpacity(0.1),
+                    color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
                     width: 1,
                   ),
                 ),
@@ -332,7 +332,7 @@ class PremiumUI extends StatelessWidget {
                 color: const Color(0xFF0F0F2D), // Deep solid void
                 borderRadius: BorderRadius.circular(borderRadius),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.08),
+                  color: Colors.white.withValues(alpha: 0.08),
                   width: 1,
                 ),
               ),
@@ -346,7 +346,7 @@ class PremiumUI extends StatelessWidget {
                   color: const Color(0x1A2B2BEE),
                   borderRadius: BorderRadius.circular(borderRadius),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     width: 1,
                   ),
                 ),
@@ -372,7 +372,7 @@ class PremiumUI extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: activeColor.withOpacity(isPlaying ? 0.4 : 0.2),
+            color: activeColor.withValues(alpha: isPlaying ? 0.4 : 0.2),
             blurRadius: isPlaying ? 60 : 40,
             spreadRadius: isPlaying ? 15 : 5,
           ),
@@ -386,7 +386,7 @@ class PremiumUI extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: activeColor.withOpacity(0.2),
+                color: activeColor.withValues(alpha: 0.2),
                 width: 1.5,
               ),
             ),
@@ -398,7 +398,7 @@ class PremiumUI extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.black,
-              border: Border.all(color: activeColor.withOpacity(0.3)),
+              border: Border.all(color: activeColor.withValues(alpha: 0.3)),
               image: const DecorationImage(
                 image: CachedNetworkImageProvider('https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=2662&auto=format&fit=crop'),
                 fit: BoxFit.cover,
@@ -425,7 +425,7 @@ class PremiumUI extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 1.5),
             width: 2.5,
             decoration: BoxDecoration(
-              color: activeColor.withOpacity(0.5 + (index % 5 / 10)),
+              color: activeColor.withValues(alpha: 0.5 + (index % 5 / 10)),
               borderRadius: BorderRadius.circular(10),
             ),
           ).animate(onPlay: (c) => isPlaying ? c.repeat(reverse: true) : c.stop())
@@ -456,7 +456,7 @@ class PremiumUI extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
         color: const Color(0x0DFFFFFF), // Subtle glass base
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
@@ -468,7 +468,7 @@ class PremiumUI extends StatelessWidget {
               Container(
                 width: 4,
                 decoration: BoxDecoration(
-                  color: accentColor.withOpacity(0.6),
+                  color: accentColor.withValues(alpha: 0.6),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(16),
                     bottomLeft: Radius.circular(16),
@@ -519,12 +519,12 @@ class PremiumUI extends StatelessWidget {
                   color: const Color(0xE60A0A1F),
                   borderRadius: BorderRadius.circular(35),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     width: 1,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.5),
+                      color: Colors.black.withValues(alpha: 0.5),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -542,11 +542,11 @@ class PremiumUI extends StatelessWidget {
                         width: capsuleWidth,
                         height: capsuleHeight,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(22),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.white.withOpacity(0.05),
+                              color: Colors.white.withValues(alpha: 0.05),
                               blurRadius: 10,
                               spreadRadius: 2,
                             ),
@@ -624,10 +624,10 @@ class PremiumUI extends StatelessWidget {
           ? Container(
               padding: padding ?? const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(opacity * 1.5), // High-perf opacity
+                color: Colors.white.withValues(alpha: opacity * 1.5), // High-perf opacity
                 borderRadius: BorderRadius.circular(borderRadius),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.08),
+                  color: Colors.white.withValues(alpha: 0.08),
                   width: 1,
                 ),
               ),
@@ -658,14 +658,14 @@ class PremiumUI extends StatelessWidget {
         shape: BoxShape.circle,
         gradient: RadialGradient(
           colors: [
-            Colors.white.withOpacity(0.15 * opacity),
-            Color(0xFF256AF4).withOpacity(0.05 * opacity),
+            Colors.white.withValues(alpha: 0.15 * opacity),
+            Color(0xFF256AF4).withValues(alpha: 0.05 * opacity),
             Colors.transparent,
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF256AF4).withOpacity(0.1 * opacity),
+            color: Color(0xFF256AF4).withValues(alpha: 0.1 * opacity),
             blurRadius: 80 * opacity,
           ),
         ],
@@ -691,7 +691,7 @@ class PremiumUI extends StatelessWidget {
                   center: Alignment.center,
                   radius: 1.5,
                   colors: [
-                    PremiumTokens.nebulaBlue.withOpacity(0.08),
+                    PremiumTokens.nebulaBlue.withValues(alpha: 0.08),
                     Colors.transparent,
                   ],
                 ),
@@ -704,15 +704,15 @@ class PremiumUI extends StatelessWidget {
             top: -100, 
             right: -50, 
             size: 400, 
-            color: PremiumTokens.nebulaBlue.withOpacity(isVoid ? 0.12 : 0.08)
+            color: PremiumTokens.nebulaBlue.withValues(alpha: isVoid ? 0.12 : 0.08)
           ),
           
           // Transitionary Elements
           if (isVoid) ...[
-            _buildBokeh(bottom: -50, left: -50, size: 350, color: PremiumTokens.nebulaBlue.withOpacity(0.06)),
+            _buildBokeh(bottom: -50, left: -50, size: 350, color: PremiumTokens.nebulaBlue.withValues(alpha: 0.06)),
             _buildMoon(bottom: 120, left: 60, size: 80),
           ] else ...[
-             _buildBokeh(bottom: -100, left: -50, size: 300, color: PremiumTokens.celestialGlow.withOpacity(0.04)),
+             _buildBokeh(bottom: -100, left: -50, size: 300, color: PremiumTokens.celestialGlow.withValues(alpha: 0.04)),
              _buildMoon(top: 60, left: 40, size: 60),
           ],
           
@@ -721,7 +721,7 @@ class PremiumUI extends StatelessWidget {
             top: isVoid ? 200 : 120, 
             right: isVoid ? 80 : 60, 
             size: 30, 
-            color: isVoid ? Colors.deepPurpleAccent.withOpacity(0.2) : Colors.blueAccent.withOpacity(0.15)
+            color: isVoid ? Colors.deepPurpleAccent.withValues(alpha: 0.2) : Colors.blueAccent.withValues(alpha: 0.15)
           ),
         ],
       ),
@@ -738,7 +738,7 @@ class PremiumUI extends StatelessWidget {
       opacity: opacity,
       child: Container(
         decoration: BoxDecoration(image: DecorationImage(
-            image: NetworkImage('https://lh3.googleusercontent.com/aida-public/AB6AXuC9J4nO13Fik0Au_1Tuo1M_eBAME8GcVjNnVSfbU6fysIWTWnsO91vA0tbb9LpPBBElJiQmj3ypYIio9OcPJ6ROICRKUvgSRlAkpR7PvCQH_RFO9-NhG-oirndhfV_gOm4oOPJWONG3ylcEKlmNO59670Z4FeAftQH5i9Zi3Mm_Jbb3Qddb0aA5C0e30wj77H8rNFpXhTjRB1vkjo2Lf-7snA8T_zQ8oXZe-IfvYfpsJHbFn75gBZvCkhuvcwONzXXeGBNbm4SRWNU'),
+            image: NetworkImage('https://images.unsplash.com/photo-1539667468021-fdb3dfaa059d?auto=format&fit=crop&w=800&q=80'),
             repeat: ImageRepeat.repeat,
             scale: 0.5,
           ),
@@ -779,7 +779,7 @@ class PremiumUI extends StatelessWidget {
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               blurRadius: 40,
               spreadRadius: 5,
             ),
@@ -808,17 +808,17 @@ class PremiumUI extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: RadialGradient(
-              colors: [color.withOpacity(0.8), color.withOpacity(0.1), Colors.transparent],
+              colors: [color.withValues(alpha: 0.8), color.withValues(alpha: 0.1), Colors.transparent],
             ),
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.3),
+                color: color.withValues(alpha: 0.3),
                 blurRadius: 20,
               ),
             ],
           ),
           child: CustomPaint(
-            painter: _PlanetRingsPainter(color: color.withOpacity(0.2)),
+            painter: _PlanetRingsPainter(color: color.withValues(alpha: 0.2)),
           ),
         ),
       ),
@@ -842,7 +842,7 @@ class PremiumUI extends StatelessWidget {
           borderRadius: BorderRadius.circular(100),
           boxShadow: [
             BoxShadow(
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
               blurRadius: 20,
             ),
           ],
@@ -988,7 +988,7 @@ class PremiumUI extends StatelessWidget {
       placeholder: (context, url) => placeholder ?? Container(
         width: width,
         height: height,
-        color: PremiumTokens.accentDark.withOpacity(0.5),
+        color: PremiumTokens.accentDark.withValues(alpha: 0.5),
         child: const Center(
           child: CircularProgressIndicator(
             strokeWidth: 2,
@@ -1023,7 +1023,7 @@ class PremiumUI extends StatelessWidget {
 
   /// SacredDivider: A spiritual separator with a central icon
   static Widget sacredDivider({Color? color, double width = 60}) {
-    final activeColor = color ?? Colors.white.withOpacity(0.1);
+    final activeColor = color ?? Colors.white.withValues(alpha: 0.1);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -1072,7 +1072,7 @@ class PremiumUI extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: PremiumTokens.saffronGlow.withOpacity(0.3),
+              color: PremiumTokens.saffronGlow.withValues(alpha: 0.3),
               blurRadius: 15,
               offset: const Offset(0, 8),
             ),
@@ -1149,15 +1149,15 @@ class _SacredNotification extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xF208081A), // Ultra-deep void glass
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: color.withOpacity(0.25), width: 1.2),
+        border: Border.all(color: color.withValues(alpha: 0.25), width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.15),
+            color: color.withValues(alpha: 0.15),
             blurRadius: 25,
             spreadRadius: -2,
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.6),
+            color: Colors.black.withValues(alpha: 0.6),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -1170,9 +1170,9 @@ class _SacredNotification extends StatelessWidget {
             width: 38,
             height: 38,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
-              border: Border.all(color: color.withOpacity(0.2), width: 1),
+              border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
             ),
             child: Center(
               child: icon != null 
@@ -1183,12 +1183,12 @@ class _SacredNotification extends StatelessWidget {
                       color: color,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      shadows: [Shadow(color: color.withOpacity(0.5), blurRadius: 8)],
+                      shadows: [Shadow(color: color.withValues(alpha: 0.5), blurRadius: 8)],
                     ),
                   ),
             ),
           ).animate(onPlay: (controller) => controller.repeat())
-           .shimmer(duration: 2.seconds, color: color.withOpacity(0.2)),
+           .shimmer(duration: 2.seconds, color: color.withValues(alpha: 0.2)),
           
           const SizedBox(width: 14),
           
@@ -1198,7 +1198,7 @@ class _SacredNotification extends StatelessWidget {
               style: PremiumTokens.sansStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: Colors.white.withOpacity(0.95),
+                color: Colors.white.withValues(alpha: 0.95),
                 letterSpacing: 0.2,
               ),
               maxLines: 2,
@@ -1249,8 +1249,8 @@ class _CrescentMoonPainter extends CustomPainter {
       ..shader = RadialGradient(
         colors: [
           Colors.white,
-          Colors.white.withOpacity(0.8),
-          Colors.white.withOpacity(0.1),
+          Colors.white.withValues(alpha: 0.8),
+          Colors.white.withValues(alpha: 0.1),
         ],
         stops: const [0.0, 0.5, 1.0],
       ).createShader(Rect.fromCircle(center: center, radius: radius))
@@ -1272,7 +1272,7 @@ class _CrescentMoonPainter extends CustomPainter {
     
     // Add a tiny glow to the tips
     final glowPaint = Paint()
-      ..color = Colors.white.withOpacity(0.3)
+      ..color = Colors.white.withValues(alpha: 0.3)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
     canvas.drawPath(crescentPath, glowPaint);
   }
@@ -1384,7 +1384,7 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal> wi
               boxShadow: [
                 BoxShadow(
                   color: (widget.isActive ? PremiumTokens.saffronGlow : PremiumTokens.nebulaBlue)
-                      .withOpacity(widget.isActive ? 0.3 : 0.25),
+                      .withValues(alpha: widget.isActive ? 0.3 : 0.25),
                   blurRadius: widget.isActive ? 30 : 25,
                   spreadRadius: widget.isActive ? 2 : 1,
                 ),
@@ -1398,15 +1398,15 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal> wi
             height: 58,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFF03030F).withOpacity(0.9), // Near-black void
+              color: const Color(0xFF03030F).withValues(alpha: 0.9), // Near-black void
               border: Border.all(
-                color: (widget.isActive ? PremiumTokens.saffronGlow : Colors.white).withOpacity(0.4),
+                color: (widget.isActive ? PremiumTokens.saffronGlow : Colors.white).withValues(alpha: 0.4),
                 width: 1.5,
               ),
               boxShadow: [
                 if (widget.isActive)
                   BoxShadow(
-                    color: PremiumTokens.saffronGlow.withOpacity(0.5),
+                    color: PremiumTokens.saffronGlow.withValues(alpha: 0.5),
                     blurRadius: 15,
                     spreadRadius: -2,
                   ),
@@ -1759,7 +1759,7 @@ class SacredActionMenuState extends State<SacredActionMenu> {
               tween: Tween(begin: 0, end: _isVisible ? 1 : 0),
               duration: const Duration(milliseconds: 300),
               builder: (context, value, child) => Container(
-                color: Colors.black.withOpacity(value * 0.7),
+                color: Colors.black.withValues(alpha: value * 0.7),
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: value * 5, sigmaY: value * 5),
                   child: Container(color: Colors.transparent),
@@ -1816,18 +1816,18 @@ class SacredActionMenuState extends State<SacredActionMenu> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: _hoveredIndex != -1 
-                      ? widget.items[_hoveredIndex].color.withOpacity(0.2)
-                      : Colors.white.withOpacity(0.1),
+                      ? widget.items[_hoveredIndex].color.withValues(alpha: 0.2)
+                      : Colors.white.withValues(alpha: 0.1),
                     border: Border.all(
                       color: _hoveredIndex != -1 
-                        ? widget.items[_hoveredIndex].color.withOpacity(0.6)
-                        : Colors.white.withOpacity(0.3),
+                        ? widget.items[_hoveredIndex].color.withValues(alpha: 0.6)
+                        : Colors.white.withValues(alpha: 0.3),
                       width: 2,
                     ),
                     boxShadow: [
                       if (_hoveredIndex != -1)
                         BoxShadow(
-                          color: widget.items[_hoveredIndex].color.withOpacity(0.4),
+                          color: widget.items[_hoveredIndex].color.withValues(alpha: 0.4),
                           blurRadius: 20,
                           spreadRadius: 5,
                         ),
@@ -1865,11 +1865,11 @@ class SacredActionMenuState extends State<SacredActionMenu> {
           height: isSelected ? 80 : 65,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isSelected ? item.color.withOpacity(0.9) : PremiumTokens.voidBlack.withOpacity(0.9),
-            border: Border.all(color: item.color.withOpacity(isSelected ? 0.8 : 0.4), width: isSelected ? 3 : 1.5),
+            color: isSelected ? item.color.withValues(alpha: 0.9) : PremiumTokens.voidBlack.withValues(alpha: 0.9),
+            border: Border.all(color: item.color.withValues(alpha: isSelected ? 0.8 : 0.4), width: isSelected ? 3 : 1.5),
             boxShadow: [
               BoxShadow(
-                color: item.color.withOpacity(isSelected ? 0.6 : 0.2),
+                color: item.color.withValues(alpha: isSelected ? 0.6 : 0.2),
                 blurRadius: isSelected ? 25 : 15,
                 spreadRadius: isSelected ? 5 : 2,
               ),
@@ -1894,7 +1894,7 @@ class SacredActionMenuState extends State<SacredActionMenu> {
               fontSize: isSelected ? 11 : 9,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.5,
-              color: isSelected ? Colors.white : Colors.white.withOpacity(0.8),
+              color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.8),
             ),
           ),
         ).animate(target: _isVisible ? 1 : 0).fadeIn(delay: 200.ms),

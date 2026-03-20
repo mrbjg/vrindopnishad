@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; // Ethereal Dashboard Base
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
@@ -11,12 +11,20 @@ import '../core/localization.dart';
 import '../core/content_provider.dart';
 import '../core/audio_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../core/stats_provider.dart';
+import '../core/auth_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final statsAsync = ref.watch(userStatsProvider);
+    final user = ref.watch(authStateProvider).value;
+    
+    final level = statsAsync.value?.level ?? 1;
+    final photoUrl = user?.photoURL;
+    
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
@@ -32,7 +40,7 @@ class HomeScreen extends ConsumerWidget {
                 collapsedHeight: 80,
                 pinned: true,
                 floating: false,
-                backgroundColor: PremiumTokens.voidBlack.withOpacity(0.95),
+                backgroundColor: PremiumTokens.voidBlack.withValues(alpha: 0.95),
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -55,16 +63,16 @@ class HomeScreen extends ConsumerWidget {
                           Container(
                             height: 12,
                             width: 1,
-                            color: Colors.white.withOpacity(0.1),
+                            color: Colors.white.withValues(alpha: 0.1),
                           ),
                           const SizedBox(width: 8),
                           Flexible(
                             child: Text(
-                              "ETHEREAL DASHBOARD",
+                              "ORBIT $level • ETHEREAL DASHBOARD",
                               style: GoogleFonts.inter(
                                 fontSize: 9,
-                                color: Colors.white70,
-                                fontWeight: FontWeight.w600,
+                                color: PremiumTokens.nebulaBlue,
+                                fontWeight: FontWeight.w900,
                                 letterSpacing: 1.5,
                               ),
                               maxLines: 1,
@@ -88,12 +96,14 @@ class HomeScreen extends ConsumerWidget {
                           height: 32,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.3)),
+                            border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
                           ),
-                          child: PremiumUI.networkImage(
-                            url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAkQJsMLqDCMwi1jqTeWSOOqq3Wz9ZIpqA9usLZAS95EcvHTBag2RoKJxY0vI0ignkQJ8N7UDe1CbmOARjpZ4djVMMi7DYNHPxPNoYSkcaHePL2qyHdLar7mUl0CW6gMbXv788itHF2vxM4sZWWsBBAQUG96RO8rYlrZNHgfYgQ6IfsKE6u5jOS_QRQe0dd2Fy-5dU6VL7ZLOg1jCrXoMsqJDXEiKCcCuT1CctHQ72_ivF3Rc94CqJae0t_M1fKLDyKMLPrbTHwr8I',
-                            borderRadius: BorderRadius.circular(15),
-                          ),
+                          child: photoUrl != null 
+                            ? PremiumUI.networkImage(
+                                url: photoUrl,
+                                borderRadius: BorderRadius.circular(15),
+                              )
+                            : Icon(Iconsax.user, color: PremiumTokens.nebulaBlue, size: 16),
                         ),
                       ],
                     ),
@@ -110,6 +120,10 @@ class HomeScreen extends ConsumerWidget {
               ),
 
               SliverToBoxAdapter(
+                child: _buildExpandPlayerButton(context, ref),
+              ),
+
+              SliverToBoxAdapter(
                 child: _buildPremiumNaamJap(context, ref),
               ),
 
@@ -118,14 +132,14 @@ class HomeScreen extends ConsumerWidget {
                   builder: (context, ref, _) {
                     final lang = ref.watch(languageProvider);
                     final l = AppLocalization(lang);
-                    return _buildCategoriesHeader(context, l);
+                    return _buildCategoriesHeader(context, l, ref);
                   },
                 ),
               ),
 
               SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                sliver: _buildCategoriesGrid(context),
+                sliver: _buildCategoriesGrid(context, ref),
               ),
 
               SliverToBoxAdapter(
@@ -154,11 +168,40 @@ class HomeScreen extends ConsumerWidget {
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: PremiumTokens.nebulaBlue.withOpacity(0.1),
+        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
         shape: BoxShape.circle,
-        border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.2)),
+        border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
       ),
       child: Icon(icon, color: PremiumTokens.nebulaBlue, size: 20),
+    );
+  }
+
+  Widget _buildExpandPlayerButton(BuildContext context, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.mediumImpact();
+        ref.read(navigationIndexProvider.notifier).state = 2;
+      },
+      child: PremiumUI.glassCard(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        borderRadius: 20,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Iconsax.music_play, color: Colors.white, size: 18),
+            const SizedBox(width: 12),
+            Text(
+              "EXPAND PLAYER",
+              style: PremiumTokens.sansStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 2,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -232,7 +275,7 @@ class HomeScreen extends ConsumerWidget {
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
                           colors: [
-                            PremiumTokens.nebulaBlue.withOpacity(0.1),
+                            PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
                             Colors.transparent,
                           ],
                         ),
@@ -246,8 +289,8 @@ class HomeScreen extends ConsumerWidget {
                     height: 110,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.03),
-                      border: Border.all(color: Colors.white.withOpacity(0.1)),
+                      color: Colors.white.withValues(alpha: 0.03),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black26,
@@ -279,39 +322,14 @@ class HomeScreen extends ConsumerWidget {
             
             const SizedBox(height: 24),
             
-            GestureDetector(
-              onTap: () {
-                HapticFeedback.mediumImpact();
-                ref.read(navigationIndexProvider.notifier).state = 2;
-              },
-              child: PremiumUI.glassCard(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                borderRadius: 20,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Iconsax.music_play, color: Colors.white, size: 18),
-                    const SizedBox(width: 12),
-                    Text(
-                      "EXPAND PLAYER",
-                      style: PremiumTokens.sansStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 2,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            // The original _buildExpandPlayerButton content was here. It's now moved to its own method.
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCategoriesHeader(BuildContext context, AppLocalization l) {
+  Widget _buildCategoriesHeader(BuildContext context, AppLocalization l, WidgetRef widgetRef) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       child: Row(
@@ -321,31 +339,37 @@ class HomeScreen extends ConsumerWidget {
             'Sacred Wisdom',
             style: GoogleFonts.manrope(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          Text(
-            'View All',
-            style: GoogleFonts.manrope(color: PremiumTokens.nebulaBlue, fontSize: 13, fontWeight: FontWeight.bold),
+          GestureDetector(
+            onTap: () {
+              HapticFeedback.lightImpact();
+              widgetRef.read(navigationIndexProvider.notifier).state = 1; // View all content in Library
+            },
+            child: Text(
+              'View All',
+              style: GoogleFonts.manrope(color: PremiumTokens.nebulaBlue, fontSize: 13, fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCategoriesGrid(BuildContext context) {
+  Widget _buildCategoriesGrid(BuildContext context, WidgetRef widgetRef) {
     final categories = [
       {
         'name': 'Shlokas',
         'count': '124 Verses',
-        'image': 'https://lh3.googleusercontent.com/aida-public/AB6AXuAEFZ1NeG5QqGTXKSJv1rV8rLDhQhlx1UHhyfelWZwIv73jJc27pWCgFEVnAWsEtoztQzjpYfB4Ta-gdVXO8nGW3TZv6gz2VVNiXQ0bAuPAU0A2EET6kwzroKFi6QyMx_iL6hT5-nJmaJG4g5yeUcs228Qz43Q7oWwJVkCXGRh71Rj96lkX3FqW2AKzNfIzMtF4NrnJwqilFitnulwwrvmJQl5WzvK75f9qBeesP1Y_X9MsagiJDCEJtxSHRCThUFQP20TqBpHXqug'
+        'image': 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80'
       },
       {
         'name': 'Mantras',
         'count': '48 Audio',
-        'image': 'https://lh3.googleusercontent.com/aida-public/AB6AXuBn4KXlGdM09V_vyL6FYniGawEBhjjVTHPtWkncMv7AsR6PnDmJx7em82khx96o3tU2b3i1Xv29wn9YRQoYyoZeajegx50mvb2FhsVMMSfaFhybyyp4s5nWVhvjM-Xy_QSV-yOBYDJ2x9MEKcOFTdGbZgUrn0UE6v0p2K2PQWyKunglhZdM8Zl3m2CwulCpccA2dLrSOn__UtnRnXD-8qj4bbhKvT8rR2TwLW9SujHlkdwDM9eRnU6XwEIsGvxdMY1xt3PWf0sISOE'
+        'image': 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80'
       },
       {
         'name': 'Stories',
         'count': '12 Series',
-        'image': 'https://lh3.googleusercontent.com/aida-public/AB6AXuD6E9OTyxnJhrda-g9daQdFXrAz4TJmD0Cewd-uAJHe99lzEGrtQBZP2OLvO0-zle7gi0JAFr95Tuwe2uWVQZenYjMMg2aZuepRChhSJhrehrkL8F20BMPRedP3DHsihlTPFzXTa-TuUVlfqdV5EB1ua7JyiQrF5wAlg7lPsHMoeptGeQ5PPyMp2W0dTyvoQ3AJ_GKnESg4LjlHvVxlQm2NA-rJFW5whrIw9unR7N2UVzqZuXGSWUcnIiHviA2FeNwKnx98C7l2Eds'
+        'image': 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?auto=format&fit=crop&w=400&q=80'
       },
     ];
 
@@ -362,7 +386,7 @@ class HomeScreen extends ConsumerWidget {
           return GestureDetector(
             onTap: () {
               HapticFeedback.lightImpact();
-              // Navigation or category logic
+              widgetRef.read(navigationIndexProvider.notifier).state = 1; // Navigate to Library
             },
             child: PremiumUI.saffronGlassCard(
               padding: EdgeInsets.zero,
@@ -382,7 +406,7 @@ class HomeScreen extends ConsumerWidget {
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
                         colors: [
-                          PremiumTokens.charcoal.withOpacity(0.9),
+                          PremiumTokens.charcoal.withValues(alpha: 0.9),
                           Colors.transparent,
                         ],
                       ),
@@ -493,14 +517,14 @@ class HomeScreen extends ConsumerWidget {
               },
               child: PremiumUI.voidCard(
                 padding: const EdgeInsets.all(16),
-                accentColor: PremiumTokens.nebulaBlue.withOpacity(0.3),
+                accentColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
                 child: Row(
                   children: [
                     Container(
                       width: 50,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: PremiumTokens.nebulaBlue.withOpacity(0.1),
+                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Center(child: Text('ॐ', style: TextStyle(color: PremiumTokens.nebulaBlue, fontSize: 24))),
@@ -544,7 +568,7 @@ class PremiumQuoteCard extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Stack(
         alignment: Alignment.center,
@@ -556,7 +580,7 @@ class PremiumQuoteCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24),
                 child: PremiumUI.networkImage(
-                  url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDactqYO6CbwQGgpXvjo0DgkESwH0VMyPzgUmW4lxWwigZrkL3hrpWO0GV55qftuaynG8hIGsNOSf0jyS_jbiyw5ICe60cRZF6CddbBypU9dsLavW8_kOkCYxHF7pTRhvL6Wfr2octpa0b_jMExeQV1Lotlx7iz8g0mW810-RDEKM5t2WNkYO8l4JdqMizl99LC83J63eCUMj940jv-a6uWL3suEKZHb5WQeBGmSzatYFzPn_F95l_tE6xxWZljmCNgJcSdqbypQVU',
+                  url: 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?auto=format&fit=crop&w=800&q=80',
                 ),
               ),
             ),
@@ -567,8 +591,8 @@ class PremiumQuoteCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(24),
               gradient: LinearGradient(
                 colors: [
-                  PremiumTokens.charcoal.withOpacity(0.9),
-                  PremiumTokens.surfaceCharcoal.withOpacity(0.7),
+                  PremiumTokens.charcoal.withValues(alpha: 0.9),
+                  PremiumTokens.surfaceCharcoal.withValues(alpha: 0.7),
                 ],
               ),
             ),

@@ -130,7 +130,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                     borderRadius: BorderRadius.circular(24),
                                   ),
                                   child: PremiumUI.networkImage(
-                                    url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBHu8Eu-IeZXmdDyP9CGIYZOUdk_ADEEcjbsJd_ERe8TJLT3bqNwsEF1qd2GIc52oBip9aRZZDzDNBprKDu5y207MDsU76yeRRf3XYO2ckGgQheqCBn0KAhdLascnDZP8F98XNQ9C3TmOV1CgjrJEjniTKhkeNACkVMntZbA8c5IqPYst5pK_IM2XxlgMHNS1UuBOjGAQ-Rf0Jthy4ZQeoOcjBE4OSo8F2lFNBeRiSW-BgFyqXmAUwhFtXOfZ7lGaH9CfX1J_YyFUg',
+                                    url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80',
                                     borderRadius: BorderRadius.circular(24),
                                   ),
                                 ),
@@ -142,7 +142,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                       begin: Alignment.bottomCenter,
                                       end: Alignment.topCenter,
                                       colors: [
-                                        PremiumTokens.charcoal.withOpacity(0.9),
+                                        PremiumTokens.charcoal.withValues(alpha: 0.9),
                                         Colors.transparent,
                                       ],
                                     ),
@@ -284,14 +284,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
-              color: isSelected ? PremiumTokens.saffronGlow : PremiumTokens.saffronGlow.withOpacity(0.05),
+              color: isSelected ? PremiumTokens.saffronGlow : PremiumTokens.saffronGlow.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(100),
               border: Border.all(
-                color: isSelected ? Colors.transparent : PremiumTokens.saffronGlow.withOpacity(0.1),
+                color: isSelected ? Colors.transparent : PremiumTokens.saffronGlow.withValues(alpha: 0.1),
               ),
               boxShadow: isSelected ? [
                 BoxShadow(
-                  color: PremiumTokens.saffronGlow.withOpacity(0.3),
+                  color: PremiumTokens.saffronGlow.withValues(alpha: 0.3),
                   blurRadius: 15,
                   spreadRadius: -2,
                 )
@@ -337,7 +337,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(14),
                 child: PremiumUI.networkImage(
-                  url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBYgYpRIViZa_gs2-nCpkN1icsC_3pKdUI9kLKymK91_Hm6B-jfE2Pe3E0-_ZbwyIhJ2fR284qfSjio3EB9NlauKKMN9rDWkm5XkNbYRNgOG18SbA22nyjAoz28MOPuLnLR-CKQv__Z_w8NTW9tn3PiV_USrXL7kOcOCAOTfPacSJscNJP6wY9Z8NdE0TPeJ9J5OHWc8xY6s0Jf2CmGkAWAb2D50TcF-X-eaRb9_yYjEvphxoNmVLQXbc11L34Myzi3Ziyz0C9vOoE',
+                  url: 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?auto=format&fit=crop&w=200&q=80',
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),
@@ -362,12 +362,12 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(Iconsax.music, size: 10, color: PremiumTokens.saffronGlow.withOpacity(0.5)),
+                      Icon(Iconsax.music, size: 10, color: PremiumTokens.saffronGlow.withValues(alpha: 0.5)),
                       SizedBox(width: 4),
                       Text(
                         item.category.toUpperCase(),
                         style: GoogleFonts.manrope(
-                          color: PremiumTokens.saffronGlow.withOpacity(0.7),
+                          color: PremiumTokens.saffronGlow.withValues(alpha: 0.7),
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 1,

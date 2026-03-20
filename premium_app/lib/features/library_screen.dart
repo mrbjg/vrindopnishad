@@ -107,7 +107,7 @@ class LibraryScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: PremiumTokens.surfaceCharcoal,
-                border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.3)),
+                border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
               ),
               child: ClipOval(
                 child: Image.network(
@@ -133,9 +133,9 @@ class LibraryScreen extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         decoration: BoxDecoration(
-          color: PremiumTokens.surfaceCharcoal.withOpacity(0.5),
+          color: PremiumTokens.surfaceCharcoal.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.2)),
+          border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
         ),
         child: TextField(
           onChanged: (value) {
@@ -252,7 +252,7 @@ class LibraryScreen extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: PremiumTokens.surfaceCharcoal,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.1)),
+                  border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1)),
                 ),
                 child: Center(
                   child: item.imageUrl != null 
@@ -301,7 +301,7 @@ class LibraryScreen extends ConsumerWidget {
                 height: 36,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.3)),
+                  border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
                 ),
                 child: const Icon(Icons.play_arrow, color: PremiumTokens.nebulaBlue, size: 20),
               ),

@@ -71,8 +71,8 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        widget.gradientColors[0].withOpacity(0.3),
-                        widget.gradientColors[1].withOpacity(0.1),
+                        widget.gradientColors[0].withValues(alpha: 0.3),
+                        widget.gradientColors[1].withValues(alpha: 0.1),
                         Colors.transparent,
                       ],
                     ),
@@ -135,7 +135,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.05),
+                              color: Colors.white.withValues(alpha: 0.05),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(color: Colors.white10),
                             ),
@@ -236,7 +236,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
               ),
             ),
             const SizedBox(width: 8),
-            Icon(Iconsax.arrow_right_3, color: widget.gradientColors[0].withOpacity(0.5), size: 18),
+            Icon(Iconsax.arrow_right_3, color: widget.gradientColors[0].withValues(alpha: 0.5), size: 18),
           ],
         ),
       ),

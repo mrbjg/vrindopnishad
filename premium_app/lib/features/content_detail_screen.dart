@@ -127,7 +127,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               SliverToBoxAdapter(
                 child: PremiumUI.focusContainer(
                   isFocusMode: isFocusMode,
-                  child: _buildPremiumHero(displayTitle, displayCategory),
+                  child: _buildPremiumHero(displayTitle, displayCategory, l),
                 ),
               ),
 
@@ -139,7 +139,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     _buildPremiumSanskritCard(l, isFocusMode),
                     
                     const SizedBox(height: 32),
-                    PremiumUI.sacredDivider(color: Colors.white.withOpacity(isFocusMode ? 0.3 : 0.05)),
+                    PremiumUI.sacredDivider(color: Colors.white.withValues(alpha: isFocusMode ? 0.3 : 0.05)),
                     const SizedBox(height: 32),
 
                     // Meaning Sections - Hidden/Simplified in Focus Mode
@@ -222,7 +222,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  Widget _buildPremiumHero(String title, String category) {
+  Widget _buildPremiumHero(String title, String category, AppLocalization l) {
+    // Try to localize category if it matches a key
+    final localizedCategory = l.translate(category.toLowerCase());
+    final displayCategory = localizedCategory != category.toLowerCase() ? localizedCategory : category;
+    final isHindi = RegExp(r'[\u0900-\u097F]').hasMatch(displayCategory);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -230,17 +235,17 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: PremiumTokens.saffronGlow.withOpacity(0.1),
+              color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: PremiumTokens.saffronGlow.withOpacity(0.2)),
+              border: Border.all(color: PremiumTokens.saffronGlow.withValues(alpha: 0.2)),
             ),
             child: Text(
-              category.toUpperCase(),
-              style: GoogleFonts.outfit(
+              displayCategory.toUpperCase(),
+              style: GoogleFonts.manrope( // Switch to Manrope for safer script handling
                 color: PremiumTokens.saffronGlow,
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.5,
+                fontSize: 10,
+                fontWeight: FontWeight.w900,
+                letterSpacing: isHindi ? 0.5 : 2.0, // Reduced for Hindi
               ),
             ),
           ),
@@ -274,12 +279,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         ),
         decoration: BoxDecoration(
           color: (_showCompactHeader && !isFocusMode) 
-            ? const Color(0xFF03030F).withOpacity(0.85) 
+            ? const Color(0xFF03030F).withValues(alpha: 0.85) 
             : Colors.transparent,
           border: Border(
             bottom: BorderSide(
               color: (_showCompactHeader && !isFocusMode) 
-                ? Colors.white.withOpacity(0.1) 
+                ? Colors.white.withValues(alpha: 0.1) 
                 : Colors.transparent,
               width: 1,
             ),
@@ -404,15 +409,15 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         curve: Curves.easeInOut,
         padding: EdgeInsets.all(isFocusMode ? 32 : 28),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(isFocusMode ? 0.04 : 0.08),
+          color: Colors.white.withValues(alpha: isFocusMode ? 0.04 : 0.08),
           borderRadius: BorderRadius.circular(32),
           border: Border.all(
-            color: Colors.white.withOpacity(isFocusMode ? 0.1 : 0.05),
+            color: Colors.white.withValues(alpha: isFocusMode ? 0.1 : 0.05),
             width: 0.5,
           ),
           boxShadow: isFocusMode ? [
             BoxShadow(
-              color: PremiumTokens.saffronGlow.withOpacity(0.1),
+              color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
               blurRadius: 40,
               spreadRadius: 10,
             )
@@ -422,26 +427,31 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           children: [
             PremiumUI.focusContainer(
               isFocusMode: isFocusMode,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: PremiumTokens.saffronGlow.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      "MANTRA / SLOKA",
-                      style: GoogleFonts.outfit(
-                        color: PremiumTokens.saffronGlow, 
-                        fontSize: 10, 
-                        fontWeight: FontWeight.w900, 
-                        letterSpacing: 3,
+              child: Builder(
+                builder: (context) {
+                  final isHindiLabel = RegExp(r'[\u0900-\u097F]').hasMatch(l.translate('mantra_sloka_label'));
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          l.translate('mantra_sloka_label').toUpperCase(),
+                          style: GoogleFonts.manrope(
+                            color: PremiumTokens.saffronGlow, 
+                            fontSize: 10, 
+                            fontWeight: FontWeight.w900, 
+                            letterSpacing: isHindiLabel ? 0.5 : 2.5,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ],
+                    ],
+                  );
+                },
               ),
             ),
             if (!isFocusMode) const SizedBox(height: 24),
@@ -450,13 +460,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               textAlign: TextAlign.center,
               style: PremiumTokens.lailaStyle(
                 fontSize: _fontSize + (isFocusMode ? 10 : 6),
-                color: Colors.white.withOpacity(0.95),
+                color: Colors.white.withValues(alpha: 0.95),
                 fontWeight: FontWeight.bold,
               ).copyWith(
                 height: 1.6,
                 shadows: [
                   Shadow(
-                    color: PremiumTokens.saffronGlow.withOpacity(0.3),
+                    color: PremiumTokens.saffronGlow.withValues(alpha: 0.3),
                     blurRadius: 15,
                   ),
                 ],
@@ -487,27 +497,32 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           children: [
             PremiumUI.focusContainer(
               isFocusMode: isFocusMode,
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: accentColor.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(icon, color: accentColor, size: 14),
-                  ),
-                  const SizedBox(width: 14),
-                  Text(
-                    title.toUpperCase(),
-                    style: GoogleFonts.outfit(
-                      color: accentColor, 
-                      fontSize: 11, 
-                      fontWeight: FontWeight.w900, 
-                      letterSpacing: 2,
-                    ),
-                  ),
-                ],
+              child: Builder(
+                builder: (context) {
+                  final isHindi = RegExp(r'[\u0900-\u097F]').hasMatch(title);
+                  return Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: accentColor.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(icon, color: accentColor, size: 14),
+                      ),
+                      const SizedBox(width: 14),
+                      Text(
+                        title.toUpperCase(),
+                        style: GoogleFonts.manrope(
+                          color: accentColor,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: isHindi ? 0.5 : 2.0,
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
             if (!isFocusMode) const SizedBox(height: 20),
@@ -515,7 +530,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               content,
               style: PremiumTokens.lailaStyle(
                 fontSize: isFocusMode ? _fontSize + 3 : _fontSize,
-                color: Colors.white.withOpacity(isFocusMode ? 0.95 : 0.85),
+                color: Colors.white.withValues(alpha: isFocusMode ? 0.95 : 0.85),
                 fontWeight: FontWeight.normal,
               ).copyWith(
                 height: 1.8,
@@ -580,7 +595,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           decoration: BoxDecoration(
             gradient: PremiumTokens.saffronPremiumGradient,
             shape: BoxShape.circle,
-            boxShadow: [BoxShadow(color: PremiumTokens.saffronGlow.withOpacity(0.3), blurRadius: 20)],
+            boxShadow: [BoxShadow(color: PremiumTokens.saffronGlow.withValues(alpha: 0.3), blurRadius: 20)],
           ),
           child: Icon(Iconsax.music, color: Colors.white, size: 24),
         ),
@@ -613,7 +628,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: PremiumTokens.saffronGlow.withOpacity(0.1),
+                          color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: isLoading 
@@ -632,7 +647,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             Text(
                               isLoading ? "PREPARING DIVINE VIBRATIONS..." : "DIVINE RECITATION",
                               style: GoogleFonts.outfit(
-                                color: Colors.white.withOpacity(0.5),
+                                color: Colors.white.withValues(alpha: 0.5),
                                 fontWeight: FontWeight.w900,
                                 fontSize: 9,
                                 letterSpacing: 2,
@@ -671,7 +686,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         icon: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.05),
+                            color: Colors.white.withValues(alpha: 0.05),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(Iconsax.maximize_4, color: Colors.white, size: 16),
@@ -682,7 +697,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         icon: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.05),
+                            color: Colors.white.withValues(alpha: 0.05),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(Iconsax.arrow_down_1, color: Colors.white, size: 16),
@@ -723,7 +738,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         gradient: PremiumTokens.saffronPremiumGradient,
                         boxShadow: [
                           BoxShadow(
-                            color: PremiumTokens.saffronGlow.withOpacity(0.3),
+                            color: PremiumTokens.saffronGlow.withValues(alpha: 0.3),
                             blurRadius: 20,
                             spreadRadius: -2,
                           ),
@@ -762,9 +777,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withOpacity(0.1)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         ),
         child: Icon(icon, color: Colors.white70, size: iconSize),
       ),
@@ -782,9 +797,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
         overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
         activeTrackColor: PremiumTokens.saffronGlow,
-        inactiveTrackColor: Colors.white.withOpacity(0.1),
+        inactiveTrackColor: Colors.white.withValues(alpha: 0.1),
         thumbColor: Colors.white,
-        overlayColor: PremiumTokens.saffronGlow.withOpacity(0.2),
+        overlayColor: PremiumTokens.saffronGlow.withValues(alpha: 0.2),
       ),
       child: Slider(
         value: progress.clamp(0.0, 1.0),

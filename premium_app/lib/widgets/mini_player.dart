@@ -51,10 +51,10 @@ class MiniPlayer extends ConsumerWidget {
                 filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.04),
+                    color: Colors.white.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.08),
+                      color: Colors.white.withValues(alpha: 0.08),
                       width: 0.5,
                     ),
                   ),
@@ -68,8 +68,8 @@ class MiniPlayer extends ConsumerWidget {
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                accentColor.withOpacity(0.0),
-                                accentColor.withOpacity(0.15),
+                                accentColor.withValues(alpha: 0.0),
+                                accentColor.withValues(alpha: 0.15),
                               ],
                             ),
                           ),
@@ -103,7 +103,7 @@ class MiniPlayer extends ConsumerWidget {
                                   Text(
                                     audioState.isLoading ? "Tuning Ethereal Frequencies..." : content.category.toUpperCase(),
                                     style: GoogleFonts.manrope(
-                                      color: audioState.isLoading ? PremiumTokens.saffronGlow : accentColor.withOpacity(0.6),
+                                      color: audioState.isLoading ? PremiumTokens.saffronGlow : accentColor.withValues(alpha: 0.6),
                                       fontSize: 9,
                                       fontWeight: FontWeight.w900,
                                       letterSpacing: 1.2,
@@ -114,7 +114,7 @@ class MiniPlayer extends ConsumerWidget {
                             ),
                             
                             IconButton(
-                              icon: Icon(Iconsax.backward_10_seconds, color: Colors.white.withOpacity(0.4), size: 18),
+                              icon: Icon(Iconsax.backward_10_seconds, color: Colors.white.withValues(alpha: 0.4), size: 18),
                               onPressed: () {
                                 HapticFeedback.lightImpact();
                                 ref.read(audioProvider.notifier).skipBackward();
@@ -153,7 +153,7 @@ class MiniPlayer extends ConsumerWidget {
                         child: Container(
                           height: 2,
                           width: double.infinity,
-                          color: Colors.white.withOpacity(0.05),
+                          color: Colors.white.withValues(alpha: 0.05),
                           child: FractionallySizedBox(
                             alignment: Alignment.centerLeft,
                             widthFactor: progress.clamp(0.0, 1.0),
@@ -178,10 +178,10 @@ class MiniPlayer extends ConsumerWidget {
       height: 48,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: accentColor.withOpacity(0.1),
-        border: Border.all(color: accentColor.withOpacity(0.2), width: 1),
+        color: accentColor.withValues(alpha: 0.1),
+        border: Border.all(color: accentColor.withValues(alpha: 0.2), width: 1),
         boxShadow: isLoading ? [
-          BoxShadow(color: accentColor.withOpacity(0.2), blurRadius: 10, spreadRadius: 2)
+          BoxShadow(color: accentColor.withValues(alpha: 0.2), blurRadius: 10, spreadRadius: 2)
         ] : [],
       ),
       child: Center(
@@ -199,7 +199,7 @@ class MiniPlayer extends ConsumerWidget {
     )
     .shimmer(
       duration: 2.seconds,
-      color: Colors.white.withOpacity(0.1),
+      color: Colors.white.withValues(alpha: 0.1),
     )
     .custom(
       builder: (context, value, child) {

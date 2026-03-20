@@ -32,6 +32,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     super.build(context);
     final authState = ref.watch(authStateProvider);
     final user = authState.value;
+    final statsAsync = ref.watch(userStatsProvider);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -84,7 +85,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Level 42 Seeker",
+                                    "Level ${statsAsync.value?.level ?? 1} Seeker",
                                     style: PremiumTokens.sansStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -92,7 +93,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                                     ),
                                   ),
                                   Text(
-                                    "Evolving Silver-Indigo Aura",
+                                    "${(statsAsync.value?.experiencePoints ?? 0) % 100} / 100 XP to next Orbit",
                                     style: PremiumTokens.sansStyle(
                                       fontSize: 12,
                                       color: Colors.white38,
@@ -224,7 +225,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
         leading: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: customIconFile != null
@@ -398,7 +399,7 @@ class _PremiumProfileHeader extends ConsumerWidget {
         Text(
           label.toUpperCase(),
           style: GoogleFonts.manrope(
-            color: color.withOpacity(0.7),
+            color: color.withValues(alpha: 0.7),
             fontSize: 10,
             fontWeight: FontWeight.bold,
             letterSpacing: 1,

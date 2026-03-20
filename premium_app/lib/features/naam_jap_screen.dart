@@ -130,7 +130,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      PremiumTokens.nebulaBlue.withOpacity(0.15),
+                      PremiumTokens.nebulaBlue.withValues(alpha: 0.15),
                       Colors.transparent,
                     ],
                   ),
@@ -144,8 +144,8 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
               height: 200,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.03),
-                border: Border.all(color: Colors.white.withOpacity(0.08)),
+                color: Colors.white.withValues(alpha: 0.03),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
               ),
               child: Center(
                 child: Animate(
@@ -160,7 +160,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                       fontWeight: FontWeight.w300,
                       color: Colors.white,
                       shadows: [
-                        Shadow(color: PremiumTokens.nebulaBlue.withOpacity(0.5), blurRadius: 20),
+                        Shadow(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.5), blurRadius: 20),
                       ],
                     ),
                   ),
@@ -201,7 +201,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                 gradient: PremiumTokens.nebulaGradient,
                 boxShadow: [
                   BoxShadow(
-                    color: PremiumTokens.nebulaBlue.withOpacity(0.3),
+                    color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
                     blurRadius: 30,
                     spreadRadius: 2,
                   ),

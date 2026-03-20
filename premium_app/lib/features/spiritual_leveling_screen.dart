@@ -1,14 +1,22 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; // Sanctuary UI Base
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../core/design_system.dart';
+import '../core/auth_provider.dart';
+import '../core/stats_provider.dart';
 
 class SpiritualLevelingScreen extends ConsumerWidget {
   const SpiritualLevelingScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(authStateProvider).value;
+    final statsAsync = ref.watch(userStatsProvider);
+    final level = statsAsync.value?.level ?? 1;
+    final xp = statsAsync.value?.experiencePoints ?? 0;
+
     return Scaffold(
       backgroundColor: PremiumTokens.charcoal,
       body: Stack(
@@ -21,8 +29,8 @@ class SpiritualLevelingScreen extends ConsumerWidget {
                   center: Alignment.center,
                   radius: 1.2,
                   colors: [
-                    PremiumTokens.nebulaBlue.withOpacity(0.2), // primary aura
-                    PremiumTokens.celestialGlow.withOpacity(0.1), // celestial aura
+                    PremiumTokens.nebulaBlue.withValues(alpha: 0.2), // primary aura
+                    PremiumTokens.celestialGlow.withValues(alpha: 0.1), // celestial aura
                     Colors.transparent,
                   ],
                 ),
@@ -45,7 +53,7 @@ class SpiritualLevelingScreen extends ConsumerWidget {
             physics: const BouncingScrollPhysics(),
             slivers: [
               _buildHeader(context),
-              SliverToBoxAdapter(child: _buildAuraDisplay()),
+              SliverToBoxAdapter(child: _buildAuraDisplay(user, level)),
               SliverToBoxAdapter(child: _buildSoulBadges()),
               SliverToBoxAdapter(child: _buildSacredInsights()),
               SliverToBoxAdapter(child: _buildResonancePath()),
@@ -80,7 +88,7 @@ class SpiritualLevelingScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAuraDisplay() {
+  Widget _buildAuraDisplay(User? user, int level) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 40),
       child: Column(
@@ -110,7 +118,7 @@ class SpiritualLevelingScreen extends ConsumerWidget {
                     shape: BoxShape.circle,
                     color: PremiumTokens.charcoal,
                     image: DecorationImage(
-                      image: CachedNetworkImageProvider("https://lh3.googleusercontent.com/aida-public/AB6AXuBWTzLudhMZk2fgMX3OarbSyNvs7vHKhl-A8YGPtySIGOQFhgghoJI2VnyRmu6xNqZU-MxMht92mtqYOsXnb4tUa7PCSEDIUpkF_BvgH3A3Qbs5imOBFJSNd486A7_yhhQ5WNqHLrN2MBOLB4tiT5VSEbQlcp2kPQ8RZcabyayRNmsPzE2Y_KnW8Z2W9-eZyMWAtapcderOpikCaeylT7UjIiHDW1DFCDJBbolD6nb55DXtXsqCl70965wpvTsEDTTPqhjfrxh31Ts"),
+                      image: NetworkImage(user?.photoURL ?? 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -127,9 +135,9 @@ class SpiritualLevelingScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: PremiumTokens.nebulaBlue.withOpacity(0.3),
+              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(100),
-              border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.4)),
+              border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.4)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -137,7 +145,7 @@ class SpiritualLevelingScreen extends ConsumerWidget {
                 const Icon(Icons.auto_awesome, color: PremiumTokens.nebulaBlue, size: 16),
                 const SizedBox(width: 8),
                 Text(
-                  "AURA LEVEL 42",
+                  "AURA LEVEL $level",
                   style: PremiumTokens.sansStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
@@ -242,12 +250,12 @@ class SpiritualLevelingScreen extends ConsumerWidget {
             crossAxisCount: 2,
             crossAxisSpacing: 16,
             mainAxisSpacing: 16,
-            childAspectRatio: 1.3,
+            childAspectRatio: 1.1, // Increased height for children
             children: [
-              _buildInsightCard(Iconsax.timer, "1,240", "Stillness Minutes"),
-              _buildInsightCard(Iconsax.hierarchy, "84", "Sangat Contributions"),
-              _buildInsightCard(Iconsax.book, "312", "Journal Reflections"),
-              _buildInsightCard(Iconsax.heart, "1.2k", "Divine Resonance"),
+              _buildInsightCard(Iconsax.timer, "1,240", "Stillness"),
+              _buildInsightCard(Iconsax.hierarchy, "84", "Sangat"),
+              _buildInsightCard(Iconsax.book, "312", "Reflections"),
+              _buildInsightCard(Iconsax.heart, "1.2k", "Resonance"),
             ],
           ),
         ],
@@ -257,22 +265,22 @@ class SpiritualLevelingScreen extends ConsumerWidget {
 
   Widget _buildInsightCard(IconData icon, String value, String label) {
     return PremiumUI.glassCard(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       borderRadius: 24,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: PremiumTokens.nebulaBlue, size: 32),
-          const Spacer(),
+          Icon(icon, color: PremiumTokens.nebulaBlue, size: 24),
+          const SizedBox(height: 8),
           Text(
             value,
-            style: PremiumTokens.sansStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            style: PremiumTokens.sansStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
           Text(
             label.toUpperCase(),
             style: PremiumTokens.sansStyle(
-              fontSize: 10,
+              fontSize: 9,
               color: Colors.white38,
               fontWeight: FontWeight.bold,
               letterSpacing: 1,
@@ -352,7 +360,7 @@ class SpiritualLevelingScreen extends ConsumerWidget {
         child: Container(
           height: 100 * heightFactor,
           decoration: BoxDecoration(
-            color: PremiumTokens.nebulaBlue.withOpacity(isHighlighted ? 0.7 : 0.3),
+            color: PremiumTokens.nebulaBlue.withValues(alpha: isHighlighted ? 0.7 : 0.3),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
             border: isHighlighted ? Border.all(color: PremiumTokens.nebulaBlue, width: 1.5) : null,
           ),
