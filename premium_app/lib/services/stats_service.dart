@@ -141,4 +141,16 @@ class StatsService {
       return 0;
     }
   }
+
+  /// Clear user's reading history
+  Future<void> clearReadingHistory(String uid) async {
+    try {
+      await _supabase
+          .from('reading_history')
+          .delete()
+          .eq('firebase_uid', uid);
+    } catch (e) {
+      debugPrint('Error clearing history: $e');
+    }
+  }
 }

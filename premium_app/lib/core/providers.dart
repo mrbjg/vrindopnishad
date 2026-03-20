@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'stats_provider.dart';
+import 'cache_service.dart';
+import 'localization.dart';
 
 final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
 
@@ -117,6 +120,35 @@ final hasSeenOnboardingProvider =
 final navigationIndexProvider = StateProvider<int>((ref) => 0);
 
 final libraryCategoryProvider = StateProvider<String>((ref) => "ALL");
+
+final recentSearchesProvider = AsyncNotifierProvider<RecentSearchesNotifier, List<String>>(() {
+  return RecentSearchesNotifier();
+});
+
+class RecentSearchesNotifier extends AsyncNotifier<List<String>> {
+  static const _key = 'recent_sacred_searches';
+
+  @override
+  Future<List<String>> build() async {
+    final cache = CacheService.instance;
+    final data = await cache.get(_key);
+    if (data == null) return [];
+    return List<String>.from(jsonDecode(data));
+  }
+
+  Future<void> addSearch(String query) async {
+    if (query.isEmpty) return;
+    final current = state.value ?? [];
+    final updated = [query, ...current.where((q) => q != query)].take(5).toList();
+    state = AsyncValue.data(updated);
+    await CacheService.instance.set(_key, jsonEncode(updated));
+  }
+
+  Future<void> clear() async {
+    state = const AsyncValue.data([]);
+    await CacheService.instance.set(_key, jsonEncode([]));
+  }
+}
 
 /// Global Focus Mode provider for immersive spiritual experience
 final focusModeProvider = StateProvider<bool>((ref) => false);

@@ -325,8 +325,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 ref.read(focusModeProvider.notifier).state = !isFocusMode;
               },
               isActive: isFocusMode,
-              isToggled: false,
+              isToggled: isFocusMode,
               isAnimated: true,
+              resetAfterPlay: false,
               animFolder: 'Visibility V2',
               animFile: 'visibilityV2.json',
             ),
@@ -340,6 +341,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     _toggleFavorite,
                     isToggled: widget.content != null && ref.watch(isFavoriteProvider(widget.content!.id)),
                     isAnimated: true,
+                    resetAfterPlay: false,
                     animFolder: 'Heart',
                     animFile: 'heart.json',
                   ),
@@ -369,6 +371,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     String? animFile,
     bool isCustomSvg = false,
     String? svgFile,
+    bool resetAfterPlay = true,
   }) {
     return PremiumUI.glassCard(
       padding: const EdgeInsets.all(10),
@@ -380,6 +383,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             size: 20, 
             color: (isActive || isToggled) ? PremiumTokens.saffronGlow : Colors.white,
             isToggled: isToggled,
+            resetAfterPlay: resetAfterPlay,
             onTap: () {
               HapticFeedback.lightImpact();
               onTap();

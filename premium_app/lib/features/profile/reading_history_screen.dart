@@ -5,6 +5,8 @@ import '../../core/design_system.dart';
 import '../../core/stats_provider.dart';
 import '../../models/user_stats.dart';
 import '../content_detail_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../core/auth_provider.dart';
 
 class ReadingHistoryScreen extends ConsumerWidget {
   const ReadingHistoryScreen({super.key});
@@ -31,7 +33,14 @@ class ReadingHistoryScreen extends ConsumerWidget {
             physics: const BouncingScrollPhysics(),
             slivers: [
               SliverAppBar(
-                title: const Text("Reading History"),
+                title: Text(
+                  "JOURNEY HISTORY",
+                  style: GoogleFonts.spectral(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2,
+                    fontSize: 16,
+                  ),
+                ),
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 pinned: true,
@@ -41,9 +50,22 @@ class ReadingHistoryScreen extends ConsumerWidget {
                   onPressed: () => Navigator.pop(context),
                 ),
                 actions: [
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text("Clear All", style: TextStyle(color: Colors.redAccent)),
+                  historyAsync.when(
+                    data: (items) => items.isNotEmpty 
+                      ? TextButton(
+                          onPressed: () => _showClearConfirmation(context, ref),
+                          child: Text(
+                            "Clear", 
+                            style: GoogleFonts.manrope(
+                              color: Colors.redAccent, 
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, __) => const SizedBox.shrink(),
                   ),
                 ],
               ),
@@ -51,7 +73,7 @@ class ReadingHistoryScreen extends ConsumerWidget {
                 data: (historyItems) {
                   if (historyItems.isEmpty) return SliverFillRemaining(child: _buildEmptyState(context));
                   return SliverPadding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                     sliver: SliverList(
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
@@ -72,7 +94,7 @@ class ReadingHistoryScreen extends ConsumerWidget {
                                 ),
                                 title: Text(
                                   item.title ?? "Unknown Sacred Text",
-                                  style: PremiumTokens.displayStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                  style: PremiumTokens.displayStyle(fontSize: 15, fontWeight: FontWeight.bold),
                                 ),
                                 subtitle: Text(
                                   "${item.category ?? 'Divine'} • ${_formatTime(item.readAt)}",
@@ -103,6 +125,48 @@ class ReadingHistoryScreen extends ConsumerWidget {
                 error: (e, __) => SliverFillRemaining(child: Center(child: Text("Error: $e"))),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showClearConfirmation(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A2E),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: const BorderSide(color: Colors.white10),
+        ),
+        title: Text(
+          "Clear History?",
+          style: GoogleFonts.spectral(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          "This will remove all your recorded reading sessions. This action cannot be undone.",
+          style: GoogleFonts.manrope(color: Colors.white70, fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text("Keep History"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent.withValues(alpha: 0.8),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            onPressed: () async {
+              Navigator.pop(ctx);
+              final user = ref.read(authServiceProvider).currentUser;
+              if (user != null) {
+                await ref.read(statsServiceProvider).clearReadingHistory(user.uid);
+                ref.invalidate(readingHistoryProvider);
+              }
+            },
+            child: const Text("Clear All", style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

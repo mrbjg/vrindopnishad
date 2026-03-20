@@ -13,6 +13,7 @@ import '../core/audio_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../core/stats_provider.dart';
 import '../core/auth_provider.dart';
+import 'search_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -87,8 +88,19 @@ class HomeScreen extends ConsumerWidget {
                         GestureDetector(
                           onTap: () {
                             HapticFeedback.lightImpact();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => SearchScreen()),
+                            );
                           },
-                          child: Icon(Iconsax.notification, color: PremiumTokens.nebulaBlue, size: 24),
+                          child: Icon(Iconsax.search_normal, color: PremiumTokens.nebulaBlue, size: 22),
+                        ),
+                        const SizedBox(width: 16),
+                        GestureDetector(
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                          },
+                          child: Icon(Iconsax.notification, color: PremiumTokens.nebulaBlue, size: 22),
                         ),
                         const SizedBox(width: 16),
                         Container(

@@ -6,7 +6,9 @@ import '../core/content_provider.dart';
 import '../core/providers.dart';
 import '../core/auth_provider.dart';
 import 'content_detail_screen.dart';
+import 'search_screen.dart';
 import 'package:flutter/services.dart';
+import '../core/favorites_provider.dart';
 
 class LibraryScreen extends ConsumerWidget {
   const LibraryScreen({super.key});
@@ -25,7 +27,7 @@ class LibraryScreen extends ConsumerWidget {
               physics: const BouncingScrollPhysics(),
               slivers: [
                 SliverToBoxAdapter(child: _buildHeader()),
-                SliverToBoxAdapter(child: _buildSearchBar(ref)),
+                SliverToBoxAdapter(child: _buildSearchBar(context, ref)),
                 SliverToBoxAdapter(child: _buildNowPlaying()),
                 Consumer(
                   builder: (context, ref, child) {
@@ -46,7 +48,7 @@ class LibraryScreen extends ConsumerWidget {
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
-                            return _buildLibraryItem(context, items[index]);
+                            return _buildLibraryItem(context, ref, items[index]);
                           },
                           childCount: items.length,
                         ),
@@ -132,28 +134,34 @@ class LibraryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSearchBar(WidgetRef ref) {
+  Widget _buildSearchBar(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        decoration: BoxDecoration(
-          color: PremiumTokens.surfaceCharcoal.withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
-        ),
-        child: TextField(
-          onChanged: (value) {
-            // Future: Implement debounced search here
-            ref.read(libraryCategoryProvider.notifier).state = value.isEmpty ? "ALL" : "SEARCH:$value";
-          },
-          decoration: InputDecoration(
-            hintText: "Search sacred mantras...",
-            hintStyle: PremiumTokens.sansStyle(color: Colors.white24),
-            border: InputBorder.none,
-            icon: Icon(Iconsax.search_normal, color: PremiumTokens.nebulaBlue, size: 20),
+      child: GestureDetector(
+        onTap: () {
+          HapticFeedback.lightImpact();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => SearchScreen()),
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: PremiumTokens.surfaceCharcoal.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
           ),
-          style: PremiumTokens.sansStyle(),
+          child: Row(
+            children: [
+              Icon(Iconsax.search_normal, color: PremiumTokens.nebulaBlue, size: 20),
+              const SizedBox(width: 12),
+              Text(
+                "Search sacred mantras...",
+                style: PremiumTokens.sansStyle(color: Colors.white24, fontSize: 14),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -232,7 +240,7 @@ class LibraryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildLibraryItem(BuildContext context, SacredContent item) {
+  Widget _buildLibraryItem(BuildContext context, WidgetRef ref, SacredContent item) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: GestureDetector(
@@ -280,7 +288,7 @@ class LibraryScreen extends ConsumerWidget {
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 12),
                     Row(
                       children: [
                         const Icon(Icons.schedule, color: Colors.white24, size: 12),
@@ -301,6 +309,20 @@ class LibraryScreen extends ConsumerWidget {
                   ],
                 ),
               ),
+              // Like Button
+              PremiumUI.animatedIcon(
+                folder: 'Heart',
+                fileName: 'heart.json',
+                size: 20,
+                color: ref.watch(isFavoriteProvider(item.id)) ? PremiumTokens.saffronGlow : Colors.white24,
+                isToggled: ref.watch(isFavoriteProvider(item.id)),
+                resetAfterPlay: false,
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  ref.read(favoritesProvider.notifier).toggleFavorite(item.id);
+                },
+              ),
+              const SizedBox(width: 16),
               Container(
                 width: 36,
                 height: 36,

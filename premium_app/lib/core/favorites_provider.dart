@@ -81,38 +81,42 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
 
   /// Add a content item to favorites
   Future<void> addFavorite(String contentId) async {
-    if (_currentUser == null) return;
-
-    // Optimistic update
+    // Always update local state for immediate feedback and guest support
     state = {...state, contentId};
     await _saveToLocal();
 
-    try {
-      await _supabase.from('favorites').insert({
-        'user_id': _currentUser!.id,
-        'content_id': contentId,
-      });
-    } catch (e) {
+    // Sync with Supabase only if authenticated
+    if (_currentUser != null) {
+      try {
+        await _supabase.from('favorites').insert({
+          'user_id': _currentUser!.id,
+          'content_id': contentId,
+        });
+      } catch (e) {
+        // Log error but keep local state
+      }
     }
   }
 
   /// Remove a content item from favorites
   Future<void> removeFavorite(String contentId) async {
-    if (_currentUser == null) return;
-
-    // Optimistic update
+    // Always update local state
     final newState = {...state};
     newState.remove(contentId);
     state = newState;
     await _saveToLocal();
 
-    try {
-      await _supabase
-          .from('favorites')
-          .delete()
-          .eq('user_id', _currentUser!.id)
-          .eq('content_id', contentId);
-    } catch (e) {
+    // Sync with Supabase only if authenticated
+    if (_currentUser != null) {
+      try {
+        await _supabase
+            .from('favorites')
+            .delete()
+            .eq('user_id', _currentUser!.id)
+            .eq('content_id', contentId);
+      } catch (e) {
+        // Log error
+      }
     }
   }
 

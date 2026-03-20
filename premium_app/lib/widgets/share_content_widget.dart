@@ -1,4 +1,5 @@
-import 'dart:io';
+import 'dart:io' show File;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../core/content_provider.dart';
@@ -211,19 +212,27 @@ class ShareContentHelper {
       //   throw Exception('Failed to capture image');
       // }
 
-      // Save to temp file
-      final tempDir = await getTemporaryDirectory();
-      final fileName =
-          'vrindopnishad_${DateTime.now().millisecondsSinceEpoch}.png';
-      final file = File('${tempDir.path}/$fileName');
-      await file.writeAsBytes(imageBytes);
+      // Share logic
+      if (kIsWeb) {
+        await Share.shareXFiles(
+          [XFile.fromData(imageBytes, name: 'vrindopnishad.png', mimeType: 'image/png')],
+          text: '${content.title}\n\nShared from Vrindopnishad 🙏',
+          subject: content.title,
+        );
+      } else {
+        // Save to temp file for mobile/desktop
+        final tempDir = await getTemporaryDirectory();
+        final fileName = 'vrindopnishad_${DateTime.now().millisecondsSinceEpoch}.png';
+        final file = File('${tempDir.path}/$fileName');
+        await file.writeAsBytes(imageBytes);
 
-      // Share the image
-      await Share.shareXFiles(
-        [XFile(file.path)],
-        text: '${content.title}\n\nShared from Vrindopnishad 🙏',
-        subject: content.title,
-      );
+        // Share the image
+        await Share.shareXFiles(
+          [XFile(file.path)],
+          text: '${content.title}\n\nShared from Vrindopnishad 🙏',
+          subject: content.title,
+        );
+      }
     } catch (e) {
       // Close loading indicator if still showing
       if (context.mounted) {

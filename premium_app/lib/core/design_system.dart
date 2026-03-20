@@ -1735,12 +1735,15 @@ class _PremiumInteractiveIconState extends State<_PremiumInteractiveIcon> with S
 
   void _handleTap() {
     HapticFeedback.lightImpact();
-    if (widget.onTap != null) widget.onTap!();
+    if (widget.onTap != null) {
+      widget.onTap!();
+    }
     
-    // If not using toggle logic, play once
-    if (!widget.isToggled && _controller.duration != null) {
+    // Manual trigger for non-toggle icons (like share, send, or back button)
+    // For toggle icons, didUpdateWidget handles the animation transition
+    if (_controller.duration != null && !widget.isToggled && widget.resetAfterPlay) {
       _controller.forward(from: 0.0).then((_) {
-        if (widget.resetAfterPlay && mounted && !widget.isToggled) {
+        if (mounted && !widget.isToggled) {
           _controller.value = 0.0;
         }
       });

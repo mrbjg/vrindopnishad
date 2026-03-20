@@ -83,7 +83,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                       onTap: (index) => ref.read(navigationIndexProvider.notifier).state = index,
                       items: const [
                         (iconSvg: 'iconsax-ai-housing-jbqdn4s3-.svg', activeIconSvg: 'iconsax-ai-housing-1etziexn-.svg', label: "Home"),
-                        (iconSvg: 'iconsax-book-saved-bg1ra9cv-.svg', activeIconSvg: 'iconsax-book-saved-cf2vpsqx-.svg', label: "Library"),
+                        (iconSvg: 'iconsax-book-saved-cf2vpsqx-.svg', activeIconSvg: 'iconsax-book-saved-bg1ra9cv-.svg', label: "Library"),
                         (iconSvg: 'iconsax-archive-27ilzneb-.svg', activeIconSvg: 'iconsax-archive-27ilzneb-.svg', label: ""), // Placeholder for center
                         (iconSvg: 'iconsax-ai-send-message-m26q6m1j-.svg', activeIconSvg: 'iconsax-ai-send-message-2njcmr24-.svg', label: "Journal"),
                         (iconSvg: 'iconsax-ai-users-rcrm13gd-.svg', activeIconSvg: 'iconsax-ai-users-uj3awqug-.svg', label: "Profile"),

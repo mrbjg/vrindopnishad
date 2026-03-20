@@ -104,10 +104,14 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
             child: PremiumUI.glassCard(
               padding: const EdgeInsets.all(10),
               borderRadius: 14,
-              child: Icon(
-                isFocusMode ? Iconsax.eye_slash : Iconsax.eye,
-                color: isFocusMode ? PremiumTokens.nebulaBlue : Colors.white,
+              child: PremiumUI.animatedIcon(
+                folder: 'Visibility V2',
+                fileName: 'visibilityV2.json',
                 size: 20,
+                color: isFocusMode ? PremiumTokens.nebulaBlue : Colors.white,
+                isToggled: isFocusMode,
+                resetAfterPlay: false,
+                onTap: null, // Gesture handled by parent
               ),
             ),
           ),

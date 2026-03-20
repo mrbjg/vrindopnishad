@@ -8,6 +8,7 @@ import '../core/design_system.dart';
 import '../core/providers.dart';
 import '../features/content_detail_screen.dart';
 import 'package:flutter/services.dart';
+import '../core/favorites_provider.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   SearchScreen({super.key});
@@ -31,13 +32,12 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
+    final recentSearchesAsync = ref.watch(recentSearchesProvider);
     final currentCategory = ref.watch(libraryCategoryProvider);
     
-    // Logic: If searching, show search results. If not searching, show category-filtered content.
     final List<SacredContent> displayItems = _isSearching
         ? ref.watch(searchedContentProvider(_searchQuery))
-        : ref.watch(filteredContentProvider(currentCategory));
+        : [];
 
     return Scaffold(
       backgroundColor: PremiumTokens.charcoal,
@@ -47,227 +47,302 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           Positioned.fill(child: PremiumUI.mandalaOverlay(opacity: 0.03)),
           
           SafeArea(
-            child: CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                // Premium Integrated Header
-                SliverAppBar(
-                  floating: true,
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  centerTitle: true,
-                  title: Text(
-                    "Sacred Library",
-                    style: GoogleFonts.manrope(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                  actions: [
-                    IconButton(
-                      icon: Icon(Iconsax.notification, color: Colors.white54),
-                      onPressed: () {},
-                    ),
-                  ],
+            child: Column(
+              children: [
+                // Global Header
+                _buildSearchHeader(context),
+                
+                // Search Input Field
+                _buildSearchInput(),
+
+                Expanded(
+                  child: _isSearching 
+                    ? _buildSearchResults(displayItems)
+                    : _buildInitialView(recentSearchesAsync),
                 ),
-
-                // Immersive Search Section
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  sliver: SliverToBoxAdapter(
-                    child: PremiumUI.glassCard(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      borderRadius: 16,
-                      child: TextField(
-                        controller: _searchController,
-                        focusNode: _focusNode,
-                        style: GoogleFonts.manrope(color: Colors.white),
-                        decoration: InputDecoration(
-                          hintText: "Search mantras, stories, shlokas...",
-                          hintStyle: GoogleFonts.manrope(color: Colors.white24, fontSize: 14),
-                          border: InputBorder.none,
-                          icon: Icon(Iconsax.search_normal, color: PremiumTokens.saffronGlow, size: 20),
-                          suffixIcon: _searchQuery.isNotEmpty
-                              ? IconButton(
-                                  icon: Icon(Iconsax.close_circle, size: 18, color: Colors.white38),
-                                  onPressed: () {
-                                    _searchController.clear();
-                                    setState(() {
-                                      _searchQuery = '';
-                                      _isSearching = false;
-                                    });
-                                  },
-                                )
-                              : null,
-                        ),
-                        onChanged: (v) => setState(() {
-                          _searchQuery = v;
-                          _isSearching = v.isNotEmpty;
-                        }),
-                      ),
-                    ),
-                  ),
-                ),
-
-                if (!_isSearching) ...[
-                  // Featured Content Card
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Stack(
-                        children: [
-                          PremiumUI.saffronGlassCard(
-                            padding: EdgeInsets.zero,
-                            borderRadius: 24,
-                            child: Stack(
-                              children: [
-                                // Featured Image with Overlay
-                                Container(
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
-                                  child: PremiumUI.networkImage(
-                                    url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80',
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
-                                ),
-                                Container(
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(24),
-                                    gradient: LinearGradient(
-                                      begin: Alignment.bottomCenter,
-                                      end: Alignment.topCenter,
-                                      colors: [
-                                        PremiumTokens.charcoal.withValues(alpha: 0.9),
-                                        Colors.transparent,
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                
-                                // Text Content
-                                Positioned(
-                                  left: 20,
-                                  bottom: 20,
-                                  right: 20,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: PremiumTokens.saffronGlow,
-                                          borderRadius: BorderRadius.circular(100),
-                                        ),
-                                        child: Text(
-                                          "FEATURED MANTRA",
-                                          style: GoogleFonts.manrope(
-                                            color: PremiumTokens.charcoal,
-                                            fontSize: 9,
-                                            fontWeight: FontWeight.w900,
-                                            letterSpacing: 1.5,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: 8),
-                                      Text(
-                                        "Maha Mrityunjaya",
-                                        style: GoogleFonts.manrope(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.w800,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // Horizontal Categories
-                  SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                          child: Text(
-                            "CATEGORIES",
-                            style: GoogleFonts.manrope(
-                              color: Colors.white38,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 2,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 50,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            children: [
-                              _buildPremiumPill("ALL", currentCategory == "ALL"),
-                              _buildPremiumPill("PEACE", currentCategory == "PEACE"),
-                              _buildPremiumPill("PROSPERITY", currentCategory == "PROSPERITY"),
-                              _buildPremiumPill("PROTECTION", currentCategory == "PROTECTION"),
-                              _buildPremiumPill("HEALING", currentCategory == "HEALING"),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Recommended List
-                  SliverPadding(
-                    padding: const EdgeInsets.all(24),
-                    sliver: displayItems.isEmpty
-                        ? SliverToBoxAdapter(child: Center(child: _buildEmptyResults()))
-                        : SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 16),
-                                  child: _buildSacredListItem(context, displayItems[index]),
-                                );
-                              },
-                              childCount: displayItems.length,
-                            ),
-                          ),
-                  ),
-                ] else ...[
-                  // Search Results
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                    sliver: displayItems.isEmpty
-                        ? SliverFillRemaining(hasScrollBody: false, child: _buildEmptyResults())
-                        : SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) => Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
-                                child: _buildSacredListItem(context, displayItems[index]),
-                              ),
-                              childCount: displayItems.length,
-                            ),
-                          ),
-                  ),
-                ],
-
-                const SliverToBoxAdapter(child: SizedBox(height: 120)),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSearchHeader(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      child: Row(
+        children: [
+          PremiumUI.glassCard(
+            padding: const EdgeInsets.all(10),
+            borderRadius: 14,
+            child: PremiumUI.animatedIcon(
+              folder: 'Chevron-left',
+              fileName: 'chevron-left.json',
+              size: 20,
+              color: Colors.white,
+              onTap: () {
+                HapticFeedback.mediumImpact();
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          const SizedBox(width: 16),
+          Text(
+            "SACRED SEARCH",
+            style: GoogleFonts.manrope(
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+              letterSpacing: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchInput() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      child: PremiumUI.glassCard(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        borderRadius: 16,
+        child: TextField(
+          controller: _searchController,
+          focusNode: _focusNode,
+          autofocus: false, // Changed to false to prevent keyboard pop on back btn match
+          style: GoogleFonts.manrope(color: Colors.white),
+          onSubmitted: (v) {
+            if (v.isNotEmpty) {
+              ref.read(recentSearchesProvider.notifier).addSearch(v);
+            }
+          },
+          decoration: InputDecoration(
+            hintText: "Search mantras, stories, shlokas...",
+            hintStyle: GoogleFonts.manrope(color: Colors.white24, fontSize: 14),
+            border: InputBorder.none,
+            icon: Icon(Iconsax.search_normal, color: PremiumTokens.nebulaBlue, size: 20),
+            suffixIcon: _searchQuery.isNotEmpty
+                ? IconButton(
+                    icon: Icon(Iconsax.close_circle, size: 18, color: Colors.white38),
+                    onPressed: () {
+                      _searchController.clear();
+                      setState(() {
+                        _searchQuery = '';
+                        _isSearching = false;
+                      });
+                    },
+                  )
+                : null,
+          ),
+          onChanged: (v) => setState(() {
+            _searchQuery = v;
+            _isSearching = v.isNotEmpty;
+          }),
+        ),
+      ),
+    );
+  }
+
+  String _getCategoryPlaceholder(String category) {
+    switch (category.toUpperCase()) {
+      case 'PEACE':
+        return 'https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?auto=format&fit=crop&w=200&q=80';
+      case 'PROTECTION':
+        return 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=200&q=80';
+      case 'HEALING':
+        return 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=200&q=80';
+      case 'PROSPERITY':
+        return 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=200&q=80';
+      default:
+        return 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?auto=format&fit=crop&w=200&q=80';
+    }
+  }
+
+  Widget _buildSacredListItem(BuildContext context, SacredContent item) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        ref.read(recentSearchesProvider.notifier).addSearch(_searchQuery);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => ContentDetailScreen(content: item)),
+        );
+      },
+      child: PremiumUI.glassCard(
+        padding: const EdgeInsets.all(12),
+        borderRadius: 20,
+        child: Row(
+          children: [
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: PremiumTokens.nebulaGradient,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: PremiumUI.networkImage(
+                  url: item.imageUrl ?? _getCategoryPlaceholder(item.category),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.displayTitle,
+                    style: GoogleFonts.manrope(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    item.category.toUpperCase(),
+                    style: GoogleFonts.manrope(
+                      color: PremiumTokens.nebulaBlue,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+              // Like Button
+              PremiumUI.animatedIcon(
+                folder: 'Heart',
+                fileName: 'heart.json',
+                size: 20,
+                color: ref.watch(isFavoriteProvider(item.id)) ? PremiumTokens.saffronGlow : Colors.white24,
+                isToggled: ref.watch(isFavoriteProvider(item.id)),
+                resetAfterPlay: false,
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  ref.read(favoritesProvider.notifier).toggleFavorite(item.id);
+                },
+              ),
+              const SizedBox(width: 16),
+              const Icon(Iconsax.arrow_right_3, color: Colors.white24, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInitialView(AsyncValue<List<String>> recentSearches) {
+    return ListView(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.all(24),
+      children: [
+        recentSearches.when(
+          data: (searches) {
+            if (searches.isEmpty) return const SizedBox.shrink();
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "RECENT SEARCHES",
+                      style: GoogleFonts.manrope(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white24,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => ref.read(recentSearchesProvider.notifier).clear(),
+                      child: Text("Clear", style: TextStyle(color: PremiumTokens.nebulaBlue, fontSize: 12)),
+                    ),
+                  ],
+                ),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: searches.map((s) => _buildSearchTag(s)).toList(),
+                ),
+                const SizedBox(height: 40),
+              ],
+            );
+          },
+          loading: () => const SizedBox.shrink(),
+          error: (_, __) => const SizedBox.shrink(),
+        ),
+
+        Text(
+          "SUGGESTED PATHS",
+          style: GoogleFonts.manrope(
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+            color: Colors.white24,
+            letterSpacing: 2,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: [
+            _buildSearchTag("Hanuman Chalisa", isStatic: true),
+            _buildSearchTag("Meditation", isStatic: true),
+            _buildSearchTag("Mantra", isStatic: true),
+            _buildSearchTag("Spirituality", isStatic: true),
+            _buildSearchTag("Peace", isStatic: true),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSearchTag(String text, {bool isStatic = false}) {
+    return GestureDetector(
+      onTap: () {
+        _searchController.text = text;
+        setState(() {
+          _searchQuery = text;
+          _isSearching = true;
+        });
+        if (isStatic) {
+          ref.read(recentSearchesProvider.notifier).addSearch(text);
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(100),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        ),
+        child: Text(
+          text,
+          style: GoogleFonts.manrope(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchResults(List<SacredContent> displayItems) {
+    if (displayItems.isEmpty) return _buildEmptyResults();
+    
+    return ListView.builder(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      itemCount: displayItems.length,
+      itemBuilder: (context, index) => Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: _buildSacredListItem(context, displayItems[index]),
       ),
     );
   }
@@ -284,121 +359,40 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
-              color: isSelected ? PremiumTokens.saffronGlow : PremiumTokens.saffronGlow.withValues(alpha: 0.05),
+              color: isSelected ? PremiumTokens.nebulaBlue : PremiumTokens.surfaceCharcoal,
               borderRadius: BorderRadius.circular(100),
               border: Border.all(
-                color: isSelected ? Colors.transparent : PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+                color: isSelected ? Colors.transparent : Colors.white.withValues(alpha: 0.1),
               ),
-              boxShadow: isSelected ? [
-                BoxShadow(
-                  color: PremiumTokens.saffronGlow.withValues(alpha: 0.3),
-                  blurRadius: 15,
-                  spreadRadius: -2,
-                )
-              ] : null,
             ),
             child: Text(
               label,
               style: GoogleFonts.manrope(
-                color: isSelected ? PremiumTokens.charcoal : Colors.white60,
+                color: isSelected ? Colors.white : Colors.white60,
                 fontSize: 12,
                 fontWeight: FontWeight.w800,
-                letterSpacing: 1,
               ),
             ),
           ),
         ),
       ),
-    ).animate().fadeIn(duration: 400.ms).slideX(begin: 0.2);
-  }
-
-  Widget _buildSacredListItem(BuildContext context, SacredContent item) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => ContentDetailScreen(content: item)),
-        );
-      },
-      child: PremiumUI.glassCard(
-        padding: const EdgeInsets.all(12),
-        borderRadius: 20,
-        child: Row(
-          children: [
-            // Thumbnail
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(14),
-                gradient: PremiumTokens.saffronPremiumGradient,
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: PremiumUI.networkImage(
-                  url: 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?auto=format&fit=crop&w=200&q=80',
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
-            ),
-            SizedBox(width: 16),
-            
-            // Info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.displayTitle,
-                    style: GoogleFonts.manrope(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(Iconsax.music, size: 10, color: PremiumTokens.saffronGlow.withValues(alpha: 0.5)),
-                      SizedBox(width: 4),
-                      Text(
-                        item.category.toUpperCase(),
-                        style: GoogleFonts.manrope(
-                          color: PremiumTokens.saffronGlow.withValues(alpha: 0.7),
-                          fontSize: 10,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            
-            // Actions
-            IconButton(
-              icon: Icon(Iconsax.play_circle5, color: PremiumTokens.saffronGlow, size: 28),
-              onPressed: () {},
-            ),
-          ],
-        ),
-      ),
-    ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1);
+    );
   }
 
   Widget _buildEmptyResults() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(Iconsax.search_zoom_out, size: 48, color: Colors.white10),
-        const SizedBox(height: 16),
+        const Icon(Iconsax.search_status, size: 64, color: Colors.white10),
+        const SizedBox(height: 24),
         Text(
-          "No results found on this path",
-          style: GoogleFonts.manrope(color: Colors.white38, fontSize: 15),
+          "NO SACRED ECHOES FOUND",
+          style: GoogleFonts.manrope(
+            fontSize: 12,
+            fontWeight: FontWeight.w900,
+            color: Colors.white24,
+            letterSpacing: 2,
+          ),
         ),
       ],
     );
