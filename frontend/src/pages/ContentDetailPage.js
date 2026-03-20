@@ -239,8 +239,7 @@ const ContentDetailPage = () => {
           </div>
 
           <h1 
-            className="text-4xl md:text-6xl font-bold mb-12 leading-tight lg:leading-snug pt-6 text-sacred-gradient"
-            style={{ paddingBottom: '0.2em' }}
+            className="text-4xl md:text-6xl font-bold mb-12 leading-[1.2] lg:leading-[1.3] pt-8 pb-4 text-sacred-gradient"
           >
             {content.title}
           </h1>
@@ -262,7 +261,7 @@ const ContentDetailPage = () => {
             {content.sanskrit_text && (
               <div className="relative group py-16 sm:py-20 border-b border-white/5">
                 <div className="absolute top-0 right-0 p-8 opacity-5 text-9xl font-serif pointer-events-none">ॐ</div>
-                <h3 className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-white/30 mb-12 sm:mb-16 flex items-center justify-center sm:justify-start gap-4">
+                <h3 className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-white/30 mb-12 sm:mb-16 flex items-center justify-center sm:justify-start gap-4 py-2">
                   <span className="h-[1px] w-12 bg-gradient-to-r from-transparent to-white/10 hidden sm:block"></span>
                   Sanskrit Text
                   <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-white/10 hidden sm:block"></span>
@@ -284,7 +283,7 @@ const ContentDetailPage = () => {
 
             {content.hindi_text && (
               <div className="py-16 sm:py-20 border-b border-white/5">
-                <h3 className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-amber-500/50 mb-12 sm:mb-16 flex items-center justify-center sm:justify-start gap-4">
+                <h3 className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-amber-500/50 mb-12 sm:mb-16 flex items-center justify-center sm:justify-start gap-4 py-2">
                   <span className="h-[1px] w-12 bg-gradient-to-r from-transparent to-amber-500/10 hidden sm:block"></span>
                   Hindi Meaning
                   <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-amber-500/10 hidden sm:block"></span>

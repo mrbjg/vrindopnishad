@@ -121,7 +121,7 @@ const ContentListPage = () => {
                     <ArrowRight size={20} />
                   </div>
                 </div>
-                <h3 className="text-xl font-bold mb-4 line-clamp-2 leading-tight group-hover:text-primary/90 transition-colors">
+                <h3 className="text-xl font-bold mb-4 line-clamp-2 leading-snug group-hover:text-primary/90 transition-colors py-1">
                   {item.title}
                 </h3>
                 <p className="text-white/60 text-sm line-clamp-3 leading-relaxed mb-6">
