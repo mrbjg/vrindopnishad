@@ -13,6 +13,7 @@ import '../core/localization.dart';
 import '../core/providers.dart';
 import '../widgets/animated_effects.dart';
 import 'package:flutter/services.dart';
+import 'global_player_screen.dart';
 
 class ContentDetailScreen extends ConsumerStatefulWidget {
   final SacredContent? content;
@@ -435,12 +436,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             SelectableText(
               text,
               textAlign: TextAlign.center,
-              style: GoogleFonts.spectral(
+              style: PremiumTokens.lailaStyle(
                 fontSize: _fontSize + (isFocusMode ? 10 : 6),
                 color: Colors.white.withOpacity(0.95),
                 fontWeight: FontWeight.bold,
+              ).copyWith(
                 height: 1.6,
-                fontStyle: FontStyle.italic,
                 shadows: [
                   Shadow(
                     color: PremiumTokens.saffronGlow.withOpacity(0.3),
@@ -448,18 +449,6 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   ),
                 ],
               ),
-            )
-            .animate(onPlay: (controller) => controller.repeat(reverse: true))
-            .shimmer(
-              duration: 3.seconds,
-              color: Colors.white.withOpacity(0.1),
-              blendMode: BlendMode.srcOver,
-            )
-            .scale(
-              duration: 4.seconds,
-              begin: const Offset(1, 1),
-              end: const Offset(1.02, 1.02),
-              curve: Curves.easeInOut,
             ),
           ],
         ),
@@ -512,11 +501,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             if (!isFocusMode) const SizedBox(height: 20),
             Text(
               content,
-              style: GoogleFonts.outfit(
+              style: PremiumTokens.lailaStyle(
                 fontSize: isFocusMode ? _fontSize + 3 : _fontSize,
                 color: Colors.white.withOpacity(isFocusMode ? 0.95 : 0.85),
-                height: 1.7,
-                letterSpacing: 0.1,
+                fontWeight: FontWeight.normal,
+              ).copyWith(
+                height: 1.8,
+                letterSpacing: 0.2,
               ),
             ),
           ],
@@ -589,8 +580,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     return PremiumUI.glassCard(
       padding: const EdgeInsets.all(24),
       borderRadius: 32,
-      blur: 30,
-      opacity: 0.15,
+      blur: 35, // Increased for better separation
+      opacity: 0.2, // Slightly more opaque for better legibility
+      optimized: false, // Enable real glassmorphism
       child: Consumer(
         builder: (context, ref, child) {
           final audioState = ref.watch(audioProvider);
@@ -650,16 +642,41 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     ],
                   ),
                 ),
-                IconButton(
-                    onPressed: () => setState(() => _showAudioPlayer = false),
-                    icon: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
-                        shape: BoxShape.circle,
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          HapticFeedback.mediumImpact();
+                          Navigator.of(context).push(
+                            PageRouteBuilder(
+                              pageBuilder: (context, animation, secondaryAnimation) => GlobalPlayerScreen(),
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                return FadeTransition(opacity: animation, child: child);
+                              },
+                            ),
+                          );
+                        },
+                        icon: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.05),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Iconsax.maximize_4, color: Colors.white, size: 16),
+                        ),
                       ),
-                      child: Icon(Iconsax.arrow_down_1, color: Colors.white, size: 16),
-                    ),
+                      IconButton(
+                        onPressed: () => setState(() => _showAudioPlayer = false),
+                        icon: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.05),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Iconsax.arrow_down_1, color: Colors.white, size: 16),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

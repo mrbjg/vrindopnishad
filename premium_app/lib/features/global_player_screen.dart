@@ -95,7 +95,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
                         ),
-                      ).animate().fadeIn().slideY(begin: 0.2, end: 0),
+                      ),
                       const SizedBox(height: 8),
                       Text(
                         currentContent?.category?.toUpperCase() ?? "DIVINE WISDOM",
@@ -105,7 +105,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
                           fontWeight: FontWeight.w900,
                           letterSpacing: 4,
                         ),
-                      ).animate().fadeIn(delay: 200.ms),
+                      ),
                     ],
                   ),
                 ),

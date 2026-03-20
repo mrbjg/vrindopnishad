@@ -30,7 +30,7 @@ class MiniPlayer extends ConsumerWidget {
       onTap: () {
         Navigator.of(context).push(
           PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => const GlobalPlayerScreen(),
+            pageBuilder: (context, animation, secondaryAnimation) => GlobalPlayerScreen(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               return FadeTransition(opacity: animation, child: child);
             },

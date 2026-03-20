@@ -168,7 +168,6 @@ class PremiumTokens {
       letterSpacing: letterSpacing,
     );
   }
-
   static TextStyle soulStyle({
     double fontSize = 24,
     Color color = Colors.white,
@@ -176,6 +175,20 @@ class PremiumTokens {
     double? letterSpacing,
   }) {
     return GoogleFonts.newsreader(
+      fontSize: fontSize,
+      color: color,
+      fontWeight: fontWeight,
+      letterSpacing: letterSpacing,
+    );
+  }
+
+  static TextStyle lailaStyle({
+    double fontSize = 24,
+    Color color = Colors.white,
+    FontWeight fontWeight = FontWeight.normal,
+    double? letterSpacing,
+  }) {
+    return GoogleFonts.laila(
       fontSize: fontSize,
       color: color,
       fontWeight: fontWeight,
