@@ -184,22 +184,50 @@ body.is-scrolling .glass-card {
     line-height: normal;
 }
 
-/* Sacred Badge Style */
+/* Sacred Badge Style - Refined for Categorical Colors */
 .sacred-badge {
-    background: rgba(var(--primary-rgb), 0.1);
-    border: 1px solid rgba(var(--primary-rgb), 0.2);
-    color: var(--primary);
     text-transform: uppercase;
     letter-spacing: 0.2em;
     font-weight: 700;
     font-size: 0.65rem;
     padding: 0.6rem 1.25rem;
     border-radius: 9999px;
-    box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.1);
     display: inline-flex;
     align-items: center;
     line-height: 1.4;
     transition: all 0.3s ease;
+    background: rgba(var(--primary-rgb), 0.1);
+    border: 1px solid rgba(var(--primary-rgb), 0.2);
+    color: var(--primary);
+    box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.1);
+}
+
+/* Categorical Utility Overrides */
+.badge-shloka {
+    background: rgba(245, 158, 11, 0.1) !important;
+    border-color: rgba(245, 158, 11, 0.2) !important;
+    color: #fbbf24 !important;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.1) !important;
+}
+
+.badge-strotra {
+    background: rgba(56, 189, 248, 0.1) !important;
+    border-color: rgba(56, 189, 248, 0.2) !important;
+    color: #38bdf8 !important;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.1) !important;
+}
+
+.badge-poem {
+    background: rgba(52, 211, 153, 0.1) !important;
+    border-color: rgba(52, 211, 153, 0.2) !important;
+    color: #34d399 !important;
+    box-shadow: 0 0 20px rgba(52, 211, 153, 0.1) !important;
+}
+
+.badge-general {
+    background: rgba(148, 163, 184, 0.1) !important;
+    border-color: rgba(148, 163, 184, 0.2) !important;
+    color: #94a3b8 !important;
 }
 
 /* Modern Range Slider - Sanctuary Dial */

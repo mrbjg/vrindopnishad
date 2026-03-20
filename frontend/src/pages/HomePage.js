@@ -43,33 +43,33 @@ const HomePage = () => {
         </div>
 
         <div className="content-grid">
-          <Link to="/category/shloka" className="glass-card flex flex-col items-center text-center hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 group">
-             <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center text-primary mb-6 shadow-inner">
+          <Link to="/category/shloka" className="glass-card flex flex-col items-center text-center hover:border-amber-400/30 hover:shadow-2xl hover:shadow-amber-400/5 transition-all duration-500 group">
+             <div className="w-16 h-16 rounded-full bg-amber-400/10 flex items-center justify-center text-amber-400 mb-6 shadow-inner ring-1 ring-amber-400/20">
                <Scroll size={32} />
              </div>
-             <div className="badge border-primary/30 text-primary/80">Vedas & Upanishads</div>
+             <div className="badge border-amber-400/30 text-amber-400/80 bg-amber-400/5">Vedas & Upanishads</div>
              <h3 className="text-xl font-bold mb-4">Sacred Verses</h3>
              <p className="text-white/60 text-sm leading-relaxed">
                Dive into the timeless wisdom of Sanskrit shlokas from ancient scriptures.
              </p>
           </Link>
 
-          <Link to="/category/strotra" className="glass-card flex flex-col items-center text-center hover:border-blue-400/30 hover:shadow-2xl hover:shadow-blue-400/5 transition-all duration-500 group">
-             <div className="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 mb-6 shadow-inner">
+          <Link to="/category/strotra" className="glass-card flex flex-col items-center text-center hover:border-sky-400/30 hover:shadow-2xl hover:shadow-sky-400/5 transition-all duration-500 group">
+             <div className="w-16 h-16 rounded-full bg-sky-400/10 flex items-center justify-center text-sky-400 mb-6 shadow-inner ring-1 ring-sky-400/20">
                <Music size={32} />
              </div>
-             <div className="badge border-blue-400/30 text-blue-400/80">Devotional Hymns</div>
+             <div className="badge border-sky-400/30 text-sky-400/80 bg-sky-400/5">Devotional Hymns</div>
              <h3 className="text-xl font-bold mb-4">Strotras</h3>
              <p className="text-white/60 text-sm leading-relaxed">
                Experience the power of traditional hymns and prayers dedicated to the divine.
              </p>
           </Link>
 
-          <Link to="/category/poem" className="glass-card flex flex-col items-center text-center hover:border-purple-400/30 hover:shadow-2xl hover:shadow-purple-400/5 transition-all duration-500 group">
-             <div className="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 mb-6 shadow-inner">
+          <Link to="/category/poem" className="glass-card flex flex-col items-center text-center hover:border-emerald-400/30 hover:shadow-2xl hover:shadow-emerald-400/5 transition-all duration-500 group">
+             <div className="w-16 h-16 rounded-full bg-emerald-400/10 flex items-center justify-center text-emerald-400 mb-6 shadow-inner ring-1 ring-emerald-400/20">
                <FileText size={32} />
              </div>
-             <div className="badge border-purple-400/30 text-purple-400/80">Spiritual Poetry</div>
+             <div className="badge border-emerald-400/30 text-emerald-400/80 bg-emerald-400/5">Spiritual Poetry</div>
              <h3 className="text-xl font-bold mb-4">Poems</h3>
              <p className="text-white/60 text-sm leading-relaxed">
                Contemporary and classic spiritual poetry expressing the depths of devotion.

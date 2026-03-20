@@ -103,6 +103,16 @@ const ContentDetailPage = () => {
     ));
   };
 
+  const getCategoryBadgeClass = (category) => {
+    switch (category?.toLowerCase()) {
+      case 'shloka': return 'badge-shloka';
+      case 'strotra': return 'badge-strotra';
+      case 'poem': return 'badge-poem';
+      case 'general': return 'badge-general';
+      default: return '';
+    }
+  };
+
   if (!content) {
     return (
       <div className="animate-fade-in">
@@ -212,7 +222,7 @@ const ContentDetailPage = () => {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10 mb-12 border-b border-white/5 pb-10">
             <div className="flex flex-col gap-6 w-full lg:w-auto">
               <div className="flex flex-col items-center lg:items-start gap-4">
-                <span className="sacred-badge">
+                <span className={`sacred-badge ${getCategoryBadgeClass(content.category)}`}>
                   {content.category}
                 </span>
                 

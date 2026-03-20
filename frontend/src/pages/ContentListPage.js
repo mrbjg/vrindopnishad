@@ -43,6 +43,16 @@ const ContentListPage = () => {
     item.hindi_text?.toLowerCase().includes(debouncedSearch.toLowerCase())
   );
 
+  const getCategoryBadgeClass = (category) => {
+    switch (category?.toLowerCase()) {
+      case 'shloka': return 'badge-shloka';
+      case 'strotra': return 'badge-strotra';
+      case 'poem': return 'badge-poem';
+      case 'general': return 'badge-general';
+      default: return '';
+    }
+  };
+
   return (
     <div className="animate-fade-in">
       <Helmet>
@@ -115,7 +125,9 @@ const ContentListPage = () => {
             <Link to={`/content/${item.slug || item.id}`} key={item.id} className="glass-card group flex flex-col justify-between hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500">
               <div>
                 <div className="flex justify-between items-start mb-4">
-                  <span className="badge border-primary/20 text-primary/70">{item.category}</span>
+                  <span className={`badge transition-all duration-300 ${getCategoryBadgeClass(item.category)}`}>
+                    {item.category}
+                  </span>
                   <div className="flex items-center gap-3 text-white/20 transition-all duration-300">
                     <AudioPlayButton track={item} />
                     <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-500" />

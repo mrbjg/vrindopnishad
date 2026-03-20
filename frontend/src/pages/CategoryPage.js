@@ -15,19 +15,28 @@ const CategoryPage = () => {
       name: 'Shlokas',
       description: 'Sacred verses from Hindu scriptures',
       icon: Scroll,
-      color: 'text-primary'
+      color: 'text-amber-400'
     },
     strotra: {
       name: 'Strotras',
       description: 'Devotional hymns and prayers',
       icon: Music,
-      color: 'text-blue-400'
+      color: 'text-sky-400'
     },
     poem: {
       name: 'Poems',
       description: 'Spiritual and devotional poetry',
       icon: FileText,
-      color: 'text-purple-400'
+      color: 'text-emerald-400'
+    }
+  };
+
+  const getCategoryBadgeClass = (cat) => {
+    switch (cat?.toLowerCase()) {
+      case 'shloka': return 'badge-shloka';
+      case 'strotra': return 'badge-strotra';
+      case 'poem': return 'badge-poem';
+      default: return '';
     }
   };
 
@@ -79,7 +88,7 @@ const CategoryPage = () => {
              <IconComponent size={64} />
           </div>
           <h3 className="text-2xl font-bold mb-4">No {info.name.toLowerCase()} available yet</h3>
-          <p className="text-white/40 mb-10">Please check back later or explore other categories.</p>
+          <p className="text-white/40 mb-10 text-lg">Please check back later or explore other categories.</p>
           <Link to="/" className="btn-premium px-10 py-3">
              Back to Home
           </Link>
@@ -90,7 +99,7 @@ const CategoryPage = () => {
             <Link key={item.id} to={`/content/${item.id}`} className="glass-card group flex flex-col justify-between hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500">
               <div>
                 <div className="flex justify-between items-start mb-4">
-                  <span className={`badge border-white/10 text-white/60 transition-all duration-300`}>
+                  <span className={`badge transition-all duration-300 ${getCategoryBadgeClass(category)}`}>
                     {category}
                   </span>
                   <div className="text-white/10 transition-colors duration-300">
