@@ -174,7 +174,7 @@ body.is-scrolling .glass-card {
     background-clip: text;
     display: inline-block;
     padding: 0.1em 0;
-    line-height: normal; /* Ensure standard line-height for gradient clipping */
+    line-height: 1.4;
 }
 
 /* Sacred Badge Style */

@@ -1,5 +1,7 @@
+```json
 {
   "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/sitemap.xml",
@@ -14,7 +16,7 @@
       "destination": "/robots.txt"
     },
     {
-      "source": "/((?!sitemap|robots|favicon|static|.*\\..*).*)",
+      "source": "/((?!sitemap|robots|favicon|static|.*\\.).*)",
       "destination": "/index.html"
     }
   ],
