@@ -230,6 +230,13 @@ body.is-scrolling .glass-card {
     color: #94a3b8 !important;
 }
 
+.badge-katha {
+    background: rgba(251, 146, 60, 0.1) !important;
+    border-color: rgba(251, 146, 60, 0.2) !important;
+    color: #fb923c !important;
+    box-shadow: 0 0 20px rgba(251, 146, 60, 0.1) !important;
+}
+
 /* Modern Range Slider - Sanctuary Dial */
 .sacred-slider-container {
     --slider-percent: 50%;

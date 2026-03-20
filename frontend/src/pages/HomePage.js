@@ -42,9 +42,9 @@ const HomePage = () => {
           <div className="h-[1px] flex-1 bg-white/10"></div>
         </div>
 
-        <div className="content-grid">
-          <Link to="/category/shloka" className="glass-card flex flex-col items-center text-center hover:border-amber-400/30 hover:shadow-2xl hover:shadow-amber-400/5 transition-all duration-500 group">
-             <div className="w-16 h-16 rounded-full bg-amber-400/10 flex items-center justify-center text-amber-400 mb-6 shadow-inner ring-1 ring-amber-400/20">
+        <div className="content-grid font-sans">
+          <Link to="/category/shloka" className="glass-card flex flex-col items-center text-center hover:border-amber-400/30 hover:shadow-2xl hover:shadow-amber-400/10 transition-all duration-500 group">
+             <div className="w-16 h-16 rounded-full bg-amber-400/10 flex items-center justify-center text-amber-400 mb-6 shadow-inner ring-1 ring-amber-400/20 group-hover:scale-110 transition-transform duration-500">
                <Scroll size={32} />
              </div>
              <div className="badge border-amber-400/30 text-amber-400/80 bg-amber-400/5">Vedas & Upanishads</div>
@@ -54,8 +54,8 @@ const HomePage = () => {
              </p>
           </Link>
 
-          <Link to="/category/strotra" className="glass-card flex flex-col items-center text-center hover:border-sky-400/30 hover:shadow-2xl hover:shadow-sky-400/5 transition-all duration-500 group">
-             <div className="w-16 h-16 rounded-full bg-sky-400/10 flex items-center justify-center text-sky-400 mb-6 shadow-inner ring-1 ring-sky-400/20">
+          <Link to="/category/strotra" className="glass-card flex flex-col items-center text-center hover:border-sky-400/30 hover:shadow-2xl hover:shadow-sky-400/10 transition-all duration-500 group">
+             <div className="w-16 h-16 rounded-full bg-sky-400/10 flex items-center justify-center text-sky-400 mb-6 shadow-inner ring-1 ring-sky-400/20 group-hover:scale-110 transition-transform duration-500">
                <Music size={32} />
              </div>
              <div className="badge border-sky-400/30 text-sky-400/80 bg-sky-400/5">Devotional Hymns</div>
@@ -65,8 +65,8 @@ const HomePage = () => {
              </p>
           </Link>
 
-          <Link to="/category/poem" className="glass-card flex flex-col items-center text-center hover:border-emerald-400/30 hover:shadow-2xl hover:shadow-emerald-400/5 transition-all duration-500 group">
-             <div className="w-16 h-16 rounded-full bg-emerald-400/10 flex items-center justify-center text-emerald-400 mb-6 shadow-inner ring-1 ring-emerald-400/20">
+          <Link to="/category/poem" className="glass-card flex flex-col items-center text-center hover:border-emerald-400/30 hover:shadow-2xl hover:shadow-emerald-400/10 transition-all duration-500 group">
+             <div className="w-16 h-16 rounded-full bg-emerald-400/10 flex items-center justify-center text-emerald-400 mb-6 shadow-inner ring-1 ring-emerald-400/20 group-hover:scale-110 transition-transform duration-500">
                <FileText size={32} />
              </div>
              <div className="badge border-emerald-400/30 text-emerald-400/80 bg-emerald-400/5">Spiritual Poetry</div>

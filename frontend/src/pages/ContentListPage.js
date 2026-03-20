@@ -43,11 +43,42 @@ const ContentListPage = () => {
     item.hindi_text?.toLowerCase().includes(debouncedSearch.toLowerCase())
   );
 
+  const getCategoryColorClasses = (category) => {
+    switch (category?.toLowerCase()) {
+      case 'shloka': return { 
+        bg: 'bg-amber-500', 
+        hover: 'hover:border-amber-400/30 hover:shadow-amber-400/5',
+        text: 'text-amber-400' 
+      };
+      case 'strotra': return { 
+        bg: 'bg-sky-500', 
+        hover: 'hover:border-sky-400/30 hover:shadow-sky-400/5',
+        text: 'text-sky-400' 
+      };
+      case 'poem': return { 
+        bg: 'bg-emerald-500', 
+        hover: 'hover:border-emerald-400/30 hover:shadow-emerald-400/5',
+        text: 'text-emerald-400' 
+      };
+      case 'katha': return { 
+        bg: 'bg-orange-500', 
+        hover: 'hover:border-orange-400/30 hover:shadow-orange-400/5',
+        text: 'text-orange-400' 
+      };
+      default: return { 
+        bg: 'bg-slate-500', 
+        hover: 'hover:border-slate-400/30 hover:shadow-slate-400/5',
+        text: 'text-slate-400' 
+      };
+    }
+  };
+
   const getCategoryBadgeClass = (category) => {
     switch (category?.toLowerCase()) {
       case 'shloka': return 'badge-shloka';
       case 'strotra': return 'badge-strotra';
       case 'poem': return 'badge-poem';
+      case 'katha': return 'badge-katha';
       case 'general': return 'badge-general';
       default: return '';
     }
@@ -81,19 +112,22 @@ const ContentListPage = () => {
       <div className="flex gap-3 overflow-x-auto pb-6 scrollbar-hide mb-8">
         <button 
           onClick={() => setSelectedCategory(null)}
-          className={`flex-none px-6 py-2 rounded-full border transition-all ${!selectedCategory ? 'bg-primary border-transparent text-white' : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'}`}
+          className={`flex-none px-6 py-2 rounded-full border transition-all duration-300 ${!selectedCategory ? 'bg-primary border-transparent text-white shadow-lg shadow-primary/20' : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'}`}
         >
           All
         </button>
-        {categories.map(cat => (
-          <button 
-            key={cat}
-            onClick={() => setSelectedCategory(cat)}
-            className={`flex-none px-6 py-2 rounded-full border transition-all capitalize ${selectedCategory === cat ? 'bg-primary border-transparent text-white' : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'}`}
-          >
-            {cat}s
-          </button>
-        ))}
+        {categories.map(cat => {
+          const colors = getCategoryColorClasses(cat);
+          return (
+            <button 
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`flex-none px-6 py-2 rounded-full border transition-all duration-300 capitalize ${selectedCategory === cat ? `${colors.bg} border-transparent text-white shadow-lg shadow-${cat === 'shloka' ? 'amber' : cat === 'strotra' ? 'sky' : cat === 'poem' ? 'emerald' : cat === 'katha' ? 'orange' : 'slate'}-500/20` : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'}`}
+            >
+              {cat}s
+            </button>
+          );
+        })}
       </div>
 
       {loading ? (
@@ -121,18 +155,24 @@ const ContentListPage = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredContent.map(item => (
-            <Link to={`/content/${item.slug || item.id}`} key={item.id} className="glass-card group flex flex-col justify-between hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500">
-              <div>
-                <div className="flex justify-between items-start mb-4">
-                  <span className={`badge transition-all duration-300 ${getCategoryBadgeClass(item.category)}`}>
-                    {item.category}
-                  </span>
-                  <div className="flex items-center gap-3 text-white/20 transition-all duration-300">
-                    <AudioPlayButton track={item} />
-                    <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-500" />
+          {filteredContent.map(item => {
+            const colors = getCategoryColorClasses(item.category);
+            return (
+              <Link 
+                to={`/content/${item.slug || item.id}`} 
+                key={item.id} 
+                className={`glass-card group flex flex-col justify-between transition-all duration-500 border border-white/10 ${colors.hover} hover:shadow-2xl`}
+              >
+                <div>
+                  <div className="flex justify-between items-start mb-4">
+                    <span className={`badge transition-all duration-300 ${getCategoryBadgeClass(item.category)}`}>
+                      {item.category}
+                    </span>
+                    <div className="flex items-center gap-3 text-white/20 transition-all duration-300">
+                      <AudioPlayButton track={item} />
+                      <ArrowRight size={20} className={`group-hover:translate-x-1 transition-transform duration-500`} />
+                    </div>
                   </div>
-                </div>
                 <h3 className="text-xl font-bold mb-4 line-clamp-2 leading-snug transition-colors py-1">
                   {item.title}
                 </h3>
@@ -150,9 +190,10 @@ const ContentListPage = () => {
                 ))}
               </div>
             </Link>
-          ))}
-        </div>
-      )}
+          );
+        })}
+      </div>
+    )}
 
       {!loading && filteredContent.length === 0 && (
         <div className="text-center py-24 glass-card">

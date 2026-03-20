@@ -28,6 +28,22 @@ const CategoryPage = () => {
       description: 'Spiritual and devotional poetry',
       icon: FileText,
       color: 'text-emerald-400'
+    },
+    katha: {
+      name: 'Kathas',
+      description: 'Divine stories and spiritual narratives',
+      icon: Scroll,
+      color: 'text-orange-400'
+    }
+  };
+
+  const getCategoryColorClasses = (cat) => {
+    switch (cat?.toLowerCase()) {
+      case 'shloka': return { hover: 'hover:border-amber-400/30 hover:shadow-amber-400/5' };
+      case 'strotra': return { hover: 'hover:border-sky-400/30 hover:shadow-sky-400/5' };
+      case 'poem': return { hover: 'hover:border-emerald-400/30 hover:shadow-emerald-400/5' };
+      case 'katha': return { hover: 'hover:border-orange-400/30 hover:shadow-orange-400/5' };
+      default: return { hover: 'hover:border-slate-400/30 hover:shadow-slate-400/5' };
     }
   };
 
@@ -36,7 +52,8 @@ const CategoryPage = () => {
       case 'shloka': return 'badge-shloka';
       case 'strotra': return 'badge-strotra';
       case 'poem': return 'badge-poem';
-      default: return '';
+      case 'katha': return 'badge-katha';
+      default: return 'badge-general';
     }
   };
 
@@ -95,32 +112,39 @@ const CategoryPage = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {content.map((item) => (
-            <Link key={item.id} to={`/content/${item.id}`} className="glass-card group flex flex-col justify-between hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500">
-              <div>
-                <div className="flex justify-between items-start mb-4">
-                  <span className={`badge transition-all duration-300 ${getCategoryBadgeClass(category)}`}>
-                    {category}
-                  </span>
-                  <div className="text-white/10 transition-colors duration-300">
-                    <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-500" />
+          {content.map((item) => {
+            const colors = getCategoryColorClasses(category);
+            return (
+              <Link 
+                key={item.id} 
+                to={`/content/${item.id}`} 
+                className={`glass-card group flex flex-col justify-between transition-all duration-500 border border-white/10 ${colors.hover} hover:shadow-2xl`}
+              >
+                <div>
+                  <div className="flex justify-between items-start mb-4">
+                    <span className={`badge transition-all duration-300 ${getCategoryBadgeClass(category)}`}>
+                      {category}
+                    </span>
+                    <div className="text-white/10 transition-colors duration-300">
+                      <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-500" />
+                    </div>
                   </div>
+                  <h3 className="text-xl font-bold mb-4 line-clamp-2 leading-tight transition-colors duration-300">
+                    {item.title}
+                  </h3>
+                  <p className="text-white/50 text-sm line-clamp-4 leading-relaxed">
+                    {item.hindi_text || item.english_translation || item.description}
+                  </p>
                 </div>
-                <h3 className="text-xl font-bold mb-4 line-clamp-2 leading-tight transition-colors duration-300">
-                  {item.title}
-                </h3>
-                <p className="text-white/50 text-sm line-clamp-4 leading-relaxed">
-                  {item.hindi_text || item.english_translation || item.description}
-                </p>
-              </div>
 
-              <div className="pt-6 mt-6 border-t border-white/5 flex gap-4">
-                {item.audio_url && <MusicIcon size={16} className="text-white/20" />}
-                {item.image_urls && item.image_urls.length > 0 && <ImageIcon size={16} className="text-white/20" />}
-                {item.video_urls && item.video_urls.length > 0 && <Video size={16} className="text-white/20" />}
-              </div>
-            </Link>
-          ))}
+                <div className="pt-6 mt-6 border-t border-white/5 flex gap-4">
+                  {item.audio_url && <MusicIcon size={16} className="text-white/20" />}
+                  {item.image_urls && item.image_urls.length > 0 && <ImageIcon size={16} className="text-white/20" />}
+                  {item.video_urls && item.video_urls.length > 0 && <Video size={16} className="text-white/20" />}
+                </div>
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>
