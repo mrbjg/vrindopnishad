@@ -22,22 +22,21 @@ class MainNavigationScreen extends ConsumerStatefulWidget {
 }
 
 class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
-  final List<Widget> _screens = [
-    HomeScreen(),
-    LibraryScreen(),
-    NaamJapScreen(),
-    JournalScreen(),
-    ProfileScreen(),
-    RitualsScreen(),
-  ];
-
   // Pinterest-style Menu State
   final ValueNotifier<Offset?> _menuPointerPosition = ValueNotifier<Offset?>(null);
   final GlobalKey<SacredActionMenuState> _menuKey = GlobalKey<SacredActionMenuState>();
 
-
   @override
   Widget build(BuildContext context) {
+    final List<Widget> screens = [
+      HomeScreen(),
+      LibraryScreen(),
+      NaamJapScreen(),
+      EternalReflectionScreen(),
+      ProfileScreen(),
+      RitualsScreen(),
+    ];
+
     return Scaffold(
       backgroundColor: PremiumTokens.voidBlack,
       body: Stack(
@@ -54,7 +53,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
             child: Consumer(
               builder: (context, ref, child) {
                 final currentIndex = ref.watch(navigationIndexProvider);
-                return IndexedStack(index: currentIndex, children: _screens);
+                return IndexedStack(index: currentIndex, children: screens);
               },
             ),
           ),
