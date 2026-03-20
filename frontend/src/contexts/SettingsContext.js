@@ -8,7 +8,8 @@ export const SettingsProvider = ({ children }) => {
     let initial = saved ? JSON.parse(saved) : {
       fontSize: 2, // 1-5 scale
       fontStyle: 'Serif', // Serif (Laila), Sans (Poppins), Inter
-      lineByLine: true
+      lineByLine: true,
+      smoothScroll: false
     };
     
     // Migration from old string-based font sizes

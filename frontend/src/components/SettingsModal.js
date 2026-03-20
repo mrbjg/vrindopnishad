@@ -142,28 +142,48 @@ const SettingsModal = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* Reading Mode */}
-          <div className="space-y-4">
-            <h3 className="text-xs uppercase tracking-[0.2em] text-white/30 font-bold flex items-center gap-2">
-              <Layout size={14} /> Reading Experience
-            </h3>
-            <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl">
-              <div className="flex flex-col">
-                <span className="font-bold text-sm">Line-by-Line Reading</span>
-                <span className="text-xs text-white/30">Auto-split Hindi/Sanskrit verses</span>
+            {/* Reading Mode */}
+            <div className="space-y-4">
+              <h3 className="text-xs uppercase tracking-[0.2em] text-white/30 font-bold flex items-center gap-2">
+                <Layout size={14} /> Reading Experience
+              </h3>
+              
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl transition-all hover:bg-white/10">
+                  <div className="flex flex-col">
+                    <span className="font-bold text-sm">Line-by-Line Reading</span>
+                    <span className="text-xs text-white/30">Auto-split Hindi/Sanskrit verses</span>
+                  </div>
+                  <button
+                    onClick={() => updateSetting('lineByLine', !settings.lineByLine)}
+                    className={`w-14 h-8 rounded-full transition-all relative ${
+                      settings.lineByLine ? 'bg-primary' : 'bg-white/10'
+                    }`}
+                  >
+                    <div className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-all shadow-md ${
+                      settings.lineByLine ? 'left-7' : 'left-1'
+                    }`}></div>
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl transition-all hover:bg-white/10">
+                  <div className="flex flex-col">
+                    <span className="font-bold text-sm">Fluid Motion</span>
+                    <span className="text-xs text-white/30">Premium smooth scrolling experience</span>
+                  </div>
+                  <button
+                    onClick={() => updateSetting('smoothScroll', !settings.smoothScroll)}
+                    className={`w-14 h-8 rounded-full transition-all relative ${
+                      settings.smoothScroll ? 'bg-primary' : 'bg-white/10'
+                    }`}
+                  >
+                    <div className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-all shadow-md ${
+                      settings.smoothScroll ? 'left-7' : 'left-1'
+                    }`}></div>
+                  </button>
+                </div>
               </div>
-              <button
-                onClick={() => updateSetting('lineByLine', !settings.lineByLine)}
-                className={`w-14 h-8 rounded-full transition-all relative ${
-                  settings.lineByLine ? 'bg-primary' : 'bg-white/10'
-                }`}
-              >
-                <div className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-all shadow-md ${
-                  settings.lineByLine ? 'left-7' : 'left-1'
-                }`}></div>
-              </button>
             </div>
-          </div>
         </div>
 
         <div className="mt-12">
