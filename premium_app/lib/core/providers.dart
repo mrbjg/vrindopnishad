@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'stats_provider.dart';
 
 final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
 
@@ -68,14 +68,18 @@ final previouslyAnimatedCountProvider = StateProvider<int>((ref) => 5);
 
 class NaamJapNotifier extends StateNotifier<int> {
   final SharedPreferences prefs;
+  final Ref ref;
 
-  NaamJapNotifier(this.prefs) : super(0) {
+  NaamJapNotifier(this.prefs, this.ref) : super(0) {
     state = prefs.getInt('naam_jap_count') ?? 0;
   }
 
   Future<void> increment() async {
     state++;
     await prefs.setInt('naam_jap_count', state);
+    
+    // Sync with Supabase (fire and forget)
+    ref.read(userStatsProvider.notifier).syncJaps(state);
   }
 
   Future<void> reset() async {
@@ -86,7 +90,7 @@ class NaamJapNotifier extends StateNotifier<int> {
 
 final naamJapStateProvider = StateNotifierProvider<NaamJapNotifier, int>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
-  return NaamJapNotifier(prefs);
+  return NaamJapNotifier(prefs, ref);
 });
 
 class OnboardingNotifier extends StateNotifier<bool> {

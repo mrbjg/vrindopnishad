@@ -13,6 +13,7 @@ import 'profile/about_screen.dart';
 import 'spiritual_leveling_screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/services.dart';
+import '../core/stats_provider.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   ProfileScreen({super.key});
@@ -349,15 +350,33 @@ class _PremiumProfileHeader extends ConsumerWidget {
           const SizedBox(height: 32),
 
           // Journey Overview Stats
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildStat("Streaks", "21d", PremiumTokens.nebulaBlue),
-              const SizedBox(width: 24),
-              _buildStat("Japs", _formatCount(japCount), PremiumTokens.celestialGlow),
-              const SizedBox(width: 24),
-              _buildStat("Level", "Orbit 4", Colors.tealAccent),
-            ],
+          Consumer(
+            builder: (context, ref, child) {
+              final statsAsync = ref.watch(userStatsProvider);
+              return statsAsync.when(
+                data: (stats) => Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildStat("Streaks", "${stats?.streakCount ?? 0}d", PremiumTokens.nebulaBlue),
+                    const SizedBox(width: 24),
+                    _buildStat("Japs", _formatCount(stats?.totalJapCount ?? 0), PremiumTokens.celestialGlow),
+                    const SizedBox(width: 24),
+                    _buildStat("Level", "Orbit ${stats?.level ?? 1}", Colors.tealAccent),
+                  ],
+                ),
+                loading: () => Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildStat("Streaks", "--", PremiumTokens.nebulaBlue),
+                    const SizedBox(width: 24),
+                    _buildStat("Japs", "--", PremiumTokens.celestialGlow),
+                    const SizedBox(width: 24),
+                    _buildStat("Level", "--", Colors.tealAccent),
+                  ],
+                ),
+                error: (_, __) => const SizedBox.shrink(),
+              );
+            },
           ),
         ],
       ),

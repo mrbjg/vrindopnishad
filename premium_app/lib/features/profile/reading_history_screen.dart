@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/design_system.dart';
+import '../../core/stats_provider.dart';
+import '../../models/user_stats.dart';
 import '../content_detail_screen.dart';
 
-class ReadingHistoryScreen extends StatelessWidget {
+class ReadingHistoryScreen extends ConsumerWidget {
   const ReadingHistoryScreen({super.key});
 
+  String _formatTime(DateTime date) {
+    final now = DateTime.now();
+    final diff = now.difference(date);
+    if (diff.inMinutes < 60) return "${diff.inMinutes}m ago";
+    if (diff.inHours < 24) return "${diff.inHours}h ago";
+    if (diff.inDays == 1) return "Yesterday";
+    return "${diff.inDays}d ago";
+  }
+
   @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final historyItems = [
-      {'title': 'Ashtavakra Gita', 'category': 'Shloka', 'time': '2 hours ago'},
-      {'title': 'Gayatri Mantra', 'category': 'Strotra', 'time': 'Yesterday'},
-      {
-        'title': 'Introduction to Vedas',
-        'category': 'Article',
-        'time': '3 days ago',
-      },
-    ];
+  Widget build(BuildContext context, WidgetRef ref) {
+    final historyAsync = ref.watch(readingHistoryProvider);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -44,76 +47,61 @@ class ReadingHistoryScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              if (historyItems.isEmpty)
-                SliverFillRemaining(child: _buildEmptyState(context))
-              else
-                SliverPadding(
-                  padding: const EdgeInsets.all(16),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final item = historyItems[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: PremiumUI.voidGlassCard(
-                            padding: EdgeInsets.zero,
-                            optimized: true,
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              leading: Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: PremiumTokens.nebulaBlue.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.1)),
-                                ),
-                                child: const Icon(
-                                  Iconsax.clock,
-                                  color: PremiumTokens.nebulaBlue,
-                                  size: 20,
-                                ),
-                              ),
-                              title: Text(
-                                item['title']!,
-                                style: PremiumTokens.displayStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              subtitle: Text(
-                                "${item['category']} • ${item['time']}",
-                                style: PremiumTokens.sansStyle(
-                                  color: Colors.white38,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              trailing: const Icon(
-                                Iconsax.arrow_right_3,
-                                size: 18,
-                                color: Colors.white24,
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ContentDetailScreen(
-                                      title: item['title']!,
-                                      category: item['category']!,
-                                    ),
+              historyAsync.when(
+                data: (historyItems) {
+                  if (historyItems.isEmpty) return SliverFillRemaining(child: _buildEmptyState(context));
+                  return SliverPadding(
+                    padding: const EdgeInsets.all(16),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final item = historyItems[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: PremiumUI.voidGlassCard(
+                              padding: EdgeInsets.zero,
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                leading: Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: PremiumTokens.nebulaBlue.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                                );
-                              },
+                                  child: const Icon(Iconsax.clock, color: PremiumTokens.nebulaBlue, size: 20),
+                                ),
+                                title: Text(
+                                  item.title ?? "Unknown Sacred Text",
+                                  style: PremiumTokens.displayStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Text(
+                                  "${item.category ?? 'Divine'} • ${_formatTime(item.readAt)}",
+                                  style: PremiumTokens.sansStyle(color: Colors.white38, fontSize: 12),
+                                ),
+                                trailing: const Icon(Iconsax.arrow_right_3, size: 18, color: Colors.white24),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ContentDetailScreen(
+                                        title: item.title ?? "",
+                                        category: item.category ?? "",
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                      childCount: historyItems.length,
+                          );
+                        },
+                        childCount: historyItems.length,
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
+                loading: () => const SliverFillRemaining(child: Center(child: CircularProgressIndicator())),
+                error: (e, __) => SliverFillRemaining(child: Center(child: Text("Error: $e"))),
+              ),
             ],
           ),
         ],

@@ -4,16 +4,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../core/design_system.dart';
 import '../core/audio_provider.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import '../core/stats_provider.dart';
+import 'global_player_screen.dart';
 import '../core/favorites_provider.dart';
 import '../widgets/share_content_widget.dart';
 import '../core/localization.dart';
 import '../core/providers.dart';
 import '../widgets/animated_effects.dart';
 import 'package:flutter/services.dart';
-import 'global_player_screen.dart';
 
 class ContentDetailScreen extends ConsumerStatefulWidget {
   final SacredContent? content;
@@ -44,6 +45,17 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    
+    // Log reading activity after a short delay to ensure it's a genuine visit
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        ref.read(userStatsProvider.notifier).recordReading(
+          widget.title ?? 'Unknown', // Fixed null safety
+          title: widget.title,
+          category: widget.category,
+        );
+      }
+    });
   }
 
   void _onScroll() {

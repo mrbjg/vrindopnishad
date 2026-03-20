@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:iconsax/iconsax.dart';
+import '../core/stats_provider.dart';
 
 class NaamJapScreen extends ConsumerStatefulWidget {
   const NaamJapScreen({super.key});
@@ -21,6 +22,8 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
   Widget build(BuildContext context) {
     final count = ref.watch(naamJapStateProvider);
     final isFocusMode = ref.watch(focusModeProvider);
+    final statsAsync = ref.watch(userStatsProvider);
+    final streak = statsAsync.value?.streakCount ?? 0;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -47,7 +50,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                 const SizedBox(height: 40),
                 
                 // Session Stats
-                _buildSessionStats(isFocusMode),
+                _buildSessionStats(isFocusMode, streak),
                 
                 const SizedBox(height: 140), // Spacing for Navbar + MiniPlayer
               ],
@@ -222,7 +225,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
     );
   }
 
-  Widget _buildSessionStats(bool isFocusMode) {
+  Widget _buildSessionStats(bool isFocusMode, int streak) {
     return PremiumUI.focusContainer(
       isFocusMode: isFocusMode,
       child: Padding(
@@ -237,7 +240,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
               Container(width: 1, height: 30, color: Colors.white10),
               Expanded(child: _buildStatItem("SESSIONS", "12", Colors.white70)),
               Container(width: 1, height: 30, color: Colors.white10),
-              Expanded(child: _buildStatItem("STREAK", "7d", PremiumTokens.saffronGlow)),
+              Expanded(child: _buildStatItem("STREAK", "${streak}d", PremiumTokens.saffronGlow)),
             ],
           ),
         ),
