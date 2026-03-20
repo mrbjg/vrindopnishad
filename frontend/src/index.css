@@ -714,25 +714,24 @@ body.is-scrolling .glass-card {
 }
 
 .side-item {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 12px;
+    border-radius: 12px;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    position: relative;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(255, 255, 255, 0.4);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    text-decoration: none;
-    background: transparent;
-    position: relative;
+    border: 1px solid transparent;
     margin: 0.25rem 0;
 }
 
 .side-item:hover {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.02);
     color: rgba(255, 255, 255, 0.8);
-    transform: translateX(3px);
-    transition: all 0.4s ease-out;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .side-item.active {
