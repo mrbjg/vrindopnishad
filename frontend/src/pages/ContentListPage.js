@@ -72,9 +72,14 @@ const ContentListPage = () => {
         hover: 'hover:border-orange-400/30 hover:shadow-orange-400/5',
         text: 'text-orange-400' 
       };
+      case 'general': return {
+        bg: 'bg-indigo-500',
+        hover: 'hover:border-indigo-400/30 hover:shadow-indigo-400/5',
+        text: 'text-indigo-400'
+      };
       default: return { 
-        bg: 'bg-slate-500', 
-        hover: 'hover:border-slate-400/30 hover:shadow-slate-400/5',
+        bg: 'bg-slate-500',
+        hover: 'hover:border-slate-400/20 hover:shadow-slate-400/5',
         text: 'text-slate-400' 
       };
     }
@@ -85,9 +90,9 @@ const ContentListPage = () => {
       case 'shloka': return 'badge-shloka';
       case 'strotra': return 'badge-strotra';
       case 'poem': return 'badge-poem';
-      case 'katha': return 'badge-katha';
-      case 'general': return 'badge-general';
-      default: return '';
+      case 'katha': return 'badge-orange';
+      case 'general': return 'badge-indigo';
+      default: return 'badge-slate';
     }
   };
 
@@ -115,11 +120,10 @@ const ContentListPage = () => {
         </div>
       </div>
 
-      {/* Categories Horizontal Scroll */}
       <div className="flex gap-3 overflow-x-auto pb-6 scrollbar-hide mb-8">
         <button 
           onClick={() => setSelectedCategory(null)}
-          className={`flex-none px-6 py-2 rounded-full border transition-all duration-300 ${!selectedCategory ? 'active-indigo border-transparent text-white shadow-lg shadow-indigo-500/20' : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'}`}
+          className={`px-6 py-2 rounded-full border transition-all duration-300 flex-none ${!selectedCategory ? 'active-gold border-transparent text-white shadow-lg shadow-amber-500/20' : 'bg-white/5 border-white/10 text-white/40 hover:border-white/20'}`}
         >
           All
         </button>
@@ -129,7 +133,7 @@ const ContentListPage = () => {
             <button 
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`flex-none px-6 py-2 rounded-full border transition-all duration-300 capitalize ${selectedCategory === cat ? `${colors.bg} border-transparent text-white shadow-lg shadow-${cat === 'shloka' ? 'amber' : cat === 'strotra' ? 'sky' : cat === 'poem' ? 'emerald' : cat === 'katha' ? 'orange' : 'slate'}-500/20` : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'}`}
+              className={`px-6 py-2 rounded-full border transition-all duration-300 flex-none capitalize ${selectedCategory === cat ? `${colors.bg} border-transparent text-white shadow-lg shadow-amber-500/20` : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'}`}
             >
               {cat}s
             </button>

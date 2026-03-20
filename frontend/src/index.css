@@ -26,9 +26,9 @@
     --blur-effect: blur(8px);
     /* Reduced from 12px for performance */
     --star-color: rgba(255, 255, 255, 0.8);
-    --nebula-color-1: rgba(123, 31, 162, 0.15);
-    --nebula-color-2: rgba(32, 84, 174, 0.15);
-    --nebula-color-3: rgba(175, 38, 255, 0.1);
+    --nebula-color-1: rgba(245, 158, 11, 0.08); /* Amber Ghosting */
+    --nebula-color-2: rgba(32, 84, 174, 0.1);  /* Deep Blue */
+    --nebula-color-3: rgba(251, 191, 36, 0.05); /* Gold Ghosting */
 }
 
 /* Premium Toggle State */
@@ -57,7 +57,7 @@ textarea {
 html {
     scroll-behavior: smooth;
     overflow-x: hidden;
-    background: #0a0015;
+    background: #080808; /* Neutral Deep Black */
     font-size: clamp(14px, 1.2vw, 18px);
 }
 
@@ -66,8 +66,7 @@ body {
     line-height: var(--line-height);
     color: var(--text-color);
     min-height: 100vh;
-    background: #0a0015;
-    overflow-x: hidden;
+    background: #080808;
     overflow-x: hidden;
 }
 
@@ -270,11 +269,11 @@ body.is-scrolling .glass-card {
     box-shadow: 0 15px 35px rgba(245, 158, 11, 0.35) !important;
 }
 
-.active-indigo {
-    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+.active-gold {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
     color: white !important;
     border: transparent !important;
-    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2) !important;
+    box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3) !important;
 }
 
 /* Modern Range Slider - Sanctuary Dial */
@@ -730,9 +729,10 @@ body.is-scrolling .glass-card {
 }
 
 .side-item:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: rgba(255, 255, 255, 0.9);
-    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.8);
+    transform: translateX(3px);
+    transition: all 0.4s ease-out;
 }
 
 .side-item.active {
