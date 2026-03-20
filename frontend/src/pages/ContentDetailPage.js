@@ -108,8 +108,9 @@ const ContentDetailPage = () => {
       case 'shloka': return 'badge-shloka';
       case 'strotra': return 'badge-strotra';
       case 'poem': return 'badge-poem';
+      case 'katha': return 'badge-katha';
       case 'general': return 'badge-general';
-      default: return '';
+      default: return 'badge-general';
     }
   };
 
@@ -123,7 +124,7 @@ const ContentDetailPage = () => {
         <div className="glass-card text-center py-24">
           <h2 className="text-3xl font-bold mb-6">Content not found</h2>
           <p className="text-white/40 mb-10 text-lg">The verse or poem you are looking for does not exist in our library.</p>
-          <Link to="/content" className="btn-premium px-10 py-3">
+          <Link to="/content" className="btn-sacred-gold px-10 py-3">
             Explore All Content
           </Link>
         </div>
@@ -249,14 +250,14 @@ const ContentDetailPage = () => {
           </div>
 
           <h1 
-            className="text-4xl md:text-6xl font-bold mb-12 leading-[1.2] lg:leading-[1.3] pt-8 pb-4 text-sacred-gradient"
+            className="text-4xl md:text-6xl font-bold mb-6 leading-[1.2] lg:leading-[1.3] pt-8 pb-4 text-sacred-gradient"
           >
             {content.title}
           </h1>
 
           {content.description && (
             <p 
-              className="text-white/60 font-light leading-relaxed mb-12 italic border-l-4 border-white/10 pl-6 break-words"
+              className="text-white/60 font-light leading-relaxed mb-8 italic border-l-4 border-white/10 pl-6 break-words"
               style={{ 
                 fontSize: `${Math.max(14, settings.fontSize * 1.2)}px`,
                 wordBreak: 'break-word',
@@ -269,9 +270,9 @@ const ContentDetailPage = () => {
 
           <div className="space-y-16">
             {content.sanskrit_text && (
-              <div className="relative group py-16 sm:py-20 border-b border-white/5">
+              <div className="relative group py-8 sm:py-12 border-b border-white/5">
                 <div className="absolute top-0 right-0 p-8 opacity-5 text-9xl font-serif pointer-events-none">ॐ</div>
-                <h3 className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-white/30 mb-12 sm:mb-16 flex items-center justify-center sm:justify-start gap-4 py-2">
+                <h3 className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-white/30 mb-6 sm:mb-8 flex items-center justify-center sm:justify-start gap-4 py-2">
                   <span className="h-[1px] w-12 bg-gradient-to-r from-transparent to-white/10 hidden sm:block"></span>
                   Sanskrit Text
                   <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-white/10 hidden sm:block"></span>
@@ -292,8 +293,8 @@ const ContentDetailPage = () => {
             )}
 
             {content.hindi_text && (
-              <div className="py-16 sm:py-20 border-b border-white/5">
-                <h3 className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-amber-500/50 mb-12 sm:mb-16 flex items-center justify-center sm:justify-start gap-4 py-2">
+              <div className="py-8 sm:py-12 border-b border-white/5">
+                <h3 className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-amber-500/50 mb-6 sm:mb-8 flex items-center justify-center sm:justify-start gap-4 py-2">
                   <span className="h-[1px] w-12 bg-gradient-to-r from-transparent to-amber-500/10 hidden sm:block"></span>
                   Hindi Meaning
                   <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-amber-500/10 hidden sm:block"></span>
@@ -348,14 +349,14 @@ const ContentDetailPage = () => {
             {content.audio_url && (
               <div className="pt-8 border-t border-white/5">
                 <h3 className="text-xl font-bold mb-6 flex items-center gap-3">
-                  <Music size={24} className="text-primary" />
+                  <Music size={24} className="text-amber-400" />
                   Listen to Audio
                 </h3>
-                <div className="bg-white/5 rounded-2xl p-6 flex items-center gap-6 group hover:bg-white/10 transition-all border border-white/5 hover:border-primary/20">
+                <div className="bg-white/5 rounded-2xl p-6 flex items-center gap-6 group hover:bg-white/10 transition-all border border-white/5 hover:border-amber-500/20">
                   <AudioPlayButton 
                     track={content} 
                     size={32} 
-                    className="w-16 h-16 bg-primary text-white shadow-lg shadow-primary/20" 
+                    className="w-16 h-16 bg-amber-500 text-white shadow-lg shadow-amber-500/20" 
                   />
                   <div>
                     <h4 className="font-bold text-lg mb-1">Divine Rendition</h4>
@@ -368,15 +369,15 @@ const ContentDetailPage = () => {
             {(content.image_url || (content.image_urls && content.image_urls.length > 0)) && (
               <div className="pt-8 border-t border-white/5">
                 <h3 className="text-xl font-bold mb-8 flex items-center gap-3">
-                  <ImageIcon size={24} className="text-primary" />
+                  <ImageIcon size={24} className="text-amber-400" />
                   Gallery
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {content.image_url && (
-                    <img src={content.image_url} alt="Verse" className="rounded-2xl w-full h-auto border border-white/10 hover:border-primary/30 transition-all shadow-2xl" />
+                    <img src={content.image_url} alt="Verse" loading="lazy" className="rounded-2xl w-full h-auto border border-white/10 hover:border-amber-400/30 transition-all shadow-2xl" />
                   )}
                   {content.image_urls?.map((url, idx) => (
-                    <img key={idx} src={url} alt={`Verse ${idx + 1}`} className="rounded-2xl w-full h-auto border border-white/10 hover:border-primary/30 transition-all shadow-2xl" />
+                    <img key={idx} src={url} alt={`Verse ${idx + 1}`} loading="lazy" className="rounded-2xl w-full h-auto border border-white/10 hover:border-amber-400/30 transition-all shadow-2xl" />
                   ))}
                 </div>
               </div>

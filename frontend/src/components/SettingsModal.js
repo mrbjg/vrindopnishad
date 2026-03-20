@@ -192,7 +192,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
         <div className="p-8 pt-4 border-t border-white/5 bg-white/[0.02]">
           <button 
             onClick={onClose}
-            className="w-full btn-premium py-4 font-bold text-sm tracking-widest uppercase shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+            className="w-full btn-sacred-gold py-4 font-bold text-sm tracking-widest uppercase shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"
           >
             Save Preferences
           </button>

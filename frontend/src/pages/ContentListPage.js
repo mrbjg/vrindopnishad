@@ -7,35 +7,42 @@ import { Helmet } from 'react-helmet-async';
 
 const ContentListPage = () => {
   const { apiService } = useContext(ApiContext);
-  const [content, setContent] = useState(() => apiService.getCachedData('all_none_50') || []);
+  const [content, setContent] = useState(() => {
+    try {
+      const cached = localStorage.getItem('sanctuary_content_cache');
+      return cached ? JSON.parse(cached) : [];
+    } catch { return []; }
+  });
   const [categories, setCategories] = useState(() => apiService.getCachedData('categories') || []);
-  const [loading, setLoading] = useState(!apiService.getCachedData('all_none_50'));
-  const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [loading, setLoading] = useState(!content.length);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(searchTerm);
-    }, 300);
+    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
     return () => clearTimeout(timer);
-  }, [searchTerm]);
+  }, [searchQuery]);
 
   useEffect(() => {
-    const fetchDataContent = async () => {
+    const fetchContent = async () => {
       setLoading(true);
       try {
         const data = await apiService.getAllContent(selectedCategory);
         const cats = await apiService.getCategories();
         setContent(data);
         setCategories(cats);
+        // Cache all content if no category is selected
+        if (!selectedCategory) {
+          localStorage.setItem('sanctuary_content_cache', JSON.stringify(data));
+        }
       } catch (error) {
         console.error('Error fetching content:', error);
       } finally {
         setLoading(false);
       }
     };
-    fetchDataContent();
+    fetchContent();
   }, [selectedCategory, apiService]);
 
   const filteredContent = content.filter(item => 
@@ -101,9 +108,9 @@ const ContentListPage = () => {
           <input 
             type="text" 
             placeholder="Search verses, titles..." 
-            className="w-full h-12 bg-white/5 border border-white/10 rounded-full pl-12 pr-6 outline-none focus:border-primary/50 transition-colors"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full h-12 bg-white/5 border border-white/10 rounded-full pl-12 pr-6 outline-none focus:border-amber-500/50 transition-colors"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
@@ -112,7 +119,7 @@ const ContentListPage = () => {
       <div className="flex gap-3 overflow-x-auto pb-6 scrollbar-hide mb-8">
         <button 
           onClick={() => setSelectedCategory(null)}
-          className={`flex-none px-6 py-2 rounded-full border transition-all duration-300 ${!selectedCategory ? 'bg-primary border-transparent text-white shadow-lg shadow-primary/20' : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'}`}
+          className={`flex-none px-6 py-2 rounded-full border transition-all duration-300 ${!selectedCategory ? 'active-indigo border-transparent text-white shadow-lg shadow-indigo-500/20' : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'}`}
         >
           All
         </button>

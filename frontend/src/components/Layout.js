@@ -49,10 +49,10 @@ const Layout = ({ children }) => {
 
           <div className="flex items-center gap-6">
             <nav className="hidden lg:flex items-center gap-6">
-              <Link to="/" className={`nav-link text-sm font-semibold tracking-wide transition-all ${isActive('/') ? 'text-primary' : 'text-white/50 hover:text-white'}`}>
+              <Link to="/" className={`nav-link text-sm font-semibold tracking-wide transition-all ${isActive('/') ? 'text-amber-400' : 'text-white/50 hover:text-white'}`}>
                 Home
               </Link>
-              <Link to="/content" className={`nav-link text-sm font-semibold tracking-wide transition-all ${isActive('/content') ? 'text-primary' : 'text-white/50 hover:text-white'}`}>
+              <Link to="/content" className={`nav-link text-sm font-semibold tracking-wide transition-all ${isActive('/content') ? 'text-amber-400' : 'text-white/50 hover:text-white'}`}>
                 Sanctuary Library
               </Link>
             </nav>
@@ -100,7 +100,7 @@ const Layout = ({ children }) => {
                       e.stopPropagation();
                       setIsSettingsOpen(true);
                     }}
-                    className="text-white/40 hover:text-primary hover:scale-110 active:scale-95 transition-all p-1.5 sm:p-1"
+                    className="text-white/40 hover:text-amber-400 hover:scale-110 active:scale-95 transition-all p-1.5 sm:p-1"
                     title="Settings"
                   >
                     <Settings size={18} className="sm:w-[16px] sm:h-[16px]" />
@@ -122,14 +122,14 @@ const Layout = ({ children }) => {
                   </button>
                 </div>
               ) : (
-                <Link to="/login" className="btn-premium py-2 px-6 text-sm shadow-xl shadow-primary/20">
+                <Link to="/login" className="btn-sacred-gold py-2.5 px-8 text-sm uppercase tracking-widest shadow-2xl">
                   Enter Sanctuary
                 </Link>
               )}
               
               {isAdmin && (
-                 <Link to="/admin-old/dashboard" className="p-2.5 bg-white/5 border border-white/10 rounded-full hover:bg-primary/20 hover:border-primary/40 transition-all">
-                   <LayoutDashboard size={20} className="text-primary-light" />
+                 <Link to="/admin-old/dashboard" className="p-2.5 bg-white/5 border border-white/10 rounded-full hover:bg-amber-500/20 hover:border-amber-400/40 transition-all">
+                   <LayoutDashboard size={20} className="text-amber-300" />
                  </Link>
               )}
             </div>
@@ -169,16 +169,16 @@ const Layout = ({ children }) => {
       {/* Mobile Bottom Nav */}
       {!isAuthPage && (
         <div className="md:hidden fixed bottom-6 left-6 right-6 h-16 glass rounded-full z-[1000] flex items-center justify-around px-4 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-fade-in-up">
-          <Link to="/" className={`p-2 rounded-full transition-all ${isActive('/') ? 'text-primary scale-125' : 'text-white/30'}`}>
+          <Link to="/" className={`p-2 rounded-full transition-all ${isActive('/') ? 'text-amber-400 scale-125' : 'text-white/30'}`}>
             <Home size={24} />
           </Link>
-          <Link to="/content" className={`p-2 rounded-full transition-all ${isActive('/content') ? 'text-primary scale-125' : 'text-white/30'}`}>
+          <Link to="/content" className={`p-2 rounded-full transition-all ${isActive('/content') ? 'text-amber-400 scale-125' : 'text-white/30'}`}>
             <BookOpen size={24} />
           </Link>
-          <Link to="/category/shloka" className={`p-2 rounded-full transition-all ${isCategoryActive('shloka') ? 'text-primary scale-125' : 'text-white/30'}`}>
+          <Link to="/category/shloka" className={`p-2 rounded-full transition-all ${isCategoryActive('shloka') ? 'text-amber-400 scale-125' : 'text-white/30'}`}>
             <Scroll size={24} />
           </Link>
-          <Link to="/category/strotra" className={`p-2 rounded-full transition-all ${isCategoryActive('strotra') ? 'text-primary scale-125' : 'text-white/30'}`}>
+          <Link to="/category/strotra" className={`p-2 rounded-full transition-all ${isCategoryActive('strotra') ? 'text-amber-400 scale-125' : 'text-white/30'}`}>
             <Music size={24} />
           </Link>
         </div>

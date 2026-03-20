@@ -174,7 +174,7 @@ const LoginPage = () => {
           <button 
             type="submit" 
             disabled={loading}
-            className="btn-premium w-full h-14 justify-center text-base shadow-lg shadow-primary/20"
+            className="btn-sacred-gold w-full h-14 justify-center text-base shadow-2xl"
           >
             {loading ? 'Processing...' : (
               <>
