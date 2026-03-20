@@ -101,6 +101,29 @@ class PremiumUI extends StatelessWidget {
     );
   }
 
+  /// Premium Logo Widget
+  static Widget logo({double height = 40, Color? color}) {
+    return SvgPicture.asset(
+      'assets/vaani.svg',
+      height: height,
+      colorFilter: color != null ? ColorFilter.mode(color, BlendMode.srcIn) : null,
+    );
+  }
+
+  /// Animated Premium Logo
+  static Widget logoAnimated({double height = 60, Color? color}) {
+    final effectiveColor = color ?? Colors.white;
+    return logo(height: height, color: color)
+        .animate(onPlay: (controller) => controller.repeat(reverse: true))
+        .shimmer(duration: 3.seconds, color: effectiveColor.withOpacity(0.3))
+        .scale(
+          begin: const Offset(1, 1),
+          end: const Offset(1.05, 1.05),
+          duration: 3.seconds,
+          curve: Curves.easeInOutSine,
+        );
+  }
+
   /// Premium Button with Saffron Gradient
   static Widget primaryButton({
     required String text,

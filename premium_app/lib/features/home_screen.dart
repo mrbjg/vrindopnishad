@@ -120,10 +120,6 @@ class HomeScreen extends ConsumerWidget {
               ),
 
               SliverToBoxAdapter(
-                child: _buildExpandPlayerButton(context, ref),
-              ),
-
-              SliverToBoxAdapter(
                 child: _buildPremiumNaamJap(context, ref),
               ),
 
@@ -177,30 +173,25 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _buildExpandPlayerButton(BuildContext context, WidgetRef ref) {
-    return GestureDetector(
+    return PremiumUI.etherealButton(
       onTap: () {
-        HapticFeedback.mediumImpact();
         ref.read(navigationIndexProvider.notifier).state = 2;
       },
-      child: PremiumUI.glassCard(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        borderRadius: 20,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Iconsax.music_play, color: Colors.white, size: 18),
-            const SizedBox(width: 12),
-            Text(
-              "EXPAND PLAYER",
-              style: PremiumTokens.sansStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 2,
-                color: Colors.white,
-              ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Iconsax.music_play, color: Colors.white.withValues(alpha: 0.9), size: 18),
+          const SizedBox(width: 12),
+          Text(
+            "EXPAND PLAYER",
+            style: PremiumTokens.sansStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 2,
+              color: Colors.white,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -210,7 +201,7 @@ class HomeScreen extends ConsumerWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: PremiumUI.glassCard(
+      child: PremiumUI.etherealCard(
         padding: const EdgeInsets.all(24),
         borderRadius: 32,
         child: Column(
@@ -222,102 +213,63 @@ class HomeScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'DAILY CHANTS',
+                      'DAILY PROGRESS',
                       style: PremiumTokens.sansStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
-                        color: Colors.white38,
+                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.7),
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Sacred Counter',
                       style: GoogleFonts.spectral(
-                        fontSize: 22,
+                        fontSize: 26,
                         color: Colors.white,
                         fontWeight: FontWeight.w300,
                       ),
                     ),
                   ],
                 ),
-                PremiumUI.glassCard(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                const Spacer(),
+                PremiumUI.etherealButton(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   borderRadius: 12,
+                  onTap: () {}, 
+                  color: Colors.white.withValues(alpha: 0.05),
                   child: Text(
                     "GOAL: 1008",
-                    style: PremiumTokens.sansStyle(fontSize: 10, color: PremiumTokens.nebulaBlue, fontWeight: FontWeight.bold),
+                    style: PremiumTokens.sansStyle(
+                      fontSize: 11, 
+                      color: Colors.white.withValues(alpha: 0.9), // Changed from nebulaBlue to white
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1,
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
             
-            // Professional Central Counter
-            GestureDetector(
-              onTap: () {
-                HapticFeedback.mediumImpact();
-                ref.read(naamJapStateProvider.notifier).increment();
-              },
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Aura
-                  Animate(
-                    onPlay: (c) => c.repeat(reverse: true),
-                    effects: [
-                      ScaleEffect(begin: const Offset(1, 1), end: const Offset(1.2, 1.2), duration: 2.seconds),
-                    ],
-                    child: Container(
-                      width: 140,
-                      height: 140,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: RadialGradient(
-                          colors: [
-                            PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
-                            Colors.transparent,
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  
-                  // Counter Disk
-                  Container(
-                    width: 110,
-                    height: 110,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withValues(alpha: 0.03),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: Animate(
-                        target: count > 0 ? 1 : 0,
-                        effects: [
-                          ScaleEffect(duration: 200.ms),
-                        ],
-                        child: Text(
-                          count.toString(),
-                          style: GoogleFonts.spectral(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+            // Enhanced Premium Counter
+            Center(
+              child: PremiumUI.naamJapCounter(
+                count: count,
+                onTap: () {
+                  ref.read(naamJapStateProvider.notifier).increment();
+                },
+                goal: 1008,
+                size: 240,
               ),
+            ),
+            
+            const SizedBox(height: 32),
+            
+            // Moved Expand Player inside the block, matching width
+            SizedBox(
+              width: double.infinity,
+              child: _buildExpandPlayerButton(context, ref),
             ),
             
             const SizedBox(height: 24),

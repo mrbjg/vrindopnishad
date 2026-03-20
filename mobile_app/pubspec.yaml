@@ -76,11 +76,11 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "../icons/v-logo-small-centered.png"
+  image_path: "../premium_app/assets/vaani_icon.png"
   min_sdk_android: 21
   # Adaptive icons for Android
   adaptive_icon_background: "#000000"
-  adaptive_icon_foreground: "../icons/v-logo-small-centered.png"
+  adaptive_icon_foreground: "../premium_app/assets/vaani_icon.png"
   # Remove alpha channel for iOS
   remove_alpha_ios: true
 

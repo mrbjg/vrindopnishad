@@ -219,7 +219,7 @@ class PremiumUI extends StatelessWidget {
     ]);
 
     Widget logoImage = SvgPicture.asset(
-      'assets/logo.svg',
+      'assets/vaani.svg',
       height: height,
       colorFilter: color != null ? ColorFilter.mode(color, BlendMode.srcIn) : luminanceToAlpha,
     );
@@ -232,7 +232,7 @@ class PremiumUI extends StatelessWidget {
         child: ColorFiltered(
           colorFilter: luminanceToAlpha,
           child: SvgPicture.asset(
-            'assets/logo.svg',
+            'assets/vaani.svg',
             height: height,
           ),
         ),
@@ -605,6 +605,21 @@ class PremiumUI extends StatelessWidget {
     );
   }
 
+  /// Premium Naam Jap Counter Widget
+  static Widget naamJapCounter({
+    required int count,
+    required VoidCallback onTap,
+    int goal = 1008,
+    double size = 200,
+  }) {
+    return _PremiumNaamJapCounterInternal(
+      count: count,
+      onTap: onTap,
+      goal: goal,
+      size: size,
+    );
+  }
+
 
   /// Generic glass card
   static Widget glassCard({
@@ -627,7 +642,7 @@ class PremiumUI extends StatelessWidget {
                 color: Colors.white.withValues(alpha: opacity * 1.5), // High-perf opacity
                 borderRadius: BorderRadius.circular(borderRadius),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.08),
+                  color: Colors.white.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
@@ -645,6 +660,104 @@ class PremiumUI extends StatelessWidget {
                 child: child,
               ),
             ),
+      ),
+    );
+  }
+
+  /// High-end ethereal card with subtle glow and premium glassmorphism
+  static Widget etherealCard({
+    required Widget child,
+    double borderRadius = 32,
+    EdgeInsets? padding,
+    EdgeInsets? margin,
+    Color? glowColor,
+    bool showGlow = true,
+  }) {
+    final activeGlow = glowColor ?? PremiumTokens.nebulaBlue;
+    return Container(
+      margin: margin,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(borderRadius),
+        boxShadow: showGlow ? [
+          BoxShadow(
+            color: activeGlow.withValues(alpha: 0.08),
+            blurRadius: 30,
+            spreadRadius: -10,
+          ),
+        ] : [],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            padding: padding ?? const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: const Color(0x15FFFFFF),
+              borderRadius: BorderRadius.circular(borderRadius),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.12),
+                width: 1,
+              ),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withValues(alpha: 0.05),
+                  Colors.white.withValues(alpha: 0.02),
+                ],
+              ),
+            ),
+            child: child,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Premium ethereal capsule button
+  static Widget etherealButton({
+    required Widget child,
+    required VoidCallback onTap,
+    Color? color,
+    double borderRadius = 35,
+    EdgeInsets? padding,
+  }) {
+    final activeColor = color ?? PremiumTokens.nebulaBlue;
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(borderRadius),
+          boxShadow: [
+            BoxShadow(
+              color: activeColor.withValues(alpha: 0.15),
+              blurRadius: 15,
+              spreadRadius: -2,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(borderRadius),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+            child: Container(
+              padding: padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+              decoration: BoxDecoration(
+                color: activeColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(borderRadius),
+                border: Border.all(
+                  color: activeColor.withValues(alpha: 0.3),
+                  width: 1.5,
+                ),
+              ),
+              child: child,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -738,7 +851,7 @@ class PremiumUI extends StatelessWidget {
       opacity: opacity,
       child: Container(
         decoration: BoxDecoration(image: DecorationImage(
-            image: NetworkImage('https://images.unsplash.com/photo-1539667468021-fdb3dfaa059d?auto=format&fit=crop&w=800&q=80'),
+            image: NetworkImage('https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?auto=format&fit=crop&w=800&q=80'),
             repeat: ImageRepeat.repeat,
             scale: 0.5,
           ),
@@ -1937,4 +2050,250 @@ void showSacredMenu(
     ),
   );
   Overlay.of(context).insert(entry);
+}
+
+class _PremiumNaamJapCounterInternal extends StatefulWidget {
+  final int count;
+  final VoidCallback onTap;
+  final int goal;
+  final double size;
+
+  const _PremiumNaamJapCounterInternal({
+    required this.count,
+    required this.onTap,
+    required this.goal,
+    required this.size,
+  });
+
+  @override
+  State<_PremiumNaamJapCounterInternal> createState() => _PremiumNaamJapCounterInternalState();
+}
+
+class _PremiumNaamJapCounterInternalState extends State<_PremiumNaamJapCounterInternal> with TickerProviderStateMixin {
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
+  late AnimationController _pressController;
+  late Animation<double> _pressAnimation;
+  late AnimationController _rotationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.08).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeOutCubic),
+    );
+
+    _pressController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _pressAnimation = Tween<double>(begin: 1.0, end: 0.92).animate(
+      CurvedAnimation(parent: _pressController, curve: Curves.easeOutCubic),
+    );
+
+    _rotationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 20),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    _pressController.dispose();
+    _rotationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(_PremiumNaamJapCounterInternal oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.count != oldWidget.count) {
+      _pulseController.forward(from: 0.0).then((_) => _pulseController.reverse());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = (widget.count / widget.goal).clamp(0.0, 1.0);
+
+    return GestureDetector(
+      onTapDown: (_) {
+        _pressController.animateTo(1.0, curve: Curves.easeOutCubic, duration: const Duration(milliseconds: 150));
+      },
+      onTapUp: (_) {
+        _pressController.animateTo(0.0, curve: Curves.easeOutBack, duration: const Duration(milliseconds: 400));
+        HapticFeedback.mediumImpact();
+        widget.onTap();
+      },
+      onTapCancel: () {
+        _pressController.animateTo(0.0, curve: Curves.easeOutCubic, duration: const Duration(milliseconds: 100));
+      },
+      child: ScaleTransition(
+        scale: _pressAnimation,
+        child: SizedBox(
+          width: widget.size,
+          height: widget.size,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Outer Aura
+              PremiumUI.nebulaGlow(size: widget.size * 1.5, opacity: 0.4),
+
+              // Rotating Background Disk
+              RepaintBoundary(
+                child: RotationTransition(
+                  turns: _rotationController,
+                  child: Container(
+                    width: widget.size * 0.8,
+                    height: widget.size * 0.8,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          PremiumTokens.nebulaBlue.withValues(alpha: 0.15),
+                          PremiumTokens.voidBlack,
+                        ],
+                      ),
+                    ),
+                    child: PremiumUI.mandalaOverlay(opacity: 0.06),
+                  ),
+                ),
+              ),
+
+              // Progress Ring
+              RepaintBoundary(
+                child: SizedBox(
+                  width: widget.size * 0.85,
+                  height: widget.size * 0.85,
+                  child: CustomPaint(
+                    painter: _NaamJapProgressPainter(
+                      progress: progress,
+                      color: PremiumTokens.nebulaBlue,
+                      glowColor: PremiumTokens.celestialGlow,
+                    ),
+                  ),
+                ),
+              ),
+
+              // Center Content with Pulse
+              ScaleTransition(
+                scale: _pulseAnimation,
+                child: Container(
+                  width: widget.size * 0.55,
+                  height: widget.size * 0.55,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFF020205).withValues(alpha: 0.95), // Deeper void for better contrast
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
+                        blurRadius: 25,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          widget.count.toString(),
+                          style: PremiumTokens.lailaStyle(
+                            fontSize: widget.size * 0.18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'CHANTS',
+                          style: PremiumTokens.sansStyle(
+                            fontSize: widget.size * 0.04,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2,
+                            color: Colors.white54, // Brighter for better visibility
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NaamJapProgressPainter extends CustomPainter {
+  final double progress;
+  final Color color;
+  final Color glowColor;
+
+  _NaamJapProgressPainter({
+    required this.progress,
+    required this.color,
+    required this.glowColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (size.width - 10) / 2;
+    const strokeWidth = 8.0;
+
+    // Background track
+    final trackPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.05)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth;
+    canvas.drawCircle(center, radius, trackPaint);
+
+    // Progress Arc
+    final progressPaint = Paint()
+      ..shader = LinearGradient(
+        colors: [color, glowColor],
+      ).createShader(Rect.fromCircle(center: center, radius: radius))
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      -math.pi / 2,
+      2 * math.pi * progress,
+      false,
+      progressPaint,
+    );
+
+    // Outer Glow for progress
+    if (progress > 0) {
+      final glowPaint = Paint()
+        ..color = glowColor.withValues(alpha: 0.3)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth * 2.5
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10)
+        ..strokeCap = StrokeCap.round;
+
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        -math.pi / 2,
+        2 * math.pi * progress,
+        false,
+        glowPaint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _NaamJapProgressPainter oldDelegate) {
+    return oldDelegate.progress != progress;
+  }
 }

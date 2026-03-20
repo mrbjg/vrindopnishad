@@ -228,18 +228,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               const SizedBox(height: 40),
 
               // Logo
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Icon(
-                  Iconsax.flash,
-                  size: 32,
-                  color: AppTheme.primaryColor,
-                ),
-              ),
+              PremiumUI.logoAnimated(height: 60),
 
               const SizedBox(height: 36),
 
