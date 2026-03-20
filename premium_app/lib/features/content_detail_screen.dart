@@ -73,13 +73,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     super.dispose();
   }
 
-  Future<void> _toggleFavorite() async {
-    if (widget.content == null) return;
+  Future<void> _toggleFavoriteResolved(SacredContent? content) async {
+    if (content == null) return;
     HapticFeedback.lightImpact();
     try {
       await ref
           .read(favoritesProvider.notifier)
-          .toggleFavorite(widget.content!.id);
+          .toggleFavorite(content.id);
     } catch (e) {
       if (mounted) {
         PremiumUI.showNotification(
@@ -92,10 +92,10 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     }
   }
 
-  void _shareContent() {
-    if (widget.content == null) return;
+  void _shareContentResolved(SacredContent? content) {
+    if (content == null) return;
     HapticFeedback.lightImpact();
-    ShareContentHelper.shareAsImage(context, widget.content!);
+    ShareContentHelper.shareAsImage(context, content);
   }
 
   @override
@@ -104,11 +104,15 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     final isFocusMode = ref.watch(focusModeProvider);
     final l = AppLocalization(currentLanguage);
 
+    final allContent = ref.watch(sacredContentProvider);
+    final content = widget.content ?? 
+      (widget.title != null ? allContent.cast<SacredContent?>().firstWhere((c) => c?.title == widget.title, orElse: () => null) : null);
+
     final displayTitle =
-        (widget.content?.title ?? widget.title ?? l.translate('sacred_text'))
+        (content?.title ?? widget.title ?? l.translate('sacred_text'))
             .replaceAll('\n', ', ');
     final displayCategory =
-        widget.content?.category ?? widget.category ?? "Wisdom";
+        content?.category ?? widget.category ?? "Wisdom";
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -136,7 +140,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
                     // Sanskrit Card - Always visible but styled for focus
-                    _buildPremiumSanskritCard(l, isFocusMode),
+                    _buildPremiumSanskritCard(content, l, isFocusMode),
                     
                     const SizedBox(height: 32),
                     PremiumUI.sacredDivider(color: Colors.white.withValues(alpha: isFocusMode ? 0.3 : 0.05)),
@@ -149,7 +153,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         children: [
                           _buildPremiumContentSection(
                             title: l.translate('hindi_meaning'),
-                            content: widget.content?.hindiMeaning ?? "",
+                            content: content?.hindiMeaning ?? "",
                             icon: Iconsax.heart,
                             accentColor: Colors.redAccent,
                           ),
@@ -157,7 +161,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
                           _buildPremiumContentSection(
                             title: l.translate('english_translation'),
-                            content: widget.content?.translation ?? "",
+                            content: content?.translation ?? "",
                             icon: Iconsax.language_circle,
                             accentColor: Colors.blueAccent,
                           ),
@@ -170,7 +174,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     // Commentary remains but simplified
                     _buildPremiumContentSection(
                       title: l.translate('commentary'),
-                      content: widget.content?.commentary ?? "",
+                      content: content?.commentary ?? "",
                       icon: Iconsax.lamp_charge,
                       accentColor: PremiumTokens.saffronGlow,
                       isFocusMode: isFocusMode,
@@ -200,7 +204,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           ),
 
           // Floating Header
-          _buildPremiumHeader(displayTitle, isFocusMode),
+          _buildPremiumHeader(content, displayTitle, isFocusMode),
 
           // Audio Toggle - Fades in Focus Mode
           Positioned(
@@ -212,7 +216,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               child: AnimatedSwitcher(
                 duration: 300.ms,
                 child: _showAudioPlayer
-                    ? _buildPremiumAudioPlayer()
+                    ? _buildPremiumAudioPlayer(content)
                     : _buildAudioFloatingToggle(),
               ),
             ),
@@ -265,7 +269,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  Widget _buildPremiumHeader(String title, bool isFocusMode) {
+  Widget _buildPremiumHeader(SacredContent? content, String title, bool isFocusMode) {
     return Positioned(
       top: 0,
       left: 0,
@@ -338,8 +342,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 children: [
                   _buildHeaderCircleButton(
                     null,
-                    _toggleFavorite,
-                    isToggled: widget.content != null && ref.watch(isFavoriteProvider(widget.content!.id)),
+                    () => _toggleFavoriteResolved(content),
+                    isToggled: content != null && ref.watch(isFavoriteProvider(content.id)),
                     isAnimated: true,
                     resetAfterPlay: false,
                     animFolder: 'Heart',
@@ -348,7 +352,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   const SizedBox(width: 8),
                   _buildHeaderCircleButton(
                     null, 
-                    _shareContent,
+                    () => _shareContentResolved(content),
                     isCustomSvg: true,
                     svgFile: 'iconsax-ai-send-message-m26q6m1j-.svg',
                   ),
@@ -405,8 +409,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  Widget _buildPremiumSanskritCard(AppLocalization l, bool isFocusMode) {
-    final text = widget.content?.sanskritText ?? "";
+  Widget _buildPremiumSanskritCard(SacredContent? content, AppLocalization l, bool isFocusMode) {
+    final text = content?.sanskritText ?? "";
     return RepaintBoundary(
       child: AnimatedContainer(
         duration: 500.ms,
@@ -607,7 +611,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     ).animate().scale();
   }
 
-  Widget _buildPremiumAudioPlayer() {
+  Widget _buildPremiumAudioPlayer(SacredContent? content) {
     return PremiumUI.glassCard(
       padding: const EdgeInsets.all(24),
       borderRadius: 32,
@@ -658,7 +662,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                               ),
                             ),
                             Text(
-                              widget.content?.title ?? "Sacred Verse",
+                              content?.title ?? "Sacred Verse",
                               style: GoogleFonts.outfit(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -730,8 +734,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   GestureDetector(
                     onTap: () {
                       HapticFeedback.mediumImpact();
-                      if (widget.content != null) {
-                        ref.read(audioProvider.notifier).play(widget.content!);
+                      if (content != null) {
+                        ref.read(audioProvider.notifier).play(content);
                       }
                     },
                     child: Container(

@@ -46,8 +46,14 @@ class ReadingHistoryScreen extends ConsumerWidget {
                 pinned: true,
                 centerTitle: true,
                 leading: IconButton(
-                  icon: const Icon(Icons.arrow_back_ios, color: PremiumTokens.nebulaBlue, size: 20),
-                  onPressed: () => Navigator.pop(context),
+                  icon: PremiumUI.animatedIcon(
+                    folder: 'Chevron-left',
+                    fileName: 'chevron-left.json',
+                    size: 20,
+                    color: PremiumTokens.nebulaBlue,
+                    onTap: () => Navigator.pop(context),
+                  ),
+                  onPressed: () {}, // Handled by animatedIcon onTap
                 ),
                 actions: [
                   historyAsync.when(

@@ -217,7 +217,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Widget _buildBackButton(BuildContext context) {
     return PressableScale(
-      onTap: () => Navigator.pop(context),
+      onTap: () {}, // Handled by animatedIcon onTap
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -232,6 +232,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           fileName: 'chevron-left.json',
           size: 20,
           color: Colors.white,
+          onTap: () => Navigator.pop(context),
         ),
       ),
     );

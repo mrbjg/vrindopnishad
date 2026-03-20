@@ -37,8 +37,9 @@ class SavedItemsScreen extends ConsumerWidget {
                     fileName: 'chevron-left.json',
                     size: 20,
                     color: PremiumTokens.nebulaBlue,
+                    onTap: () => Navigator.pop(context),
                   ),
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {}, // Handled by animatedIcon onTap
                 ),
               ),
               if (savedItems.isEmpty)
@@ -93,15 +94,16 @@ class SavedItemsScreen extends ConsumerWidget {
                                 color: Colors.white24,
                               ),
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ContentDetailScreen(
-                                      title: item.title,
-                                      category: item.category,
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ContentDetailScreen(
+                                        content: item,
+                                        title: item.title,
+                                        category: item.category,
+                                      ),
                                     ),
-                                  ),
-                                );
+                                  );
                               },
                             ),
                           ),

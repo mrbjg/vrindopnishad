@@ -10,7 +10,7 @@ import 'profile/saved_items_screen.dart';
 import 'profile/reading_history_screen.dart';
 import 'profile/settings_screen.dart';
 import 'profile/about_screen.dart';
-import 'spiritual_leveling_screen.dart';
+import 'celestial_stats_screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/services.dart';
 import '../core/stats_provider.dart';
@@ -56,9 +56,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                     _buildPremiumSectionTitle("Sacred Journey"),
                     const SizedBox(height: 16),
                     GestureDetector(
-                      onTap: () => Navigator.push(
+                        onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const SpiritualLevelingScreen()),
+                        MaterialPageRoute(builder: (_) => const CelestialStatsScreen()),
                       ),
                       child: PremiumUI.voidCard(
                         padding: const EdgeInsets.all(20),

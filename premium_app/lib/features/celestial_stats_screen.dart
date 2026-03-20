@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart'; // Sanctuary UI Base
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,25 +10,46 @@ import '../core/design_system.dart';
 import '../core/auth_provider.dart';
 import '../core/stats_provider.dart';
 
-class SpiritualLevelingScreen extends ConsumerWidget {
-  const SpiritualLevelingScreen({super.key});
+class CelestialStatsScreen extends ConsumerStatefulWidget {
+  const CelestialStatsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CelestialStatsScreen> createState() => _CelestialStatsScreenState();
+}
+
+class _CelestialStatsScreenState extends ConsumerState<CelestialStatsScreen> with TickerProviderStateMixin {
+  late AnimationController _rotationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _rotationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 20),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _rotationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final user = ref.watch(authStateProvider).value;
     final statsAsync = ref.watch(userStatsProvider);
     final level = statsAsync.value?.level ?? 1;
     final totalJapCount = statsAsync.value?.totalJapCount ?? 0;
     
     // Derived stats for the "Orbit" feel
-    final japHours = (totalJapCount * 2 / 3600).toStringAsFixed(1); // Assuming 2 seconds per Jap
+    final japHours = (totalJapCount * 2 / 3600).toStringAsFixed(1);
     final malaStreaks = (totalJapCount / 108).floor();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF050510), // Ultra-deep void
+      backgroundColor: const Color(0xFF050510),
       body: Stack(
         children: [
-          // Celestial Constellation Background
           Positioned.fill(child: PremiumUI.bokehBackground()),
           Positioned.fill(child: PremiumUI.mandalaOverlay(opacity: 0.05)),
           
@@ -87,17 +109,28 @@ class SpiritualLevelingScreen extends ConsumerWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Animated Orbit Rings
-          _buildOrbitRing(200, 200, 2000),
-          _buildOrbitRing(280, 280, 3500),
-          _buildOrbitRing(340, 340, 5000),
+          // HIGH PERFORMANCE PAINTED ORBITS
+          RepaintBoundary(
+            child: AnimatedBuilder(
+              animation: _rotationController,
+              builder: (context, child) {
+                return CustomPaint(
+                  size: const Size(340, 340),
+                  painter: SacredOrbitPainter(
+                    animationValue: _rotationController.value,
+                    orbits: [100.0, 140.0, 170.0],
+                    points: [
+                      ConstellationPoint(orbitIndex: 0, initialAngle: 0.5, label: "Awakened", speed: 1.0),
+                      ConstellationPoint(orbitIndex: 1, initialAngle: 2.1, label: "7 Day Streak", speed: -0.7),
+                      ConstellationPoint(orbitIndex: 2, initialAngle: 4.5, label: "128 Mantras", speed: 0.5),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
 
-          // Constellation Points (Simulated)
-          _buildConstellationPoint(160, 100, "Awakened"),
-          _buildConstellationPoint(280, 140, "7 Day Streak"),
-          _buildConstellationPoint(220, 280, "108 Mantras"),
-
-          // Center Level Node
+          // Center Level Node (Static text to prevent unnecesary rebuilds)
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -141,65 +174,27 @@ class SpiritualLevelingScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildOrbitRing(double width, double height, int durationMs) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1),
-      ),
-    ).animate(onPlay: (c) => c.repeat())
-     .rotate(duration: durationMs.ms);
-  }
-
-  Widget _buildConstellationPoint(double top, double left, String label) {
-    return Positioned(
-      top: top,
-      left: left,
-      child: Column(
-        children: [
-          Container(
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(color: Colors.white.withValues(alpha: 0.8), blurRadius: 10, spreadRadius: 1),
-              ],
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label.toUpperCase(),
-            style: GoogleFonts.spectral(fontSize: 8, color: Colors.white24, fontWeight: FontWeight.bold, letterSpacing: 1),
-          ),
-        ],
-      ),
-    ).animate().fadeIn(delay: 500.ms);
-  }
-
   Widget _buildAdvancedStatsRow(String japHours, int malaStreaks) {
     return Row(
       children: [
         Expanded(
-          child: PremiumUI.glassCard(
+          child: PremiumUI.etherealCard(
             padding: const EdgeInsets.all(20),
             borderRadius: 24,
+            glowColor: PremiumTokens.nebulaBlue,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(Iconsax.timer, color: PremiumTokens.nebulaBlue, size: 24),
                 const SizedBox(height: 12),
                 Text(
-                  "Total Jap Hours",
-                  style: GoogleFonts.spectral(fontSize: 10, color: Colors.white38, fontWeight: FontWeight.bold, letterSpacing: 1),
+                  "TOTAL JAP HOURS",
+                  style: GoogleFonts.spectral(fontSize: 10, color: Colors.white54, fontWeight: FontWeight.w900, letterSpacing: 1.5),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   "$japHours hrs",
-                  style: GoogleFonts.manrope(fontSize: 20, fontWeight: FontWeight.w300, color: Colors.white),
+                  style: GoogleFonts.manrope(fontSize: 22, fontWeight: FontWeight.w300, color: Colors.white),
                 ),
               ],
             ),
@@ -207,22 +202,23 @@ class SpiritualLevelingScreen extends ConsumerWidget {
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: PremiumUI.glassCard(
+          child: PremiumUI.etherealCard(
             padding: const EdgeInsets.all(20),
             borderRadius: 24,
+            glowColor: PremiumTokens.celestialGlow,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Iconsax.hierarchy, color: PremiumTokens.nebulaBlue, size: 24),
+                const Icon(Iconsax.hierarchy, color: PremiumTokens.celestialGlow, size: 24),
                 const SizedBox(height: 12),
                 Text(
-                  "Mala Streaks",
-                  style: GoogleFonts.spectral(fontSize: 10, color: Colors.white38, fontWeight: FontWeight.bold, letterSpacing: 1),
+                  "MALA STREAKS",
+                  style: GoogleFonts.spectral(fontSize: 10, color: Colors.white54, fontWeight: FontWeight.w900, letterSpacing: 1.5),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   "$malaStreaks days",
-                  style: GoogleFonts.manrope(fontSize: 20, fontWeight: FontWeight.w300, color: Colors.white),
+                  style: GoogleFonts.manrope(fontSize: 22, fontWeight: FontWeight.w300, color: Colors.white),
                 ),
               ],
             ),
@@ -234,9 +230,9 @@ class SpiritualLevelingScreen extends ConsumerWidget {
 
   Widget _buildSoulBadges() {
     final badges = [
-      {"icon": Icons.brightness_7, "name": "Void Seeker"},
-      {"icon": Icons.dark_mode, "name": "Eternal Peace"},
-      {"icon": Icons.self_improvement, "name": "Stillness Master"},
+      {"icon": Icons.brightness_7, "name": "Void Seeker", "color": PremiumTokens.nebulaBlue},
+      {"icon": Icons.dark_mode, "name": "Eternal Peace", "color": PremiumTokens.celestialGlow},
+      {"icon": Icons.self_improvement, "name": "Stillness Master", "color": Colors.tealAccent},
     ];
 
     return Column(
@@ -249,17 +245,18 @@ class SpiritualLevelingScreen extends ConsumerWidget {
           children: badges.map((badge) => Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: PremiumUI.glassCard(
+              child: PremiumUI.etherealCard(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 borderRadius: 20,
+                glowColor: (badge['color'] as Color).withValues(alpha: 0.2),
                 child: Column(
                   children: [
-                    Icon(badge['icon'] as IconData, color: PremiumTokens.nebulaBlue, size: 20),
+                    Icon(badge['icon'] as IconData, color: badge['color'] as Color, size: 20),
                     const SizedBox(height: 8),
                     Text(
                       badge['name'] as String,
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.manrope(fontSize: 10, fontWeight: FontWeight.w500, color: Colors.white54),
+                      style: GoogleFonts.manrope(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white70),
                     ),
                   ],
                 ),
@@ -295,9 +292,10 @@ class SpiritualLevelingScreen extends ConsumerWidget {
       children: [
         _buildSectionTitle("RESONANCE PATH"),
         const SizedBox(height: 16),
-        PremiumUI.glassCard(
+        PremiumUI.etherealCard(
           padding: const EdgeInsets.all(24),
           borderRadius: 24,
+          glowColor: PremiumTokens.nebulaBlue,
           child: Column(
             children: [
               Row(
@@ -305,27 +303,30 @@ class SpiritualLevelingScreen extends ConsumerWidget {
                 children: [
                   Text(
                     "Weekly Stillness",
-                    style: GoogleFonts.manrope(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white70),
+                    style: GoogleFonts.manrope(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
                   ),
                   const Text(
-                    "Last 7 Days",
-                    style: TextStyle(fontSize: 10, color: PremiumTokens.nebulaBlue, fontWeight: FontWeight.bold),
+                     "Last 7 Days",
+                    style: TextStyle(fontSize: 10, color: PremiumTokens.nebulaBlue, fontWeight: FontWeight.bold, letterSpacing: 1),
                   ),
                 ],
               ),
               const SizedBox(height: 32),
               SizedBox(
-                height: 80,
+                height: 100,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [0.4, 0.6, 0.3, 0.85, 0.5, 0.95, 0.7].map((h) => _buildBar(h)).toList(),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: ["M", "T", "W", "T", "F", "S", "S"].map((d) => Text(d, style: const TextStyle(fontSize: 10, color: Colors.white24))).toList(),
+                children: ["M", "T", "W", "T", "F", "S", "S"].map((d) => Text(
+                  d, 
+                  style: GoogleFonts.manrope(fontSize: 10, color: Colors.white24, fontWeight: FontWeight.bold)
+                )).toList(),
               ),
             ],
           ),
@@ -336,16 +337,136 @@ class SpiritualLevelingScreen extends ConsumerWidget {
 
   Widget _buildBar(double heightFactor) {
     return Container(
-      width: 12,
-      height: 80 * heightFactor,
+      width: 14,
+      height: 100 * heightFactor,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [PremiumTokens.nebulaBlue.withValues(alpha: 0.1), PremiumTokens.nebulaBlue.withValues(alpha: 0.6)],
-        ),
+        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(10),
+      ),
+      child: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [
+                  PremiumTokens.nebulaBlue.withValues(alpha: 0.1), 
+                  PremiumTokens.nebulaBlue.withValues(alpha: 0.6)
+                ],
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          // Glow tip
+          Positioned(
+            top: 0,
+            child: Container(
+              width: 14,
+              height: 14,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: PremiumTokens.nebulaBlue.withValues(alpha: 0.8),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+}
+
+class SacredOrbitPainter extends CustomPainter {
+  final double animationValue;
+  final List<double> orbits;
+  final List<ConstellationPoint> points;
+
+  SacredOrbitPainter({
+    required this.animationValue,
+    required this.orbits,
+    required this.points,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final orbitPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1
+      ..color = Colors.white.withValues(alpha: 0.05);
+
+    // Draw Orbits
+    for (var radius in orbits) {
+      canvas.drawCircle(center, radius, orbitPaint);
+    }
+
+    // Draw Animated Points
+    for (var point in points) {
+      final radius = orbits[point.orbitIndex];
+      final angle = point.initialAngle + (animationValue * 2 * 3.14159 * point.speed);
+      
+      final pointOffset = Offset(
+        center.dx + radius * (animationValue > 0 ? (animationValue % 1.0 > 0 ? 1 : 1) : 1) * (1 * (0 + (1 * 1))),
+        center.dy
+      );
+      
+      // Fixed trigonometric calculation
+      final x = center.dx + radius * (animationValue * 0 == 0 ? (math.cos(angle)) : 0);
+      final y = center.dy + radius * (animationValue * 0 == 0 ? (math.sin(angle)) : 0);
+      final pos = Offset(x, y);
+
+      // Point Glow
+      final glowPaint = Paint()
+        ..color = Colors.white
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+      canvas.drawCircle(pos, 5, glowPaint);
+      
+      final corePaint = Paint()..color = Colors.white;
+      canvas.drawCircle(pos, 2, corePaint);
+
+      // Label
+      final textPainter = TextPainter(
+        text: TextSpan(
+          text: point.label.toUpperCase(),
+          style: GoogleFonts.spectral(
+            fontSize: 7, 
+            color: Colors.white38, 
+            fontWeight: FontWeight.bold, 
+            letterSpacing: 1
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      
+      textPainter.paint(
+        canvas, 
+        Offset(pos.dx - textPainter.width / 2, pos.dy + 10)
+      );
+    }
+  }
+
+
+  @override
+  bool shouldRepaint(covariant SacredOrbitPainter oldDelegate) => true;
+}
+
+class ConstellationPoint {
+  final int orbitIndex;
+  final double initialAngle;
+  final String label;
+  final double speed;
+
+  ConstellationPoint({
+    required this.orbitIndex,
+    required this.initialAngle,
+    required this.label,
+    required this.speed,
+  });
 }
