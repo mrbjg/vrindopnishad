@@ -6,11 +6,15 @@
       "destination": "/sitemap.xml"
     },
     {
+      "source": "/sitemap-images.xml",
+      "destination": "/sitemap-images.xml"
+    },
+    {
       "source": "/robots.txt",
       "destination": "/robots.txt"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!sitemap|robots|favicon|static|.*\\..*).*)",
       "destination": "/index.html"
     }
   ],

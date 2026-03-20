@@ -65,9 +65,11 @@ async function generateSitemap() {
 ${urls}
 </urlset>`;
 
+    // Write to public folder (source of truth for some builds)
     fs.writeFileSync('public/sitemap.xml', sitemap);
     console.log('Dynamic sitemap.xml generated successfully in public/');
     
+    // Also write to build folder if it exists (for local production testing or manual deploys)
     if (fs.existsSync('build')) {
         fs.writeFileSync('build/sitemap.xml', sitemap);
         console.log('Dynamic sitemap.xml copied to build/');
