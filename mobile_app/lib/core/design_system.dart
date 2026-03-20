@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
 import 'theme.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// SANT-VAANI PREMIUM DESIGN SYSTEM

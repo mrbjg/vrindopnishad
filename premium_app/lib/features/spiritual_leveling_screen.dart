@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../core/design_system.dart';
 import '../core/auth_provider.dart';
 import '../core/stats_provider.dart';
@@ -15,48 +17,39 @@ class SpiritualLevelingScreen extends ConsumerWidget {
     final user = ref.watch(authStateProvider).value;
     final statsAsync = ref.watch(userStatsProvider);
     final level = statsAsync.value?.level ?? 1;
-    final xp = statsAsync.value?.experiencePoints ?? 0;
+    final totalJapCount = statsAsync.value?.totalJapCount ?? 0;
+    
+    // Derived stats for the "Orbit" feel
+    final japHours = (totalJapCount * 2 / 3600).toStringAsFixed(1); // Assuming 2 seconds per Jap
+    final malaStreaks = (totalJapCount / 108).floor();
 
     return Scaffold(
-      backgroundColor: PremiumTokens.charcoal,
+      backgroundColor: const Color(0xFF050510), // Ultra-deep void
       body: Stack(
         children: [
-          // Generative Aura Background
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment.center,
-                  radius: 1.2,
-                  colors: [
-                    PremiumTokens.nebulaBlue.withValues(alpha: 0.2), // primary aura
-                    PremiumTokens.celestialGlow.withValues(alpha: 0.1), // celestial aura
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Positioned.fill(
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, PremiumTokens.charcoal],
-                ),
-              ),
-            ),
-          ),
+          // Celestial Constellation Background
+          Positioned.fill(child: PremiumUI.bokehBackground()),
+          Positioned.fill(child: PremiumUI.mandalaOverlay(opacity: 0.05)),
           
           CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
               _buildHeader(context),
-              SliverToBoxAdapter(child: _buildAuraDisplay(user, level)),
-              SliverToBoxAdapter(child: _buildSoulBadges()),
-              SliverToBoxAdapter(child: _buildSacredInsights()),
-              SliverToBoxAdapter(child: _buildResonancePath()),
+              SliverToBoxAdapter(child: _buildOrbitConstellation(user, level)),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    children: [
+                      _buildAdvancedStatsRow(japHours, malaStreaks),
+                      const SizedBox(height: 24),
+                      _buildSoulBadges(),
+                      const SizedBox(height: 32),
+                      _buildResonancePath(),
+                    ],
+                  ),
+                ),
+              ),
               const SliverToBoxAdapter(child: SizedBox(height: 120)),
             ],
           ),
@@ -74,102 +67,168 @@ class SpiritualLevelingScreen extends ConsumerWidget {
         onPressed: () => Navigator.pop(context),
       ),
       title: Text(
-        "Sanctuary Profile",
-        style: PremiumTokens.sansStyle(fontWeight: FontWeight.bold),
-      ),
-      actions: [
-        IconButton(
-          icon: Icon(Iconsax.setting_2, color: PremiumTokens.nebulaBlue),
-          onPressed: () {},
+        "JOURNEY STATS",
+        style: GoogleFonts.spectral(
+          fontWeight: FontWeight.bold,
+          letterSpacing: 4,
+          fontSize: 18,
+          color: Colors.white,
         ),
-      ],
+      ),
       pinned: true,
       centerTitle: true,
     );
   }
 
-  Widget _buildAuraDisplay(User? user, int level) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 40),
+  Widget _buildOrbitConstellation(User? user, int level) {
+    return Container(
+      height: 380,
+      margin: const EdgeInsets.symmetric(vertical: 20),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Animated Orbit Rings
+          _buildOrbitRing(200, 200, 2000),
+          _buildOrbitRing(280, 280, 3500),
+          _buildOrbitRing(340, 340, 5000),
+
+          // Constellation Points (Simulated)
+          _buildConstellationPoint(160, 100, "Awakened"),
+          _buildConstellationPoint(280, 140, "7 Day Streak"),
+          _buildConstellationPoint(220, 280, "108 Mantras"),
+
+          // Center Level Node
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "CURRENT ORBIT",
+                style: GoogleFonts.spectral(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.6),
+                  letterSpacing: 4,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Level $level",
+                style: GoogleFonts.spectral(
+                  fontSize: 48,
+                  fontWeight: FontWeight.w200,
+                  color: Colors.white,
+                  letterSpacing: -1,
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Profile Aura
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3), width: 1),
+                ),
+                child: CircleAvatar(
+                  radius: 40,
+                  backgroundImage: CachedNetworkImageProvider(user?.photoURL ?? 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80'),
+                ),
+              ).animate(onPlay: (c) => c.repeat(reverse: true))
+               .shimmer(duration: 2.seconds, color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOrbitRing(double width, double height, int durationMs) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1),
+      ),
+    ).animate(onPlay: (c) => c.repeat())
+     .rotate(duration: durationMs.ms);
+  }
+
+  Widget _buildConstellationPoint(double top, double left, String label) {
+    return Positioned(
+      top: top,
+      left: left,
       child: Column(
         children: [
-          // Evolution Aura Sphere
           Container(
-            padding: const EdgeInsets.all(8),
-            decoration: PremiumTokens.evolvingAura(
-              color: PremiumTokens.nebulaBlue,
-              intensity: 1.0,
-            ),
-            child: Container(
-              width: 160,
-              height: 160,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [PremiumTokens.nebulaBlue, PremiumTokens.celestialGlow, PremiumTokens.voidBlue],
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(4),
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: PremiumTokens.charcoal,
-                    image: DecorationImage(
-                      image: NetworkImage(user?.photoURL ?? 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            "Void Seeker",
-            style: PremiumTokens.displayStyle(fontSize: 32, fontWeight: FontWeight.w800),
-          ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            width: 8,
+            height: 8,
             decoration: BoxDecoration(
-              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(100),
-              border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.4)),
+              shape: BoxShape.circle,
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(color: Colors.white.withValues(alpha: 0.8), blurRadius: 10, spreadRadius: 1),
+              ],
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label.toUpperCase(),
+            style: GoogleFonts.spectral(fontSize: 8, color: Colors.white24, fontWeight: FontWeight.bold, letterSpacing: 1),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(delay: 500.ms);
+  }
+
+  Widget _buildAdvancedStatsRow(String japHours, int malaStreaks) {
+    return Row(
+      children: [
+        Expanded(
+          child: PremiumUI.glassCard(
+            padding: const EdgeInsets.all(20),
+            borderRadius: 24,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.auto_awesome, color: PremiumTokens.nebulaBlue, size: 16),
-                const SizedBox(width: 8),
+                const Icon(Iconsax.timer, color: PremiumTokens.nebulaBlue, size: 24),
+                const SizedBox(height: 12),
                 Text(
-                  "AURA LEVEL $level",
-                  style: PremiumTokens.sansStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2,
-                  ),
+                  "Total Jap Hours",
+                  style: GoogleFonts.spectral(fontSize: 10, color: Colors.white38, fontWeight: FontWeight.bold, letterSpacing: 1),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "$japHours hrs",
+                  style: GoogleFonts.manrope(fontSize: 20, fontWeight: FontWeight.w300, color: Colors.white),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 48),
-            child: Text(
-              '"Evolving silver-and-indigo energy field reflecting deep stillness."',
-              textAlign: TextAlign.center,
-              style: PremiumTokens.sansStyle(
-                fontSize: 14,
-                color: Colors.white54,
-                fontStyle: FontStyle.italic,
-              ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: PremiumUI.glassCard(
+            padding: const EdgeInsets.all(20),
+            borderRadius: 24,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(Iconsax.hierarchy, color: PremiumTokens.nebulaBlue, size: 24),
+                const SizedBox(height: 12),
+                Text(
+                  "Mala Streaks",
+                  style: GoogleFonts.spectral(fontSize: 10, color: Colors.white38, fontWeight: FontWeight.bold, letterSpacing: 1),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "$malaStreaks days",
+                  style: GoogleFonts.manrope(fontSize: 20, fontWeight: FontWeight.w300, color: Colors.white),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -178,193 +237,114 @@ class SpiritualLevelingScreen extends ConsumerWidget {
       {"icon": Icons.brightness_7, "name": "Void Seeker"},
       {"icon": Icons.dark_mode, "name": "Eternal Peace"},
       {"icon": Icons.self_improvement, "name": "Stillness Master"},
-      {"icon": Icons.groups_3, "name": "Sangat Guide"},
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          child: Text(
-            "SOUL BADGES",
-            style: PremiumTokens.sansStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: Colors.white38,
-              letterSpacing: 2,
+        _buildSectionTitle("SOUL BADGES"),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: badges.map((badge) => Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: PremiumUI.glassCard(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                borderRadius: 20,
+                child: Column(
+                  children: [
+                    Icon(badge['icon'] as IconData, color: PremiumTokens.nebulaBlue, size: 20),
+                    const SizedBox(height: 8),
+                    Text(
+                      badge['name'] as String,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.manrope(fontSize: 10, fontWeight: FontWeight.w500, color: Colors.white54),
+                    ),
+                  ],
+                ),
+              ),
             ),
+          )).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Row(
+      children: [
+        Text(
+          title,
+          style: GoogleFonts.manrope(
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+            color: Colors.white24,
+            letterSpacing: 2,
           ),
         ),
-        SizedBox(
-          height: 60,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: badges.length,
-            itemBuilder: (context, index) {
-              final badge = badges[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: PremiumUI.glassCard(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  borderRadius: 16,
-                  child: Row(
-                    children: [
-                      Icon(badge['icon'] as IconData, color: PremiumTokens.nebulaBlue, size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        badge['name'] as String,
-                        style: PremiumTokens.sansStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                      ),
-                    ],
+        const SizedBox(width: 12),
+        Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.05))),
+      ],
+    );
+  }
+
+  Widget _buildResonancePath() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle("RESONANCE PATH"),
+        const SizedBox(height: 16),
+        PremiumUI.glassCard(
+          padding: const EdgeInsets.all(24),
+          borderRadius: 24,
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Weekly Stillness",
+                    style: GoogleFonts.manrope(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white70),
                   ),
+                  const Text(
+                    "Last 7 Days",
+                    style: TextStyle(fontSize: 10, color: PremiumTokens.nebulaBlue, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
+              SizedBox(
+                height: 80,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [0.4, 0.6, 0.3, 0.85, 0.5, 0.95, 0.7].map((h) => _buildBar(h)).toList(),
                 ),
-              );
-            },
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: ["M", "T", "W", "T", "F", "S", "S"].map((d) => Text(d, style: const TextStyle(fontSize: 10, color: Colors.white24))).toList(),
+              ),
+            ],
           ),
         ),
       ],
     );
   }
 
-  Widget _buildSacredInsights() {
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "SACRED INSIGHTS",
-            style: PremiumTokens.sansStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: Colors.white38,
-              letterSpacing: 2,
-            ),
-          ),
-          const SizedBox(height: 16),
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            childAspectRatio: 1.1, // Increased height for children
-            children: [
-              _buildInsightCard(Iconsax.timer, "1,240", "Stillness"),
-              _buildInsightCard(Iconsax.hierarchy, "84", "Sangat"),
-              _buildInsightCard(Iconsax.book, "312", "Reflections"),
-              _buildInsightCard(Iconsax.heart, "1.2k", "Resonance"),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInsightCard(IconData icon, String value, String label) {
-    return PremiumUI.glassCard(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      borderRadius: 24,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: PremiumTokens.nebulaBlue, size: 24),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: PremiumTokens.sansStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            label.toUpperCase(),
-            style: PremiumTokens.sansStyle(
-              fontSize: 9,
-              color: Colors.white38,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildResonancePath() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: PremiumUI.glassCard(
-        padding: const EdgeInsets.all(24),
-        borderRadius: 24,
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Resonance Path",
-                  style: PremiumTokens.sansStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  "Last 7 Days",
-                  style: PremiumTokens.sansStyle(
-                    fontSize: 12,
-                    color: PremiumTokens.nebulaBlue,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
-            SizedBox(
-              height: 100,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  _buildBar(0.4),
-                  _buildBar(0.6),
-                  _buildBar(0.3),
-                  _buildBar(0.85, isHighlighted: true),
-                  _buildBar(0.5),
-                  _buildBar(0.95, isHighlighted: true),
-                  _buildBar(0.7),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
-                  .map((d) => Text(
-                        d,
-                        style: PremiumTokens.sansStyle(
-                          fontSize: 10,
-                          color: Colors.white24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ))
-                  .toList(),
-            ),
-          ],
+  Widget _buildBar(double heightFactor) {
+    return Container(
+      width: 12,
+      height: 80 * heightFactor,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          colors: [PremiumTokens.nebulaBlue.withValues(alpha: 0.1), PremiumTokens.nebulaBlue.withValues(alpha: 0.6)],
         ),
-      ),
-    );
-  }
-
-  Widget _buildBar(double heightFactor, {bool isHighlighted = false}) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: Container(
-          height: 100 * heightFactor,
-          decoration: BoxDecoration(
-            color: PremiumTokens.nebulaBlue.withValues(alpha: isHighlighted ? 0.7 : 0.3),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-            border: isHighlighted ? Border.all(color: PremiumTokens.nebulaBlue, width: 1.5) : null,
-          ),
-        ),
+        borderRadius: BorderRadius.circular(10),
       ),
     );
   }

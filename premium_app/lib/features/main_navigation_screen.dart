@@ -12,6 +12,7 @@ import '../core/audio_provider.dart';
 import '../core/content_provider.dart';
 import '../core/providers.dart';
 import '../widgets/mini_player.dart';
+import 'rituals_screen.dart';
 
 class MainNavigationScreen extends ConsumerStatefulWidget {
   MainNavigationScreen({super.key});
@@ -23,10 +24,11 @@ class MainNavigationScreen extends ConsumerStatefulWidget {
 class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   final List<Widget> _screens = [
     HomeScreen(),
-    LibraryScreen(), 
+    LibraryScreen(),
     NaamJapScreen(),
     JournalScreen(),
     ProfileScreen(),
+    RitualsScreen(),
   ];
 
   // Pinterest-style Menu State
@@ -81,7 +83,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                       onTap: (index) => ref.read(navigationIndexProvider.notifier).state = index,
                       items: const [
                         (iconSvg: 'iconsax-ai-housing-jbqdn4s3-.svg', activeIconSvg: 'iconsax-ai-housing-1etziexn-.svg', label: "Home"),
-                        (iconSvg: 'iconsax-book-saved-cf2vpsqx-.svg', activeIconSvg: 'iconsax-book-saved-bg1ra9cv-.svg', label: "Library"),
+                        (iconSvg: 'iconsax-book-saved-bg1ra9cv-.svg', activeIconSvg: 'iconsax-book-saved-cf2vpsqx-.svg', label: "Library"),
                         (iconSvg: 'iconsax-archive-27ilzneb-.svg', activeIconSvg: 'iconsax-archive-27ilzneb-.svg', label: ""), // Placeholder for center
                         (iconSvg: 'iconsax-ai-send-message-m26q6m1j-.svg', activeIconSvg: 'iconsax-ai-send-message-2njcmr24-.svg', label: "Journal"),
                         (iconSvg: 'iconsax-ai-users-rcrm13gd-.svg', activeIconSvg: 'iconsax-ai-users-uj3awqug-.svg', label: "Profile"),
@@ -112,6 +114,14 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                                     color: PremiumTokens.saffronGlow,
                                     onTap: () {
                                       ref.read(navigationIndexProvider.notifier).state = 2;
+                                    },
+                                  ),
+                                  SacredMenuItem(
+                                    icon: Iconsax.sun_1, 
+                                    label: "Rituals",
+                                    color: PremiumTokens.nebulaBlue,
+                                    onTap: () {
+                                      ref.read(navigationIndexProvider.notifier).state = 5;
                                     },
                                   ),
                                   SacredMenuItem(

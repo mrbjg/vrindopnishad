@@ -851,7 +851,7 @@ class PremiumUI extends StatelessWidget {
       opacity: opacity,
       child: Container(
         decoration: BoxDecoration(image: DecorationImage(
-            image: NetworkImage('https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?auto=format&fit=crop&w=800&q=80'),
+            image: CachedNetworkImageProvider('https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?auto=format&fit=crop&w=800&q=80'),
             repeat: ImageRepeat.repeat,
             scale: 0.5,
           ),
@@ -1238,6 +1238,25 @@ class PremiumUI extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  /// Premium Sacred Call Alert (Ritual Reminder)
+  static void showSacredCall(
+    BuildContext context, {
+    required String ritualName,
+    required String nextStep,
+    required VoidCallback onBegin,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => _SacredCallAlert(
+        ritualName: ritualName,
+        nextStep: nextStep,
+        onBegin: onBegin,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return const SizedBox.shrink();
@@ -1527,22 +1546,25 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal> wi
             ),
             child: Center(
               child: widget.count != null && widget.count! > 0
-                    ? Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Iconsax.heart5, color: Colors.white, size: 24)
-                              .animate(onPlay: (c) => c.repeat(reverse: true))
-                              .scale(begin: const Offset(1,1), end: const Offset(1.2, 1.2), duration: 800.ms),
-                          const SizedBox(height: 2),
-                          Text(
-                            widget.count.toString(),
-                            style: GoogleFonts.spectral(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min, // Ensure min size
+                          children: [
+                            const Icon(Iconsax.heart5, color: Colors.white, size: 24)
+                                .animate(onPlay: (c) => c.repeat(reverse: true))
+                                .scale(begin: const Offset(1,1), end: const Offset(1.2, 1.2), duration: 800.ms),
+                            const SizedBox(height: 2),
+                            Text(
+                              widget.count.toString(),
+                              style: GoogleFonts.spectral(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       )
                     : Padding(
                         padding: const EdgeInsets.all(12),
@@ -1623,6 +1645,7 @@ class _PremiumAnimatedNavButtonState extends State<_PremiumAnimatedNavButton> wi
       onTap: _handleTap,
       behavior: HitTestBehavior.opaque,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ScaleTransition(
@@ -1826,7 +1849,7 @@ class SacredActionMenuState extends State<SacredActionMenu> {
     }
 
     int closestIndex = -1;
-    double minDistance = 60.0; // Hit threshold
+    double minDistance = 80.0; // Hit threshold increased for larger radius
 
     for (int i = 0; i < widget.items.length; i++) {
       final itemPos = _getItemPosition(i);
@@ -1844,11 +1867,11 @@ class SacredActionMenuState extends State<SacredActionMenu> {
   }
 
   Offset _getItemPosition(int index) {
-    const double startAngle = 3.14159 + 0.5;
-    const double endAngle = 2 * 3.14159 - 0.5;
+    const double startAngle = 3.14159 + 0.3;
+    const double endAngle = 2 * 3.14159 - 0.3;
     final double angleStep = (endAngle - startAngle) / (widget.items.length - 1);
     final double angle = startAngle + (index * angleStep);
-    const double radius = 110.0;
+    const double radius = 140.0;
 
     return widget.position + Offset(radius * math.cos(angle), radius * math.sin(angle));
   }
@@ -1886,11 +1909,11 @@ class SacredActionMenuState extends State<SacredActionMenu> {
             final item = widget.items[index];
             
             // Layout logic: Items spread in an arc above the tap point
-            const double startAngle = 3.14159 + 0.5; // Top-leftish
-            const double endAngle = 2 * 3.14159 - 0.5; // Top-rightish
+            const double startAngle = 3.14159 + 0.3; // Top-leftish
+            const double endAngle = 2 * 3.14159 - 0.3; // Top-rightish
             final double angleStep = (endAngle - startAngle) / (widget.items.length - 1);
             final double angle = startAngle + (index * angleStep);
-            const double radius = 110.0;
+            const double radius = 140.0;
 
             final double offsetX = radius * math.cos(angle);
             final double offsetY = radius * math.sin(angle);
@@ -2295,5 +2318,103 @@ class _NaamJapProgressPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _NaamJapProgressPainter oldDelegate) {
     return oldDelegate.progress != progress;
+  }
+}
+
+class _SacredCallAlert extends StatelessWidget {
+  final String ritualName;
+  final String nextStep;
+  final VoidCallback onBegin;
+
+  const _SacredCallAlert({
+    required this.ritualName,
+    required this.nextStep,
+    required this.onBegin,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
+      decoration: const BoxDecoration(
+        color: Color(0xFF020408), // Void Black
+        borderRadius: BorderRadius.vertical(top: Radius.circular(50)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Morning Glow Icon
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+              boxShadow: [
+                BoxShadow(
+                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2),
+                  blurRadius: 40,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: const Icon(Iconsax.sun_1, color: PremiumTokens.nebulaBlue, size: 48),
+          ).animate(onPlay: (c) => c.repeat(reverse: true))
+           .scale(begin: const Offset(1,1), end: const Offset(1.1, 1.1), duration: 1.seconds),
+          
+          const SizedBox(height: 32),
+          Text(
+            "SACRED CALL",
+            style: GoogleFonts.manrope(
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              color: PremiumTokens.nebulaBlue,
+              letterSpacing: 4,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            ritualName,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.spectral(
+              fontSize: 32,
+              fontWeight: FontWeight.w300,
+              color: Colors.white,
+              letterSpacing: 1,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            nextStep,
+            style: GoogleFonts.manrope(
+              fontSize: 12,
+              color: Colors.white24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          
+          const SizedBox(height: 48),
+          PremiumUI.primaryButton(
+            text: "BEGIN RITUAL",
+            onTap: () {
+              Navigator.pop(context);
+              onBegin();
+            },
+          ),
+          const SizedBox(height: 16),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              "REMIND ME IN 10 MINS",
+              style: GoogleFonts.manrope(
+                fontSize: 11,
+                color: Colors.white38,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

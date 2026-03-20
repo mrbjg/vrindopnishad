@@ -7,6 +7,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
 import '../core/auth_provider.dart';
+import '../core/design_system.dart';
 import '../widgets/animated_effects.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {

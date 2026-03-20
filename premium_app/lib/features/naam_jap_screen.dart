@@ -33,27 +33,32 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
           Positioned.fill(child: PremiumUI.masterBackground(index: 2)),
           
           SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(context, isFocusMode),
-                
-                const Spacer(flex: 1),
-                
-                // Professional Counter Display
-                _buildProfessionalCounter(count),
-                
-                const Spacer(flex: 1),
-                
-                // Interaction Area
-                _buildInteractionArea(count, isFocusMode),
-                
-                const SizedBox(height: 40),
-                
-                // Session Stats
-                _buildSessionStats(isFocusMode, streak),
-                
-                const SizedBox(height: 140), // Spacing for Navbar + MiniPlayer
-              ],
+            child: SingleChildScrollView(
+              padding: EdgeInsets.zero,
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildHeader(context, isFocusMode),
+                  
+                  const SizedBox(height: 20),
+                  
+                  // Professional Counter Display
+                  _buildProfessionalCounter(count),
+                  
+                  const SizedBox(height: 20),
+                  
+                  // Interaction Area
+                  _buildInteractionArea(count, isFocusMode),
+                  
+                  const SizedBox(height: 40),
+                  
+                  // Session Stats
+                  _buildSessionStats(isFocusMode, streak),
+                  
+                  const SizedBox(height: 140), // Spacing for Navbar + MiniPlayer
+                ],
+              ),
             ),
           ),
         ],

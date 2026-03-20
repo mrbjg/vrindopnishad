@@ -4,6 +4,7 @@ import 'package:iconsax/iconsax.dart';
 import '../core/design_system.dart';
 import '../core/content_provider.dart';
 import '../core/providers.dart';
+import '../core/auth_provider.dart';
 import 'content_detail_screen.dart';
 import 'package:flutter/services.dart';
 
@@ -101,25 +102,29 @@ class LibraryScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: 12),
-            Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: PremiumTokens.surfaceCharcoal,
-                border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
-              ),
-              child: ClipOval(
-                child: Image.network(
-                  'https://lh3.googleusercontent.com/aida-public/AB6AXuAkQJsMLqDCMwi1jqTeWSOOqq3Wz9ZIpqA9usLZAS95EcvHTBag2RoKJxY0vI0ignkQJ8N7UDe1CbmOARjpZ4djVMMi7DYNHPxPNoYSkcaHePL2qyHdLar7mUl0CW6gMbXv788itHF2vxM4sZWWsBBAQUG96RO8rYlrZNHgfYgQ6IfsKE6u5jOS_QRQe0dd2Fy-5dU6VL7ZLOg1jCrXoMsqJDXEiKCcCuT1CctHQ72_ivF3Rc94CqJae0t_M1fKLDyKMLPrbTHwr8I',
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => const Icon(
-                    Icons.person,
-                    color: PremiumTokens.nebulaBlue,
-                    size: 20,
+            Consumer(
+              builder: (context, ref, child) {
+                final user = ref.watch(authStateProvider).value;
+                return Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: PremiumTokens.surfaceCharcoal,
+                    border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
                   ),
-                ),
-              ),
+                  child: user?.photoURL != null 
+                    ? PremiumUI.networkImage(
+                        url: user!.photoURL!,
+                        borderRadius: BorderRadius.circular(19),
+                      )
+                    : const Icon(
+                        Iconsax.user,
+                        color: PremiumTokens.nebulaBlue,
+                        size: 20,
+                      ),
+                );
+              },
             ),
           ],
         ),

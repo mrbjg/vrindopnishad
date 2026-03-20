@@ -116,6 +116,18 @@ class CacheService {
     await _prefs?.remove(_cacheTimeKey);
   }
 
+  /// Get any string from disk cache
+  Future<String?> get(String key) async {
+    _prefs ??= await SharedPreferences.getInstance();
+    return _prefs!.getString(key);
+  }
+
+  /// Save any string to disk cache
+  Future<void> set(String key, String value) async {
+    _prefs ??= await SharedPreferences.getInstance();
+    await _prefs!.setString(key, value);
+  }
+
   /// Get cache age string for debugging
   String? getCacheAge() {
     if (_lastCacheTime == null) return null;
