@@ -43,7 +43,7 @@ const HomePage = () => {
         </div>
 
         <div className="content-grid">
-          <Link to="/category/shloka" className="glass-card flex flex-col items-center text-center">
+          <Link to="/category/shloka" className="glass-card flex flex-col items-center text-center hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 group">
              <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center text-primary mb-6 shadow-inner">
                <Scroll size={32} />
              </div>
@@ -54,7 +54,7 @@ const HomePage = () => {
              </p>
           </Link>
 
-          <Link to="/category/strotra" className="glass-card flex flex-col items-center text-center">
+          <Link to="/category/strotra" className="glass-card flex flex-col items-center text-center hover:border-blue-400/30 hover:shadow-2xl hover:shadow-blue-400/5 transition-all duration-500 group">
              <div className="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 mb-6 shadow-inner">
                <Music size={32} />
              </div>
@@ -65,7 +65,7 @@ const HomePage = () => {
              </p>
           </Link>
 
-          <Link to="/category/poem" className="glass-card flex flex-col items-center text-center">
+          <Link to="/category/poem" className="glass-card flex flex-col items-center text-center hover:border-purple-400/30 hover:shadow-2xl hover:shadow-purple-400/5 transition-all duration-500 group">
              <div className="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 mb-6 shadow-inner">
                <FileText size={32} />
              </div>

@@ -112,16 +112,16 @@ const ContentListPage = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredContent.map(item => (
-            <Link to={`/content/${item.slug || item.id}`} key={item.id} className="glass-card group flex flex-col justify-between">
+            <Link to={`/content/${item.slug || item.id}`} key={item.id} className="glass-card group flex flex-col justify-between hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500">
               <div>
                 <div className="flex justify-between items-start mb-4">
                   <span className="badge border-primary/20 text-primary/70">{item.category}</span>
-                  <div className="flex items-center gap-3 text-white/20 group-hover:text-primary transition-all">
+                  <div className="flex items-center gap-3 text-white/20 transition-all duration-300">
                     <AudioPlayButton track={item} />
-                    <ArrowRight size={20} />
+                    <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-500" />
                   </div>
                 </div>
-                <h3 className="text-xl font-bold mb-4 line-clamp-2 leading-snug group-hover:text-primary/90 transition-colors py-1">
+                <h3 className="text-xl font-bold mb-4 line-clamp-2 leading-snug transition-colors py-1">
                   {item.title}
                 </h3>
                 <p className="text-white/60 text-sm line-clamp-3 leading-relaxed mb-6">

@@ -87,17 +87,17 @@ const CategoryPage = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {content.map((item) => (
-            <Link key={item.id} to={`/content/${item.id}`} className="glass-card group flex flex-col justify-between">
+            <Link key={item.id} to={`/content/${item.id}`} className="glass-card group flex flex-col justify-between hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500">
               <div>
                 <div className="flex justify-between items-start mb-4">
-                  <span className={`badge border-white/10 text-white/60 group-hover:border-primary/30 group-hover:text-primary transition-all`}>
+                  <span className={`badge border-white/10 text-white/60 transition-all duration-300`}>
                     {category}
                   </span>
-                  <div className="text-white/10 group-hover:text-primary transition-colors">
-                    <ArrowRight size={20} />
+                  <div className="text-white/10 transition-colors duration-300">
+                    <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-500" />
                   </div>
                 </div>
-                <h3 className="text-xl font-bold mb-4 line-clamp-2 leading-tight group-hover:text-primary/90 transition-colors">
+                <h3 className="text-xl font-bold mb-4 line-clamp-2 leading-tight transition-colors duration-300">
                   {item.title}
                 </h3>
                 <p className="text-white/50 text-sm line-clamp-4 leading-relaxed">

@@ -41,8 +41,9 @@ const SettingsModal = ({ isOpen, onClose }) => {
       ></div>
 
       {/* Modal Card */}
-      <div className="glass-card w-full max-w-md relative z-10 animate-scale-in p-8 border border-white/20 shadow-2xl">
-        <div className="flex justify-between items-center mb-10">
+      <div className="glass-card w-full max-w-md relative z-10 animate-scale-in flex flex-col max-h-[90vh] border border-white/20 shadow-2xl p-0 overflow-hidden">
+        {/* Fixed Header */}
+        <div className="flex justify-between items-center p-8 pb-4 border-b border-white/5">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-primary/20 rounded-lg text-primary">
               <Type size={20} />
@@ -57,7 +58,8 @@ const SettingsModal = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        <div className="space-y-10">
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto p-8 pt-6 space-y-10 custom-scrollbar">
           {/* Personal Profile Section */}
           <div className="space-y-4">
             <h3 className="text-xs uppercase tracking-[0.2em] text-white/30 font-bold flex items-center gap-2">
@@ -142,54 +144,55 @@ const SettingsModal = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-            {/* Reading Mode */}
-            <div className="space-y-4">
-              <h3 className="text-xs uppercase tracking-[0.2em] text-white/30 font-bold flex items-center gap-2">
-                <Layout size={14} /> Reading Experience
-              </h3>
-              
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl transition-all hover:bg-white/10">
-                  <div className="flex flex-col">
-                    <span className="font-bold text-sm">Line-by-Line Reading</span>
-                    <span className="text-xs text-white/30">Auto-split Hindi/Sanskrit verses</span>
-                  </div>
-                  <button
-                    onClick={() => updateSetting('lineByLine', !settings.lineByLine)}
-                    className={`w-14 h-8 rounded-full transition-all relative ${
-                      settings.lineByLine ? 'bg-primary' : 'bg-white/10'
-                    }`}
-                  >
-                    <div className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-all shadow-md ${
-                      settings.lineByLine ? 'left-7' : 'left-1'
-                    }`}></div>
-                  </button>
+          {/* Reading Mode */}
+          <div className="space-y-4">
+            <h3 className="text-xs uppercase tracking-[0.2em] text-white/30 font-bold flex items-center gap-2">
+              <Layout size={14} /> Reading Experience
+            </h3>
+            
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl transition-all hover:bg-white/10 group">
+                <div className="flex flex-col">
+                  <span className="font-bold text-sm transition-all duration-300">Line-by-Line Reading</span>
+                  <span className="text-xs text-white/30">Auto-split Hindi/Sanskrit verses</span>
                 </div>
+                <button
+                  onClick={() => updateSetting('lineByLine', !settings.lineByLine)}
+                  className={`w-14 h-8 rounded-full transition-all relative ${
+                    settings.lineByLine ? 'sacred-toggle-active' : 'bg-white/10'
+                  }`}
+                >
+                  <div className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-all shadow-md ${
+                    settings.lineByLine ? 'left-7' : 'left-1'
+                  }`}></div>
+                </button>
+              </div>
 
-                <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl transition-all hover:bg-white/10">
-                  <div className="flex flex-col">
-                    <span className="font-bold text-sm">Fluid Motion</span>
-                    <span className="text-xs text-white/30">Premium smooth scrolling experience</span>
-                  </div>
-                  <button
-                    onClick={() => updateSetting('smoothScroll', !settings.smoothScroll)}
-                    className={`w-14 h-8 rounded-full transition-all relative ${
-                      settings.smoothScroll ? 'bg-primary' : 'bg-white/10'
-                    }`}
-                  >
-                    <div className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-all shadow-md ${
-                      settings.smoothScroll ? 'left-7' : 'left-1'
-                    }`}></div>
-                  </button>
+              <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl transition-all hover:bg-white/10 group">
+                <div className="flex flex-col">
+                  <span className="font-bold text-sm transition-all duration-300">Fluid Motion</span>
+                  <span className="text-xs text-white/30">Premium smooth scrolling experience</span>
                 </div>
+                <button
+                  onClick={() => updateSetting('smoothScroll', !settings.smoothScroll)}
+                  className={`w-14 h-8 rounded-full transition-all relative ${
+                    settings.smoothScroll ? 'sacred-toggle-active' : 'bg-white/10'
+                  }`}
+                >
+                  <div className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-all shadow-md ${
+                    settings.smoothScroll ? 'left-7' : 'left-1'
+                  }`}></div>
+                </button>
               </div>
             </div>
+          </div>
         </div>
 
-        <div className="mt-12">
+        {/* Fixed Footer */}
+        <div className="p-8 pt-4 border-t border-white/5 bg-white/[0.02]">
           <button 
             onClick={onClose}
-            className="w-full btn-premium py-4 font-bold text-sm tracking-widest uppercase"
+            className="w-full btn-premium py-4 font-bold text-sm tracking-widest uppercase shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
           >
             Save Preferences
           </button>
