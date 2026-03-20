@@ -184,7 +184,6 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
     } catch (e) {
       // Silent fail - ensure we at least keep the sample if state was empty
       if (state.isEmpty) state = [_featuredSample];
-      print('Background refresh failed: $e');
     }
   }
 
@@ -204,7 +203,6 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
       }
     } catch (e) {
       if (state.isEmpty) state = [_featuredSample];
-      print('API fetch failed: $e');
     }
   }
 

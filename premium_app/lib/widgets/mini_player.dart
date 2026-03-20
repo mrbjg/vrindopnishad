@@ -195,7 +195,13 @@ class MiniPlayer extends ConsumerWidget {
         ),
       ),
     ).animate(
-      onPlay: (controller) => isPlaying ? controller.repeat() : controller.stop(),
+      onPlay: (controller) {
+        if (isPlaying) {
+          controller.repeat();
+        } else {
+          controller.stop();
+        }
+      },
     )
     .shimmer(
       duration: 2.seconds,

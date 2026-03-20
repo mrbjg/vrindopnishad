@@ -59,40 +59,30 @@ class AuthService {
   // Google Sign In
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      print("Starting Google Sign In...");
       if (kIsWeb) {
         GoogleAuthProvider googleProvider = GoogleAuthProvider();
         return await _auth.signInWithPopup(googleProvider);
       } else {
         // Mobile: Native Google Sign In
-        print("Mobile flow: Signing in with Google...");
         final googleUser = await _googleSignIn.signIn();
         if (googleUser == null) {
-          print("Google Sign In canceled by user.");
           return null;
         }
 
-        print("Google account retrieved: ${googleUser.email}");
         final googleAuth = await googleUser.authentication;
         final accessToken = googleAuth.accessToken;
         final idToken = googleAuth.idToken;
 
-        print(
-          "Tokens retrieved. idToken: ${idToken != null}, accessToken: ${accessToken != null}",
-        );
 
         final credential = GoogleAuthProvider.credential(
           accessToken: accessToken,
           idToken: idToken,
         );
 
-        print("Signing in to Firebase with Credential...");
         final userCredential = await _auth.signInWithCredential(credential);
-        print("Firebase login successful: ${userCredential.user?.email}");
         return userCredential;
       }
     } catch (e) {
-      print("Google Sign In Error: $e");
       rethrow;
     }
   }

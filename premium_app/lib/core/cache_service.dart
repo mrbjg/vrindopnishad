@@ -88,7 +88,6 @@ class CacheService {
         }
       }
     } catch (e) {
-      print('Cache load error: $e');
     }
   }
 
@@ -99,7 +98,6 @@ class CacheService {
       await _prefs?.setString(_contentCacheKey, json.encode(jsonList));
       await _prefs?.setString(_cacheTimeKey, DateTime.now().toIso8601String());
     } catch (e) {
-      print('Cache save error: $e');
     }
   }
 

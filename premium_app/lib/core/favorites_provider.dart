@@ -32,7 +32,6 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
         state = saved.toSet();
       }
     } catch (e) {
-      print('Local favorites load error: $e');
     }
   }
 
@@ -41,7 +40,6 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setStringList(_storageKey, state.toList());
     } catch (e) {
-      print('Local favorites save error: $e');
     }
   }
 
@@ -64,7 +62,6 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
         await _saveToLocal();
       }
     } catch (e) {
-      print('Favorites sync unavailable: $e');
     }
   }
 
@@ -96,7 +93,6 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
         'content_id': contentId,
       });
     } catch (e) {
-      print('Favorites sync failed (continuing locally): $e');
     }
   }
 
@@ -117,7 +113,6 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
           .eq('user_id', _currentUser!.id)
           .eq('content_id', contentId);
     } catch (e) {
-      print('Favorites sync failed (continuing locally): $e');
     }
   }
 
