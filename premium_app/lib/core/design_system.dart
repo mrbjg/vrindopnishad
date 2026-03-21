@@ -857,11 +857,26 @@ class PremiumUI extends StatelessWidget {
   static Widget mandalaOverlay({double opacity = 0.03}) {
     return Opacity(
       opacity: opacity,
-      child: Container(
-        decoration: BoxDecoration(image: DecorationImage(
-            image: CachedNetworkImageProvider('https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?auto=format&fit=crop&w=800&q=80'),
-            repeat: ImageRepeat.repeat,
-            scale: 0.5,
+      child: ImageFiltered(
+        imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: CachedNetworkImageProvider('https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?auto=format&fit=crop&w=800&q=80'),
+              repeat: ImageRepeat.repeat,
+              scale: 0.5,
+            ),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                colors: [
+                  Colors.white.withValues(alpha: 0.2),
+                  Colors.transparent,
+                ],
+                stops: const [0.5, 1.0],
+              ),
+            ),
           ),
         ),
       ),
@@ -2251,9 +2266,11 @@ class _PremiumNaamJapCounterInternalState extends State<_PremiumNaamJapCounterIn
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          PremiumTokens.nebulaBlue.withValues(alpha: 0.15),
+                          PremiumTokens.nebulaBlue.withValues(alpha: 0.18),
+                          PremiumTokens.nebulaBlue.withValues(alpha: 0.04),
                           PremiumTokens.voidBlack,
                         ],
+                        stops: const [0.0, 0.6, 1.0],
                       ),
                     ),
                     child: PremiumUI.mandalaOverlay(opacity: 0.06),
@@ -2284,13 +2301,13 @@ class _PremiumNaamJapCounterInternalState extends State<_PremiumNaamJapCounterIn
                   height: widget.size * 0.55,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF020205).withValues(alpha: 0.95), // Deeper void for better contrast
+                    color: const Color(0xFF020205).withValues(alpha: 0.98), // Deeper void for better contrast
                     border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
                     boxShadow: [
                       BoxShadow(
-                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
-                        blurRadius: 25,
-                        spreadRadius: 2,
+                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.25),
+                        blurRadius: 40,
+                        spreadRadius: -2,
                       ),
                     ],
                   ),
@@ -2369,13 +2386,14 @@ class _NaamJapProgressPainter extends CustomPainter {
       progressPaint,
     );
 
-    // Outer Glow for progress
+    // Outer Glow for progress (Dual Layer for ethereal feel)
     if (progress > 0) {
-      final glowPaint = Paint()
-        ..color = glowColor.withValues(alpha: 0.3)
+      // Layer 1: Tight Core Glow
+      final tightGlowPaint = Paint()
+        ..color = glowColor.withValues(alpha: 0.4)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = strokeWidth * 2.5
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10)
+        ..strokeWidth = strokeWidth * 1.5
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8)
         ..strokeCap = StrokeCap.round;
 
       canvas.drawArc(
@@ -2383,7 +2401,23 @@ class _NaamJapProgressPainter extends CustomPainter {
         -math.pi / 2,
         2 * math.pi * progress,
         false,
-        glowPaint,
+        tightGlowPaint,
+      );
+
+      // Layer 2: Broad Ethereal Aura
+      final broadGlowPaint = Paint()
+        ..color = glowColor.withValues(alpha: 0.15)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth * 4.0
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 25)
+        ..strokeCap = StrokeCap.round;
+
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        -math.pi / 2,
+        2 * math.pi * progress,
+        false,
+        broadGlowPaint,
       );
     }
   }
