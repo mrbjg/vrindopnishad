@@ -1022,71 +1022,105 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(32),
-        decoration: BoxDecoration(
-          color: _getThemeData().backgroundColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-          border: Border.all(color: _getThemeData().textColor.withValues(alpha: 0.1)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("READING SETTINGS", 
-              style: GoogleFonts.manrope(
-                fontSize: 10, 
-                fontWeight: FontWeight.w900, 
-                color: _getThemeData().textColor.withValues(alpha: 0.5), 
-                letterSpacing: 2
-              )
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) {
+          final themeData = _getThemeData();
+          return Container(
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: themeData.backgroundColor,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+              border: Border.all(color: themeData.textColor.withValues(alpha: 0.1)),
             ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Font Size", style: GoogleFonts.spectral(color: _getThemeData().textColor, fontSize: 16)),
-                _buildPremiumFontControls(_getThemeData()),
-              ],
-            ),
-            const SizedBox(height: 32),
-            Text("Divine Backdrop", style: GoogleFonts.spectral(color: _getThemeData().textColor, fontSize: 16)),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: ReadingTheme.values.map((theme) {
-                final isSelected = _currentTheme == theme;
-                return GestureDetector(
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    setState(() => _currentTheme = theme);
-                    // Update universal preference
-                    ref.read(readerThemeProvider.notifier).state = theme;
-                  },
-                  child: AnimatedContainer(
-                    duration: 300.ms,
-                    curve: Curves.easeInOut,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: isSelected ? PremiumTokens.nebulaBlue : Colors.white.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: isSelected ? Colors.transparent : Colors.white.withValues(alpha: 0.1)),
-                    ),
-                    child: Text(
-                      theme.name.replaceAll(RegExp(r'(?=[A-Z])'), ' ').toUpperCase(),
-                      style: GoogleFonts.manrope(
-                        fontSize: 10, 
-                        fontWeight: FontWeight.w800, 
-                        color: isSelected ? Colors.white : _getThemeData().textColor.withValues(alpha: 0.6)
+                Text("READING SETTINGS", 
+                  style: GoogleFonts.manrope(
+                    fontSize: 10, 
+                    fontWeight: FontWeight.w900, 
+                    color: themeData.textColor.withValues(alpha: 0.5), 
+                    letterSpacing: 2
+                  )
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Font Size", style: GoogleFonts.spectral(color: themeData.textColor, fontSize: 16)),
+                    // Pass the modal state setter if needed, but since Font Controls use parent setState,
+                    // we need to make sure they also trigger this modal rebuild.
+                    PremiumUI.glassCard(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      borderRadius: 16,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Iconsax.text, color: themeData.textColor.withValues(alpha: 0.24), size: 16),
+                          const SizedBox(width: 16),
+                          _buildFontToolButton(Iconsax.minus, () {
+                            if (_fontSize > 14) {
+                              setState(() => _fontSize -= 2);
+                              setModalState(() {});
+                            }
+                          }, themeData),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text("${_fontSize.toInt()}", style: GoogleFonts.outfit(color: themeData.textColor, fontWeight: FontWeight.bold)),
+                          ),
+                          _buildFontToolButton(Iconsax.add, () {
+                            if (_fontSize < 32) {
+                              setState(() => _fontSize += 2);
+                              setModalState(() {});
+                            }
+                          }, themeData),
+                        ],
                       ),
                     ),
-                  ),
-                );
-              }).toList(),
+                  ],
+                ),
+                const SizedBox(height: 32),
+                Text("Divine Backdrop", style: GoogleFonts.spectral(color: themeData.textColor, fontSize: 16)),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: ReadingTheme.values.map((theme) {
+                    final isSelected = _currentTheme == theme;
+                    return GestureDetector(
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        setState(() => _currentTheme = theme);
+                        setModalState(() {});
+                        // Update universal preference
+                        ref.read(readerThemeProvider.notifier).state = theme;
+                      },
+                      child: AnimatedContainer(
+                        duration: 300.ms,
+                        curve: Curves.easeInOut,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: isSelected ? PremiumTokens.nebulaBlue : Colors.white.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: isSelected ? Colors.transparent : Colors.white.withValues(alpha: 0.1)),
+                        ),
+                        child: Text(
+                          theme.name.replaceAll(RegExp(r'(?=[A-Z])'), ' ').toUpperCase(),
+                          style: GoogleFonts.manrope(
+                            fontSize: 10, 
+                            fontWeight: FontWeight.w800, 
+                            color: isSelected ? Colors.white : themeData.textColor.withValues(alpha: 0.6)
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 32),
+              ],
             ),
-            const SizedBox(height: 32),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
