@@ -101,7 +101,16 @@ class NaamJapNotifier extends StateNotifier<NaamJapState> {
     state = NaamJapState(total: total, today: today);
   }
 
+  DateTime _lastIncrementTime = DateTime.fromMillisecondsSinceEpoch(0);
+
   Future<void> increment() async {
+    final now = DateTime.now();
+    // Throttle: max 3 taps per second (~333ms delay)
+    if (now.difference(_lastIncrementTime).inMilliseconds < 333) {
+      return;
+    }
+    _lastIncrementTime = now;
+
     final newTotal = state.total + 1;
     final newToday = state.today + 1;
     
