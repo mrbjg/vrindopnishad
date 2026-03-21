@@ -63,9 +63,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     });
 
     // Log reading activity to capture this session in history
-    Future.delayed(const Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 500), () async {
       if (mounted) {
-        // More robust content resolution for history tracking
+        // Robust content resolution for history tracking
         final allContent = ref.read(sacredContentProvider);
         final resolvedContent = widget.content ?? 
           (widget.title != null ? allContent.where((c) => c.title == widget.title).firstOrNull : null);
@@ -74,12 +74,28 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         final logCategory = resolvedContent?.category ?? widget.category ?? 'Divine';
         final logId = resolvedContent?.id ?? logTitle;
 
-        // Record visit in celestial history
-        ref.read(userStatsProvider.notifier).recordReading(
-          logId,
-          title: logTitle,
-          category: logCategory,
-        );
+        try {
+          await ref.read(userStatsProvider.notifier).recordReading(
+            logId,
+            title: logTitle,
+            category: logCategory,
+          );
+        } catch (e) {
+             debugPrint("History Sync Error: $e");
+             if (mounted) {
+               ScaffoldMessenger.of(context).showSnackBar(
+                 SnackBar(
+                   backgroundColor: Colors.redAccent.withValues(alpha: 0.8),
+                   content: Text(
+                     "VAANI SYNC ERROR: $e",
+                     style: const TextStyle(color: Colors.white, fontSize: 12),
+                   ),
+                   behavior: SnackBarBehavior.floating,
+                   duration: const Duration(seconds: 5),
+                 ),
+               );
+             }
+        }
       }
     });
   }

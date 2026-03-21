@@ -39,7 +39,7 @@ class StatsService {
       return UserStats.fromJson(response);
     } catch (e) {
       debugPrint('Error handling user stats: $e');
-      return null;
+      rethrow;
     }
   }
 
@@ -127,6 +127,7 @@ class StatsService {
       }
     } catch (e) {
       debugPrint('Error logging activity: $e');
+      rethrow;
     }
   }
 
