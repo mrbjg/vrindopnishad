@@ -40,6 +40,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   bool _showCompactHeader = false;
   bool _showAudioPlayer = false;
   ReadingTheme _currentTheme = ReadingTheme.divineFlow;
+  double _sanskritScale = 1.0;
+  double _hindiScale = 1.0;
+  double _englishScale = 1.0;
+  double _commentaryScale = 1.0;
+  double _baseScale = 1.0;
 
   @override
   void initState() {
@@ -161,7 +166,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     Center(
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 600),
-                        child: _buildPremiumSanskritCard(content, l, isFocusMode, themeData),
+                        child: GestureDetector(
+                          onScaleStart: (details) => _baseScale = _sanskritScale,
+                          onScaleUpdate: (details) => setState(() => _sanskritScale = (_baseScale * details.scale).clamp(0.5, 3.0)),
+                          child: _buildPremiumSanskritCard(content, l, isFocusMode, themeData, scale: _sanskritScale),
+                        ),
                       ),
                     ),
                     
@@ -177,22 +186,32 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           constraints: const BoxConstraints(maxWidth: 600),
                           child: Column(
                             children: [
-                              _buildPremiumContentSection(
-                                title: l.translate('hindi_meaning'),
-                                content: content?.hindiMeaning ?? "",
-                                icon: Iconsax.heart,
-                                accentColor: themeData.accentColor,
-                                themeData: themeData,
-                              ),
-                              const SizedBox(height: 24),
+                                GestureDetector(
+                                  onScaleStart: (details) => _baseScale = _hindiScale,
+                                  onScaleUpdate: (details) => setState(() => _hindiScale = (_baseScale * details.scale).clamp(0.5, 3.0)),
+                                  child: _buildPremiumContentSection(
+                                    title: l.translate('hindi_meaning'),
+                                    content: content?.hindiMeaning ?? "",
+                                    icon: Iconsax.heart,
+                                    accentColor: themeData.accentColor,
+                                    themeData: themeData,
+                                    currentScale: _hindiScale,
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
 
-                              _buildPremiumContentSection(
-                                title: l.translate('english_translation'),
-                                content: content?.translation ?? "",
-                                icon: Iconsax.language_circle,
-                                accentColor: themeData.secondaryAccent,
-                                themeData: themeData,
-                              ),
+                                GestureDetector(
+                                  onScaleStart: (details) => _baseScale = _englishScale,
+                                  onScaleUpdate: (details) => setState(() => _englishScale = (_baseScale * details.scale).clamp(0.5, 3.0)),
+                                  child: _buildPremiumContentSection(
+                                    title: l.translate('english_translation'),
+                                    content: content?.translation ?? "",
+                                    icon: Iconsax.language_circle,
+                                    accentColor: themeData.secondaryAccent,
+                                    themeData: themeData,
+                                    currentScale: _englishScale,
+                                  ),
+                                ),
                             ],
                           ),
                         ),
@@ -205,13 +224,18 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     Center(
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 600),
-                        child: _buildPremiumContentSection(
-                          title: l.translate('commentary'),
-                          content: content?.commentary ?? "",
-                          icon: Iconsax.lamp_charge,
-                          accentColor: PremiumTokens.saffronGlow,
-                          isFocusMode: isFocusMode,
-                          themeData: themeData,
+                        child: GestureDetector(
+                          onScaleStart: (details) => _baseScale = _commentaryScale,
+                          onScaleUpdate: (details) => setState(() => _commentaryScale = (_baseScale * details.scale).clamp(0.5, 3.0)),
+                          child: _buildPremiumContentSection(
+                            title: l.translate('commentary'),
+                            content: content?.commentary ?? "",
+                            icon: Iconsax.lamp_charge,
+                            accentColor: PremiumTokens.saffronGlow,
+                            isFocusMode: isFocusMode,
+                            themeData: themeData,
+                            currentScale: _commentaryScale,
+                          ),
                         ),
                       ),
                     ),
@@ -468,7 +492,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  Widget _buildPremiumSanskritCard(SacredContent? content, AppLocalization l, bool isFocusMode, _ReadingThemeData themeData) {
+  Widget _buildPremiumSanskritCard(SacredContent? content, AppLocalization l, bool isFocusMode, _ReadingThemeData themeData, {double scale = 1.0}) {
     final text = content?.sanskritText ?? "";
     return RepaintBoundary(
       child: AnimatedContainer(
@@ -527,7 +551,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               _formatSacredText(text),
               textAlign: TextAlign.center,
               style: PremiumTokens.lailaStyle(
-                fontSize: _fontSize + (isFocusMode ? 10 : 6),
+                fontSize: (_fontSize + (isFocusMode ? 10 : 6)) * scale,
                 color: themeData.textColor.withValues(alpha: 0.95),
                 fontWeight: FontWeight.bold,
               ).copyWith(
@@ -553,6 +577,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     required Color accentColor,
     required _ReadingThemeData themeData,
     bool isFocusMode = false,
+    double currentScale = 1.0,
   }) {
     if (content.isEmpty) return const SizedBox.shrink();
     return RepaintBoundary(
@@ -600,7 +625,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               _formatSacredText(content),
               textAlign: TextAlign.center, // Centered for reading focus
               style: PremiumTokens.soulStyle( // Use Newsreader for body
-                fontSize: isFocusMode ? _fontSize + 3 : _fontSize,
+                fontSize: (isFocusMode ? _fontSize + 3 : _fontSize) * currentScale,
                 color: themeData.textColor.withValues(alpha: isFocusMode ? 0.95 : 0.85),
                 fontWeight: FontWeight.normal,
               ).copyWith(
