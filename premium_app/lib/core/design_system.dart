@@ -2724,6 +2724,18 @@ class _PremiumNaamJapCounterInternalState
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        RepaintBoundary(
+                          child: SvgPicture.asset(
+                            'assets/shriJiMukut.svg',
+                            width: 32,
+                            height: 32,
+                            colorFilter: const ColorFilter.mode(
+                              PremiumTokens.nebulaBlue, 
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
                         Text(
                           widget.count.toString(),
                           style: PremiumTokens.lailaStyle(

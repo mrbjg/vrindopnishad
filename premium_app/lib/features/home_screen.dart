@@ -35,53 +35,20 @@ class HomeScreen extends ConsumerWidget {
               // Sticky Header (matching bg-background-dark/80 backdrop-blur-md)
               SliverAppBar(
                 expandedHeight: 0,
-                collapsedHeight: 80,
+                collapsedHeight: 72,
                 pinned: true,
                 floating: false,
                 elevation: 0,
                 scrolledUnderElevation: 0,
                 backgroundColor: PremiumTokens.voidIndigo.withValues(alpha: 0.98),
+                titleSpacing: 20,
                 title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    PremiumUI.animatedIcon(
-                      folder: 'Filter',
-                      fileName: 'filter.json',
-                      size: 28,
-                      color: PremiumTokens.nebulaBlue,
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        // Filter logic
-                      },
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: PremiumUI.logo(height: 28),
                     ),
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          PremiumUI.logo(height: 28),
-                          const SizedBox(width: 8),
-                          Container(
-                            height: 12,
-                            width: 1,
-                            color: Colors.white.withValues(alpha: 0.1),
-                          ),
-                          const SizedBox(width: 8),
-                          Flexible(
-                            child: Text(
-                              "ORBIT $level • ETHEREAL DASHBOARD",
-                              style: GoogleFonts.inter(
-                                fontSize: 9,
-                                color: PremiumTokens.nebulaBlue,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 1.5,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    const Spacer(),
                     Row(
                       children: [
                         GestureDetector(
@@ -125,7 +92,7 @@ class HomeScreen extends ConsumerWidget {
 
               const SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+                  padding: EdgeInsets.fromLTRB(20, 30, 20, 10),
                   child: PremiumQuoteCard(),
                 ),
               ),

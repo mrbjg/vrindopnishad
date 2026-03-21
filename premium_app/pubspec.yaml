@@ -98,6 +98,7 @@ flutter:
   assets:
     - assets/vaani.svg
     - assets/logo.svg
+    - assets/shriJiMukut.svg
     - assets/iconsax/
     - assets/animated_icons/Chevron-left/
     - assets/animated_icons/Filter/

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../core/design_system.dart';
 import '../core/providers.dart';
 import '../core/stats_provider.dart';
@@ -240,9 +241,16 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                 ],
               ),
               child: Center(
-                child: Text(
-                  "ॐ",
-                  style: GoogleFonts.spectral(fontSize: 40, color: Colors.white),
+                child: RepaintBoundary(
+                  child: SvgPicture.asset(
+                    'assets/shriJiMukut.svg',
+                    width: 54,
+                    height: 54,
+                    colorFilter: const ColorFilter.mode(
+                      Colors.white, 
+                      BlendMode.srcIn,
+                    ),
+                  ),
                 ),
               ),
             ),
