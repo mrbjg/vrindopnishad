@@ -70,5 +70,47 @@
 	<array>
 		<string>audio</string>
 	</array>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundleAlternateIcons</key>
+		<dict>
+			<key>MainActivityRadiant</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>icon_radiant</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>MainActivityGolden</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>icon_golden</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>MainActivityDivine</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>icon_divine</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+		</dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>icon_starter</string>
+			</array>
+			<key>UIPrerenderedIcon</key>
+			<false/>
+		</dict>
+	</dict>
 </dict>
 </plist>

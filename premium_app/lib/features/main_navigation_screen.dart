@@ -9,6 +9,7 @@ import 'journal_screen.dart';
 import 'profile_screen.dart';
 import 'package:flutter/services.dart';
 import '../core/providers.dart';
+import '../core/dynamic_icon_service.dart';
 import '../widgets/mini_player.dart';
 import 'rituals_screen.dart';
 import '../core/stats_provider.dart';
@@ -51,6 +52,8 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Activate Dynamic Icon Service
+    ref.watch(dynamicIconServiceProvider);
     final List<Widget> screens = [
       HomeScreen(),
       LibraryScreen(),

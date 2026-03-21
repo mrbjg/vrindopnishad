@@ -86,7 +86,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 SizedBox(height: 12),
 
-                // Dark Mode Toggle
                 _buildToggleCard(
                   context,
                   l.translate('dark_mode'),
@@ -99,6 +98,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   },
                   gradientColors: [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withOpacity(0.8)],
                 ),
+                const SizedBox(height: 16),
+
+                // Divine Icon Status Card
+                _buildDivineIconStatus(context),
                 const SizedBox(height: 16),
 
                 // Reader Theme Section
@@ -851,6 +854,77 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ],
           ),
         ),
+      ),
+    );
+  Widget _buildDivineIconStatus(BuildContext context) {
+    final japState = ref.watch(naamJapStateProvider);
+    final totalMalas = japState.total ~/ 108;
+    final todayMalas = japState.today ~/ 108;
+
+    String levelName = "Starter";
+    String nextUnlock = "Reach 21 Malas today for Radiant";
+    IconData icon = Iconsax.star_1;
+    Color color = Colors.white60;
+
+    if (totalMalas >= 1008) {
+      levelName = "Divine Level";
+      nextUnlock = "Supreme Spiritual Focus attained";
+      icon = Iconsax.crown;
+      color = PremiumTokens.saffronGlow;
+    } else if (totalMalas >= 108) {
+      levelName = "Golden Level";
+      nextUnlock = "${1008 - totalMalas} Malas left for Divine";
+      icon = Iconsax.magicpen;
+      color = Colors.amber;
+    } else if (todayMalas >= 21) {
+      levelName = "Radiant Level";
+      nextUnlock = "${108 - totalMalas} Total Malas for Golden";
+      icon = Iconsax.sun_1;
+      color = PremiumTokens.nebulaBlue;
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: color.withOpacity(0.2), width: 1.5),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "App Icon: $levelName",
+                  style: PremiumTokens.displayStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  nextUnlock,
+                  style: PremiumTokens.sansStyle(
+                    fontSize: 12,
+                    color: Colors.white38,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
