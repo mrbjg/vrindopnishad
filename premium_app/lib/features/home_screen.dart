@@ -391,6 +391,8 @@ class HomeScreen extends ConsumerWidget {
 
 
   Widget _buildRecentReflectionPreview(BuildContext context, WidgetRef ref) {
+    final historyAsync = ref.watch(readingHistoryProvider);
+    
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -406,45 +408,51 @@ class HomeScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16),
-          GestureDetector(
-            onTap: () {
-              // Select the latest reflection for audio playback if it has a URL
-              // For now, expand the player or navigate
-              ref.read(navigationIndexProvider.notifier).state = 1;
+          historyAsync.when(
+            data: (history) {
+              if (history.isEmpty) return const SizedBox.shrink();
+              final latest = history.first;
+              return GestureDetector(
+                onTap: () {
+                  ref.read(navigationIndexProvider.notifier).state = 1;
+                },
+                child: PremiumUI.voidCard(
+                  child: Row(
+                    children: [
+                      const Icon(Iconsax.moon, color: Color(0xFFC0C0CF), size: 24),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              latest.title ?? 'Sacred Reflection',
+                              style: GoogleFonts.newsreader(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              "${latest.category ?? 'Spiritual'} • Just Read",
+                              style: GoogleFonts.manrope(color: Colors.white38, fontSize: 11),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Iconsax.arrow_right_3, color: Colors.white24, size: 20),
+                        onPressed: () {
+                          ref.read(navigationIndexProvider.notifier).state = 1;
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              );
             },
-            child: PremiumUI.voidCard(
-              child: Row(
-                children: [
-                  const Icon(Iconsax.moon, color: Color(0xFFC0C0CF), size: 24),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Stillness in the Void',
-                          style: GoogleFonts.newsreader(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          'Mar 14 • 3 min read',
-                          style: GoogleFonts.manrope(color: Colors.white38, fontSize: 11),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Iconsax.arrow_right_3, color: Colors.white24, size: 20),
-                    onPressed: () {
-                      ref.read(navigationIndexProvider.notifier).state = 1; // Library index
-                    },
-                  ),
-                ],
-              ),
-            ),
+            loading: () => const Center(child: CircularProgressIndicator(strokeWidth: 1)),
+            error: (e, _) => const SizedBox.shrink(),
           ),
         ],
       ),

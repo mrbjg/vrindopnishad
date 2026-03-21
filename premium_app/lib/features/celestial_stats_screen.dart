@@ -9,6 +9,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../core/design_system.dart';
 import '../core/auth_provider.dart';
 import '../core/stats_provider.dart';
+import '../models/user_stats.dart';
 
 class CelestialStatsScreen extends ConsumerStatefulWidget {
   const CelestialStatsScreen({super.key});
@@ -39,12 +40,14 @@ class _CelestialStatsScreenState extends ConsumerState<CelestialStatsScreen> wit
   Widget build(BuildContext context) {
     final user = ref.watch(authStateProvider).value;
     final statsAsync = ref.watch(userStatsProvider);
-    final level = statsAsync.value?.level ?? 1;
-    final totalJapCount = statsAsync.value?.totalJapCount ?? 0;
+    final historyAsync = ref.watch(readingHistoryProvider);
     
-    // Derived stats for the "Orbit" feel
-    final japHours = (totalJapCount * 2 / 3600).toStringAsFixed(1);
-    final malaStreaks = (totalJapCount / 108).floor();
+    final stats = statsAsync.value;
+    final level = stats?.level ?? 1;
+    
+    // Core metrics powered by UserStats
+    final japHours = ((stats?.totalReadingMinutes ?? 0) / 60.0).toStringAsFixed(1);
+    final malaStreaks = stats?.streakCount ?? 0;
 
     return Scaffold(
       backgroundColor: PremiumTokens.voidBlack,
@@ -65,9 +68,9 @@ class _CelestialStatsScreenState extends ConsumerState<CelestialStatsScreen> wit
                     children: [
                       _buildAdvancedStatsRow(japHours, malaStreaks),
                       const SizedBox(height: 24),
-                      _buildSoulBadges(),
+                      _buildSoulBadges(level),
                       const SizedBox(height: 32),
-                      _buildResonancePath(),
+                      _buildResonancePath(historyAsync.value ?? []),
                     ],
                   ),
                 ),
@@ -229,11 +232,11 @@ class _CelestialStatsScreenState extends ConsumerState<CelestialStatsScreen> wit
     );
   }
 
-  Widget _buildSoulBadges() {
+  Widget _buildSoulBadges(int level) {
     final badges = [
-      {"icon": Icons.brightness_7, "name": "Void Seeker", "color": PremiumTokens.nebulaBlue},
-      {"icon": Icons.dark_mode, "name": "Eternal Peace", "color": PremiumTokens.celestialGlow},
-      {"icon": Icons.self_improvement, "name": "Stillness Master", "color": Colors.tealAccent},
+      {"icon": Icons.brightness_7, "name": "Void Seeker", "color": PremiumTokens.nebulaBlue, "minLevel": 1},
+      {"icon": Icons.dark_mode, "name": "Eternal Peace", "color": PremiumTokens.celestialGlow, "minLevel": 5},
+      {"icon": Icons.self_improvement, "name": "Stillness Master", "color": Colors.tealAccent, "minLevel": 10},
     ];
 
     return Column(
@@ -243,27 +246,35 @@ class _CelestialStatsScreenState extends ConsumerState<CelestialStatsScreen> wit
         const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: badges.map((badge) => Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: PremiumUI.etherealCard(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                borderRadius: 20,
-                glowColor: (badge['color'] as Color).withValues(alpha: 0.2),
-                child: Column(
-                  children: [
-                    Icon(badge['icon'] as IconData, color: badge['color'] as Color, size: 20),
-                    const SizedBox(height: 8),
-                    Text(
-                      badge['name'] as String,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.manrope(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white70),
+          children: badges.map((badge) {
+            final isUnlocked = level >= (badge['minLevel'] as int);
+            return Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: PremiumUI.etherealCard(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  borderRadius: 20,
+                  glowColor: isUnlocked 
+                      ? (badge['color'] as Color).withValues(alpha: 0.2)
+                      : Colors.transparent,
+                  child: Opacity(
+                    opacity: isUnlocked ? 1.0 : 0.2,
+                    child: Column(
+                      children: [
+                        Icon(badge['icon'] as IconData, color: badge['color'] as Color, size: 20),
+                        const SizedBox(height: 8),
+                        Text(
+                          badge['name'] as String,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.manrope(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white70),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          )).toList(),
+            );
+          }).toList(),
         ),
       ],
     );
@@ -287,7 +298,35 @@ class _CelestialStatsScreenState extends ConsumerState<CelestialStatsScreen> wit
     );
   }
 
-  Widget _buildResonancePath() {
+  Widget _buildResonancePath(List<ReadingHistoryItem> history) {
+    // Generate last 7 days
+    final now = DateTime.now();
+    final last7Days = List.generate(7, (i) {
+      final date = now.subtract(Duration(days: 6 - i));
+      return DateTime(date.year, date.month, date.day);
+    });
+
+    // Count shlokas per day
+    final counts = <DateTime, int>{};
+    for (var date in last7Days) {
+      counts[date] = 0;
+    }
+
+    for (var item in history) {
+      final date = DateTime(item.readAt.year, item.readAt.month, item.readAt.day);
+      if (counts.containsKey(date)) {
+        counts[date] = (counts[date] ?? 0) + 1;
+      }
+    }
+
+    // Days labels (Last char of weekday)
+    final dayLabels = ["M", "T", "W", "T", "F", "S", "S"];
+    // Rotate labels based on current day
+    final rotatedLabels = List.generate(7, (i) {
+      final day = now.subtract(Duration(days: 6 - i)).weekday;
+      return dayLabels[day - 1];
+    });
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -318,13 +357,18 @@ class _CelestialStatsScreenState extends ConsumerState<CelestialStatsScreen> wit
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [0.4, 0.6, 0.3, 0.85, 0.5, 0.95, 0.7].map((h) => _buildBar(h)).toList(),
+                  children: last7Days.map((date) {
+                    final count = counts[date] ?? 0;
+                    // Normalize: 0 to 5 shlokas maps to 0.1 to 1.0 height
+                    final factor = (count / 5.0).clamp(0.1, 1.0);
+                    return _buildBar(factor);
+                  }).toList(),
                 ),
               ),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: ["M", "T", "W", "T", "F", "S", "S"].map((d) => Text(
+                children: rotatedLabels.map((d) => Text(
                   d, 
                   style: GoogleFonts.manrope(fontSize: 10, color: Colors.white24, fontWeight: FontWeight.bold)
                 )).toList(),
