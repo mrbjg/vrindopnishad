@@ -1244,26 +1244,18 @@ class PremiumUI extends StatelessWidget {
     IconData? icon, 
     Color? color,
   }) {
-    final snackBar = SnackBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      behavior: SnackBarBehavior.floating,
-      margin: EdgeInsets.only(
-        top: 20, 
-        left: 24, 
-        right: 24, 
-        bottom: MediaQuery.of(context).size.height - 160
-      ),
-      duration: const Duration(seconds: 3),
-      content: _SacredNotification(
+    late OverlayEntry overlayEntry;
+    
+    overlayEntry = OverlayEntry(
+      builder: (context) => _PremiumNotificationOverlay(
         message: message,
-        icon: icon, // Passed icon or null
+        icon: icon,
         color: color ?? PremiumTokens.nebulaBlue,
+        onDismiss: () => overlayEntry.remove(),
       ),
     );
 
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    Overlay.of(context).insert(overlayEntry);
   }
 
   /// Premium Sacred Call Alert (Ritual Reminder)
@@ -1288,6 +1280,79 @@ class PremiumUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const SizedBox.shrink();
+  }
+}
+
+class _PremiumNotificationOverlay extends StatefulWidget {
+  final String message;
+  final IconData? icon;
+  final Color color;
+  final VoidCallback onDismiss;
+
+  const _PremiumNotificationOverlay({
+    required this.message,
+    this.icon,
+    required this.color,
+    required this.onDismiss,
+  });
+
+  @override
+  State<_PremiumNotificationOverlay> createState() => _PremiumNotificationOverlayState();
+}
+
+class _PremiumNotificationOverlayState extends State<_PremiumNotificationOverlay> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Offset> _offsetAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    _offsetAnimation = Tween<Offset>(
+      begin: const Offset(0.0, -1.5),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutBack,
+    ));
+
+    _controller.forward();
+
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        _controller.reverse().then((_) => widget.onDismiss());
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: MediaQuery.of(context).padding.top + 20,
+      left: 24,
+      right: 24,
+      child: Material(
+        color: Colors.transparent,
+        child: SlideTransition(
+          position: _offsetAnimation,
+          child: _SacredNotification(
+            message: widget.message,
+            icon: widget.icon,
+            color: widget.color,
+          ),
+        ),
+      ),
+    );
   }
 }
 

@@ -828,11 +828,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
           ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(
-                isSelected ? Iconsax.tick_circle5 : Iconsax.stop,
-                size: 16,
-                color: isSelected ? accentColor : Colors.white24,
+              Center(
+                child: Icon(
+                  isSelected ? Iconsax.tick_circle5 : Iconsax.stop,
+                  size: 16,
+                  color: isSelected ? accentColor : Colors.white24,
+                ),
               ),
               const SizedBox(height: 6),
               Text(
