@@ -9,6 +9,7 @@ class UserStats {
   final int totalJapCount;
   final int dailyMalaGoal;
   final String? reminderTime;
+  final bool dynamicIconEnabled;
   final DateTime updatedAt;
 
   UserStats({
@@ -20,8 +21,9 @@ class UserStats {
     this.totalReadingMinutes = 0,
     this.totalShlokasRead = 0,
     this.totalJapCount = 0,
-    this.dailyMalaGoal = 0,
+    this.dailyMalaGoal = 11,
     this.reminderTime,
+    this.dynamicIconEnabled = true,
     required this.updatedAt,
   });
 
@@ -37,8 +39,9 @@ class UserStats {
       totalReadingMinutes: json['total_reading_minutes'] ?? 0,
       totalShlokasRead: json['total_shlokas_read'] ?? 0,
       totalJapCount: json['total_jap_count'] ?? 0,
-      dailyMalaGoal: json['daily_mala_goal'] ?? 0,
+      dailyMalaGoal: json['daily_mala_goal'] ?? 11,
       reminderTime: json['reminder_time'],
+      dynamicIconEnabled: json['dynamic_icon_enabled'] ?? true,
       updatedAt: json['updated_at'] != null 
           ? DateTime.parse(json['updated_at'].toString()) 
           : DateTime.now(),
@@ -57,6 +60,7 @@ class UserStats {
       'total_jap_count': totalJapCount,
       'daily_mala_goal': dailyMalaGoal,
       'reminder_time': reminderTime,
+      'dynamic_icon_enabled': dynamicIconEnabled,
       'updated_at': updatedAt.toIso8601String(),
     };
   }
@@ -72,6 +76,7 @@ class UserStats {
     int? totalJapCount,
     int? dailyMalaGoal,
     String? reminderTime,
+    bool? dynamicIconEnabled,
     DateTime? updatedAt,
   }) {
     return UserStats(
@@ -85,6 +90,7 @@ class UserStats {
       totalJapCount: totalJapCount ?? this.totalJapCount,
       dailyMalaGoal: dailyMalaGoal ?? this.dailyMalaGoal,
       reminderTime: reminderTime ?? this.reminderTime,
+      dynamicIconEnabled: dynamicIconEnabled ?? this.dynamicIconEnabled,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }

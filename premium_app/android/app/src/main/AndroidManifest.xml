@@ -28,7 +28,7 @@
             android:name=".MainActivityStarter"
             android:enabled="true"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_starter"
+            android:icon="@mipmap/ic_launcher"
             android:label="Sant Vaani"
             android:targetActivity="com.ryanheise.audioservice.AudioServiceActivity">
             <intent-filter>
@@ -41,7 +41,7 @@
             android:name=".MainActivityRadiant"
             android:enabled="false"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_radiant"
+            android:icon="@mipmap/ic_launcher"
             android:label="Sant Vaani"
             android:targetActivity="com.ryanheise.audioservice.AudioServiceActivity">
             <intent-filter>
@@ -54,7 +54,7 @@
             android:name=".MainActivityGolden"
             android:enabled="false"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_golden"
+            android:icon="@mipmap/ic_launcher"
             android:label="Sant Vaani"
             android:targetActivity="com.ryanheise.audioservice.AudioServiceActivity">
             <intent-filter>
@@ -67,7 +67,7 @@
             android:name=".MainActivityDivine"
             android:enabled="false"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_divine"
+            android:icon="@mipmap/ic_launcher"
             android:label="Sant Vaani"
             android:targetActivity="com.ryanheise.audioservice.AudioServiceActivity">
             <intent-filter>

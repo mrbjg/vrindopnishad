@@ -6,6 +6,8 @@ import '../../core/design_system.dart';
 import '../../core/providers.dart';
 import '../../core/localization.dart';
 import '../../core/providers/reading_providers.dart';
+import '../../core/auth_provider.dart';
+import '../../core/stats_provider.dart';
 import '../../widgets/animated_effects.dart';
 import 'package:flutter/services.dart';
 
@@ -112,8 +114,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ref.watch(dynamicIconEnabledProvider),
                   (val) async {
                     HapticFeedback.mediumImpact();
-                    ref.read(dynamicIconEnabledProvider.notifier).state = val;
-                    await ref.read(sharedPreferencesProvider).setBool('dynamic_icon_enabled', val);
+                    final user = ref.read(authServiceProvider).currentUser;
+                    if (user != null) {
+                      await ref.read(statsServiceProvider).updateStats(user.uid, {
+                        'dynamic_icon_enabled': val,
+                      });
+                      // Refresh the local provider state immediately
+                      ref.read(dynamicIconEnabledProvider.notifier).state = val;
+                      
+                      PremiumUI.showNotification(
+                        context, 
+                        val ? "Divine Evolution active" : "Classic Vaults restored",
+                        icon: Iconsax.magicpen,
+                      );
+                    }
                   },
                   gradientColors: [PremiumTokens.saffronGlow, Colors.orange],
                 ),

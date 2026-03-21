@@ -24,6 +24,8 @@ class StatsService {
           'total_reading_minutes': 0,
           'total_shlokas_read': 0,
           'total_jap_count': 0,
+          'daily_mala_goal': 11,
+          'dynamic_icon_enabled': true,
           'updated_at': DateTime.now().toIso8601String(),
         };
         

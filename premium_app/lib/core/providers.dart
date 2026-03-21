@@ -204,6 +204,6 @@ final focusModeProvider = StateProvider<bool>((ref) => false);
 
 /// Provider to enable/disable dynamic app icon evolution
 final dynamicIconEnabledProvider = StateProvider<bool>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider);
-  return prefs.getBool('dynamic_icon_enabled') ?? true;
+  final stats = ref.watch(userStatsProvider).value;
+  return stats?.dynamicIconEnabled ?? true;
 });

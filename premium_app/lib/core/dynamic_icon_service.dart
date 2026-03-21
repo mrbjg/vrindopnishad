@@ -25,13 +25,16 @@ class DynamicIconService {
     _ref.listen(dynamicIconEnabledProvider, (previous, next) {
       if (!next) {
         // Explicitly return to starter icon (vaani_icon.png)
-        FlutterDynamicIconPlus.setAlternateIconName(iconName: null);
+        FlutterDynamicIconPlus.setAlternateIconName(iconName: 'MainActivityStarter');
       } else {
         _checkAndUpdateIcon();
       }
     });
 
-    // Check for midnight reset on service initialization
+    // Check and apply correct icon on service initialization
+    _checkAndUpdateIcon();
+    
+    // Check for midnight reset
     _checkMidnightReset();
   }
 
@@ -49,9 +52,9 @@ class DynamicIconService {
         if (!Platform.isAndroid && !Platform.isIOS) return;
         
         final currentIcon = await FlutterDynamicIconPlus.alternateIconName;
-        if (currentIcon != null) {
+        if (currentIcon != 'MainActivityStarter') {
           // Reset to default at midnight
-          await FlutterDynamicIconPlus.setAlternateIconName(iconName: null);
+          await FlutterDynamicIconPlus.setAlternateIconName(iconName: 'MainActivityStarter');
         }
       } catch (e) {
         print('Error resetting icon at midnight: $e');
@@ -99,12 +102,9 @@ class DynamicIconService {
 
       final currentIcon = await FlutterDynamicIconPlus.alternateIconName;
       
-      // Map 'MainActivityStarter' to null (Default icon)
-      final String? normalizedTarget = targetIcon == 'MainActivityStarter' ? null : targetIcon;
-
-      if (currentIcon != normalizedTarget) {
+      if (currentIcon != targetIcon) {
         await FlutterDynamicIconPlus.setAlternateIconName(
-          iconName: normalizedTarget,
+          iconName: targetIcon,
         );
       }
     } catch (e) {
