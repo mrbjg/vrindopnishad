@@ -102,6 +102,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                 // Divine Icon Status Card
                 _buildDivineIconStatus(context),
+                const SizedBox(height: 12),
+
+                _buildToggleCard(
+                  context,
+                  "Dynamic App Icon",
+                  "Evolve icon based on daily milestones",
+                  Iconsax.magicpen,
+                  ref.watch(dynamicIconEnabledProvider),
+                  (val) async {
+                    HapticFeedback.mediumImpact();
+                    ref.read(dynamicIconEnabledProvider.notifier).state = val;
+                    await ref.read(sharedPreferencesProvider).setBool('dynamic_icon_enabled', val);
+                  },
+                  gradientColors: [PremiumTokens.saffronGlow, Colors.orange],
+                ),
                 const SizedBox(height: 16),
 
                 // Reader Theme Section

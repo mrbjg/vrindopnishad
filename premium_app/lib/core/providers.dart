@@ -201,3 +201,9 @@ class RecentSearchesNotifier extends AsyncNotifier<List<String>> {
 
 /// Global Focus Mode provider for immersive spiritual experience
 final focusModeProvider = StateProvider<bool>((ref) => false);
+
+/// Provider to enable/disable dynamic app icon evolution
+final dynamicIconEnabledProvider = StateProvider<bool>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return prefs.getBool('dynamic_icon_enabled') ?? true;
+});

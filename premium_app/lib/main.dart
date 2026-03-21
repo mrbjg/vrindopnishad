@@ -5,6 +5,7 @@ import 'core/theme.dart';
 import 'core/design_system.dart';
 import 'core/auth_provider.dart';
 import 'core/providers.dart';
+import 'core/dynamic_icon_service.dart';
 import 'features/main_navigation_screen.dart';
 import 'features/auth_screen.dart';
 import 'features/onboarding_screen.dart';
@@ -61,6 +62,13 @@ class SantVaaniPremiumApp extends ConsumerStatefulWidget {
 
 class _SantVaaniPremiumAppState extends ConsumerState<SantVaaniPremiumApp> {
   bool _showSplash = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize Dynamic Icon Service to listen for milestones and toggles
+    ref.read(dynamicIconServiceProvider);
+  }
 
   @override
   Widget build(BuildContext context) {

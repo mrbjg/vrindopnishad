@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/design_system.dart';
@@ -180,8 +181,8 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
       context: context,
       barrierDismissible: true,
       barrierLabel: "Dismiss",
-      barrierColor: Colors.black.withOpacity(0.8),
-      transitionDuration: const Duration(milliseconds: 400),
+      barrierColor: Colors.black.withOpacity(0.85),
+      transitionDuration: const Duration(milliseconds: 500),
       pageBuilder: (ctx, animation, secondaryAnimation) {
         return Center(
           child: Material(
@@ -201,7 +202,7 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
                     ),
                     const SizedBox(height: 32),
                     PremiumUI.silverText(
-                      "Release History?",
+                      "Clear History?",
                       style: GoogleFonts.spectral(
                         fontSize: 28,
                         fontWeight: FontWeight.w300,
@@ -224,14 +225,31 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
                     // Action Buttons (Full width to match Logout dialog style)
                     _buildSelectionButton(
                       context: ctx,
-                      label: "RELEASE ALL SESSIONS",
+                      label: "CLEAR ALL HISTORY",
                       isPrimary: true,
                       onTap: () async {
                         Navigator.pop(ctx);
                         final user = ref.read(authServiceProvider).currentUser;
                         if (user != null) {
-                          await ref.read(statsServiceProvider).clearReadingHistory(user.uid);
-                          ref.invalidate(readingHistoryProvider);
+                          try {
+                            // High performance clear
+                            await ref.read(statsServiceProvider).clearReadingHistory(user.uid);
+                            // Deep refresh
+                            ref.invalidate(readingHistoryProvider);
+                            HapticFeedback.heavyImpact();
+                            
+                            // Sacred Notification Feedback
+                            if (context.mounted) {
+                              PremiumUI.showNotification(
+                                context, 
+                                "Celestial vaults cleared",
+                                icon: Iconsax.trash,
+                                color: Colors.redAccent,
+                              );
+                            }
+                          } catch (e) {
+                            debugPrint('Error clearing history: $e');
+                          }
                         }
                       },
                     ),
@@ -246,7 +264,10 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
                 ),
               ),
             ),
-          ).animate().fadeIn().scale(begin: const Offset(0.9, 0.9)),
+          ).animate(onPlay: (c) => c.forward())
+           .scale(begin: const Offset(0.7, 0.7), end: const Offset(1, 1), curve: Curves.easeOutBack, duration: 400.ms)
+           .fadeIn(duration: 400.ms)
+           .shimmer(delay: 500.ms, duration: 2.seconds, color: Colors.white10),
         );
       },
     );
