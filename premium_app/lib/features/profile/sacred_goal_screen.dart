@@ -173,7 +173,7 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
           gradient: PremiumTokens.nebulaGradient,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
-            BoxShadow(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3), blurRadius: 20, spreadRadius: 2),
+            BoxShadow(color: PremiumTokens.nebulaBlue.withOpacity(0.3), blurRadius: 20, spreadRadius: 2),
           ],
         ),
         child: Center(

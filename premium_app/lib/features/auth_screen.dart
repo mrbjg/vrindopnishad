@@ -236,11 +236,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         prefixIcon: Icon(icon, color: Colors.white38, size: 20),
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.05),
+        fillColor: PremiumTokens.nebulaBlue.withOpacity(0.05),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
+          borderSide: BorderSide(color: PremiumTokens.nebulaBlue.withOpacity(0.2)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
@@ -261,9 +261,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         width: 56,
         height: 56,
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: Colors.white.withOpacity(0.05),
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: Colors.white.withOpacity(0.1)),
         ),
         child: Center(
           child: image != null 

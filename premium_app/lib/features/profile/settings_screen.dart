@@ -59,7 +59,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                      color: PremiumTokens.nebulaBlue.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: PremiumUI.customIcon(
@@ -97,7 +97,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     HapticFeedback.lightImpact();
                     ref.read(themeProvider.notifier).toggleTheme(val);
                   },
-                  gradientColors: [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)],
+                  gradientColors: [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withOpacity(0.8)],
                 ),
                 const SizedBox(height: 16),
 
@@ -133,7 +133,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     HapticFeedback.lightImpact();
                     setState(() => _notifications = val);
                   },
-                  gradientColors: [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)],
+                  gradientColors: [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withOpacity(0.8)],
                 ),
                 const SizedBox(height: 32),
 
@@ -150,7 +150,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   l.translate('privacy_policy'),
                   l.translate('privacy_policy'),
                   Iconsax.shield_tick,
-                  gradientColors: [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)],
+                  gradientColors: [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withOpacity(0.8)],
                 ),
                 const SizedBox(height: 12),
 
@@ -159,7 +159,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   l.translate('terms_service'),
                   l.translate('terms_service'),
                   Iconsax.document,
-                  gradientColors: [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)],
+                  gradientColors: [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withOpacity(0.8)],
                 ),
                 const SizedBox(height: 12),
 
@@ -181,8 +181,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
-                              PremiumTokens.nebulaBlue.withValues(alpha: 0.05),
+                              PremiumTokens.nebulaBlue.withOpacity(0.1),
+                              PremiumTokens.nebulaBlue.withOpacity(0.05),
                             ],
                           ),
                           borderRadius: BorderRadius.circular(20),
@@ -231,10 +231,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.08),
+          color: Colors.white.withOpacity(0.08),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: Colors.white.withOpacity(0.1),
           ),
         ),
         child: PremiumUI.animatedIcon(
@@ -260,7 +260,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+              color: PremiumTokens.nebulaBlue.withOpacity(0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, size: 16, color: PremiumTokens.nebulaBlue),
@@ -291,14 +291,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     List<Color>? gradientColors,
   }) {
     final colors =
-        gradientColors ?? [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)];
+        gradientColors ?? [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withOpacity(0.8)];
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: Colors.white.withOpacity(0.06),
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.08),
+          color: Colors.white.withOpacity(0.08),
           width: 1.5,
         ),
       ),
@@ -317,7 +317,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
-                    color: colors[0].withValues(alpha: 0.4),
+                    color: colors[0].withOpacity(0.4),
                     blurRadius: 12,
                     offset: Offset(0, 4),
                     spreadRadius: -4,
@@ -370,11 +370,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         height: 32,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: value ? activeColor : Colors.grey.withValues(alpha: 0.3),
+          color: value ? activeColor : Colors.grey.withOpacity(0.3),
           boxShadow: value
               ? [
                   BoxShadow(
-                    color: activeColor.withValues(alpha: 0.4),
+                    color: activeColor.withOpacity(0.4),
                     blurRadius: 12,
                     spreadRadius: -4,
                   ),
@@ -394,7 +394,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.15),
+                  color: Colors.black.withOpacity(0.15),
                   blurRadius: 8,
                   offset: Offset(0, 2),
                 ),
@@ -415,10 +415,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       onTap: () => _showLanguageDialog(context, l),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.06),
+          color: Colors.white.withOpacity(0.06),
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.08),
+            color: Colors.white.withOpacity(0.08),
             width: 1.5,
           ),
         ),
@@ -433,7 +433,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
-                      color: PremiumTokens.nebulaBlue.withValues(alpha: 0.4),
+                      color: PremiumTokens.nebulaBlue.withOpacity(0.4),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                       spreadRadius: -4,
@@ -472,7 +472,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.05),
+                  color: Colors.white.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -499,7 +499,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           color: const Color(0xFF1A1A2E),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: Colors.white.withOpacity(0.1),
           ),
         ),
         child: SafeArea(
@@ -513,7 +513,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     width: 48,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: Colors.white38.withValues(alpha: 0.3),
+                      color: Colors.white38.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
@@ -589,12 +589,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? PremiumTokens.nebulaBlue.withValues(alpha: 0.1)
-                              : Colors.white.withValues(alpha: 0.05),
+                              ? PremiumTokens.nebulaBlue.withOpacity(0.1)
+                              : Colors.white.withOpacity(0.05),
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
                             color: isSelected
-                                ? PremiumTokens.nebulaBlue.withValues(alpha: 0.3)
+                                ? PremiumTokens.nebulaBlue.withOpacity(0.3)
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -605,8 +605,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? PremiumTokens.nebulaBlue.withValues(alpha: 0.15)
-                                    : Colors.white.withValues(alpha: 0.05),
+                                    ? PremiumTokens.nebulaBlue.withOpacity(0.15)
+                                    : Colors.white.withOpacity(0.05),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Icon(
@@ -683,7 +683,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }) {
     final colors = isDestructive
         ? [const Color(0xFFEF4444), const Color(0xFFF87171)]
-        : gradientColors ?? [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)];
+        : gradientColors ?? [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withOpacity(0.8)];
 
     return PressableScale(
       onTap: () {
@@ -697,12 +697,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.06),
+          color: Colors.white.withOpacity(0.06),
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
             color: isDestructive
-                ? Colors.red.withValues(alpha: 0.15)
-                : Colors.white.withValues(alpha: 0.08),
+                ? Colors.red.withOpacity(0.15)
+                : Colors.white.withOpacity(0.08),
             width: 1.5,
           ),
         ),
@@ -721,7 +721,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
-                      color: colors[0].withValues(alpha: 0.4),
+                      color: colors[0].withOpacity(0.4),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                       spreadRadius: -4,
@@ -747,7 +747,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.05),
+                  color: Colors.white.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -769,9 +769,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: Colors.white.withOpacity(0.08)),
       ),
       child: Row(
         children: [
@@ -820,10 +820,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           duration: const Duration(milliseconds: 300),
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: isSelected ? accentColor.withValues(alpha: 0.15) : Colors.transparent,
+            color: isSelected ? accentColor.withOpacity(0.15) : Colors.transparent,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isSelected ? accentColor.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.05),
+              color: isSelected ? accentColor.withOpacity(0.3) : Colors.white.withValues(alpha: 0.05),
               width: 1.5,
             ),
           ),

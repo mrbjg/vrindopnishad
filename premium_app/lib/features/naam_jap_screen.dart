@@ -18,7 +18,7 @@ class NaamJapScreen extends ConsumerStatefulWidget {
 }
 
 class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
-  // Use Animate widget directly to avoid mixin conflicts and initialization errors
+  bool _isImmersive = false;
 
   @override
   Widget build(BuildContext context) {
@@ -55,46 +55,93 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          // Ethereal Background
-          Positioned.fill(child: PremiumUI.masterBackground(index: 2)),
-          
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.zero,
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildHeader(context, isFocusMode),
-                  
-                  const SizedBox(height: 20),
-                  
-                  // Professional Counter Display
-                  _buildProfessionalCounter(count),
-                  
-                  const SizedBox(height: 20),
-                  
-                  // Interaction Area
-                  _buildInteractionArea(count, isFocusMode),
-                  
-                  const SizedBox(height: 40),
-                  
-                  // Session Stats
-                  _buildSessionStats(
-                    isFocusMode, 
-                    todayMalas, 
-                    highestMalas, 
-                    dailyGoal: ref.read(userStatsProvider).value?.dailyMalaGoal ?? 0,
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          HapticFeedback.lightImpact();
+          ref.read(naamJapStateProvider.notifier).increment();
+        },
+        child: Stack(
+          children: [
+            // Ethereal Background
+            Positioned.fill(child: PremiumUI.masterBackground(index: 2)),
+            
+            if (!_isImmersive)
+              SafeArea(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.zero,
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildHeader(context, isFocusMode),
+                      
+                      const SizedBox(height: 20),
+                      
+                      // Professional Counter Display
+                      _buildProfessionalCounter(count),
+                      
+                      const SizedBox(height: 20),
+                      
+                      // Interaction Area
+                      _buildInteractionArea(count, isFocusMode),
+                      
+                      const SizedBox(height: 40),
+                      
+                      // Session Stats
+                      _buildSessionStats(
+                        isFocusMode, 
+                        todayMalas, 
+                        highestMalas, 
+                        dailyGoal: ref.read(userStatsProvider).value?.dailyMalaGoal ?? 0,
+                      ),
+                      
+                      const SizedBox(height: 140), // Spacing for Navbar + MiniPlayer
+                    ],
                   ),
-                  
-                  const SizedBox(height: 140), // Spacing for Navbar + MiniPlayer
-                ],
+                ),
               ),
-            ),
-          ),
-        ],
+
+            if (_isImmersive)
+              Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildProfessionalCounter(count, simplified: true),
+                    const SizedBox(height: 24),
+                    Text(
+                      "TAP ANYWHERE TO JAP",
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 4,
+                        color: Colors.white.withValues(alpha: 0.15),
+                      ),
+                    ).animate(onPlay: (c) => c.repeat(reverse: true))
+                     .fadeIn(duration: 1.seconds)
+                     .fadeOut(delay: 2.seconds, duration: 1.seconds),
+                  ],
+                ),
+              ),
+
+            if (_isImmersive)
+              Positioned(
+                top: 50,
+                left: 24, // User asked for top corner, usually back is top left or right
+                child: GestureDetector(
+                  onTap: () {
+                    HapticFeedback.mediumImpact();
+                    setState(() => _isImmersive = false);
+                  },
+                  child: PremiumUI.glassCard(
+                    padding: const EdgeInsets.all(12),
+                    borderRadius: 16,
+                    child: const Icon(Iconsax.arrow_left_2, color: Colors.white, size: 24),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -110,7 +157,6 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
               if (Navigator.canPop(context)) {
                 Navigator.pop(context);
               } else {
-                // If in bottom nav, switch to Home
                 ref.read(navigationIndexProvider.notifier).state = 0;
               }
             },
@@ -120,32 +166,70 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
               child: const Icon(Iconsax.arrow_left_2, color: Colors.white, size: 20),
             ),
           ),
-          Text(
-            "NAAM JAP",
-            style: PremiumTokens.sansStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 4,
-              color: PremiumTokens.nebulaBlue,
-            ),
-          ),
+          
           GestureDetector(
             onTap: () {
-              HapticFeedback.mediumImpact();
-              _showMalaHistorySheet(context);
+              HapticFeedback.heavyImpact();
+              setState(() => _isImmersive = true);
             },
-            child: PremiumUI.glassCard(
-              padding: const EdgeInsets.all(10),
-              borderRadius: 14,
-              child: const Icon(Iconsax.clock, color: Colors.white, size: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "NAAM JAP",
+                  style: PremiumTokens.sansStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 4,
+                    color: PremiumTokens.nebulaBlue,
+                  ),
+                ),
+                Text(
+                  "TAP TO IMMERSE",
+                  style: PremiumTokens.sansStyle(
+                    fontSize: 8,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 2,
+                    color: Colors.white.withValues(alpha: 0.3),
+                  ),
+                ),
+              ],
             ),
+          ),
+
+          Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  HapticFeedback.mediumImpact();
+                  setState(() => _isImmersive = true);
+                },
+                child: PremiumUI.glassCard(
+                  padding: const EdgeInsets.all(10),
+                  borderRadius: 14,
+                  child: const Icon(Iconsax.maximize_1, color: Colors.white, size: 20),
+                ),
+              ),
+              const SizedBox(width: 12),
+              GestureDetector(
+                onTap: () {
+                  HapticFeedback.mediumImpact();
+                  _showMalaHistorySheet(context);
+                },
+                child: PremiumUI.glassCard(
+                  padding: const EdgeInsets.all(10),
+                  borderRadius: 14,
+                  child: const Icon(Iconsax.clock, color: Colors.white, size: 20),
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildProfessionalCounter(int totalCount) {
+  Widget _buildProfessionalCounter(int totalCount, {bool simplified = false}) {
     // Mathematical correction for Mala / Bead display
     final int completedMalas = totalCount ~/ 108;
     final int currentBead = totalCount == 0 ? 0 : (totalCount - 1) % 108 + 1;
@@ -162,8 +246,8 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                 ScaleEffect(begin: const Offset(1, 1), end: const Offset(1.2, 1.2), duration: 2.seconds),
               ],
               child: Container(
-                width: 250,
-                height: 250,
+                width: simplified ? 300 : 250,
+                height: simplified ? 300 : 250,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
@@ -178,8 +262,8 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
             
             // Glass Disk with dynamic number
             Container(
-              width: 200,
-              height: 200,
+              width: simplified ? 240 : 200,
+              height: simplified ? 240 : 200,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white.withValues(alpha: 0.03),
@@ -210,7 +294,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                   child: Text(
                     currentBead.toString(),
                     style: GoogleFonts.spectral(
-                      fontSize: 72,
+                      fontSize: simplified ? 96 : 72,
                       fontWeight: FontWeight.w300,
                       color: Colors.white,
                       shadows: [
@@ -223,31 +307,33 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
-        // Continuous Status Display
-        Animate(
-          key: ValueKey(completedMalas),
-          effects: [FadeEffect(duration: 400.ms), SlideEffect(begin: const Offset(0, 0.2), end: Offset.zero)],
-          child: Text(
-            "MALA $completedMalas • BEAD $currentBead",
-            style: PremiumTokens.sansStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 2.5,
-              color: PremiumTokens.nebulaBlue,
+        if (!simplified) ...[
+          const SizedBox(height: 16),
+          // Continuous Status Display
+          Animate(
+            key: ValueKey(completedMalas),
+            effects: [FadeEffect(duration: 400.ms), SlideEffect(begin: const Offset(0, 0.2), end: Offset.zero)],
+            child: Text(
+              "MALA $completedMalas • BEAD $currentBead",
+              style: PremiumTokens.sansStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 2.5,
+                color: PremiumTokens.nebulaBlue,
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          "TOTAL CHANTS: $totalCount",
-          style: PremiumTokens.sansStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 1.5,
-            color: Colors.white38,
+          const SizedBox(height: 8),
+          Text(
+            "TOTAL CHANTS: $totalCount",
+            style: PremiumTokens.sansStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.5,
+              color: Colors.white38,
+            ),
           ),
-        ),
+        ],
       ],
     );
   }

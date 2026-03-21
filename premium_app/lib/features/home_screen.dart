@@ -40,7 +40,7 @@ class HomeScreen extends ConsumerWidget {
                 floating: false,
                 elevation: 0,
                 scrolledUnderElevation: 0,
-                backgroundColor: PremiumTokens.voidIndigo.withValues(alpha: 0.98),
+                backgroundColor: PremiumTokens.voidIndigo.withOpacity(0.98),
                 titleSpacing: 20,
                 title: Row(
                   children: [
@@ -74,7 +74,7 @@ class HomeScreen extends ConsumerWidget {
                           height: 32,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
+                            border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.3)),
                           ),
                           child: photoUrl != null 
                             ? PremiumUI.networkImage(
@@ -145,7 +145,7 @@ class HomeScreen extends ConsumerWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Iconsax.music_play, color: Colors.white.withValues(alpha: 0.9), size: 18),
+          Icon(Iconsax.music_play, color: Colors.white.withOpacity(0.9), size: 18),
           const SizedBox(width: 12),
           Text(
             "EXPAND PLAYER",
@@ -183,7 +183,7 @@ class HomeScreen extends ConsumerWidget {
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
-                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.7),
+                        color: PremiumTokens.nebulaBlue.withOpacity(0.7),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -202,12 +202,12 @@ class HomeScreen extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   borderRadius: 12,
                   onTap: () {}, 
-                  color: Colors.white.withValues(alpha: 0.05),
+                  color: Colors.white.withOpacity(0.05),
                   child: Text(
                     "GOAL: 1008",
                     style: PremiumTokens.sansStyle(
                       fontSize: 11, 
-                      color: Colors.white.withValues(alpha: 0.9), // Changed from nebulaBlue to white
+                      color: Colors.white.withOpacity(0.9), // Changed from nebulaBlue to white
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1,
                     ),
@@ -323,7 +323,7 @@ class HomeScreen extends ConsumerWidget {
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
                         colors: [
-                          PremiumTokens.charcoal.withValues(alpha: 0.9),
+                          PremiumTokens.charcoal.withOpacity(0.9),
                           Colors.transparent,
                         ],
                       ),
@@ -442,14 +442,14 @@ class HomeScreen extends ConsumerWidget {
               },
               child: PremiumUI.voidCard(
                 padding: const EdgeInsets.all(16),
-                accentColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
+                accentColor: PremiumTokens.nebulaBlue.withOpacity(0.3),
                 child: Row(
                   children: [
                     Container(
                       width: 50,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                        color: PremiumTokens.nebulaBlue.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Center(child: Text('ॐ', style: TextStyle(color: PremiumTokens.nebulaBlue, fontSize: 24))),
@@ -493,7 +493,7 @@ class PremiumQuoteCard extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Stack(
         alignment: Alignment.center,
@@ -516,8 +516,8 @@ class PremiumQuoteCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(24),
               gradient: LinearGradient(
                 colors: [
-                  PremiumTokens.charcoal.withValues(alpha: 0.9),
-                  PremiumTokens.surfaceCharcoal.withValues(alpha: 0.7),
+                  PremiumTokens.charcoal.withOpacity(0.9),
+                  PremiumTokens.surfaceCharcoal.withOpacity(0.7),
                 ],
               ),
             ),

@@ -72,7 +72,7 @@ class EtherealOrbPlayer extends ConsumerWidget {
                       height: 120,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: accentColor.withValues(alpha: 0.3),
+                        color: accentColor.withOpacity(0.3),
                       ),
                     ),
                   ),
@@ -90,9 +90,9 @@ class EtherealOrbPlayer extends ConsumerWidget {
                        shape: BoxShape.circle,
                        gradient: SweepGradient(
                          colors: [
-                           accentColor.withValues(alpha: 0.0),
-                           accentColor.withValues(alpha: 0.4),
-                           accentColor.withValues(alpha: 0.0),
+                           accentColor.withOpacity(0.0),
+                           accentColor.withOpacity(0.4),
+                           accentColor.withOpacity(0.0),
                          ],
                          stops: const [0.0, 0.5, 1.0],
                        ),
@@ -115,11 +115,11 @@ class EtherealOrbPlayer extends ConsumerWidget {
                   height: 68,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.02),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.15), width: 1.5),
+                    color: Colors.white.withOpacity(0.02),
+                    border: Border.all(color: Colors.white.withOpacity(0.15), width: 1.5),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.3),
+                        color: Colors.black.withOpacity(0.3),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -137,7 +137,7 @@ class EtherealOrbPlayer extends ConsumerWidget {
                               shape: BoxShape.circle,
                               gradient: RadialGradient(
                                 colors: [
-                                  accentColor.withValues(alpha: 0.2),
+                                  accentColor.withOpacity(0.2),
                                   Colors.transparent,
                                 ],
                               ),
@@ -183,7 +183,7 @@ class EtherealOrbPlayer extends ConsumerWidget {
                 if (!isPlaying)
                   Positioned(
                     bottom: 12,
-                    child: Icon(Icons.play_arrow_rounded, color: Colors.white.withValues(alpha: 0.5), size: 12),
+                    child: Icon(Icons.play_arrow_rounded, color: Colors.white.withOpacity(0.5), size: 12),
                   ),
               ],
             ),
@@ -215,7 +215,7 @@ class _CelestialProgressPainter extends CustomPainter {
 
     // Rim Background
     final bgPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.05)
+      ..color = Colors.white.withOpacity(0.05)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     canvas.drawCircle(center, radius, bgPaint);
@@ -228,7 +228,7 @@ class _CelestialProgressPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final glowPaint = Paint()
-      ..color = color.withValues(alpha: 0.3)
+      ..color = color.withOpacity(0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 6
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);

@@ -77,7 +77,7 @@ class EternalReflectionScreen extends ConsumerWidget {
               border: Border.all(color: Colors.white10, width: 2),
               boxShadow: [
                 BoxShadow(
-                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.5),
+                  color: PremiumTokens.nebulaBlue.withOpacity(0.5),
                   blurRadius: 25,
                   offset: const Offset(0, 4),
                 ),
@@ -182,7 +182,7 @@ class EternalReflectionScreen extends ConsumerWidget {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3 * value),
+                      color: PremiumTokens.nebulaBlue.withOpacity(0.3 * value),
                       blurRadius: 40,
                       spreadRadius: 5,
                     ),
@@ -198,7 +198,7 @@ class EternalReflectionScreen extends ConsumerWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2),
+                          color: PremiumTokens.nebulaBlue.withOpacity(0.2),
                           width: 1,
                         ),
                       ),
@@ -214,7 +214,7 @@ class EternalReflectionScreen extends ConsumerWidget {
                           end: Alignment.bottomRight,
                           colors: [
                             PremiumTokens.silver,
-                            PremiumTokens.silver.withValues(alpha: 0.1),
+                            PremiumTokens.silver.withOpacity(0.1),
                           ],
                         ),
                       ),
@@ -251,7 +251,7 @@ class EternalReflectionScreen extends ConsumerWidget {
             "Phase of Release & Reflection",
             style: PremiumTokens.sansStyle(
               fontSize: 10,
-              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.6),
+              color: PremiumTokens.nebulaBlue.withOpacity(0.6),
               letterSpacing: 1,
             ),
           ),
@@ -391,7 +391,7 @@ class EternalReflectionScreen extends ConsumerWidget {
       context: context,
       barrierDismissible: true,
       barrierLabel: "Dismiss",
-      barrierColor: Colors.black.withValues(alpha: 0.85),
+      barrierColor: Colors.black.withOpacity(0.85),
       transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (ctx, animation, secondaryAnimation) {
         return Center(
@@ -420,7 +420,7 @@ class EternalReflectionScreen extends ConsumerWidget {
                         style: const TextStyle(color: Colors.white, fontSize: 18),
                         decoration: InputDecoration(
                           hintText: "Title of Enlightenment",
-                          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.2)),
+                          hintStyle: TextStyle(color: Colors.white.withOpacity(0.2)),
                           enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.white10)),
                           focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: PremiumTokens.nebulaBlue)),
                         ),
@@ -432,7 +432,7 @@ class EternalReflectionScreen extends ConsumerWidget {
                         style: GoogleFonts.manrope(color: Colors.white70, fontSize: 15, height: 1.6),
                         decoration: InputDecoration(
                           hintText: "Descend into your thoughts...",
-                          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.2)),
+                          hintStyle: TextStyle(color: Colors.white.withOpacity(0.2)),
                           border: InputBorder.none,
                         ),
                       ),

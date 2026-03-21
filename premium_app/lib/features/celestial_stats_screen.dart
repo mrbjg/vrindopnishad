@@ -143,7 +143,7 @@ class _CelestialStatsScreenState extends ConsumerState<CelestialStatsScreen> wit
                 style: GoogleFonts.spectral(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
-                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.6),
+                  color: PremiumTokens.nebulaBlue.withOpacity(0.6),
                   letterSpacing: 4,
                 ),
               ),
@@ -163,14 +163,14 @@ class _CelestialStatsScreenState extends ConsumerState<CelestialStatsScreen> wit
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3), width: 1),
+                  border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.3), width: 1),
                 ),
                 child: CircleAvatar(
                   radius: 40,
                   backgroundImage: CachedNetworkImageProvider(user?.photoURL ?? 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80'),
                 ),
               ).animate(onPlay: (c) => c.repeat(reverse: true))
-               .shimmer(duration: 2.seconds, color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
+               .shimmer(duration: 2.seconds, color: PremiumTokens.nebulaBlue.withOpacity(0.2)),
             ],
           ),
         ],
@@ -255,7 +255,7 @@ class _CelestialStatsScreenState extends ConsumerState<CelestialStatsScreen> wit
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   borderRadius: 20,
                   glowColor: isUnlocked 
-                      ? (badge['color'] as Color).withValues(alpha: 0.2)
+                      ? (badge['color'] as Color).withOpacity(0.2)
                       : Colors.transparent,
                   child: Opacity(
                     opacity: isUnlocked ? 1.0 : 0.2,
@@ -293,7 +293,7 @@ class _CelestialStatsScreenState extends ConsumerState<CelestialStatsScreen> wit
           ),
         ),
         const SizedBox(width: 12),
-        Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.05))),
+        Expanded(child: Divider(color: Colors.white.withOpacity(0.05))),
       ],
     );
   }
@@ -385,7 +385,7 @@ class _CelestialStatsScreenState extends ConsumerState<CelestialStatsScreen> wit
       width: 14,
       height: 100 * heightFactor,
       decoration: BoxDecoration(
-        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+        color: PremiumTokens.nebulaBlue.withOpacity(0.1),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Stack(
@@ -397,8 +397,8 @@ class _CelestialStatsScreenState extends ConsumerState<CelestialStatsScreen> wit
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
                 colors: [
-                  PremiumTokens.nebulaBlue.withValues(alpha: 0.1), 
-                  PremiumTokens.nebulaBlue.withValues(alpha: 0.6)
+                  PremiumTokens.nebulaBlue.withOpacity(0.1), 
+                  PremiumTokens.nebulaBlue.withOpacity(0.6)
                 ],
               ),
               borderRadius: BorderRadius.circular(10),
@@ -414,7 +414,7 @@ class _CelestialStatsScreenState extends ConsumerState<CelestialStatsScreen> wit
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: PremiumTokens.nebulaBlue.withValues(alpha: 0.8),
+                    color: PremiumTokens.nebulaBlue.withOpacity(0.8),
                     blurRadius: 10,
                     spreadRadius: 2,
                   ),
@@ -445,7 +445,7 @@ class SacredOrbitPainter extends CustomPainter {
     final orbitPaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
-      ..color = Colors.white.withValues(alpha: 0.05);
+      ..color = Colors.white.withOpacity(0.05);
 
     // Draw Orbits
     for (var radius in orbits) {
