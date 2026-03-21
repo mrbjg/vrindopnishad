@@ -47,6 +47,7 @@ class UserStatsNotifier extends AsyncNotifier<UserStats?> {
     
     // Refresh to update UI
     await refresh();
+    ref.invalidate(readingHistoryProvider);
   }
   
   /// Update total jap count

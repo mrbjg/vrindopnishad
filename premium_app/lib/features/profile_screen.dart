@@ -11,6 +11,7 @@ import 'profile/reading_history_screen.dart';
 import 'profile/settings_screen.dart';
 import 'profile/about_screen.dart';
 import 'celestial_stats_screen.dart';
+import 'journal_screen.dart';
 import '../widgets/sacred_logout_dialog.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/services.dart';
@@ -113,7 +114,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                     _buildPremiumSectionTitle("Your Sacred Collection"),
                     const SizedBox(height: 16),
                     _buildPremiumMenuItem(
-                      icon: Iconsax.archive_book,
+                      icon: Iconsax.heart,
                       title: "Saved Items",
                       subtitle: "Your spiritual vault",
                       color: PremiumTokens.nebulaBlue,
@@ -124,8 +125,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                     ),
                     const SizedBox(height: 12),
                     _buildPremiumMenuItem(
+                      icon: Iconsax.edit_2,
+                      title: "Journal Reflections",
+                      subtitle: "Your written thoughts",
+                      color: PremiumTokens.starlight,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const EternalReflectionScreen()),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildPremiumMenuItem(
                       icon: Iconsax.clock,
-                      title: "Journey History",
+                      title: "Reading History",
                       subtitle: "Continue your reflections",
                       color: PremiumTokens.celestialGlow,
                       onTap: () => Navigator.push(

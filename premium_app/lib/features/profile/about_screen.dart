@@ -49,24 +49,9 @@ class AboutScreen extends StatelessWidget {
                     children: [
                       const SizedBox(height: 20),
                       Center(
-                        child: Container(
-                          width: 120,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            gradient: PremiumTokens.nebulaGradient,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: PremiumTokens.nebulaBlue.withValues(alpha: 0.4),
-                                blurRadius: 25,
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Iconsax.magic_star,
-                            size: 60,
-                            color: Colors.white,
-                          ),
+                        child: PremiumUI.pulsingCelestialIcon(
+                          icon: Iconsax.magic_star,
+                          size: 60,
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -103,15 +88,16 @@ class AboutScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      GridView.count(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisCount: 4,
+                        mainAxisSpacing: 16,
+                        crossAxisSpacing: 16,
                         children: [
                           _buildSocialIcon(context, Iconsax.instagram, "Instagram"),
-                          const SizedBox(width: 24),
                           _buildSocialIcon(context, Iconsax.message_2, "WhatsApp"),
-                          const SizedBox(width: 24),
                           _buildSocialIcon(context, Iconsax.direct_right, "Telegram"),
-                          const SizedBox(width: 24),
                           _buildSocialIcon(context, Iconsax.video_circle, "YouTube"),
                         ],
                       ),
@@ -147,24 +133,21 @@ class AboutScreen extends StatelessWidget {
     String description,
   ) {
     return PremiumUI.voidGlassCard(
-      padding: const EdgeInsets.all(20),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: PremiumTokens.nebulaBlue,
-              ),
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: PremiumTokens.nebulaBlue,
             ),
-            const SizedBox(height: 12),
-            Text(description, style: const TextStyle(height: 1.6)),
-          ],
-        ),
+          ),
+          const SizedBox(height: 12),
+          Text(description, style: const TextStyle(height: 1.6, color: Colors.white70)),
+        ],
       ),
     );
   }

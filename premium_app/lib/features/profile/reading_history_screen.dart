@@ -6,6 +6,7 @@ import '../../core/stats_provider.dart';
 import '../content_detail_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/auth_provider.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class ReadingHistoryScreen extends ConsumerWidget {
   const ReadingHistoryScreen({super.key});
@@ -38,7 +39,7 @@ class ReadingHistoryScreen extends ConsumerWidget {
             slivers: [
               SliverAppBar(
                 title: Text(
-                  "JOURNEY HISTORY",
+                  "READING HISTORY",
                   style: GoogleFonts.spectral(
                     fontWeight: FontWeight.bold,
                     letterSpacing: 2,
@@ -142,44 +143,79 @@ class ReadingHistoryScreen extends ConsumerWidget {
   }
 
   void _showClearConfirmation(BuildContext context, WidgetRef ref) {
-    showDialog(
+    showGeneralDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A2E),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-          side: const BorderSide(color: Colors.white10),
-        ),
-        title: Text(
-          "Clear History?",
-          style: GoogleFonts.spectral(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        content: Text(
-          "This will remove all your recorded reading sessions. This action cannot be undone.",
-          style: GoogleFonts.manrope(color: Colors.white70, fontSize: 14),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text("Keep History"),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.redAccent.withValues(alpha: 0.8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      barrierDismissible: true,
+      barrierLabel: "Dismiss",
+      barrierColor: Colors.black.withValues(alpha: 0.8),
+      transitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (ctx, animation, secondaryAnimation) {
+        return Center(
+          child: Material(
+            color: Colors.transparent,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(32),
+                decoration: PremiumTokens.indigoGlass(),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    PremiumUI.pulsingCelestialIcon(
+                      icon: Iconsax.trash,
+                      size: 40,
+                    ),
+                    const SizedBox(height: 32),
+                    PremiumUI.silverText(
+                      "Release History?",
+                      style: GoogleFonts.spectral(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w300,
+                        letterSpacing: 2,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      "This will remove all your recorded reading sessions from the celestial vault. This action is permanent.",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.manrope(
+                        color: PremiumTokens.silver.withValues(alpha: 0.7),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w300,
+                        height: 1.6,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    // Action Buttons (Full width to match Logout dialog style)
+                    _buildSelectionButton(
+                      context: ctx,
+                      label: "RELEASE ALL SESSIONS",
+                      isPrimary: true,
+                      onTap: () async {
+                        Navigator.pop(ctx);
+                        final user = ref.read(authServiceProvider).currentUser;
+                        if (user != null) {
+                          await ref.read(statsServiceProvider).clearReadingHistory(user.uid);
+                          ref.invalidate(readingHistoryProvider);
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    _buildSelectionButton(
+                      context: ctx,
+                      label: "KEEP HISTORY",
+                      isPrimary: false,
+                      onTap: () => Navigator.pop(ctx),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            onPressed: () async {
-              Navigator.pop(ctx);
-              final user = ref.read(authServiceProvider).currentUser;
-              if (user != null) {
-                await ref.read(statsServiceProvider).clearReadingHistory(user.uid);
-                ref.invalidate(readingHistoryProvider);
-              }
-            },
-            child: const Text("Clear All", style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
+          ).animate().fadeIn().scale(begin: const Offset(0.9, 0.9)),
+        );
+      },
     );
   }
 
@@ -219,6 +255,60 @@ class ReadingHistoryScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSelectionButton({
+    required BuildContext context,
+    required String label,
+    required bool isPrimary,
+    required VoidCallback onTap,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      height: 54,
+      child: isPrimary
+          ? ElevatedButton(
+              onPressed: onTap,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.all(0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+              ),
+              child: Ink(
+                decoration: BoxDecoration(
+                  gradient: PremiumTokens.silverGradient,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    label,
+                    style: GoogleFonts.manrope(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
+                      color: PremiumTokens.voidBlack,
+                      letterSpacing: 2.5,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          : OutlinedButton(
+              onPressed: onTap,
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: PremiumTokens.silver.withValues(alpha: 0.1)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+              ),
+              child: Text(
+                label,
+                style: GoogleFonts.manrope(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: PremiumTokens.silver.withValues(alpha: 0.4),
+                  letterSpacing: 2,
+                ),
+              ),
+            ),
     );
   }
 }

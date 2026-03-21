@@ -11,6 +11,8 @@ import 'package:flutter/services.dart';
 import '../core/theme.dart';
 import '../widgets/sacred_ritual_alert.dart';
 
+import '../core/stats_provider.dart';
+
 class RitualsScreen extends ConsumerWidget {
   const RitualsScreen({super.key});
 
@@ -28,7 +30,7 @@ class RitualsScreen extends ConsumerWidget {
           SafeArea(
             child: Column(
               children: [
-                _buildHeader(context),
+                _buildHeader(context, ref),
                 Expanded(
                   child: ritualsAsync.when(
                     data: (rituals) => _buildRitualsList(context, ref, rituals),
@@ -69,7 +71,7 @@ class RitualsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.all(32.0),
       child: Column(
@@ -97,13 +99,13 @@ class RitualsScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16),
-          _buildTestTrigger(context),
+          _buildTestTrigger(context, ref),
         ],
       ),
     );
   }
 
-  Widget _buildTestTrigger(BuildContext context) {
+  Widget _buildTestTrigger(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       onTap: () {
         HapticFeedback.mediumImpact();
@@ -112,7 +114,14 @@ class RitualsScreen extends ConsumerWidget {
           title: "Celestial Call",
           description: "Begin your morning sequence to greet the sun.",
           ritualTitle: "Surya Namaskar",
-          onBegin: () => Navigator.pop(context),
+          onBegin: () {
+            ref.read(userStatsProvider.notifier).recordReading(
+              "ritual_surya_namaskar",
+              title: "Surya Namaskar",
+              category: "Ritual",
+            );
+            Navigator.pop(context);
+          },
           onRemind: () => Navigator.pop(context),
         );
       },
@@ -282,6 +291,14 @@ class RitualsScreen extends ConsumerWidget {
       builder: (context, ref, child) => GestureDetector(
         onTap: () {
           HapticFeedback.lightImpact();
+          final willBeCompleted = !ritual.isCompleted;
+          if (willBeCompleted) {
+            ref.read(userStatsProvider.notifier).recordReading(
+              "ritual_done_${ritual.id}",
+              title: "Completed: ${ritual.title}",
+              category: "Ritual",
+            );
+          }
           ref.read(ritualsProvider.notifier).toggleRitual(ritual.id);
         },
         child: AnimatedContainer(

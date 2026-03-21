@@ -2,6 +2,7 @@ import 'dart:convert';
 
 class JournalEntry {
   final String id;
+  final String firebaseUid;
   final String title;
   final String content;
   final DateTime createdAt;
@@ -9,6 +10,7 @@ class JournalEntry {
 
   JournalEntry({
     required this.id,
+    required this.firebaseUid,
     required this.title,
     required this.content,
     required this.createdAt,
@@ -18,20 +20,22 @@ class JournalEntry {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'firebase_uid': firebaseUid,
       'title': title,
       'content': content,
-      'createdAt': createdAt.toIso8601String(),
-      'moonPhase': moonPhase,
+      'created_at': createdAt.toUtc().toIso8601String(),
+      'moon_phase': moonPhase,
     };
   }
 
   factory JournalEntry.fromJson(Map<String, dynamic> json) {
     return JournalEntry(
       id: json['id'],
-      title: json['title'],
-      content: json['content'],
-      createdAt: DateTime.parse(json['createdAt']),
-      moonPhase: json['moonPhase'],
+      firebaseUid: json['firebase_uid'] ?? '',
+      title: json['title'] ?? '',
+      content: json['content'] ?? '',
+      createdAt: DateTime.parse(json['created_at']).toLocal(),
+      moonPhase: json['moon_phase'],
     );
   }
 
@@ -43,6 +47,7 @@ class JournalEntry {
   }) {
     return JournalEntry(
       id: id,
+      firebaseUid: firebaseUid,
       title: title ?? this.title,
       content: content ?? this.content,
       createdAt: createdAt ?? this.createdAt,

@@ -63,7 +63,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     });
 
     // Log reading activity after a short delay to ensure it's a real session
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 1), () {
       if (mounted) {
         final allContent = ref.read(sacredContentProvider);
         final resolvedContent = widget.content ?? 

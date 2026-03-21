@@ -6,6 +6,7 @@ import '../core/journal_provider.dart';
 import '../models/journal_entry.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class EternalReflectionScreen extends ConsumerWidget {
   const EternalReflectionScreen({super.key});
@@ -115,37 +116,46 @@ class EternalReflectionScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Icon(Iconsax.sort, color: PremiumTokens.nebulaBlue, size: 24),
+          IconButton(
+            icon: PremiumUI.animatedIcon(
+              folder: 'Chevron-left',
+              fileName: 'chevron-left.json',
+              size: 20,
+              color: PremiumTokens.nebulaBlue,
+              onTap: () => Navigator.pop(context),
+            ),
+            onPressed: () {},
+          ),
           Column(
             children: [
               Text(
                 "SANT-VAANI",
-                style: PremiumTokens.sansStyle(
+                style: GoogleFonts.spectral(
                   fontSize: 18,
-                  fontWeight: FontWeight.w300,
+                  fontWeight: FontWeight.bold,
                   letterSpacing: 4,
+                  color: Colors.white,
                 ),
               ),
               Text(
                 "SOUL REFLECTIONS",
-                style: PremiumTokens.sansStyle(
+                style: GoogleFonts.manrope(
                   fontSize: 10,
                   color: PremiumTokens.nebulaBlue,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w900,
                   letterSpacing: 2,
                 ),
               ),
             ],
           ),
-          GestureDetector(
-            onTap: () => _showSearchDialog(context, ref),
-            child: const Icon(Iconsax.search_normal, color: PremiumTokens.nebulaBlue, size: 24),
+          IconButton(
+            icon: const Icon(Iconsax.search_normal, color: PremiumTokens.nebulaBlue, size: 20),
+            onPressed: () => _showSearchDialog(context, ref),
           ),
         ],
       ),
@@ -157,53 +167,88 @@ class EternalReflectionScreen extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(vertical: 32),
       child: Column(
         children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  PremiumTokens.nebulaBlue.withValues(alpha: 0.2),
-                  PremiumTokens.nebulaBlue.withValues(alpha: 0.05),
-                ],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.5),
-                  blurRadius: 40,
-                  spreadRadius: 10,
-                ),
-              ],
-            ),
-            child: Center(
-              child: Container(
-                margin: const EdgeInsets.only(left: 20),
-                width: 60,
-                height: 60,
-                decoration: const BoxDecoration(
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: 1),
+            duration: const Duration(seconds: 2),
+            builder: (context, value, child) {
+              return Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: PremiumTokens.voidBlack,
+                  boxShadow: [
+                    BoxShadow(
+                      color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3 * value),
+                      blurRadius: 40,
+                      spreadRadius: 5,
+                    ),
+                  ],
                 ),
-              ),
-            ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Outer glow ring
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2),
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    // Moon shape
+                    Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            PremiumTokens.silver,
+                            PremiumTokens.silver.withValues(alpha: 0.1),
+                          ],
+                        ),
+                      ),
+                    ),
+                    // Shadow for crescent effect
+                    Positioned(
+                      left: 15,
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0xFF02020B), // Match background
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           Text(
             "WANING CRESCENT",
-            style: PremiumTokens.sansStyle(
-              fontSize: 12,
-              color: Colors.white60,
-              letterSpacing: 2,
+            style: GoogleFonts.spectral(
+              fontSize: 14,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 3,
             ),
           ),
+          const SizedBox(height: 4),
           Text(
-            "Oct 25, 2026 • The Void Calls",
+            "Phase of Release & Reflection",
             style: PremiumTokens.sansStyle(
               fontSize: 10,
-              color: Colors.white38,
+              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.6),
+              letterSpacing: 1,
             ),
           ),
         ],
@@ -338,77 +383,103 @@ class EternalReflectionScreen extends ConsumerWidget {
     final titleController = TextEditingController(text: entry?.title);
     final contentController = TextEditingController(text: entry?.content);
 
-    showDialog(
+    showGeneralDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF0A0A1F),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-          side: const BorderSide(color: Colors.white10),
-        ),
-        title: Text(
-          entry == null ? "NEW REFLECTION" : "EDIT REFLECTION",
-          style: GoogleFonts.spectral(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 2,
-          ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: titleController,
-              autofocus: true,
-              style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                hintText: "Title of Enlightenment",
-                hintStyle: TextStyle(color: Colors.white24),
-                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white10)),
-                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: PremiumTokens.nebulaBlue)),
+      barrierDismissible: true,
+      barrierLabel: "Dismiss",
+      barrierColor: Colors.black.withValues(alpha: 0.85),
+      transitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (ctx, animation, secondaryAnimation) {
+        return Center(
+          child: Material(
+            color: Colors.transparent,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Container(
+                  padding: const EdgeInsets.all(32),
+                  decoration: PremiumTokens.indigoGlass(),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      PremiumUI.silverText(
+                        entry == null ? "ASCEND TO THOUGHT" : "REFINE REFLECTION",
+                        style: GoogleFonts.spectral(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      TextField(
+                        controller: titleController,
+                        style: const TextStyle(color: Colors.white, fontSize: 18),
+                        decoration: InputDecoration(
+                          hintText: "Title of Enlightenment",
+                          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.2)),
+                          enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.white10)),
+                          focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: PremiumTokens.nebulaBlue)),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      TextField(
+                        controller: contentController,
+                        maxLines: 8,
+                        style: GoogleFonts.manrope(color: Colors.white70, fontSize: 15, height: 1.6),
+                        decoration: InputDecoration(
+                          hintText: "Descend into your thoughts...",
+                          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.2)),
+                          border: InputBorder.none,
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: Colors.white10),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                              ),
+                              child: const Text("CLOSE", style: TextStyle(color: Colors.white38, letterSpacing: 2)),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                final title = titleController.text.trim();
+                                final content = contentController.text.trim();
+                                if (title.isNotEmpty) {
+                                  if (entry == null) {
+                                    ref.read(journalProvider.notifier).addEntry(title, content);
+                                  } else {
+                                    ref.read(journalProvider.notifier).updateEntry(entry.id, title: title, content: content);
+                                  }
+                                  Navigator.pop(ctx);
+                                  HapticFeedback.mediumImpact();
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: PremiumTokens.nebulaBlue,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                              ),
+                              child: Text(entry == null ? "ASCEND" : "SAVE", style: const TextStyle(color: Colors.white, letterSpacing: 2, fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: contentController,
-              maxLines: 5,
-              style: const TextStyle(color: Colors.white70),
-              decoration: const InputDecoration(
-                hintText: "Descend into your thoughts...",
-                hintStyle: TextStyle(color: Colors.white24),
-                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white10)),
-                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: PremiumTokens.nebulaBlue)),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text("CLOSE"),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: PremiumTokens.nebulaBlue,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            ),
-            onPressed: () {
-              final title = titleController.text.trim();
-              final content = contentController.text.trim();
-              if (title.isNotEmpty) {
-                if (entry == null) {
-                  ref.read(journalProvider.notifier).addEntry(title, content);
-                } else {
-                  ref.read(journalProvider.notifier).updateEntry(entry.id, title: title, content: content);
-                }
-                Navigator.pop(ctx);
-                HapticFeedback.mediumImpact();
-              }
-            },
-            child: Text(entry == null ? "ASCEND" : "SAVE", style: const TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
+        ).animate().fadeIn().moveY(begin: 20, end: 0);
+      },
     );
   }
 
