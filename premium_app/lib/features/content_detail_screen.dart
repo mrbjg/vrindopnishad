@@ -12,6 +12,7 @@ import '../core/favorites_provider.dart';
 import '../widgets/share_content_widget.dart';
 import '../core/localization.dart';
 import '../core/providers.dart';
+import '../core/theme.dart';
 import '../core/providers/reading_providers.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -140,7 +141,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       body: Stack(
         children: [
           if (_currentTheme == ReadingTheme.divineFlow)
-            Positioned.fill(child: PremiumUI.masterBackground(index: 3)),
+            Positioned.fill(
+              child: RepaintBoundary(
+                child: PremiumUI.masterBackground(index: 3),
+              ),
+            ),
           
           if (_currentTheme == ReadingTheme.sacredParchment)
              Positioned.fill(
@@ -180,14 +185,16 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     Center(
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 600),
-                        child: GestureDetector(
-                          onScaleStart: (details) => _baseScale = _sanskritScale.value,
-                          onScaleUpdate: (details) => _sanskritScale.value = (_baseScale * details.scale).clamp(0.5, 3.0),
-                          child: ValueListenableBuilder<double>(
-                            valueListenable: _sanskritScale,
-                            builder: (context, scale, child) {
-                              return _buildPremiumSanskritCard(content, l, isFocusMode, themeData, scale: scale);
-                            },
+                        child: RepaintBoundary(
+                          child: GestureDetector(
+                            onScaleStart: (details) => _baseScale = _sanskritScale.value,
+                            onScaleUpdate: (details) => _sanskritScale.value = (_baseScale * details.scale).clamp(0.5, 3.0),
+                            child: ValueListenableBuilder<double>(
+                              valueListenable: _sanskritScale,
+                              builder: (context, scale, child) {
+                                return _buildPremiumSanskritCard(content, l, isFocusMode, themeData, scale: scale);
+                              },
+                            ),
                           ),
                         ),
                       ),
@@ -203,6 +210,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                       child: Center(
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 600),
+                        child: RepaintBoundary(
                           child: Column(
                             children: [
                                 GestureDetector(
@@ -244,6 +252,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             ],
                           ),
                         ),
+                        ),
                       ),
                     ),
                     
@@ -253,22 +262,24 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     Center(
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 600),
-                        child: GestureDetector(
-                          onScaleStart: (details) => _baseScale = _commentaryScale.value,
-                          onScaleUpdate: (details) => _commentaryScale.value = (_baseScale * details.scale).clamp(0.5, 3.0),
-                          child: ValueListenableBuilder<double>(
-                            valueListenable: _commentaryScale,
-                            builder: (context, scale, child) {
-                              return _buildPremiumContentSection(
-                                title: l.translate('commentary'),
-                                content: content?.commentary ?? "",
-                                icon: Iconsax.lamp_charge,
-                                accentColor: PremiumTokens.saffronGlow,
-                                isFocusMode: isFocusMode,
-                                themeData: themeData,
-                                currentScale: scale,
-                              );
-                            },
+                        child: RepaintBoundary(
+                          child: GestureDetector(
+                            onScaleStart: (details) => _baseScale = _commentaryScale.value,
+                            onScaleUpdate: (details) => _commentaryScale.value = (_baseScale * details.scale).clamp(0.5, 3.0),
+                            child: ValueListenableBuilder<double>(
+                              valueListenable: _commentaryScale,
+                              builder: (context, scale, child) {
+                                return _buildPremiumContentSection(
+                                  title: l.translate('commentary'),
+                                  content: content?.commentary ?? "",
+                                  icon: Iconsax.lamp_charge,
+                                  accentColor: PremiumTokens.saffronGlow,
+                                  isFocusMode: isFocusMode,
+                                  themeData: themeData,
+                                  currentScale: scale,
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ),
@@ -283,7 +294,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     const SizedBox(height: 48),
                     RepaintBoundary(
                       child: Center(
-                        child: Text("ॐ", style: GoogleFonts.spectral(fontSize: 48, color: themeData.textColor))
+                        child: AppTheme.lowPerformanceMode 
+                          ? Text("ॐ", style: GoogleFonts.spectral(fontSize: 48, color: themeData.textColor.withValues(alpha: 0.2)))
+                          : Text("ॐ", style: GoogleFonts.spectral(fontSize: 48, color: themeData.textColor))
                           .animate(onPlay: (c) => c.repeat(reverse: true))
                           .fadeIn(duration: 2.seconds)
                           .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.1, 1.1), duration: 3.seconds)
@@ -593,7 +606,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 shadows: themeData.showTextShadows ? [
                   Shadow(
                     color: themeData.accentColor.withValues(alpha: 0.3),
-                    blurRadius: 15,
+                    blurRadius: 8,
                   ),
                 ] : [],
               ),

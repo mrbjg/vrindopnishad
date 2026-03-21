@@ -902,30 +902,36 @@ class PremiumUI extends StatelessWidget {
   }
 
   static Widget _buildMoon({double? top, double? bottom, double? left, double? right, required double size}) {
+    final body = Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.white.withValues(alpha: 0.15),
+            blurRadius: 40,
+            spreadRadius: 5,
+          ),
+        ],
+      ),
+      child: CustomPaint(
+        painter: _CrescentMoonPainter(),
+      ),
+    );
+
     return Positioned(
       top: top,
       bottom: bottom,
       left: left,
       right: right,
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.white.withValues(alpha: 0.15),
-              blurRadius: 40,
-              spreadRadius: 5,
-            ),
-          ],
-        ),
-        child: CustomPaint(
-          painter: _CrescentMoonPainter(),
-        ),
-      ).animate(onPlay: (c) => c.repeat(reverse: true))
-       .fadeIn(duration: 2.seconds)
-       .moveY(begin: 0, end: -10, duration: 4.seconds, curve: Curves.easeInOut),
+      child: RepaintBoundary(
+        child: AppTheme.lowPerformanceMode 
+          ? body 
+          : body.animate(onPlay: (c) => c.repeat(reverse: true))
+              .fadeIn(duration: 2.seconds)
+              .moveY(begin: 0, end: -10, duration: 4.seconds, curve: Curves.easeInOut),
+      ),
     );
   }
 
