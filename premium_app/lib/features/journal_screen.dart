@@ -417,25 +417,28 @@ class EternalReflectionScreen extends ConsumerWidget {
     
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF0A0A1F),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-          side: const BorderSide(color: Colors.white10),
-        ),
-        content: TextField(
-          controller: searchController,
-          autofocus: true,
-          style: const TextStyle(color: Colors.white),
-          decoration: const InputDecoration(
-            hintText: "Search reflections...",
-            hintStyle: TextStyle(color: Colors.white24),
-            border: InputBorder.none,
-            prefixIcon: Icon(Iconsax.search_normal, color: Colors.white24),
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          contentPadding: EdgeInsets.zero,
+          content: Container(
+            width: double.maxFinite,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: PremiumUI.sacredSearchBar(
+              controller: searchController,
+              hintText: "Search reflections...",
+              onChanged: (val) {
+                ref.read(journalSearchProvider.notifier).state = val;
+                setState(() {}); // Rebuild for suffix icon
+              },
+              onClear: () {
+                searchController.clear();
+                ref.read(journalSearchProvider.notifier).state = "";
+                setState(() {});
+              },
+            ),
           ),
-          onChanged: (val) {
-            ref.read(journalSearchProvider.notifier).state = val;
-          },
         ),
       ),
     );

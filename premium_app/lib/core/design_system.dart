@@ -1426,6 +1426,68 @@ class PremiumUI extends StatelessWidget {
     Overlay.of(context).insert(overlayEntry);
   }
 
+  /// Premium Sacred Search Bar (Variant 1_8)
+  static Widget sacredSearchBar({
+    required TextEditingController controller,
+    required String hintText,
+    required ValueChanged<String> onChanged,
+    VoidCallback? onClear,
+  }) {
+    return Container(
+      decoration: PremiumTokens.indigoGlass(opacity: 0.1),
+      child: TextField(
+        controller: controller,
+        onChanged: onChanged,
+        style: GoogleFonts.spectral(
+          color: Colors.white,
+          fontSize: 18,
+          fontWeight: FontWeight.w400,
+        ),
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: GoogleFonts.spectral(
+            color: Colors.white.withValues(alpha: 0.2),
+            fontSize: 18,
+          ),
+          prefixIcon: Icon(
+            Iconsax.search_normal,
+            color: PremiumTokens.starlightBlue.withValues(alpha: 0.5),
+            size: 20,
+          ),
+          suffixIcon: controller.text.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white38, size: 18),
+                  onPressed: onClear,
+                )
+              : null,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(
+              color: Colors.white.withValues(alpha: 0.1),
+              width: 1,
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(
+              color: Colors.white.withValues(alpha: 0.1),
+              width: 1,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(
+              color: PremiumTokens.starlightBlue,
+              width: 1.5,
+            ),
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          filled: false,
+        ),
+      ),
+    );
+  }
+
   /// Premium Sacred Call Alert (Ritual Reminder)
   static void showSacredCall(
     BuildContext context, {
