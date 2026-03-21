@@ -145,12 +145,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 child: SizedBox(height: MediaQuery.of(context).padding.top + 80),
               ),
 
-              SliverToBoxAdapter(
-                child: PremiumUI.focusContainer(
-                  isFocusMode: isFocusMode,
-                  child: _buildPremiumHero(displayTitle, displayCategory, l),
+              if (!isFocusMode) 
+                SliverToBoxAdapter(
+                  child: PremiumUI.focusContainer(
+                    isFocusMode: isFocusMode,
+                    child: _buildPremiumHero(displayTitle, displayCategory, l, themeData),
+                  ),
                 ),
-              ),
 
               SliverPadding(
                 padding: EdgeInsets.fromLTRB(20, isFocusMode ? 100 : 32, 20, 200),
@@ -165,7 +166,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     ),
                     
                     const SizedBox(height: 32),
-                    PremiumUI.sacredDivider(color: Colors.white.withValues(alpha: isFocusMode ? 0.3 : 0.05)),
+                    PremiumUI.sacredDivider(color: themeData.textColor.withValues(alpha: isFocusMode ? 0.3 : 0.05)),
                     const SizedBox(height: 32),
 
                     // Meaning Sections - Hidden/Simplified in Focus Mode
@@ -218,13 +219,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
                     PremiumUI.focusContainer(
                       isFocusMode: isFocusMode,
-                      child: Center(child: _buildPremiumFontControls()),
+                      child: Center(child: _buildPremiumFontControls(themeData)),
                     ),
                     
                     const SizedBox(height: 48),
                     RepaintBoundary(
                       child: Center(
-                        child: Text("ॐ", style: GoogleFonts.spectral(fontSize: 48, color: Colors.white))
+                        child: Text("ॐ", style: GoogleFonts.spectral(fontSize: 48, color: themeData.textColor))
                           .animate(onPlay: (c) => c.repeat(reverse: true))
                           .fadeIn(duration: 2.seconds)
                           .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.1, 1.1), duration: 3.seconds)
@@ -238,30 +239,36 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             ],
           ),
 
-          // Floating Header
-          _buildPremiumHeader(content, displayTitle, isFocusMode),
+          // Floating Header - Fades away in focus mode unless at the very top
+          AnimatedOpacity(
+            duration: 400.ms,
+            opacity: isFocusMode ? (_scrollController.hasClients && _scrollController.offset < 50 ? 1.0 : 0.0) : 1.0,
+            child: _buildPremiumHeader(content, displayTitle, isFocusMode, themeData),
+          ),
 
           // Audio Toggle - Fades in Focus Mode
           Positioned(
             left: 20,
             right: 20,
             bottom: 32,
-            child: PremiumUI.focusContainer(
-              isFocusMode: isFocusMode,
-              child: AnimatedSwitcher(
-                duration: 300.ms,
-                child: _showAudioPlayer
-                    ? _buildPremiumAudioPlayer(content)
-                    : _buildAudioFloatingToggle(),
-              ),
-            ),
+            child: isFocusMode 
+              ? const SizedBox.shrink() 
+              : PremiumUI.focusContainer(
+                  isFocusMode: isFocusMode,
+                  child: AnimatedSwitcher(
+                    duration: 300.ms,
+                    child: _showAudioPlayer
+                        ? _buildPremiumAudioPlayer(content)
+                        : _buildAudioFloatingToggle(),
+                  ),
+                ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPremiumHero(String title, String category, AppLocalization l) {
+  Widget _buildPremiumHero(String title, String category, AppLocalization l, _ReadingThemeData themeData) {
     // Try to localize category if it matches a key
     final localizedCategory = l.translate(category.toLowerCase());
     final displayCategory = localizedCategory != category.toLowerCase() ? localizedCategory : category;
@@ -295,7 +302,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             style: GoogleFonts.spectral(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: themeData.textColor,
               height: 1.2,
             ),
           ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, end: 0),
@@ -304,7 +311,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  Widget _buildPremiumHeader(SacredContent? content, String title, bool isFocusMode) {
+  Widget _buildPremiumHeader(SacredContent? content, String title, bool isFocusMode, _ReadingThemeData themeData) {
     return Positioned(
       top: 0,
       left: 0,
@@ -318,12 +325,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         ),
         decoration: BoxDecoration(
           color: (_showCompactHeader && !isFocusMode) 
-            ? const Color(0xFF03030F).withValues(alpha: 0.85) 
+            ? themeData.backgroundColor.withValues(alpha: 0.85) 
             : Colors.transparent,
           border: Border(
             bottom: BorderSide(
               color: (_showCompactHeader && !isFocusMode) 
-                ? Colors.white.withValues(alpha: 0.1) 
+                ? themeData.textColor.withValues(alpha: 0.1) 
                 : Colors.transparent,
               width: 1,
             ),
@@ -342,6 +349,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               isAnimated: true,
               animFolder: 'Chevron-left',
               animFile: 'chevron-left.json',
+              themeData: themeData,
             ),
             SizedBox(width: 12),
             Expanded(
@@ -350,7 +358,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 opacity: (_showCompactHeader && !isFocusMode) ? 1.0 : 0.0,
                 child: Text(
                   title,
-                  style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                  style: GoogleFonts.outfit(color: themeData.textColor, fontWeight: FontWeight.bold, fontSize: 16),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -358,11 +366,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             ),
             // Reading Settings
              _buildHeaderCircleButton(
-              null,
+              Iconsax.setting_2, 
               () => _showReadingSettings(context),
-              isAnimated: true,
-              animFolder: 'Settings V4',
-              animFile: 'settingsV4.json',
+              isActive: false,
+              isAnimated: false, // Standard icon to fix "Un ab" artifact
+              themeData: themeData,
             ),
             const SizedBox(width: 8),
             // Focus Mode Toggle
@@ -378,13 +386,14 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               resetAfterPlay: false,
               animFolder: 'Visibility V2',
               animFile: 'visibilityV2.json',
+              themeData: themeData,
             ),
             const SizedBox(width: 8),
             PremiumUI.focusContainer(
               isFocusMode: isFocusMode,
               child: Row(mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildHeaderCircleButton(
+                   _buildHeaderCircleButton(
                     null,
                     () => _toggleFavoriteResolved(content),
                     isToggled: content != null && ref.watch(isFavoriteProvider(content.id)),
@@ -392,6 +401,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     resetAfterPlay: false,
                     animFolder: 'Heart',
                     animFile: 'heart.json',
+                    themeData: themeData,
                   ),
                   const SizedBox(width: 8),
                   _buildHeaderCircleButton(
@@ -399,6 +409,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     () => _shareContentResolved(content),
                     isCustomSvg: true,
                     svgFile: 'iconsax-ai-send-message-m26q6m1j-.svg',
+                    themeData: themeData,
                   ),
                 ],
               ),
@@ -420,16 +431,18 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     bool isCustomSvg = false,
     String? svgFile,
     bool resetAfterPlay = true,
+    required _ReadingThemeData themeData,
   }) {
     return PremiumUI.glassCard(
       padding: const EdgeInsets.all(10),
       borderRadius: 14,
+      opacity: themeData.glassOpacity * 1.5,
       child: isAnimated 
         ? PremiumUI.animatedIcon(
             folder: animFolder!, 
             fileName: animFile!, 
             size: 20, 
-            color: (isActive || isToggled) ? PremiumTokens.saffronGlow : Colors.white,
+            color: (isActive || isToggled) ? themeData.accentColor : themeData.textColor,
             isToggled: isToggled,
             resetAfterPlay: resetAfterPlay,
             onTap: () {
@@ -446,9 +459,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               ? PremiumUI.customIcon(
                   fileName: svgFile!,
                   size: 20,
-                  color: (isActive || isToggled) ? PremiumTokens.saffronGlow : Colors.white,
+                  color: (isActive || isToggled) ? themeData.accentColor : themeData.textColor,
                 )
-              : Icon(icon, color: (isActive || isToggled) ? PremiumTokens.saffronGlow : Colors.white, size: 20),
+              : Icon(icon, color: (isActive || isToggled) ? themeData.accentColor : themeData.textColor, size: 20),
           ),
     );
   }
@@ -477,35 +490,36 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         ),
         child: Column(
           children: [
-            PremiumUI.focusContainer(
-              isFocusMode: isFocusMode,
-              child: Builder(
-                builder: (context) {
-                  final isHindiLabel = RegExp(r'[\u0900-\u097F]').hasMatch(l.translate('mantra_sloka_label'));
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: themeData.accentColor.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          l.translate('mantra_sloka_label').toUpperCase(),
-                          style: GoogleFonts.manrope(
-                            color: themeData.accentColor, 
-                            fontSize: 10, 
-                            fontWeight: FontWeight.w900, 
-                            letterSpacing: isHindiLabel ? 0.5 : 2.5,
+            if (!isFocusMode)
+              PremiumUI.focusContainer(
+                isFocusMode: isFocusMode,
+                child: Builder(
+                  builder: (context) {
+                    final isHindiLabel = RegExp(r'[\u0900-\u097F]').hasMatch(l.translate('mantra_sloka_label'));
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: themeData.accentColor.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            l.translate('mantra_sloka_label').toUpperCase(),
+                            style: GoogleFonts.manrope(
+                              color: themeData.accentColor, 
+                              fontSize: 10, 
+                              fontWeight: FontWeight.w900, 
+                              letterSpacing: isHindiLabel ? 0.5 : 2.5,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                },
+                      ],
+                    );
+                  },
+                ),
               ),
-            ),
             if (!isFocusMode) const SizedBox(height: 24),
             SelectableText(
               text,
@@ -548,36 +562,37 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            PremiumUI.focusContainer(
-              isFocusMode: isFocusMode,
-              child: Builder(
-                builder: (context) {
-                  final isHindi = RegExp(r'[\u0900-\u097F]').hasMatch(title);
-                  return Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: accentColor.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
+            if (!isFocusMode)
+              PremiumUI.focusContainer(
+                isFocusMode: isFocusMode,
+                child: Builder(
+                  builder: (context) {
+                    final isHindi = RegExp(r'[\u0900-\u097F]').hasMatch(title);
+                    return Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: accentColor.withValues(alpha: 0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(icon, color: accentColor, size: 14),
                         ),
-                        child: Icon(icon, color: accentColor, size: 14),
-                      ),
-                      const SizedBox(width: 14),
-                      Text(
-                        title.toUpperCase(),
-                        style: GoogleFonts.manrope(
-                          color: accentColor,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: isHindi ? 0.5 : 2.0,
+                        const SizedBox(width: 14),
+                        Text(
+                          title.toUpperCase(),
+                          style: GoogleFonts.manrope(
+                            color: accentColor,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: isHindi ? 0.5 : 2.0,
+                          ),
                         ),
-                      ),
-                    ],
-                  );
-                },
+                      ],
+                    );
+                  },
+                ),
               ),
-            ),
             if (!isFocusMode) const SizedBox(height: 20),
             Text(
               content,
@@ -596,31 +611,31 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  Widget _buildPremiumFontControls() {
+  Widget _buildPremiumFontControls(_ReadingThemeData themeData) {
     return PremiumUI.glassCard(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       borderRadius: 16,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Iconsax.text, color: Colors.white24, size: 16),
+          Icon(Iconsax.text, color: themeData.textColor.withValues(alpha: 0.24), size: 16),
           const SizedBox(width: 16),
           _buildFontToolButton(Iconsax.minus, () {
             if (_fontSize > 14) setState(() => _fontSize -= 2);
-          }),
+          }, themeData),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text("${_fontSize.toInt()}", style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold)),
+            child: Text("${_fontSize.toInt()}", style: GoogleFonts.outfit(color: themeData.textColor, fontWeight: FontWeight.bold)),
           ),
           _buildFontToolButton(Iconsax.add, () {
             if (_fontSize < 32) setState(() => _fontSize += 2);
-          }),
+          }, themeData),
         ],
       ),
     );
   }
 
-  Widget _buildFontToolButton(IconData icon, VoidCallback onTap) {
+  Widget _buildFontToolButton(IconData icon, VoidCallback onTap, _ReadingThemeData themeData) {
     return InkWell(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -628,8 +643,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       },
       child: Container(
         padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(8)),
-        child: Icon(icon, color: Colors.white, size: 14),
+        decoration: BoxDecoration(color: themeData.textColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+        child: Icon(icon, color: themeData.textColor, size: 14),
       ),
     );
   }
@@ -668,6 +683,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           final audioState = ref.watch(audioProvider);
           final isPlaying = audioState.isPlaying;
           final isLoading = audioState.isLoading;
+          final themeData = _getThemeData();
           
           return Column(
             mainAxisSize: MainAxisSize.min,
@@ -700,7 +716,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             Text(
                               isLoading ? "PREPARING DIVINE VIBRATIONS..." : "DIVINE RECITATION",
                               style: GoogleFonts.outfit(
-                                color: Colors.white.withValues(alpha: 0.5),
+                                color: themeData.textColor.withValues(alpha: 0.5),
                                 fontWeight: FontWeight.w900,
                                 fontSize: 9,
                                 letterSpacing: 2,
@@ -709,7 +725,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             Text(
                               content?.title ?? "Sacred Verse",
                               style: GoogleFonts.outfit(
-                                color: Colors.white,
+                                color: themeData.textColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
                               ),
@@ -739,10 +755,10 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         icon: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.05),
+                            color: themeData.textColor.withValues(alpha: 0.05),
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(Iconsax.maximize_4, color: Colors.white, size: 16),
+                          child: Icon(Iconsax.maximize_4, color: themeData.textColor, size: 16),
                         ),
                       ),
                       IconButton(
@@ -750,10 +766,10 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         icon: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.05),
+                            color: themeData.textColor.withValues(alpha: 0.05),
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(Iconsax.arrow_down_1, color: Colors.white, size: 16),
+                          child: Icon(Iconsax.arrow_down_1, color: themeData.textColor, size: 16),
                         ),
                       ),
                     ],
@@ -762,9 +778,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               ),
               const SizedBox(height: 16),
               // Progress Slider
-              _buildPremiumProgressBar(audioState),
+              _buildPremiumProgressBar(audioState, themeData),
               const SizedBox(height: 8),
-              _buildPremiumAudioTime(audioState),
+              _buildPremiumAudioTime(audioState, themeData),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -821,6 +837,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   }
 
   Widget _buildPlayerCircleButton(IconData icon, VoidCallback onTap, {double size = 44, double iconSize = 20}) {
+    final themeData = _getThemeData();
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -830,11 +847,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: themeData.textColor.withValues(alpha: 0.05),
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: themeData.textColor.withValues(alpha: 0.1)),
         ),
-        child: Icon(icon, color: Colors.white70, size: iconSize),
+        child: Icon(icon, color: themeData.textColor.withValues(alpha: 0.7), size: iconSize),
       ),
     );
   }
@@ -856,11 +873,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         return _ReadingThemeData(
           backgroundColor: const Color(0xFFF4ECD8),
           textColor: const Color(0xFF2D2417),
-          cardColor: const Color(0x152D2417),
-          accentColor: const Color(0xFF8B4513),
-          secondaryAccent: const Color(0xFF4A6741),
+          cardColor: const Color(0xFFE8DCC4), // Slightly darker for better card identification
+          accentColor: const Color(0xFF9E5622), // Richer sienna
+          secondaryAccent: const Color(0xFF5D7A52), // Muted forest green
           lineHeight: 2.0,
-          glassOpacity: 0.03,
+          glassOpacity: 0.05,
           showTextShadows: false,
         );
       case ReadingTheme.voidFocus:
@@ -905,7 +922,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("Font Size", style: GoogleFonts.spectral(color: _getThemeData().textColor, fontSize: 16)),
-                _buildPremiumFontControls(),
+                _buildPremiumFontControls(_getThemeData()),
               ],
             ),
             const SizedBox(height: 32),
@@ -947,7 +964,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  Widget _buildPremiumProgressBar(AudioState audioState) {
+  Widget _buildPremiumProgressBar(AudioState audioState, _ReadingThemeData themeData) {
     final duration = audioState.duration;
     final position = audioState.position;
     final progress = duration.inMilliseconds > 0 ? position.inMilliseconds / duration.inMilliseconds : 0.0;
@@ -957,10 +974,10 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         trackHeight: 3,
         thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
         overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
-        activeTrackColor: PremiumTokens.saffronGlow,
-        inactiveTrackColor: Colors.white.withValues(alpha: 0.1),
-        thumbColor: Colors.white,
-        overlayColor: PremiumTokens.saffronGlow.withValues(alpha: 0.2),
+        activeTrackColor: themeData.accentColor,
+        inactiveTrackColor: themeData.textColor.withValues(alpha: 0.1),
+        thumbColor: themeData.textColor,
+        overlayColor: themeData.accentColor.withValues(alpha: 0.2),
       ),
       child: Slider(
         value: progress.clamp(0.0, 1.0),
@@ -972,15 +989,15 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  Widget _buildPremiumAudioTime(AudioState audioState) {
+  Widget _buildPremiumAudioTime(AudioState audioState, _ReadingThemeData themeData) {
     final duration = audioState.duration;
     final position = audioState.position;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(_formatDuration(position), style: GoogleFonts.outfit(color: Colors.white38, fontSize: 10)),
-        Text(_formatDuration(duration), style: GoogleFonts.outfit(color: Colors.white38, fontSize: 10)),
+        Text(_formatDuration(position), style: GoogleFonts.outfit(color: themeData.textColor.withValues(alpha: 0.38), fontSize: 10)),
+        Text(_formatDuration(duration), style: GoogleFonts.outfit(color: themeData.textColor.withValues(alpha: 0.38), fontSize: 10)),
       ],
     );
   }
