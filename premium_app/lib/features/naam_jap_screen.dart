@@ -23,32 +23,33 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
   @override
   Widget build(BuildContext context) {
     final historyAsync = ref.watch(japHistoryProvider);
-    final count = ref.watch(naamJapStateProvider);
+    final japState = ref.watch(naamJapStateProvider);
+    final count = japState.total;
     final isFocusMode = ref.watch(focusModeProvider);
     
-    // Calculate Today's Malas & Highest
-    double todayMalas = 0;
-    double highestMalas = 0;
-    final now = DateTime.now();
+    // Calculate Today's Malas from local state for real-time accuracy (Integer as requested)
+    int todayMalas = japState.today ~/ 108;
+    int highestMalas = 0;
     
     if (historyAsync.hasValue) {
       final history = historyAsync.value!;
-      final Map<String, double> dayTotals = {};
+      final Map<String, int> dayTotals = {};
       
       for (var entry in history) {
-        final malaCount = (entry['count'] as int) / 108;
+        final count = (entry['count'] as int);
+        final malaCount = count ~/ 108;
         final date = DateTime.parse(entry['created_at']).toIso8601String().split('T')[0];
         
         dayTotals[date] = (dayTotals[date] ?? 0) + malaCount;
-        
-        // Today check
-        if (date == now.toIso8601String().split('T')[0]) {
-          todayMalas += malaCount;
-        }
       }
       
       if (dayTotals.isNotEmpty) {
         highestMalas = dayTotals.values.reduce((a, b) => a > b ? a : b);
+      }
+      
+      // Ensure current session is reflected if it's the highest today
+      if (todayMalas > highestMalas) {
+        highestMalas = todayMalas;
       }
     }
 
@@ -144,13 +145,17 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
     );
   }
 
-  Widget _buildProfessionalCounter(int count) {
+  Widget _buildProfessionalCounter(int totalCount) {
+    // Mathematical correction for Mala / Bead display
+    final int completedMalas = totalCount ~/ 108;
+    final int currentBead = totalCount == 0 ? 0 : (totalCount - 1) % 108 + 1;
+    
     return Column(
       children: [
         Stack(
           alignment: Alignment.center,
           children: [
-            // Breathing Aura using Animate widget for safety
+            // Breathing Aura
             Animate(
               onPlay: (c) => c.repeat(reverse: true),
               effects: [
@@ -171,7 +176,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
               ),
             ),
             
-            // Glass Disk
+            // Glass Disk with dynamic number
             Container(
               width: 200,
               height: 200,
@@ -182,12 +187,28 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
               ),
               child: Center(
                 child: Animate(
-                  target: count > 0 ? 1 : 0,
+                  key: ValueKey(totalCount), // Triggers animation on every increment
                   effects: [
-                    ScaleEffect(begin: const Offset(1, 1), end: const Offset(1.1, 1.1), duration: 200.ms),
+                    ScaleEffect(begin: const Offset(1, 1), end: const Offset(1.15, 1.15), duration: 150.ms, curve: Curves.easeOutCubic),
+                    CustomEffect(
+                      duration: 150.ms,
+                      builder: (context, value, child) => Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2 * value),
+                              blurRadius: 30 * value,
+                              spreadRadius: 5 * value,
+                            )
+                          ],
+                        ),
+                        child: child,
+                      ),
+                    ),
                   ],
                   child: Text(
-                    count.toString(),
+                    currentBead.toString(),
                     style: GoogleFonts.spectral(
                       fontSize: 72,
                       fontWeight: FontWeight.w300,
@@ -202,13 +223,28 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 16),
+        // Continuous Status Display
+        Animate(
+          key: ValueKey(completedMalas),
+          effects: [FadeEffect(duration: 400.ms), SlideEffect(begin: const Offset(0, 0.2), end: Offset.zero)],
+          child: Text(
+            "MALA $completedMalas • BEAD $currentBead",
+            style: PremiumTokens.sansStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 2.5,
+              color: PremiumTokens.nebulaBlue,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
         Text(
-          "TOTAL CHANTS",
+          "TOTAL CHANTS: $totalCount",
           style: PremiumTokens.sansStyle(
             fontSize: 10,
             fontWeight: FontWeight.w900,
-            letterSpacing: 2,
+            letterSpacing: 1.5,
             color: Colors.white38,
           ),
         ),
@@ -265,7 +301,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
     );
   }
 
-  Widget _buildSessionStats(bool isFocusMode, double todayMalas, double highestMalas, {int dailyGoal = 0}) {
+  Widget _buildSessionStats(bool isFocusMode, int todayMalas, int highestMalas, {int dailyGoal = 0}) {
     return PremiumUI.focusContainer(
       isFocusMode: isFocusMode,
       child: Padding(
@@ -276,11 +312,11 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: _buildStatItem("TODAY MALA", todayMalas.toStringAsFixed(1), PremiumTokens.nebulaBlue)),
+              Expanded(child: _buildStatItem("TODAY MALA", todayMalas.toString(), PremiumTokens.nebulaBlue)),
               Container(width: 1, height: 30, color: Colors.white10),
-              Expanded(child: _buildStatItem("GOAL", dailyGoal > 0 ? dailyGoal.toDouble().toStringAsFixed(1) : "11.0", Colors.white70)),
+              Expanded(child: _buildStatItem("GOAL", dailyGoal > 0 ? dailyGoal.toString() : "11", Colors.white70)),
               Container(width: 1, height: 30, color: Colors.white10),
-              Expanded(child: _buildStatItem("HIGHEST", highestMalas.toStringAsFixed(1), PremiumTokens.saffronGlow)),
+              Expanded(child: _buildStatItem("HIGHEST", highestMalas.toString(), PremiumTokens.saffronGlow)),
             ],
           ),
         ),

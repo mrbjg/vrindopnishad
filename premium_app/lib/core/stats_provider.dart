@@ -53,16 +53,23 @@ class UserStatsNotifier extends AsyncNotifier<UserStats?> {
     ref.invalidate(readingHistoryProvider);
   }
   
-  /// Update total jap count
+  /// Update total jap count silently to prevent flickering
   Future<void> syncJaps(int count) async {
     final user = ref.read(authStateProvider).value;
     if (user == null) return;
+    
+    // Update local state immediately if available to prevent flickering
+    if (state.hasValue && state.value != null) {
+      state = AsyncValue.data(state.value!.copyWith(totalJapCount: count));
+    }
     
     await ref.read(statsServiceProvider).updateStats(user.uid, {
       'total_jap_count': count,
     });
     
-    await refresh();
+    // Refresh fully in background but don't show loading state
+    final updatedStats = await ref.read(statsServiceProvider).getOrCreateStats(user.uid);
+    state = AsyncValue.data(updatedStats);
   }
 }
 

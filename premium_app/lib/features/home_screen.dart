@@ -162,7 +162,7 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _buildPremiumNaamJap(BuildContext context, WidgetRef ref) {
-    final count = ref.watch(naamJapStateProvider);
+    final japState = ref.watch(naamJapStateProvider);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -220,7 +220,7 @@ class HomeScreen extends ConsumerWidget {
             // Enhanced Premium Counter
             Center(
               child: PremiumUI.naamJapCounter(
-                count: count,
+                count: japState.total,
                 onTap: () {
                   ref.read(naamJapStateProvider.notifier).increment();
                 },

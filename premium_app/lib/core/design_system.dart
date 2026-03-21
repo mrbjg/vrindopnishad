@@ -2623,7 +2623,9 @@ class _PremiumNaamJapCounterInternalState
 
   @override
   Widget build(BuildContext context) {
-    final progress = (widget.count / widget.goal).clamp(0.0, 1.0);
+    final int completedMalas = widget.count ~/ 108;
+    final int currentBead = widget.count == 0 ? 0 : (widget.count - 1) % 108 + 1;
+    final progress = (currentBead / 108.0).clamp(0.0, 1.0);
 
     return GestureDetector(
       onTapDown: (_) {
@@ -2683,7 +2685,7 @@ class _PremiumNaamJapCounterInternalState
                 ),
               ),
 
-              // Progress Ring
+              // Progress Ring (Bead Progress)
               RepaintBoundary(
                 child: SizedBox(
                   width: widget.size * 0.85,
@@ -2708,7 +2710,7 @@ class _PremiumNaamJapCounterInternalState
                     shape: BoxShape.circle,
                     color: const Color(0xFF020205).withValues(
                       alpha: 0.98,
-                    ), // Deeper void for better contrast
+                    ),
                     border: Border.all(
                       color: Colors.white.withValues(alpha: 0.15),
                     ),
@@ -2724,20 +2726,17 @@ class _PremiumNaamJapCounterInternalState
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        RepaintBoundary(
-                          child: SvgPicture.asset(
-                            'assets/shriJiMukut.svg',
-                            width: 32,
-                            height: 32,
-                            colorFilter: const ColorFilter.mode(
-                              PremiumTokens.nebulaBlue, 
-                              BlendMode.srcIn,
-                            ),
+                        Text(
+                          'BEAD',
+                          style: PremiumTokens.sansStyle(
+                            fontSize: widget.size * 0.035,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.5,
+                            color: PremiumTokens.nebulaBlue,
                           ),
                         ),
-                        const SizedBox(height: 8),
                         Text(
-                          widget.count.toString(),
+                          currentBead.toString(),
                           style: PremiumTokens.lailaStyle(
                             fontSize: widget.size * 0.18,
                             fontWeight: FontWeight.bold,
@@ -2745,13 +2744,12 @@ class _PremiumNaamJapCounterInternalState
                           ),
                         ),
                         Text(
-                          'CHANTS',
+                          'MALA $completedMalas',
                           style: PremiumTokens.sansStyle(
-                            fontSize: widget.size * 0.04,
+                            fontSize: widget.size * 0.045,
                             fontWeight: FontWeight.w900,
-                            letterSpacing: 2,
-                            color: Colors
-                                .white54, // Brighter for better visibility
+                            letterSpacing: 1,
+                            color: Colors.white38,
                           ),
                         ),
                       ],

@@ -118,7 +118,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                           final count = ref.watch(naamJapStateProvider);
                           return PremiumUI.sacredVoidButton(
                             isActive: currentIndex == 2,
-                            count: count,
+                            count: count.total,
                             onTap: () {
                               HapticFeedback.heavyImpact();
                               // Only increment count (Naam Jap) as requested

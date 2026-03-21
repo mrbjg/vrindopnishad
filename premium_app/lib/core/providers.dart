@@ -69,47 +69,69 @@ final visibleItemCountProvider = StateProvider<int>((ref) => 5);
 /// Provider to track previously animated count (items before this index won't re-animate)
 final previouslyAnimatedCountProvider = StateProvider<int>((ref) => 5);
 
-class NaamJapNotifier extends StateNotifier<int> {
+class NaamJapState {
+  final int total;
+  final int today;
+
+  NaamJapState({required this.total, required this.today});
+}
+
+class NaamJapNotifier extends StateNotifier<NaamJapState> {
   final SharedPreferences prefs;
   final Ref ref;
 
-  NaamJapNotifier(this.prefs, this.ref) : super(0) {
-    state = prefs.getInt('naam_jap_count') ?? 0;
+  NaamJapNotifier(this.prefs, this.ref) : super(NaamJapState(total: 0, today: 0)) {
+    _init();
+  }
+
+  void _init() {
+    final total = prefs.getInt('naam_jap_count') ?? 0;
+    final lastDate = prefs.getString('naam_jap_last_date') ?? '';
+    final todayStr = DateTime.now().toIso8601String().split('T')[0];
+    
+    int today = prefs.getInt('naam_jap_today_count') ?? 0;
+    
+    // Day reset logic
+    if (lastDate != todayStr) {
+      today = 0;
+      prefs.setInt('naam_jap_today_count', 0);
+      prefs.setString('naam_jap_last_date', todayStr);
+    }
+    
+    state = NaamJapState(total: total, today: today);
   }
 
   Future<void> increment() async {
-    state++;
+    final newTotal = state.total + 1;
+    final newToday = state.today + 1;
     
-    // New: Handle Mala completion (108 chants)
-    if (state >= 108) {
+    state = NaamJapState(total: newTotal, today: newToday);
+    
+    // Notify stats service of activity (optionally sync every 108)
+    if (newTotal % 108 == 0) {
       final user = ref.read(authStateProvider).value;
       if (user != null) {
-        // Log the completed Mala
         ref.read(statsServiceProvider).logJapActivity(user.uid, 108);
+        ref.invalidate(japHistoryProvider);
       }
-      
-      // Reset local counter to 0 for the next Mala
-      state = 0;
-      await prefs.setInt('naam_jap_count', 0);
-      
-      // Sync 0 to stats (though logJapActivity updates the total correctly)
-      ref.read(userStatsProvider.notifier).syncJaps(0);
-      return;
     }
 
-    await prefs.setInt('naam_jap_count', state);
+    await prefs.setInt('naam_jap_count', newTotal);
+    await prefs.setInt('naam_jap_today_count', newToday);
+    await prefs.setString('naam_jap_last_date', DateTime.now().toIso8601String().split('T')[0]);
     
-    // Sync total count (legacy sync)
-    ref.read(userStatsProvider.notifier).syncJaps(state);
+    // Sync total count (real-time feedback)
+    ref.read(userStatsProvider.notifier).syncJaps(newTotal);
   }
 
   Future<void> reset() async {
-    state = 0;
+    state = NaamJapState(total: 0, today: 0);
     await prefs.setInt('naam_jap_count', 0);
+    await prefs.setInt('naam_jap_today_count', 0);
   }
 }
 
-final naamJapStateProvider = StateNotifierProvider<NaamJapNotifier, int>((ref) {
+final naamJapStateProvider = StateNotifierProvider<NaamJapNotifier, NaamJapState>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
   return NaamJapNotifier(prefs, ref);
 });

@@ -8,6 +8,8 @@ import '../core/content_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
+import '../core/favorites_provider.dart';
 
 class GlobalPlayerScreen extends ConsumerStatefulWidget {
   const GlobalPlayerScreen({super.key});
@@ -171,10 +173,71 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
               color: Colors.white54,
             ),
           ),
-          PremiumUI.glassCard(
-            padding: const EdgeInsets.all(12),
-            borderRadius: 16,
-            child: const Icon(Iconsax.more, color: Colors.white, size: 24),
+          GestureDetector(
+            onTapDown: (details) {
+              HapticFeedback.heavyImpact();
+              final RenderBox box = context.findRenderObject() as RenderBox;
+              final Offset position = box.localToGlobal(details.localPosition);
+              
+              final content = ref.read(audioProvider).currentContent;
+              final isFav = content != null 
+                  ? ref.read(favoritesProvider).contains(content.id) 
+                  : false;
+              
+              showSacredMenu(
+                context,
+                position,
+                [
+                  SacredMenuItem(
+                    icon: Iconsax.share,
+                    label: "Share",
+                    color: PremiumTokens.nebulaBlue,
+                    onTap: () {
+                      if (content != null) {
+                        Share.share("Listen to '${content.title}' on Sant-Vaani: Sacred Wisdom for Modern Life. 🕉️");
+                      }
+                    },
+                  ),
+                  SacredMenuItem(
+                    icon: isFav ? Iconsax.heart5 : Iconsax.heart,
+                    label: isFav ? "Loved" : "Love",
+                    color: PremiumTokens.saffronGlow,
+                    onTap: () {
+                      if (content != null) {
+                        ref.read(favoritesProvider.notifier).toggleFavorite(content.id);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(isFav ? "Removed from Favorites" : "Added to Favorites"),
+                            backgroundColor: PremiumTokens.voidIndigo,
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                  SacredMenuItem(
+                    icon: Iconsax.timer_1,
+                    label: "Timer",
+                    color: PremiumTokens.celestialGlow,
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                         const SnackBar(
+                          content: Text("Divine Sleep Timer coming soon! ✨"),
+                          backgroundColor: PremiumTokens.voidIndigo,
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+                null,
+              );
+            },
+            child: PremiumUI.glassCard(
+              padding: const EdgeInsets.all(12),
+              borderRadius: 16,
+              child: const Icon(Iconsax.more, color: Colors.white, size: 24),
+            ),
           ),
         ],
       ),

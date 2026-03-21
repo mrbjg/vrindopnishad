@@ -60,6 +60,34 @@ class UserStats {
       'updated_at': updatedAt.toIso8601String(),
     };
   }
+
+  UserStats copyWith({
+    String? firebaseUid,
+    int? level,
+    int? experiencePoints,
+    int? streakCount,
+    DateTime? lastActiveDate,
+    int? totalReadingMinutes,
+    int? totalShlokasRead,
+    int? totalJapCount,
+    int? dailyMalaGoal,
+    String? reminderTime,
+    DateTime? updatedAt,
+  }) {
+    return UserStats(
+      firebaseUid: firebaseUid ?? this.firebaseUid,
+      level: level ?? this.level,
+      experiencePoints: experiencePoints ?? this.experiencePoints,
+      streakCount: streakCount ?? this.streakCount,
+      lastActiveDate: lastActiveDate ?? this.lastActiveDate,
+      totalReadingMinutes: totalReadingMinutes ?? this.totalReadingMinutes,
+      totalShlokasRead: totalShlokasRead ?? this.totalShlokasRead,
+      totalJapCount: totalJapCount ?? this.totalJapCount,
+      dailyMalaGoal: dailyMalaGoal ?? this.dailyMalaGoal,
+      reminderTime: reminderTime ?? this.reminderTime,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
 }
 
 class ReadingHistoryItem {
