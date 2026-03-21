@@ -856,6 +856,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
       ),
     );
+  }
+
   Widget _buildDivineIconStatus(BuildContext context) {
     final japState = ref.watch(naamJapStateProvider);
     final totalMalas = japState.total ~/ 108;

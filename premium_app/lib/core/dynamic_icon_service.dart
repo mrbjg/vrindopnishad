@@ -1,4 +1,4 @@
-import 'package:flutter_dynamic_icon/flutter_dynamic_icon.dart';
+import 'package:flutter_dynamic_icon_plus/flutter_dynamic_icon_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:io';
 import 'providers.dart';
@@ -38,12 +38,14 @@ class DynamicIconService {
         targetIcon = 'MainActivityStarter';
       }
 
-      final currentIcon = await FlutterDynamicIcon.getAlternateIconName();
+      final currentIcon = await FlutterDynamicIconPlus.alternateIconName;
       
       if (currentIcon != targetIcon) {
         // To avoid annoying the user with multiple batch icon changes, 
         // we only set it if it definitely changed level.
-        await FlutterDynamicIcon.setAlternateIconName(targetIcon == 'MainActivityStarter' ? null : targetIcon);
+        await FlutterDynamicIconPlus.setAlternateIconName(
+          iconName: targetIcon == 'MainActivityStarter' ? null : targetIcon,
+        );
       }
     } catch (e) {
       // Fail silently for icons to avoid breaking the chant experience
@@ -53,6 +55,6 @@ class DynamicIconService {
 
   // Debug method to force an icon change (useful for testing)
   Future<void> forceSetIcon(String? iconName) async {
-    await FlutterDynamicIcon.setAlternateIconName(iconName);
+    await FlutterDynamicIconPlus.setAlternateIconName(iconName: iconName);
   }
 }
