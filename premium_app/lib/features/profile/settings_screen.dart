@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/design_system.dart';
-import '../../core/theme.dart';
 import '../../core/providers.dart';
 import '../../core/localization.dart';
+import '../../core/providers/reading_providers.dart';
 import '../../widgets/animated_effects.dart';
 import 'package:flutter/services.dart';
 
@@ -99,6 +99,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   },
                   gradientColors: [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)],
                 ),
+                const SizedBox(height: 16),
+
+                // Reader Theme Section
+                _buildSectionHeader(
+                  context,
+                  l.translate('reader_theme'),
+                  Iconsax.book,
+                ),
+                const SizedBox(height: 12),
+                _buildReaderThemeSelector(context, l),
                 const SizedBox(height: 12),
 
                 // Language Selector
@@ -744,6 +754,93 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Iconsax.arrow_right_3,
                   size: 18,
                   color: isDestructive ? Colors.red : PremiumTokens.nebulaBlue,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReaderThemeSelector(BuildContext context, AppLocalization l) {
+    final currentTheme = ref.watch(readerThemeProvider);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+      ),
+      child: Row(
+        children: [
+          _buildThemeOption(
+            context,
+            ReadingTheme.divineFlow,
+            "Divine",
+            currentTheme == ReadingTheme.divineFlow,
+            PremiumTokens.saffronGlow,
+          ),
+          const SizedBox(width: 8),
+          _buildThemeOption(
+            context,
+            ReadingTheme.sacredParchment,
+            "Parchment",
+            currentTheme == ReadingTheme.sacredParchment,
+            const Color(0xFF9E5622),
+          ),
+          const SizedBox(width: 8),
+          _buildThemeOption(
+            context,
+            ReadingTheme.voidFocus,
+            "Void",
+            currentTheme == ReadingTheme.voidFocus,
+            Colors.white54,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildThemeOption(
+    BuildContext context,
+    ReadingTheme theme,
+    String label,
+    bool isSelected,
+    Color accentColor,
+  ) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          HapticFeedback.mediumImpact();
+          ref.read(readerThemeProvider.notifier).state = theme;
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: isSelected ? accentColor.withValues(alpha: 0.15) : Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isSelected ? accentColor.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.05),
+              width: 1.5,
+            ),
+          ),
+          child: Column(
+            children: [
+              Icon(
+                isSelected ? Iconsax.tick_circle5 : Iconsax.stop,
+                size: 16,
+                color: isSelected ? accentColor : Colors.white24,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                label,
+                style: GoogleFonts.manrope(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: isSelected ? accentColor : Colors.white38,
                 ),
               ),
             ],

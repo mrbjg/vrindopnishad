@@ -12,10 +12,11 @@ import '../core/favorites_provider.dart';
 import '../widgets/share_content_widget.dart';
 import '../core/localization.dart';
 import '../core/providers.dart';
+import '../core/providers/reading_providers.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-enum ReadingTheme { divineFlow, sacredParchment, voidFocus }
+
 
 class ContentDetailScreen extends ConsumerStatefulWidget {
   final SacredContent? content;
@@ -51,7 +52,16 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     super.initState();
     _scrollController.addListener(_onScroll);
     
-    // Log reading activity after a short delay to ensure it's a genuine visit
+    // Initialize theme from universal preference
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          _currentTheme = ref.read(readerThemeProvider);
+        });
+      }
+    });
+
+    // Log reading activity
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         ref.read(userStatsProvider.notifier).recordReading(
@@ -925,13 +935,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         );
       case ReadingTheme.voidFocus:
         return _ReadingThemeData(
-          backgroundColor: const Color(0xFF030303),
-          textColor: Colors.white70,
-          cardColor: Colors.white.withValues(alpha: 0.05),
-          accentColor: Colors.white.withValues(alpha: 0.15),
-          secondaryAccent: Colors.white.withValues(alpha: 0.12),
-          lineHeight: 1.9,
-          glassOpacity: 0.02,
+          backgroundColor: const Color(0xFF0A0A0A),
+          textColor: const Color(0xFFE0E0E0),
+          cardColor: const Color(0xFF1A1A1A),
+          accentColor: const Color(0xFF8A2BE2), // Amethyst purple
+          secondaryAccent: const Color(0xFF00CED1), // Dark turquoise
+          lineHeight: 1.7,
+          glassOpacity: 0.1,
           showTextShadows: false,
         );
     }
@@ -977,11 +987,14 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 final isSelected = _currentTheme == theme;
                 return GestureDetector(
                   onTap: () {
-                    HapticFeedback.mediumImpact();
+                    HapticFeedback.lightImpact();
                     setState(() => _currentTheme = theme);
-                    Navigator.pop(context);
+                    // Update universal preference
+                    ref.read(readerThemeProvider.notifier).state = theme;
                   },
-                  child: Container(
+                  child: AnimatedContainer(
+                    duration: 300.ms,
+                    curve: Curves.easeInOut,
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
                       color: isSelected ? PremiumTokens.nebulaBlue : Colors.white.withValues(alpha: 0.05),

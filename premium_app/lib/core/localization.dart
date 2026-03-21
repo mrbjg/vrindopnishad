@@ -104,6 +104,7 @@ class AppLocalization {
       'admin_access': "Admin Access",
       'admin_access_sub': "Add and manage content",
       'mantra_sloka_label': "MANTRA / SLOKA",
+      'reader_theme': "Reader Theme",
     },
     AppLanguage.hindi: {
       'greeting': "श्री राधे 🙏",
@@ -196,6 +197,7 @@ class AppLocalization {
       'admin_access': "एडमिन पहुंच",
       'admin_access_sub': "सामग्री जोड़ें और प्रबंधित करें",
       'mantra_sloka_label': "मंत्र / श्लोक",
+      'reader_theme': "पठन थीम",
     },
     AppLanguage.sanskrit: {
       'greeting': "नमो नमः 🙏",
@@ -288,6 +290,7 @@ class AppLocalization {
       'admin_access': "प्रशासक प्रवेशः",
       'admin_access_sub': "विषयान् योजयतु प्रबन्धयतु च",
       'mantra_sloka_label': "मन्त्रः / श्लोकः",
+      'reader_theme': "पठन स्वरूपम्",
     },
   };
 
