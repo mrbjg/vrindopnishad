@@ -1257,6 +1257,25 @@ class PremiumUI extends StatelessWidget {
       );
     }
 
+    if (url.startsWith('assets/')) {
+      final imageWidget = Image.asset(
+        url,
+        fit: fit,
+        width: width,
+        height: height,
+        errorBuilder: (context, error, stackTrace) => Container(
+          width: width,
+          height: height,
+          color: PremiumTokens.accentDark,
+          child: const Icon(Icons.broken_image, color: Colors.redAccent, size: 20),
+        ),
+      );
+      if (borderRadius != null) {
+        return ClipRRect(borderRadius: borderRadius, child: imageWidget);
+      }
+      return imageWidget;
+    }
+
     final imageWidget = CachedNetworkImage(
       imageUrl: url,
       fit: fit,

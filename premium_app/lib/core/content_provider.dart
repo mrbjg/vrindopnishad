@@ -274,7 +274,7 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
     hindiMeaning: 'इस प्रकार दिन-रात काल व्यतीत हुआ। ब्रज के रसिक संत श्री वंशी अली जी का भजन भाव।',
     commentary: 'A soulful bhajan expressing devotion and the passage of time in spiritual practice.',
     audioUrl: 'https://archive.org/download/aise-kaal-bitayo-nis-din/aise%20kaal%20bitayo%20nis%20din.mp3',
-    imageUrl: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=2574&auto=format&fit=crop',
+    imageUrl: 'assets/images/sant_sanatan.png',
   );
 }
 
