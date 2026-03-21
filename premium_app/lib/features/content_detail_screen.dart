@@ -524,7 +524,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               ),
             if (!isFocusMode) const SizedBox(height: 24),
             SelectableText(
-              text,
+              _formatSacredText(text),
               textAlign: TextAlign.center,
               style: PremiumTokens.lailaStyle(
                 fontSize: _fontSize + (isFocusMode ? 10 : 6),
@@ -597,7 +597,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               ),
             if (!isFocusMode) const SizedBox(height: 24),
             Text(
-              content,
+              _formatSacredText(content),
               textAlign: TextAlign.center, // Centered for reading focus
               style: PremiumTokens.soulStyle( // Use Newsreader for body
                 fontSize: isFocusMode ? _fontSize + 3 : _fontSize,
@@ -1023,6 +1023,20 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   String _formatDuration(Duration d) {
     String two(int n) => n.toString().padLeft(2, '0');
     return "${two(d.inMinutes.remainder(60))}:${two(d.inSeconds.remainder(60))}";
+  }
+
+  String _formatSacredText(String text) {
+    if (text.isEmpty) return "";
+    // Split by । or , and join with newline for poetic flow
+    // We add newline after punctuation and then clean up double newlines/spaces
+    return text
+        .replaceAll('।', '।\n')
+        .replaceAll(', ', ',\n')
+        .replaceAll(',', ',\n')
+        .split('\n')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .join('\n');
   }
 }
 
