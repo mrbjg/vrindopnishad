@@ -278,22 +278,24 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: PremiumTokens.saffronGlow.withValues(alpha: 0.2)),
-            ),
-            child: Text(
-              displayCategory.toUpperCase(),
-              style: GoogleFonts.manrope( // Switch to Manrope for safer script handling
-                color: PremiumTokens.saffronGlow,
-                fontSize: 10,
-                fontWeight: FontWeight.w900,
-                letterSpacing: isHindi ? 0.5 : 2.0, // Reduced for Hindi
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(width: 20, height: 1, decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.transparent, PremiumTokens.saffronGlow.withValues(alpha: 0.5)]))),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Text(
+                  displayCategory.toUpperCase(),
+                  style: GoogleFonts.manrope(
+                    color: PremiumTokens.saffronGlow.withValues(alpha: 0.8),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: isHindi ? 0.5 : 3.0,
+                  ),
+                ),
               ),
-            ),
+              Container(width: 20, height: 1, decoration: BoxDecoration(gradient: LinearGradient(colors: [PremiumTokens.saffronGlow.withValues(alpha: 0.5), Colors.transparent]))),
+            ],
           ),
           SizedBox(height: 16),
           Text(
@@ -554,48 +556,49 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   }) {
     if (content.isEmpty) return const SizedBox.shrink();
     return RepaintBoundary(
-      child: PremiumUI.glassCard(
+      child: Container( // Changed from glassCard to a simpler container for borderless feel
         padding: EdgeInsets.symmetric(horizontal: 28, vertical: isFocusMode ? 36 : 24),
-        opacity: themeData.glassOpacity,
-        blur: isFocusMode ? 25 : 18,
-        borderRadius: 24,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center, // Centered for better flow
           children: [
             if (!isFocusMode)
               PremiumUI.focusContainer(
                 isFocusMode: isFocusMode,
-                child: Builder(
-                  builder: (context) {
-                    final isHindi = RegExp(r'[\u0900-\u097F]').hasMatch(title);
-                    return Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: accentColor.withValues(alpha: 0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(icon, color: accentColor, size: 14),
-                        ),
-                        const SizedBox(width: 14),
-                        Text(
+                child: Column(
+                  children: [
+                    Icon(icon, color: accentColor.withValues(alpha: 0.4), size: 16),
+                    const SizedBox(height: 12),
+                    Builder(
+                      builder: (context) {
+                        final isHindi = RegExp(r'[\u0900-\u097F]').hasMatch(title);
+                        return Text(
                           title.toUpperCase(),
                           style: GoogleFonts.manrope(
-                            color: accentColor,
-                            fontSize: 11,
+                            color: accentColor.withValues(alpha: 0.7),
+                            fontSize: 10,
                             fontWeight: FontWeight.w900,
-                            letterSpacing: isHindi ? 0.5 : 2.0,
+                            letterSpacing: isHindi ? 0.5 : 2.5,
                           ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      width: 40,
+                      height: 1,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.transparent, accentColor.withValues(alpha: 0.2), Colors.transparent],
                         ),
-                      ],
-                    );
-                  },
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            if (!isFocusMode) const SizedBox(height: 20),
+            if (!isFocusMode) const SizedBox(height: 24),
             Text(
               content,
+              textAlign: TextAlign.center, // Centered for reading focus
               style: PremiumTokens.soulStyle( // Use Newsreader for body
                 fontSize: isFocusMode ? _fontSize + 3 : _fontSize,
                 color: themeData.textColor.withValues(alpha: isFocusMode ? 0.95 : 0.85),
@@ -658,26 +661,41 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           setState(() => _showAudioPlayer = true);
         },
         child: Container(
-          width: 60,
-          height: 60,
+          width: 56,
+          height: 56,
           decoration: BoxDecoration(
-            gradient: PremiumTokens.saffronPremiumGradient,
             shape: BoxShape.circle,
-            boxShadow: [BoxShadow(color: PremiumTokens.saffronGlow.withValues(alpha: 0.3), blurRadius: 20)],
+            boxShadow: [
+              BoxShadow(
+                color: PremiumTokens.saffronGlow.withValues(alpha: 0.2),
+                blurRadius: 20,
+                spreadRadius: 2,
+              )
+            ],
+            border: Border.all(color: PremiumTokens.saffronGlow.withValues(alpha: 0.3), width: 1.5),
           ),
-          child: Icon(Iconsax.music, color: Colors.white, size: 24),
+          child: Center(
+            child: Icon(Iconsax.music5, color: PremiumTokens.saffronGlow, size: 24), // Filled music icon for 'Soul Orb'
+          ),
         ),
       ),
-    ).animate().scale();
+    ).animate().scale(duration: 400.ms, curve: Curves.easeOutBack);
   }
 
   Widget _buildPremiumAudioPlayer(SacredContent? content) {
-    return PremiumUI.glassCard(
+    return Container( // Changed from glassCard to a more organic, borderless design
       padding: const EdgeInsets.all(24),
-      borderRadius: 32,
-      blur: 35, // Increased for better separation
-      opacity: 0.2, // Slightly more opaque for better legibility
-      optimized: false, // Enable real glassmorphism
+      decoration: BoxDecoration(
+        color: _getThemeData().backgroundColor.withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(40),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 40,
+            offset: const Offset(0, 10),
+          )
+        ],
+      ),
       child: Consumer(
         builder: (context, ref, child) {
           final audioState = ref.watch(audioProvider);
