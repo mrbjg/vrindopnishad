@@ -264,10 +264,15 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           ),
 
           // Floating Header - Fades away in focus mode unless at the very top
-          AnimatedOpacity(
-            duration: 400.ms,
-            opacity: isFocusMode ? (_scrollController.hasClients && _scrollController.offset < 50 ? 1.0 : 0.0) : 1.0,
-            child: _buildPremiumHeader(content, displayTitle, isFocusMode, themeData),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: AnimatedOpacity(
+              duration: 400.ms,
+              opacity: isFocusMode ? (_scrollController.hasClients && _scrollController.offset < 50 ? 1.0 : 0.0) : 1.0,
+              child: _buildPremiumHeader(content, displayTitle, isFocusMode, themeData),
+            ),
           ),
 
           // Audio Toggle - Fades in Focus Mode
@@ -338,11 +343,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   }
 
   Widget _buildPremiumHeader(SacredContent? content, String title, bool isFocusMode, _ReadingThemeData themeData) {
-    return Positioned(
-      top: 0,
-      left: 0,
-      right: 0,
-      child: Container(
+    return Container(
         padding: EdgeInsets.only(
           top: MediaQuery.of(context).padding.top + 8,
           bottom: 12,
@@ -436,14 +437,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     isCustomSvg: true,
                     svgFile: 'iconsax-ai-send-message-m26q6m1j-.svg',
                     themeData: themeData,
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
+            ],
+          ),
+        );
   }
 
   Widget _buildHeaderCircleButton(
