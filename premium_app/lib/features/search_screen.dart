@@ -3,7 +3,6 @@ import '../core/content_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../core/design_system.dart';
 import '../core/providers.dart';
 import '../features/content_detail_screen.dart';
@@ -33,7 +32,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final recentSearchesAsync = ref.watch(recentSearchesProvider);
-    final currentCategory = ref.watch(libraryCategoryProvider);
     
     final List<SacredContent> displayItems = _isSearching
         ? ref.watch(searchedContentProvider(_searchQuery))
@@ -105,27 +103,26 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   Widget _buildSearchInput() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      child: PremiumUI.glassCard(
+      child: PremiumUI.etherealCard(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        borderRadius: 16,
+        borderRadius: 32,
+        showGlow: true,
+        glowColor: PremiumTokens.nebulaBlue,
         child: TextField(
           controller: _searchController,
           focusNode: _focusNode,
-          autofocus: false, // Changed to false to prevent keyboard pop on back btn match
-          style: GoogleFonts.manrope(color: Colors.white),
-          onSubmitted: (v) {
-            if (v.isNotEmpty) {
-              ref.read(recentSearchesProvider.notifier).addSearch(v);
-            }
-          },
+          autofocus: false,
+          style: GoogleFonts.manrope(color: Colors.white, fontSize: 15),
+          cursorColor: PremiumTokens.nebulaBlue,
           decoration: InputDecoration(
             hintText: "Search mantras, stories, shlokas...",
             hintStyle: GoogleFonts.manrope(color: Colors.white24, fontSize: 14),
             border: InputBorder.none,
-            icon: Icon(Iconsax.search_normal, color: PremiumTokens.nebulaBlue, size: 20),
+            contentPadding: const EdgeInsets.symmetric(vertical: 15),
+            prefixIcon: Icon(Iconsax.search_normal, color: PremiumTokens.nebulaBlue, size: 20),
             suffixIcon: _searchQuery.isNotEmpty
                 ? IconButton(
-                    icon: Icon(Iconsax.close_circle, size: 18, color: Colors.white38),
+                    icon: const Icon(Iconsax.close_circle, size: 18, color: Colors.white38),
                     onPressed: () {
                       _searchController.clear();
                       setState(() {
@@ -318,16 +315,17 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           ref.read(recentSearchesProvider.notifier).addSearch(text);
         }
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(100),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-        ),
+      child: PremiumUI.glassCard(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        borderRadius: 100,
         child: Text(
           text,
-          style: GoogleFonts.manrope(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
+          style: GoogleFonts.manrope(
+            color: Colors.white70, 
+            fontSize: 12, 
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+          ),
         ),
       ),
     );
@@ -343,38 +341,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       itemBuilder: (context, index) => Padding(
         padding: const EdgeInsets.only(bottom: 16),
         child: _buildSacredListItem(context, displayItems[index]),
-      ),
-    );
-  }
-
-  Widget _buildPremiumPill(String label, bool isSelected) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        ref.read(libraryCategoryProvider.notifier).state = label;
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 8),
-        child: Center(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            decoration: BoxDecoration(
-              color: isSelected ? PremiumTokens.nebulaBlue : PremiumTokens.surfaceCharcoal,
-              borderRadius: BorderRadius.circular(100),
-              border: Border.all(
-                color: isSelected ? Colors.transparent : Colors.white.withValues(alpha: 0.1),
-              ),
-            ),
-            child: Text(
-              label,
-              style: GoogleFonts.manrope(
-                color: isSelected ? Colors.white : Colors.white60,
-                fontSize: 12,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }
