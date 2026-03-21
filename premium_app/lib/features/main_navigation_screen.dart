@@ -11,6 +11,8 @@ import 'package:flutter/services.dart';
 import '../core/providers.dart';
 import '../widgets/mini_player.dart';
 import 'rituals_screen.dart';
+import '../core/stats_provider.dart';
+import 'profile/sacred_goal_screen.dart';
 
 class MainNavigationScreen extends ConsumerStatefulWidget {
   MainNavigationScreen({super.key});
@@ -28,6 +30,23 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   void initState() {
     super.initState();
     PremiumUI.setSacredStatus();
+    
+    // Check goal setting after first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkGoalSetting();
+    });
+  }
+
+  void _checkGoalSetting() {
+    final statsAsync = ref.read(userStatsProvider);
+    statsAsync.whenData((stats) {
+      if (stats != null && stats.dailyMalaGoal == 0) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SacredGoalScreen(isOnboarding: true)),
+        );
+      }
+    });
   }
 
   @override

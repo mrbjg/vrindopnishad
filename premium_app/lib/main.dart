@@ -13,9 +13,9 @@ import 'features/splash_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'core/cache_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
+import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +38,9 @@ void main() async {
     androidNotificationOngoing: true,
   );
 
+  // Initialize Notification Service
+  await NotificationService().init();
+  
   // Pre-initialize SharedPreferences for instant cache access
   final prefs = await SharedPreferences.getInstance();
   

@@ -11,6 +11,7 @@ import 'profile/reading_history_screen.dart';
 import 'profile/settings_screen.dart';
 import 'profile/about_screen.dart';
 import 'celestial_stats_screen.dart';
+import '../widgets/sacred_logout_dialog.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/services.dart';
 import '../core/stats_provider.dart';
@@ -126,7 +127,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       icon: Iconsax.clock,
                       title: "Journey History",
                       subtitle: "Continue your reflections",
-                      color: Colors.blueAccent,
+                      color: PremiumTokens.celestialGlow,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => ReadingHistoryScreen()),
@@ -140,7 +141,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       icon: Iconsax.setting_2,
                       title: "Settings",
                       subtitle: "Notifications & Account",
-                      color: Colors.purpleAccent,
+                      color: PremiumTokens.starlight,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => SettingsScreen()),
@@ -151,7 +152,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       icon: Iconsax.info_circle,
                       title: "About Divine Path",
                       subtitle: "Vision & Mission",
-                      color: Colors.tealAccent,
+                      color: PremiumTokens.silver,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => AboutScreen()),
@@ -246,25 +247,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   }
 
   void _handleLogout(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: PremiumTokens.charcoal,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24), side: const BorderSide(color: Colors.white10)),
-        title: Text("Spiritual Rest?", style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.bold)),
-        content: Text("Are you sure you want to pause your journey for now?", style: GoogleFonts.manrope(color: Colors.white70)),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("Continue")),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-            onPressed: () {
-              Navigator.pop(ctx);
-              ref.read(authServiceProvider).signOut();
-            },
-            child: const Text("Sign Out", style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
+    SacredLogoutDialog.show(
+      context,
+      onLogout: () => ref.read(authServiceProvider).signOut(),
     );
   }
 }
@@ -282,7 +267,6 @@ class _PremiumProfileHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final japCount = ref.watch(naamJapStateProvider);
     return Container(
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top + 20,

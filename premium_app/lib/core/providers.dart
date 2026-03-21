@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'auth_provider.dart';
 import 'stats_provider.dart';
 import 'cache_service.dart';
-import 'localization.dart';
 
 final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
 
@@ -79,9 +79,27 @@ class NaamJapNotifier extends StateNotifier<int> {
 
   Future<void> increment() async {
     state++;
+    
+    // New: Handle Mala completion (108 chants)
+    if (state >= 108) {
+      final user = ref.read(authStateProvider).value;
+      if (user != null) {
+        // Log the completed Mala
+        ref.read(statsServiceProvider).logJapActivity(user.uid, 108);
+      }
+      
+      // Reset local counter to 0 for the next Mala
+      state = 0;
+      await prefs.setInt('naam_jap_count', 0);
+      
+      // Sync 0 to stats (though logJapActivity updates the total correctly)
+      ref.read(userStatsProvider.notifier).syncJaps(0);
+      return;
+    }
+
     await prefs.setInt('naam_jap_count', state);
     
-    // Sync with Supabase (fire and forget)
+    // Sync total count (legacy sync)
     ref.read(userStatsProvider.notifier).syncJaps(state);
   }
 

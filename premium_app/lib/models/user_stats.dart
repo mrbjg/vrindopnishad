@@ -7,6 +7,8 @@ class UserStats {
   final int totalReadingMinutes;
   final int totalShlokasRead;
   final int totalJapCount;
+  final int dailyMalaGoal;
+  final String? reminderTime;
   final DateTime updatedAt;
 
   UserStats({
@@ -18,6 +20,8 @@ class UserStats {
     this.totalReadingMinutes = 0,
     this.totalShlokasRead = 0,
     this.totalJapCount = 0,
+    this.dailyMalaGoal = 0,
+    this.reminderTime,
     required this.updatedAt,
   });
 
@@ -33,6 +37,8 @@ class UserStats {
       totalReadingMinutes: json['total_reading_minutes'] ?? 0,
       totalShlokasRead: json['total_shlokas_read'] ?? 0,
       totalJapCount: json['total_jap_count'] ?? 0,
+      dailyMalaGoal: json['daily_mala_goal'] ?? 0,
+      reminderTime: json['reminder_time'],
       updatedAt: json['updated_at'] != null 
           ? DateTime.parse(json['updated_at'].toString()) 
           : DateTime.now(),
@@ -49,6 +55,8 @@ class UserStats {
       'total_reading_minutes': totalReadingMinutes,
       'total_shlokas_read': totalShlokasRead,
       'total_jap_count': totalJapCount,
+      'daily_mala_goal': dailyMalaGoal,
+      'reminder_time': reminderTime,
       'updated_at': updatedAt.toIso8601String(),
     };
   }

@@ -55,6 +55,49 @@ class StatsService {
     }
   }
 
+  /// Log a jap activity milestone (e.g. 1 Mala = 108 chants)
+  Future<void> logJapActivity(String uid, int count) async {
+    try {
+      await _supabase.from('jap_history').insert({
+        'firebase_uid': uid,
+        'count': count,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+      
+      // Also update total jap count in stats
+      final stats = await getOrCreateStats(uid);
+      if (stats != null) {
+        final newXp = stats.experiencePoints + (count * 2); // 2 XP per chant
+        final newLevel = (newXp / 1000).floor() + 1;
+        
+        await updateStats(uid, {
+          'total_jap_count': stats.totalJapCount + count,
+          'experience_points': newXp,
+          'level': newLevel,
+        });
+      }
+    } catch (e) {
+      debugPrint('Error logging jap activity: $e');
+    }
+  }
+
+  /// Fetch user's jap history
+  Future<List<Map<String, dynamic>>> getJapHistory(String uid) async {
+    try {
+      final response = await _supabase
+          .from('jap_history')
+          .select()
+          .eq('firebase_uid', uid)
+          .order('created_at', ascending: false)
+          .limit(100);
+          
+      return (response as List).cast<Map<String, dynamic>>();
+    } catch (e) {
+      debugPrint('Error fetching jap history: $e');
+      return [];
+    }
+  }
+
   /// Log a reading activity
   Future<void> logReadingActivity(String uid, {
     required String contentId,
@@ -67,7 +110,7 @@ class StatsService {
         'content_id': contentId,
         'title': title,
         'category': category,
-        'read_at': DateTime.now().toIso8601String(),
+        'read_at': DateTime.now().toUtc().toIso8601String(),
       });
       
       // Also update total shlokas count in stats
@@ -151,6 +194,18 @@ class StatsService {
           .eq('firebase_uid', uid);
     } catch (e) {
       debugPrint('Error clearing history: $e');
+    }
+  }
+
+  Future<void> updateGoal(String uid, int goal, String? reminderTime) async {
+    try {
+      await _supabase.from('user_stats').update({
+        'daily_mala_goal': goal,
+        'reminder_time': reminderTime,
+        'updated_at': DateTime.now().toIso8601String(),
+      }).eq('firebase_uid', uid);
+    } catch (e) {
+      debugPrint('Error updating goal: $e');
     }
   }
 }

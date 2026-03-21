@@ -3,7 +3,6 @@ import 'package:iconsax/iconsax.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/design_system.dart';
 import '../../core/stats_provider.dart';
-import '../../models/user_stats.dart';
 import '../content_detail_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/auth_provider.dart';
@@ -12,8 +11,13 @@ class ReadingHistoryScreen extends ConsumerWidget {
   const ReadingHistoryScreen({super.key});
 
   String _formatTime(DateTime date) {
+    final dateLocal = date.isUtc ? date.toLocal() : date;
     final now = DateTime.now();
-    final diff = now.difference(date);
+    final diff = now.difference(dateLocal);
+    
+    // Handle slightly future-dated items (e.g., clock skew)
+    if (diff.inSeconds < 30) return "Just now";
+    
     if (diff.inMinutes < 60) return "${diff.inMinutes}m ago";
     if (diff.inHours < 24) return "${diff.inHours}h ago";
     if (diff.inDays == 1) return "Yesterday";

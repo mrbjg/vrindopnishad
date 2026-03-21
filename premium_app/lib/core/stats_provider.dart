@@ -68,3 +68,10 @@ final readingHistoryProvider = FutureProvider<List<ReadingHistoryItem>>((ref) as
   
   return await ref.read(statsServiceProvider).getReadingHistory(user.uid);
 });
+
+final japHistoryProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final user = ref.watch(authStateProvider).value;
+  if (user == null) return [];
+  
+  return await ref.read(statsServiceProvider).getJapHistory(user.uid);
+});

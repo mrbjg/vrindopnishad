@@ -62,13 +62,21 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       }
     });
 
-    // Log reading activity
+    // Log reading activity after a short delay to ensure it's a real session
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
+        final allContent = ref.read(sacredContentProvider);
+        final resolvedContent = widget.content ?? 
+          (widget.title != null ? allContent.cast<SacredContent?>().firstWhere((c) => c?.title == widget.title, orElse: () => null) : null);
+        
+        final logTitle = resolvedContent?.title ?? widget.title ?? 'Unknown Sacred Text';
+        final logCategory = resolvedContent?.category ?? widget.category ?? 'Divine';
+        final logId = resolvedContent?.id ?? logTitle;
+
         ref.read(userStatsProvider.notifier).recordReading(
-          widget.title ?? 'Unknown', // Fixed null safety
-          title: widget.title,
-          category: widget.category,
+          logId,
+          title: logTitle,
+          category: logCategory,
         );
       }
     });
@@ -129,10 +137,18 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       (widget.title != null ? allContent.cast<SacredContent?>().firstWhere((c) => c?.title == widget.title, orElse: () => null) : null);
 
     final displayTitle =
-        (content?.title ?? widget.title ?? l.translate('sacred_text'))
+        (content?.title ?? widget.title ?? "Sacred Text")
             .replaceAll('\n', ', ');
     final displayCategory =
         content?.category ?? widget.category ?? "Wisdom";
+
+    // If no content is found and no title/category provided, we are effectively in a dead state
+    if (content == null && widget.title == null && widget.content == null) {
+      return Scaffold(
+        backgroundColor: PremiumTokens.voidBlack,
+        body: Center(child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue)),
+      );
+    }
 
     final themeData = _getThemeData();
 

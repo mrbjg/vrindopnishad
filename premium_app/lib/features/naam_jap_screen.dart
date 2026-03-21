@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../core/design_system.dart';
-import '../core/providers.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:iconsax/iconsax.dart';
+import '../core/design_system.dart';
+import '../core/providers.dart';
+import '../core/stats_provider.dart';
 import '../core/stats_provider.dart';
 
 class NaamJapScreen extends ConsumerStatefulWidget {
@@ -20,10 +21,35 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final historyAsync = ref.watch(japHistoryProvider);
     final count = ref.watch(naamJapStateProvider);
     final isFocusMode = ref.watch(focusModeProvider);
-    final statsAsync = ref.watch(userStatsProvider);
-    final streak = statsAsync.value?.streakCount ?? 0;
+    
+    // Calculate Today's Malas & Highest
+    double todayMalas = 0;
+    double highestMalas = 0;
+    final now = DateTime.now();
+    
+    if (historyAsync.hasValue) {
+      final history = historyAsync.value!;
+      final Map<String, double> dayTotals = {};
+      
+      for (var entry in history) {
+        final malaCount = (entry['count'] as int) / 108;
+        final date = DateTime.parse(entry['created_at']).toIso8601String().split('T')[0];
+        
+        dayTotals[date] = (dayTotals[date] ?? 0) + malaCount;
+        
+        // Today check
+        if (date == now.toIso8601String().split('T')[0]) {
+          todayMalas += malaCount;
+        }
+      }
+      
+      if (dayTotals.isNotEmpty) {
+        highestMalas = dayTotals.values.reduce((a, b) => a > b ? a : b);
+      }
+    }
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -54,7 +80,12 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                   const SizedBox(height: 40),
                   
                   // Session Stats
-                  _buildSessionStats(isFocusMode, streak),
+                  _buildSessionStats(
+                    isFocusMode, 
+                    todayMalas, 
+                    highestMalas, 
+                    dailyGoal: ref.read(userStatsProvider).value?.dailyMalaGoal ?? 0,
+                  ),
                   
                   const SizedBox(height: 140), // Spacing for Navbar + MiniPlayer
                 ],
@@ -99,20 +130,12 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
           GestureDetector(
             onTap: () {
               HapticFeedback.mediumImpact();
-              ref.read(focusModeProvider.notifier).state = !isFocusMode;
+              _showMalaHistorySheet(context);
             },
             child: PremiumUI.glassCard(
               padding: const EdgeInsets.all(10),
               borderRadius: 14,
-              child: PremiumUI.animatedIcon(
-                folder: 'Visibility V2',
-                fileName: 'visibilityV2.json',
-                size: 20,
-                color: isFocusMode ? PremiumTokens.nebulaBlue : Colors.white,
-                isToggled: isFocusMode,
-                resetAfterPlay: false,
-                onTap: null, // Gesture handled by parent
-              ),
+              child: const Icon(Iconsax.clock, color: Colors.white, size: 20),
             ),
           ),
         ],
@@ -234,7 +257,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
     );
   }
 
-  Widget _buildSessionStats(bool isFocusMode, int streak) {
+  Widget _buildSessionStats(bool isFocusMode, double todayMalas, double highestMalas, {int dailyGoal = 0}) {
     return PremiumUI.focusContainer(
       isFocusMode: isFocusMode,
       child: Padding(
@@ -245,11 +268,11 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: _buildStatItem("DAILY GOAL", "108", PremiumTokens.nebulaBlue)),
+              Expanded(child: _buildStatItem("TODAY MALA", todayMalas.toStringAsFixed(1), PremiumTokens.nebulaBlue)),
               Container(width: 1, height: 30, color: Colors.white10),
-              Expanded(child: _buildStatItem("SESSIONS", "12", Colors.white70)),
+              Expanded(child: _buildStatItem("GOAL", dailyGoal > 0 ? dailyGoal.toDouble().toStringAsFixed(1) : "11.0", Colors.white70)),
               Container(width: 1, height: 30, color: Colors.white10),
-              Expanded(child: _buildStatItem("STREAK", "${streak}d", PremiumTokens.saffronGlow)),
+              Expanded(child: _buildStatItem("HIGHEST", highestMalas.toStringAsFixed(1), PremiumTokens.saffronGlow)),
             ],
           ),
         ),
@@ -270,6 +293,249 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
           style: PremiumTokens.sansStyle(fontSize: 18, fontWeight: FontWeight.bold, color: accent),
         ),
       ],
+    );
+  }
+
+  void _showMalaHistorySheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => const _MalaHistorySheet(),
+    );
+  }
+}
+
+class _MalaHistorySheet extends ConsumerStatefulWidget {
+  const _MalaHistorySheet();
+
+  @override
+  ConsumerState<_MalaHistorySheet> createState() => _MalaHistorySheetState();
+}
+
+class _MalaHistorySheetState extends ConsumerState<_MalaHistorySheet> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final historyAsync = ref.watch(japHistoryProvider);
+
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.7,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            PremiumTokens.voidIndigo.withValues(alpha: 0.95),
+            PremiumTokens.voidBlack,
+          ],
+        ),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+      ),
+      child: Column(
+        children: [
+          const SizedBox(height: 12),
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.white24,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            "MALA HISTORY",
+            style: PremiumTokens.sansStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 4,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 24),
+          
+          // Ethereal TabBar
+          TabBar(
+            controller: _tabController,
+            indicatorColor: PremiumTokens.nebulaBlue,
+            dividerColor: Colors.transparent,
+            labelStyle: PremiumTokens.sansStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2),
+            unselectedLabelColor: Colors.white24,
+            tabs: const [
+              Tab(text: "DAILY"),
+              Tab(text: "WEEKLY"),
+              Tab(text: "YEARLY"),
+            ],
+          ),
+          
+          Expanded(
+            child: historyAsync.when(
+              data: (history) => TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildHistoryContent(history, "daily"),
+                  _buildHistoryContent(history, "weekly"),
+                  _buildHistoryContent(history, "yearly"),
+                ],
+              ),
+              loading: () => const Center(child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue)),
+              error: (e, _) => Center(child: Text("Error loading history", style: TextStyle(color: Colors.white54))),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistoryContent(List<Map<String, dynamic>> history, String timeframe) {
+    if (history.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Iconsax.radar, color: Colors.white10, size: 64),
+            const SizedBox(height: 16),
+            Text(
+              "No sacred history found yet",
+              style: PremiumTokens.sansStyle(color: Colors.white24, fontSize: 13),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Process History
+    final now = DateTime.now();
+    double totalMalas = 0;
+    int peakCount = 0;
+    final Map<String, int> groupedData = {};
+
+    for (var entry in history) {
+      final count = entry['count'] as int;
+      final createdAt = DateTime.parse(entry['created_at'] as String);
+      totalMalas += count / 108;
+      if (count > peakCount) peakCount = count;
+
+      String key = "";
+      if (timeframe == "daily") {
+        // If it's today, show hourly. Otherwise group by day of the week.
+        if (now.difference(createdAt).inDays < 1 && now.day == createdAt.day) {
+          final hour = createdAt.hour;
+          key = "${hour}:00";
+          groupedData[key] = (groupedData[key] ?? 0) + count;
+        } else if (now.difference(createdAt).inDays < 7) {
+          key = "${createdAt.day}/${createdAt.month}";
+          groupedData[key] = (groupedData[key] ?? 0) + count;
+        }
+      } else if (timeframe == "weekly") {
+        // Last 4 weeks
+        final weekNum = (createdAt.day / 7).ceil();
+        key = "W$weekNum";
+        groupedData[key] = (groupedData[key] ?? 0) + count;
+      } else {
+        // Last 12 months
+        key = "${createdAt.month}/${createdAt.year}";
+        groupedData[key] = (groupedData[key] ?? 0) + count;
+      }
+    }
+
+    // Prepare chart data (max 7 bars for visibility)
+    final entries = groupedData.entries.toList();
+    final chartValues = entries.map((e) => e.value.toDouble()).toList();
+    if (chartValues.isEmpty) chartValues.add(0);
+    final maxValue = chartValues.reduce((a, b) => a > b ? a : b);
+    
+    // Unique days counts for average
+    final uniqueDays = history.map((e) => DateTime.parse(e['created_at']).toIso8601String().split('T')[0]).toSet().length;
+    final dailyAvg = uniqueDays > 0 ? (totalMalas / uniqueDays) : 0;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        children: [
+          PremiumUI.etherealCard(
+            padding: const EdgeInsets.all(24),
+            borderRadius: 24,
+            glowColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      timeframe.toUpperCase(),
+                      style: PremiumTokens.sansStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    const Icon(Iconsax.status_up, color: PremiumTokens.nebulaBlue, size: 20),
+                  ],
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  height: 120,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: chartValues.map((v) => _buildMiniBar(maxValue > 0 ? v / maxValue : 0)).toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          _buildSummaryItem("Total Malas", totalMalas.toStringAsFixed(1), PremiumTokens.nebulaBlue),
+          const SizedBox(height: 12),
+          _buildSummaryItem("Daily Average", dailyAvg.toStringAsFixed(1), Colors.white70),
+          const SizedBox(height: 12),
+          _buildSummaryItem("Peak Milestone", "$peakCount Chants", PremiumTokens.saffronGlow),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryItem(String label, String value, Color color) {
+    return PremiumUI.glassCard(
+      padding: const EdgeInsets.all(20),
+      borderRadius: 20,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: PremiumTokens.sansStyle(fontSize: 12, color: Colors.white70)),
+          Text(value, style: PremiumTokens.sansStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMiniBar(double heightFactor) {
+    return Container(
+      width: 12,
+      height: 120 * heightFactor,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          colors: [
+            PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+            PremiumTokens.nebulaBlue,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(6),
+      ),
     );
   }
 }
