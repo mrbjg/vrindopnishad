@@ -138,15 +138,8 @@ class ShareContentWidget extends StatelessWidget {
                     color: const Color(0xFFEDA638),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Center(
-                    child: Text(
-                      'व',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  child: Center(
+                    child: PremiumUI.logo(height: 16, color: Colors.black),
                   ),
                 ),
                 const SizedBox(width: 10),

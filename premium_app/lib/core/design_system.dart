@@ -9,6 +9,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'theme.dart';
+import '../widgets/sacred_ritual_alert.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// SANT-VAANI PREMIUM DESIGN SYSTEM
@@ -20,22 +21,25 @@ class PremiumTokens {
   // COLORS: Enhanced Palette
   // ═══════════════════════════════════════════════════════════════════════════
   static const Color charcoal = Color(0xFF020205); // Unified to voidBlack
-  static const Color voidBlack = Color(0xFF020205); 
-  static const Color voidPure = Color(0xFF000000); 
+  static const Color voidBlack = Color(0xFF020205);
+  static const Color voidPure = Color(0xFF000000);
   static const Color background = Color(0xFF020205);
-  static const Color surfaceCharcoal = Color(0xFF0A0A1F); // Deep blue-tinted surface
+  static const Color surfaceCharcoal = Color(
+    0xFF0A0A1F,
+  ); // Deep blue-tinted surface
   static const Color accentDark = Color(0xFF050510);
-  static const Color nebulaBlue = Color(0xFF256AF4); 
-  static const Color voidBlue = Color(0xFF0A0A1A); 
+  static const Color nebulaBlue = Color(0xFF256AF4);
+  static const Color voidBlue = Color(0xFF0A0A1A);
   static const Color primaryAccent = Color(0xFF256AF4); // Blue is now primary
   static const Color saffronGlow = Color(0xFFF2A60D); // Kept as subtle accent
   static const Color starlight = Color(0xFF93C5FD);
-  static const Color silverCloud = Color(0xFFC0C0CF); 
+  static const Color silverCloud = Color(0xFFC0C0CF);
   static const Color deepGold = Color(0xFFC5A059);
   static const Color celestialGlow = Color(0xFFAC92FF);
   static const Color voidIndigo = Color(0xFF0D0D1A);
   static const Color silver = Color(0xFFC0C0C8);
-  
+  static const Color starlightBlue = Color(0xFF93C5FD);
+
   // ═══════════════════════════════════════════════════════════════════════════
   // GRADIENTS: Immersive & Smooth
   // ═══════════════════════════════════════════════════════════════════════════
@@ -65,10 +69,7 @@ class PremiumTokens {
   static const LinearGradient goldGlassGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [
-      Color(0x33C5A059),
-      Color(0x11C5A059),
-    ],
+    colors: [Color(0x33C5A059), Color(0x11C5A059)],
   );
 
   static const LinearGradient nebulaGradient = LinearGradient(
@@ -102,10 +103,24 @@ class PremiumTokens {
     return BoxDecoration(
       color: (color ?? Colors.white).withValues(alpha: opacity),
       borderRadius: BorderRadius.circular(borderRadius),
-      border: border ?? Border.all(
-        color: Colors.white.withValues(alpha: 0.1),
-        width: 1.0,
-      ),
+      border:
+          border ??
+          Border.all(color: Colors.white.withValues(alpha: 0.12), width: 1.0),
+    );
+  }
+
+  static BoxDecoration indigoGlass({double opacity = 0.7}) {
+    return BoxDecoration(
+      color: voidIndigo.withValues(alpha: opacity),
+      borderRadius: BorderRadius.circular(40),
+      border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+      boxShadow: [
+        BoxShadow(
+          color: const Color(0xFF1E3A8A).withValues(alpha: 0.3),
+          blurRadius: 40,
+          spreadRadius: 2,
+        ),
+      ],
     );
   }
 
@@ -131,10 +146,7 @@ class PremiumTokens {
   static const LinearGradient glassReflection = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [
-      Color(0x80FFFFFF),
-      Color(0x00FFFFFF),
-    ],
+    colors: [Color(0x80FFFFFF), Color(0x00FFFFFF)],
     stops: [0.0, 0.5],
   );
 
@@ -176,6 +188,7 @@ class PremiumTokens {
       letterSpacing: letterSpacing,
     );
   }
+
   static TextStyle soulStyle({
     double fontSize = 24,
     Color color = Colors.white,
@@ -217,32 +230,97 @@ class _CelestialBreathingCurve extends Curve {
 class PremiumUI extends StatelessWidget {
   const PremiumUI({super.key});
 
+  /// Silver gradient text wrapper
+  static Widget silverText(
+    String text, {
+    required TextStyle style,
+    TextAlign textAlign = TextAlign.start,
+  }) {
+    return ShaderMask(
+      blendMode: BlendMode.srcIn,
+      shaderCallback: (bounds) => PremiumTokens.silverGradient.createShader(
+        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+      ),
+      child: Text(text, style: style, textAlign: textAlign),
+    );
+  }
+
+  /// Celestial pulsing icon for alerts
+  static Widget pulsingCelestialIcon({
+    required IconData icon,
+    double size = 48,
+  }) {
+    return Container(
+          width: size * 1.6,
+          height: size * 1.6,
+          decoration: BoxDecoration(
+            color: Colors.blue.withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Icon(icon, color: PremiumTokens.silver, size: size),
+          ),
+        )
+        .animate(onPlay: (c) => c.repeat(reverse: true))
+        .custom(
+          duration: 2.seconds,
+          builder: (context, value, child) => Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.blue.withValues(alpha: 0.2 * value),
+                  blurRadius: 20 * value,
+                  spreadRadius: 10 * value,
+                ),
+              ],
+            ),
+            child: child,
+          ),
+        );
+  }
+
   static Widget logo({double height = 40, Color? color}) {
     // Matrix to convert luminance to alpha (removes black backgrounds)
     const luminanceToAlpha = ColorFilter.matrix([
-      1, 0, 0, 0, 0,
-      0, 1, 0, 0, 0,
-      0, 0, 1, 0, 0,
-      0.2126, 0.7152, 0.0722, 0, 0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0.2126,
+      0.7152,
+      0.0722,
+      0,
+      0,
     ]);
 
     Widget logoImage = SvgPicture.asset(
       'assets/vaani.svg',
       height: height,
-      colorFilter: color != null ? ColorFilter.mode(color, BlendMode.srcIn) : luminanceToAlpha,
+      colorFilter: color != null
+          ? ColorFilter.mode(color, BlendMode.srcIn)
+          : luminanceToAlpha,
     );
 
-    // If a color is provided, we must strip the black background FIRST, 
+    // If a color is provided, we must strip the black background FIRST,
     // and THEN apply the srcIn tint filter to the resulting transparency.
     if (color != null) {
       return ColorFiltered(
         colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
         child: ColorFiltered(
           colorFilter: luminanceToAlpha,
-          child: SvgPicture.asset(
-            'assets/vaani.svg',
-            height: height,
-          ),
+          child: SvgPicture.asset('assets/vaani.svg', height: height),
         ),
       );
     }
@@ -254,7 +332,10 @@ class PremiumUI extends StatelessWidget {
     final effectiveColor = color ?? Colors.white;
     return logo(height: height, color: color)
         .animate(onPlay: (controller) => controller.repeat(reverse: true))
-        .shimmer(duration: 3.seconds, color: effectiveColor.withValues(alpha: 0.3))
+        .shimmer(
+          duration: 3.seconds,
+          color: effectiveColor.withValues(alpha: 0.3),
+        )
         .scale(
           begin: const Offset(1, 1),
           end: const Offset(1.05, 1.05),
@@ -262,7 +343,6 @@ class PremiumUI extends StatelessWidget {
           curve: Curves.easeInOutSine,
         );
   }
-
 
   /// Specific glass card for the Saffron Dashboard V2
   static Widget saffronGlassCard({
@@ -287,25 +367,13 @@ class PremiumUI extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
-        child: optimized 
-          ? Container(
-              padding: padding ?? const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: const Color(0xCC0A0A1F), // Solid high-performance surface
-                borderRadius: BorderRadius.circular(borderRadius),
-                border: Border.all(
-                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
-                  width: 1,
-                ),
-              ),
-              child: child,
-            )
-          : BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-              child: Container(
+        child: optimized
+            ? Container(
                 padding: padding ?? const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: const Color(0x990A0A1F),
+                  color: const Color(
+                    0xCC0A0A1F,
+                  ), // Solid high-performance surface
                   borderRadius: BorderRadius.circular(borderRadius),
                   border: Border.all(
                     color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
@@ -313,8 +381,22 @@ class PremiumUI extends StatelessWidget {
                   ),
                 ),
                 child: child,
+              )
+            : BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                child: Container(
+                  padding: padding ?? const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: const Color(0x990A0A1F),
+                    borderRadius: BorderRadius.circular(borderRadius),
+                    border: Border.all(
+                      color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                      width: 1,
+                    ),
+                  ),
+                  child: child,
+                ),
               ),
-            ),
       ),
     );
   }
@@ -333,34 +415,35 @@ class PremiumUI extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
         child: optimized
-          ? Container(
-              width: double.infinity, // Ensure bounded width for children (Expanded/Row)
-              padding: padding ?? const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: const Color(0xFF0F0F2D), // Deep solid void
-                borderRadius: BorderRadius.circular(borderRadius),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.08),
-                  width: 1,
-                ),
-              ),
-              child: child,
-            )
-          : BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-              child: Container(
+            ? Container(
+                width: double
+                    .infinity, // Ensure bounded width for children (Expanded/Row)
                 padding: padding ?? const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: const Color(0x1A2B2BEE),
+                  color: const Color(0xFF0F0F2D), // Deep solid void
                   borderRadius: BorderRadius.circular(borderRadius),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: Colors.white.withValues(alpha: 0.08),
                     width: 1,
                   ),
                 ),
                 child: child,
+              )
+            : BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                child: Container(
+                  padding: padding ?? const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: const Color(0x1A2B2BEE),
+                    borderRadius: BorderRadius.circular(borderRadius),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.1),
+                      width: 1,
+                    ),
+                  ),
+                  child: child,
+                ),
               ),
-            ),
       ),
     );
   }
@@ -368,7 +451,7 @@ class PremiumUI extends StatelessWidget {
   /// Rotating Nebula Disk for Audio Player
   static Widget nebulaDisk({
     required Widget child,
-    double size = 224, 
+    double size = 224,
     bool isPlaying = false,
     Color? accentColor,
   }) {
@@ -391,16 +474,22 @@ class PremiumUI extends StatelessWidget {
         children: [
           // Outer Glow Ring
           Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: activeColor.withValues(alpha: 0.2),
-                width: 1.5,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: activeColor.withValues(alpha: 0.2),
+                    width: 1.5,
+                  ),
+                ),
+              )
+              .animate(onPlay: (c) => isPlaying ? c.repeat() : c.stop())
+              .scale(
+                begin: const Offset(1, 1),
+                end: const Offset(1.1, 1.1),
+                duration: 2.seconds,
+                curve: Curves.easeInOut,
               ),
-            ),
-          ).animate(onPlay: (c) => isPlaying ? c.repeat() : c.stop())
-           .scale(begin: const Offset(1, 1), end: const Offset(1.1, 1.1), duration: 2.seconds, curve: Curves.easeInOut),
-          
+
           Container(
             margin: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -408,7 +497,9 @@ class PremiumUI extends StatelessWidget {
               color: Colors.black,
               border: Border.all(color: activeColor.withValues(alpha: 0.3)),
               image: const DecorationImage(
-                image: CachedNetworkImageProvider('https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=2662&auto=format&fit=crop'),
+                image: CachedNetworkImageProvider(
+                  'https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=2662&auto=format&fit=crop',
+                ),
                 fit: BoxFit.cover,
                 opacity: 0.3,
               ),
@@ -430,20 +521,23 @@ class PremiumUI extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: List.generate(30, (index) {
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 1.5),
-            width: 2.5,
-            decoration: BoxDecoration(
-              color: activeColor.withValues(alpha: 0.5 + (index % 5 / 10)),
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ).animate(onPlay: (c) => isPlaying ? c.repeat(reverse: true) : c.stop())
-           .custom(
-             duration: (500 + index * 50).ms,
-             builder: (context, value, child) {
-               final double h = 10 + (value * (15 + (index % 7) * 4));
-               return SizedBox(height: h, child: child);
-             }
-           );
+                margin: const EdgeInsets.symmetric(horizontal: 1.5),
+                width: 2.5,
+                decoration: BoxDecoration(
+                  color: activeColor.withValues(alpha: 0.5 + (index % 5 / 10)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              )
+              .animate(
+                onPlay: (c) => isPlaying ? c.repeat(reverse: true) : c.stop(),
+              )
+              .custom(
+                duration: (500 + index * 50).ms,
+                builder: (context, value, child) {
+                  final double h = 10 + (value * (15 + (index % 7) * 4));
+                  return SizedBox(height: h, child: child);
+                },
+              );
         }),
       ),
     );
@@ -484,10 +578,7 @@ class PremiumUI extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: Padding(
-                padding: padding,
-                child: child,
-              ),
+              child: Padding(padding: padding, child: child),
             ),
           ],
         ),
@@ -505,13 +596,16 @@ class PremiumUI extends StatelessWidget {
       builder: (context, constraints) {
         final width = constraints.maxWidth;
         // Ensure width is bounded for web/desktop or large screens
-        final effectiveWidth = width.isFinite ? width : MediaQuery.sizeOf(context).width;
-        final slotWidth = (effectiveWidth - 32) / 5; // Accounting for 16px horizontal padding
+        final effectiveWidth = width.isFinite
+            ? width
+            : MediaQuery.sizeOf(context).width;
+        final slotWidth =
+            (effectiveWidth - 32) / 5; // Accounting for 16px horizontal padding
         final capsuleWidth = 58.0;
         final capsuleHeight = 44.0;
 
         return Container(
-          height: 100, 
+          height: 100,
           width: effectiveWidth,
           padding: const EdgeInsets.only(bottom: 20, left: 16, right: 16),
           child: Stack(
@@ -543,7 +637,9 @@ class PremiumUI extends StatelessWidget {
                     AnimatedPositioned(
                       duration: const Duration(milliseconds: 350),
                       curve: Curves.fastOutSlowIn,
-                      left: (selectedIndex * slotWidth) + (slotWidth - capsuleWidth) / 2,
+                      left:
+                          (selectedIndex * slotWidth) +
+                          (slotWidth - capsuleWidth) / 2,
                       top: (70 - capsuleHeight) / 2,
                       child: Container(
                         width: capsuleWidth,
@@ -569,8 +665,9 @@ class PremiumUI extends StatelessWidget {
                         children: List.generate(items.length, (index) {
                           final item = items[index];
                           final isSelected = selectedIndex == index;
-                          
-                          if (index == 2) return const Expanded(child: SizedBox());
+
+                          if (index == 2)
+                            return const Expanded(child: SizedBox());
 
                           return Expanded(
                             child: _PremiumAnimatedNavButton(
@@ -603,8 +700,8 @@ class PremiumUI extends StatelessWidget {
     int? count,
   }) {
     return _SacredVoidButtonInternal(
-      onTap: onTap, 
-      onLongPressStart: onLongPressStart, 
+      onTap: onTap,
+      onLongPressStart: onLongPressStart,
       onLongPressMoveUpdate: onLongPressMoveUpdate,
       onLongPressEnd: onLongPressEnd,
       isActive: isActive,
@@ -627,7 +724,6 @@ class PremiumUI extends StatelessWidget {
     );
   }
 
-
   /// Generic glass card
   static Widget glassCard({
     required Widget child,
@@ -643,30 +739,32 @@ class PremiumUI extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
         child: optimized
-          ? Container(
-              padding: padding ?? const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: opacity * 1.5), // High-perf opacity
-                borderRadius: BorderRadius.circular(borderRadius),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.1),
-                  width: 1,
-                ),
-              ),
-              child: child,
-            )
-          : BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-              child: Container(
+            ? Container(
                 padding: padding ?? const EdgeInsets.all(20),
-                decoration: PremiumTokens.glassDecoration(
-                  blur: blur,
-                  opacity: opacity,
-                  borderRadius: borderRadius,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(
+                    alpha: opacity * 1.5,
+                  ), // High-perf opacity
+                  borderRadius: BorderRadius.circular(borderRadius),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.1),
+                    width: 1,
+                  ),
                 ),
                 child: child,
+              )
+            : BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                child: Container(
+                  padding: padding ?? const EdgeInsets.all(20),
+                  decoration: PremiumTokens.glassDecoration(
+                    blur: blur,
+                    opacity: opacity,
+                    borderRadius: borderRadius,
+                  ),
+                  child: child,
+                ),
               ),
-            ),
       ),
     );
   }
@@ -685,13 +783,15 @@ class PremiumUI extends StatelessWidget {
       margin: margin,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: showGlow ? [
-          BoxShadow(
-            color: activeGlow.withValues(alpha: 0.08),
-            blurRadius: 30,
-            spreadRadius: -10,
-          ),
-        ] : [],
+        boxShadow: showGlow
+            ? [
+                BoxShadow(
+                  color: activeGlow.withValues(alpha: 0.08),
+                  blurRadius: 30,
+                  spreadRadius: -10,
+                ),
+              ]
+            : [],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
@@ -721,6 +821,7 @@ class PremiumUI extends StatelessWidget {
       ),
     );
   }
+
 
   /// Premium ethereal capsule button
   static Widget etherealButton({
@@ -752,7 +853,9 @@ class PremiumUI extends StatelessWidget {
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
             child: Container(
-              padding: padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+              padding:
+                  padding ??
+                  const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
               decoration: BoxDecoration(
                 color: activeColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(borderRadius),
@@ -798,7 +901,7 @@ class PremiumUI extends StatelessWidget {
     // 0: Home, 1: Library, 4: Profile -> Bokeh
     // 2: Naam Jap, 3: Journal -> Void
     final isVoid = index == 2 || index == 3;
-    
+
     return Container(
       decoration: const BoxDecoration(color: PremiumTokens.voidBlack),
       child: Stack(
@@ -818,30 +921,44 @@ class PremiumUI extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Primary Nebula Flare
           _buildBokeh(
-            top: -100, 
-            right: -50, 
-            size: 400, 
-            color: PremiumTokens.nebulaBlue.withValues(alpha: isVoid ? 0.12 : 0.08)
+            top: -100,
+            right: -50,
+            size: 400,
+            color: PremiumTokens.nebulaBlue.withValues(
+              alpha: isVoid ? 0.12 : 0.08,
+            ),
           ),
-          
+
           // Transitionary Elements
           if (isVoid) ...[
-            _buildBokeh(bottom: -50, left: -50, size: 350, color: PremiumTokens.nebulaBlue.withValues(alpha: 0.06)),
+            _buildBokeh(
+              bottom: -50,
+              left: -50,
+              size: 350,
+              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.06),
+            ),
             _buildMoon(bottom: 120, left: 60, size: 80),
           ] else ...[
-             _buildBokeh(bottom: -100, left: -50, size: 300, color: PremiumTokens.celestialGlow.withValues(alpha: 0.04)),
-             _buildMoon(top: 60, left: 40, size: 60),
+            _buildBokeh(
+              bottom: -100,
+              left: -50,
+              size: 300,
+              color: PremiumTokens.celestialGlow.withValues(alpha: 0.04),
+            ),
+            _buildMoon(top: 60, left: 40, size: 60),
           ],
-          
+
           // Unified Planet (Subtle)
           _buildPlanet(
-            top: isVoid ? 200 : 120, 
-            right: isVoid ? 80 : 60, 
-            size: 30, 
-            color: isVoid ? Colors.deepPurpleAccent.withValues(alpha: 0.2) : Colors.blueAccent.withValues(alpha: 0.15)
+            top: isVoid ? 200 : 120,
+            right: isVoid ? 80 : 60,
+            size: 30,
+            color: isVoid
+                ? Colors.deepPurpleAccent.withValues(alpha: 0.2)
+                : Colors.blueAccent.withValues(alpha: 0.15),
           ),
         ],
       ),
@@ -861,7 +978,9 @@ class PremiumUI extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: CachedNetworkImageProvider('https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?auto=format&fit=crop&w=800&q=80'),
+              image: CachedNetworkImageProvider(
+                'https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?auto=format&fit=crop&w=800&q=80',
+              ),
               repeat: ImageRepeat.repeat,
               scale: 0.5,
             ),
@@ -882,7 +1001,14 @@ class PremiumUI extends StatelessWidget {
     );
   }
 
-  static Widget _buildBokeh({double? top, double? bottom, double? left, double? right, required double size, required Color color}) {
+  static Widget _buildBokeh({
+    double? top,
+    double? bottom,
+    double? left,
+    double? right,
+    required double size,
+    required Color color,
+  }) {
     return Positioned(
       top: top,
       bottom: bottom,
@@ -893,15 +1019,19 @@ class PremiumUI extends StatelessWidget {
         height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          gradient: RadialGradient(
-            colors: [color, Colors.transparent],
-          ),
+          gradient: RadialGradient(colors: [color, Colors.transparent]),
         ),
       ),
     );
   }
 
-  static Widget _buildMoon({double? top, double? bottom, double? left, double? right, required double size}) {
+  static Widget _buildMoon({
+    double? top,
+    double? bottom,
+    double? left,
+    double? right,
+    required double size,
+  }) {
     final body = Container(
       width: size,
       height: size,
@@ -915,9 +1045,7 @@ class PremiumUI extends StatelessWidget {
           ),
         ],
       ),
-      child: CustomPaint(
-        painter: _CrescentMoonPainter(),
-      ),
+      child: CustomPaint(painter: _CrescentMoonPainter()),
     );
 
     return Positioned(
@@ -926,16 +1054,29 @@ class PremiumUI extends StatelessWidget {
       left: left,
       right: right,
       child: RepaintBoundary(
-        child: AppTheme.lowPerformanceMode 
-          ? body 
-          : body.animate(onPlay: (c) => c.repeat(reverse: true))
-              .fadeIn(duration: 2.seconds)
-              .moveY(begin: 0, end: -10, duration: 4.seconds, curve: Curves.easeInOut),
+        child: AppTheme.lowPerformanceMode
+            ? body
+            : body
+                  .animate(onPlay: (c) => c.repeat(reverse: true))
+                  .fadeIn(duration: 2.seconds)
+                  .moveY(
+                    begin: 0,
+                    end: -10,
+                    duration: 4.seconds,
+                    curve: Curves.easeInOut,
+                  ),
       ),
     );
   }
 
-  static Widget _buildPlanet({double? top, double? bottom, double? left, double? right, required double size, required Color color}) {
+  static Widget _buildPlanet({
+    double? top,
+    double? bottom,
+    double? left,
+    double? right,
+    required double size,
+    required Color color,
+  }) {
     return Positioned(
       top: top,
       bottom: bottom,
@@ -949,13 +1090,14 @@ class PremiumUI extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: RadialGradient(
-              colors: [color.withValues(alpha: 0.8), color.withValues(alpha: 0.1), Colors.transparent],
+              colors: [
+                color.withValues(alpha: 0.8),
+                color.withValues(alpha: 0.1),
+                Colors.transparent,
+              ],
             ),
             boxShadow: [
-              BoxShadow(
-                color: color.withValues(alpha: 0.3),
-                blurRadius: 20,
-              ),
+              BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 20),
             ],
           ),
           child: CustomPaint(
@@ -1050,7 +1192,7 @@ class PremiumUI extends StatelessWidget {
   // ═══════════════════════════════════════════════════════════════════════════
   // ICONS: Animated & Custom Assets
   // ═══════════════════════════════════════════════════════════════════════════
-  
+
   static const String animRoot = 'assets/animated_icons/';
   static const String svgRoot = 'assets/iconsax/';
 
@@ -1084,12 +1226,16 @@ class PremiumUI extends StatelessWidget {
     double size = 24,
     Color? color,
   }) {
-    final String path = fileName.startsWith('assets/') ? fileName : '$svgRoot$fileName';
+    final String path = fileName.startsWith('assets/')
+        ? fileName
+        : '$svgRoot$fileName';
     return SvgPicture.asset(
       path,
       width: size,
       height: size,
-      colorFilter: color != null ? ColorFilter.mode(color, BlendMode.srcIn) : null,
+      colorFilter: color != null
+          ? ColorFilter.mode(color, BlendMode.srcIn)
+          : null,
       fit: BoxFit.contain,
     );
   }
@@ -1116,27 +1262,35 @@ class PremiumUI extends StatelessWidget {
       fit: fit,
       width: width,
       height: height,
-      memCacheWidth: width != null ? (width * 2).toInt() : null, // Limit memory cache
+      memCacheWidth: width != null
+          ? (width * 2).toInt()
+          : null, // Limit memory cache
       errorWidget: (context, url, error) {
         print("Image Loading Error: $error");
         return Container(
           width: width,
           height: height,
           color: PremiumTokens.accentDark,
-          child: const Icon(Icons.broken_image, color: Colors.redAccent, size: 20),
+          child: const Icon(
+            Icons.broken_image,
+            color: Colors.redAccent,
+            size: 20,
+          ),
         );
       },
-      placeholder: (context, url) => placeholder ?? Container(
-        width: width,
-        height: height,
-        color: PremiumTokens.accentDark.withValues(alpha: 0.5),
-        child: const Center(
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation(PremiumTokens.nebulaBlue),
+      placeholder: (context, url) =>
+          placeholder ??
+          Container(
+            width: width,
+            height: height,
+            color: PremiumTokens.accentDark.withValues(alpha: 0.5),
+            child: const Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation(PremiumTokens.nebulaBlue),
+              ),
+            ),
           ),
-        ),
-      ),
     );
 
     if (borderRadius != null) {
@@ -1155,10 +1309,7 @@ class PremiumUI extends StatelessWidget {
       duration: duration,
       opacity: isFocusMode ? 0.0 : 1.0,
       curve: Curves.easeInOut,
-      child: IgnorePointer(
-        ignoring: isFocusMode,
-        child: child,
-      ),
+      child: IgnorePointer(ignoring: isFocusMode, child: child),
     );
   }
 
@@ -1168,16 +1319,27 @@ class PremiumUI extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(width: width, height: 1, decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [Colors.transparent, activeColor])
-        )),
+        Container(
+          width: width,
+          height: 1,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(colors: [Colors.transparent, activeColor]),
+          ),
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text("ॐ", style: GoogleFonts.spectral(color: activeColor, fontSize: 18)),
+          child: Text(
+            "ॐ",
+            style: GoogleFonts.spectral(color: activeColor, fontSize: 18),
+          ),
         ),
-        Container(width: width, height: 1, decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [activeColor, Colors.transparent])
-        )),
+        Container(
+          width: width,
+          height: 1,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(colors: [activeColor, Colors.transparent]),
+          ),
+        ),
       ],
     );
   }
@@ -1189,7 +1351,8 @@ class PremiumUI extends StatelessWidget {
     double endScale = 1.05,
     Duration duration = const Duration(milliseconds: 4000),
   }) {
-    return child.animate(onPlay: (c) => c.repeat(reverse: true))
+    return child
+        .animate(onPlay: (c) => c.repeat(reverse: true))
         .scale(
           begin: Offset(beginScale, beginScale),
           end: Offset(endScale, endScale),
@@ -1244,13 +1407,13 @@ class PremiumUI extends StatelessWidget {
 
   /// Premium Notification / Custom SnackBar
   static void showNotification(
-    BuildContext context, 
+    BuildContext context,
     String message, {
-    IconData? icon, 
+    IconData? icon,
     Color? color,
   }) {
     late OverlayEntry overlayEntry;
-    
+
     overlayEntry = OverlayEntry(
       builder: (context) => _PremiumNotificationOverlay(
         message: message,
@@ -1270,15 +1433,13 @@ class PremiumUI extends StatelessWidget {
     required String nextStep,
     required VoidCallback onBegin,
   }) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) => _SacredCallAlert(
-        ritualName: ritualName,
-        nextStep: nextStep,
-        onBegin: onBegin,
-      ),
+    SacredRitualAlert.show(
+      context,
+      title: "Sacred Call",
+      description: nextStep,
+      ritualTitle: ritualName,
+      onBegin: onBegin,
+      onRemind: () => Navigator.pop(context),
     );
   }
 
@@ -1302,10 +1463,13 @@ class _PremiumNotificationOverlay extends StatefulWidget {
   });
 
   @override
-  State<_PremiumNotificationOverlay> createState() => _PremiumNotificationOverlayState();
+  State<_PremiumNotificationOverlay> createState() =>
+      _PremiumNotificationOverlayState();
 }
 
-class _PremiumNotificationOverlayState extends State<_PremiumNotificationOverlay> with SingleTickerProviderStateMixin {
+class _PremiumNotificationOverlayState
+    extends State<_PremiumNotificationOverlay>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _offsetAnimation;
 
@@ -1320,10 +1484,7 @@ class _PremiumNotificationOverlayState extends State<_PremiumNotificationOverlay
     _offsetAnimation = Tween<Offset>(
       begin: const Offset(0.0, -1.5),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutBack,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
 
     _controller.forward();
 
@@ -1375,73 +1536,85 @@ class _SacredNotification extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.03),
-        borderRadius: BorderRadius.circular(40),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(40),
-        child: AppTheme.lowPerformanceMode
-          ? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: Row(
-                children: [
-                  _buildNotificationIcon(),
-                  const SizedBox(width: 16),
-                  _buildNotificationContent(),
-                ],
-              ),
-            )
-          : BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                child: Row(
-                  children: [
-                    _buildNotificationIcon(),
-                    const SizedBox(width: 16),
-                    _buildNotificationContent(),
-                  ],
-                ),
-              ),
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.03),
+            borderRadius: BorderRadius.circular(40),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.1),
+              width: 1,
             ),
-      ),
-    ).animate().slideY(begin: -1.0, end: 0.0, curve: Curves.easeOutQuart, duration: 600.ms)
-               .fadeIn(duration: 300.ms);
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(40),
+            child: AppTheme.lowPerformanceMode
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 16,
+                    ),
+                    child: Row(
+                      children: [
+                        _buildNotificationIcon(),
+                        const SizedBox(width: 16),
+                        _buildNotificationContent(),
+                      ],
+                    ),
+                  )
+                : BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 16,
+                      ),
+                      child: Row(
+                        children: [
+                          _buildNotificationIcon(),
+                          const SizedBox(width: 16),
+                          _buildNotificationContent(),
+                        ],
+                      ),
+                    ),
+                  ),
+          ),
+        )
+        .animate()
+        .slideY(
+          begin: -1.0,
+          end: 0.0,
+          curve: Curves.easeOutQuart,
+          duration: 600.ms,
+        )
+        .fadeIn(duration: 300.ms);
   }
 
   Widget _buildNotificationIcon() {
     return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Center(
-        child: icon != null 
-          ? Icon(icon, color: PremiumTokens.silver, size: 28)
-          : Text(
-              "व",
-              style: GoogleFonts.notoSansDevanagari(
-                color: PremiumTokens.silver,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                shadows: [Shadow(color: PremiumTokens.silver.withValues(alpha: 0.5), blurRadius: 8)],
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.2),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
               ),
-            ),
-      ),
-    ).animate(onPlay: (controller) => controller.repeat())
-     .shimmer(duration: 3.seconds, color: Colors.white.withValues(alpha: 0.2));
+            ],
+          ),
+          child: Center(
+            child: icon != null
+                ? Icon(icon, color: PremiumTokens.silver, size: 28)
+                : PremiumUI.logo(height: 28, color: PremiumTokens.silver),
+          ),
+        )
+        .animate(onPlay: (controller) => controller.repeat())
+        .shimmer(
+          duration: 3.seconds,
+          color: Colors.white.withValues(alpha: 0.2),
+        );
   }
 
   Widget _buildNotificationContent() {
@@ -1473,7 +1646,8 @@ class _SacredNotification extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           ShaderMask(
-            shaderCallback: (bounds) => PremiumTokens.silverGradient.createShader(bounds),
+            shaderCallback: (bounds) =>
+                PremiumTokens.silverGradient.createShader(bounds),
             child: Text(
               message.split('\n')[0],
               style: GoogleFonts.spectral(
@@ -1511,8 +1685,12 @@ class _PlanetRingsPainter extends CustomPainter {
       ..strokeWidth = 1;
 
     final center = Offset(size.width / 2, size.height / 2);
-    final rect = Rect.fromCenter(center: center, width: size.width * 1.8, height: size.height * 0.4);
-    
+    final rect = Rect.fromCenter(
+      center: center,
+      width: size.width * 1.8,
+      height: size.height * 0.4,
+    );
+
     // Rotate the rings slightly
     canvas.save();
     canvas.translate(center.dx, center.dy);
@@ -1547,16 +1725,18 @@ class _CrescentMoonPainter extends CustomPainter {
       ..addOval(Rect.fromCircle(center: center, radius: radius));
 
     final path2 = Path()
-      ..addOval(Rect.fromCircle(
-        center: center.translate(radius * 0.4, -radius * 0.15),
-        radius: radius * 0.95,
-      ));
+      ..addOval(
+        Rect.fromCircle(
+          center: center.translate(radius * 0.4, -radius * 0.15),
+          radius: radius * 0.95,
+        ),
+      );
 
     // Subtract path2 from path1 to create a crescent
     final crescentPath = Path.combine(PathOperation.difference, path1, path2);
 
     canvas.drawPath(crescentPath, moonPaint);
-    
+
     // Add a tiny glow to the tips
     final glowPaint = Paint()
       ..color = Colors.white.withValues(alpha: 0.3)
@@ -1586,10 +1766,12 @@ class _SacredVoidButtonInternal extends StatefulWidget {
   });
 
   @override
-  State<_SacredVoidButtonInternal> createState() => _SacredVoidButtonInternalState();
+  State<_SacredVoidButtonInternal> createState() =>
+      _SacredVoidButtonInternalState();
 }
 
-class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal> with SingleTickerProviderStateMixin {
+class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
@@ -1622,7 +1804,7 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal> wi
   }
 
   void _handleTap() {
-    HapticFeedback.mediumImpact(); 
+    HapticFeedback.mediumImpact();
     widget.onTap();
     if (_controller.duration != null) {
       _controller.forward(from: 0.0).then((_) {
@@ -1670,8 +1852,11 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal> wi
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: (widget.isActive ? PremiumTokens.saffronGlow : PremiumTokens.nebulaBlue)
-                      .withValues(alpha: widget.isActive ? 0.3 : 0.25),
+                  color:
+                      (widget.isActive
+                              ? PremiumTokens.saffronGlow
+                              : PremiumTokens.nebulaBlue)
+                          .withValues(alpha: widget.isActive ? 0.3 : 0.25),
                   blurRadius: widget.isActive ? 30 : 25,
                   spreadRadius: widget.isActive ? 2 : 1,
                 ),
@@ -1685,9 +1870,13 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal> wi
             height: 58,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFF03030F).withValues(alpha: 0.9), // Near-black void
+              color: const Color(
+                0xFF03030F,
+              ).withValues(alpha: 0.9), // Near-black void
               border: Border.all(
-                color: (widget.isActive ? PremiumTokens.saffronGlow : Colors.white).withValues(alpha: 0.4),
+                color:
+                    (widget.isActive ? PremiumTokens.saffronGlow : Colors.white)
+                        .withValues(alpha: 0.4),
                 width: 1.5,
               ),
               boxShadow: [
@@ -1701,47 +1890,57 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal> wi
             ),
             child: Center(
               child: widget.count != null && widget.count! > 0
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min, // Ensure min size
-                          children: [
-                            const Icon(Iconsax.heart5, color: Colors.white, size: 24)
-                                .animate(onPlay: (c) => c.repeat(reverse: true))
-                                .scale(begin: const Offset(1,1), end: const Offset(1.2, 1.2), duration: 800.ms),
-                            const SizedBox(height: 2),
-                            Text(
-                              widget.count.toString(),
-                              style: GoogleFonts.spectral(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min, // Ensure min size
+                        children: [
+                          const Icon(
+                                Iconsax.heart5,
                                 color: Colors.white,
+                                size: 24,
+                              )
+                              .animate(onPlay: (c) => c.repeat(reverse: true))
+                              .scale(
+                                begin: const Offset(1, 1),
+                                end: const Offset(1.2, 1.2),
+                                duration: 800.ms,
                               ),
+                          const SizedBox(height: 2),
+                          Text(
+                            widget.count.toString(),
+                            style: GoogleFonts.spectral(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
-                          ],
-                        ),
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: ColorFiltered(
-                          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                          child: Lottie.asset(
-                            'assets/animated_icons/Heart/heart.json',
-                            controller: _controller,
-                            width: 44,
-                            height: 44,
-                            repeat: false,
-                            animate: false,
-                            onLoaded: (composition) {
-                              _controller.duration = composition.duration;
-                              _controller.value = 0.0;
-                            },
                           ),
+                        ],
+                      ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: ColorFiltered(
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
+                        child: Lottie.asset(
+                          'assets/animated_icons/Heart/heart.json',
+                          controller: _controller,
+                          width: 44,
+                          height: 44,
+                          repeat: false,
+                          animate: false,
+                          onLoaded: (composition) {
+                            _controller.duration = composition.duration;
+                            _controller.value = 0.0;
+                          },
                         ),
                       ),
+                    ),
             ),
           ),
-          
         ],
       ),
     );
@@ -1762,10 +1961,12 @@ class _PremiumAnimatedNavButton extends StatefulWidget {
   });
 
   @override
-  State<_PremiumAnimatedNavButton> createState() => _PremiumAnimatedNavButtonState();
+  State<_PremiumAnimatedNavButton> createState() =>
+      _PremiumAnimatedNavButtonState();
 }
 
-class _PremiumAnimatedNavButtonState extends State<_PremiumAnimatedNavButton> with SingleTickerProviderStateMixin {
+class _PremiumAnimatedNavButtonState extends State<_PremiumAnimatedNavButton>
+    with SingleTickerProviderStateMixin {
   late AnimationController _pulseController;
   late Animation<double> _scaleAnimation;
 
@@ -1777,8 +1978,20 @@ class _PremiumAnimatedNavButtonState extends State<_PremiumAnimatedNavButton> wi
       duration: const Duration(milliseconds: 400),
     );
     _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.2).chain(CurveTween(curve: Curves.easeOut)), weight: 50),
-      TweenSequenceItem(tween: Tween(begin: 1.2, end: 1.0).chain(CurveTween(curve: Curves.easeIn)), weight: 50),
+      TweenSequenceItem(
+        tween: Tween(
+          begin: 1.0,
+          end: 1.2,
+        ).chain(CurveTween(curve: Curves.easeOut)),
+        weight: 50,
+      ),
+      TweenSequenceItem(
+        tween: Tween(
+          begin: 1.2,
+          end: 1.0,
+        ).chain(CurveTween(curve: Curves.easeIn)),
+        weight: 50,
+      ),
     ]).animate(_pulseController);
   }
 
@@ -1806,7 +2019,9 @@ class _PremiumAnimatedNavButtonState extends State<_PremiumAnimatedNavButton> wi
           ScaleTransition(
             scale: _scaleAnimation,
             child: PremiumUI.customIcon(
-              fileName: widget.isSelected ? widget.item.activeIconSvg : widget.item.iconSvg,
+              fileName: widget.isSelected
+                  ? widget.item.activeIconSvg
+                  : widget.item.iconSvg,
               color: widget.isSelected ? Colors.white : Colors.white24,
               size: 24,
             ),
@@ -1849,10 +2064,12 @@ class _PremiumInteractiveIcon extends StatefulWidget {
   });
 
   @override
-  State<_PremiumInteractiveIcon> createState() => _PremiumInteractiveIconState();
+  State<_PremiumInteractiveIcon> createState() =>
+      _PremiumInteractiveIconState();
 }
 
-class _PremiumInteractiveIconState extends State<_PremiumInteractiveIcon> with SingleTickerProviderStateMixin {
+class _PremiumInteractiveIconState extends State<_PremiumInteractiveIcon>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -1893,10 +2110,12 @@ class _PremiumInteractiveIconState extends State<_PremiumInteractiveIcon> with S
     if (widget.onTap != null) {
       widget.onTap!();
     }
-    
+
     // Manual trigger for non-toggle icons (like share, send, or back button)
     // For toggle icons, didUpdateWidget handles the animation transition
-    if (_controller.duration != null && !widget.isToggled && widget.resetAfterPlay) {
+    if (_controller.duration != null &&
+        !widget.isToggled &&
+        widget.resetAfterPlay) {
       _controller.forward(from: 0.0).then((_) {
         if (mounted && !widget.isToggled) {
           _controller.value = 0.0;
@@ -1934,11 +2153,7 @@ class _PremiumInteractiveIconState extends State<_PremiumInteractiveIcon> with S
     return GestureDetector(
       onTap: _handleTap,
       behavior: HitTestBehavior.opaque,
-      child: SizedBox(
-        width: widget.size,
-        height: widget.size,
-        child: lottie,
-      ),
+      child: SizedBox(width: widget.size, height: widget.size, child: lottie),
     );
   }
 }
@@ -1975,7 +2190,7 @@ class SacredActionMenuState extends State<SacredActionMenu> {
       HapticFeedback.mediumImpact();
       widget.items[_hoveredIndex].onTap();
     }
-    
+
     if (mounted) {
       setState(() => _isVisible = false);
       Future.delayed(const Duration(milliseconds: 300), widget.onClose);
@@ -2027,11 +2242,13 @@ class SacredActionMenuState extends State<SacredActionMenu> {
   Offset _getItemPosition(int index) {
     const double startAngle = 3.14159 + 0.3;
     const double endAngle = 2 * 3.14159 - 0.3;
-    final double angleStep = (endAngle - startAngle) / (widget.items.length - 1);
+    final double angleStep =
+        (endAngle - startAngle) / (widget.items.length - 1);
     final double angle = startAngle + (index * angleStep);
     const double radius = 140.0;
 
-    return widget.position + Offset(radius * math.cos(angle), radius * math.sin(angle));
+    return widget.position +
+        Offset(radius * math.cos(angle), radius * math.sin(angle));
   }
 
   void _handleClose() {
@@ -2055,21 +2272,25 @@ class SacredActionMenuState extends State<SacredActionMenu> {
               builder: (context, value, child) => Container(
                 color: Colors.black.withValues(alpha: value * 0.7),
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: value * 5, sigmaY: value * 5),
+                  filter: ImageFilter.blur(
+                    sigmaX: value * 5,
+                    sigmaY: value * 5,
+                  ),
                   child: Container(color: Colors.transparent),
                 ),
               ),
             ),
           ),
-          
+
           // Menu Items in an Arc
           ...List.generate(widget.items.length, (index) {
             final item = widget.items[index];
-            
+
             // Layout logic: Items spread in an arc above the tap point
             const double startAngle = 3.14159 + 0.3; // Top-leftish
             const double endAngle = 2 * 3.14159 - 0.3; // Top-rightish
-            final double angleStep = (endAngle - startAngle) / (widget.items.length - 1);
+            final double angleStep =
+                (endAngle - startAngle) / (widget.items.length - 1);
             final double angle = startAngle + (index * angleStep);
             const double radius = 140.0;
 
@@ -2094,56 +2315,63 @@ class SacredActionMenuState extends State<SacredActionMenu> {
               ),
             );
           }),
-          
+
           // Original Tap Point Indicator / Icon Sync
           Positioned(
-            left: widget.position.dx - 35,
-            top: widget.position.dy - 35,
-            child: GestureDetector(
-              onTap: _handleClose,
-              child: Hero(
-                tag: 'sacred_void_center',
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: 70,
-                  height: 70,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _hoveredIndex != -1 
-                      ? widget.items[_hoveredIndex].color.withValues(alpha: 0.2)
-                      : Colors.white.withValues(alpha: 0.1),
-                    border: Border.all(
-                      color: _hoveredIndex != -1 
-                        ? widget.items[_hoveredIndex].color.withValues(alpha: 0.6)
-                        : Colors.white.withValues(alpha: 0.3),
-                      width: 2,
-                    ),
-                    boxShadow: [
-                      if (_hoveredIndex != -1)
-                        BoxShadow(
-                          color: widget.items[_hoveredIndex].color.withValues(alpha: 0.4),
-                          blurRadius: 20,
-                          spreadRadius: 5,
+                left: widget.position.dx - 35,
+                top: widget.position.dy - 35,
+                child: GestureDetector(
+                  onTap: _handleClose,
+                  child: Hero(
+                    tag: 'sacred_void_center',
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      width: 70,
+                      height: 70,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _hoveredIndex != -1
+                            ? widget.items[_hoveredIndex].color.withValues(
+                                alpha: 0.2,
+                              )
+                            : Colors.white.withValues(alpha: 0.1),
+                        border: Border.all(
+                          color: _hoveredIndex != -1
+                              ? widget.items[_hoveredIndex].color.withValues(
+                                  alpha: 0.6,
+                                )
+                              : Colors.white.withValues(alpha: 0.3),
+                          width: 2,
                         ),
-                    ],
-                  ),
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 200),
-                    child: Icon(
-                      _hoveredIndex != -1 
-                        ? widget.items[_hoveredIndex].icon 
-                        : Icons.close, 
-                      key: ValueKey(_hoveredIndex),
-                      color: _hoveredIndex != -1 
-                        ? widget.items[_hoveredIndex].color
-                        : Colors.white, 
-                      size: _hoveredIndex != -1 ? 30 : 24,
+                        boxShadow: [
+                          if (_hoveredIndex != -1)
+                            BoxShadow(
+                              color: widget.items[_hoveredIndex].color
+                                  .withValues(alpha: 0.4),
+                              blurRadius: 20,
+                              spreadRadius: 5,
+                            ),
+                        ],
+                      ),
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 200),
+                        child: Icon(
+                          _hoveredIndex != -1
+                              ? widget.items[_hoveredIndex].icon
+                              : Icons.close,
+                          key: ValueKey(_hoveredIndex),
+                          color: _hoveredIndex != -1
+                              ? widget.items[_hoveredIndex].color
+                              : Colors.white,
+                          size: _hoveredIndex != -1 ? 30 : 24,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          ).animate(target: _isVisible ? 1 : 0).scale(begin: const Offset(0.5, 0.5), end: const Offset(1, 1)),
+              )
+              .animate(target: _isVisible ? 1 : 0)
+              .scale(begin: const Offset(0.5, 0.5), end: const Offset(1, 1)),
         ],
       ),
     );
@@ -2154,31 +2382,42 @@ class SacredActionMenuState extends State<SacredActionMenu> {
       mainAxisSize: MainAxisSize.min,
       children: [
         AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          width: isSelected ? 80 : 65,
-          height: isSelected ? 80 : 65,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isSelected ? item.color.withValues(alpha: 0.9) : PremiumTokens.voidBlack.withValues(alpha: 0.9),
-            border: Border.all(color: item.color.withValues(alpha: isSelected ? 0.8 : 0.4), width: isSelected ? 3 : 1.5),
-            boxShadow: [
-              BoxShadow(
-                color: item.color.withValues(alpha: isSelected ? 0.6 : 0.2),
-                blurRadius: isSelected ? 25 : 15,
-                spreadRadius: isSelected ? 5 : 2,
+              duration: const Duration(milliseconds: 200),
+              width: isSelected ? 80 : 65,
+              height: isSelected ? 80 : 65,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected
+                    ? item.color.withValues(alpha: 0.9)
+                    : PremiumTokens.voidBlack.withValues(alpha: 0.9),
+                border: Border.all(
+                  color: item.color.withValues(alpha: isSelected ? 0.8 : 0.4),
+                  width: isSelected ? 3 : 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: item.color.withValues(alpha: isSelected ? 0.6 : 0.2),
+                    blurRadius: isSelected ? 25 : 15,
+                    spreadRadius: isSelected ? 5 : 2,
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Center(
-            child: Icon(
-              item.icon, 
-              color: isSelected ? PremiumTokens.voidBlack : Colors.white, 
-              size: isSelected ? 32 : 26,
-            ),
-          ),
-        ).animate(target: _isVisible ? 1 : 0)
-         .scale(begin: const Offset(0, 0), end: const Offset(1, 1), curve: Curves.elasticOut, duration: 500.ms)
-         .fadeIn(duration: 200.ms),
+              child: Center(
+                child: Icon(
+                  item.icon,
+                  color: isSelected ? PremiumTokens.voidBlack : Colors.white,
+                  size: isSelected ? 32 : 26,
+                ),
+              ),
+            )
+            .animate(target: _isVisible ? 1 : 0)
+            .scale(
+              begin: const Offset(0, 0),
+              end: const Offset(1, 1),
+              curve: Curves.elasticOut,
+              duration: 500.ms,
+            )
+            .fadeIn(duration: 200.ms),
         const SizedBox(height: 8),
         Material(
           color: Colors.transparent,
@@ -2188,7 +2427,9 @@ class SacredActionMenuState extends State<SacredActionMenu> {
               fontSize: isSelected ? 11 : 9,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.5,
-              color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.8),
+              color: isSelected
+                  ? Colors.white
+                  : Colors.white.withValues(alpha: 0.8),
             ),
           ),
         ).animate(target: _isVisible ? 1 : 0).fadeIn(delay: 200.ms),
@@ -2213,9 +2454,9 @@ class SacredMenuItem {
 
 /// Helper to trigger the Pinterest-style Overlay Menu
 void showSacredMenu(
-  BuildContext context, 
-  Offset position, 
-  List<SacredMenuItem> items, 
+  BuildContext context,
+  Offset position,
+  List<SacredMenuItem> items,
   ValueNotifier<Offset?>? pointerPosition, {
   Key? key,
 }) {
@@ -2247,10 +2488,13 @@ class _PremiumNaamJapCounterInternal extends StatefulWidget {
   });
 
   @override
-  State<_PremiumNaamJapCounterInternal> createState() => _PremiumNaamJapCounterInternalState();
+  State<_PremiumNaamJapCounterInternal> createState() =>
+      _PremiumNaamJapCounterInternalState();
 }
 
-class _PremiumNaamJapCounterInternalState extends State<_PremiumNaamJapCounterInternal> with TickerProviderStateMixin {
+class _PremiumNaamJapCounterInternalState
+    extends State<_PremiumNaamJapCounterInternal>
+    with TickerProviderStateMixin {
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
   late AnimationController _pressController;
@@ -2294,7 +2538,9 @@ class _PremiumNaamJapCounterInternalState extends State<_PremiumNaamJapCounterIn
   void didUpdateWidget(_PremiumNaamJapCounterInternal oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.count != oldWidget.count) {
-      _pulseController.forward(from: 0.0).then((_) => _pulseController.reverse());
+      _pulseController
+          .forward(from: 0.0)
+          .then((_) => _pulseController.reverse());
     }
   }
 
@@ -2304,15 +2550,27 @@ class _PremiumNaamJapCounterInternalState extends State<_PremiumNaamJapCounterIn
 
     return GestureDetector(
       onTapDown: (_) {
-        _pressController.animateTo(1.0, curve: Curves.easeOutCubic, duration: const Duration(milliseconds: 150));
+        _pressController.animateTo(
+          1.0,
+          curve: Curves.easeOutCubic,
+          duration: const Duration(milliseconds: 150),
+        );
       },
       onTapUp: (_) {
-        _pressController.animateTo(0.0, curve: Curves.easeOutBack, duration: const Duration(milliseconds: 400));
+        _pressController.animateTo(
+          0.0,
+          curve: Curves.easeOutBack,
+          duration: const Duration(milliseconds: 400),
+        );
         HapticFeedback.mediumImpact();
         widget.onTap();
       },
       onTapCancel: () {
-        _pressController.animateTo(0.0, curve: Curves.easeOutCubic, duration: const Duration(milliseconds: 100));
+        _pressController.animateTo(
+          0.0,
+          curve: Curves.easeOutCubic,
+          duration: const Duration(milliseconds: 100),
+        );
       },
       child: ScaleTransition(
         scale: _pressAnimation,
@@ -2371,8 +2629,12 @@ class _PremiumNaamJapCounterInternalState extends State<_PremiumNaamJapCounterIn
                   height: widget.size * 0.55,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF020205).withValues(alpha: 0.98), // Deeper void for better contrast
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+                    color: const Color(0xFF020205).withValues(
+                      alpha: 0.98,
+                    ), // Deeper void for better contrast
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.15),
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: PremiumTokens.nebulaBlue.withValues(alpha: 0.25),
@@ -2399,7 +2661,8 @@ class _PremiumNaamJapCounterInternalState extends State<_PremiumNaamJapCounterIn
                             fontSize: widget.size * 0.04,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,
-                            color: Colors.white54, // Brighter for better visibility
+                            color: Colors
+                                .white54, // Brighter for better visibility
                           ),
                         ),
                       ],
@@ -2432,14 +2695,12 @@ class _NaamJapProgressPainter extends CustomPainter {
     final radius = (size.width - 10) / 2;
     const strokeWidth = 8.0;
 
-    // Background track
     final trackPaint = Paint()
       ..color = Colors.white.withValues(alpha: 0.05)
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth;
     canvas.drawCircle(center, radius, trackPaint);
 
-    // Progress Arc
     final progressPaint = Paint()
       ..shader = LinearGradient(
         colors: [color, glowColor],
@@ -2456,9 +2717,7 @@ class _NaamJapProgressPainter extends CustomPainter {
       progressPaint,
     );
 
-    // Outer Glow for progress (Dual Layer for ethereal feel)
     if (progress > 0) {
-      // Layer 1: Tight Core Glow
       final tightGlowPaint = Paint()
         ..color = glowColor.withValues(alpha: 0.4)
         ..style = PaintingStyle.stroke
@@ -2474,7 +2733,6 @@ class _NaamJapProgressPainter extends CustomPainter {
         tightGlowPaint,
       );
 
-      // Layer 2: Broad Ethereal Aura
       final broadGlowPaint = Paint()
         ..color = glowColor.withValues(alpha: 0.15)
         ..style = PaintingStyle.stroke
@@ -2495,220 +2753,5 @@ class _NaamJapProgressPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _NaamJapProgressPainter oldDelegate) {
     return oldDelegate.progress != progress;
-  }
-}
-
-class _SacredCallAlert extends StatelessWidget {
-  final String ritualName;
-  final String nextStep;
-  final VoidCallback onBegin;
-
-  const _SacredCallAlert({
-    required this.ritualName,
-    required this.nextStep,
-    required this.onBegin,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: PremiumTokens.voidIndigo.withValues(alpha: 0.7),
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(48)),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF1E3A8A).withValues(alpha: 0.3),
-            blurRadius: 40,
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: const Color(0xFF93C5FD).withValues(alpha: 0.15),
-            blurRadius: 25,
-            spreadRadius: 0,
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(48)),
-        child: _buildAlertContent(context),
-      ),
-    );
-  }
-
-  Widget _buildAlertContent(BuildContext context) {
-    final stack = Stack(
-      children: [
-        // Floating Starlight Glows
-        Positioned(
-          top: 20,
-          left: 40,
-          child: Container(
-            width: 4,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.blue[300]!.withValues(alpha: 0.4),
-              shape: BoxShape.circle,
-            ),
-          ).animate(onPlay: (c) => c.repeat(reverse: true)).fadeIn(duration: 2.seconds).blur(begin: const Offset(1,1), end: const Offset(2,2)),
-        ),
-        Positioned(
-          top: 80,
-          right: 50,
-          child: Container(
-            width: 4,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.blue[100]!.withValues(alpha: 0.3),
-              shape: BoxShape.circle,
-            ),
-          ).animate(onPlay: (c) => c.repeat(reverse: true)).fadeIn(duration: 3.seconds).blur(begin: const Offset(1,1), end: const Offset(2,2)),
-        ),
-        Positioned(
-          bottom: 200,
-          left: 60,
-          child: Container(
-            width: 2,
-            height: 2,
-            decoration: BoxDecoration(
-              color: Colors.blue[200]!.withValues(alpha: 0.5),
-              shape: BoxShape.circle,
-            ),
-          ).animate(onPlay: (c) => c.repeat(reverse: true)).fadeIn(duration: 2.5.seconds),
-        ),
-        
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 48),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Pulsing Celestial Icon
-              Center(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.blue[500]!.withValues(alpha: 0.1),
-                      ),
-                    ).animate(onPlay: (c) => c.repeat())
-                     .shimmer(duration: 2.seconds, color: Colors.blue[400]!.withValues(alpha: 0.2))
-                     .blur(begin: const Offset(20,20), end: const Offset(30,30)),
-                    
-                    const Icon(Icons.nights_stay_outlined, color: PremiumTokens.silver, size: 48),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 32),
-              
-              // Header
-              ShaderMask(
-                shaderCallback: (bounds) => PremiumTokens.silverGradient.createShader(bounds),
-                child: Text(
-                  "Sacred Call",
-                  style: GoogleFonts.spectral(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              
-              // Description
-              Text(
-                nextStep,
-                textAlign: TextAlign.center,
-                style: PremiumTokens.sansStyle(
-                  fontSize: 14,
-                  color: PremiumTokens.silver.withValues(alpha: 0.7),
-                  fontWeight: FontWeight.w300,
-                  letterSpacing: 0.2,
-                ),
-              ),
-              
-              const SizedBox(height: 48),
-              
-              // Begin Ritual Button (Premium Silver Gradient)
-              GestureDetector(
-                onTap: () {
-                  HapticFeedback.heavyImpact();
-                  Navigator.pop(context);
-                  onBegin();
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 18),
-                  decoration: BoxDecoration(
-                    gradient: PremiumTokens.silverGradient,
-                    borderRadius: BorderRadius.circular(100),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.white.withValues(alpha: 0.3),
-                        blurRadius: 20,
-                        offset: const Offset(0, 0),
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Text(
-                      "BEGIN RITUAL",
-                      style: PremiumTokens.sansStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                        color: PremiumTokens.voidBlack,
-                        letterSpacing: 2,
-                      ),
-                    ),
-                  ),
-                ).animate().scale(begin: const Offset(0.9, 0.9), end: const Offset(1.0, 1.0), curve: Curves.elasticOut, duration: 800.ms),
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Remind in 10m Button (Outlined Silver)
-              GestureDetector(
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 18),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    border: Border.all(color: PremiumTokens.silver.withValues(alpha: 0.2), width: 1),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "REMIND IN 10M",
-                      style: PremiumTokens.sansStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: PremiumTokens.silver.withValues(alpha: 0.6),
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-
-    if (AppTheme.lowPerformanceMode) {
-      return stack;
-    }
-
-    return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-      child: stack,
-    );
   }
 }

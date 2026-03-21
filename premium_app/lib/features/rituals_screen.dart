@@ -9,6 +9,7 @@ import '../core/rituals_provider.dart';
 import '../models/ritual.dart';
 import 'package:flutter/services.dart';
 import '../core/theme.dart';
+import '../widgets/sacred_ritual_alert.dart';
 
 class RitualsScreen extends ConsumerWidget {
   const RitualsScreen({super.key});
@@ -95,7 +96,48 @@ class RitualsScreen extends ConsumerWidget {
               ),
             ),
           ),
+          const SizedBox(height: 16),
+          _buildTestTrigger(context),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTestTrigger(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.mediumImpact();
+        SacredRitualAlert.show(
+          context,
+          title: "Celestial Call",
+          description: "Begin your morning sequence to greet the sun.",
+          ritualTitle: "Surya Namaskar",
+          onBegin: () => Navigator.pop(context),
+          onRemind: () => Navigator.pop(context),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100),
+          border: Border.all(color: PremiumTokens.starlightBlue.withValues(alpha: 0.2)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.auto_awesome, color: PremiumTokens.starlightBlue, size: 14),
+            const SizedBox(width: 8),
+            Text(
+              "TEST CELESTIAL ALERT",
+              style: GoogleFonts.manrope(
+                fontSize: 9,
+                fontWeight: FontWeight.w900,
+                color: PremiumTokens.starlightBlue.withValues(alpha: 0.6),
+                letterSpacing: 2,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
