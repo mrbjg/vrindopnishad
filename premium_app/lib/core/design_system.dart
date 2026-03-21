@@ -468,29 +468,28 @@ class PremiumUI extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
-        child: IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Stitch Accent Bar
-              Container(
-                width: 4,
-                decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: 0.6),
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    bottomLeft: Radius.circular(16),
-                  ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Stitch Accent Bar - Fills available height naturally
+            Container(
+              width: 4,
+              constraints: const BoxConstraints(minHeight: 88),
+              decoration: BoxDecoration(
+                color: accentColor.withValues(alpha: 0.6),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  bottomLeft: Radius.circular(16),
                 ),
               ),
-              Expanded(
-                child: Padding(
-                  padding: padding,
-                  child: child,
-                ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: padding,
+                child: child,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

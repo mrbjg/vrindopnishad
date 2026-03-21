@@ -15,8 +15,6 @@ class LibraryScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final content = ref.watch(sacredContentProvider);
-
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
@@ -45,7 +43,8 @@ class LibraryScreen extends ConsumerWidget {
 
                     return SliverPadding(
                       padding: const EdgeInsets.fromLTRB(24, 0, 24, 120), // Extra bottom padding for FAB
-                      sliver: SliverList(
+                      sliver: SliverFixedExtentList(
+                        itemExtent: 120.0,
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
                             return _buildLibraryItem(context, ref, items[index]);

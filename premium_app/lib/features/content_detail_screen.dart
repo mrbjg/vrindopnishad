@@ -41,10 +41,10 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   bool _showCompactHeader = false;
   bool _showAudioPlayer = false;
   ReadingTheme _currentTheme = ReadingTheme.divineFlow;
-  double _sanskritScale = 1.0;
-  double _hindiScale = 1.0;
-  double _englishScale = 1.0;
-  double _commentaryScale = 1.0;
+  final ValueNotifier<double> _sanskritScale = ValueNotifier<double>(1.0);
+  final ValueNotifier<double> _hindiScale = ValueNotifier<double>(1.0);
+  final ValueNotifier<double> _englishScale = ValueNotifier<double>(1.0);
+  final ValueNotifier<double> _commentaryScale = ValueNotifier<double>(1.0);
   double _baseScale = 1.0;
 
   @override
@@ -85,6 +85,10 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _sanskritScale.dispose();
+    _hindiScale.dispose();
+    _englishScale.dispose();
+    _commentaryScale.dispose();
     super.dispose();
   }
 
@@ -177,9 +181,14 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 600),
                         child: GestureDetector(
-                          onScaleStart: (details) => _baseScale = _sanskritScale,
-                          onScaleUpdate: (details) => setState(() => _sanskritScale = (_baseScale * details.scale).clamp(0.5, 3.0)),
-                          child: _buildPremiumSanskritCard(content, l, isFocusMode, themeData, scale: _sanskritScale),
+                          onScaleStart: (details) => _baseScale = _sanskritScale.value,
+                          onScaleUpdate: (details) => _sanskritScale.value = (_baseScale * details.scale).clamp(0.5, 3.0),
+                          child: ValueListenableBuilder<double>(
+                            valueListenable: _sanskritScale,
+                            builder: (context, scale, child) {
+                              return _buildPremiumSanskritCard(content, l, isFocusMode, themeData, scale: scale);
+                            },
+                          ),
                         ),
                       ),
                     ),
@@ -197,29 +206,39 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           child: Column(
                             children: [
                                 GestureDetector(
-                                  onScaleStart: (details) => _baseScale = _hindiScale,
-                                  onScaleUpdate: (details) => setState(() => _hindiScale = (_baseScale * details.scale).clamp(0.5, 3.0)),
-                                  child: _buildPremiumContentSection(
-                                    title: l.translate('hindi_meaning'),
-                                    content: content?.hindiMeaning ?? "",
-                                    icon: Iconsax.heart,
-                                    accentColor: themeData.accentColor,
-                                    themeData: themeData,
-                                    currentScale: _hindiScale,
+                                  onScaleStart: (details) => _baseScale = _hindiScale.value,
+                                  onScaleUpdate: (details) => _hindiScale.value = (_baseScale * details.scale).clamp(0.5, 3.0),
+                                  child: ValueListenableBuilder<double>(
+                                    valueListenable: _hindiScale,
+                                    builder: (context, scale, child) {
+                                      return _buildPremiumContentSection(
+                                        title: l.translate('hindi_meaning'),
+                                        content: content?.hindiMeaning ?? "",
+                                        icon: Iconsax.heart,
+                                        accentColor: themeData.accentColor,
+                                        themeData: themeData,
+                                        currentScale: scale,
+                                      );
+                                    },
                                   ),
                                 ),
                                 const SizedBox(height: 24),
 
                                 GestureDetector(
-                                  onScaleStart: (details) => _baseScale = _englishScale,
-                                  onScaleUpdate: (details) => setState(() => _englishScale = (_baseScale * details.scale).clamp(0.5, 3.0)),
-                                  child: _buildPremiumContentSection(
-                                    title: l.translate('english_translation'),
-                                    content: content?.translation ?? "",
-                                    icon: Iconsax.language_circle,
-                                    accentColor: themeData.secondaryAccent,
-                                    themeData: themeData,
-                                    currentScale: _englishScale,
+                                  onScaleStart: (details) => _baseScale = _englishScale.value,
+                                  onScaleUpdate: (details) => _englishScale.value = (_baseScale * details.scale).clamp(0.5, 3.0),
+                                  child: ValueListenableBuilder<double>(
+                                    valueListenable: _englishScale,
+                                    builder: (context, scale, child) {
+                                      return _buildPremiumContentSection(
+                                        title: l.translate('english_translation'),
+                                        content: content?.translation ?? "",
+                                        icon: Iconsax.language_circle,
+                                        accentColor: themeData.secondaryAccent,
+                                        themeData: themeData,
+                                        currentScale: scale,
+                                      );
+                                    },
                                   ),
                                 ),
                             ],
@@ -235,16 +254,21 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 600),
                         child: GestureDetector(
-                          onScaleStart: (details) => _baseScale = _commentaryScale,
-                          onScaleUpdate: (details) => setState(() => _commentaryScale = (_baseScale * details.scale).clamp(0.5, 3.0)),
-                          child: _buildPremiumContentSection(
-                            title: l.translate('commentary'),
-                            content: content?.commentary ?? "",
-                            icon: Iconsax.lamp_charge,
-                            accentColor: PremiumTokens.saffronGlow,
-                            isFocusMode: isFocusMode,
-                            themeData: themeData,
-                            currentScale: _commentaryScale,
+                          onScaleStart: (details) => _baseScale = _commentaryScale.value,
+                          onScaleUpdate: (details) => _commentaryScale.value = (_baseScale * details.scale).clamp(0.5, 3.0),
+                          child: ValueListenableBuilder<double>(
+                            valueListenable: _commentaryScale,
+                            builder: (context, scale, child) {
+                              return _buildPremiumContentSection(
+                                title: l.translate('commentary'),
+                                content: content?.commentary ?? "",
+                                icon: Iconsax.lamp_charge,
+                                accentColor: PremiumTokens.saffronGlow,
+                                isFocusMode: isFocusMode,
+                                themeData: themeData,
+                                currentScale: scale,
+                              );
+                            },
                           ),
                         ),
                       ),
