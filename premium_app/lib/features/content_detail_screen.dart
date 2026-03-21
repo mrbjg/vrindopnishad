@@ -62,17 +62,19 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       }
     });
 
-    // Log reading activity after a short delay to ensure it's a real session
-    Future.delayed(const Duration(seconds: 1), () {
+    // Log reading activity to capture this session in history
+    Future.delayed(const Duration(milliseconds: 500), () {
       if (mounted) {
+        // More robust content resolution for history tracking
         final allContent = ref.read(sacredContentProvider);
         final resolvedContent = widget.content ?? 
-          (widget.title != null ? allContent.cast<SacredContent?>().firstWhere((c) => c?.title == widget.title, orElse: () => null) : null);
+          (widget.title != null ? allContent.where((c) => c.title == widget.title).firstOrNull : null);
         
-        final logTitle = resolvedContent?.title ?? widget.title ?? 'Unknown Sacred Text';
+        final logTitle = resolvedContent?.title ?? widget.title ?? 'Sacred Text';
         final logCategory = resolvedContent?.category ?? widget.category ?? 'Divine';
         final logId = resolvedContent?.id ?? logTitle;
 
+        // Record visit in celestial history
         ref.read(userStatsProvider.notifier).recordReading(
           logId,
           title: logTitle,

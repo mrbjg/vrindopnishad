@@ -38,6 +38,7 @@ class UserStatsNotifier extends AsyncNotifier<UserStats?> {
     final user = ref.read(authStateProvider).value;
     if (user == null) return;
     
+    // Sync to Supabase
     await ref.read(statsServiceProvider).logReadingActivity(
       user.uid, 
       contentId: contentId,
@@ -45,7 +46,9 @@ class UserStatsNotifier extends AsyncNotifier<UserStats?> {
       category: category,
     );
     
-    // Refresh to update UI
+    // Brief delay to ensure database consistency before UI refresh
+    await Future.delayed(const Duration(milliseconds: 300));
+    
     await refresh();
     ref.invalidate(readingHistoryProvider);
   }

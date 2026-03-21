@@ -116,21 +116,25 @@ class EternalReflectionScreen extends ConsumerWidget {
     );
   }
 
+  Widget _buildHeader(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(
-            icon: PremiumUI.animatedIcon(
-              folder: 'Chevron-left',
-              fileName: 'chevron-left.json',
-              size: 20,
-              color: PremiumTokens.nebulaBlue,
-              onTap: () => Navigator.pop(context),
-            ),
-            onPressed: () {},
-          ),
+          if (Navigator.canPop(context))
+            IconButton(
+              icon: PremiumUI.animatedIcon(
+                folder: 'Chevron-left',
+                fileName: 'chevron-left.json',
+                size: 20,
+                color: PremiumTokens.nebulaBlue,
+                onTap: () => Navigator.pop(context),
+              ),
+              onPressed: () {},
+            )
+          else
+            const Icon(Iconsax.sort, color: PremiumTokens.nebulaBlue, size: 24),
           Column(
             children: [
               Text(

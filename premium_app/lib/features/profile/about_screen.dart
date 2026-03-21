@@ -3,6 +3,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/design_system.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -14,6 +15,23 @@ class AboutScreen extends StatelessWidget {
       body: Stack(
         children: [
           PremiumUI.voidBackground(),
+          
+          // Celestial Nebula Overlays
+          Positioned(
+            top: -100,
+            right: -100,
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: PremiumTokens.nebulaBlue.withValues(alpha: 0.15),
+              ),
+            ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+             .scale(duration: 5.seconds, begin: const Offset(1, 1), end: const Offset(1.2, 1.2))
+             .blur(begin: const Offset(80, 80), end: const Offset(100, 100)),
+          ),
+
           CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
@@ -30,13 +48,13 @@ class AboutScreen extends StatelessWidget {
                     color: PremiumTokens.nebulaBlue,
                     onTap: () => Navigator.pop(context),
                   ),
-                  onPressed: () {}, // Handled by animatedIcon onTap
+                  onPressed: () {},
                 ),
                 title: Text(
-                  "ABOUT DIVINE PATH",
+                  "SACRED VISION",
                   style: GoogleFonts.spectral(
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 2,
+                    letterSpacing: 4,
                     fontSize: 16,
                     color: Colors.white,
                   ),
@@ -44,78 +62,134 @@ class AboutScreen extends StatelessWidget {
               ),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
                   child: Column(
                     children: [
-                      const SizedBox(height: 20),
-                      Center(
+                      const SizedBox(height: 40),
+                      
+                      // Hero Icon with Divine Aura
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: PremiumTokens.evolvingAura(
+                          color: PremiumTokens.nebulaBlue,
+                          intensity: 0.5,
+                        ),
                         child: PremiumUI.pulsingCelestialIcon(
                           icon: Iconsax.magic_star,
-                          size: 60,
+                          size: 80,
                         ),
-                      ),
-                      const SizedBox(height: 24),
+                      ).animate().fadeIn(duration: 800.ms).scale(delay: 200.ms),
+                      
+                      const SizedBox(height: 48),
+                      
+                      // Branding Section
                       Text(
-                        "Sant-Vaani",
-                        style: PremiumTokens.displayStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
+                         "SANT-VAANI",
+                         style: GoogleFonts.spectral(
+                           fontSize: 42,
+                           fontWeight: FontWeight.w900,
+                           color: Colors.white,
+                           letterSpacing: 8,
+                         ),
+                      ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.2, end: 0),
+                      
+                      const SizedBox(height: 8),
+                      
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
+                          borderRadius: BorderRadius.circular(100),
                         ),
-                      ),
-                      const Text("Version 1.0.0", style: TextStyle(color: Colors.grey)),
-                      const SizedBox(height: 40),
-                      _buildInfoCard(
-                        context,
-                        "Our Mission",
+                        child: Text(
+                          "VERSION 1.0.0 • PRO",
+                          style: GoogleFonts.manrope(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2,
+                            color: PremiumTokens.nebulaBlue,
+                          ),
+                        ),
+                      ).animate().fadeIn(delay: 600.ms),
+                      
+                      const SizedBox(height: 64),
+                      
+                      // Info Sections
+                      _buildCelestialSection(
+                        "OUR DIVINE MISSION",
                         "Sant-Vaani (Vrindopnishad) is dedicated to preserving and promoting the rich cultural and spiritual heritage of Hindu Vaidik Sanskriti in the digital age.",
+                        Iconsax.sun_1,
                       ),
-                      const SizedBox(height: 16),
-                      _buildInfoCard(
-                        context,
-                        "What we offer",
-                        "We provide an immersive platform to explore Shlokas, Strotras, and sacred poems with beautiful imagery, audio narrations, and deep commentaries.",
-                      ),
-                      const SizedBox(height: 40),
-                      const Divider(color: Colors.white10),
+                      
                       const SizedBox(height: 24),
+                      
+                      _buildCelestialSection(
+                        "WHAT WE OFFER",
+                        "An immersive celestial platform to explore Shlokas, Strotras, and sacred poems with high-fidelity audio and deep commentaries.",
+                        Iconsax.moon,
+                      ),
+                      
+                      const SizedBox(height: 64),
+                      
+                      // Social Connections
                       Text(
-                        "Follow us for daily wisdom".toUpperCase(),
+                        "CONNECT IN THE CIRCLE",
                         style: GoogleFonts.manrope(
                           fontWeight: FontWeight.w900,
-                          fontSize: 10,
-                          letterSpacing: 2,
-                          color: Colors.white38,
+                          fontSize: 11,
+                          letterSpacing: 3,
+                          color: Colors.white24,
                         ),
                       ),
-                      const SizedBox(height: 24),
-                      GridView.count(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        crossAxisCount: 4,
-                        mainAxisSpacing: 16,
-                        crossAxisSpacing: 16,
+                      
+                      const SizedBox(height: 32),
+                      
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _buildSocialIcon(context, Iconsax.instagram, "Instagram"),
-                          _buildSocialIcon(context, Iconsax.message_2, "WhatsApp"),
-                          _buildSocialIcon(context, Iconsax.direct_right, "Telegram"),
-                          _buildSocialIcon(context, Iconsax.video_circle, "YouTube"),
+                          _buildPremiumSocialIcon(context, Iconsax.instagram, "Instagram", PremiumTokens.nebulaBlue),
+                          const SizedBox(width: 24),
+                          _buildPremiumSocialIcon(context, Iconsax.message_2, "WhatsApp", Colors.greenAccent),
+                          const SizedBox(width: 24),
+                          _buildPremiumSocialIcon(context, Iconsax.direct_right, "Telegram", Colors.lightBlueAccent),
+                          const SizedBox(width: 24),
+                          _buildPremiumSocialIcon(context, Iconsax.video_circle, "YouTube", Colors.redAccent),
                         ],
                       ),
-                      const SizedBox(height: 60),
-                      const Text(
-                        "© 2026 Vrindopnishad. All rights reserved.",
-                        style: TextStyle(color: Colors.white24, fontSize: 11),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        "Made with ❤️ for Sant-Sanatan",
-                        style: TextStyle(
-                          color: PremiumTokens.nebulaBlue,
-                          fontSize: 11,
+                      
+                      const SizedBox(height: 80),
+                      
+                      // Footer
+                      Text(
+                        "© 2026 VRINDOPNISHAD",
+                        style: GoogleFonts.manrope(
+                          color: Colors.white24,
+                          fontSize: 10,
                           fontWeight: FontWeight.bold,
+                          letterSpacing: 2,
                         ),
                       ),
-                      const SizedBox(height: 40),
+                      
+                      const SizedBox(height: 8),
+                      
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("MADE WITH ", style: TextStyle(color: Colors.white.withValues(alpha: 0.2), fontSize: 10)),
+                          const Icon(Icons.favorite, color: Colors.redAccent, size: 10),
+                          Text(" FOR ", style: TextStyle(color: Colors.white.withValues(alpha: 0.2), fontSize: 10)),
+                          Text(
+                            "SANT-SANATAN",
+                            style: GoogleFonts.manrope(
+                              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.6),
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ],
+                      ),
+                      
+                      const SizedBox(height: 60),
                     ],
                   ),
                 ),
@@ -127,51 +201,75 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoCard(
-    BuildContext context,
-    String title,
-    String description,
-  ) {
-    return PremiumUI.voidGlassCard(
-      padding: const EdgeInsets.all(24),
+  Widget _buildCelestialSection(String title, String description, IconData icon) {
+    return PremiumUI.voidCard(
+      padding: const EdgeInsets.all(28),
+      accentColor: PremiumTokens.nebulaBlue,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: PremiumTokens.nebulaBlue,
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: PremiumTokens.nebulaBlue, size: 16),
+              ),
+              const SizedBox(width: 16),
+              Text(
+                title,
+                style: GoogleFonts.spectral(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 3,
+                  color: Colors.white.withValues(alpha: 0.9),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.only(left: 40),
+            child: Text(
+              description,
+              style: GoogleFonts.manrope(
+                height: 1.8,
+                fontSize: 14,
+                color: Colors.white.withValues(alpha: 0.5),
+                fontWeight: FontWeight.w300,
+              ),
             ),
           ),
-          const SizedBox(height: 12),
-          Text(description, style: const TextStyle(height: 1.6, color: Colors.white70)),
         ],
       ),
     );
   }
 
-  Widget _buildSocialIcon(BuildContext context, IconData icon, String label) {
+  Widget _buildPremiumSocialIcon(BuildContext context, IconData icon, String label, Color color) {
     return GestureDetector(
       onTap: () {
-        HapticFeedback.lightImpact();
+        HapticFeedback.mediumImpact();
         PremiumUI.showNotification(
           context, 
-          "Connecting to our $label...",
+          "Connecting to $label...",
           icon: icon,
-          color: PremiumTokens.nebulaBlue,
+          color: color,
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+          color: color.withValues(alpha: 0.05),
           shape: BoxShape.circle,
-          border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
+          border: Border.all(color: color.withValues(alpha: 0.15), width: 1),
         ),
-        child: Icon(icon, color: PremiumTokens.nebulaBlue, size: 24),
+        child: Icon(icon, color: color, size: 22),
       ),
-    );
+    ).animate()
+     .fadeIn(delay: 800.ms)
+     .scale(begin: const Offset(0.8, 0.8), curve: Curves.easeOutBack);
   }
 }

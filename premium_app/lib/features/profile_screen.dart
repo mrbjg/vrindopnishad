@@ -114,6 +114,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                     _buildPremiumSectionTitle("Your Sacred Collection"),
                     const SizedBox(height: 16),
                     _buildPremiumMenuItem(
+                      icon: Iconsax.edit_2,
+                      title: "Journal Reflections",
+                      subtitle: "Your spiritual diary",
+                      color: PremiumTokens.starlight,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const EternalReflectionScreen()),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildPremiumMenuItem(
                       icon: Iconsax.heart,
                       title: "Saved Items",
                       subtitle: "Your spiritual vault",
@@ -121,17 +132,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const SavedItemsScreen()),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    _buildPremiumMenuItem(
-                      icon: Iconsax.edit_2,
-                      title: "Journal Reflections",
-                      subtitle: "Your written thoughts",
-                      color: PremiumTokens.starlight,
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const EternalReflectionScreen()),
                       ),
                     ),
                     const SizedBox(height: 12),

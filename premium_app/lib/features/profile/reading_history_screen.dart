@@ -8,8 +8,22 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/auth_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-class ReadingHistoryScreen extends ConsumerWidget {
+class ReadingHistoryScreen extends ConsumerStatefulWidget {
   const ReadingHistoryScreen({super.key});
+
+  @override
+  ConsumerState<ReadingHistoryScreen> createState() => _ReadingHistoryScreenState();
+}
+
+class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Proactively refresh history when entering the screen
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.invalidate(readingHistoryProvider);
+    });
+  }
 
   String _formatTime(DateTime date) {
     final dateLocal = date.isUtc ? date.toLocal() : date;
@@ -26,7 +40,7 @@ class ReadingHistoryScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final historyAsync = ref.watch(readingHistoryProvider);
 
     return Scaffold(
@@ -91,27 +105,10 @@ class ReadingHistoryScreen extends ConsumerWidget {
                           final item = historyItems[index];
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 12),
-                            child: PremiumUI.voidGlassCard(
-                              padding: EdgeInsets.zero,
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                leading: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: const Icon(Iconsax.clock, color: PremiumTokens.nebulaBlue, size: 20),
-                                ),
-                                title: Text(
-                                  item.title ?? "Unknown Sacred Text",
-                                  style: PremiumTokens.displayStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                                ),
-                                subtitle: Text(
-                                  "${item.category ?? 'Divine'} • ${_formatTime(item.readAt)}",
-                                  style: PremiumTokens.sansStyle(color: Colors.white38, fontSize: 12),
-                                ),
-                                trailing: const Icon(Iconsax.arrow_right_3, size: 18, color: Colors.white24),
+                            child: PremiumUI.voidCard(
+                              padding: const EdgeInsets.all(16),
+                              accentColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.5),
+                              child: InkWell(
                                 onTap: () {
                                   Navigator.push(
                                     context,
@@ -123,6 +120,42 @@ class ReadingHistoryScreen extends ConsumerWidget {
                                     ),
                                   );
                                 },
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: const Icon(Iconsax.clock, color: PremiumTokens.nebulaBlue, size: 20),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            item.title ?? "Unknown Sacred Text",
+                                            style: PremiumTokens.displayStyle(
+                                              fontSize: 16, 
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            "${item.category ?? 'Divine'} • ${_formatTime(item.readAt)}",
+                                            style: PremiumTokens.sansStyle(
+                                              color: Colors.white38, 
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Icon(Iconsax.arrow_right_3, size: 18, color: Colors.white12),
+                                  ],
+                                ),
                               ),
                             ),
                           );
