@@ -8,8 +8,6 @@ import 'library_screen.dart';
 import 'journal_screen.dart';
 import 'profile_screen.dart';
 import 'package:flutter/services.dart';
-import '../core/audio_provider.dart';
-import '../core/content_provider.dart';
 import '../core/providers.dart';
 import '../widgets/mini_player.dart';
 import 'rituals_screen.dart';
@@ -25,6 +23,12 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   // Pinterest-style Menu State
   final ValueNotifier<Offset?> _menuPointerPosition = ValueNotifier<Offset?>(null);
   final GlobalKey<SacredActionMenuState> _menuKey = GlobalKey<SacredActionMenuState>();
+
+  @override
+  void initState() {
+    super.initState();
+    PremiumUI.setSacredStatus();
+  }
 
   @override
   Widget build(BuildContext context) {

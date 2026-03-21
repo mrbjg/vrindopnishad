@@ -20,10 +20,10 @@ class PremiumTokens {
   // ═══════════════════════════════════════════════════════════════════════════
   // COLORS: Enhanced Palette
   // ═══════════════════════════════════════════════════════════════════════════
-  static const Color charcoal = Color(0xFF020205); // Unified to voidBlack
-  static const Color voidBlack = Color(0xFF020205);
+  static const Color charcoal = Color(0xFF050510); // Indigo-tinted void
+  static const Color voidBlack = Color(0xFF050510);
   static const Color voidPure = Color(0xFF000000);
-  static const Color background = Color(0xFF020205);
+  static const Color background = Color(0xFF050510);
   static const Color surfaceCharcoal = Color(
     0xFF0A0A1F,
   ); // Deep blue-tinted surface
@@ -51,7 +51,7 @@ class PremiumTokens {
   static const LinearGradient divineDarkGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Color(0xFF1A160F), Color(0xFF2D2516), Color(0xFF40341A)],
+    colors: [Color(0xFF0A0A1F), Color(0xFF070715), Color(0xFF050510)],
   );
 
   static const LinearGradient spaceVoidGradient = LinearGradient(
@@ -1502,6 +1502,21 @@ class PremiumUI extends StatelessWidget {
       ritualTitle: ritualName,
       onBegin: onBegin,
       onRemind: () => Navigator.pop(context),
+    );
+  }
+
+
+  /// Sync System Status Bar with Sacred Void Aesthetic
+  static void setSacredStatus() {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+        systemNavigationBarColor: PremiumTokens.voidBlack,
+        systemNavigationBarDividerColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
     );
   }
 

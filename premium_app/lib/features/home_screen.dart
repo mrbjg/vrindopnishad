@@ -3,14 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:ui';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../core/design_system.dart';
 import '../core/providers.dart';
 import '../core/localization.dart';
 import '../core/content_provider.dart';
 import '../core/audio_provider.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../core/stats_provider.dart';
 import '../core/auth_provider.dart';
 import 'search_screen.dart';
@@ -41,7 +38,9 @@ class HomeScreen extends ConsumerWidget {
                 collapsedHeight: 80,
                 pinned: true,
                 floating: false,
-                backgroundColor: PremiumTokens.voidBlack.withValues(alpha: 0.95),
+                elevation: 0,
+                scrolledUnderElevation: 0,
+                backgroundColor: PremiumTokens.voidIndigo.withValues(alpha: 0.98),
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -168,19 +167,6 @@ class HomeScreen extends ConsumerWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildCircleButton(IconData icon) {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
-        shape: BoxShape.circle,
-        border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
-      ),
-      child: Icon(icon, color: PremiumTokens.nebulaBlue, size: 20),
     );
   }
 

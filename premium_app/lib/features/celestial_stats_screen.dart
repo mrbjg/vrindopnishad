@@ -47,7 +47,7 @@ class _CelestialStatsScreenState extends ConsumerState<CelestialStatsScreen> wit
     final malaStreaks = (totalJapCount / 108).floor();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF050510),
+      backgroundColor: PremiumTokens.voidBlack,
       body: Stack(
         children: [
           Positioned.fill(child: PremiumUI.bokehBackground()),
@@ -82,8 +82,9 @@ class _CelestialStatsScreenState extends ConsumerState<CelestialStatsScreen> wit
 
   Widget _buildHeader(BuildContext context) {
     return SliverAppBar(
-      backgroundColor: Colors.transparent,
       elevation: 0,
+      scrolledUnderElevation: 0,
+      backgroundColor: Colors.transparent,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios, color: PremiumTokens.nebulaBlue, size: 20),
         onPressed: () => Navigator.pop(context),
@@ -411,11 +412,6 @@ class SacredOrbitPainter extends CustomPainter {
     for (var point in points) {
       final radius = orbits[point.orbitIndex];
       final angle = point.initialAngle + (animationValue * 2 * 3.14159 * point.speed);
-      
-      final pointOffset = Offset(
-        center.dx + radius * (animationValue > 0 ? (animationValue % 1.0 > 0 ? 1 : 1) : 1) * (1 * (0 + (1 * 1))),
-        center.dy
-      );
       
       // Fixed trigonometric calculation
       final x = center.dx + radius * (animationValue * 0 == 0 ? (math.cos(angle)) : 0);
