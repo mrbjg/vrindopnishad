@@ -1298,104 +1298,119 @@ class _SacredNotification extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(40),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            child: Row(
-              children: [
-                // Branded Icon or Provided Icon
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: icon != null 
-                      ? Icon(icon, color: PremiumTokens.silver, size: 28)
-                      : Text(
-                          "व", // Branded Vrindopnishad Symbol
-                          style: GoogleFonts.notoSansDevanagari(
-                            color: PremiumTokens.silver,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            shadows: [Shadow(color: PremiumTokens.silver.withValues(alpha: 0.5), blurRadius: 8)],
-                          ),
-                        ),
-                  ),
-                ).animate(onPlay: (controller) => controller.repeat())
-                 .shimmer(duration: 3.seconds, color: Colors.white.withValues(alpha: 0.2)),
-                
-                const SizedBox(width: 16),
-                
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "SANT-VAANI",
-                            style: PremiumTokens.sansStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w900,
-                              color: PremiumTokens.silver.withValues(alpha: 0.6),
-                              letterSpacing: 2,
-                            ),
-                          ),
-                          Text(
-                            "now",
-                            style: PremiumTokens.sansStyle(
-                              fontSize: 10,
-                              color: PremiumTokens.silver.withValues(alpha: 0.4),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 2),
-                      ShaderMask(
-                        shaderCallback: (bounds) => PremiumTokens.silverGradient.createShader(bounds),
-                        child: Text(
-                          message.split('\n')[0], // Use first line as title if multi-line
-                          style: GoogleFonts.spectral(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      if (message.contains('\n'))
-                        Text(
-                          message.split('\n').sublist(1).join(' '),
-                          style: PremiumTokens.sansStyle(
-                            fontSize: 12,
-                            color: PremiumTokens.silver.withValues(alpha: 0.6),
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                    ],
-                  ),
+        child: AppTheme.lowPerformanceMode
+          ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: Row(
+                children: [
+                  _buildNotificationIcon(),
+                  const SizedBox(width: 16),
+                  _buildNotificationContent(),
+                ],
+              ),
+            )
+          : BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                child: Row(
+                  children: [
+                    _buildNotificationIcon(),
+                    const SizedBox(width: 16),
+                    _buildNotificationContent(),
+                  ],
                 ),
-                const SizedBox(width: 8),
-              ],
+              ),
             ),
-          ),
-        ),
       ),
     ).animate().slideY(begin: -1.0, end: 0.0, curve: Curves.easeOutQuart, duration: 600.ms)
                .fadeIn(duration: 300.ms);
+  }
+
+  Widget _buildNotificationIcon() {
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Center(
+        child: icon != null 
+          ? Icon(icon, color: PremiumTokens.silver, size: 28)
+          : Text(
+              "व",
+              style: GoogleFonts.notoSansDevanagari(
+                color: PremiumTokens.silver,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                shadows: [Shadow(color: PremiumTokens.silver.withValues(alpha: 0.5), blurRadius: 8)],
+              ),
+            ),
+      ),
+    ).animate(onPlay: (controller) => controller.repeat())
+     .shimmer(duration: 3.seconds, color: Colors.white.withValues(alpha: 0.2));
+  }
+
+  Widget _buildNotificationContent() {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "SANT-VAANI",
+                style: PremiumTokens.sansStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  color: PremiumTokens.silver.withValues(alpha: 0.6),
+                  letterSpacing: 2,
+                ),
+              ),
+              Text(
+                "now",
+                style: PremiumTokens.sansStyle(
+                  fontSize: 10,
+                  color: PremiumTokens.silver.withValues(alpha: 0.4),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 2),
+          ShaderMask(
+            shaderCallback: (bounds) => PremiumTokens.silverGradient.createShader(bounds),
+            child: Text(
+              message.split('\n')[0],
+              style: GoogleFonts.spectral(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          if (message.contains('\n'))
+            Text(
+              message.split('\n').sublist(1).join(' '),
+              style: PremiumTokens.sansStyle(
+                fontSize: 12,
+                color: PremiumTokens.silver.withValues(alpha: 0.6),
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+        ],
+      ),
+    );
   }
 }
 
@@ -2412,174 +2427,184 @@ class _SacredCallAlert extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(48)),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: Stack(
+        child: _buildAlertContent(context),
+      ),
+    );
+  }
+
+  Widget _buildAlertContent(BuildContext context) {
+    final stack = Stack(
+      children: [
+        // Floating Starlight Glows
+        Positioned(
+          top: 20,
+          left: 40,
+          child: Container(
+            width: 4,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.blue[300]!.withValues(alpha: 0.4),
+              shape: BoxShape.circle,
+            ),
+          ).animate(onPlay: (c) => c.repeat(reverse: true)).fadeIn(duration: 2.seconds).blur(begin: const Offset(1,1), end: const Offset(2,2)),
+        ),
+        Positioned(
+          top: 80,
+          right: 50,
+          child: Container(
+            width: 4,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.blue[100]!.withValues(alpha: 0.3),
+              shape: BoxShape.circle,
+            ),
+          ).animate(onPlay: (c) => c.repeat(reverse: true)).fadeIn(duration: 3.seconds).blur(begin: const Offset(1,1), end: const Offset(2,2)),
+        ),
+        Positioned(
+          bottom: 200,
+          left: 60,
+          child: Container(
+            width: 2,
+            height: 2,
+            decoration: BoxDecoration(
+              color: Colors.blue[200]!.withValues(alpha: 0.5),
+              shape: BoxShape.circle,
+            ),
+          ).animate(onPlay: (c) => c.repeat(reverse: true)).fadeIn(duration: 2.5.seconds),
+        ),
+        
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 48),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              // Floating Starlight Glows
-              Positioned(
-                top: 20,
-                left: 40,
-                child: Container(
-                  width: 4,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.blue[300]!.withValues(alpha: 0.4),
-                    shape: BoxShape.circle,
-                  ),
-                ).animate(onPlay: (c) => c.repeat(reverse: true)).fadeIn(duration: 2.seconds).blur(begin: const Offset(1,1), end: const Offset(2,2)),
+              // Pulsing Celestial Icon
+              Center(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.blue[500]!.withValues(alpha: 0.1),
+                      ),
+                    ).animate(onPlay: (c) => c.repeat())
+                     .shimmer(duration: 2.seconds, color: Colors.blue[400]!.withValues(alpha: 0.2))
+                     .blur(begin: const Offset(20,20), end: const Offset(30,30)),
+                    
+                    const Icon(Icons.nights_stay_outlined, color: PremiumTokens.silver, size: 48),
+                  ],
+                ),
               ),
-              Positioned(
-                top: 80,
-                right: 50,
-                child: Container(
-                  width: 4,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.blue[100]!.withValues(alpha: 0.3),
-                    shape: BoxShape.circle,
+              const SizedBox(height: 32),
+              
+              // Header
+              ShaderMask(
+                shaderCallback: (bounds) => PremiumTokens.silverGradient.createShader(bounds),
+                child: Text(
+                  "Sacred Call",
+                  style: GoogleFonts.spectral(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white,
+                    letterSpacing: 1,
                   ),
-                ).animate(onPlay: (c) => c.repeat(reverse: true)).fadeIn(duration: 3.seconds).blur(begin: const Offset(1,1), end: const Offset(2,2)),
+                ),
               ),
-              Positioned(
-                bottom: 200,
-                left: 60,
-                child: Container(
-                  width: 2,
-                  height: 2,
-                  decoration: BoxDecoration(
-                    color: Colors.blue[200]!.withValues(alpha: 0.5),
-                    shape: BoxShape.circle,
-                  ),
-                ).animate(onPlay: (c) => c.repeat(reverse: true)).fadeIn(duration: 2.5.seconds),
+              const SizedBox(height: 12),
+              
+              // Description
+              Text(
+                nextStep,
+                textAlign: TextAlign.center,
+                style: PremiumTokens.sansStyle(
+                  fontSize: 14,
+                  color: PremiumTokens.silver.withValues(alpha: 0.7),
+                  fontWeight: FontWeight.w300,
+                  letterSpacing: 0.2,
+                ),
               ),
               
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 48),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Pulsing Celestial Icon
-                    Center(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Container(
-                            width: 80,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.blue[500]!.withValues(alpha: 0.1),
-                            ),
-                          ).animate(onPlay: (c) => c.repeat())
-                           .shimmer(duration: 2.seconds, color: Colors.blue[400]!.withValues(alpha: 0.2))
-                           .blur(begin: const Offset(20,20), end: const Offset(30,30)),
-                          
-                          const Icon(Icons.nights_stay_outlined, color: PremiumTokens.silver, size: 48),
-                        ],
+              const SizedBox(height: 48),
+              
+              // Begin Ritual Button (Premium Silver Gradient)
+              GestureDetector(
+                onTap: () {
+                  HapticFeedback.heavyImpact();
+                  Navigator.pop(context);
+                  onBegin();
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  decoration: BoxDecoration(
+                    gradient: PremiumTokens.silverGradient,
+                    borderRadius: BorderRadius.circular(100),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.white.withValues(alpha: 0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 0),
                       ),
-                    ),
-                    const SizedBox(height: 32),
-                    
-                    // Header
-                    ShaderMask(
-                      shaderCallback: (bounds) => PremiumTokens.silverGradient.createShader(bounds),
-                      child: Text(
-                        "Sacred Call",
-                        style: GoogleFonts.spectral(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    
-                    // Description
-                    Text(
-                      nextStep,
-                      textAlign: TextAlign.center,
+                    ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      "BEGIN RITUAL",
                       style: PremiumTokens.sansStyle(
                         fontSize: 14,
-                        color: PremiumTokens.silver.withValues(alpha: 0.7),
-                        fontWeight: FontWeight.w300,
-                        letterSpacing: 0.2,
+                        fontWeight: FontWeight.w800,
+                        color: PremiumTokens.voidBlack,
+                        letterSpacing: 2,
                       ),
                     ),
-                    
-                    const SizedBox(height: 48),
-                    
-                    // Begin Ritual Button (Premium Silver Gradient)
-                    GestureDetector(
-                      onTap: () {
-                        HapticFeedback.heavyImpact();
-                        Navigator.pop(context);
-                        onBegin();
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        decoration: BoxDecoration(
-                          gradient: PremiumTokens.silverGradient,
-                          borderRadius: BorderRadius.circular(100),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.white.withValues(alpha: 0.3),
-                              blurRadius: 20,
-                              offset: const Offset(0, 0),
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Text(
-                            "BEGIN RITUAL",
-                            style: PremiumTokens.sansStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w800,
-                              color: PremiumTokens.voidBlack,
-                              letterSpacing: 2,
-                            ),
-                          ),
-                        ),
-                      ).animate().scale(begin: const Offset(0.9, 0.9), end: const Offset(1.0, 1.0), curve: Curves.elasticOut, duration: 800.ms),
-                    ),
-                    
-                    const SizedBox(height: 16),
-                    
-                    // Remind in 10m Button (Outlined Silver)
-                    GestureDetector(
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          border: Border.all(color: PremiumTokens.silver.withValues(alpha: 0.2), width: 1),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "REMIND IN 10M",
-                            style: PremiumTokens.sansStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: PremiumTokens.silver.withValues(alpha: 0.6),
-                              letterSpacing: 1.5,
-                            ),
-                          ),
-                        ),
+                  ),
+                ).animate().scale(begin: const Offset(0.9, 0.9), end: const Offset(1.0, 1.0), curve: Curves.elasticOut, duration: 800.ms),
+              ),
+              
+              const SizedBox(height: 16),
+              
+              // Remind in 10m Button (Outlined Silver)
+              GestureDetector(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    border: Border.all(color: PremiumTokens.silver.withValues(alpha: 0.2), width: 1),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "REMIND IN 10M",
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: PremiumTokens.silver.withValues(alpha: 0.6),
+                        letterSpacing: 1.5,
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
             ],
           ),
         ),
-      ),
+      ],
+    );
+
+    if (AppTheme.lowPerformanceMode) {
+      return stack;
+    }
+
+    return BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+      child: stack,
     );
   }
 }

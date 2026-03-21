@@ -8,6 +8,7 @@ import '../core/design_system.dart';
 import '../core/rituals_provider.dart';
 import '../models/ritual.dart';
 import 'package:flutter/services.dart';
+import '../core/theme.dart';
 
 class RitualsScreen extends ConsumerWidget {
   const RitualsScreen({super.key});
@@ -176,77 +177,7 @@ class RitualsScreen extends ConsumerWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(24),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              ritual.title,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.manrope(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: ritual.isCompleted ? Colors.white24 : PremiumTokens.silver,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              "${ritual.time} ${ritual.subtitle != null ? '• ${ritual.subtitle}' : ''}",
-                              style: GoogleFonts.manrope(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.blueGrey[400]!.withValues(alpha: 0.8),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      GestureDetector(
-                        onTap: () {
-                          HapticFeedback.lightImpact();
-                          ref.read(ritualsProvider.notifier).toggleRitual(ritual.id);
-                        },
-                        child: AnimatedContainer(
-                          duration: 300.ms,
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: ritual.isCompleted 
-                                ? PremiumTokens.starlight.withValues(alpha: 0.1) 
-                                : Colors.transparent,
-                            border: Border.all(
-                              color: ritual.isCompleted 
-                                  ? PremiumTokens.starlight.withValues(alpha: 0.6) 
-                                  : Colors.white.withValues(alpha: 0.2),
-                              width: 1,
-                            ),
-                            boxShadow: ritual.isCompleted ? [
-                              BoxShadow(
-                                color: PremiumTokens.starlight.withValues(alpha: 0.4),
-                                blurRadius: 15,
-                                spreadRadius: 0,
-                              )
-                            ] : [],
-                          ),
-                          child: ritual.isCompleted 
-                              ? const Icon(Icons.check, color: PremiumTokens.starlight, size: 18) 
-                              : null,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              child: _buildGlassContent(ritual),
             ),
           ).animate().fadeIn(duration: 400.ms).slideX(begin: 0.05),
         ),
@@ -254,6 +185,93 @@ class RitualsScreen extends ConsumerWidget {
     );
   }
 
+  Widget _buildGlassContent(Ritual ritual) {
+    const double blurSigma = 8.0;
+    final content = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  ritual.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.manrope(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: ritual.isCompleted ? Colors.white24 : PremiumTokens.silver,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  "${ritual.time} ${ritual.subtitle != null ? '• ${ritual.subtitle}' : ''}",
+                  style: GoogleFonts.manrope(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.blueGrey[400]!.withValues(alpha: 0.8),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Checkmark indicator logic stays same...
+          _buildCheckmark(ritual),
+        ],
+      ),
+    );
+
+    if (AppTheme.lowPerformanceMode) {
+      return content;
+    }
+
+    return BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
+      child: content,
+    );
+  }
+
+  Widget _buildCheckmark(Ritual ritual) {
+    return Consumer(
+      builder: (context, ref, child) => GestureDetector(
+        onTap: () {
+          HapticFeedback.lightImpact();
+          ref.read(ritualsProvider.notifier).toggleRitual(ritual.id);
+        },
+        child: AnimatedContainer(
+          duration: 300.ms,
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: ritual.isCompleted 
+                ? PremiumTokens.starlight.withValues(alpha: 0.1) 
+                : Colors.transparent,
+            border: Border.all(
+              color: ritual.isCompleted 
+                  ? PremiumTokens.starlight.withValues(alpha: 0.6) 
+                  : Colors.white.withValues(alpha: 0.2),
+              width: 1,
+            ),
+            boxShadow: ritual.isCompleted ? [
+              BoxShadow(
+                color: PremiumTokens.starlight.withValues(alpha: 0.4),
+                blurRadius: AppTheme.lowPerformanceMode ? 5 : 15,
+                spreadRadius: 0,
+              )
+            ] : [],
+          ),
+          child: ritual.isCompleted 
+              ? const Icon(Icons.check, color: PremiumTokens.starlight, size: 18) 
+              : null,
+        ),
+      ),
+    );
+  }
   void _showAddRitualDialog(BuildContext context, WidgetRef ref, {Ritual? ritual}) {
     final titleController = TextEditingController(text: ritual?.title);
     final timeController = TextEditingController(text: ritual?.time);
@@ -474,28 +492,32 @@ class _ConstellationBackground extends StatelessWidget {
     required double size,
     required double opacity,
   }) {
+    final star = Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: opacity),
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.white.withValues(alpha: opacity),
+            blurRadius: size * (AppTheme.lowPerformanceMode ? 1 : 2),
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+    );
+
     return Positioned(
       top: top,
       bottom: bottom,
       left: left,
       right: right,
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: opacity),
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.white.withValues(alpha: opacity),
-              blurRadius: size * 2,
-              spreadRadius: 1,
-            ),
-          ],
-        ),
-      ).animate(onPlay: (c) => c.repeat(reverse: true))
-       .fadeIn(duration: (1000 + (size * 500)).ms)
-       .blur(begin: const Offset(0.5, 0.5), end: const Offset(1.5, 1.5)),
+      child: AppTheme.lowPerformanceMode 
+        ? star
+        : star.animate(onPlay: (c) => c.repeat(reverse: true))
+             .fadeIn(duration: (1000 + (size * 500)).ms)
+             .blur(begin: const Offset(0.5, 0.5), end: const Offset(1.5, 1.5)),
     );
   }
 }
