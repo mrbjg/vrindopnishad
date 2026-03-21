@@ -6,6 +6,7 @@ import '../core/audio_provider.dart';
 import '../core/design_system.dart';
 import '../core/content_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/services.dart';
 
 class GlobalPlayerScreen extends ConsumerStatefulWidget {
@@ -67,14 +68,15 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
                       size: MediaQuery.of(context).size.width * 0.7,
                       isPlaying: isPlaying,
                       accentColor: accentColor,
-                      child: Text(
-                        'ॐ',
-                        style: GoogleFonts.spectral(
-                          fontSize: 80,
-                          color: Colors.white.withValues(alpha: 0.9),
-                          shadows: [
-                            Shadow(color: accentColor, blurRadius: 20),
-                          ],
+                      child: RepaintBoundary(
+                        child: SvgPicture.asset(
+                          'assets/shriJiMukut.svg',
+                          width: 100,
+                          height: 100,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.white, 
+                            BlendMode.srcIn,
+                          ),
                         ),
                       ),
                     ),

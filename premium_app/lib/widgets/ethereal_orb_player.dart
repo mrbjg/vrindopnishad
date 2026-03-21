@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../core/audio_provider.dart';
 import '../core/design_system.dart';
 import '../features/global_player_screen.dart';
@@ -144,15 +145,15 @@ class EtherealOrbPlayer extends ConsumerWidget {
                           ),
 
                           // Symbolic Icon
-                          Text(
-                            'ॐ',
-                            style: GoogleFonts.spectral(
-                              color: Colors.white,
-                              fontSize: 26,
-                              fontWeight: FontWeight.w300,
-                              shadows: [
-                                Shadow(color: accentColor.withValues(alpha: 0.8), blurRadius: 15),
-                              ],
+                          RepaintBoundary(
+                            child: SvgPicture.asset(
+                              'assets/shriJiMukut.svg',
+                              width: 32,
+                              height: 32,
+                              colorFilter: const ColorFilter.mode(
+                                Colors.white, 
+                                BlendMode.srcIn,
+                              ),
                             ),
                           ),
 

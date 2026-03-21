@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../core/audio_provider.dart';
 import '../core/design_system.dart';
 import '../features/global_player_screen.dart';
@@ -185,12 +186,15 @@ class MiniPlayer extends ConsumerWidget {
         ] : [],
       ),
       child: Center(
-        child: Text(
-          'ॐ',
-          style: TextStyle(
-            fontSize: 20, 
-            color: accentColor, 
-            shadows: [Shadow(color: accentColor, blurRadius: 8)]
+        child: RepaintBoundary(
+          child: SvgPicture.asset(
+            'assets/shriJiMukut.svg',
+            width: 24,
+            height: 24,
+            colorFilter: ColorFilter.mode(
+              accentColor, 
+              BlendMode.srcIn,
+            ),
           ),
         ),
       ),
