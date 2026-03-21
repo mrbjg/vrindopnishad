@@ -927,9 +927,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         return _ReadingThemeData(
           backgroundColor: const Color(0xFF030303),
           textColor: Colors.white70,
-          cardColor: Colors.white.withValues(alpha: 0.02),
-          accentColor: Colors.white30,
-          secondaryAccent: Colors.white24,
+          cardColor: Colors.white.withValues(alpha: 0.05),
+          accentColor: Colors.white.withValues(alpha: 0.15),
+          secondaryAccent: Colors.white.withValues(alpha: 0.12),
           lineHeight: 1.9,
           glassOpacity: 0.02,
           showTextShadows: false,
@@ -946,7 +946,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         decoration: BoxDecoration(
           color: _getThemeData().backgroundColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: _getThemeData().textColor.withValues(alpha: 0.1)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
