@@ -116,6 +116,97 @@ class NotificationService {
     }
   }
 
+  /// Schedule a reminder for a Vrat or Utsav the day before
+  Future<void> scheduleSacredEventReminder(String id, String title, DateTime date) async {
+    final scheduledDate = tz.TZDateTime.from(date, tz.local).subtract(const Duration(days: 1));
+    // Set to 8:00 PM the night before
+    final finalDate = tz.TZDateTime(tz.local, scheduledDate.year, scheduledDate.month, scheduledDate.day, 20, 0);
+
+    if (finalDate.isBefore(tz.TZDateTime.now(tz.local))) return;
+
+    await _notifications.zonedSchedule(
+      id.hashCode,
+      'Sacred Preparation',
+      'Tomorrow is $title. Prepare your heart for the divine tithi.',
+      finalDate,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'sacred_calendar',
+          'Sacred Calendar',
+          channelDescription: 'Vrat and Utsav reminders',
+          importance: Importance.high,
+          priority: Priority.high,
+        ),
+        iOS: DarwinNotificationDetails(),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+    );
+  }
+
+  /// Schedule a warning when a streak is at risk of being lost
+  Future<void> scheduleStreakWarning(int currentStreak) async {
+    await _notifications.cancel(2001); // 2001 is for streak warnings
+
+    final now = tz.TZDateTime.now(tz.local);
+    // Schedule for 8 PM tonight if they haven't checked in
+    var scheduledDate = tz.TZDateTime(tz.local, now.year, now.month, now.day, 20, 0);
+
+    if (scheduledDate.isBefore(now)) return;
+
+    await _notifications.zonedSchedule(
+      2001,
+      '🔥 Streak at Risk!',
+      'Your $currentStreak-day streak is ending soon. Complete your Sadhana now!',
+      scheduledDate,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'streak_warnings',
+          'Streak Warnings',
+          channelDescription: 'Alerts when your streak is about to be lost',
+          importance: Importance.max,
+          priority: Priority.high,
+        ),
+        iOS: DarwinNotificationDetails(),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+    );
+  }
+
+  /// Schedule daily wisdom (Daily Gyaan)
+  Future<void> scheduleDailyGyaanNotification(String title) async {
+    await _notifications.cancel(3001);
+
+    final now = tz.TZDateTime.now(tz.local);
+    // 9:00 AM every morning
+    var scheduledDate = tz.TZDateTime(tz.local, now.year, now.month, now.day, 9, 0);
+    
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+
+    await _notifications.zonedSchedule(
+      3001,
+      'Daily Gyaan',
+      'Today\'s Wisdom: $title',
+      scheduledDate,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'daily_gyaan',
+          'Daily Gyaan',
+          channelDescription: 'Daily spiritual wisdom notifications',
+          importance: Importance.defaultImportance,
+          priority: Priority.defaultPriority,
+        ),
+        iOS: DarwinNotificationDetails(),
+      ),
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
+  }
+
   Future<void> cancelAll() async {
     await _notifications.cancelAll();
   }

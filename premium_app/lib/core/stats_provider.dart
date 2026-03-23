@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/user_stats.dart';
 import '../services/stats_service.dart';
+import '../services/gamification_service.dart';
 import 'auth_provider.dart';
 
 final statsServiceProvider = Provider<StatsService>((ref) => StatsService());
@@ -33,12 +35,12 @@ class UserStatsNotifier extends AsyncNotifier<UserStats?> {
     });
   }
 
-  /// Increment shloka read count and earn XP
-  Future<void> recordReading(String contentId, {String? title, String? category}) async {
+  /// Increment shloka read count and earn XP via GamificationService
+  Future<void> recordReading(BuildContext context, String contentId, {String? title, String? category}) async {
     final user = ref.read(authStateProvider).value;
     if (user == null) return;
     
-    // Sync to Supabase
+    // 1. Log activity to Supabase
     await ref.read(statsServiceProvider).logReadingActivity(
       user.uid, 
       contentId: contentId,
@@ -46,8 +48,14 @@ class UserStatsNotifier extends AsyncNotifier<UserStats?> {
       category: category,
     );
     
-    // Brief delay to ensure database consistency before UI refresh
-    await Future.delayed(const Duration(milliseconds: 300));
+    // 2. Award XP via GamificationService
+    if (context.mounted) {
+      await ref.read(gamificationServiceProvider).awardXP(
+        context, 
+        50, // Base XP for reading
+        title ?? 'Read Sacred Text',
+      );
+    }
     
     await refresh();
     ref.invalidate(readingHistoryProvider);

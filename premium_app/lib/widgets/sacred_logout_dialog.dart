@@ -16,7 +16,7 @@ class SacredLogoutDialog extends StatelessWidget {
       context: context,
       barrierDismissible: true,
       barrierLabel: "Dismiss",
-      barrierColor: Colors.black.withOpacity(0.8),
+      barrierColor: Colors.black.withValues(alpha: 0.8),
       transitionDuration: const Duration(milliseconds: 500),
       pageBuilder: (context, animation, secondaryAnimation) {
         return SacredLogoutDialog(onLogout: onLogout);
@@ -64,7 +64,7 @@ class SacredLogoutDialog extends StatelessWidget {
                   style: GoogleFonts.manrope(
                     fontSize: 14,
                     fontWeight: FontWeight.w300,
-                    color: PremiumTokens.silver.withOpacity(0.7),
+                    color: PremiumTokens.silver.withValues(alpha: 0.7),
                     height: 1.6,
                   ),
                 ),
@@ -140,7 +140,7 @@ class SacredLogoutDialog extends StatelessWidget {
           : OutlinedButton(
               onPressed: onTap,
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: PremiumTokens.silver.withOpacity(0.1)),
+                side: BorderSide(color: PremiumTokens.silver.withValues(alpha: 0.1)),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
               ),
               child: Text(
@@ -148,7 +148,7 @@ class SacredLogoutDialog extends StatelessWidget {
                 style: GoogleFonts.manrope(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: PremiumTokens.silver.withOpacity(0.4),
+                  color: PremiumTokens.silver.withValues(alpha: 0.4),
                   letterSpacing: 2,
                 ),
               ),

@@ -76,6 +76,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
         try {
           await ref.read(userStatsProvider.notifier).recordReading(
+            context,
             logId,
             title: logTitle,
             category: logCategory,
@@ -85,7 +86,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
              if (mounted) {
                ScaffoldMessenger.of(context).showSnackBar(
                  SnackBar(
-                   backgroundColor: Colors.redAccent.withOpacity(0.8),
+                   backgroundColor: Colors.redAccent.withValues(alpha: 0.8),
                    content: Text(
                      "VAANI SYNC ERROR: $e",
                      style: const TextStyle(color: Colors.white, fontSize: 12),
@@ -235,7 +236,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     ),
                     
                     const SizedBox(height: 32),
-                    PremiumUI.sacredDivider(color: themeData.textColor.withOpacity(isFocusMode ? 0.3 : 0.05)),
+                    PremiumUI.sacredDivider(color: themeData.textColor.withValues(alpha: isFocusMode ? 0.3 : 0.05)),
                     const SizedBox(height: 32),
 
                     // Meaning Sections - Hidden/Simplified in Focus Mode
@@ -329,7 +330,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     RepaintBoundary(
                       child: Center(
                         child: AppTheme.lowPerformanceMode 
-                          ? Text("ॐ", style: GoogleFonts.spectral(fontSize: 48, color: themeData.textColor.withOpacity(0.2)))
+                          ? Text("ॐ", style: GoogleFonts.spectral(fontSize: 48, color: themeData.textColor.withValues(alpha: 0.2)))
                           : Text("ॐ", style: GoogleFonts.spectral(fontSize: 48, color: themeData.textColor))
                           .animate(onPlay: (c) => c.repeat(reverse: true))
                           .fadeIn(duration: 2.seconds)
@@ -391,20 +392,20 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(width: 20, height: 1, decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.transparent, PremiumTokens.saffronGlow.withOpacity(0.5)]))),
+              Container(width: 20, height: 1, decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.transparent, PremiumTokens.saffronGlow.withValues(alpha: 0.5)]))),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Text(
                   displayCategory.toUpperCase(),
                   style: GoogleFonts.manrope(
-                    color: PremiumTokens.saffronGlow.withOpacity(0.8),
+                    color: PremiumTokens.saffronGlow.withValues(alpha: 0.8),
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: isHindi ? 0.5 : 3.0,
                   ),
                 ),
               ),
-              Container(width: 20, height: 1, decoration: BoxDecoration(gradient: LinearGradient(colors: [PremiumTokens.saffronGlow.withOpacity(0.5), Colors.transparent]))),
+              Container(width: 20, height: 1, decoration: BoxDecoration(gradient: LinearGradient(colors: [PremiumTokens.saffronGlow.withValues(alpha: 0.5), Colors.transparent]))),
             ],
           ),
           SizedBox(height: 16),
@@ -433,12 +434,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         ),
         decoration: BoxDecoration(
           color: (_showCompactHeader && !isFocusMode) 
-            ? themeData.backgroundColor.withOpacity(0.85) 
+            ? themeData.backgroundColor.withValues(alpha: 0.85) 
             : Colors.transparent,
           border: Border(
             bottom: BorderSide(
               color: (_showCompactHeader && !isFocusMode) 
-                ? themeData.textColor.withOpacity(0.1) 
+                ? themeData.textColor.withValues(alpha: 0.1) 
                 : Colors.transparent,
               width: 1,
             ),
@@ -584,12 +585,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           color: themeData.cardColor,
           borderRadius: BorderRadius.circular(32),
           border: Border.all(
-            color: themeData.textColor.withOpacity(isFocusMode ? 0.1 : 0.05),
+            color: themeData.textColor.withValues(alpha: isFocusMode ? 0.1 : 0.05),
             width: 0.5,
           ),
           boxShadow: isFocusMode ? [
             BoxShadow(
-              color: themeData.accentColor.withOpacity(0.1),
+              color: themeData.accentColor.withValues(alpha: 0.1),
               blurRadius: 40,
               spreadRadius: 10,
             )
@@ -609,7 +610,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
-                            color: themeData.accentColor.withOpacity(0.1),
+                            color: themeData.accentColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -633,13 +634,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               textAlign: TextAlign.center,
               style: PremiumTokens.lailaStyle(
                 fontSize: (_fontSize + (isFocusMode ? 10 : 6)) * scale,
-                color: themeData.textColor.withOpacity(0.95),
+                color: themeData.textColor.withValues(alpha: 0.95),
                 fontWeight: FontWeight.bold,
               ).copyWith(
                 height: 1.6,
                 shadows: themeData.showTextShadows ? [
                   Shadow(
-                    color: themeData.accentColor.withOpacity(0.3),
+                    color: themeData.accentColor.withValues(alpha: 0.3),
                     blurRadius: 8,
                   ),
                 ] : [],
@@ -672,7 +673,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 isFocusMode: isFocusMode,
                 child: Column(
                   children: [
-                    Icon(icon, color: accentColor.withOpacity(0.4), size: 16),
+                    Icon(icon, color: accentColor.withValues(alpha: 0.4), size: 16),
                     const SizedBox(height: 12),
                     Builder(
                       builder: (context) {
@@ -680,7 +681,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         return Text(
                           title.toUpperCase(),
                           style: GoogleFonts.manrope(
-                            color: accentColor.withOpacity(0.7),
+                            color: accentColor.withValues(alpha: 0.7),
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: isHindi ? 0.5 : 2.5,
@@ -694,7 +695,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                       height: 1,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Colors.transparent, accentColor.withOpacity(0.2), Colors.transparent],
+                          colors: [Colors.transparent, accentColor.withValues(alpha: 0.2), Colors.transparent],
                         ),
                       ),
                     ),
@@ -707,7 +708,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               textAlign: TextAlign.center, // Centered for reading focus
               style: PremiumTokens.soulStyle( // Use Newsreader for body
                 fontSize: (isFocusMode ? _fontSize + 3 : _fontSize) * currentScale,
-                color: themeData.textColor.withOpacity(isFocusMode ? 0.95 : 0.85),
+                color: themeData.textColor.withValues(alpha: isFocusMode ? 0.95 : 0.85),
                 fontWeight: FontWeight.normal,
               ).copyWith(
                 height: themeData.lineHeight,
@@ -727,7 +728,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Iconsax.text, color: themeData.textColor.withOpacity(0.24), size: 16),
+          Icon(Iconsax.text, color: themeData.textColor.withValues(alpha: 0.24), size: 16),
           const SizedBox(width: 16),
           _buildFontToolButton(Iconsax.minus, () {
             if (_fontSize > 14) setState(() => _fontSize -= 2);
@@ -752,7 +753,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       },
       child: Container(
         padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(color: themeData.textColor.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+        decoration: BoxDecoration(color: themeData.textColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
         child: Icon(icon, color: themeData.textColor, size: 14),
       ),
     );
@@ -773,12 +774,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: PremiumTokens.saffronGlow.withOpacity(0.2),
+                color: PremiumTokens.saffronGlow.withValues(alpha: 0.2),
                 blurRadius: 20,
                 spreadRadius: 2,
               )
             ],
-            border: Border.all(color: PremiumTokens.saffronGlow.withOpacity(0.3), width: 1.5),
+            border: Border.all(color: PremiumTokens.saffronGlow.withValues(alpha: 0.3), width: 1.5),
           ),
           child: Center(
             child: Icon(Iconsax.music5, color: PremiumTokens.saffronGlow, size: 24), // Filled music icon for 'Soul Orb'
@@ -792,11 +793,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     return Container( // Changed from glassCard to a more organic, borderless design
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: _getThemeData().backgroundColor.withOpacity(0.9),
+        color: _getThemeData().backgroundColor.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 40,
             offset: const Offset(0, 10),
           )
@@ -821,7 +822,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: PremiumTokens.saffronGlow.withOpacity(0.1),
+                          color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: isLoading 
@@ -840,7 +841,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             Text(
                               isLoading ? "PREPARING DIVINE VIBRATIONS..." : "DIVINE RECITATION",
                               style: GoogleFonts.outfit(
-                                color: themeData.textColor.withOpacity(0.5),
+                                color: themeData.textColor.withValues(alpha: 0.5),
                                 fontWeight: FontWeight.w900,
                                 fontSize: 9,
                                 letterSpacing: 2,
@@ -879,7 +880,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         icon: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: themeData.textColor.withOpacity(0.05),
+                            color: themeData.textColor.withValues(alpha: 0.05),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(Iconsax.maximize_4, color: themeData.textColor, size: 16),
@@ -890,7 +891,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         icon: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: themeData.textColor.withOpacity(0.05),
+                            color: themeData.textColor.withValues(alpha: 0.05),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(Iconsax.arrow_down_1, color: themeData.textColor, size: 16),
@@ -931,7 +932,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         gradient: PremiumTokens.saffronPremiumGradient,
                         boxShadow: [
                           BoxShadow(
-                            color: PremiumTokens.saffronGlow.withOpacity(0.3),
+                            color: PremiumTokens.saffronGlow.withValues(alpha: 0.3),
                             blurRadius: 20,
                             spreadRadius: -2,
                           ),
@@ -971,11 +972,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: themeData.textColor.withOpacity(0.05),
+          color: themeData.textColor.withValues(alpha: 0.05),
           shape: BoxShape.circle,
-          border: Border.all(color: themeData.textColor.withOpacity(0.1)),
+          border: Border.all(color: themeData.textColor.withValues(alpha: 0.1)),
         ),
-        child: Icon(icon, color: themeData.textColor.withOpacity(0.7), size: iconSize),
+        child: Icon(icon, color: themeData.textColor.withValues(alpha: 0.7), size: iconSize),
       ),
     );
   }
@@ -986,7 +987,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         return _ReadingThemeData(
           backgroundColor: Colors.black,
           textColor: Colors.white,
-          cardColor: Colors.white.withOpacity(0.08),
+          cardColor: Colors.white.withValues(alpha: 0.08),
           accentColor: PremiumTokens.saffronGlow,
           secondaryAccent: Colors.blueAccent,
           lineHeight: 1.8,
@@ -1030,7 +1031,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             decoration: BoxDecoration(
               color: themeData.backgroundColor,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-              border: Border.all(color: themeData.textColor.withOpacity(0.1)),
+              border: Border.all(color: themeData.textColor.withValues(alpha: 0.1)),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -1040,7 +1041,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   style: GoogleFonts.manrope(
                     fontSize: 10, 
                     fontWeight: FontWeight.w900, 
-                    color: themeData.textColor.withOpacity(0.5), 
+                    color: themeData.textColor.withValues(alpha: 0.5), 
                     letterSpacing: 2
                   )
                 ),
@@ -1057,7 +1058,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Iconsax.text, color: themeData.textColor.withOpacity(0.24), size: 16),
+                          Icon(Iconsax.text, color: themeData.textColor.withValues(alpha: 0.24), size: 16),
                           const SizedBox(width: 16),
                           _buildFontToolButton(Iconsax.minus, () {
                             if (_fontSize > 14) {
@@ -1100,16 +1101,16 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         curve: Curves.easeInOut,
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
-                          color: isSelected ? PremiumTokens.nebulaBlue : Colors.white.withOpacity(0.05),
+                          color: isSelected ? PremiumTokens.nebulaBlue : Colors.white.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: isSelected ? Colors.transparent : Colors.white.withOpacity(0.1)),
+                          border: Border.all(color: isSelected ? Colors.transparent : Colors.white.withValues(alpha: 0.1)),
                         ),
                         child: Text(
                           theme.name.replaceAll(RegExp(r'(?=[A-Z])'), ' ').toUpperCase(),
                           style: GoogleFonts.manrope(
                             fontSize: 10, 
                             fontWeight: FontWeight.w800, 
-                            color: isSelected ? Colors.white : themeData.textColor.withOpacity(0.6)
+                            color: isSelected ? Colors.white : themeData.textColor.withValues(alpha: 0.6)
                           ),
                         ),
                       ),
@@ -1136,9 +1137,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
         overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
         activeTrackColor: themeData.accentColor,
-        inactiveTrackColor: themeData.textColor.withOpacity(0.1),
+        inactiveTrackColor: themeData.textColor.withValues(alpha: 0.1),
         thumbColor: themeData.textColor,
-        overlayColor: themeData.accentColor.withOpacity(0.2),
+        overlayColor: themeData.accentColor.withValues(alpha: 0.2),
       ),
       child: Slider(
         value: progress.clamp(0.0, 1.0),
@@ -1157,8 +1158,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(_formatDuration(position), style: GoogleFonts.outfit(color: themeData.textColor.withOpacity(0.38), fontSize: 10)),
-        Text(_formatDuration(duration), style: GoogleFonts.outfit(color: themeData.textColor.withOpacity(0.38), fontSize: 10)),
+        Text(_formatDuration(position), style: GoogleFonts.outfit(color: themeData.textColor.withValues(alpha: 0.38), fontSize: 10)),
+        Text(_formatDuration(duration), style: GoogleFonts.outfit(color: themeData.textColor.withValues(alpha: 0.38), fontSize: 10)),
       ],
     );
   }

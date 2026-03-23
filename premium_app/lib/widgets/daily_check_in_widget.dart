@@ -1,0 +1,109 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:iconsax/iconsax.dart';
+import '../core/design_system.dart';
+import '../core/stats_provider.dart';
+import '../services/gamification_service.dart';
+
+class DailyCheckInWidget extends ConsumerStatefulWidget {
+  const DailyCheckInWidget({super.key});
+
+  @override
+  ConsumerState<DailyCheckInWidget> createState() => _DailyCheckInWidgetState();
+}
+
+class _DailyCheckInWidgetState extends ConsumerState<DailyCheckInWidget> {
+  bool _isClaimed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final statsAsync = ref.watch(userStatsProvider);
+
+    return statsAsync.when(
+      data: (stats) {
+        if (stats == null) return const SizedBox.shrink();
+        
+        // Simple heuristic: If last active date is today, consider it "checked in"
+        // In a real app, we'd have a 'last_claim_date' column.
+        final now = DateTime.now().toIso8601String().split('T')[0];
+        final isAlreadyClaimed = stats.lastActiveDate?.toIso8601String().split('T')[0] == now;
+
+        return PremiumUI.etherealCard(
+          padding: const EdgeInsets.all(20),
+          borderRadius: 24,
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Text('✨', style: TextStyle(fontSize: 24)),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'DAILY BLESSING',
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
+                        color: PremiumTokens.saffronGlow,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      isAlreadyClaimed || _isClaimed 
+                        ? 'Come back tomorrow!' 
+                        : 'Claim your daily XP bonus',
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 13,
+                        color: Colors.white70,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              IgnorePointer(
+                ignoring: isAlreadyClaimed || _isClaimed,
+                child: Opacity(
+                  opacity: isAlreadyClaimed || _isClaimed ? 0.5 : 1.0,
+                  child: PremiumUI.etherealButton(
+                    onTap: () async {
+                      HapticFeedback.heavyImpact();
+                      setState(() => _isClaimed = true);
+                      
+                      await ref.read(gamificationServiceProvider).awardXP(
+                        context,
+                        100, // Daily bonus Base XP
+                        'Daily Blessing',
+                      );
+                    },
+                    child: Text(
+                      isAlreadyClaimed || _isClaimed ? 'CLAIMED' : 'CLAIM',
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ).animate().fadeIn().slideX(begin: 0.1);
+      },
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+    );
+  }
+}

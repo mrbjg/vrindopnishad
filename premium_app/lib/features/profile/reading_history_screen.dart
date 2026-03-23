@@ -108,7 +108,7 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
                             padding: const EdgeInsets.only(bottom: 12),
                             child: PremiumUI.voidCard(
                               padding: const EdgeInsets.all(16),
-                              accentColor: PremiumTokens.nebulaBlue.withOpacity(0.5),
+                              accentColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.5),
                               child: InkWell(
                                 onTap: () {
                                   Navigator.push(
@@ -126,7 +126,7 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
                                     Container(
                                       padding: const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
-                                        color: PremiumTokens.nebulaBlue.withOpacity(0.1),
+                                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: const Icon(Iconsax.clock, color: PremiumTokens.nebulaBlue, size: 20),
@@ -181,7 +181,7 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
       context: context,
       barrierDismissible: true,
       barrierLabel: "Dismiss",
-      barrierColor: Colors.black.withOpacity(0.85),
+      barrierColor: Colors.black.withValues(alpha: 0.85),
       transitionDuration: const Duration(milliseconds: 500),
       pageBuilder: (ctx, animation, secondaryAnimation) {
         return Center(
@@ -215,7 +215,7 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
                       "This will remove all your recorded reading sessions from the celestial vault. This action is permanent.",
                       textAlign: TextAlign.center,
                       style: GoogleFonts.manrope(
-                        color: PremiumTokens.silver.withOpacity(0.7),
+                        color: PremiumTokens.silver.withValues(alpha: 0.7),
                         fontSize: 14,
                         fontWeight: FontWeight.w300,
                         height: 1.6,
@@ -281,9 +281,9 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: PremiumTokens.nebulaBlue.withOpacity(0.1),
+              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
               shape: BoxShape.circle,
-              border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.2)),
+              border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
             ),
             child: const Icon(
               Iconsax.clock,
@@ -350,7 +350,7 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
           : OutlinedButton(
               onPressed: onTap,
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: PremiumTokens.silver.withOpacity(0.1)),
+                side: BorderSide(color: PremiumTokens.silver.withValues(alpha: 0.1)),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
               ),
               child: Text(
@@ -358,7 +358,7 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
                 style: GoogleFonts.manrope(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: PremiumTokens.silver.withOpacity(0.4),
+                  color: PremiumTokens.silver.withValues(alpha: 0.4),
                   letterSpacing: 2,
                 ),
               ),

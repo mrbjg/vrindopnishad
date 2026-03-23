@@ -15,6 +15,8 @@ import 'rituals_screen.dart';
 import '../core/stats_provider.dart';
 import 'profile/sacred_goal_screen.dart';
 
+import '../core/notification_manager.dart';
+
 class MainNavigationScreen extends ConsumerStatefulWidget {
   MainNavigationScreen({super.key});
 
@@ -44,8 +46,10 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
       const RitualsScreen(),
     ];
 
-    // Check goal setting after first frame
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    // Initialize notifications and sync reminders
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref.read(notificationServiceProvider).init();
+      await ref.read(notificationManagerProvider).syncAllReminders();
       _checkGoalSetting();
     });
   }
@@ -136,7 +140,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                             onTap: () {
                               HapticFeedback.heavyImpact();
                               // Only increment count (Naam Jap) as requested
-                              ref.read(naamJapStateProvider.notifier).increment();
+                              ref.read(naamJapStateProvider.notifier).increment(context);
                             },
                             onLongPressStart: (details) {
                               _menuPointerPosition.value = details.globalPosition;

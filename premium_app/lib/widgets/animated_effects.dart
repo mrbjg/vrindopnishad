@@ -227,7 +227,7 @@ class _FlowerOfLifePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = (isDark ? Colors.white : AppTheme.primaryColor).withOpacity(0.05,)
+      ..color = (isDark ? Colors.white : AppTheme.primaryColor).withValues(alpha: 0.05,)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.5;
 
@@ -284,12 +284,12 @@ class GlassCard extends StatelessWidget {
     Widget contents = Container(
       padding: padding ?? const EdgeInsets.all(AppTheme.space16),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.black : Colors.white).withOpacity(AppTheme.lowPerformanceMode ? opacity * 1.5 : opacity,),
+        color: (isDark ? Colors.black : Colors.white).withValues(alpha: AppTheme.lowPerformanceMode ? opacity * 1.5 : opacity,),
         borderRadius: radius,
         border: Border.all(
           color:
               borderColor ??
-              (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+              (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
           width: 0.8,
         ),
       ),
@@ -347,8 +347,8 @@ class ShimmerLoading extends StatelessWidget {
           height: height,
           decoration: BoxDecoration(
             color: isDark
-                ? Colors.white.withOpacity(0.05)
-                : Colors.black.withOpacity(0.05),
+                ? Colors.white.withValues(alpha: 0.05)
+                : Colors.black.withValues(alpha: 0.05),
             borderRadius:
                 borderRadius ?? BorderRadius.circular(AppTheme.radiusSmall),
           ),
@@ -357,8 +357,8 @@ class ShimmerLoading extends StatelessWidget {
         .shimmer(
           duration: 1500.ms,
           color: isDark
-              ? Colors.white.withOpacity(0.1)
-              : Colors.white.withOpacity(0.8),
+              ? Colors.white.withValues(alpha: 0.1)
+              : Colors.white.withValues(alpha: 0.8),
         );
   }
 }
@@ -398,7 +398,7 @@ class GradientCategoryCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppTheme.radiusXL),
           boxShadow: [
             BoxShadow(
-              color: gradientColors.first.withOpacity(0.3),
+              color: gradientColors.first.withValues(alpha: 0.3),
               blurRadius: 10,
               offset: Offset(0, 4),
             ),
@@ -415,7 +415,7 @@ class GradientCategoryCard extends StatelessWidget {
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.12),
+                  color: Colors.white.withValues(alpha: 0.12),
                 ),
               ),
             ),
@@ -428,7 +428,7 @@ class GradientCategoryCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.18),
+                      color: Colors.white.withValues(alpha: 0.18),
                       borderRadius: BorderRadius.circular(
                         AppTheme.radiusMedium,
                       ),
@@ -448,7 +448,7 @@ class GradientCategoryCard extends StatelessWidget {
                     Text(
                       '$itemCount items',
                       style: GoogleFonts.outfit(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                       ),
@@ -553,8 +553,8 @@ class PulsingOmButton extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      AppTheme.primaryColor.withOpacity(0.3),
-                      AppTheme.primaryColor.withOpacity(0),
+                      AppTheme.primaryColor.withValues(alpha: 0.3),
+                      AppTheme.primaryColor.withValues(alpha: 0),
                     ],
                   ),
                 ),
@@ -699,7 +699,7 @@ class _RadialMenuState extends State<RadialMenu>
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: item.color.withOpacity(0.4),
+                              color: item.color.withValues(alpha: 0.4),
                               blurRadius: 10,
                             ),
                           ],
@@ -748,7 +748,7 @@ class QuoteCard extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: (isDark ? AppTheme.sacredViolet : AppTheme.primaryColor)
-                .withOpacity(0.3),
+                .withValues(alpha: 0.3),
             blurRadius: 20,
             offset: Offset(0, 8),
           ),
@@ -762,7 +762,7 @@ class QuoteCard extends StatelessWidget {
             size: 32,
             color: isDark
                 ? Colors.white24
-                : AppTheme.primaryColor.withOpacity(0.3),
+                : AppTheme.primaryColor.withValues(alpha: 0.3),
           ),
           SizedBox(height: AppTheme.space12),
           Text(
@@ -807,7 +807,7 @@ class SacredOm extends StatelessWidget {
       'ॐ',
       style: TextStyle(
         fontSize: size,
-        color: (color ?? AppTheme.primaryColor).withOpacity(opacity),
+        color: (color ?? AppTheme.primaryColor).withValues(alpha: opacity),
         fontWeight: FontWeight.w300,
       ),
     );

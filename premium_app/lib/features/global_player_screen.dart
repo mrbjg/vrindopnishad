@@ -282,11 +282,11 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [accentColor, accentColor.withOpacity(0.6)],
+                  colors: [accentColor, accentColor.withValues(alpha: 0.6)],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: accentColor.withOpacity(0.4),
+                    color: accentColor.withValues(alpha: 0.4),
                     blurRadius: 40,
                     spreadRadius: 2,
                   ),
@@ -320,9 +320,9 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withOpacity(0.1)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         ),
         child: Icon(icon, color: Colors.white, size: 24),
       ),
@@ -348,7 +348,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
               thumbShape: _CustomGlowingThumbShape(color: Colors.white, glowColor: accentColor),
               overlayShape: const RoundSliderOverlayShape(overlayRadius: 18),
               activeTrackColor: accentColor,
-              inactiveTrackColor: Colors.white.withOpacity(0.05),
+              inactiveTrackColor: Colors.white.withValues(alpha: 0.05),
               activeTickMarkColor: Colors.transparent,
               inactiveTickMarkColor: Colors.transparent,
             ),
@@ -441,13 +441,13 @@ class _CustomGlowingThumbShape extends SliderComponentShape {
 
     // Outer glow
     final Paint glowPaint = Paint()
-      ..color = glowColor.withOpacity(0.5 * activationAnimation.value)
+      ..color = glowColor.withValues(alpha: 0.5 * activationAnimation.value)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12);
     canvas.drawCircle(center, thumbRadius * 2.5, glowPaint);
 
     // Inner glow / border
     final Paint borderPaint = Paint()
-      ..color = glowColor.withOpacity(0.8)
+      ..color = glowColor.withValues(alpha: 0.8)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
     canvas.drawCircle(center, thumbRadius + 1, borderPaint);

@@ -20,6 +20,10 @@ import 'sacred_calendar_screen.dart';
 import 'achievements_screen.dart';
 import 'daily_challenge_screen.dart';
 
+import '../widgets/streak_fire_animation.dart';
+import '../widgets/xp_progress_bar.dart';
+import '../widgets/daily_check_in_widget.dart';
+
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -63,6 +67,12 @@ class HomeScreen extends ConsumerWidget {
                   ],
                 ),
                 automaticallyImplyLeading: false,
+              ),
+
+              // 0. Daily Check-in
+              const SliverPadding(
+                padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
+                sliver: SliverToBoxAdapter(child: DailyCheckInWidget()),
               ),
 
               // 1. Daily Motivation Card
@@ -203,38 +213,8 @@ class _StreakLevelBar extends ConsumerWidget {
             borderRadius: 20,
             child: Row(
               children: [
-                // Streak
-                Row(
-                  children: [
-                    Text(streak > 0 ? '🔥' : '❄️',
-                        style: const TextStyle(fontSize: 20)),
-                    const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '$streak',
-                          style: PremiumTokens.sansStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w900,
-                            color: streak > 0
-                                ? PremiumTokens.saffronGlow
-                                : Colors.white38,
-                          ),
-                        ),
-                        Text(
-                          'STREAK',
-                          style: PremiumTokens.sansStyle(
-                            fontSize: 7,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1,
-                            color: Colors.white38,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                // Streak Fire
+                StreakFireAnimation(streak: streak, isActive: streak > 0),
 
                 const SizedBox(width: 16),
                 Container(width: 1, height: 36, color: Colors.white10),
@@ -242,42 +222,9 @@ class _StreakLevelBar extends ConsumerWidget {
 
                 // Level & XP Progress
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'LVL $level',
-                            style: PremiumTokens.sansStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w900,
-                              color: PremiumTokens.nebulaBlue,
-                            ),
-                          ),
-                          Text(
-                            SpiritualityEngine.levelTitle(levelTier),
-                            style: PremiumTokens.sansStyle(
-                              fontSize: 9,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white38,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: LinearProgressIndicator(
-                          value: progress,
-                          backgroundColor: Colors.white.withValues(alpha: 0.05),
-                          valueColor: const AlwaysStoppedAnimation<Color>(
-                              PremiumTokens.nebulaBlue),
-                          minHeight: 5,
-                        ),
-                      ),
-                    ],
+                  child: XPProgressBar(
+                    progress: progress,
+                    level: level,
                   ),
                 ),
 
@@ -762,7 +709,7 @@ class _PremiumNaamJapSection extends ConsumerWidget {
                 child: PremiumUI.naamJapCounter(
                   count: japState.total,
                   onTap: () {
-                    ref.read(naamJapStateProvider.notifier).increment();
+                    ref.read(naamJapStateProvider.notifier).increment(context);
                   },
                   goal: 1008,
                   size: 240,

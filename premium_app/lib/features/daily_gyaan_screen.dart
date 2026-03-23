@@ -7,6 +7,7 @@ import 'package:iconsax/iconsax.dart';
 import '../core/design_system.dart';
 import '../core/spirituality_provider.dart';
 import '../models/daily_gyaan.dart';
+import '../services/gamification_service.dart';
 
 class DailyGyaanScreen extends ConsumerWidget {
   const DailyGyaanScreen({super.key});
@@ -56,7 +57,7 @@ class DailyGyaanScreen extends ConsumerWidget {
                 // Today's featured gyaan
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: _buildTodayGyaan(ref),
+                  child: _buildTodayGyaan(context, ref),
                 ),
 
                 const SizedBox(height: 20),
@@ -99,7 +100,7 @@ class DailyGyaanScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildTodayGyaan(WidgetRef ref) {
+  Widget _buildTodayGyaan(BuildContext context, WidgetRef ref) {
     final todayGyaan = ref.watch(dailyGyaanProvider);
 
     return todayGyaan.when(
@@ -177,8 +178,13 @@ class DailyGyaanScreen extends ConsumerWidget {
               SizedBox(
                 width: double.infinity,
                 child: PremiumUI.etherealButton(
-                  onTap: () {
+                  onTap: () async {
                     HapticFeedback.heavyImpact();
+                    await ref.read(gamificationServiceProvider).awardXP(
+                      context,
+                      50,
+                      'Gyaan of the Day: ${gyaan.title}',
+                    );
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

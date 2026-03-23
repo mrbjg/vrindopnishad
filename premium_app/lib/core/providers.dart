@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_provider.dart';
 import 'stats_provider.dart';
 import 'cache_service.dart';
+import '../services/gamification_service.dart';
 
 final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
 
@@ -103,7 +104,7 @@ class NaamJapNotifier extends StateNotifier<NaamJapState> {
 
   DateTime _lastIncrementTime = DateTime.fromMillisecondsSinceEpoch(0);
 
-  Future<void> increment() async {
+  Future<void> increment(BuildContext context) async {
     final now = DateTime.now();
     // Throttle: max 3 taps per second (~333ms delay)
     if (now.difference(_lastIncrementTime).inMilliseconds < 333) {
@@ -120,6 +121,14 @@ class NaamJapNotifier extends StateNotifier<NaamJapState> {
     if (newTotal % 108 == 0) {
       final user = ref.read(authStateProvider).value;
       if (user != null) {
+        // Award XP via GamificationService
+        if (context.mounted) {
+          await ref.read(gamificationServiceProvider).awardXP(
+            context,
+            216, // 108 chants * 2 XP
+            'Completed 1 Mala',
+          );
+        }
         ref.read(statsServiceProvider).logJapActivity(user.uid, 108);
         ref.invalidate(japHistoryProvider);
       }
@@ -147,8 +156,9 @@ final naamJapStateProvider = StateNotifierProvider<NaamJapNotifier, NaamJapState
 
 class OnboardingNotifier extends StateNotifier<bool> {
   final SharedPreferences prefs;
+  final Ref ref;
 
-  OnboardingNotifier(this.prefs) : super(0.0 != 0.0) { // Using a dummy bool for super as it's set in constructor
+  OnboardingNotifier(this.prefs, this.ref) : super(false) {
     state = prefs.getBool('has_seen_onboarding') ?? false;
   }
 
@@ -156,13 +166,35 @@ class OnboardingNotifier extends StateNotifier<bool> {
     state = true;
     await prefs.setBool('has_seen_onboarding', true);
   }
+
+  Future<void> completeOnboardingWithAssessment({
+    required String level,
+    required int dailyGoal,
+  }) async {
+    state = true;
+    await prefs.setBool('has_seen_onboarding', true);
+    
+    // Sync with Supabase if user is logged in
+    final user = ref.read(authStateProvider).value;
+    if (user != null) {
+      try {
+        await ref.read(statsServiceProvider).updateStats(user.uid, {
+          'spirituality_level': level,
+          'daily_mala_goal': dailyGoal,
+          'onboarding_completed': true,
+        });
+      } catch (e) {
+        debugPrint('Error syncing onboarding stats: $e');
+      }
+    }
+  }
 }
 
 /// Provider to track if the user has completed the onboarding flow
 final hasSeenOnboardingProvider =
     StateNotifierProvider<OnboardingNotifier, bool>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
-  return OnboardingNotifier(prefs);
+  return OnboardingNotifier(prefs, ref);
 });
 
 /// Provider for the selected category in the Sacred Library

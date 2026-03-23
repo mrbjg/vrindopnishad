@@ -7,6 +7,7 @@ import 'package:iconsax/iconsax.dart';
 import '../core/design_system.dart';
 import '../core/spirituality_provider.dart';
 import '../core/spirituality_engine.dart';
+import '../services/gamification_service.dart';
 
 class DailyMotivationScreen extends ConsumerWidget {
   const DailyMotivationScreen({super.key});
@@ -191,14 +192,21 @@ class DailyMotivationScreen extends ConsumerWidget {
                   // Share Button
                   Center(
                     child: GestureDetector(
-                      onTap: () {
+                      onTap: () async {
                         HapticFeedback.mediumImpact();
-                        PremiumUI.showNotification(
+                        await ref.read(gamificationServiceProvider).awardXP(
                           context,
-                          'Sharing sacred wisdom...',
-                          icon: Iconsax.share,
-                          color: PremiumTokens.nebulaBlue,
+                          25,
+                          'Shared Spiritual Wisdom',
                         );
+                        if (context.mounted) {
+                          PremiumUI.showNotification(
+                            context,
+                            'Sharing sacred wisdom...',
+                            icon: Iconsax.share,
+                            color: PremiumTokens.nebulaBlue,
+                          );
+                        }
                       },
                       child: PremiumUI.glassCard(
                         padding: const EdgeInsets.symmetric(

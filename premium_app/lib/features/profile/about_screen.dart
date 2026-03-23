@@ -25,7 +25,7 @@ class AboutScreen extends StatelessWidget {
               height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: PremiumTokens.nebulaBlue.withOpacity(0.15),
+                color: PremiumTokens.nebulaBlue.withValues(alpha: 0.15),
               ),
             ).animate(onPlay: (controller) => controller.repeat(reverse: true))
              .scale(duration: 5.seconds, begin: const Offset(1, 1), end: const Offset(1.2, 1.2))
@@ -98,7 +98,7 @@ class AboutScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         decoration: BoxDecoration(
-                          border: Border.all(color: PremiumTokens.nebulaBlue.withOpacity(0.3)),
+                          border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
                           borderRadius: BorderRadius.circular(100),
                         ),
                         child: Text(
@@ -175,13 +175,13 @@ class AboutScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("MADE WITH ", style: TextStyle(color: Colors.white.withOpacity(0.2), fontSize: 10)),
+                          Text("MADE WITH ", style: TextStyle(color: Colors.white.withValues(alpha: 0.2), fontSize: 10)),
                           const Icon(Icons.favorite, color: Colors.redAccent, size: 10),
-                          Text(" FOR ", style: TextStyle(color: Colors.white.withOpacity(0.2), fontSize: 10)),
+                          Text(" FOR ", style: TextStyle(color: Colors.white.withValues(alpha: 0.2), fontSize: 10)),
                           Text(
                             "SANT-SANATAN",
                             style: GoogleFonts.manrope(
-                              color: PremiumTokens.nebulaBlue.withOpacity(0.6),
+                              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.6),
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
                             ),
@@ -213,7 +213,7 @@ class AboutScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: PremiumTokens.nebulaBlue.withOpacity(0.1),
+                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: PremiumTokens.nebulaBlue, size: 16),
@@ -225,7 +225,7 @@ class AboutScreen extends StatelessWidget {
                   fontSize: 14,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 3,
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                 ),
               ),
             ],
@@ -238,7 +238,7 @@ class AboutScreen extends StatelessWidget {
               style: GoogleFonts.manrope(
                 height: 1.8,
                 fontSize: 14,
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withValues(alpha: 0.5),
                 fontWeight: FontWeight.w300,
               ),
             ),
@@ -262,9 +262,9 @@ class AboutScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.05),
+          color: color.withValues(alpha: 0.05),
           shape: BoxShape.circle,
-          border: Border.all(color: color.withOpacity(0.15), width: 1),
+          border: Border.all(color: color.withValues(alpha: 0.15), width: 1),
         ),
         child: Icon(icon, color: color, size: 22),
       ),

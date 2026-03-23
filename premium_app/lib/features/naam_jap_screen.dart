@@ -59,7 +59,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
         behavior: HitTestBehavior.translucent,
         onTap: () {
           HapticFeedback.lightImpact();
-          ref.read(naamJapStateProvider.notifier).increment();
+          ref.read(naamJapStateProvider.notifier).increment(context);
         },
         child: Stack(
           children: [
@@ -346,7 +346,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
           GestureDetector(
             onTap: () {
               HapticFeedback.mediumImpact();
-              ref.read(naamJapStateProvider.notifier).increment();
+              ref.read(naamJapStateProvider.notifier).increment(context);
             },
             child: Container(
               width: 100,
