@@ -41,12 +41,12 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCU9VuBms1Ss8VzFEqFSWScQgwDTCDwPkw',
-    appId: '1:1019370299171:android:421f8669d8a388dfcd3696',
-    messagingSenderId: '1019370299171',
-    projectId: 'login-me-vrinda',
-    databaseURL: 'https://login-me-vrinda-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'login-me-vrinda.firebasestorage.app',
+    apiKey: 'AIzaSyAr78jEl1kzZ_MKRieUBlk5o5lO2p24vQU',
+    appId: '1:1027361942428:android:3505e536f6ea3f7753b659',
+    messagingSenderId: '1027361942428',
+    projectId: 'santvaanig',
+    databaseURL: 'https://santvaanig-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'santvaanig.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -59,13 +59,13 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCxBytUXjMdhBQfSjjuaIGfcXZe8N0WkH0',
-    appId: '1:1019370299171:web:1a6df319b2fbfd6fcd3696',
-    messagingSenderId: '1019370299171',
-    projectId: 'login-me-vrinda',
-    authDomain: 'login-me-vrinda.firebaseapp.com',
-    databaseURL: 'https://login-me-vrinda-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'login-me-vrinda.firebasestorage.app',
+    apiKey: 'AIzaSyAr78jEl1kzZ_MKRieUBlk5o5lO2p24vQU',
+    appId: '1:1027361942428:web:1a6df319b2fbfd6fcd3696',
+    messagingSenderId: '1027361942428',
+    projectId: 'santvaanig',
+    authDomain: 'santvaanig.firebaseapp.com',
+    databaseURL: 'https://santvaanig-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'santvaanig.firebasestorage.app',
     measurementId: 'G-NN88X7N454',
   );
 

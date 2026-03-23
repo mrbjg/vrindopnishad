@@ -18,7 +18,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _startTransition() async {
-    await Future.delayed(const Duration(milliseconds: 3000));
+    // Reduced delay for "Instant" feel, but enough for the animation to be seen
+    await Future.delayed(const Duration(milliseconds: 800));
     if (mounted) widget.onComplete();
   }
 

@@ -10,6 +10,7 @@ import 'features/main_navigation_screen.dart';
 import 'features/auth_screen.dart';
 import 'features/onboarding_screen.dart';
 import 'features/splash_screen.dart';
+import 'core/cache_service.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:firebase_core/firebase_core.dart';
@@ -21,30 +22,43 @@ import 'services/notification_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-  // Initialize Supabase
-  await sb.Supabase.initialize(
-    url: 'https://tilimltxgeucefxzerqi.supabase.co',
-    anonKey: 'sb_publishable_0YiM-Q8itRORUDdToracaQ_vzcrjUlC',
-  );
-
-  // Initialize Background Audio
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
-    androidNotificationChannelName: 'Audio playback',
-    androidNotificationOngoing: true,
-  );
-
-  // Initialize Notification Service
-  await NotificationService().init();
-  
-  // Pre-initialize SharedPreferences for instant cache access
+  // Initialize Cache & Storage first (Fast & Synchronous-ish)
   final prefs = await SharedPreferences.getInstance();
-  
+  await CacheService.instance.init();
+
+  // Initialize Services in parallel for "Instant" opening feel
+  // We wait for Firebase as it's critical for Auth, but other services can start in parallel
+  await Future.wait([
+    // Robust Firebase initialization with explicit duplicate handling
+    () async {
+      try {
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+      } catch (e) {
+        if (e.toString().contains('duplicate-app')) {
+          // Already initialized, we can safely ignore
+        } else {
+          rethrow;
+        }
+      }
+    }(),
+
+    // Parallel initialization of non-blocking services
+    sb.Supabase.initialize(
+      url: 'https://tilimltxgeucefxzerqi.supabase.co',
+      anonKey: 'sb_publishable_0YiM-Q8itRORUDdToracaQ_vzcrjUlC',
+    ),
+    
+    JustAudioBackground.init(
+      androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+      androidNotificationChannelName: 'Audio playback',
+      androidNotificationOngoing: true,
+    ),
+    
+    NotificationService().init(),
+  ]);
+
   runApp(ProviderScope(
     overrides: [
       sharedPreferencesProvider.overrideWithValue(prefs),

@@ -12,7 +12,7 @@ class AuthService {
   // For Android, we must pass the Web Client ID as serverClientId to get a valid ID Token for Supabase
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     serverClientId:
-        '1019370299171-vdf08iskqktbvrcntf3s1iadvracoued.apps.googleusercontent.com',
+        '1027361942428-qan7576dnckruo88bl7gr6rfsi5ho0kn.apps.googleusercontent.com',
   );
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
