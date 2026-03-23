@@ -77,6 +77,8 @@ ALTER TABLE user_stats ADD COLUMN IF NOT EXISTS daily_mala_goal INT DEFAULT 11;
 ALTER TABLE user_stats ADD COLUMN IF NOT EXISTS preferred_language TEXT DEFAULT 'hi';
 ALTER TABLE user_stats ADD COLUMN IF NOT EXISTS onboarding_completed BOOLEAN DEFAULT false;
 ALTER TABLE user_stats ADD COLUMN IF NOT EXISTS total_badges INT DEFAULT 0;
+ALTER TABLE user_stats ADD COLUMN IF NOT EXISTS reminder_time TEXT;
+ALTER TABLE user_stats ADD COLUMN IF NOT EXISTS dynamic_icon_enabled BOOLEAN DEFAULT true;
 
 -- 8. Enable RLS on new tables
 ALTER TABLE daily_motivations ENABLE ROW LEVEL SECURITY;

@@ -1,0 +1,28 @@
+Analyzing premium_app...                                        
+
+warning • The URI 'package:flutter_lints/flutter.yaml' included in '/Users/sakhi/Code/Company/Projects/VrindaVaani/premium_app/analysis_options.yaml' can't be found when analyzing '/Users/sakhi/Code/Company/Projects/VrindaVaani/premium_app' • analysis_options.yaml:10:10 • include_file_not_found
+warning • 'LockCachingAudioSource' is experimental and could be removed or changed at any time • lib/core/audio_service.dart:48:18 • experimental_member_use
+warning • The declaration '_supabase' isn't referenced • lib/core/auth_provider.dart:10:25 • unused_element
+warning • Unused import: '../core/providers.dart' • lib/core/content_provider.dart:6:8 • unused_import
+warning • Unused import: 'package:flutter_animate/flutter_animate.dart' • lib/features/auth_screen.dart:6:8 • unused_import
+   info • The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' • lib/features/daily_challenge_screen.dart:2:8 • unnecessary_import
+warning • Unused import: 'package:google_fonts/google_fonts.dart' • lib/features/global_player_screen.dart:4:8 • unused_import
+warning • Unused import: '../core/content_provider.dart' • lib/features/global_player_screen.dart:7:8 • unused_import
+warning • The receiver can't be 'null' because of short-circuiting, so the null-aware operator '?.' can't be used • lib/features/global_player_screen.dart:114:57 • invalid_null_aware_operator
+warning • A value for optional parameter 'thumbRadius' isn't ever given • lib/features/global_player_screen.dart:419:10 • unused_element_parameter
+warning • The value of the local variable 'levelTier' isn't used • lib/features/home_screen.dart:198:11 • unused_local_variable
+  error • The method '_buildHeader' isn't defined for the type 'EternalReflectionScreen' • lib/features/journal_screen.dart:50:45 • undefined_method
+  error • The named parameter 'height' isn't defined • lib/features/journal_screen.dart:400:27 • undefined_named_parameter
+warning • The declaration '_showSearchDialog' isn't referenced • lib/features/journal_screen.dart:559:8 • unused_element
+warning • Unused import: 'profile/sacred_goal_screen.dart' • lib/features/main_navigation_screen.dart:16:8 • unused_import
+warning • Duplicate import • lib/features/naam_jap_screen.dart:11:8 • duplicate_import
+warning • Unused import: '../../core/stats_provider.dart' • lib/features/profile/settings_screen.dart:10:8 • unused_import
+warning • Unused import: '../core/providers.dart' • lib/features/profile_screen.dart:8:8 • unused_import
+warning • Unused import: 'dart:convert' • lib/models/journal_entry.dart:1:8 • unused_import
+warning • Unused import: 'package:iconsax/iconsax.dart' • lib/services/gamification_service.dart:5:8 • unused_import
+warning • Unused import: '../models/user_stats.dart' • lib/services/gamification_service.dart:10:8 • unused_import
+warning • Unused import: '../models/achievement.dart' • lib/services/gamification_service.dart:11:8 • unused_import
+warning • Unused import: 'package:iconsax/iconsax.dart' • lib/widgets/achievement_dialog.dart:5:8 • unused_import
+warning • Unused import: 'package:iconsax/iconsax.dart' • lib/widgets/daily_check_in_widget.dart:5:8 • unused_import
+warning • Unused import: 'package:google_fonts/google_fonts.dart' • lib/widgets/ethereal_orb_player.dart:5:8 • unused_import
+

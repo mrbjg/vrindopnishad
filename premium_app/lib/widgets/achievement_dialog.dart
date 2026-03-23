@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:iconsax/iconsax.dart';
 import '../core/design_system.dart';
 import '../models/achievement.dart';
 
@@ -40,7 +39,7 @@ class AchievementUnlockDialog extends StatelessWidget {
 
           // Main Card
           PremiumUI.etherealCard(
-            padding: const EdgeInsets.fromLTRB(32, 60, 32, 32),
+            padding: const EdgeInsets.fromLTRB(28, 80, 28, 32),
             borderRadius: 32,
             glowColor: PremiumTokens.saffronGlow.withValues(alpha: 0.2),
             child: Column(

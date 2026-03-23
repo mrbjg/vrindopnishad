@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class JournalEntry {
   final String id;
   final String firebaseUid;

@@ -13,7 +13,6 @@ import '../core/dynamic_icon_service.dart';
 import '../widgets/mini_player.dart';
 import 'rituals_screen.dart';
 import '../core/stats_provider.dart';
-import 'profile/sacred_goal_screen.dart';
 
 import '../core/notification_manager.dart';
 

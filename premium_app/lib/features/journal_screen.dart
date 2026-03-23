@@ -17,101 +17,102 @@ class EternalReflectionScreen extends ConsumerWidget {
     final searchQuery = ref.watch(journalSearchProvider);
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Stack(
-        children: [
-          SafeArea(
-            child: CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                SliverToBoxAdapter(child: _buildHeader(context, ref)),
-                SliverToBoxAdapter(child: _buildMoonPhase()),
-                journalAsync.when(
-                  data: (entries) {
-                    final filteredEntries = entries.where((e) => 
-                      e.title.toLowerCase().contains(searchQuery.toLowerCase()) || 
-                      e.content.toLowerCase().contains(searchQuery.toLowerCase())
-                    ).toList();
-
-                    if (filteredEntries.isEmpty) {
-                      return SliverFillRemaining(child: _buildEmptyState());
-                    }
-
-                    return SliverPadding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      sliver: SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final entry = filteredEntries[index];
-                            return _buildTimelineItem(
-                              context: context,
-                              ref: ref,
-                              entry: entry,
-                              isActive: index == 0,
-                            );
-                          },
-                          childCount: filteredEntries.length,
-                        ),
-                      ),
-                    );
-                  },
-                  loading: () => const SliverFillRemaining(child: Center(child: CircularProgressIndicator())),
-                  error: (e, __) => SliverFillRemaining(child: Center(child: Text("Error: $e"))),
+      backgroundColor: PremiumTokens.voidBlack,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: PremiumTokens.spaceVoidGradient,
+        ),
+        child: Stack(
+          children: [
+            // Ambient Nebula Glows
+            Positioned(
+              top: -100,
+              right: -100,
+              child: Container(
+                width: 300,
+                height: 300,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.15),
                 ),
-                const SliverToBoxAdapter(child: SizedBox(height: 120)),
-              ],
+              ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
+                begin: const Offset(1, 1),
+                end: const Offset(1.3, 1.3),
+                duration: 4.seconds,
+                curve: Curves.easeInOut,
+              ),
             ),
-          ),
-        ],
+            
+            SafeArea(
+              child: CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  SliverToBoxAdapter(child: _buildHeader(context, ref)),
+                  SliverToBoxAdapter(child: _buildSoulOrb()),
+                  journalAsync.when(
+                    data: (entries) {
+                      final filteredEntries = entries.where((e) => 
+                        e.title.toLowerCase().contains(searchQuery.toLowerCase()) || 
+                        e.content.toLowerCase().contains(searchQuery.toLowerCase())
+                      ).toList();
+
+                      if (filteredEntries.isEmpty) {
+                        return SliverFillRemaining(child: _buildEmptyState(context, ref));
+                      }
+
+                      return SliverPadding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        sliver: SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                              final entry = filteredEntries[index];
+                              return _buildTimelineItem(
+                                context: context,
+                                ref: ref,
+                                entry: entry,
+                                isActive: index == 0,
+                              ).animate().fadeIn(delay: (index * 100).ms).moveX(begin: 10, end: 0);
+                            },
+                            childCount: filteredEntries.length,
+                          ),
+                        ),
+                      );
+                    },
+                    loading: () => const SliverFillRemaining(child: Center(child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue))),
+                    error: (e, __) => SliverFillRemaining(child: Center(child: Text("Error syncing reflections: $e", style: const TextStyle(color: Colors.white38)))),
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 140)),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 80),
+        padding: const EdgeInsets.only(bottom: 100),
         child: GestureDetector(
-          onTap: () => _showEntryDialog(context, ref),
+          onTap: () {
+            HapticFeedback.heavyImpact();
+            _showEntryDialog(context, ref);
+          },
           child: Container(
-            width: 64,
-            height: 64,
+            width: 60,
+            height: 60,
             decoration: BoxDecoration(
               gradient: PremiumTokens.nebulaGradient,
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.white10, width: 2),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 1.5),
               boxShadow: [
                 BoxShadow(
-                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.5),
-                  blurRadius: 25,
-                  offset: const Offset(0, 4),
+                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.4),
+                  blurRadius: 20,
+                  spreadRadius: 2,
                 ),
               ],
             ),
-            child: const Icon(Icons.add, color: Colors.white, size: 32),
+            child: const Icon(Iconsax.add, color: Colors.white, size: 28),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Iconsax.note_21, color: Colors.white10, size: 80),
-          const SizedBox(height: 24),
-          Text(
-            "NO REFLECTIONS YET",
-            style: PremiumTokens.sansStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 2,
-              color: Colors.white24,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            "Start your journey of self-discovery",
-            style: PremiumTokens.sansStyle(fontSize: 12, color: Colors.white10),
-          ),
-        ],
       ),
     );
   }
@@ -166,93 +167,158 @@ class EternalReflectionScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildMoonPhase() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 32),
+  Widget _buildEmptyState(BuildContext context, WidgetRef ref) {
+    return Center(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0, end: 1),
-            duration: const Duration(seconds: 2),
-            builder: (context, value, child) {
-              return Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3 * value),
-                      blurRadius: 40,
-                      spreadRadius: 5,
-                    ),
-                  ],
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // Outer glow ring
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2),
-                          width: 1,
-                        ),
-                      ),
-                    ),
-                    // Moon shape
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            PremiumTokens.silver,
-                            PremiumTokens.silver.withValues(alpha: 0.1),
-                          ],
-                        ),
-                      ),
-                    ),
-                    // Shadow for crescent effect
-                    Positioned(
-                      left: 15,
-                      child: Container(
-                        width: 60,
-                        height: 60,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color(0xFF02020B), // Match background
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 20),
+          Container(
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withValues(alpha: 0.02),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+            ),
+            child: const Icon(Iconsax.note_21, color: PremiumTokens.nebulaBlue, size: 64),
+          ).animate(onPlay: (c) => c.repeat(reverse: true)).shimmer(duration: 3.seconds),
+          const SizedBox(height: 32),
           Text(
-            "WANING CRESCENT",
-            style: GoogleFonts.spectral(
+            "THE VOID IS SILENT",
+            style: PremiumTokens.sansStyle(
               fontSize: 14,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 4,
               color: Colors.white,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 3,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 12),
           Text(
-            "Phase of Release & Reflection",
+            "Capture your echoes of spiritual wisdom",
+            style: PremiumTokens.sansStyle(
+              fontSize: 12, 
+              color: Colors.white38,
+              letterSpacing: 1,
+            ),
+          ),
+          const SizedBox(height: 48),
+          ElevatedButton(
+            onPressed: () => _showEntryDialog(context, ref),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white.withValues(alpha: 0.05),
+              side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            ),
+            child: Text(
+              "BEGIN REFLECTION",
+              style: PremiumTokens.sansStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2,
+                color: Colors.white70,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSoulOrb() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 48),
+      child: Column(
+        children: [
+          Center(
+            child: Container(
+              width: 140,
+              height: 140,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2),
+                    blurRadius: 40,
+                    spreadRadius: 10,
+                  ),
+                ],
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                   // Rotating Celestial Ring
+                  Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.1),
+                        width: 1,
+                      ),
+                    ),
+                  ).animate(onPlay: (c) => c.repeat()).rotate(duration: 10.seconds),
+                  
+                  // The Core Orb
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFF000000),
+                          const Color(0xFF0A0A2D),
+                        ],
+                      ),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 0.5),
+                    ),
+                  ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
+                    begin: const Offset(1, 1),
+                    end: const Offset(1.1, 1.1),
+                    duration: 3.seconds,
+                    curve: Curves.easeInOutSine,
+                  ),
+
+                  // Interior Pulsing Glow
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
+                      boxShadow: [
+                        BoxShadow(
+                          color: PremiumTokens.nebulaBlue.withValues(alpha: 0.5),
+                          blurRadius: 20,
+                        ),
+                      ],
+                    ),
+                  ).animate(onPlay: (c) => c.repeat(reverse: true)).fadeIn(duration: 2.seconds),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          ShaderMask(
+            shaderCallback: (bounds) => PremiumTokens.silverGradient.createShader(bounds),
+            child: Text(
+              "SOUL RESONANCE",
+              style: GoogleFonts.spectral(
+                fontSize: 16,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 6,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            "Phase of Release & Clarity",
             style: PremiumTokens.sansStyle(
               fontSize: 10,
-              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.6),
-              letterSpacing: 1,
+              color: Colors.white38,
+              letterSpacing: 2,
             ),
           ),
         ],
@@ -274,111 +340,163 @@ class EternalReflectionScreen extends ConsumerWidget {
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 24),
-        color: Colors.transparent,
+        padding: const EdgeInsets.only(right: 32),
+        margin: const EdgeInsets.only(bottom: 24),
+        decoration: BoxDecoration(
+          color: Colors.redAccent.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: const Icon(Iconsax.trash, color: Colors.redAccent),
       ),
       onDismissed: (_) {
         ref.read(journalProvider.notifier).deleteEntry(entry.id);
         PremiumUI.showNotification(context, "Reflection released to the void");
       },
-      child: IntrinsicHeight(
-        child: Row(
-          children: [
-            Column(
-              children: [
-                Container(
-                  width: 1,
-                  height: 20,
-                  color: Colors.white12,
-                ),
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isActive ? PremiumTokens.nebulaBlue : Colors.white24,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Timeline indicator
+          Column(
+            children: [
+              Container(
+                width: 2,
+                height: 40,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.white.withValues(alpha: 0.05),
+                      isActive ? PremiumTokens.nebulaBlue : Colors.white10,
+                    ],
                   ),
                 ),
-                Expanded(
-                  child: Container(
-                    width: 1,
-                    color: Colors.white12,
+              ),
+              Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isActive ? PremiumTokens.nebulaBlue : Colors.transparent,
+                  border: Border.all(
+                    color: isActive ? Colors.white : Colors.white24,
+                    width: 2,
+                  ),
+                  boxShadow: [
+                    if (isActive)
+                      BoxShadow(
+                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.5),
+                        blurRadius: 10,
+                      ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 2,
+                height: 120, // Tall enough for typical card contents
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      isActive ? PremiumTokens.nebulaBlue : Colors.white10,
+                      Colors.white.withValues(alpha: 0.05),
+                    ],
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(width: 24),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 24),
-                child: GestureDetector(
-                  onLongPress: () => _showEntryDialog(context, ref, entry: entry),
-                  child: PremiumUI.voidCard(
-                    accentColor: isActive ? PremiumTokens.nebulaBlue : Colors.white10,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                entry.title,
-                                style: PremiumTokens.displayStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w300,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              timeStr,
+              ),
+            ],
+          ),
+          const SizedBox(width: 24),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 24),
+              child: GestureDetector(
+                onTap: () => _showEntryDialog(context, ref, entry: entry),
+                child: PremiumUI.voidGlassCard(
+                  optimized: false, // Use backdrop filters for absolute premium feel
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              entry.title.toUpperCase(),
                               style: PremiumTokens.sansStyle(
-                                fontSize: 10,
-                                color: Colors.white38,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 2,
+                                color: isActive ? Colors.white : Colors.white70,
                               ),
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          entry.content,
-                          style: PremiumTokens.sansStyle(
-                            fontSize: 14,
-                            color: Colors.white70,
-                            fontWeight: FontWeight.w300,
                           ),
+                          Text(
+                            timeStr,
+                            style: PremiumTokens.sansStyle(
+                              fontSize: 10,
+                              color: Colors.white24,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        entry.content,
+                        style: PremiumTokens.sansStyle(
+                          fontSize: 14,
+                          color: Colors.white.withValues(alpha: 0.6),
                         ),
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Text(
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.05),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
                               dateStr,
                               style: PremiumTokens.sansStyle(
-                                fontSize: 10,
-                                color: isActive ? PremiumTokens.nebulaBlue : Colors.white38,
+                                fontSize: 9,
                                 fontWeight: FontWeight.bold,
+                                color: isActive ? PremiumTokens.nebulaBlue : Colors.white38,
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Container(
-                                height: 1,
-                                color: Colors.white10,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Container(
+                              height: 1,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.white.withValues(alpha: 0.1),
+                                    Colors.transparent,
+                                  ],
+                                ),
                               ),
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                          Icon(
+                            Iconsax.arrow_right_1, 
+                            size: 14, 
+                            color: Colors.white.withValues(alpha: 0.1),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

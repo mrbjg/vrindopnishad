@@ -7,7 +7,6 @@ import '../../core/providers.dart';
 import '../../core/localization.dart';
 import '../../core/providers/reading_providers.dart';
 import '../../core/auth_provider.dart';
-import '../../core/stats_provider.dart';
 import '../../widgets/animated_effects.dart';
 import 'package:flutter/services.dart';
 

@@ -195,7 +195,6 @@ class _StreakLevelBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final statsAsync = ref.watch(userStatsProvider);
-    final levelTier = ref.watch(spiritualityLevelProvider);
     final xpMult = ref.watch(xpMultiplierProvider);
 
     return statsAsync.when(

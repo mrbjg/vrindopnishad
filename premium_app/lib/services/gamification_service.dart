@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:iconsax/iconsax.dart';
 import '../core/design_system.dart';
 import '../core/spirituality_engine.dart';
 import '../core/spirituality_provider.dart';
 import '../core/stats_provider.dart';
-import '../models/user_stats.dart';
-import '../models/achievement.dart';
 import '../widgets/xp_toast.dart';
 import '../widgets/achievement_dialog.dart';
 import '../core/auth_provider.dart';
@@ -23,7 +20,12 @@ class GamificationService {
   GamificationService(this.ref);
 
   /// Award XP to user and show a floating toast
-  Future<void> awardXP(BuildContext context, int amount, String reason) async {
+  Future<void> awardXP(
+    BuildContext context, 
+    int amount, 
+    String reason, {
+    bool triggerCheck = true,
+  }) async {
     final user = ref.read(authStateProvider).value;
     if (user == null) return;
 
@@ -53,8 +55,10 @@ class GamificationService {
       // 3. Refresh stats
       ref.invalidate(userStatsProvider);
       
-      // 4. Check achievements
-      checkAchievements(context);
+      // 4. Check achievements (only if triggered)
+      if (triggerCheck) {
+        checkAchievements(context);
+      }
     }
   }
 
@@ -82,8 +86,13 @@ class GamificationService {
       if (context.mounted) {
         AchievementUnlockDialog.show(context, achievement);
         
-        // Award Bonus XP for achievement
-        awardXP(context, achievement.xpBonus, 'Achievement: ${achievement.title}');
+        // Award Bonus XP for achievement (DON'T trigger check again to avoid infinite loop)
+        awardXP(
+          context, 
+          achievement.xpBonus, 
+          'Achievement: ${achievement.title}',
+          triggerCheck: false,
+        );
       }
     }
     

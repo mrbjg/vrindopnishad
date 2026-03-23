@@ -8,7 +8,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../core/design_system.dart';
 import '../core/providers.dart';
 import '../core/stats_provider.dart';
-import '../core/stats_provider.dart';
 
 class NaamJapScreen extends ConsumerStatefulWidget {
   const NaamJapScreen({super.key});
