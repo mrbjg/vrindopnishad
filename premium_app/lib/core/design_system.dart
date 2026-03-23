@@ -227,6 +227,59 @@ class _CelestialBreathingCurve extends Curve {
   }
 }
 
+class EmojiToIcon {
+  static IconData getIcon(String emoji) {
+    switch (emoji) {
+      case '🌅':
+        return Iconsax.sun_15;
+      case '🔥':
+        return Iconsax.flash_1;
+      case '📿':
+        return Iconsax.repeat;
+      case '📖':
+        return Iconsax.book_1;
+      case '🧘':
+        return Iconsax.activity;
+      case '⭐':
+        return Iconsax.star_1;
+      case '🏔️':
+        return Iconsax.flag;
+      case '👑':
+        return Iconsax.crown;
+      case '🏆':
+        return Iconsax.award;
+      case '📚':
+        return Iconsax.teacher;
+      case '📅':
+        return Iconsax.calendar_1;
+      case '⚡':
+        return Iconsax.flash_1;
+      case '🌱':
+        return Iconsax.sun_1;
+      case '🌟':
+        return Iconsax.star_1;
+      case '💎':
+        return Iconsax.star_1;
+      case '🌑':
+        return Iconsax.moon;
+      case '✨':
+        return Iconsax.magicpen;
+      case '🕉️':
+        return Iconsax.sun_fog;
+      default:
+        return Iconsax.mask;
+    }
+  }
+
+  static Widget getIconWidget(String emoji, {double size = 24, Color? color}) {
+    return Icon(
+      getIcon(emoji),
+      size: size,
+      color: color ?? Colors.white,
+    );
+  }
+}
+
 class PremiumUI extends StatelessWidget {
   const PremiumUI({super.key});
 

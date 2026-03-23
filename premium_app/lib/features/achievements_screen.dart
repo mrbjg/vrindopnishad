@@ -136,7 +136,7 @@ class AchievementsScreen extends ConsumerWidget {
   Widget _statColumn(String emoji, String value, String label, Color color) {
     return Column(
       children: [
-        Text(emoji, style: const TextStyle(fontSize: 24)),
+        EmojiToIcon.getIconWidget(emoji, size: 24, color: color),
         const SizedBox(height: 8),
         Text(
           value,
@@ -195,13 +195,10 @@ class AchievementsScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
+              EmojiToIcon.getIconWidget(
                 achievement.icon,
-                style: TextStyle(
-                  fontSize: 40,
-                  color:
-                      isUnlocked ? null : Colors.white.withValues(alpha: 0.15),
-                ),
+                size: 40,
+                color: isUnlocked ? null : Colors.white.withValues(alpha: 0.15),
               ),
               const SizedBox(height: 12),
               Text(
@@ -290,7 +287,7 @@ class AchievementsScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 32),
-            Text(achievement.icon, style: const TextStyle(fontSize: 64)),
+            EmojiToIcon.getIconWidget(achievement.icon, size: 64, color: PremiumTokens.saffronGlow),
             const SizedBox(height: 16),
             Text(
               achievement.title,
@@ -318,7 +315,7 @@ class AchievementsScreen extends ConsumerWidget {
               child: Text(
                 achievement.isUnlocked
                     ? '✓ EARNED +${achievement.xpBonus} XP'
-                    : '🔒 +${achievement.xpBonus} XP WHEN UNLOCKED',
+                    : 'LOCKED +${achievement.xpBonus} XP WHEN UNLOCKED',
                 style: PremiumTokens.sansStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w900,

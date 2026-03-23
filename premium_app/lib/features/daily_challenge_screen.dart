@@ -71,7 +71,7 @@ class DailyChallengeScreen extends ConsumerWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text('🔥', style: TextStyle(fontSize: 20)),
+                          EmojiToIcon.getIconWidget('🔥', size: 20, color: PremiumTokens.saffronGlow),
                           const SizedBox(width: 12),
                           Text(
                             'STREAK BONUS: ${xpMultiplier}x XP',
@@ -103,11 +103,10 @@ class DailyChallengeScreen extends ConsumerWidget {
                             gradient: PremiumTokens.nebulaGradient,
                             borderRadius: BorderRadius.circular(14),
                           ),
-                          child: Center(
-                            child: Text(
-                              _tierEmoji(levelTier),
-                              style: const TextStyle(fontSize: 24),
-                            ),
+                          child: EmojiToIcon.getIconWidget(
+                            _tierEmoji(levelTier),
+                            size: 24,
+                            color: Colors.white,
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -220,8 +219,7 @@ class DailyChallengeScreen extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Text(challenge.typeIcon,
-                    style: const TextStyle(fontSize: 28)),
+                EmojiToIcon.getIconWidget(challenge.typeIcon, size: 24, color: Colors.white),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(

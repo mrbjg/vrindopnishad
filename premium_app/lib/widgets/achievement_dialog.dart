@@ -126,11 +126,10 @@ class AchievementUnlockDialog extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Center(
-                child: Text(
-                  achievement.icon,
-                  style: const TextStyle(fontSize: 50),
-                ),
+              child: EmojiToIcon.getIconWidget(
+                achievement.icon,
+                size: 44,
+                color: PremiumTokens.saffronGlow,
               ),
             ),
           ).animate()

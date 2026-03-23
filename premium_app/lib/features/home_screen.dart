@@ -153,7 +153,7 @@ class _DailyMotivationSection extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  const Text('🌅', style: TextStyle(fontSize: 24)),
+                  EmojiToIcon.getIconWidget('🌅', size: 20, color: PremiumTokens.saffronGlow),
                   const SizedBox(width: 12),
                   Text(
                     'DAILY INSPIRATION',
@@ -285,7 +285,7 @@ class _DailyChallengesPreview extends ConsumerWidget {
               borderRadius: 20,
               child: Row(
                 children: [
-                  const Text('⚡', style: TextStyle(fontSize: 22)),
+                  EmojiToIcon.getIconWidget('⚡', size: 20, color: Colors.white54),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -419,7 +419,7 @@ class _QuickActionTile extends StatelessWidget {
           borderRadius: 20,
           child: Column(
             children: [
-              Text(emoji, style: const TextStyle(fontSize: 28)),
+              EmojiToIcon.getIconWidget(emoji, size: 24, color: color),
               const SizedBox(height: 8),
               Text(
                 label.toUpperCase(),
@@ -474,8 +474,7 @@ class _UpcomingEventsBanner extends ConsumerWidget {
                       color: Colors.orangeAccent.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Center(
-                        child: Text('🕉️', style: TextStyle(fontSize: 20))),
+                    child: EmojiToIcon.getIconWidget('🕉️', size: 18, color: Colors.orangeAccent),
                   ),
                   const SizedBox(width: 14),
                   Expanded(

@@ -40,7 +40,7 @@ class _DailyCheckInWidgetState extends ConsumerState<DailyCheckInWidget> {
                   color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Text('✨', style: TextStyle(fontSize: 24)),
+                child: EmojiToIcon.getIconWidget('✨', size: 24, color: PremiumTokens.saffronGlow),
               ),
               const SizedBox(width: 16),
               Expanded(
