@@ -259,7 +259,7 @@ class EmojiToIcon {
       case '🌟':
         return Iconsax.star_1;
       case '💎':
-        return Iconsax.star_1;
+        return Iconsax.diamond;
       case '🌑':
         return Iconsax.moon;
       case '✨':
