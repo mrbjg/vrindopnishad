@@ -7,6 +7,26 @@ import 'package:flutter/foundation.dart';
 class NotificationService {
   static final NotificationService _instance = NotificationService._();
   factory NotificationService() => _instance;
+
+  Future<bool> requestPermissions() async {
+    if (kIsWeb) return true;
+    
+    final AndroidFlutterLocalNotificationsPlugin? androidPlugin = _notifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    if (androidPlugin != null) {
+      // Request exact alarms permission if on Android
+      if (!kIsWeb && Platform.isAndroid) {
+        final allowed = await androidPlugin.requestExactAlarmsPermission();
+        if (allowed == false) {
+          debugPrint('Exact alarms not permitted.');
+          return false;
+        }
+      }
+    }
+    // For iOS, permissions are requested during initialization, but we can add a check here if needed.
+    // For now, assume true if not Android or if Android permission was granted.
+    return true;
+  }
+
   NotificationService._();
 
   final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
@@ -37,7 +57,7 @@ class NotificationService {
     }
 
     try {
-      if (Platform.isAndroid) {
+      if (!kIsWeb && Platform.isAndroid) {
          final androidPlugin = _notifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
          if (androidPlugin != null) {
            final allowed = await androidPlugin.requestExactAlarmsPermission();

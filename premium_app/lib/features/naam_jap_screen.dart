@@ -91,9 +91,9 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                       // Session Stats
                       _buildSessionStats(
                         isFocusMode, 
-                        todayMalas, 
-                        highestMalas, 
-                        dailyGoal: ref.read(userStatsProvider).value?.dailyMalaGoal ?? 0,
+                        todayMalas,
+                        highestMalas,
+                        dailyGoal: 11, // Default goal while 'daily_mala_goal' is disabled
                       ),
                       
                       const SizedBox(height: 140), // Spacing for Navbar + MiniPlayer

@@ -39,9 +39,9 @@ class UserStats {
       totalReadingMinutes: json['total_reading_minutes'] ?? 0,
       totalShlokasRead: json['total_shlokas_read'] ?? 0,
       totalJapCount: json['total_jap_count'] ?? 0,
-      dailyMalaGoal: json['daily_mala_goal'] ?? 11,
-      reminderTime: json['reminder_time'],
-      dynamicIconEnabled: json['dynamic_icon_enabled'] ?? true,
+      // dailyMalaGoal: json['daily_mala_goal'] ?? 11,
+      // reminderTime: json['reminder_time'],
+      // dynamicIconEnabled: json['dynamic_icon_enabled'] ?? true,
       updatedAt: json['updated_at'] != null 
           ? DateTime.parse(json['updated_at'].toString()) 
           : DateTime.now(),
@@ -58,9 +58,9 @@ class UserStats {
       'total_reading_minutes': totalReadingMinutes,
       'total_shlokas_read': totalShlokasRead,
       'total_jap_count': totalJapCount,
-      'daily_mala_goal': dailyMalaGoal,
-      'reminder_time': reminderTime,
-      'dynamic_icon_enabled': dynamicIconEnabled,
+      // 'daily_mala_goal': dailyMalaGoal,
+      // 'reminder_time': reminderTime,
+      // 'dynamic_icon_enabled': dynamicIconEnabled,
       'updated_at': updatedAt.toIso8601String(),
     };
   }

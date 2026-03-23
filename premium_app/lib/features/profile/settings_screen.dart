@@ -116,10 +116,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     HapticFeedback.mediumImpact();
                     final user = ref.read(authServiceProvider).currentUser;
                     if (user != null) {
+                      /* 
                       await ref.read(statsServiceProvider).updateStats(user.uid, {
                         'dynamic_icon_enabled': val,
                       });
-                      // Refresh the local provider state immediately
+                      */
+                      // Update the local provider state immediately
                       ref.read(dynamicIconEnabledProvider.notifier).state = val;
                       
                       PremiumUI.showNotification(

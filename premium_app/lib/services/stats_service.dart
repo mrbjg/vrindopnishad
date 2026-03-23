@@ -10,7 +10,7 @@ class StatsService {
     try {
       final response = await _supabase
           .from('user_stats')
-          .select()
+          .select('firebase_uid, level, experience_points, streak_count, last_active_date, total_reading_minutes, total_shlokas_read, total_jap_count, updated_at')
           .eq('firebase_uid', uid)
           .maybeSingle();
 
@@ -24,15 +24,15 @@ class StatsService {
           'total_reading_minutes': 0,
           'total_shlokas_read': 0,
           'total_jap_count': 0,
-          'daily_mala_goal': 11,
-          'dynamic_icon_enabled': true,
+          // 'daily_mala_goal': 11, // Column missing in current schema?
+          // 'dynamic_icon_enabled': true,
           'updated_at': DateTime.now().toIso8601String(),
         };
         
         final created = await _supabase
             .from('user_stats')
             .insert(newStats)
-            .select()
+            .select('firebase_uid, level, experience_points, streak_count, last_active_date, total_reading_minutes, total_shlokas_read, total_jap_count, updated_at')
             .single();
             
         return UserStats.fromJson(created);
@@ -203,8 +203,8 @@ class StatsService {
   Future<void> updateGoal(String uid, int goal, String? reminderTime) async {
     try {
       await _supabase.from('user_stats').update({
-        'daily_mala_goal': goal,
-        'reminder_time': reminderTime,
+        // 'daily_mala_goal': goal, // Column missing in current schema?
+        // 'reminder_time': reminderTime,
         'updated_at': DateTime.now().toIso8601String(),
       }).eq('firebase_uid', uid);
     } catch (e) {

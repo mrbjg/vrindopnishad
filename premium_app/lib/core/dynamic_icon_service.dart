@@ -1,6 +1,7 @@
 import 'package:flutter_dynamic_icon_plus/flutter_dynamic_icon_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'providers.dart';
 import 'stats_provider.dart';
 
@@ -49,7 +50,7 @@ class DynamicIconService {
       _lastCheckedDate = now;
       
       try {
-        if (!Platform.isAndroid && !Platform.isIOS) return;
+        if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) return;
         
         final currentIcon = await FlutterDynamicIconPlus.alternateIconName;
         if (currentIcon != 'MainActivityStarter') {
@@ -67,7 +68,7 @@ class DynamicIconService {
     if (!_ref.read(dynamicIconEnabledProvider)) return;
 
     try {
-      if (!Platform.isAndroid && !Platform.isIOS) return;
+      if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) return;
 
       // Always check for midnight reset first
       await _checkMidnightReset();

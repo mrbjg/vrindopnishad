@@ -777,8 +777,30 @@ class PremiumUI extends StatelessWidget {
     EdgeInsets? margin,
     Color? glowColor,
     bool showGlow = true,
+    bool optimized = true, // Added optimized toggle for high-performance rebuilds
   }) {
     final activeGlow = glowColor ?? PremiumTokens.nebulaBlue;
+    final cardContent = Container(
+      padding: padding ?? const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: const Color(0x15FFFFFF),
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.12),
+          width: 1,
+        ),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withValues(alpha: 0.05),
+            Colors.white.withValues(alpha: 0.02),
+          ],
+        ),
+      ),
+      child: child,
+    );
+
     return Container(
       margin: margin,
       decoration: BoxDecoration(
@@ -795,29 +817,12 @@ class PremiumUI extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-          child: Container(
-            padding: padding ?? const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: const Color(0x15FFFFFF),
-              borderRadius: BorderRadius.circular(borderRadius),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.12),
-                width: 1,
+        child: optimized
+            ? cardContent
+            : BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                child: cardContent,
               ),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.white.withValues(alpha: 0.05),
-                  Colors.white.withValues(alpha: 0.02),
-                ],
-              ),
-            ),
-            child: child,
-          ),
-        ),
       ),
     );
   }
@@ -830,8 +835,24 @@ class PremiumUI extends StatelessWidget {
     Color? color,
     double borderRadius = 35,
     EdgeInsets? padding,
+    bool optimized = true, // Added optimized toggle
   }) {
     final activeColor = color ?? PremiumTokens.nebulaBlue;
+    final buttonBody = Container(
+      padding:
+          padding ??
+          const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      decoration: BoxDecoration(
+        color: activeColor.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: Border.all(
+          color: activeColor.withValues(alpha: 0.3),
+          width: 1.5,
+        ),
+      ),
+      child: child,
+    );
+
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -850,23 +871,12 @@ class PremiumUI extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(borderRadius),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-            child: Container(
-              padding:
-                  padding ??
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-              decoration: BoxDecoration(
-                color: activeColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(borderRadius),
-                border: Border.all(
-                  color: activeColor.withValues(alpha: 0.3),
-                  width: 1.5,
+          child: optimized
+              ? buttonBody
+              : BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                  child: buttonBody,
                 ),
-              ),
-              child: child,
-            ),
-          ),
         ),
       ),
     );
@@ -971,33 +981,38 @@ class PremiumUI extends StatelessWidget {
 
   /// Subtle mandala pattern overlay for sacred screens
   static Widget mandalaOverlay({double opacity = 0.03}) {
-    return Opacity(
-      opacity: opacity,
-      child: ImageFiltered(
-        imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: CachedNetworkImageProvider(
-                'https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?auto=format&fit=crop&w=800&q=80',
-              ),
-              repeat: ImageRepeat.repeat,
-              scale: 0.5,
-            ),
+    final body = Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: const CachedNetworkImageProvider(
+            'https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?auto=format&fit=crop&w=800&q=80',
           ),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: RadialGradient(
-                colors: [
-                  Colors.white.withValues(alpha: 0.2),
-                  Colors.transparent,
-                ],
-                stops: const [0.5, 1.0],
-              ),
-            ),
+          repeat: ImageRepeat.repeat,
+          scale: 0.5,
+          opacity: 0.5,
+        ),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            colors: [
+              Colors.white.withValues(alpha: 0.1),
+              Colors.transparent,
+            ],
+            stops: const [0.5, 1.0],
           ),
         ),
       ),
+    );
+
+    return Opacity(
+      opacity: opacity,
+      child: AppTheme.lowPerformanceMode
+          ? body
+          : ImageFiltered(
+              imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+              child: body,
+            ),
     );
   }
 
@@ -1282,8 +1297,13 @@ class PremiumUI extends StatelessWidget {
       width: width,
       height: height,
       memCacheWidth: width != null
-          ? (width * 2).toInt()
-          : null, // Limit memory cache
+          ? (width * 2).toInt() // Standard HD scaling
+          : 600, // Reasonable default to prevent memory exhaustion
+      memCacheHeight: height != null
+          ? (height * 2).toInt()
+          : null,
+      maxWidthDiskCache: 1200, // Prevent huge disk cache
+      maxHeightDiskCache: 1200,
       errorWidget: (context, url, error) {
         print("Image Loading Error: $error");
         return Container(
@@ -2383,12 +2403,15 @@ class SacredActionMenuState extends State<SacredActionMenu> {
             final item = widget.items[index];
 
             // Layout logic: Items spread in an arc above the tap point
+            final double screenWidth = MediaQuery.sizeOf(context).width;
+            final double minDimension = math.min(screenWidth, MediaQuery.sizeOf(context).height);
+            final double radius = math.min(140.0, minDimension * 0.35); // Responsive radius
+
             const double startAngle = 3.14159 + 0.3; // Top-leftish
             const double endAngle = 2 * 3.14159 - 0.3; // Top-rightish
             final double angleStep =
                 (endAngle - startAngle) / (widget.items.length - 1);
             final double angle = startAngle + (index * angleStep);
-            const double radius = 140.0;
 
             final double offsetX = radius * math.cos(angle);
             final double offsetY = radius * math.sin(angle);
@@ -2823,7 +2846,7 @@ class _NaamJapProgressPainter extends CustomPainter {
       progressPaint,
     );
 
-    if (progress > 0) {
+    if (progress > 0 && !AppTheme.lowPerformanceMode) {
       final tightGlowPaint = Paint()
         ..color = glowColor.withValues(alpha: 0.4)
         ..style = PaintingStyle.stroke

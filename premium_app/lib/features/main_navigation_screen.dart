@@ -27,11 +27,23 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   final ValueNotifier<Offset?> _menuPointerPosition = ValueNotifier<Offset?>(null);
   final GlobalKey<SacredActionMenuState> _menuKey = GlobalKey<SacredActionMenuState>();
 
+  // Optimized screen instances to prevent recreation on every rebuild
+  late final List<Widget> _screens;
+
   @override
   void initState() {
     super.initState();
     PremiumUI.setSacredStatus();
     
+    _screens = [
+      const HomeScreen(),
+      const LibraryScreen(),
+      NaamJapScreen(),
+      const EternalReflectionScreen(),
+      ProfileScreen(),
+      const RitualsScreen(),
+    ];
+
     // Check goal setting after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkGoalSetting();
@@ -41,12 +53,15 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   void _checkGoalSetting() {
     final statsAsync = ref.read(userStatsProvider);
     statsAsync.whenData((stats) {
+      // Temporarily disabled due to database schema mismatch with 'daily_mala_goal'
+      /*
       if (stats != null && stats.dailyMalaGoal == 0) {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const SacredGoalScreen(isOnboarding: true)),
         );
       }
+      */
     });
   }
 
@@ -54,14 +69,6 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   Widget build(BuildContext context) {
     // Activate Dynamic Icon Service
     ref.watch(dynamicIconServiceProvider);
-    final List<Widget> screens = [
-      HomeScreen(),
-      LibraryScreen(),
-      NaamJapScreen(),
-      EternalReflectionScreen(),
-      ProfileScreen(),
-      RitualsScreen(),
-    ];
 
     return Scaffold(
       backgroundColor: PremiumTokens.voidBlack,
@@ -71,7 +78,9 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
             child: Consumer(
               builder: (context, ref, child) {
                 final currentIndex = ref.watch(navigationIndexProvider);
-                return PremiumUI.masterBackground(index: currentIndex);
+                return RepaintBoundary(
+                  child: PremiumUI.masterBackground(index: currentIndex),
+                );
               },
             ),
           ),
@@ -79,7 +88,9 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
             child: Consumer(
               builder: (context, ref, child) {
                 final currentIndex = ref.watch(navigationIndexProvider);
-                return IndexedStack(index: currentIndex, children: screens);
+                return RepaintBoundary(
+                  child: IndexedStack(index: currentIndex, children: _screens),
+                );
               },
             ),
           ),
@@ -89,7 +100,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
             left: 0,
             right: 0,
             bottom: 102, // Tightened from 120 to clear the Nav Button while feeling more compact
-            child: const MiniPlayer(),
+            child: const RepaintBoundary(child: MiniPlayer()),
           ),
 
           // Mind-Blowing Ethereal NavBar

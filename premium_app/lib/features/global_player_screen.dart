@@ -57,80 +57,91 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
           Positioned.fill(child: PremiumUI.masterBackground(index: 2)),
           
           SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(context),
-                const Spacer(flex: 1),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final screenHeight = constraints.maxHeight;
+                final bool isSmallScreen = screenHeight < 700;
                 
-                // Divine Disk
-                Center(
-                  child: RotationTransition(
-                    turns: _diskController,
-                    child: PremiumUI.nebulaDisk(
-                      size: MediaQuery.of(context).size.width * 0.7,
-                      isPlaying: isPlaying,
-                      accentColor: accentColor,
-                      child: RepaintBoundary(
-                        child: SvgPicture.asset(
-                          'assets/shriJiMukut.svg',
-                          width: 100,
-                          height: 100,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.white, 
-                            BlendMode.srcIn,
+                return SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Container(
+                    constraints: BoxConstraints(minHeight: screenHeight),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildHeader(context),
+                        
+                        // Divine Disk
+                        Center(
+                          child: RotationTransition(
+                            turns: _diskController,
+                            child: PremiumUI.nebulaDisk(
+                              size: isSmallScreen 
+                                ? MediaQuery.of(context).size.width * 0.5 
+                                : MediaQuery.of(context).size.width * 0.7,
+                              isPlaying: isPlaying,
+                              accentColor: accentColor,
+                              child: RepaintBoundary(
+                                child: SvgPicture.asset(
+                                  'assets/shriJiMukut.svg',
+                                  width: isSmallScreen ? 70 : 100,
+                                  height: isSmallScreen ? 70 : 100,
+                                  colorFilter: const ColorFilter.mode(
+                                    Colors.white, 
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ).animate().scale(duration: 800.ms, curve: Curves.easeOutBack),
+                        
+                        // Track Info
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                          child: Column(
+                            children: [
+                              Text(
+                                currentContent?.title ?? "Sacred Silence",
+                                textAlign: TextAlign.center,
+                                style: PremiumTokens.soulStyle(
+                                  fontSize: isSmallScreen ? 22 : 28,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                currentContent?.category?.toUpperCase() ?? "DIVINE WISDOM",
+                                style: PremiumTokens.sansStyle(
+                                  fontSize: 10,
+                                  color: accentColor,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 4,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
+                        
+                        // Waveform
+                        PremiumUI.aestheticWaveform(isPlaying: isPlaying, color: accentColor),
+                        
+                        const SizedBox(height: 20),
+                        
+                        // Controls
+                        _buildControls(audioState, accentColor),
+                        
+                        const SizedBox(height: 20),
+                        
+                        // Progress
+                        _buildProgressBar(audioState, accentColor),
+                        
+                        const SizedBox(height: 40),
+                      ],
                     ),
                   ),
-                ).animate().scale(duration: 800.ms, curve: Curves.easeOutBack),
-                
-                const Spacer(flex: 1),
-                
-                // Track Info
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: Column(
-                    children: [
-                      Text(
-                        currentContent?.title ?? "Sacred Silence",
-                        textAlign: TextAlign.center,
-                        style: PremiumTokens.soulStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        currentContent?.category?.toUpperCase() ?? "DIVINE WISDOM",
-                        style: PremiumTokens.sansStyle(
-                          fontSize: 12,
-                          color: accentColor,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 4,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                
-                const SizedBox(height: 40),
-                
-                // Waveform
-                PremiumUI.aestheticWaveform(isPlaying: isPlaying, color: accentColor),
-                
-                const SizedBox(height: 40),
-                
-                // Controls
-                _buildControls(audioState, accentColor),
-                
-                const SizedBox(height: 40),
-                
-                // Progress
-                _buildProgressBar(audioState, accentColor),
-                
-                const SizedBox(height: 40),
-              ],
+                );
+              },
             ),
           ),
         ],
