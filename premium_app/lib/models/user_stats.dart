@@ -10,6 +10,10 @@ class UserStats {
   final int dailyMalaGoal;
   final String? reminderTime;
   final bool dynamicIconEnabled;
+  final String spiritualityLevel; // seeker, sadhak, tapasvi, siddha
+  final String preferredLanguage;
+  final bool onboardingCompleted;
+  final int totalBadges;
   final DateTime updatedAt;
 
   UserStats({
@@ -24,6 +28,10 @@ class UserStats {
     this.dailyMalaGoal = 11,
     this.reminderTime,
     this.dynamicIconEnabled = true,
+    this.spiritualityLevel = 'seeker',
+    this.preferredLanguage = 'hi',
+    this.onboardingCompleted = false,
+    this.totalBadges = 0,
     required this.updatedAt,
   });
 
@@ -39,9 +47,13 @@ class UserStats {
       totalReadingMinutes: json['total_reading_minutes'] ?? 0,
       totalShlokasRead: json['total_shlokas_read'] ?? 0,
       totalJapCount: json['total_jap_count'] ?? 0,
-      // dailyMalaGoal: json['daily_mala_goal'] ?? 11,
-      // reminderTime: json['reminder_time'],
-      // dynamicIconEnabled: json['dynamic_icon_enabled'] ?? true,
+      dailyMalaGoal: json['daily_mala_goal'] ?? 11,
+      reminderTime: json['reminder_time'],
+      dynamicIconEnabled: json['dynamic_icon_enabled'] ?? true,
+      spiritualityLevel: json['spirituality_level'] ?? 'seeker',
+      preferredLanguage: json['preferred_language'] ?? 'hi',
+      onboardingCompleted: json['onboarding_completed'] ?? false,
+      totalBadges: json['total_badges'] ?? 0,
       updatedAt: json['updated_at'] != null 
           ? DateTime.parse(json['updated_at'].toString()) 
           : DateTime.now(),
@@ -58,10 +70,14 @@ class UserStats {
       'total_reading_minutes': totalReadingMinutes,
       'total_shlokas_read': totalShlokasRead,
       'total_jap_count': totalJapCount,
-      // 'daily_mala_goal': dailyMalaGoal,
-      // 'reminder_time': reminderTime,
-      // 'dynamic_icon_enabled': dynamicIconEnabled,
-      'updated_at': updatedAt.toIso8601String(),
+      'daily_mala_goal': dailyMalaGoal,
+      'reminder_time': reminderTime,
+      'dynamic_icon_enabled': dynamicIconEnabled,
+      'spirituality_level': spiritualityLevel,
+      'preferred_language': preferredLanguage,
+      'onboarding_completed': onboardingCompleted,
+      'total_badges': totalBadges,
+      'updated_at': updatedAt.toUtc().toIso8601String(),
     };
   }
 
