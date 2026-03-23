@@ -89,14 +89,14 @@ ALTER TABLE daily_challenges ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_challenge_progress ENABLE ROW LEVEL SECURITY;
 
 -- Public read for content tables
-CREATE POLICY "Public read daily_motivations" ON daily_motivations FOR SELECT USING (true);
-CREATE POLICY "Public read daily_gyaan" ON daily_gyaan FOR SELECT USING (true);
-CREATE POLICY "Public read sacred_calendar" ON sacred_calendar FOR SELECT USING (true);
-CREATE POLICY "Public read daily_challenges" ON daily_challenges FOR SELECT USING (true);
+CREATE POLICY "Public read daily_motivations" ON daily_motivations FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Public read daily_gyaan" ON daily_gyaan FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Public read sacred_calendar" ON sacred_calendar FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Public read daily_challenges" ON daily_challenges FOR SELECT TO authenticated USING (true);
 
 -- User-specific for progress tables
-CREATE POLICY "Users manage own achievements" ON user_achievements FOR ALL USING (true);
-CREATE POLICY "Users manage own challenge progress" ON user_challenge_progress FOR ALL USING (true);
+CREATE POLICY "Users manage own achievements" ON user_achievements FOR ALL TO authenticated USING (firebase_uid = auth.uid()::text) WITH CHECK (firebase_uid = auth.uid()::text);
+CREATE POLICY "Users manage own challenge progress" ON user_challenge_progress FOR ALL TO authenticated USING (firebase_uid = auth.uid()::text) WITH CHECK (firebase_uid = auth.uid()::text);
 
 -- 9. Seed some sample motivations
 INSERT INTO daily_motivations (content, source, min_level, max_level, category) VALUES
