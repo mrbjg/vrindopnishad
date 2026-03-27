@@ -28,23 +28,19 @@ void main() async {
 
   // Initialize Services in parallel for "Instant" opening feel
   // We wait for Firebase as it's critical for Auth, but other services can start in parallel
-  await Future.wait([
-    // Robust Firebase initialization with explicit duplicate handling
-    () async {
-      try {
-        await Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        );
-      } catch (e) {
-        if (e.toString().contains('duplicate-app')) {
-          // Already initialized, we can safely ignore
-        } else {
-          rethrow;
-        }
-      }
-    }(),
+  // 1. Initialize Firebase first as it's a dependency for other services
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    if (!e.toString().contains('duplicate-app')) {
+      rethrow;
+    }
+  }
 
-    // Parallel initialization of non-blocking services
+  // 2. Initialize other services in parallel
+  await Future.wait([
     sb.Supabase.initialize(
       url: 'https://tilimltxgeucefxzerqi.supabase.co',
       anonKey: 'sb_publishable_0YiM-Q8itRORUDdToracaQ_vzcrjUlC',
@@ -56,6 +52,7 @@ void main() async {
       androidNotificationOngoing: true,
     ),
     
+    // Now safe to initialize notifications
     NotificationService().init(),
   ]);
 

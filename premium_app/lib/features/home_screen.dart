@@ -16,7 +16,6 @@ import 'search_screen.dart';
 import 'daily_motivation_screen.dart';
 import 'daily_gyaan_screen.dart';
 import 'sacred_calendar_screen.dart';
-import 'achievements_screen.dart';
 
 import '../widgets/daily_check_in_widget.dart';
 
@@ -64,18 +63,13 @@ class HomeScreen extends ConsumerWidget {
                 automaticallyImplyLeading: false,
               ),
 
-              // 0. Daily Check-in
-              const SliverPadding(
-                padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
-                sliver: SliverToBoxAdapter(child: DailyCheckInWidget()),
-              ),
+              // 0. Daily Check-in (REMOVED)
 
               // Consolodated Lite Section
               const SliverToBoxAdapter(
                 child: Column(
                   children: [
                     _DailyMotivationSection(),
-                    _StreakLevelBar(),
                     RepaintBoundary(child: _PremiumNaamJapSection()),
                     _QuickActionsGrid(),
                   ],
@@ -314,14 +308,6 @@ class _QuickActionsGrid extends StatelessWidget {
             onTap: () => Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const SacredCalendarScreen())),
           ),
-          const SizedBox(width: 12),
-          _QuickActionTile(
-            emoji: '🏆',
-            label: 'Badges',
-            color: PremiumTokens.celestialSilver,
-            onTap: () => Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const AchievementsScreen())),
-          ),
         ],
       ),
     );
@@ -357,7 +343,7 @@ class _QuickActionTile extends StatelessWidget {
           child: Column(
             children: [
               Icon(
-                label == 'Gyaan' ? Iconsax.teacher : (label == 'Calendar' ? Iconsax.calendar : Iconsax.medal_star),
+                label == 'Gyaan' ? Iconsax.teacher : Iconsax.calendar,
                 size: 24,
                 color: PremiumTokens.celestialSilver.withValues(alpha: 0.6),
               ),

@@ -21,42 +21,15 @@ class GamificationService {
 
   GamificationService(this.ref);
 
-  /// Award XP and handle progression
+  /// Award XP and handle progression (DISABLED)
   Future<void> awardXP(
     BuildContext context, 
     int amount, 
     String reason, {
     bool triggerCheck = true,
   }) async {
-    final user = ref.read(authStateProvider).value;
-    if (user == null) return;
-
-    final multiplier = ref.read(xpMultiplierProvider);
-    final finalAmount = (amount * multiplier).toInt();
-
-    final stats = ref.read(userStatsProvider).value;
-    if (stats != null) {
-      final newXp = stats.experiencePoints + finalAmount;
-      final newLevel = (newXp / 1000).floor() + 1;
-
-      await ref.read(statsServiceProvider).updateStats(user.uid, {
-        'experience_points': newXp,
-        'level': newLevel,
-      });
-
-      if (!context.mounted) return;
-      XPToast.show(context, finalAmount, reason, multiplier: multiplier);
-
-      if (newLevel > stats.level) {
-        _queueDialog(() => _showLevelUpDialog(context, newLevel));
-      }
-
-      ref.invalidate(userStatsProvider);
-      
-      if (triggerCheck) {
-        checkAchievements(context);
-      }
-    }
+    // Gamification system removed for now.
+    return;
   }
 
   /// Sequence dialogs to prevent overlap (YouTube Style)
@@ -73,52 +46,10 @@ class GamificationService {
     trigger();
   }
 
-  /// Check for newly earned achievements
+  /// Check for newly earned achievements (DISABLED)
   Future<void> checkAchievements(BuildContext context) async {
-    final user = ref.read(authStateProvider).value;
-    if (user == null) return;
-
-    final stats = ref.read(userStatsProvider).value;
-    if (stats == null) return;
-
-    final unlockedAsync = await ref.read(userAchievementsProvider.future);
-    final unlockedIds = unlockedAsync.map((e) => e.achievementId).toSet();
-
-    final newAchievements = SpiritualityEngine.checkNewAchievements(
-      stats: stats,
-      alreadyUnlocked: unlockedIds,
-    );
-
-    for (final achievement in newAchievements) {
-      try {
-        await ref.read(spiritualContentServiceProvider).unlockAchievement(user.uid, achievement.id);
-        
-        if (context.mounted) {
-          _queueDialog(() => AchievementUnlockDialog.show(context, achievement, onDismiss: () {
-            _isShowingDialog = false;
-            _processQueue();
-          }));
-          
-          if (context.mounted) {
-            awardXP(
-              context, 
-              achievement.xpBonus, 
-              'Achievement: ${achievement.title}',
-              triggerCheck: false,
-            );
-          }
-        }
-      } catch (e) {
-        debugPrint('Failed to unlock achievement ${achievement.id}: $e');
-        // Still show the dialog once, but don't re-trigger XP to avoid loops
-      }
-    }
-
-    
-    if (newAchievements.isNotEmpty) {
-      ref.invalidate(userAchievementsProvider);
-      ref.invalidate(achievementsWithStatusProvider);
-    }
+    // Gamification system removed for now.
+    return;
   }
 
   void _showLevelUpDialog(BuildContext context, int newLevel) {

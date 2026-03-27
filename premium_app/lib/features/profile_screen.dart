@@ -9,7 +9,6 @@ import 'profile/saved_items_screen.dart';
 import 'profile/reading_history_screen.dart';
 import 'profile/settings_screen.dart';
 import 'profile/about_screen.dart';
-import 'celestial_stats_screen.dart';
 import 'journal_screen.dart';
 import '../widgets/sacred_logout_dialog.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -54,61 +53,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 padding: const EdgeInsets.all(24),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
-                    _buildPremiumSectionTitle("Sacred Journey"),
                     const SizedBox(height: 16),
-                    GestureDetector(
-                        onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const CelestialStatsScreen()),
-                      ),
-                      child: PremiumUI.voidCard(
-                        padding: const EdgeInsets.all(20),
-                        borderRadius: 24,
-                        accentColor: const Color(0xFF2E0BDA),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: PremiumTokens.evolvingAura(
-                                color: const Color(0xFF2E0BDA),
-                                intensity: 0.6,
-                              ),
-                              child: PremiumUI.animatedIcon(
-                                folder: 'Star',
-                                fileName: 'star.json',
-                                size: 24,
-                                color: const Color(0xFFC0C0C0),
-                              ),
-                            ),
-                            const SizedBox(width: 20),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Level ${statsAsync.value?.level ?? 1} Seeker",
-                                    style: PremiumTokens.sansStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  Text(
-                                    "${(statsAsync.value?.experiencePoints ?? 0) % 100} / 100 XP to next Orbit",
-                                    style: PremiumTokens.sansStyle(
-                                      fontSize: 12,
-                                      color: Colors.white38,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const Icon(Iconsax.arrow_right_3, color: Colors.white24, size: 20),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
 
                     _buildPremiumSectionTitle("Your Sacred Collection"),
                     const SizedBox(height: 16),
@@ -353,21 +298,13 @@ class _PremiumProfileHeader extends ConsumerWidget {
                 data: (stats) => Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildStat("Streaks", "${stats?.streakCount ?? 0}d", PremiumTokens.celestialSilver),
-                    const SizedBox(width: 24),
                     _buildStat("Japs", _formatCount(stats?.totalJapCount ?? 0), PremiumTokens.celestialSilver.withValues(alpha: 0.7)),
-                    const SizedBox(width: 24),
-                    _buildStat("Level", "Orbit ${stats?.level ?? 1}", PremiumTokens.celestialSilver.withValues(alpha: 0.5)),
                   ],
                 ),
                 loading: () => Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildStat("Streaks", "--", PremiumTokens.nebulaBlue),
-                    const SizedBox(width: 24),
                     _buildStat("Japs", "--", PremiumTokens.celestialGlow),
-                    const SizedBox(width: 24),
-                    _buildStat("Level", "--", Colors.tealAccent),
                   ],
                 ),
                 error: (_, __) => const SizedBox.shrink(),

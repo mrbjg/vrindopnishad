@@ -3,6 +3,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._();
@@ -43,6 +44,100 @@ class NotificationService {
     
     const initSettings = InitializationSettings(android: androidInit, iOS: iosInit);
     await _notifications.initialize(initSettings);
+
+    // Initialize FCM
+    await _initFCM();
+  }
+
+  Future<void> _initFCM() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    // Request permissions (especially for iOS)
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      debugPrint('User granted permission');
+      
+      // Get the token for this device
+      String? token = await messaging.getToken();
+      debugPrint("FCM Token: $token");
+      // TODO: Save this token to Supabase for targeted notifications
+    }
+
+    // Create Custom Sound Channels for Android
+    if (!kIsWeb && Platform.isAndroid) {
+      final androidPlugin = _notifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+      if (androidPlugin != null) {
+        await androidPlugin.createNotificationChannel(const AndroidNotificationChannel(
+          'divine_flute',
+          'Divine Flute',
+          description: 'Notifications with flute sound',
+          importance: Importance.max,
+          playSound: true,
+          sound: RawResourceAndroidNotificationSound('flute'),
+        ));
+        await androidPlugin.createNotificationChannel(const AndroidNotificationChannel(
+          'temple_bell',
+          'Temple Bell',
+          description: 'Notifications with temple bell sound',
+          importance: Importance.max,
+          playSound: true,
+          sound: RawResourceAndroidNotificationSound('temple_bell'),
+        ));
+        await androidPlugin.createNotificationChannel(const AndroidNotificationChannel(
+          'sacred_shankh',
+          'Sacred Shankh',
+          description: 'Notifications with shankh sound',
+          importance: Importance.max,
+          playSound: true,
+          sound: RawResourceAndroidNotificationSound('shankh'),
+        ));
+      }
+    }
+
+    // Handle incoming messages
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      debugPrint('Got a message whilst in the foreground!');
+      if (message.notification != null) {
+        _showRemoteNotification(message);
+      }
+    });
+  }
+
+  Future<void> _showRemoteNotification(RemoteMessage message) async {
+    final notification = message.notification;
+    final data = message.data;
+    
+    String channelId = 'sacred_reminders';
+    String sound = data['sound'] ?? 'default';
+    
+    if (sound == 'flute') channelId = 'divine_flute';
+    else if (sound == 'temple_bell') channelId = 'temple_bell';
+    else if (sound == 'shankh') channelId = 'sacred_shankh';
+
+    await _notifications.show(
+      notification.hashCode,
+      notification?.title,
+      notification?.body,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          channelId,
+          channelId.replaceAll('_', ' ').toUpperCase(),
+          importance: Importance.max,
+          priority: Priority.high,
+          sound: sound != 'default' ? RawResourceAndroidNotificationSound(sound) : null,
+          playSound: true,
+        ),
+        iOS: DarwinNotificationDetails(
+          presentSound: true,
+          sound: sound != 'default' ? '$sound.mp3' : null,
+        ),
+      ),
+    );
   }
 
   Future<void> scheduleDailyReminder(int hour, int minute) async {

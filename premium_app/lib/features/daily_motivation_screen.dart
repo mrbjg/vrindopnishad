@@ -194,11 +194,7 @@ class DailyMotivationScreen extends ConsumerWidget {
                     child: GestureDetector(
                       onTap: () async {
                         HapticFeedback.mediumImpact();
-                        await ref.read(gamificationServiceProvider).awardXP(
-                          context,
-                          25,
-                          'Shared Spiritual Wisdom',
-                        );
+                        // awardXP removed
                         if (context.mounted) {
                           PremiumUI.showNotification(
                             context,

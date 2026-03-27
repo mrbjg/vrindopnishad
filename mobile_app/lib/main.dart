@@ -10,6 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
+import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,9 @@ void main() async {
     url: 'https://tilimltxgeucefxzerqi.supabase.co',
     anonKey: 'sb_publishable_0YiM-Q8itRORUDdToracaQ_vzcrjUlC',
   );
+
+  // Initialize Notifications
+  await NotificationService().init();
 
   runApp(const ProviderScope(child: SantVaaniApp()));
 }

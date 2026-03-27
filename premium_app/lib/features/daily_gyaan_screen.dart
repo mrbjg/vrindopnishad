@@ -173,17 +173,13 @@ class DailyGyaanScreen extends ConsumerWidget {
                 child: PremiumUI.etherealButton(
                   onTap: () async {
                     HapticFeedback.heavyImpact();
-                    await ref.read(gamificationServiceProvider).awardXP(
-                      context,
-                      50,
-                      'Gyaan of the Day: ${gyaan.title}',
-                    );
+                    // awardXP removed
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'REFLECT ON WISDOM (+50 XP)',
+                        'REFLECT ON WISDOM',
                         style: PremiumTokens.sansStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
