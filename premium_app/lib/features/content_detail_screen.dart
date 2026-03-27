@@ -321,25 +321,6 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     ),
                     const SizedBox(height: 32),
 
-                    PremiumUI.focusContainer(
-                      isFocusMode: isFocusMode,
-                      child: Center(child: _buildPremiumFontControls(themeData)),
-                    ),
-                    
-                    const SizedBox(height: 48),
-                    RepaintBoundary(
-                      child: Center(
-                        child: AppTheme.lowPerformanceMode 
-                          ? Text("ॐ", style: GoogleFonts.spectral(fontSize: 48, color: themeData.textColor.withValues(alpha: 0.2)))
-                          : Text("ॐ", style: GoogleFonts.spectral(fontSize: 48, color: themeData.textColor))
-                          .animate(onPlay: (c) => c.repeat(reverse: true))
-                          .fadeIn(duration: 2.seconds)
-                          .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.1, 1.1), duration: 3.seconds)
-                          .blur(begin: const Offset(0, 0), end: const Offset(2, 2), duration: 3.seconds)
-                          .custom(builder: (c, v, child) => Opacity(opacity: 0.1 + (v * 0.1), child: child)),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
                     if (content != null) ...[
                       const SizedBox(height: 64),
                       PremiumUI.sacredDivider(color: themeData.textColor.withValues(alpha: 0.1)),
@@ -441,6 +422,27 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         ),
                       ),
                     ],
+
+                    const SizedBox(height: 64),
+                    PremiumUI.focusContainer(
+                      isFocusMode: isFocusMode,
+                      child: Center(child: _buildPremiumFontControls(themeData)),
+                    ),
+                    
+                    const SizedBox(height: 48),
+                    RepaintBoundary(
+                      child: Center(
+                        child: AppTheme.lowPerformanceMode 
+                          ? Text("ॐ", style: GoogleFonts.spectral(fontSize: 48, color: themeData.textColor.withValues(alpha: 0.2)))
+                          : Text("ॐ", style: GoogleFonts.spectral(fontSize: 48, color: themeData.textColor))
+                          .animate(onPlay: (c) => c.repeat(reverse: true))
+                          .fadeIn(duration: 2.seconds)
+                          .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.1, 1.1), duration: 3.seconds)
+                          .blur(begin: const Offset(0, 0), end: const Offset(2, 2), duration: 3.seconds)
+                          .custom(builder: (c, v, child) => Opacity(opacity: 0.1 + (v * 0.1), child: child)),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
                   ]),
                 ),
               ),
