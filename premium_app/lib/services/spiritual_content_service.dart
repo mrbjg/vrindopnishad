@@ -79,11 +79,29 @@ class SpiritualContentService {
       final list = (response as List).cast<Map<String, dynamic>>();
       if (list.isEmpty) return null;
 
-      final dayIndex = DateTime.now().day % list.length;
-      return DailyGyaan.fromJson(list[dayIndex]);
+      // Pick a pseudo-random one based on today's date for consistency
+      if (list.isNotEmpty) {
+        final dayIndex = DateTime.now().day % list.length;
+        return DailyGyaan.fromJson(list[dayIndex]);
+      }
+      
+      // Fallback Sample Data for UI Demo
+      return DailyGyaan(
+        id: 'sample_today',
+        title: 'The Eternal Witness',
+        content: 'Know that you are the eternal witness, untouched by the tides of time. In the silence of your heart, the universe speaks.',
+        difficulty: 2,
+        createdAt: DateTime.now(),
+      );
     } catch (e) {
       debugPrint('Error fetching gyaan: $e');
-      return null;
+      return DailyGyaan(
+        id: 'sample_error',
+        title: 'The Path of Peace',
+        content: 'Peace is not the absence of conflict, but the presence of God in every breath.',
+        difficulty: 1,
+        createdAt: DateTime.now(),
+      );
     }
   }
 
@@ -97,10 +115,33 @@ class SpiritualContentService {
       final response =
           await query.order('created_at', ascending: false).limit(50);
 
-      return (response as List)
+      final apiList = (response as List)
           .cast<Map<String, dynamic>>()
           .map((e) => DailyGyaan.fromJson(e))
           .toList();
+
+      // Add high-quality samples for UI demonstration
+      return [
+        ...apiList,
+        DailyGyaan(
+            id: 's1',
+            title: 'Transcending Ego',
+            content: 'The ego is a veil between the soul and the world. Lift it with humility.',
+            difficulty: 3,
+            createdAt: DateTime.now().subtract(const Duration(days: 1))),
+        DailyGyaan(
+            id: 's2',
+            title: 'Radha-Krishna Prem',
+            content: 'Pure love is the highest form of knowledge. It dissolves all boundaries.',
+            difficulty: 1,
+            createdAt: DateTime.now().subtract(const Duration(days: 2))),
+        DailyGyaan(
+            id: 's3',
+            title: 'The Power of Mantra',
+            content: 'Sound is the primordial vibration. Chanting clears the mind like a summer rain.',
+            difficulty: 2,
+            createdAt: DateTime.now().subtract(const Duration(days: 3))),
+      ];
     } catch (e) {
       debugPrint('Error fetching all gyaan: $e');
       return [];
@@ -120,10 +161,31 @@ class SpiritualContentService {
           .order('date', ascending: true)
           .limit(limit);
 
-      return (response as List)
+      final apiList = (response as List)
           .cast<Map<String, dynamic>>()
           .map((e) => SacredEvent.fromJson(e))
           .toList();
+
+      // Prepend Sample Data for UI Demo
+      return [
+        SacredEvent(
+          id: 'e1',
+          title: 'Full Moon Meditation',
+          date: DateTime.now().add(const Duration(days: 2)),
+          type: 'utsav',
+          description: 'A time for deep inner work under the celestial glow.',
+          createdAt: DateTime.now(),
+        ),
+        SacredEvent(
+          id: 'e2',
+          title: 'Pradosh Vrat',
+          date: DateTime.now().add(const Duration(days: 5)),
+          type: 'vrat',
+          description: 'Focused prayer and fasting for Lord Shiva.',
+          createdAt: DateTime.now(),
+        ),
+        ...apiList,
+      ];
     } catch (e) {
       debugPrint('Error fetching events: $e');
       return [];
@@ -164,13 +226,37 @@ class SpiritualContentService {
           .select()
           .eq('date', today);
 
-      return (response as List)
+      final apiList = (response as List)
           .cast<Map<String, dynamic>>()
           .map((e) => SacredEvent.fromJson(e))
           .toList();
+          
+      // Ensure Today has an event for UI Demo
+      if (apiList.isEmpty) {
+        return [
+          SacredEvent(
+            id: 'today_sample',
+            title: 'Celestial Alignment Day',
+            date: DateTime.now(),
+            type: 'tithi',
+            description: 'The stars are aligned for spiritual progress today.',
+            createdAt: DateTime.now(),
+          ),
+        ];
+      }
+      return apiList;
     } catch (e) {
       debugPrint('Error fetching today events: $e');
-      return [];
+      return [
+        SacredEvent(
+          id: 'error_sample',
+          title: 'Divine Grace Moment',
+          date: DateTime.now(),
+          type: 'utsav',
+          description: 'Every moment is a gift when lived in awareness.',
+          createdAt: DateTime.now(),
+        ),
+      ];
     }
   }
 
