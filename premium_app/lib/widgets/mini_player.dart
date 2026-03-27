@@ -10,15 +10,23 @@ import '../core/audio_provider.dart';
 import '../core/design_system.dart';
 import '../features/global_player_screen.dart';
 
-class MiniPlayer extends ConsumerWidget {
+class MiniPlayer extends ConsumerStatefulWidget {
   const MiniPlayer({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MiniPlayer> createState() => _MiniPlayerState();
+}
+
+class _MiniPlayerState extends ConsumerState<MiniPlayer> {
+  double _dragOffset = 0;
+  bool _isDismissing = false;
+
+  @override
+  Widget build(BuildContext context) {
     final audioState = ref.watch(audioProvider);
     final content = audioState.currentContent;
     
-    if (content == null) return const SizedBox.shrink();
+    if (content == null || _isDismissing) return const SizedBox.shrink();
 
     final isPlaying = audioState.isPlaying;
     final progress = audioState.duration.inMilliseconds > 0 
@@ -28,6 +36,31 @@ class MiniPlayer extends ConsumerWidget {
     final accentColor = _getCategoryColor(content.category);
 
     return GestureDetector(
+      onVerticalDragUpdate: (details) {
+        if (details.primaryDelta! > 0) {
+          setState(() {
+            _dragOffset += details.primaryDelta!;
+          });
+        }
+      },
+      onVerticalDragEnd: (details) {
+        if (_dragOffset > 80) {
+          setState(() => _isDismissing = true);
+          HapticFeedback.mediumImpact();
+          ref.read(audioProvider.notifier).stop().then((_) {
+            if (mounted) {
+              setState(() {
+                _dragOffset = 0;
+                _isDismissing = false;
+              });
+            }
+          });
+        } else {
+          setState(() {
+            _dragOffset = 0;
+          });
+        }
+      },
       onTap: () {
         Navigator.of(context).push(
           PageRouteBuilder(
@@ -38,139 +71,145 @@ class MiniPlayer extends ConsumerWidget {
           ),
         );
       },
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final width = constraints.maxWidth.isFinite ? constraints.maxWidth : MediaQuery.sizeOf(context).width;
-          
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            height: 68, 
-            width: width - 24, // Accommodate margin
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(24),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.04),
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.08),
-                      width: 0.5,
-                    ),
-                  ),
-                  child: Stack(
-                    children: [
-                      // Progress Background
-                      FractionallySizedBox(
-                        alignment: Alignment.centerLeft,
-                        widthFactor: progress.clamp(0.0, 1.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                accentColor.withValues(alpha: 0.0),
-                                accentColor.withValues(alpha: 0.15),
+      child: Transform.translate(
+        offset: Offset(0, _dragOffset),
+        child: Opacity(
+          opacity: (1 - (_dragOffset / 200)).clamp(0.0, 1.0),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final width = constraints.maxWidth.isFinite ? constraints.maxWidth : MediaQuery.sizeOf(context).width;
+              
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                height: 68, 
+                width: width - 24, // Accommodate margin
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.04),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.08),
+                          width: 0.5,
+                        ),
+                      ),
+                      child: Stack(
+                        children: [
+                          // Progress Background
+                          FractionallySizedBox(
+                            alignment: Alignment.centerLeft,
+                            widthFactor: progress.clamp(0.0, 1.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    accentColor.withValues(alpha: 0.0),
+                                    accentColor.withValues(alpha: 0.15),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          
+                          // Content
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Row(
+                              children: [
+                                _buildDisk(accentColor, isPlaying, audioState.isLoading),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        content.title,
+                                        style: GoogleFonts.manrope(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: -0.2,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        audioState.isLoading ? "Tuning Ethereal Frequencies..." : content.category.toUpperCase(),
+                                        style: GoogleFonts.manrope(
+                                          color: audioState.isLoading ? PremiumTokens.saffronGlow : accentColor.withValues(alpha: 0.6),
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.w900,
+                                          letterSpacing: 1.2,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                
+                                IconButton(
+                                  icon: Icon(Iconsax.backward_10_seconds, color: Colors.white.withValues(alpha: 0.4), size: 18),
+                                  onPressed: () {
+                                    HapticFeedback.lightImpact();
+                                    ref.read(audioProvider.notifier).skipBackward();
+                                  },
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                ),
+                                const SizedBox(width: 8),
+                                // Improved Play Button with explicit sizing
+                                SizedBox(
+                                  width: 36,
+                                  height: 36,
+                                  child: IconButton(
+                                    icon: audioState.isLoading 
+                                      ? SizedBox(
+                                          width: 20, 
+                                          height: 20, 
+                                          child: CircularProgressIndicator(strokeWidth: 2, color: accentColor)
+                                        )
+                                      : Icon(isPlaying ? Iconsax.pause5 : Iconsax.play5, color: Colors.white, size: 28),
+                                    onPressed: () {
+                                      HapticFeedback.mediumImpact();
+                                      ref.read(audioProvider.notifier).togglePlayPause();
+                                    },
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
-                        ),
-                      ),
-                      
-                      // Content
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          children: [
-                            _buildDisk(accentColor, isPlaying, audioState.isLoading),
-                            const SizedBox(width: 14),
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    content.title,
-                                    style: GoogleFonts.manrope(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: -0.2,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    audioState.isLoading ? "Tuning Ethereal Frequencies..." : content.category.toUpperCase(),
-                                    style: GoogleFonts.manrope(
-                                      color: audioState.isLoading ? PremiumTokens.saffronGlow : accentColor.withValues(alpha: 0.6),
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w900,
-                                      letterSpacing: 1.2,
-                                    ),
-                                  ),
-                                ],
+                          
+                          // Progress Line
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Container(
+                              height: 2,
+                              width: double.infinity,
+                              color: Colors.white.withValues(alpha: 0.05),
+                              child: FractionallySizedBox(
+                                alignment: Alignment.centerLeft,
+                                widthFactor: progress.clamp(0.0, 1.0),
+                                child: Container(color: accentColor),
                               ),
                             ),
-                            
-                            IconButton(
-                              icon: Icon(Iconsax.backward_10_seconds, color: Colors.white.withValues(alpha: 0.4), size: 18),
-                              onPressed: () {
-                                HapticFeedback.lightImpact();
-                                ref.read(audioProvider.notifier).skipBackward();
-                              },
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                            ),
-                            const SizedBox(width: 8),
-                            // Improved Play Button with explicit sizing
-                            SizedBox(
-                              width: 36,
-                              height: 36,
-                              child: IconButton(
-                                icon: audioState.isLoading 
-                                  ? SizedBox(
-                                      width: 20, 
-                                      height: 20, 
-                                      child: CircularProgressIndicator(strokeWidth: 2, color: accentColor)
-                                    )
-                                  : Icon(isPlaying ? Iconsax.pause5 : Iconsax.play5, color: Colors.white, size: 28),
-                                onPressed: () {
-                                  HapticFeedback.mediumImpact();
-                                  ref.read(audioProvider.notifier).togglePlayPause();
-                                },
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      
-                      // Progress Line
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          height: 2,
-                          width: double.infinity,
-                          color: Colors.white.withValues(alpha: 0.05),
-                          child: FractionallySizedBox(
-                            alignment: Alignment.centerLeft,
-                            widthFactor: progress.clamp(0.0, 1.0),
-                            child: Container(color: accentColor),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-          );
-        },
+              );
+            },
+          ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.2, end: 0),
+        ),
       ),
-    ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.2, end: 0);
+    );
   }
 
   Widget _buildDisk(Color accentColor, bool isPlaying, bool isLoading) {

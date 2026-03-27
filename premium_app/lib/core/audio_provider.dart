@@ -138,6 +138,18 @@ class AudioNotifier extends StateNotifier<AudioState> {
       await seek(Duration.zero);
     }
   }
+
+  Future<void> stop() async {
+    state = AudioState(
+      currentContent: null,
+      isPlaying: false,
+      isLoading: false,
+      position: Duration.zero,
+      duration: Duration.zero,
+      playerState: PlayerState(false, ProcessingState.idle),
+    );
+    await _service.pause();
+  }
 }
 
 final audioProvider = StateNotifierProvider<AudioNotifier, AudioState>((ref) {

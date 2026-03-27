@@ -204,6 +204,45 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                         _buildSocialCircle(icon: Icons.apple, onTap: () {}),
                       ],
                     ),
+                    
+                    const SizedBox(height: 48),
+
+                    // Guest Login Option
+                    GestureDetector(
+                      onTap: () async {
+                        setState(() => _isLoading = true);
+                        try {
+                          await ref.read(authServiceProvider).signInAnonymously();
+                        } catch (e) {
+                          _showFriendlyError(e.toString());
+                        } finally {
+                          if (mounted) setState(() => _isLoading = false);
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Iconsax.user, color: Colors.white38, size: 16),
+                            const SizedBox(width: 12),
+                            Text(
+                              "CONTINUE AS GUEST",
+                              style: PremiumTokens.sansStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 2,
+                                color: Colors.white70,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

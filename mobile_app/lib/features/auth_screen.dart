@@ -420,6 +420,39 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   ),
                 ),
               ),
+
+              const SizedBox(height: 32),
+
+              // Guest Login
+              Center(
+                child: GestureDetector(
+                  onTap: () async {
+                    setState(() => _isLoading = true);
+                    try {
+                      await ref.read(authServiceProvider).signInAnonymously();
+                    } catch (e) {
+                      _showFriendlyError(e.toString());
+                    } finally {
+                      if (mounted) setState(() => _isLoading = false);
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppTheme.textMuted(context).withOpacity(0.1)),
+                    ),
+                    child: Text(
+                      "Continue as Guest",
+                      style: GoogleFonts.outfit(
+                        color: AppTheme.textMuted(context),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

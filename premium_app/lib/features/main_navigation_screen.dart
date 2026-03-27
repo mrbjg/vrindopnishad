@@ -103,7 +103,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
             left: 0,
             right: 0,
             bottom: 102, // Tightened from 120 to clear the Nav Button while feeling more compact
-            child: RepaintBoundary(child: MiniPlayer()),
+            child: MiniPlayer(),
           ),
 
           // Mind-Blowing Ethereal NavBar

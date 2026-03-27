@@ -102,6 +102,11 @@ class AuthService {
     }
   }
 
+  // Guest Sign In (Anonymous)
+  Future<UserCredential> signInAnonymously() async {
+    return await _auth.signInAnonymously();
+  }
+
   // Sign Out
   Future<void> signOut() async {
     try {
