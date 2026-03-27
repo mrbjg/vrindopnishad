@@ -16,10 +16,12 @@ final gamificationServiceProvider = Provider<GamificationService>((ref) {
 
 class GamificationService {
   final Ref ref;
+  final List<VoidCallback> _dialogQueue = [];
+  bool _isShowingDialog = false;
 
   GamificationService(this.ref);
 
-  /// Award XP to user and show a floating toast
+  /// Award XP and handle progression
   Future<void> awardXP(
     BuildContext context, 
     int amount, 
@@ -29,11 +31,9 @@ class GamificationService {
     final user = ref.read(authStateProvider).value;
     if (user == null) return;
 
-    // 1. Calculate Multiplier
     final multiplier = ref.read(xpMultiplierProvider);
     final finalAmount = (amount * multiplier).toInt();
 
-    // 2. Update stats in Supabase
     final stats = ref.read(userStatsProvider).value;
     if (stats != null) {
       final newXp = stats.experiencePoints + finalAmount;
@@ -44,22 +44,33 @@ class GamificationService {
         'level': newLevel,
       });
 
-      // Show toast
+      if (!context.mounted) return;
       XPToast.show(context, finalAmount, reason, multiplier: multiplier);
 
-      // Check for Level Up
       if (newLevel > stats.level) {
-        _showLevelUpDialog(context, newLevel);
+        _queueDialog(() => _showLevelUpDialog(context, newLevel));
       }
 
-      // 3. Refresh stats
       ref.invalidate(userStatsProvider);
       
-      // 4. Check achievements (only if triggered)
       if (triggerCheck) {
         checkAchievements(context);
       }
     }
+  }
+
+  /// Sequence dialogs to prevent overlap (YouTube Style)
+  void _queueDialog(VoidCallback dialogTrigger) {
+    _dialogQueue.add(dialogTrigger);
+    _processQueue();
+  }
+
+  void _processQueue() {
+    if (_isShowingDialog || _dialogQueue.isEmpty) return;
+    
+    _isShowingDialog = true;
+    final trigger = _dialogQueue.removeAt(0);
+    trigger();
   }
 
   /// Check for newly earned achievements
@@ -79,22 +90,30 @@ class GamificationService {
     );
 
     for (final achievement in newAchievements) {
-      // Unlock in DB
-      await ref.read(spiritualContentServiceProvider).unlockAchievement(user.uid, achievement.id);
-      
-      // Show Dialog
-      if (context.mounted) {
-        AchievementUnlockDialog.show(context, achievement);
+      try {
+        await ref.read(spiritualContentServiceProvider).unlockAchievement(user.uid, achievement.id);
         
-        // Award Bonus XP for achievement (DON'T trigger check again to avoid infinite loop)
-        awardXP(
-          context, 
-          achievement.xpBonus, 
-          'Achievement: ${achievement.title}',
-          triggerCheck: false,
-        );
+        if (context.mounted) {
+          _queueDialog(() => AchievementUnlockDialog.show(context, achievement, onDismiss: () {
+            _isShowingDialog = false;
+            _processQueue();
+          }));
+          
+          if (context.mounted) {
+            awardXP(
+              context, 
+              achievement.xpBonus, 
+              'Achievement: ${achievement.title}',
+              triggerCheck: false,
+            );
+          }
+        }
+      } catch (e) {
+        debugPrint('Failed to unlock achievement ${achievement.id}: $e');
+        // Still show the dialog once, but don't re-trigger XP to avoid loops
       }
     }
+
     
     if (newAchievements.isNotEmpty) {
       ref.invalidate(userAchievementsProvider);
@@ -108,39 +127,52 @@ class GamificationService {
     
     showDialog(
       context: context,
-      builder: (context) => PremiumUI.etherealCard(
-        padding: const EdgeInsets.all(32),
-        borderRadius: 32,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('✨', style: TextStyle(fontSize: 60)),
-            const SizedBox(height: 16),
-            Text(
-              'LEVEL UP!',
-              style: PremiumTokens.sansStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w900,
-                color: PremiumTokens.saffronGlow,
-                letterSpacing: 4,
-              ),
+      barrierDismissible: false,
+      builder: (context) => RepaintBoundary(
+        child: Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: PremiumUI.etherealCard(
+            padding: const EdgeInsets.all(32),
+            borderRadius: 32,
+            glowColor: PremiumTokens.saffronGlow.withValues(alpha: 0.2),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('✨', style: TextStyle(fontSize: 60)),
+                const SizedBox(height: 16),
+                Text(
+                  'LEVEL UP!',
+                  style: PremiumTokens.sansStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w900,
+                    color: PremiumTokens.saffronGlow,
+                    letterSpacing: 4,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'You have reached Level $newLevel',
+                  style: PremiumTokens.sansStyle(
+                    fontSize: 14,
+                    color: Colors.white70,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                PremiumUI.saffronButton(
+                  text: 'CONTINUE SADHANA',
+                  onTap: () {
+                    Navigator.pop(context);
+                    _isShowingDialog = false;
+                    _processQueue();
+                  },
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              'You have reached Level $newLevel',
-              style: PremiumTokens.sansStyle(
-                fontSize: 14,
-                color: Colors.white70,
-              ),
-            ),
-            const SizedBox(height: 32),
-            PremiumUI.saffronButton(
-              text: 'CONTINUE SADHANA',
-              onTap: () => Navigator.pop(context),
-            ),
-          ],
+          ).animate().scale(begin: const Offset(0.9, 0.9), duration: 400.ms, curve: Curves.easeOutBack).fadeIn(),
         ),
-      ).animate().scale(duration: 400.ms, curve: Curves.elasticOut),
+      ),
     );
   }
 }
+

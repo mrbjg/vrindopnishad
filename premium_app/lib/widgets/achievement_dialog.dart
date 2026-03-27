@@ -7,17 +7,26 @@ import '../models/achievement.dart';
 
 class AchievementUnlockDialog extends StatelessWidget {
   final Achievement achievement;
+  final VoidCallback? onDismiss;
 
-  const AchievementUnlockDialog({super.key, required this.achievement});
+  const AchievementUnlockDialog({
+    super.key, 
+    required this.achievement,
+    this.onDismiss,
+  });
 
-  static void show(BuildContext context, Achievement achievement) {
+  static void show(BuildContext context, Achievement achievement, {VoidCallback? onDismiss}) {
     HapticFeedback.heavyImpact();
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AchievementUnlockDialog(achievement: achievement),
+      builder: (context) => AchievementUnlockDialog(
+        achievement: achievement,
+        onDismiss: onDismiss,
+      ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +108,10 @@ class AchievementUnlockDialog extends StatelessWidget {
                     width: double.infinity,
                     child: PremiumUI.saffronButton(
                       text: 'DHANYAVAAD',
-                      onTap: () => Navigator.pop(context),
+                      onTap: () {
+                      Navigator.pop(context);
+                      onDismiss?.call();
+                    },
                     ),
                   ),
                 ],
