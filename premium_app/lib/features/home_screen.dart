@@ -6,12 +6,12 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../core/design_system.dart';
 import '../core/providers.dart';
-import '../core/content_provider.dart';
-import '../core/audio_provider.dart';
-import '../core/stats_provider.dart';
-import '../core/auth_provider.dart';
 import '../core/spirituality_provider.dart';
 import '../core/spirituality_engine.dart';
+import '../core/stats_provider.dart';
+import '../core/auth_provider.dart';
+import '../core/audio_provider.dart';
+import '../core/content_provider.dart';
 import 'search_screen.dart';
 import 'daily_motivation_screen.dart';
 import 'daily_gyaan_screen.dart';
@@ -85,20 +85,22 @@ class HomeScreen extends ConsumerWidget {
 
 
 
-              // 7. Sacred Wisdom Categories
-              const SliverToBoxAdapter(child: _CategoriesHeader()),
-
-              const SliverPadding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                sliver: _CategoriesGrid(),
-              ),
-
-              // 8. Recent Content
-              const SliverToBoxAdapter(child: _RecentReflectionPreview()),
-
-              const SliverPadding(
-                padding: EdgeInsets.fromLTRB(20, 32, 20, 180),
-                sliver: _PremiumContentList(),
+              // 7-9. Consolidated Legacy Content (Performance Optimization)
+              const SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    _CategoriesHeader(),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: _CategoriesGridLite(),
+                    ),
+                    _RecentReflectionPreviewLite(),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20, 32, 20, 180),
+                      child: _PremiumContentListLite(),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -421,78 +423,7 @@ class _CategoriesHeader extends ConsumerWidget {
   }
 }
 
-class _PremiumContentList extends ConsumerWidget {
-  const _PremiumContentList();
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final content = ref.watch(sacredContentProvider);
-    final visibleCount = ref.watch(visibleItemCountProvider);
-    final items = content.take(visibleCount).toList();
-
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          final item = items[index];
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: GestureDetector(
-              onTap: () {
-                HapticFeedback.heavyImpact();
-                ref.read(audioProvider.notifier).play(item);
-              },
-              child: PremiumUI.voidCard(
-                padding: const EdgeInsets.all(20),
-                accentColor: PremiumTokens.celestialSilver.withValues(alpha: 0.1),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: PremiumTokens.celestialSilver.withValues(alpha: 0.03),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.05)),
-                      ),
-                      child: const Center(
-                          child: Text('ॐ',
-                              style: TextStyle(
-                                  color: PremiumTokens.celestialSilver,
-                                  fontSize: 20))),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(item.title,
-                              style: PremiumTokens.sansStyle(
-                                  color: PremiumTokens.celestialSilver,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14)),
-                          const SizedBox(height: 4),
-                          Text(item.category.toUpperCase(),
-                              style: PremiumTokens.sansStyle(
-                                  color: PremiumTokens.celestialSilver.withValues(alpha: 0.4),
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 1)),
-                        ],
-                      ),
-                    ),
-                    Icon(Iconsax.arrow_right_3,
-                        color: PremiumTokens.celestialSilver.withValues(alpha: 0.2), size: 14),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-        childCount: items.length,
-      ),
-    );
-  }
-}
 
 
 class _PremiumNaamJapSection extends ConsumerWidget {
@@ -640,109 +571,74 @@ class _PremiumNaamJapSection extends ConsumerWidget {
     );
   }
 }
-
-class _CategoriesGrid extends ConsumerWidget {
-
-  const _CategoriesGrid();
+class _CategoriesGridLite extends ConsumerWidget {
+  const _CategoriesGridLite();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     const categories = [
-      {
-        'name': 'Shlokas',
-        'count': '124 Verses',
-        'image':
-            'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80'
-      },
-      {
-        'name': 'Mantras',
-        'count': '48 Audio',
-        'image':
-            'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80'
-      },
-      {
-        'name': 'Stories',
-        'count': '12 Series',
-        'image':
-            'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?auto=format&fit=crop&w=400&q=80'
-      },
+      {'name': 'Shlokas', 'count': '124 Verses', 'image': 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80'},
+      {'name': 'Mantras', 'count': '48 Audio', 'image': 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80'},
+      {'name': 'Stories', 'count': '12 Series', 'image': 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?auto=format&fit=crop&w=400&q=80'},
     ];
 
-    return SliverGrid(
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
         childAspectRatio: 1.0,
       ),
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          final cat = categories[index];
-          return GestureDetector(
-            onTap: () {
-              HapticFeedback.lightImpact();
-              ref.read(navigationIndexProvider.notifier).state = 1;
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    PremiumUI.networkImage(
-                      url: cat['image']!,
-                      width: 200,
-                    ),
-                    const DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                          colors: [
-                            Colors.black87,
-                            Colors.transparent,
-                          ],
-                        ),
+      itemCount: categories.length,
+      itemBuilder: (context, index) {
+        final cat = categories[index];
+        return GestureDetector(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            ref.read(navigationIndexProvider.notifier).state = 1;
+          },
+          child: PremiumUI.relicStaticCard(
+            borderRadius: 20,
+            padding: EdgeInsets.zero,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  PremiumUI.networkImage(url: cat['image']!, width: 200),
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [Colors.black87, Colors.transparent],
                       ),
                     ),
-                    Positioned(
-                      bottom: 12,
-                      left: 12,
-                      right: 12,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(cat['name']!,
-                              style: GoogleFonts.manrope(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14)),
-                          Text(cat['count']!,
-                              style: GoogleFonts.manrope(
-                                  color: Colors.white54, fontSize: 10)),
-                        ],
-                      ),
+                  ),
+                  Positioned(
+                    bottom: 12, left: 12, right: 12,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(cat['name']!, style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                        Text(cat['count']!, style: GoogleFonts.manrope(color: Colors.white54, fontSize: 10)),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          );
-
-
-        },
-        childCount: categories.length,
-      ),
+          ),
+        );
+      },
     );
   }
 }
 
-class _RecentReflectionPreview extends ConsumerWidget {
-  const _RecentReflectionPreview();
+class _RecentReflectionPreviewLite extends ConsumerWidget {
+  const _RecentReflectionPreviewLite();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -754,7 +650,7 @@ class _RecentReflectionPreview extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('LATEST REFLECTION',
-              style: GoogleFonts.manrope(
+              style: PremiumTokens.sansStyle(
                 color: Colors.white38,
                 fontSize: 10,
                 fontWeight: FontWeight.w800,
@@ -769,47 +665,94 @@ class _RecentReflectionPreview extends ConsumerWidget {
                 onTap: () {
                   ref.read(navigationIndexProvider.notifier).state = 1;
                 },
-                child: PremiumUI.voidCard(
+                child: PremiumUI.relicStaticCard(
+                  padding: const EdgeInsets.all(20),
                   child: Row(
                     children: [
-                      const Icon(Iconsax.moon,
-                          color: Color(0xFFC0C0CF), size: 24),
+                      const Icon(Iconsax.moon, color: PremiumTokens.celestialSilver, size: 24),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(latest.title ?? 'Sacred Reflection',
-                                style: GoogleFonts.newsreader(
+                                style: GoogleFonts.spectral(
                                   color: Colors.white,
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 )),
                             Text(
                                 "${latest.category ?? 'Spiritual'} • Just Read",
-                                style: GoogleFonts.manrope(
+                                style: PremiumTokens.sansStyle(
                                     color: Colors.white38, fontSize: 11)),
                           ],
                         ),
                       ),
-                      IconButton(
-                        icon: const Icon(Iconsax.arrow_right_3,
-                            color: Colors.white24, size: 20),
-                        onPressed: () {
-                          ref.read(navigationIndexProvider.notifier).state = 1;
-                        },
-                      ),
+                      const Icon(Iconsax.arrow_right_3, color: Colors.white24, size: 20),
                     ],
                   ),
                 ),
               );
             },
-            loading: () =>
-                const Center(child: CircularProgressIndicator(strokeWidth: 1)),
-            error: (e, _) => const SizedBox.shrink(),
+            loading: () => const SizedBox.shrink(),
+            error: (_, __) => const SizedBox.shrink(),
           ),
         ],
       ),
+    );
+  }
+}
+
+
+
+class _PremiumContentListLite extends ConsumerWidget {
+  const _PremiumContentListLite();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final content = ref.watch(sacredContentProvider);
+    final visibleCount = ref.watch(visibleItemCountProvider);
+    final items = content.take(visibleCount).toList();
+
+    return Column(
+      children: items.map((item) => Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: GestureDetector(
+          onTap: () {
+            HapticFeedback.heavyImpact();
+            ref.read(audioProvider.notifier).play(item);
+          },
+          child: PremiumUI.relicStaticCard(
+            padding: const EdgeInsets.all(20),
+            borderColor: PremiumTokens.celestialSilver.withValues(alpha: 0.1),
+            child: Row(
+              children: [
+                Container(
+                  width: 44, height: 44,
+                  decoration: BoxDecoration(
+                    color: PremiumTokens.celestialSilver.withValues(alpha: 0.03),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.05)),
+                  ),
+                  child: const Center(child: Text('ॐ', style: TextStyle(color: PremiumTokens.celestialSilver, fontSize: 20))),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(item.title, style: PremiumTokens.sansStyle(color: PremiumTokens.celestialSilver, fontWeight: FontWeight.bold, fontSize: 14)),
+                      const SizedBox(height: 4),
+                      Text(item.category.toUpperCase(), style: PremiumTokens.sansStyle(color: PremiumTokens.celestialSilver.withValues(alpha: 0.4), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                    ],
+                  ),
+                ),
+                Icon(Iconsax.arrow_right_3, color: PremiumTokens.celestialSilver.withValues(alpha: 0.2), size: 14),
+              ],
+            ),
+          ),
+        ),
+      )).toList(),
     );
   }
 }

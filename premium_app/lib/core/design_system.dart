@@ -775,6 +775,29 @@ class PremiumUI extends StatelessWidget {
     );
   }
 
+  /// High-performance static card (No BackdropFilter)
+  static Widget relicStaticCard({
+    required Widget child,
+    double borderRadius = 24,
+    EdgeInsets? padding,
+    EdgeInsets? margin,
+    Color? borderColor,
+  }) {
+    return Container(
+      margin: margin,
+      padding: padding ?? const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: PremiumTokens.voidIndigo.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: Border.all(
+          color: borderColor ?? PremiumTokens.celestialSilver.withValues(alpha: 0.1),
+          width: 0.5,
+        ),
+      ),
+      child: child,
+    );
+  }
+
   /// Generic glass card
   static Widget glassCard({
     required Widget child,

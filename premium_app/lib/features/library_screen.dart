@@ -71,7 +71,7 @@ class LibraryScreen extends ConsumerWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-              color: PremiumTokens.celestialSilver.withValues(alpha: 0.4),
+            Icon(Iconsax.element_plus, color: PremiumTokens.celestialSilver.withValues(alpha: 0.4), size: 24),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -217,7 +217,7 @@ class LibraryScreen extends ConsumerWidget {
             Container(
               width: 40,
               height: 40,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: PremiumTokens.celestialSilver.withValues(alpha: 0.1),
               ),
