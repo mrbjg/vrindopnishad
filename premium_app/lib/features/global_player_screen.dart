@@ -409,8 +409,7 @@ class _CustomGlowingThumbShape extends SliderComponentShape {
   _CustomGlowingThumbShape({
     required this.color,
     required this.glowColor,
-    this.thumbRadius = 6.0,
-  });
+  }) : thumbRadius = 6.0;
 
 
   @override

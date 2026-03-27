@@ -40,12 +40,12 @@ class DailyGyaanScreen extends ConsumerWidget {
                       ),
                       const Spacer(),
                       Text(
-                        'DAILY GYAAN',
+                        'ECHOES OF ETERNITY',
                         style: PremiumTokens.sansStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 3,
-                          color: PremiumTokens.saffronGlow,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 4,
+                          color: PremiumTokens.celestialSilver,
                         ),
                       ),
                       const Spacer(),
@@ -106,18 +106,19 @@ class DailyGyaanScreen extends ConsumerWidget {
     return todayGyaan.when(
       data: (gyaan) {
         if (gyaan == null) {
-          return PremiumUI.glassCard(
-            padding: const EdgeInsets.all(28),
-            borderRadius: 24,
+          return PremiumUI.relicCard(
+            padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+            borderRadius: 24, // Matches the Echoes cards more closely
             child: Column(
               children: [
-                const Icon(Iconsax.book_1, color: PremiumTokens.nebulaBlue, size: 40),
+                const Icon(Iconsax.book, color: PremiumTokens.celestialSilver, size: 40),
                 const SizedBox(height: 16),
                 Text(
-                  'No wisdom for today yet',
+                  'The silence holds no wisdom for today.',
+                  textAlign: TextAlign.center,
                   style: GoogleFonts.spectral(
                     fontSize: 16,
-                    color: Colors.white54,
+                    color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
                   ),
                 ),
               ],
@@ -125,30 +126,21 @@ class DailyGyaanScreen extends ConsumerWidget {
           );
         }
 
-        return PremiumUI.etherealCard(
+        return PremiumUI.glassCard(
           padding: const EdgeInsets.all(28),
-          borderRadius: 28,
-          glowColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.2),
+          borderRadius: 0, // Sharp edges as per design system
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      gradient: PremiumTokens.nebulaGradient,
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: Text(
-                      "TODAY'S WISDOM",
-                      style: PremiumTokens.sansStyle(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 1.5,
-                        color: Colors.white,
-                      ),
+                  Text(
+                    "ECHOES OF ETERNITY",
+                    style: PremiumTokens.sansStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 4,
+                      color: PremiumTokens.celestialSilver,
                     ),
                   ),
                   const Spacer(),
@@ -159,18 +151,19 @@ class DailyGyaanScreen extends ConsumerWidget {
               Text(
                 gyaan.title,
                 style: GoogleFonts.spectral(
-                  fontSize: 22,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w400,
+                  fontSize: 24,
+                  color: PremiumTokens.celestialSilver,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.5,
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
               Text(
                 gyaan.content,
                 style: GoogleFonts.spectral(
-                  fontSize: 15,
-                  color: Colors.white70,
-                  height: 1.6,
+                  fontSize: 17,
+                  color: PremiumTokens.celestialSilver.withValues(alpha: 0.8),
+                  height: 1.7,
                 ),
               ),
               const SizedBox(height: 20),
@@ -189,16 +182,13 @@ class DailyGyaanScreen extends ConsumerWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Iconsax.tick_circle,
-                          color: Colors.white, size: 18),
-                      const SizedBox(width: 10),
                       Text(
-                        'MARK AS READ (+50 XP)',
+                        'REFLECT ON WISDOM (+50 XP)',
                         style: PremiumTokens.sansStyle(
                           fontSize: 11,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1,
-                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 2,
+                          color: PremiumTokens.voidIndigo,
                         ),
                       ),
                     ],
@@ -226,9 +216,12 @@ class DailyGyaanScreen extends ConsumerWidget {
             const Icon(Iconsax.book, color: Colors.white10, size: 64),
             const SizedBox(height: 16),
             Text(
-              'No wisdom content yet',
+              'THE VOID IS SILENT',
               style: PremiumTokens.sansStyle(
-                  color: Colors.white24, fontSize: 14),
+                  color: PremiumTokens.celestialSilver.withValues(alpha: 0.2), 
+                  fontSize: 12,
+                  letterSpacing: 3,
+              ),
             ),
           ],
         ),
@@ -248,20 +241,21 @@ class DailyGyaanScreen extends ConsumerWidget {
               HapticFeedback.lightImpact();
               _showGyaanDetail(context, gyaan);
             },
-            child: PremiumUI.glassCard(
+            child: PremiumUI.relicCard(
               padding: const EdgeInsets.all(20),
-              borderRadius: 20,
+              borderRadius: 4,
               child: Row(
                 children: [
                   Container(
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
+                      color: PremiumTokens.voidIndigo.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.1)),
                     ),
-                    child: const Center(
-                        child: Text('📚', style: TextStyle(fontSize: 20))),
+                    child: Center(
+                        child: Icon(Iconsax.book, color: PremiumTokens.celestialSilver.withValues(alpha: 0.5), size: 18)),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -320,9 +314,9 @@ class DailyGyaanScreen extends ConsumerWidget {
         labels[difficulty] ?? '',
         style: PremiumTokens.sansStyle(
           fontSize: 8,
-          fontWeight: FontWeight.w900,
-          letterSpacing: 1,
-          color: colors[difficulty] ?? Colors.white,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 2,
+          color: colors[difficulty] == Colors.greenAccent ? PremiumTokens.celestialSilver : (colors[difficulty] ?? Colors.white),
         ),
       ),
     );

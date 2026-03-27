@@ -116,7 +116,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       icon: Iconsax.edit_2,
                       title: "Journal Reflections",
                       subtitle: "Your spiritual diary",
-                      color: PremiumTokens.starlight,
+                      color: PremiumTokens.celestialSilver,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const EternalReflectionScreen()),
@@ -127,7 +127,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       icon: Iconsax.heart,
                       title: "Saved Items",
                       subtitle: "Your spiritual vault",
-                      color: PremiumTokens.nebulaBlue,
+                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.7),
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const SavedItemsScreen()),
@@ -138,7 +138,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       icon: Iconsax.clock,
                       title: "Reading History",
                       subtitle: "Continue your reflections",
-                      color: PremiumTokens.celestialGlow,
+                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const ReadingHistoryScreen()),
@@ -152,7 +152,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       icon: Iconsax.setting_2,
                       title: "Settings",
                       subtitle: "Notifications & Account",
-                      color: PremiumTokens.starlight,
+                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.3),
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const SettingsScreen()),
@@ -201,8 +201,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           width: 3,
           height: 16,
           decoration: BoxDecoration(
-            color: PremiumTokens.nebulaBlue,
-            borderRadius: BorderRadius.circular(2),
+            color: PremiumTokens.celestialSilver.withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(0),
           ),
         ),
         const SizedBox(width: 12),
@@ -291,8 +291,8 @@ class _PremiumProfileHeader extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(4),
             decoration: PremiumTokens.evolvingAura(
-              color: PremiumTokens.nebulaBlue,
-              intensity: 0.7,
+              color: PremiumTokens.celestialSilver,
+              intensity: 0.5,
             ),
             child: Container(
               width: 120,
@@ -333,7 +333,7 @@ class _PremiumProfileHeader extends ConsumerWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Iconsax.sms, color: PremiumTokens.nebulaBlue, size: 14),
+                const Icon(Iconsax.sms, color: PremiumTokens.celestialSilver, size: 14),
                 const SizedBox(width: 8),
                   Text(
                     user?.email ?? "Exploring the Path",
@@ -353,11 +353,11 @@ class _PremiumProfileHeader extends ConsumerWidget {
                 data: (stats) => Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildStat("Streaks", "${stats?.streakCount ?? 0}d", PremiumTokens.nebulaBlue),
+                    _buildStat("Streaks", "${stats?.streakCount ?? 0}d", PremiumTokens.celestialSilver),
                     const SizedBox(width: 24),
-                    _buildStat("Japs", _formatCount(stats?.totalJapCount ?? 0), PremiumTokens.celestialGlow),
+                    _buildStat("Japs", _formatCount(stats?.totalJapCount ?? 0), PremiumTokens.celestialSilver.withValues(alpha: 0.7)),
                     const SizedBox(width: 24),
-                    _buildStat("Level", "Orbit ${stats?.level ?? 1}", Colors.tealAccent),
+                    _buildStat("Level", "Orbit ${stats?.level ?? 1}", PremiumTokens.celestialSilver.withValues(alpha: 0.5)),
                   ],
                 ),
                 loading: () => Row(

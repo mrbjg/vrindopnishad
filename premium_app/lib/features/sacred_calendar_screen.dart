@@ -63,12 +63,12 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                         Column(
                           children: [
                             Text(
-                              'SACRED CALENDAR',
+                              'CELESTIAL ALIGNMENT',
                               style: PremiumTokens.sansStyle(
                                 fontSize: 12,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 3,
-                                color: PremiumTokens.saffronGlow,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 4,
+                                color: PremiumTokens.celestialSilver,
                               ),
                             ),
                             Text(
@@ -101,9 +101,9 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                       'UPCOMING',
                       style: PremiumTokens.sansStyle(
                         fontSize: 10,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 2,
-                        color: Colors.white38,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 3,
+                        color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
                       ),
                     ),
                   ),
@@ -125,7 +125,7 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                       child: Padding(
                         padding: EdgeInsets.all(40),
                         child: CircularProgressIndicator(
-                            color: PremiumTokens.nebulaBlue),
+                            color: PremiumTokens.celestialSilver),
                       ),
                     ),
                   ),
@@ -146,9 +146,9 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                       'THIS MONTH',
                       style: PremiumTokens.sansStyle(
                         fontSize: 10,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 2,
-                        color: Colors.white38,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 3,
+                        color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
                       ),
                     ),
                   ),
@@ -169,7 +169,10 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                                 Text(
                                   'No events this month',
                                   style: PremiumTokens.sansStyle(
-                                      color: Colors.white24, fontSize: 14),
+                                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.2), 
+                                      fontSize: 12,
+                                      letterSpacing: 3,
+                                  ),
                                 ),
                               ],
                             ),
@@ -190,7 +193,7 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                       child: Padding(
                         padding: EdgeInsets.all(40),
                         child: CircularProgressIndicator(
-                            color: PremiumTokens.nebulaBlue),
+                            color: PremiumTokens.celestialSilver),
                       ),
                     ),
                   ),
@@ -228,30 +231,26 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
               HapticFeedback.lightImpact();
               setState(() => _selectedMonth = index + 1);
             },
-            child: AnimatedContainer(
-              duration: 300.ms,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? PremiumTokens.nebulaBlue
-                    : Colors.white.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(100),
-                border: Border.all(
-                  color: isSelected
-                      ? PremiumTokens.nebulaBlue
-                      : Colors.white.withValues(alpha: 0.1),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  border: isSelected ? const Border(
+                    bottom: BorderSide(
+                      color: PremiumTokens.celestialSilver,
+                      width: 1,
+                    ),
+                  ) : null,
+                ),
+                child: Text(
+                  months[index].toUpperCase(),
+                  style: PremiumTokens.sansStyle(
+                    fontSize: 11,
+                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w400,
+                    letterSpacing: 2,
+                    color: isSelected ? PremiumTokens.celestialSilver : PremiumTokens.celestialSilver.withValues(alpha: 0.3),
+                  ),
                 ),
               ),
-              child: Text(
-                months[index],
-                style: PremiumTokens.sansStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: isSelected ? Colors.white : Colors.white54,
-                ),
-              ),
-            ),
           );
         },
       ),
@@ -305,8 +304,9 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                     _monthShort(event.date.month),
                     style: PremiumTokens.sansStyle(
                       fontSize: 9,
-                      fontWeight: FontWeight.w700,
-                      color: accentColor.withValues(alpha: 0.7),
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.5,
+                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
                     ),
                   ),
                 ],
@@ -329,10 +329,12 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                   Row(
                     children: [
                       Text(
-                        event.typeLabel,
-                        style: GoogleFonts.manrope(
-                          fontSize: 11,
-                          color: accentColor,
+                        event.typeLabel.toUpperCase(),
+                        style: PremiumTokens.sansStyle(
+                          fontSize: 9,
+                          letterSpacing: 1.5,
+                          fontWeight: FontWeight.w800,
+                          color: accentColor.withValues(alpha: 0.7),
                         ),
                       ),
                       if (event.description != null) ...[

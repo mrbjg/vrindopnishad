@@ -64,7 +64,7 @@ class AchievementsScreen extends ConsumerWidget {
                         padding: const EdgeInsets.all(24),
                         borderRadius: 24,
                         glowColor:
-                            PremiumTokens.saffronGlow.withValues(alpha: 0.2),
+                            PremiumTokens.celestialSilver.withValues(alpha: 0.1),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -177,7 +177,7 @@ class AchievementsScreen extends ConsumerWidget {
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isUnlocked
-                ? PremiumTokens.celestialSilver.withValues(alpha: 0.3)
+                ? PremiumTokens.celestialSilver.withValues(alpha: 0.15)
                 : Colors.white.withValues(alpha: 0.05),
           ),
           boxShadow: isUnlocked

@@ -599,41 +599,40 @@ class PremiumUI extends StatelessWidget {
   static Widget voidCard({
     required Widget child,
     Color accentColor = PremiumTokens.nebulaBlue,
-    double borderRadius = 16,
+    double borderRadius = 12,
     EdgeInsets padding = const EdgeInsets.all(16),
     EdgeInsets? margin,
-    bool optimized = true,
   }) {
     return Container(
       margin: margin ?? const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
-        color: const Color(0x0DFFFFFF), // Subtle glass base
+        color: Colors.white.withValues(alpha: 0.02),
         border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
-      child: ClipRRect(
+      child: Padding(padding: padding, child: child),
+    );
+  }
+
+  /// Premium relicCard: Sharp-edged, silver-bordered glass card for the "Void" aesthetic
+  static Widget relicCard({
+    required Widget child,
+    double borderRadius = 0,
+    EdgeInsets padding = const EdgeInsets.all(20),
+    EdgeInsets? margin,
+    Color? borderColor,
+  }) {
+    return Container(
+      margin: margin,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(borderRadius),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Stitch Accent Bar - Fills available height naturally
-            Container(
-              width: 4,
-              constraints: const BoxConstraints(minHeight: 88),
-              decoration: BoxDecoration(
-                color: accentColor.withValues(alpha: 0.6),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  bottomLeft: Radius.circular(16),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Padding(padding: padding, child: child),
-            ),
-          ],
+        border: Border.all(
+          color: borderColor ?? PremiumTokens.celestialSilver.withValues(alpha: 0.15),
+          width: 0.5,
         ),
       ),
+      child: Padding(padding: padding, child: child),
     );
   }
 

@@ -349,21 +349,24 @@ class _QuickActionTile extends StatelessWidget {
           HapticFeedback.lightImpact();
           onTap();
         },
-        child: PremiumUI.voidCard(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          borderRadius: 20,
-          accentColor: color,
+        child: PremiumUI.relicCard(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          borderRadius: 4, // Subtle rounding for a "watchmaker" feel
           child: Column(
             children: [
-              EmojiToIcon.getIconWidget(emoji, size: 24, color: color),
-              const SizedBox(height: 8),
+              Icon(
+                label == 'Gyaan' ? Iconsax.teacher : (label == 'Calendar' ? Iconsax.calendar : Iconsax.medal_star),
+                size: 24,
+                color: PremiumTokens.celestialSilver.withValues(alpha: 0.6),
+              ),
+              const SizedBox(height: 12),
               Text(
                 label.toUpperCase(),
                 style: PremiumTokens.sansStyle(
-                  fontSize: 9,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1,
-                  color: color,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 2,
+                  color: PremiumTokens.celestialSilver.withValues(alpha: 0.8),
                 ),
               ),
             ],
@@ -521,8 +524,8 @@ class _PremiumNaamJapSection extends ConsumerWidget {
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        PremiumTokens.nebulaBlue.withValues(alpha: 0.15),
-                        PremiumTokens.nebulaBlue.withValues(alpha: 0.05),
+                        PremiumTokens.celestialSilver.withValues(alpha: 0.1),
+                        PremiumTokens.celestialSilver.withValues(alpha: 0.02),
                         Colors.transparent,
                       ],
                       stops: const [0.0, 0.5, 1.0],
@@ -553,7 +556,7 @@ class _PremiumNaamJapSection extends ConsumerWidget {
                     strokeCap: StrokeCap.round,
                     backgroundColor: Colors.white.withValues(alpha: 0.05),
                     valueColor: const AlwaysStoppedAnimation(
-                      PremiumTokens.nebulaBlue,
+                      PremiumTokens.celestialSilver,
                     ),
                   ),
                 ),
@@ -564,9 +567,9 @@ class _PremiumNaamJapSection extends ConsumerWidget {
                   height: 154,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF0A0A1F),
+                    color: PremiumTokens.voidIndigo,
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.1),
+                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.1),
                     ),
                     boxShadow: [
                       BoxShadow(
