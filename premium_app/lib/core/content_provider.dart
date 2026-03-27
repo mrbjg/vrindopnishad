@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'database_helper.dart';
 import 'cache_service.dart';
@@ -14,6 +15,23 @@ class SacredContent {
   final String commentary;
   final String? imageUrl;
   final String? audioUrl;
+  final String? author;
+  final String? book;
+  final String? section;
+  final String? chapter;
+  final String? heading;
+  
+  // Fail-safe persistent storage for contentTags
+  final List<String>? _contentTags;
+  final List<String>? _audioTags;
+  final List<String>? _videoTags;
+  final List<String>? _imageTags;
+
+  // Safe Public Getters
+  List<String> get contentTags => _contentTags ?? const [];
+  List<String> get audioTags => _audioTags ?? const [];
+  List<String> get videoTags => _videoTags ?? const [];
+  List<String> get imageTags => _imageTags ?? const [];
 
   // Pre-processed display strings for high performance
   late final String displayTitle;
@@ -29,7 +47,19 @@ class SacredContent {
     required this.commentary,
     this.imageUrl,
     this.audioUrl,
-  }) {
+    this.author,
+    this.book,
+    this.section,
+    this.chapter,
+    this.heading,
+    List<String>? contentTags,
+    List<String>? audioTags,
+    List<String>? videoTags,
+    List<String>? imageTags,
+  })  : this._contentTags = contentTags ?? const [],
+        this._audioTags = audioTags ?? const [],
+        this._videoTags = videoTags ?? const [],
+        this._imageTags = imageTags ?? const [] {
     _initializePreProcessed();
   }
 
@@ -60,6 +90,15 @@ class SacredContent {
       'commentary': commentary,
       'imageUrl': imageUrl,
       'audioUrl': audioUrl,
+      'author': author,
+      'book': book,
+      'section': section,
+      'chapter': chapter,
+      'heading': heading,
+      'tags': contentTags.join(','),
+      'audioTags': audioTags.join(','),
+      'videoTags': videoTags.join(','),
+      'imageTags': imageTags.join(','),
     };
   }
 
@@ -70,32 +109,59 @@ class SacredContent {
           runtimeType == other.runtimeType &&
           id == other.id &&
           title == other.title &&
-          category == other.category &&
-          sanskritText == other.sanskritText &&
-          imageUrl == other.imageUrl &&
-          audioUrl == other.audioUrl;
+          category == other.category;
 
   @override
-  int get hashCode =>
-      id.hashCode ^
-      title.hashCode ^
-      category.hashCode ^
-      sanskritText.hashCode ^
-      imageUrl.hashCode ^
-      audioUrl.hashCode;
+  int get hashCode => id.hashCode ^ title.hashCode ^ category.hashCode;
 
   factory SacredContent.fromMap(Map<String, dynamic> map) {
-    return SacredContent(
-      id: map['id'],
-      title: map['title'],
-      category: map['category'],
-      sanskritText: map['sanskritText'],
-      translation: map['translation'],
-      hindiMeaning: map['hindiMeaning'],
-      commentary: map['commentary'],
-      imageUrl: map['imageUrl'],
-      audioUrl: map['audioUrl'],
-    );
+    List<String> parseList(dynamic val) {
+      if (val == null) return [];
+      if (val is List) return val.map((e) => e.toString()).toList();
+      if (val is String) {
+        if (val.trim().isEmpty) return [];
+        return val
+            .split(',')
+            .map((e) => e.trim())
+            .where((t) => t.isNotEmpty)
+            .toList();
+      }
+      return [];
+    }
+
+    try {
+      return SacredContent(
+        id: (map['id'] ?? '').toString(),
+        title: (map['title'] ?? '').toString(),
+        category: (map['category'] ?? '').toString(),
+        sanskritText: (map['sanskritText'] ?? map['sanskrit_text'] ?? '').toString(),
+        translation: (map['translation'] ?? map['english_translation'] ?? '').toString(),
+        hindiMeaning: (map['hindiMeaning'] ?? map['hindi_text'] ?? '').toString(),
+        commentary: (map['commentary'] ?? map['description'] ?? '').toString(),
+        imageUrl: map['imageUrl'] ?? map['image_url'],
+        audioUrl: map['audioUrl'] ?? map['audio_url'],
+        author: map['author'],
+        book: map['book'],
+        section: map['section'],
+        chapter: map['chapter'],
+        heading: map['heading'],
+        contentTags: parseList(map['tags']),
+        audioTags: parseList(map['audioTags'] ?? map['audio_tags']),
+        videoTags: parseList(map['videoTags'] ?? map['video_tags']),
+        imageTags: parseList(map['imageTags'] ?? map['image_tags']),
+      );
+    } catch (e) {
+      debugPrint('Error mapping SacredContent: $e');
+      return SacredContent(
+        id: 'error',
+        title: 'Error Loading Content',
+        category: 'Error',
+        sanskritText: '',
+        translation: '',
+        hindiMeaning: '',
+        commentary: '',
+      );
+    }
   }
 }
 
@@ -274,6 +340,12 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
     commentary: 'A soulful bhajan expressing devotion and the passage of time in spiritual practice.',
     audioUrl: 'https://archive.org/download/aise-kaal-bitayo-nis-din/aise%20kaal%20bitayo%20nis%20din.mp3',
     imageUrl: 'assets/images/sant_sanatan.png',
+    author: 'Shri Vanshi Ali Ji',
+    book: 'Rasik Vaani',
+    chapter: 'Utsav Bela',
+    contentTags: ['Bhakti', 'Vrindavan', 'Siddha-Vaani'],
+    audioTags: ['Classical', 'Soothing'],
+    videoTags: ['Live Darshan'],
   );
 }
 

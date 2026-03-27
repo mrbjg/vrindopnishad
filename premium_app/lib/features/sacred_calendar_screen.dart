@@ -62,20 +62,22 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                         const Spacer(),
                         Column(
                           children: [
-                            Text(
+                            PremiumUI.silverText(
                               'CELESTIAL ALIGNMENT',
                               style: PremiumTokens.sansStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w900,
                                 letterSpacing: 4,
-                                color: PremiumTokens.celestialSilver,
                               ),
                             ),
+                            const SizedBox(height: 2),
                             Text(
                               'व्रत • उत्सव • तिथि',
                               style: GoogleFonts.spectral(
-                                fontSize: 13,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
                                 color: Colors.white38,
+                                letterSpacing: 1,
                               ),
                             ),
                           ],
@@ -231,26 +233,27 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
               HapticFeedback.lightImpact();
               setState(() => _selectedMonth = index + 1);
             },
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                decoration: BoxDecoration(
-                  border: isSelected ? const Border(
-                    bottom: BorderSide(
-                      color: PremiumTokens.celestialSilver,
-                      width: 1,
-                    ),
-                  ) : null,
-                ),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              margin: const EdgeInsets.symmetric(vertical: 4),
+              decoration: BoxDecoration(
+                color: isSelected ? PremiumTokens.celestialSilver.withValues(alpha: 0.1) : Colors.transparent,
+                borderRadius: BorderRadius.circular(12),
+                border: isSelected ? Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.15)) : null,
+              ),
+              child: Center(
                 child: Text(
                   months[index].toUpperCase(),
                   style: PremiumTokens.sansStyle(
                     fontSize: 11,
-                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w400,
+                    fontWeight: isSelected ? FontWeight.w900 : FontWeight.w500,
                     letterSpacing: 2,
-                    color: isSelected ? PremiumTokens.celestialSilver : PremiumTokens.celestialSilver.withValues(alpha: 0.3),
+                    color: isSelected ? Colors.white : PremiumTokens.celestialSilver.withValues(alpha: 0.4),
                   ),
                 ),
               ),
+            ),
           );
         },
       ),
@@ -272,22 +275,28 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
     final accentColor = typeColors[event.type] ?? PremiumTokens.nebulaBlue;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: PremiumUI.etherealCard(
-        padding: const EdgeInsets.all(20),
-        borderRadius: 20,
+        padding: const EdgeInsets.all(16),
+        borderRadius: 24,
         glowColor: isToday ? accentColor.withValues(alpha: 0.3) : null,
         child: Row(
           children: [
-            // Date badge
+            // Styled Date Badge
             Container(
-              width: 56,
-              height: 56,
+              width: 52,
+              height: 52,
               decoration: BoxDecoration(
-                color: accentColor.withValues(alpha: 0.1),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    accentColor.withValues(alpha: 0.15),
+                    accentColor.withValues(alpha: 0.05),
+                  ],
+                ),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                    color: accentColor.withValues(alpha: 0.3)),
+                border: Border.all(color: accentColor.withValues(alpha: 0.2)),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -297,7 +306,7 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                     style: PremiumTokens.sansStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w900,
-                      color: accentColor,
+                      color: Colors.white,
                     ),
                   ),
                   Text(
@@ -306,7 +315,7 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                       fontSize: 9,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 1.5,
-                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
+                      color: accentColor,
                     ),
                   ),
                 ],
@@ -319,33 +328,37 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                 children: [
                   Text(
                     event.title,
-                    style: GoogleFonts.manrope(
+                    style: PremiumTokens.sansStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w700,
                       fontSize: 15,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Text(
-                        event.typeLabel.toUpperCase(),
-                        style: PremiumTokens.sansStyle(
-                          fontSize: 9,
-                          letterSpacing: 1.5,
-                          fontWeight: FontWeight.w800,
-                          color: accentColor.withValues(alpha: 0.7),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: accentColor.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          event.typeLabel.toUpperCase(),
+                          style: PremiumTokens.sansStyle(
+                            fontSize: 8,
+                            letterSpacing: 1.5,
+                            fontWeight: FontWeight.w900,
+                            color: accentColor,
+                          ),
                         ),
                       ),
                       if (event.description != null) ...[
-                        const Text(
-                          ' • ',
-                          style: TextStyle(color: Colors.white24),
-                        ),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             event.description!,
-                            style: GoogleFonts.manrope(
+                            style: PremiumTokens.sansStyle(
                               fontSize: 11,
                               color: Colors.white38,
                             ),
@@ -359,34 +372,31 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                 ],
               ),
             ),
-            // Countdown
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: isToday
-                    ? accentColor.withValues(alpha: 0.2)
-                    : Colors.white.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                isToday
-                    ? 'TODAY'
-                    : daysUntil == 1
-                        ? 'TOMORROW'
-                        : '${daysUntil}d',
+            // Countdown / Today Badge
+            if (isToday)
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Iconsax.calendar_tick, color: accentColor, size: 16),
+              ).animate(onPlay: (controller) => controller.repeat())
+               .shimmer(duration: 2.seconds, color: Colors.white24)
+            else
+              Text(
+                daysUntil == 1 ? 'TOMORROW' : '${daysUntil}d',
                 style: PremiumTokens.sansStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
-                  color: isToday ? accentColor : Colors.white54,
+                  color: Colors.white24,
                   letterSpacing: 1,
                 ),
               ),
-            ),
           ],
         ),
       ),
-    ).animate().fadeIn(delay: (index * 80).ms, duration: 400.ms);
+    ).animate().fadeIn(delay: (index * 60).ms, duration: 400.ms).slideY(begin: 0.05);
   }
 
   String _monthShort(int month) {

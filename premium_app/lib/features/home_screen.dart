@@ -17,9 +17,6 @@ import 'daily_motivation_screen.dart';
 import 'daily_gyaan_screen.dart';
 import 'sacred_calendar_screen.dart';
 
-import '../widgets/daily_check_in_widget.dart';
-
-
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 

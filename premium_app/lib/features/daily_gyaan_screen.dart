@@ -20,7 +20,7 @@ class DailyGyaanScreen extends ConsumerWidget {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          Positioned.fill(child: PremiumUI.masterBackground(index: 1)),
+          Positioned.fill(child: PremiumUI.masterBackground(index: 2)), // Deeper cosmic vibe
           SafeArea(
             child: Column(
               children: [
@@ -126,74 +126,81 @@ class DailyGyaanScreen extends ConsumerWidget {
           );
         }
 
-        return PremiumUI.glassCard(
-          padding: const EdgeInsets.all(28),
-          borderRadius: 0, // Sharp edges as per design system
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    "ECHOES OF ETERNITY",
-                    style: PremiumTokens.sansStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 4,
-                      color: PremiumTokens.celestialSilver,
-                    ),
-                  ),
-                  const Spacer(),
-                  _difficultyBadge(gyaan.difficulty),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Text(
-                gyaan.title,
-                style: GoogleFonts.spectral(
-                  fontSize: 24,
-                  color: PremiumTokens.celestialSilver,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                gyaan.content,
-                style: GoogleFonts.spectral(
-                  fontSize: 17,
-                  color: PremiumTokens.celestialSilver.withValues(alpha: 0.8),
-                  height: 1.7,
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Complete button for XP
-              SizedBox(
-                width: double.infinity,
-                child: PremiumUI.etherealButton(
-                  onTap: () async {
-                    HapticFeedback.heavyImpact();
-                    // awardXP removed
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'REFLECT ON WISDOM',
-                        style: PremiumTokens.sansStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 2,
-                          color: PremiumTokens.voidIndigo,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                blurRadius: 40,
+                spreadRadius: -10,
+              )
             ],
           ),
-        ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1);
+          child: PremiumUI.relicCard(
+            padding: const EdgeInsets.all(32),
+            borderRadius: 28,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "WISDOM OF THE DAY",
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 4,
+                        color: PremiumTokens.celestialSilver.withValues(alpha: 0.6),
+                      ),
+                    ),
+                    _difficultyBadge(gyaan.difficulty),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  gyaan.title,
+                  style: GoogleFonts.spectral(
+                    fontSize: 26,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.2,
+                    height: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  gyaan.content,
+                  style: GoogleFonts.spectral(
+                    fontSize: 18,
+                    color: Colors.white.withValues(alpha: 0.75),
+                    height: 1.7,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  child: PremiumUI.etherealButton(
+                    onTap: () {
+                      HapticFeedback.mediumImpact();
+                    },
+                    child: Text(
+                      'REFLECT ON WISDOM',
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2.5,
+                        color: PremiumTokens.voidIndigo,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.05, curve: Curves.easeOutCubic);
       },
       loading: () => const SizedBox(
           height: 200,
@@ -238,20 +245,20 @@ class DailyGyaanScreen extends ConsumerWidget {
               _showGyaanDetail(context, gyaan);
             },
             child: PremiumUI.relicCard(
-              padding: const EdgeInsets.all(20),
-              borderRadius: 4,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              borderRadius: 16,
               child: Row(
                 children: [
                   Container(
-                    width: 44,
-                    height: 44,
+                    width: 48,
+                    height: 48,
                     decoration: BoxDecoration(
-                      color: PremiumTokens.voidIndigo.withValues(alpha: 0.5),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.1)),
+                      color: PremiumTokens.voidIndigo.withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
                     ),
-                    child: Center(
-                        child: Icon(Iconsax.book, color: PremiumTokens.celestialSilver.withValues(alpha: 0.5), size: 18)),
+                    child: const Center(
+                        child: Icon(Iconsax.book_1, color: PremiumTokens.celestialSilver, size: 20)),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -260,10 +267,10 @@ class DailyGyaanScreen extends ConsumerWidget {
                       children: [
                         Text(
                           gyaan.title,
-                          style: GoogleFonts.manrope(
+                          style: PremiumTokens.sansStyle(
                             color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -271,22 +278,21 @@ class DailyGyaanScreen extends ConsumerWidget {
                         const SizedBox(height: 4),
                         Text(
                           gyaan.content,
-                          style: GoogleFonts.manrope(
-                            color: Colors.white38,
-                            fontSize: 12,
+                          style: PremiumTokens.sansStyle(
+                            color: Colors.white.withValues(alpha: 0.4),
+                            fontSize: 11,
                           ),
-                          maxLines: 2,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 8),
                   _difficultyBadge(gyaan.difficulty),
                 ],
               ),
             ),
-          ).animate().fadeIn(delay: (index * 100).ms, duration: 400.ms),
+          ).animate().fadeIn(delay: (index * 50).ms, duration: 400.ms).slideX(begin: 0.05),
         );
       },
     );

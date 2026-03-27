@@ -208,7 +208,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 SliverToBoxAdapter(
                   child: PremiumUI.focusContainer(
                     isFocusMode: isFocusMode,
-                    child: _buildPremiumHero(displayTitle, displayCategory, l, themeData),
+                    child: _buildPremiumHero(content, displayTitle, displayCategory, l, themeData),
                   ),
                 ),
 
@@ -379,46 +379,103 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  Widget _buildPremiumHero(String title, String category, AppLocalization l, _ReadingThemeData themeData) {
+  Widget _buildPremiumHero(SacredContent? content, String title, String category, AppLocalization l, _ReadingThemeData themeData) {
     // Try to localize category if it matches a key
     final localizedCategory = l.translate(category.toLowerCase());
     final displayCategory = localizedCategory != category.toLowerCase() ? localizedCategory : category;
     final isHindi = RegExp(r'[\u0900-\u097F]').hasMatch(displayCategory);
 
+    final hasTags = ((content?.contentTags ?? []).isNotEmpty) || 
+                    ((content?.audioTags ?? []).isNotEmpty) || 
+                    ((content?.videoTags ?? []).isNotEmpty) || 
+                    ((content?.imageTags ?? []).isNotEmpty);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         children: [
+          if (content?.author != null)
+            Text(
+              content!.author!.toUpperCase(),
+              style: GoogleFonts.manrope(
+                color: PremiumTokens.saffronGlow.withValues(alpha: 0.9),
+                fontSize: 12,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 2.0,
+              ),
+            ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.2, end: 0),
+          
+          if (content?.author != null) const SizedBox(height: 12),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(width: 20, height: 1, decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.transparent, PremiumTokens.saffronGlow.withValues(alpha: 0.5)]))),
+              Container(width: 20, height: 1, decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.transparent, themeData.accentColor.withValues(alpha: 0.5)]))),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Text(
                   displayCategory.toUpperCase(),
                   style: GoogleFonts.manrope(
-                    color: PremiumTokens.saffronGlow.withValues(alpha: 0.8),
+                    color: themeData.accentColor.withValues(alpha: 0.8),
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: isHindi ? 0.5 : 3.0,
                   ),
                 ),
               ),
-              Container(width: 20, height: 1, decoration: BoxDecoration(gradient: LinearGradient(colors: [PremiumTokens.saffronGlow.withValues(alpha: 0.5), Colors.transparent]))),
+              Container(width: 20, height: 1, decoration: BoxDecoration(gradient: LinearGradient(colors: [themeData.accentColor.withValues(alpha: 0.5), Colors.transparent]))),
             ],
           ),
           const SizedBox(height: 16),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.spectral(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: themeData.textColor,
-              height: 1.2,
-            ),
-          ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, end: 0),
+          if (title.isNotEmpty)
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.spectral(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: themeData.textColor,
+                height: 1.2,
+              ),
+            ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, end: 0),
+          
+          // --- ENRICHED METADATA SECTION ---
+          const SizedBox(height: 12),
+          if (content?.author != null || content?.book != null || content?.chapter != null || content?.section != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 12,
+                runSpacing: 4,
+                children: [
+                  if (content?.author != null)
+                    _buildMetadataChip(Iconsax.user, content!.author!, themeData.accentColor),
+                  if (content?.book != null)
+                    _buildMetadataChip(Iconsax.book, content!.book!, themeData.accentColor),
+                  if (content?.chapter != null)
+                    _buildMetadataChip(Iconsax.document_text, "Chapter ${content!.chapter}", themeData.accentColor),
+                  if (content?.section != null)
+                    _buildMetadataChip(Iconsax.category, content!.section!, themeData.accentColor),
+                ],
+              ),
+            ).animate().fadeIn(delay: 200.ms),
+
+
+          if (hasTags) ...[
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              alignment: WrapAlignment.center,
+              children: [
+                ...(content?.contentTags ?? []).map((tag) => _buildTagChip("#$tag", themeData.accentColor.withValues(alpha: 0.05))),
+                ...(content?.audioTags ?? []).map((tag) => _buildTagChip("🎧 $tag", Colors.blue.withValues(alpha: 0.1))),
+                ...(content?.videoTags ?? []).map((tag) => _buildTagChip("🎬 $tag", Colors.red.withValues(alpha: 0.1))),
+                ...(content?.imageTags ?? []).map((tag) => _buildTagChip("🖼️ $tag", Colors.green.withValues(alpha: 0.1))),
+              ],
+            ).animate().fadeIn(delay: 300.ms),
+          ],
         ],
       ),
     );
@@ -755,6 +812,51 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(color: themeData.textColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
         child: Icon(icon, color: themeData.textColor, size: 14),
+      ),
+    );
+  }
+
+  Widget _buildMetadataChip(IconData icon, String label, Color accentColor) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: accentColor.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: accentColor.withValues(alpha: 0.1), width: 0.5),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: accentColor.withValues(alpha: 0.7)),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: GoogleFonts.manrope(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: accentColor.withValues(alpha: 0.9),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTagChip(String label, Color bgColor) {
+    final themeData = _getThemeData();
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        label,
+        style: GoogleFonts.inter(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: themeData.textColor.withValues(alpha: 0.7),
+        ),
       ),
     );
   }

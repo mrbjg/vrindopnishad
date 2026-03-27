@@ -112,6 +112,22 @@ class ApiService {
       commentary: json['description'] ?? '',
       imageUrl: imageUrl,
       audioUrl: audioUrl,
+      author: json['author'],
+      book: json['book'],
+      section: json['section'],
+      chapter: json['chapter'],
+      heading: json['heading'],
+      contentTags: _parseTags(json['tags']),
+      audioTags: _parseTags(json['audio_tags']),
+      videoTags: _parseTags(json['video_tags']),
+      imageTags: _parseTags(json['image_tags']),
     );
+  }
+
+  static List<String> _parseTags(dynamic val) {
+    if (val == null) return [];
+    if (val is List) return val.map((e) => e.toString()).toList();
+    if (val is String) return val.split(',').where((t) => t.trim().isNotEmpty).toList();
+    return [];
   }
 }

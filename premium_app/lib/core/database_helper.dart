@@ -7,21 +7,24 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
 
+  static const int _databaseVersion = 4; // Define database version
+  static const String _databaseName = 'sacred_wisdom.db'; // Define database name
+
   DatabaseHelper._init();
 
   Future<Database?> get database async {
     if (kIsWeb) return null; // sqflite is not supported on web natively
     if (_database != null) return _database!;
-    _database = await _initDB('sacred_wisdom.db');
+    _database = await _initDB(); // Call _initDB without arguments
     return _database;
   }
 
-  Future<Database?> _initDB(String filePath) async {
+  Future<Database?> _initDB() async { // Removed filePath argument
     if (kIsWeb) return null;
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, filePath);
+    final path = join(dbPath, _databaseName); // Use _databaseName
 
-    return await openDatabase(path, version: 2, onCreate: _createDB, onUpgrade: _upgradeDB);
+    return await openDatabase(path, version: _databaseVersion, onCreate: _createDB, onUpgrade: _upgradeDB); // Use _databaseVersion
   }
 
   Future _createDB(Database db, int version) async {
@@ -35,7 +38,16 @@ class DatabaseHelper {
         hindiMeaning TEXT NOT NULL,
         commentary TEXT NOT NULL,
         imageUrl TEXT,
-        audioUrl TEXT
+        audioUrl TEXT,
+        author TEXT,
+        book TEXT,
+        section TEXT,
+        chapter TEXT,
+        heading TEXT,
+        tags TEXT,
+        audioTags TEXT,
+        videoTags TEXT,
+        imageTags TEXT
       )
     ''');
   }
@@ -45,6 +57,27 @@ class DatabaseHelper {
       // Add audioUrl column if upgrading from version 1
       try {
         await db.execute('ALTER TABLE sacred_content ADD COLUMN audioUrl TEXT');
+      } catch (e) {
+        // Column might already exist
+      }
+    }
+    if (oldVersion < 3) {
+      try {
+        await db.execute('ALTER TABLE sacred_content ADD COLUMN author TEXT');
+        await db.execute('ALTER TABLE sacred_content ADD COLUMN tags TEXT');
+      } catch (e) {
+        // Migration might fail if columns exist
+      }
+    }
+    if (oldVersion < 4) {
+      try {
+        await db.execute('ALTER TABLE sacred_content ADD COLUMN book TEXT');
+        await db.execute('ALTER TABLE sacred_content ADD COLUMN section TEXT');
+        await db.execute('ALTER TABLE sacred_content ADD COLUMN chapter TEXT');
+        await db.execute('ALTER TABLE sacred_content ADD COLUMN heading TEXT');
+        await db.execute('ALTER TABLE sacred_content ADD COLUMN audioTags TEXT');
+        await db.execute('ALTER TABLE sacred_content ADD COLUMN videoTags TEXT');
+        await db.execute('ALTER TABLE sacred_content ADD COLUMN imageTags TEXT');
       } catch (e) {
         // Column might already exist
       }

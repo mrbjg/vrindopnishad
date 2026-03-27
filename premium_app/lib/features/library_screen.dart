@@ -44,7 +44,7 @@ class LibraryScreen extends ConsumerWidget {
                     return SliverPadding(
                       padding: const EdgeInsets.fromLTRB(24, 0, 24, 120), // Extra bottom padding for FAB
                       sliver: SliverFixedExtentList(
-                        itemExtent: 120.0,
+                        itemExtent: 136.0,
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
                             return _buildLibraryItem(context, ref, items[index]);
@@ -249,28 +249,68 @@ class LibraryScreen extends ConsumerWidget {
         },
         child: PremiumUI.relicCard(
           padding: const EdgeInsets.all(16),
-          borderRadius: 8,
+          borderRadius: 16,
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Enhanced Thumbnail
               Container(
-                width: 56,
-                height: 56,
+                width: 70,
+                height: 70,
                 decoration: BoxDecoration(
                   color: PremiumTokens.surfaceCharcoal,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.15)),
+                  border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.1)),
                 ),
                 child: Center(
                   child: item.imageUrl != null 
-                    ? PremiumUI.networkImage(url: item.imageUrl, borderRadius: BorderRadius.circular(8))
+                    ? PremiumUI.networkImage(url: item.imageUrl, borderRadius: BorderRadius.circular(10))
                     : const Icon(Icons.spa, color: PremiumTokens.celestialSilver, size: 28),
                 ),
               ),
               const SizedBox(width: 16),
+              
+              // Enriched Content Info
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (item.author != null || item.book != null)
+                      Row(
+                        children: [
+                          if (item.author != null)
+                             Text(
+                                item.author!.toUpperCase(),
+                                style: PremiumTokens.sansStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 1.2,
+                                  color: PremiumTokens.saffronGlow.withValues(alpha: 0.8),
+                                ),
+                              ),
+                          if (item.author != null && item.book != null)
+                            Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              width: 3,
+                              height: 3,
+                              decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white24),
+                            ),
+                          if (item.book != null)
+                            Expanded(
+                              child: Text(
+                                item.book!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: PremiumTokens.sansStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                  color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    const SizedBox(height: 2),
                     Text(
                       item.title,
                       maxLines: 1,
@@ -281,19 +321,48 @@ class LibraryScreen extends ConsumerWidget {
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 4),
+                    Text(
+                      item.commentary.startsWith('http') ? 'Sacred Verse Details' : item.commentary,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 11,
+                        color: Colors.white.withValues(alpha: 0.45),
+                      ).copyWith(height: 1.3),
+                    ),
+                    const Spacer(),
                     Row(
                       children: [
-                        const Icon(Icons.schedule, color: Colors.white24, size: 12),
-                        const SizedBox(width: 4),
-                        Expanded(
+                        if (item.audioUrl != null && item.audioUrl!.isNotEmpty) ...[
+                          const Icon(Icons.schedule, color: Colors.white24, size: 10),
+                          const SizedBox(width: 4),
+                          Text(
+                            "10:45",
+                            style: PremiumTokens.sansStyle(fontSize: 10, color: Colors.white24),
+                          ),
+                          const SizedBox(width: 8),
+                        ] else ...[
+                          const Icon(Icons.auto_stories, color: Colors.white24, size: 10),
+                          const SizedBox(width: 4),
+                          Text(
+                            (item.chapter ?? "READ").toUpperCase(),
+                            style: PremiumTokens.sansStyle(fontSize: 10, color: Colors.white24, letterSpacing: 1.0),
+                          ),
+                          const SizedBox(width: 8),
+                        ],
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: PremiumTokens.celestialSilver.withValues(alpha: 0.05),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
                           child: Text(
-                            "10:45 • ${item.category}",
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                            item.category.toUpperCase(),
                             style: PremiumTokens.sansStyle(
-                              fontSize: 12,
-                              color: Colors.white38,
+                              fontSize: 9, 
+                              fontWeight: FontWeight.bold,
+                              color: PremiumTokens.celestialSilver.withValues(alpha: 0.4)
                             ),
                           ),
                         ),
@@ -302,28 +371,34 @@ class LibraryScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-              // Like Button
-              PremiumUI.animatedIcon(
-                folder: 'Heart',
-                fileName: 'heart.json',
-                size: 20,
-                color: ref.watch(isFavoriteProvider(item.id)) ? PremiumTokens.saffronGlow : Colors.white24,
-                isToggled: ref.watch(isFavoriteProvider(item.id)),
-                resetAfterPlay: false,
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  ref.read(favoritesProvider.notifier).toggleFavorite(item.id);
-                },
-              ),
-              const SizedBox(width: 16),
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.2)),
-                ),
-                child: const Icon(Icons.play_arrow, color: PremiumTokens.celestialSilver, size: 20),
+              
+              // Interaction Column
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  PremiumUI.animatedIcon(
+                    folder: 'Heart',
+                    fileName: 'heart.json',
+                    size: 20,
+                    color: ref.watch(isFavoriteProvider(item.id)) ? PremiumTokens.saffronGlow : Colors.white24,
+                    isToggled: ref.watch(isFavoriteProvider(item.id)),
+                    resetAfterPlay: false,
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      ref.read(favoritesProvider.notifier).toggleFavorite(item.id);
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.2)),
+                    ),
+                    child: const Icon(Icons.play_arrow, color: PremiumTokens.celestialSilver, size: 18),
+                  ),
+                ],
               ),
             ],
           ),
