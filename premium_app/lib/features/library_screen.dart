@@ -44,7 +44,7 @@ class LibraryScreen extends ConsumerWidget {
                     return SliverPadding(
                       padding: const EdgeInsets.fromLTRB(24, 0, 24, 120), // Extra bottom padding for FAB
                       sliver: SliverFixedExtentList(
-                        itemExtent: 136.0,
+                        itemExtent: 156.0,
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
                             return _buildLibraryItem(context, ref, items[index]);
@@ -366,6 +366,36 @@ class LibraryScreen extends ConsumerWidget {
                             ),
                           ),
                         ),
+                        if (item.contentTags.isNotEmpty)
+                          Expanded(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              physics: const NeverScrollableScrollPhysics(), // Keep it passive, or remove and allow scroll
+                              child: Row(
+                                children: [
+                                  const SizedBox(width: 8),
+                                  ...item.contentTags.take(3).map((tag) => Container(
+                                    margin: const EdgeInsets.only(right: 4),
+                                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.03),
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.05)),
+                                    ),
+                                    child: Text(
+                                      tag.toUpperCase(),
+                                      style: PremiumTokens.sansStyle(
+                                        fontSize: 8, 
+                                        fontWeight: FontWeight.bold,
+                                        color: PremiumTokens.celestialSilver.withValues(alpha: 0.25),
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                  )),
+                                ],
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ],

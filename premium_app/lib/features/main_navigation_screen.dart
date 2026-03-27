@@ -40,7 +40,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
       const HomeScreen(),
       const LibraryScreen(),
       const NaamJapScreen(),
-      const EternalReflectionScreen(),
+      EternalReflectionScreen(),
       const ProfileScreen(),
       const RitualsScreen(),
     ];

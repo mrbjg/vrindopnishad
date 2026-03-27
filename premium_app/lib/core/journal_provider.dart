@@ -19,7 +19,20 @@ class JournalNotifier extends AsyncNotifier<List<JournalEntry>> {
     if (user == null) return [];
     
     final journalService = ref.read(journalServiceProvider);
-    return await journalService.fetchEntries(user.uid);
+    final entries = await journalService.fetchEntries(user.uid);
+    
+    if (entries.isEmpty) {
+      return [
+        JournalEntry(
+          id: 'demo-1',
+          firebaseUid: user.uid,
+          title: 'SHRI HARIVANSH',
+          content: 'radhe radhe',
+          createdAt: DateTime.now(),
+        ),
+      ];
+    }
+    return entries;
   }
 
   Future<void> addEntry(String title, String content, {String? moonPhase}) async {

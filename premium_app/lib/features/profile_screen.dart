@@ -64,7 +64,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       color: PremiumTokens.celestialSilver,
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const EternalReflectionScreen()),
+                        MaterialPageRoute(builder: (_) => const EternalReflectionScreen(showBackButton: true)),
                       ),
                     ),
                     const SizedBox(height: 12),

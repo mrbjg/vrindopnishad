@@ -385,11 +385,6 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     final displayCategory = localizedCategory != category.toLowerCase() ? localizedCategory : category;
     final isHindi = RegExp(r'[\u0900-\u097F]').hasMatch(displayCategory);
 
-    final hasTags = ((content?.contentTags ?? []).isNotEmpty) || 
-                    ((content?.audioTags ?? []).isNotEmpty) || 
-                    ((content?.videoTags ?? []).isNotEmpty) || 
-                    ((content?.imageTags ?? []).isNotEmpty);
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -462,20 +457,6 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             ).animate().fadeIn(delay: 200.ms),
 
 
-          if (hasTags) ...[
-            const SizedBox(height: 16),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              alignment: WrapAlignment.center,
-              children: [
-                ...(content?.contentTags ?? []).map((tag) => _buildTagChip("#$tag", themeData.accentColor.withValues(alpha: 0.05))),
-                ...(content?.audioTags ?? []).map((tag) => _buildTagChip("🎧 $tag", Colors.blue.withValues(alpha: 0.1))),
-                ...(content?.videoTags ?? []).map((tag) => _buildTagChip("🎬 $tag", Colors.red.withValues(alpha: 0.1))),
-                ...(content?.imageTags ?? []).map((tag) => _buildTagChip("🖼️ $tag", Colors.green.withValues(alpha: 0.1))),
-              ],
-            ).animate().fadeIn(delay: 300.ms),
-          ],
         ],
       ),
     );
