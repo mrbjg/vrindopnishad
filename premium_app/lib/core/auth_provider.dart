@@ -12,7 +12,7 @@ class AuthService {
     clientId: kIsWeb 
         ? '1027361942428-qan7576dnckruo88bl7gr6rfsi5ho0kn.apps.googleusercontent.com' 
         : null,
-    serverClientId:
+    serverClientId: kIsWeb ? null :
         '1027361942428-qan7576dnckruo88bl7gr6rfsi5ho0kn.apps.googleusercontent.com',
   );
 

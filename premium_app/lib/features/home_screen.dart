@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+
 import '../core/design_system.dart';
 import '../core/providers.dart';
 import '../core/content_provider.dart';
@@ -18,11 +18,9 @@ import 'daily_motivation_screen.dart';
 import 'daily_gyaan_screen.dart';
 import 'sacred_calendar_screen.dart';
 import 'achievements_screen.dart';
-import 'daily_challenge_screen.dart';
 
-import '../widgets/streak_fire_animation.dart';
-import '../widgets/xp_progress_bar.dart';
 import '../widgets/daily_check_in_widget.dart';
+
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -75,35 +73,20 @@ class HomeScreen extends ConsumerWidget {
                 sliver: SliverToBoxAdapter(child: DailyCheckInWidget()),
               ),
 
-              // 1. Daily Motivation Card
+              // Consolodated Lite Section
               const SliverToBoxAdapter(
-                child: RepaintBoundary(child: _DailyMotivationSection()),
+                child: Column(
+                  children: [
+                    _DailyMotivationSection(),
+                    _StreakLevelBar(),
+                    RepaintBoundary(child: _PremiumNaamJapSection()),
+                    _QuickActionsGrid(),
+                  ],
+                ),
               ),
 
-              // 2. Streak & Level Bar
-              const SliverToBoxAdapter(
-                child: RepaintBoundary(child: _StreakLevelBar()),
-              ),
 
-              // 3. Today's Challenges (quick view)
-              const SliverToBoxAdapter(
-                child: RepaintBoundary(child: _DailyChallengesPreview()),
-              ),
 
-              // 4. Naam Jap Quick Access
-              const SliverToBoxAdapter(
-                child: RepaintBoundary(child: _PremiumNaamJapSection()),
-              ),
-
-              // 5. Quick Actions Grid (Gyaan, Calendar, Achievements)
-              const SliverToBoxAdapter(
-                child: RepaintBoundary(child: _QuickActionsGrid()),
-              ),
-
-              // 6. Upcoming Vrat/Utsav Alert
-              const SliverToBoxAdapter(
-                child: RepaintBoundary(child: _UpcomingEventsBanner()),
-              ),
 
               // 7. Sacred Wisdom Categories
               const SliverToBoxAdapter(child: _CategoriesHeader()),
@@ -146,46 +129,46 @@ class _DailyMotivationSection extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 24, 20, 10),
         child: PremiumUI.etherealCard(
-          padding: const EdgeInsets.all(24),
-          borderRadius: 28,
-          glowColor: PremiumTokens.saffronGlow.withValues(alpha: 0.15),
+          padding: const EdgeInsets.all(20),
+          borderRadius: 24,
+          glowColor: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  EmojiToIcon.getIconWidget('🌅', size: 20, color: PremiumTokens.saffronGlow),
-                  const SizedBox(width: 12),
+                  EmojiToIcon.getIconWidget('🌅',
+                      size: 16, color: PremiumTokens.saffronGlow),
+                  const SizedBox(width: 8),
                   Text(
                     'DAILY INSPIRATION',
                     style: PremiumTokens.sansStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
-                      letterSpacing: 2,
+                      letterSpacing: 1,
                       color: PremiumTokens.saffronGlow.withValues(alpha: 0.7),
                     ),
                   ),
-                  const Spacer(),
-                  Icon(Iconsax.arrow_right_3,
-                      color: Colors.white24, size: 16),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               Text(
                 contextMotivation,
                 style: GoogleFonts.spectral(
-                  fontSize: 17,
-                  color: Colors.white,
+                  fontSize: 16,
+                  color: Colors.white.withValues(alpha: 0.9),
                   fontWeight: FontWeight.w300,
-                  height: 1.5,
+                  height: 1.4,
                 ),
               ),
             ],
           ),
         ),
       ),
-    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.05);
+    );
   }
 }
+
 
 // ─── Streak & Level Bar ────────────────────────────────────
 
@@ -195,163 +178,113 @@ class _StreakLevelBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final statsAsync = ref.watch(userStatsProvider);
-    final xpMult = ref.watch(xpMultiplierProvider);
+    final challengesAsync = ref.watch(dailyChallengesProvider);
 
-    return statsAsync.when(
-      data: (stats) {
-        final level = stats?.level ?? 1;
-        final xp = stats?.experiencePoints ?? 0;
-        final streak = stats?.streakCount ?? 0;
-        final xpForNext = SpiritualityEngine.xpForLevel(level);
-        final progress = xpForNext > 0 ? (xp % xpForNext) / xpForNext : 0.0;
+    // Use .value to prevent UI from hiding during subsequent loading states
+    final stats = statsAsync.value;
+    final challenges = challengesAsync.value;
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-          child: PremiumUI.glassCard(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            borderRadius: 20,
-            child: Row(
+    if (stats == null) {
+      if (statsAsync.isLoading) return const SizedBox(height: 60);
+      return const SizedBox.shrink();
+    }
+
+    final level = stats.level;
+    final xp = stats.experiencePoints;
+    final streak = stats.streakCount;
+
+    final xpForNext = SpiritualityEngine.xpForLevel(level);
+    final progress = xpForNext > 0 ? (xp % xpForNext) / xpForNext : 0.0;
+
+    // Use previous challenges if available to prevent flicker
+    if (challenges == null) {
+      if (challengesAsync.isLoading) return const SizedBox(height: 60);
+      return const SizedBox.shrink();
+    }
+
+    final completed = challenges.where((c) => c.isCompleted).length;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+      child: PremiumUI.glassCard(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        borderRadius: 16,
+        child: Row(
+          children: [
+            // Streak & Level info
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Streak Fire
-                StreakFireAnimation(streak: streak, isActive: streak > 0),
-
-                const SizedBox(width: 16),
-                Container(width: 1, height: 36, color: Colors.white10),
-                const SizedBox(width: 16),
-
-                // Level & XP Progress
-                Expanded(
-                  child: XPProgressBar(
-                    progress: progress,
-                    level: level,
+                Row(
+                  children: [
+                    Text('STREAK: $streak',
+                        style: PremiumTokens.sansStyle(
+                            fontSize: 9, fontWeight: FontWeight.w900)),
+                    const SizedBox(width: 12),
+                    Text('L$level',
+                        style: PremiumTokens.sansStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                            color: PremiumTokens.nebulaBlue)),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: 120,
+                  child: LinearProgressIndicator(
+                    value: progress,
+                    backgroundColor: Colors.white10,
+                    valueColor:
+                        const AlwaysStoppedAnimation(PremiumTokens.nebulaBlue),
+                    minHeight: 4,
+                    borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-
-                // XP Multiplier badge
-                if (xpMult > 1.0) ...[
-                  const SizedBox(width: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: PremiumTokens.saffronGlow.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      '${xpMult}x',
-                      style: PremiumTokens.sansStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w900,
-                        color: PremiumTokens.saffronGlow,
-                      ),
-                    ),
-                  ),
-                ],
               ],
             ),
-          ),
-        ).animate().fadeIn(delay: 100.ms, duration: 400.ms);
-      },
-      loading: () => const SizedBox(height: 70),
-      error: (_, __) => const SizedBox.shrink(),
+            const Spacer(),
+            // Challenges compact view
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text('CHALLENGES: $completed/${challenges.length}',
+                    style: PremiumTokens.sansStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white54)),
+                const SizedBox(height: 6),
+                Row(
+                  children: challenges.take(3).map((c) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: c.isCompleted
+                              ? Colors.greenAccent
+                              : Colors.white10,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
+
+
 
 // ─── Daily Challenges Preview ──────────────────────────────
 
-class _DailyChallengesPreview extends ConsumerWidget {
-  const _DailyChallengesPreview();
+// Removed _DailyChallengesPreview (Consolidated into _StreakLevelBar)
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final challengesAsync = ref.watch(dailyChallengesProvider);
-
-    return challengesAsync.when(
-      data: (challenges) {
-        if (challenges.isEmpty) return const SizedBox.shrink();
-        final completed = challenges.where((c) => c.isCompleted).length;
-
-        return GestureDetector(
-          onTap: () {
-            HapticFeedback.lightImpact();
-            Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const DailyChallengeScreen()));
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            child: PremiumUI.glassCard(
-              padding: const EdgeInsets.all(16),
-              borderRadius: 20,
-              child: Row(
-                children: [
-                  EmojiToIcon.getIconWidget('⚡', size: 20, color: Colors.white54),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "TODAY'S CHALLENGES",
-                          style: PremiumTokens.sansStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1,
-                            color: Colors.white54,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '$completed/${challenges.length} completed',
-                          style: GoogleFonts.manrope(
-                            fontSize: 13,
-                            color: completed == challenges.length
-                                ? Colors.greenAccent
-                                : Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Mini progress circles
-                  Row(
-                    children: challenges.map((c) {
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 6),
-                        child: Container(
-                          width: 10,
-                          height: 10,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: c.isCompleted
-                                ? Colors.greenAccent
-                                : Colors.white.withValues(alpha: 0.1),
-                            border: Border.all(
-                              color: c.isCompleted
-                                  ? Colors.greenAccent
-                                  : Colors.white.withValues(alpha: 0.2),
-                              width: 1,
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(width: 8),
-                  const Icon(Iconsax.arrow_right_3,
-                      color: Colors.white24, size: 14),
-                ],
-              ),
-            ),
-          ),
-        ).animate().fadeIn(delay: 200.ms, duration: 400.ms);
-      },
-      loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
-    );
-  }
-}
 
 // ─── Quick Actions Grid ────────────────────────────────────
 
@@ -389,9 +322,11 @@ class _QuickActionsGrid extends StatelessWidget {
           ),
         ],
       ),
-    ).animate().fadeIn(delay: 300.ms, duration: 400.ms);
+    );
   }
 }
+
+
 
 class _QuickActionTile extends StatelessWidget {
   final String emoji;
@@ -414,9 +349,10 @@ class _QuickActionTile extends StatelessWidget {
           HapticFeedback.lightImpact();
           onTap();
         },
-        child: PremiumUI.glassCard(
+        child: PremiumUI.voidCard(
           padding: const EdgeInsets.symmetric(vertical: 20),
           borderRadius: 20,
+          accentColor: color,
           child: Column(
             children: [
               EmojiToIcon.getIconWidget(emoji, size: 24, color: color),
@@ -433,6 +369,7 @@ class _QuickActionTile extends StatelessWidget {
             ],
           ),
         ),
+
       ),
     );
   }
@@ -440,102 +377,8 @@ class _QuickActionTile extends StatelessWidget {
 
 // ─── Upcoming Events Banner ───────────────────────────────
 
-class _UpcomingEventsBanner extends ConsumerWidget {
-  const _UpcomingEventsBanner();
+// Removed _UpcomingEventsBanner (Moved to Calendar)
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final eventsAsync = ref.watch(upcomingEventsProvider);
-
-    return eventsAsync.when(
-      data: (events) {
-        if (events.isEmpty) return const SizedBox.shrink();
-        final nextEvent = events.first;
-        final daysLeft = nextEvent.date.difference(DateTime.now()).inDays;
-
-        return GestureDetector(
-          onTap: () {
-            HapticFeedback.lightImpact();
-            Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const SacredCalendarScreen()));
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            child: PremiumUI.etherealCard(
-              padding: const EdgeInsets.all(16),
-              borderRadius: 20,
-              glowColor: Colors.orangeAccent.withValues(alpha: 0.15),
-              child: Row(
-                children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: Colors.orangeAccent.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: EmojiToIcon.getIconWidget('🕉️', size: 18, color: Colors.orangeAccent),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'UPCOMING ${nextEvent.type.toUpperCase()}',
-                          style: PremiumTokens.sansStyle(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1,
-                            color: Colors.orangeAccent.withValues(alpha: 0.7),
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          nextEvent.title,
-                          style: GoogleFonts.manrope(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.orangeAccent.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      nextEvent.isToday
-                          ? 'TODAY!'
-                          : daysLeft == 1
-                              ? 'TOMORROW'
-                              : '${daysLeft}d LEFT',
-                      style: PremiumTokens.sansStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.orangeAccent,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ).animate().fadeIn(delay: 400.ms, duration: 400.ms);
-      },
-      loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
-    );
-  }
-}
 
 // ─── Existing Sections (preserved) ────────────────────────
 
@@ -586,54 +429,52 @@ class _PremiumContentList extends ConsumerWidget {
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           final item = items[index];
-          return RepaintBoundary(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: GestureDetector(
-                onTap: () {
-                  HapticFeedback.heavyImpact();
-                  ref.read(audioProvider.notifier).play(item);
-                },
-                child: PremiumUI.voidCard(
-                  padding: const EdgeInsets.all(16),
-                  accentColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Center(
-                            child: Text('ॐ',
-                                style: TextStyle(
-                                    color: PremiumTokens.nebulaBlue,
-                                    fontSize: 24))),
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: GestureDetector(
+              onTap: () {
+                HapticFeedback.heavyImpact();
+                ref.read(audioProvider.notifier).play(item);
+              },
+              child: PremiumUI.voidCard(
+                padding: const EdgeInsets.all(16),
+                accentColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(item.title,
-                                style: GoogleFonts.manrope(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15)),
-                            const SizedBox(height: 4),
-                            Text(item.category,
-                                style: GoogleFonts.manrope(
-                                    color: PremiumTokens.nebulaBlue,
-                                    fontSize: 12)),
-                          ],
-                        ),
+                      child: const Center(
+                          child: Text('ॐ',
+                              style: TextStyle(
+                                  color: PremiumTokens.nebulaBlue,
+                                  fontSize: 24))),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(item.title,
+                              style: GoogleFonts.manrope(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15)),
+                          const SizedBox(height: 4),
+                          Text(item.category,
+                              style: GoogleFonts.manrope(
+                                  color: PremiumTokens.nebulaBlue,
+                                  fontSize: 12)),
+                        ],
                       ),
-                      const Icon(Iconsax.arrow_right_3,
-                          color: Colors.white24, size: 16),
-                    ],
-                  ),
+                    ),
+                    const Icon(Iconsax.arrow_right_3,
+                        color: Colors.white24, size: 16),
+                  ],
                 ),
               ),
             ),
@@ -645,111 +486,130 @@ class _PremiumContentList extends ConsumerWidget {
   }
 }
 
+
 class _PremiumNaamJapSection extends ConsumerWidget {
   const _PremiumNaamJapSection();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final japState = ref.watch(naamJapStateProvider);
+    const goal = 1008; // Example goal
+    final progress = (japState.total % goal) / goal;
 
-    return RepaintBoundary(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: PremiumUI.etherealCard(
-          padding: const EdgeInsets.all(24),
-          borderRadius: 32,
-          optimized: true,
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('DAILY PROGRESS',
-                          style: PremiumTokens.sansStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 2,
-                            color: PremiumTokens.nebulaBlue
-                                .withValues(alpha: 0.7),
-                          )),
-                      const SizedBox(height: 4),
-                      Text('Sacred Counter',
-                          style: GoogleFonts.spectral(
-                            fontSize: 26,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w300,
-                          )),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      child: Center(
+        child: GestureDetector(
+          onTap: () {
+            HapticFeedback.mediumImpact();
+            ref.read(naamJapStateProvider.notifier).increment(context);
+          },
+          child: SizedBox(
+            width: 200,
+            height: 200,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Static Halo / Aura
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.15),
+                        blurRadius: 60,
+                        spreadRadius: 2,
+                      ),
                     ],
                   ),
-                  const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text('GOAL: 1008',
-                        style: PremiumTokens.sansStyle(
-                          fontSize: 11,
-                          color: Colors.white.withValues(alpha: 0.9),
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1,
-                        )),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 32),
-              Center(
-                child: PremiumUI.naamJapCounter(
-                  count: japState.total,
-                  onTap: () {
-                    ref.read(naamJapStateProvider.notifier).increment(context);
-                  },
-                  goal: 1008,
-                  size: 240,
                 ),
-              ),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                child: PremiumUI.etherealButton(
-                  optimized: true,
-                  onTap: () {
-                    ref.read(navigationIndexProvider.notifier).state = 2;
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+
+                // Outermost Ring
+                SizedBox(
+                  width: 180,
+                  height: 180,
+                  child: CircularProgressIndicator(
+                    value: progress,
+                    strokeWidth: 4,
+                    backgroundColor: Colors.white.withValues(alpha: 0.05),
+                    valueColor: const AlwaysStoppedAnimation(
+                      PremiumTokens.nebulaBlue,
+                    ),
+                  ),
+                ),
+
+                // Inner Disc
+                Container(
+                  width: 150,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFF0F0F2D),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.08),
+                    ),
+                    gradient: RadialGradient(
+                      colors: [
+                        PremiumTokens.nebulaBlue.withValues(alpha: 0.05),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Iconsax.music_play,
-                          color: Colors.white.withValues(alpha: 0.9),
-                          size: 18),
-                      const SizedBox(width: 12),
-                      Text('EXPAND PLAYER',
-                          style: PremiumTokens.sansStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 2,
-                            color: Colors.white,
-                          )),
+                      Text(
+                        '${japState.total}',
+                        style: GoogleFonts.spectral(
+                          fontSize: 42,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w200,
+                          letterSpacing: -1,
+                        ),
+                      ),
+                      Text(
+                        'JAPS TODAY',
+                        style: PremiumTokens.sansStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.5,
+                          color: Colors.white38,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-            ],
+
+                // Tap Prompt (Subtle)
+                Positioned(
+                  bottom: 20,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      'TAP TO CHANT',
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 7,
+                        fontWeight: FontWeight.w900,
+                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.7),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
-
 class _CategoriesGrid extends ConsumerWidget {
+
   const _CategoriesGrid();
 
   @override
@@ -790,52 +650,57 @@ class _CategoriesGrid extends ConsumerWidget {
               HapticFeedback.lightImpact();
               ref.read(navigationIndexProvider.notifier).state = 1;
             },
-            child: PremiumUI.saffronGlassCard(
-              padding: EdgeInsets.zero,
-              optimized: true,
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: PremiumUI.networkImage(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    PremiumUI.networkImage(
                       url: cat['image']!,
-                      borderRadius: BorderRadius.circular(24),
                       width: 200,
                     ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24),
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: [
-                          PremiumTokens.charcoal.withValues(alpha: 0.9),
-                          Colors.transparent,
+                    const DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [
+                            Colors.black87,
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 12,
+                      left: 12,
+                      right: 12,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(cat['name']!,
+                              style: GoogleFonts.manrope(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14)),
+                          Text(cat['count']!,
+                              style: GoogleFonts.manrope(
+                                  color: Colors.white54, fontSize: 10)),
                         ],
                       ),
                     ),
-                  ),
-                  Positioned(
-                    bottom: 16,
-                    left: 16,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(cat['name']!,
-                            style: GoogleFonts.manrope(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14)),
-                        Text(cat['count']!,
-                            style: GoogleFonts.manrope(
-                                color: Colors.white54, fontSize: 10)),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
+
+
         },
         childCount: categories.length,
       ),
@@ -926,7 +791,8 @@ class _CompactSearchButton extends StatelessWidget {
       onTap: () {
         HapticFeedback.lightImpact();
         Navigator.push(
-            context, MaterialPageRoute(builder: (_) => SearchScreen()));
+            context, MaterialPageRoute(builder: (_) => const SearchScreen()));
+
       },
       child: const Icon(Iconsax.search_normal,
           color: PremiumTokens.nebulaBlue, size: 22),

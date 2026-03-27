@@ -311,7 +311,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
           // Continuous Status Display
           Animate(
             key: ValueKey(completedMalas),
-            effects: [FadeEffect(duration: 400.ms), SlideEffect(begin: const Offset(0, 0.2), end: Offset.zero)],
+            effects: [FadeEffect(duration: 400.ms), const SlideEffect(begin: Offset(0, 0.2), end: Offset.zero)],
             child: Text(
               "MALA $completedMalas • BEAD $currentBead",
               style: PremiumTokens.sansStyle(
@@ -523,7 +523,7 @@ class _MalaHistorySheetState extends ConsumerState<_MalaHistorySheet> with Singl
                 ],
               ),
               loading: () => const Center(child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue)),
-              error: (e, _) => Center(child: Text("Error loading history", style: TextStyle(color: Colors.white54))),
+              error: (e, _) => const Center(child: Text("Error loading history", style: TextStyle(color: Colors.white54))),
             ),
           ),
         ],
@@ -565,7 +565,7 @@ class _MalaHistorySheetState extends ConsumerState<_MalaHistorySheet> with Singl
         // If it's today, show hourly. Otherwise group by day of the week.
         if (now.difference(createdAt).inDays < 1 && now.day == createdAt.day) {
           final hour = createdAt.hour;
-          key = "${hour}:00";
+          key = "$hour:00";
           groupedData[key] = (groupedData[key] ?? 0) + count;
         } else if (now.difference(createdAt).inDays < 7) {
           key = "${createdAt.day}/${createdAt.month}";

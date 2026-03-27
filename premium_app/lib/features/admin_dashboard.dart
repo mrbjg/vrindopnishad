@@ -12,7 +12,7 @@ import 'package:flutter/services.dart';
 import '../core/design_system.dart';
 
 class AdminDashboard extends ConsumerStatefulWidget {
-  AdminDashboard({super.key});
+  const AdminDashboard({super.key});
 
   @override
   ConsumerState<AdminDashboard> createState() => _AdminDashboardState();
@@ -93,7 +93,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                                         color: AppTheme.primaryColor
                                             .withValues(alpha: 0.3),
                                         blurRadius: 12,
-                                        offset: Offset(0, 4),
+                                        offset: const Offset(0, 4),
                                       ),
                                     ],
                                   ),
@@ -174,7 +174,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                     ),
-                    tabs: [
+                    tabs: const [
                       Tab(icon: Icon(Iconsax.add, size: 20)),
                       Tab(icon: Icon(Iconsax.cloud_add, size: 20)),
                       Tab(icon: Icon(Iconsax.menu_1, size: 20)),
@@ -208,14 +208,14 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                     padding: const EdgeInsets.all(32),
                     decoration: BoxDecoration(
                       color: isDark
-                          ? Color(0xFF1A1A2E).withValues(alpha: 0.95)
+                          ? const Color(0xFF1A1A2E).withValues(alpha: 0.95)
                           : Colors.white.withValues(alpha: 0.95),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        CircularProgressIndicator(),
+                        const CircularProgressIndicator(),
                         const SizedBox(height: 20),
                         Text(
                           "Processing...",
@@ -280,7 +280,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
             description:
                 "Add one piece of sacred content at a time with all details.",
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           PressableScale(
             onTap: () => _showSingleAddDialog(context, l, isDark),
             child: Container(
@@ -395,12 +395,12 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Iconsax.import_1,
                     size: 18,
                     color: AppTheme.primaryColor,
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Text(
                     "Download CSV Template",
                     style: GoogleFonts.outfit(
@@ -473,7 +473,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
             ),
             child: Icon(icon, color: Colors.white, size: 20),
           ),
-          SizedBox(width: 14),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -541,7 +541,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
               ),
               child: Icon(icon, color: color, size: 22),
             ),
-            SizedBox(width: 14),
+            const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -606,7 +606,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
               gradient: AppTheme.primaryGradient(context),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(Iconsax.document_text,
+            child: const Icon(Iconsax.document_text,
               color: Colors.white,
               size: 18,
             ),

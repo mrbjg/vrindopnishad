@@ -83,8 +83,8 @@ class PremiumTokens {
       center: Alignment.center,
       radius: 0.8 * intensity,
       colors: [
-        Color(0xFF256AF4).withValues(alpha: 0.15 * intensity),
-        Color(0xFF256AF4).withValues(alpha: 0.05 * intensity),
+        const Color(0xFF256AF4).withValues(alpha: 0.15 * intensity),
+        const Color(0xFF256AF4).withValues(alpha: 0.05 * intensity),
         Colors.transparent,
       ],
     );
@@ -654,8 +654,8 @@ class PremiumUI extends StatelessWidget {
             : MediaQuery.sizeOf(context).width;
         final slotWidth =
             (effectiveWidth - 32) / 5; // Accounting for 16px horizontal padding
-        final capsuleWidth = 58.0;
-        final capsuleHeight = 44.0;
+        const capsuleWidth = 58.0;
+        const capsuleHeight = 44.0;
 
         return Container(
           height: 100,
@@ -719,8 +719,9 @@ class PremiumUI extends StatelessWidget {
                           final item = items[index];
                           final isSelected = selectedIndex == index;
 
-                          if (index == 2)
+                          if (index == 2) {
                             return const Expanded(child: SizedBox());
+                          }
 
                           return Expanded(
                             child: _PremiumAnimatedNavButton(
@@ -945,13 +946,13 @@ class PremiumUI extends StatelessWidget {
         gradient: RadialGradient(
           colors: [
             Colors.white.withValues(alpha: 0.15 * opacity),
-            Color(0xFF256AF4).withValues(alpha: 0.05 * opacity),
+            const Color(0xFF256AF4).withValues(alpha: 0.05 * opacity),
             Colors.transparent,
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF256AF4).withValues(alpha: 0.1 * opacity),
+            color: const Color(0xFF256AF4).withValues(alpha: 0.1 * opacity),
             blurRadius: 80 * opacity,
           ),
         ],
@@ -1035,9 +1036,9 @@ class PremiumUI extends StatelessWidget {
   /// Subtle mandala pattern overlay for sacred screens
   static Widget mandalaOverlay({double opacity = 0.03}) {
     final body = Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         image: DecorationImage(
-          image: const CachedNetworkImageProvider(
+          image: CachedNetworkImageProvider(
             'https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?auto=format&fit=crop&w=800&q=80',
           ),
           repeat: ImageRepeat.repeat,

@@ -141,7 +141,7 @@ class LibraryScreen extends ConsumerWidget {
           HapticFeedback.lightImpact();
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => SearchScreen()),
+            MaterialPageRoute(builder: (_) => const SearchScreen()),
           );
         },
         child: Container(
@@ -153,7 +153,7 @@ class LibraryScreen extends ConsumerWidget {
           ),
           child: Row(
             children: [
-              Icon(Iconsax.search_normal, color: PremiumTokens.nebulaBlue, size: 20),
+              const Icon(Iconsax.search_normal, color: PremiumTokens.nebulaBlue, size: 20),
               const SizedBox(width: 12),
               Text(
                 "Search sacred mantras...",

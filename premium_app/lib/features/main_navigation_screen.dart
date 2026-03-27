@@ -17,7 +17,7 @@ import '../core/stats_provider.dart';
 import '../core/notification_manager.dart';
 
 class MainNavigationScreen extends ConsumerStatefulWidget {
-  MainNavigationScreen({super.key});
+  const MainNavigationScreen({super.key});
 
   @override
   ConsumerState<MainNavigationScreen> createState() => _MainNavigationScreenState();
@@ -39,9 +39,9 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
     _screens = [
       const HomeScreen(),
       const LibraryScreen(),
-      NaamJapScreen(),
+      const NaamJapScreen(),
       const EternalReflectionScreen(),
-      ProfileScreen(),
+      const ProfileScreen(),
       const RitualsScreen(),
     ];
 
@@ -99,11 +99,11 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
           ),
           
           // Persistent Mini Player (Restored & Improved)
-          Positioned(
+          const Positioned(
             left: 0,
             right: 0,
             bottom: 102, // Tightened from 120 to clear the Nav Button while feeling more compact
-            child: const RepaintBoundary(child: MiniPlayer()),
+            child: RepaintBoundary(child: MiniPlayer()),
           ),
 
           // Mind-Blowing Ethereal NavBar

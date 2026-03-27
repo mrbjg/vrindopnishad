@@ -17,7 +17,7 @@ import 'package:flutter/services.dart';
 import '../core/stats_provider.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
-  ProfileScreen({super.key});
+  const ProfileScreen({super.key});
 
   @override
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
@@ -141,7 +141,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       color: PremiumTokens.celestialGlow,
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => ReadingHistoryScreen()),
+                        MaterialPageRoute(builder: (_) => const ReadingHistoryScreen()),
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -155,7 +155,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       color: PremiumTokens.starlight,
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => SettingsScreen()),
+                        MaterialPageRoute(builder: (_) => const SettingsScreen()),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -166,7 +166,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       color: PremiumTokens.silver,
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => AboutScreen()),
+                        MaterialPageRoute(builder: (_) => const AboutScreen()),
                       ),
                     ),
                     const SizedBox(height: 48),
@@ -175,7 +175,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                     Center(
                       child: TextButton.icon(
                         onPressed: () => _handleLogout(context, ref),
-                        icon: Icon(Iconsax.logout, color: Colors.white24, size: 20),
+                        icon: const Icon(Iconsax.logout, color: Colors.white24, size: 20),
                         label: Text(
                           "Sign Out from Path",
                           style: GoogleFonts.outfit(color: Colors.white24, fontWeight: FontWeight.bold),

@@ -116,7 +116,7 @@ class AppTheme {
 
   /// Primary button/header gradient
   static LinearGradient primaryGradient(BuildContext context) =>
-      LinearGradient(begin: Alignment.topLeft,
+      const LinearGradient(begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [primaryColor, primaryDark],
       );
@@ -165,7 +165,7 @@ class AppTheme {
           ? Colors.black.withValues(alpha: 0.4)
           : Colors.black.withValues(alpha: 0.06),
       blurRadius: 16,
-      offset: Offset(0, 4),
+      offset: const Offset(0, 4),
     ),
   ];
 
@@ -175,7 +175,7 @@ class AppTheme {
           ? Colors.black.withValues(alpha: 0.3)
           : Colors.black.withValues(alpha: 0.04),
       blurRadius: 12,
-      offset: Offset(0, 2),
+      offset: const Offset(0, 2),
     ),
   ];
 
@@ -328,9 +328,9 @@ class AppTheme {
           borderRadius: BorderRadius.circular(radiusMedium),
           borderSide: const BorderSide(color: primaryColor, width: 2),
         ),
-        hintStyle: TextStyle(color: lightTextMuted),
+        hintStyle: const TextStyle(color: lightTextMuted),
       ),
-      dividerTheme: DividerThemeData(
+      dividerTheme: const DividerThemeData(
         color: lightBorder,
         thickness: 1,
         space: space24,
@@ -413,9 +413,9 @@ class AppTheme {
           borderRadius: BorderRadius.circular(radiusMedium),
           borderSide: const BorderSide(color: peacockBlue, width: 2),
         ),
-        hintStyle: TextStyle(color: darkTextMuted),
+        hintStyle: const TextStyle(color: darkTextMuted),
       ),
-      dividerTheme: DividerThemeData(
+      dividerTheme: const DividerThemeData(
         color: darkBorder,
         thickness: 1,
         space: space24,

@@ -115,7 +115,7 @@ class SacredLogoutDialog extends StatelessWidget {
           ? ElevatedButton(
               onPressed: onTap,
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.all(0),
+                padding: const EdgeInsets.all(0),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
               ),
               child: Ink(

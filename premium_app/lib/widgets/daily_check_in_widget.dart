@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+
 import '../core/design_system.dart';
 import '../core/stats_provider.dart';
 import '../services/gamification_service.dart';
@@ -99,8 +99,9 @@ class _DailyCheckInWidgetState extends ConsumerState<DailyCheckInWidget> {
               ),
             ],
           ),
-        ).animate().fadeIn().slideX(begin: 0.1);
+        );
       },
+
       loading: () => const SizedBox.shrink(),
       error: (_, __) => const SizedBox.shrink(),
     );

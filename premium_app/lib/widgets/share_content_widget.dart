@@ -36,7 +36,7 @@ class ShareContentWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Color(0xFFEDA638).withValues(alpha: 0.2),
+              color: const Color(0xFFEDA638).withValues(alpha: 0.2),
               blurRadius: 30,
               spreadRadius: 5,
             ),
@@ -60,7 +60,7 @@ class ShareContentWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               decoration: BoxDecoration(
-                color: Color(0xFFEDA638).withValues(alpha: 0.15),
+                color: const Color(0xFFEDA638).withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(

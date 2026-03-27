@@ -336,7 +336,7 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                         ),
                       ),
                       if (event.description != null) ...[
-                        Text(
+                        const Text(
                           ' • ',
                           style: TextStyle(color: Colors.white24),
                         ),

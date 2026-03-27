@@ -417,6 +417,7 @@ class _CustomGlowingThumbShape extends SliderComponentShape {
     this.thumbRadius = 6.0,
   });
 
+
   @override
   Size getPreferredSize(bool isEnabled, bool isDiscrete) => Size.fromRadius(thumbRadius);
 

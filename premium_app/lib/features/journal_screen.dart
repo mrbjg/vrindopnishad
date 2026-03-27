@@ -19,7 +19,7 @@ class EternalReflectionScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: PremiumTokens.voidBlack,
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: PremiumTokens.spaceVoidGradient,
         ),
         child: Stack(
@@ -265,10 +265,10 @@ class EternalReflectionScreen extends ConsumerWidget {
                     height: 80,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: RadialGradient(
+                      gradient: const RadialGradient(
                         colors: [
-                          const Color(0xFF000000),
-                          const Color(0xFF0A0A2D),
+                          Color(0xFF000000),
+                          Color(0xFF0A0A2D),
                         ],
                       ),
                       border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 0.5),

@@ -113,13 +113,13 @@ class _SantVaaniPremiumAppState extends ConsumerState<SantVaaniPremiumApp> {
 
   Widget _buildEntryPoint(WidgetRef ref, AsyncValue<User?> authState, bool hasSeenOnboarding) {
     if (!hasSeenOnboarding) {
-      return OnboardingScreen(key: const ValueKey('onboarding'));
+      return const OnboardingScreen(key: ValueKey('onboarding'));
     }
 
     return authState.when(
       data: (user) {
         if (user != null) {
-          return MainNavigationScreen(key: const ValueKey('main_nav'));
+          return const MainNavigationScreen(key: ValueKey('main_nav'));
         }
         return const AuthScreen(key: ValueKey('auth'));
       },

@@ -52,7 +52,7 @@ class EtherealOrbPlayer extends ConsumerWidget {
         },
         child: Hero(
           tag: 'audio_player_orb',
-          child: Container(
+          child: SizedBox(
             width: 84,
             height: 84,
             child: Stack(
@@ -64,7 +64,7 @@ class EtherealOrbPlayer extends ConsumerWidget {
                     onPlay: (c) => c.repeat(reverse: true),
                     effects: [
                       ScaleEffect(begin: const Offset(1, 1), end: const Offset(1.5, 1.5), duration: 3.seconds, curve: PremiumTokens.breathingSine),
-                      FadeEffect(begin: 0.05, end: 0.2),
+                      const FadeEffect(begin: 0.05, end: 0.2),
                     ],
                     child: Container(
                       width: 120,
@@ -165,8 +165,8 @@ class EtherealOrbPlayer extends ConsumerWidget {
                               child: Container(
                                 width: 40,
                                 height: 20,
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(Radius.elliptical(40, 20)),
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.all(Radius.elliptical(40, 20)),
                                   gradient: PremiumTokens.glassReflection,
                                 ),
                               ),

@@ -184,7 +184,7 @@ class RitualsScreen extends ConsumerWidget {
               ),
             ).animate().fadeIn(delay: 200.ms),
             
-            ...categoryRituals.map((ritual) => _buildRitualCard(context, ref, ritual)).toList(),
+            ...categoryRituals.map((ritual) => _buildRitualCard(context, ref, ritual)),
           ],
         );
       }).toList(),

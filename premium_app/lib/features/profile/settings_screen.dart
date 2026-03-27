@@ -11,7 +11,7 @@ import '../../widgets/animated_effects.dart';
 import 'package:flutter/services.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
-  SettingsScreen({super.key});
+  const SettingsScreen({super.key});
 
   @override
   ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
@@ -85,7 +85,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   l.translate('appearance'),
                   Iconsax.colorfilter,
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
 
                 _buildToggleCard(
                   context,
@@ -227,7 +227,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           size: 24,
                         ),
                       ),
-                      SizedBox(height: 12),
+                      const SizedBox(height: 12),
                       Text(
                         "Sant-Vaani",
                         style: GoogleFonts.spectral(
@@ -298,7 +298,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
             child: Icon(icon, size: 16, color: PremiumTokens.nebulaBlue),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Text(
             title.toUpperCase(),
             style: PremiumTokens.sansStyle(
@@ -352,7 +352,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   BoxShadow(
                     color: colors[0].withValues(alpha: 0.4),
                     blurRadius: 12,
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                     spreadRadius: -4,
                   ),
                 ],
@@ -415,7 +415,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               : null,
         ),
         child: AnimatedAlign(
-          duration: Duration(milliseconds: 250),
+          duration: const Duration(milliseconds: 250),
           curve: Curves.easeOutBack,
           alignment: value ? Alignment.centerRight : Alignment.centerLeft,
           child: Container(
@@ -429,7 +429,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.15),
                   blurRadius: 8,
-                  offset: Offset(0, 2),
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
@@ -551,7 +551,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
                 Row(
                   children: [
                     Container(
@@ -650,7 +650,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                     : Colors.white38,
                               ),
                             ),
-                            SizedBox(width: 16),
+                            const SizedBox(width: 16),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -680,7 +680,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             if (isSelected)
                               Container(
                                 padding: const EdgeInsets.all(6),
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   color: PremiumTokens.nebulaBlue,
                                   shape: BoxShape.circle,
                                 ),

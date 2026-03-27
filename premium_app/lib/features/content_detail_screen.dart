@@ -24,7 +24,7 @@ class ContentDetailScreen extends ConsumerStatefulWidget {
   final String? title;
   final String? category;
 
-  ContentDetailScreen({
+  const ContentDetailScreen({
     super.key,
     this.content,
     this.title,
@@ -163,7 +163,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
     // If no content is found and no title/category provided, we are effectively in a dead state
     if (content == null && widget.title == null && widget.content == null) {
-      return Scaffold(
+      return const Scaffold(
         backgroundColor: PremiumTokens.voidBlack,
         body: Center(child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue)),
       );
@@ -185,10 +185,10 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           if (_currentTheme == ReadingTheme.sacredParchment)
              Positioned.fill(
                child: Container(
-                 decoration: BoxDecoration(
-                   color: const Color(0xFFF4ECD8),
+                 decoration: const BoxDecoration(
+                   color: Color(0xFFF4ECD8),
                    image: DecorationImage(
-                     image: const CachedNetworkImageProvider('https://www.transparenttextures.com/patterns/paper-fibers.png'),
+                     image: CachedNetworkImageProvider('https://www.transparenttextures.com/patterns/paper-fibers.png'),
                      opacity: 0.05,
                      repeat: ImageRepeat.repeat,
                    ),
@@ -408,7 +408,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               Container(width: 20, height: 1, decoration: BoxDecoration(gradient: LinearGradient(colors: [PremiumTokens.saffronGlow.withValues(alpha: 0.5), Colors.transparent]))),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             title,
             textAlign: TextAlign.center,
@@ -460,7 +460,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               animFile: 'chevron-left.json',
               themeData: themeData,
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: AnimatedOpacity(
                 duration: 200.ms,
@@ -781,7 +781,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             ],
             border: Border.all(color: PremiumTokens.saffronGlow.withValues(alpha: 0.3), width: 1.5),
           ),
-          child: Center(
+          child: const Center(
             child: Icon(Iconsax.music5, color: PremiumTokens.saffronGlow, size: 24), // Filled music icon for 'Soul Orb'
           ),
         ),
@@ -831,7 +831,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                               height: 14, 
                               child: CircularProgressIndicator(strokeWidth: 2, color: PremiumTokens.saffronGlow)
                             )
-                          : Icon(Iconsax.music_play, color: PremiumTokens.saffronGlow, size: 14),
+                          : const Icon(Iconsax.music_play, color: PremiumTokens.saffronGlow, size: 14),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -870,7 +870,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           HapticFeedback.mediumImpact();
                           Navigator.of(context).push(
                             PageRouteBuilder(
-                              pageBuilder: (context, animation, secondaryAnimation) => GlobalPlayerScreen(),
+                              pageBuilder: (context, animation, secondaryAnimation) => const GlobalPlayerScreen(),
                               transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                 return FadeTransition(opacity: animation, child: child);
                               },

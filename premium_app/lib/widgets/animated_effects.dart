@@ -400,7 +400,7 @@ class GradientCategoryCard extends StatelessWidget {
             BoxShadow(
               color: gradientColors.first.withValues(alpha: 0.3),
               blurRadius: 10,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -435,7 +435,7 @@ class GradientCategoryCard extends StatelessWidget {
                     ),
                     child: Icon(icon, color: Colors.white, size: 20),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   Text(
                     title,
                     style: GoogleFonts.outfit(
@@ -505,7 +505,7 @@ class AnimatedGreeting extends StatelessWidget {
       children: [
         Text(
           _greeting,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.bold,
             color: AppTheme.primaryColor,
@@ -561,7 +561,7 @@ class PulsingOmButton extends StatelessWidget {
               )
               .animate(onPlay: (c) => c.repeat(reverse: true))
               .scale(
-                begin: Offset(0.9, 0.9),
+                begin: const Offset(0.9, 0.9),
                 end: const Offset(1.1, 1.1),
                 duration: 2.seconds,
               ),
@@ -571,7 +571,7 @@ class PulsingOmButton extends StatelessWidget {
                 height: size,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [AppTheme.primaryColor, AppTheme.primaryDark],
@@ -750,7 +750,7 @@ class QuoteCard extends StatelessWidget {
             color: (isDark ? AppTheme.sacredViolet : AppTheme.primaryColor)
                 .withValues(alpha: 0.3),
             blurRadius: 20,
-            offset: Offset(0, 8),
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -764,7 +764,7 @@ class QuoteCard extends StatelessWidget {
                 ? Colors.white24
                 : AppTheme.primaryColor.withValues(alpha: 0.3),
           ),
-          SizedBox(height: AppTheme.space12),
+          const SizedBox(height: AppTheme.space12),
           Text(
             quote,
             style: TextStyle(

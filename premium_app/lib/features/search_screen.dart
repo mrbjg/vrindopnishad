@@ -10,7 +10,7 @@ import 'package:flutter/services.dart';
 import '../core/favorites_provider.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
-  SearchScreen({super.key});
+  const SearchScreen({super.key});
 
   @override
   ConsumerState<SearchScreen> createState() => _SearchScreenState();
@@ -119,7 +119,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             hintStyle: GoogleFonts.manrope(color: Colors.white24, fontSize: 14),
             border: InputBorder.none,
             contentPadding: const EdgeInsets.symmetric(vertical: 15),
-            prefixIcon: Icon(Iconsax.search_normal, color: PremiumTokens.nebulaBlue, size: 20),
+            prefixIcon: const Icon(Iconsax.search_normal, color: PremiumTokens.nebulaBlue, size: 20),
             suffixIcon: _searchQuery.isNotEmpty
                 ? IconButton(
                     icon: const Icon(Iconsax.close_circle, size: 18, color: Colors.white38),
@@ -261,7 +261,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     ),
                     TextButton(
                       onPressed: () => ref.read(recentSearchesProvider.notifier).clear(),
-                      child: Text("Clear", style: TextStyle(color: PremiumTokens.nebulaBlue, fontSize: 12)),
+                      child: const Text("Clear", style: TextStyle(color: PremiumTokens.nebulaBlue, fontSize: 12)),
                     ),
                   ],
                 ),

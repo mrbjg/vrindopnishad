@@ -14,7 +14,7 @@ class CategoryScreen extends ConsumerStatefulWidget {
   final String categoryName;
   final List<Color> gradientColors;
 
-  CategoryScreen({
+  const CategoryScreen({
     super.key,
     required this.categoryName,
     required this.gradientColors,
@@ -87,7 +87,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                           Row(
                             children: [
                               _buildGlassIcon(Iconsax.arrow_left, () => Navigator.pop(context)),
-                              SizedBox(width: 16),
+                              const SizedBox(width: 16),
                               Expanded(
                                 child: Text(
                                   widget.categoryName,
@@ -124,7 +124,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                                   hintText: "${l.translate('search')}...",
                                   hintStyle: GoogleFonts.outfit(color: Colors.white38),
                                   border: InputBorder.none,
-                                  icon: Icon(Iconsax.search_normal, color: Colors.white38, size: 20),
+                                  icon: const Icon(Iconsax.search_normal, color: Colors.white38, size: 20),
                                 ),
                                 onChanged: (v) => setState(() => _searchQuery = v),
                               ),
@@ -170,7 +170,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                       ),
                     ),
               
-              SliverToBoxAdapter(child: SizedBox(height: 100)),
+              const SliverToBoxAdapter(child: SizedBox(height: 100)),
             ],
           ),
         ],
@@ -212,7 +212,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                 gradient: LinearGradient(colors: widget.gradientColors),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Icon(Iconsax.book_1, color: Colors.white, size: 24),
+              child: const Icon(Iconsax.book_1, color: Colors.white, size: 24),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -248,7 +248,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Iconsax.folder_open, size: 64, color: Colors.white10),
+          const Icon(Iconsax.folder_open, size: 64, color: Colors.white10),
           const SizedBox(height: 16),
           Text(
             l.translate('no_content'),
