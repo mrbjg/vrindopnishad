@@ -61,13 +61,19 @@ class PremiumTokens {
   static const LinearGradient saffronPremiumGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFFE2E8F0), Color(0xFF94A3B8)], // Silver Gradient
+    colors: [Color(0xFFF2A60D), Color(0xFFD68A00)], // Real Sacred Saffron
+  );
+
+  static const LinearGradient divineGoldGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFFFFD700), Color(0xFFDAA520)], // Radiant Gold
   );
 
   static const LinearGradient goldGlassGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0x33E5E2E1), Color(0x11E5E2E1)], // Silver Glass
+    colors: [Color(0x66F2A60D), Color(0x22F2A60D)], // Saffron Glass
   );
 
   static const LinearGradient nebulaGradient = LinearGradient(

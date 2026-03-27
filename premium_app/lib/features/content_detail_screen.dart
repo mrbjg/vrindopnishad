@@ -339,6 +339,108 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           .custom(builder: (c, v, child) => Opacity(opacity: 0.1 + (v * 0.1), child: child)),
                       ),
                     ),
+                    const SizedBox(height: 32),
+                    if (content != null) ...[
+                      const SizedBox(height: 64),
+                      PremiumUI.sacredDivider(color: themeData.textColor.withValues(alpha: 0.1)),
+                      const SizedBox(height: 48),
+                      
+                      // Author Icon & Label
+                      Center(
+                        child: Text(
+                          "SACRED COMPOSITION BY",
+                          style: GoogleFonts.manrope(
+                            color: themeData.textColor.withValues(alpha: 0.3),
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 3.0,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Author Name
+                      if (content.author != null)
+                        Center(
+                          child: Text(
+                            content.author!.toUpperCase(),
+                            style: GoogleFonts.spectral(
+                              color: PremiumTokens.saffronGlow,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ),
+                      
+                      const SizedBox(height: 32),
+                      
+                      // Source Row
+                      if (content.book != null || content.chapter != null)
+                        Center(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: themeData.textColor.withValues(alpha: 0.03),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: themeData.textColor.withValues(alpha: 0.08)),
+                            ),
+                            child: Column(
+                              children: [
+                                if (content.book != null)
+                                  Text(
+                                    "FROM THE SACRED TEXT: ${content.book}".toUpperCase(),
+                                    style: GoogleFonts.manrope(
+                                      color: themeData.textColor.withValues(alpha: 0.5),
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.0,
+                                    ),
+                                  ),
+                                if (content.book != null && (content.chapter != null || content.section != null)) const SizedBox(height: 4),
+                                if (content.chapter != null || content.section != null)
+                                  Text(
+                                    "SECTION / CHAPTER: ${content.chapter ?? content.section}".toUpperCase(),
+                                    style: GoogleFonts.manrope(
+                                      color: themeData.textColor.withValues(alpha: 0.4),
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        
+                      const SizedBox(height: 48),
+                      
+                      // Tags
+                      Center(
+                        child: Text(
+                          "THEMATIC RESONANCE",
+                          style: GoogleFonts.manrope(
+                            color: themeData.textColor.withValues(alpha: 0.2), 
+                            fontSize: 8, 
+                            fontWeight: FontWeight.w900, 
+                            letterSpacing: 2.0
+                          )
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Center(
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          alignment: WrapAlignment.center,
+                          children: [
+                            ...(content.contentTags).map((tag) => _buildTagChip("#$tag", themeData.accentColor.withValues(alpha: 0.05))),
+                            ...(content.audioTags).map((tag) => _buildTagChip("🎧 $tag", Colors.blue.withValues(alpha: 0.1))),
+                            ...(content.videoTags).map((tag) => _buildTagChip("🎬 $tag", Colors.red.withValues(alpha: 0.1))),
+                            ...(content.imageTags).map((tag) => _buildTagChip("🖼️ $tag", Colors.green.withValues(alpha: 0.1))),
+                          ],
+                        ),
+                      ),
+                    ],
                   ]),
                 ),
               ),
@@ -389,19 +491,6 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         children: [
-          if (content?.author != null)
-            Text(
-              content!.author!.toUpperCase(),
-              style: GoogleFonts.manrope(
-                color: PremiumTokens.saffronGlow.withValues(alpha: 0.9),
-                fontSize: 12,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 2.0,
-              ),
-            ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.2, end: 0),
-          
-          if (content?.author != null) const SizedBox(height: 12),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -434,28 +523,6 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               ),
             ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, end: 0),
           
-          // --- ENRICHED METADATA SECTION ---
-          const SizedBox(height: 12),
-          if (content?.author != null || content?.book != null || content?.chapter != null || content?.section != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 12,
-                runSpacing: 4,
-                children: [
-                  if (content?.author != null)
-                    _buildMetadataChip(Iconsax.user, content!.author!, themeData.accentColor),
-                  if (content?.book != null)
-                    _buildMetadataChip(Iconsax.book, content!.book!, themeData.accentColor),
-                  if (content?.chapter != null)
-                    _buildMetadataChip(Iconsax.document_text, "Chapter ${content!.chapter}", themeData.accentColor),
-                  if (content?.section != null)
-                    _buildMetadataChip(Iconsax.category, content!.section!, themeData.accentColor),
-                ],
-              ),
-            ).animate().fadeIn(delay: 200.ms),
-
 
         ],
       ),
@@ -1055,11 +1122,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: themeData.textColor.withValues(alpha: 0.05),
+          color: themeData.textColor.withValues(alpha: 0.15),
           shape: BoxShape.circle,
-          border: Border.all(color: themeData.textColor.withValues(alpha: 0.1)),
+          border: Border.all(color: themeData.textColor.withValues(alpha: 0.2)),
         ),
-        child: Icon(icon, color: themeData.textColor.withValues(alpha: 0.7), size: iconSize),
+        child: Icon(icon, color: themeData.textColor.withValues(alpha: 0.85), size: iconSize),
       ),
     );
   }
