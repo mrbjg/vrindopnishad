@@ -184,25 +184,24 @@ class _StreakLevelBar extends ConsumerWidget {
     final stats = statsAsync.value;
     final challenges = challengesAsync.value;
 
-    if (stats == null) {
-      if (statsAsync.isLoading) return const SizedBox(height: 60);
+    // 1. Initial Loading State (No data and no cache)
+    if (stats == null || challenges == null) {
+      if (statsAsync.isLoading || challengesAsync.isLoading) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+          child: PremiumUI.skeleton(width: double.infinity, height: 60, borderRadius: 16),
+        );
+      }
       return const SizedBox.shrink();
     }
 
     final level = stats.level;
     final xp = stats.experiencePoints;
     final streak = stats.streakCount;
-
     final xpForNext = SpiritualityEngine.xpForLevel(level);
     final progress = xpForNext > 0 ? (xp % xpForNext) / xpForNext : 0.0;
-
-    // Use previous challenges if available to prevent flicker
-    if (challenges == null) {
-      if (challengesAsync.isLoading) return const SizedBox(height: 60);
-      return const SizedBox.shrink();
-    }
-
     final completed = challenges.where((c) => c.isCompleted).length;
+
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
@@ -497,40 +496,55 @@ class _PremiumNaamJapSection extends ConsumerWidget {
     final progress = (japState.total % goal) / goal;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
       child: Center(
         child: GestureDetector(
           onTap: () {
-            HapticFeedback.mediumImpact();
+            HapticFeedback.selectionClick();
             ref.read(naamJapStateProvider.notifier).increment(context);
           },
           child: SizedBox(
-            width: 200,
-            height: 200,
+            width: 220,
+            height: 220,
             child: Stack(
               alignment: Alignment.center,
               children: [
-                // Static Halo / Aura
+                // 1. Radiant Aura / Halo (The "Soul" of the UI)
                 Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.15),
-                        blurRadius: 60,
-                        spreadRadius: 2,
-                      ),
-                    ],
+                    gradient: RadialGradient(
+                      colors: [
+                        PremiumTokens.nebulaBlue.withValues(alpha: 0.15),
+                        PremiumTokens.nebulaBlue.withValues(alpha: 0.05),
+                        Colors.transparent,
+                      ],
+                      stops: const [0.0, 0.5, 1.0],
+                    ),
                   ),
                 ),
 
-                // Outermost Ring
+                // 2. Structural Outer Ring (Subtle)
+                Container(
+                  width: 190,
+                  height: 190,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.03),
+                      width: 1,
+                    ),
+                  ),
+                ),
+
+                // 3. Performance Progress Ring (Static and Smooth)
                 SizedBox(
-                  width: 180,
-                  height: 180,
+                  width: 184,
+                  height: 184,
                   child: CircularProgressIndicator(
                     value: progress,
-                    strokeWidth: 4,
+                    strokeWidth: 8,
+                    strokeCap: StrokeCap.round,
                     backgroundColor: Colors.white.withValues(alpha: 0.05),
                     valueColor: const AlwaysStoppedAnimation(
                       PremiumTokens.nebulaBlue,
@@ -538,33 +552,38 @@ class _PremiumNaamJapSection extends ConsumerWidget {
                   ),
                 ),
 
-                // Inner Disc
+                // 4. Elite Inner Disc (The "Nucleus")
                 Container(
-                  width: 150,
-                  height: 150,
+                  width: 154,
+                  height: 154,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF0F0F2D),
+                    color: const Color(0xFF0A0A1F),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.08),
+                      color: Colors.white.withValues(alpha: 0.1),
                     ),
-                    gradient: RadialGradient(
-                      colors: [
-                        PremiumTokens.nebulaBlue.withValues(alpha: 0.05),
-                        Colors.transparent,
-                      ],
-                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.5),
+                        blurRadius: 20,
+                      ),
+                    ],
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        '${japState.total}',
-                        style: GoogleFonts.spectral(
-                          fontSize: 42,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w200,
-                          letterSpacing: -1,
+                      // Using ShaderMask for "Silver" Metallic look
+                      ShaderMask(
+                        shaderCallback: (bounds) =>
+                            PremiumTokens.silverGradient.createShader(bounds),
+                        child: Text(
+                          '${japState.total}',
+                          style: GoogleFonts.spectral(
+                            fontSize: 52,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w200,
+                            letterSpacing: -2,
+                          ),
                         ),
                       ),
                       Text(
@@ -572,7 +591,7 @@ class _PremiumNaamJapSection extends ConsumerWidget {
                         style: PremiumTokens.sansStyle(
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
-                          letterSpacing: 1.5,
+                          letterSpacing: 2,
                           color: Colors.white38,
                         ),
                       ),
@@ -580,22 +599,26 @@ class _PremiumNaamJapSection extends ConsumerWidget {
                   ),
                 ),
 
-                // Tap Prompt (Subtle)
+                // 5. Interaction Hint
                 Positioned(
-                  bottom: 20,
+                  bottom: 24,
                   child: Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.05),
+                      ),
                     ),
                     child: Text(
                       'TAP TO CHANT',
                       style: PremiumTokens.sansStyle(
-                        fontSize: 7,
+                        fontSize: 8,
                         fontWeight: FontWeight.w900,
-                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.7),
+                        letterSpacing: 1,
+                        color: Colors.white70,
                       ),
                     ),
                   ),
@@ -608,6 +631,7 @@ class _PremiumNaamJapSection extends ConsumerWidget {
     );
   }
 }
+
 class _CategoriesGrid extends ConsumerWidget {
 
   const _CategoriesGrid();

@@ -1437,6 +1437,22 @@ class PremiumUI extends StatelessWidget {
     );
   }
 
+  /// Skeleton placeholder for "Instant" app feel (YouTube style)
+  static Widget skeleton({
+    required double width, 
+    required double height, 
+    double borderRadius = 12,
+  }) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
+    );
+  }
+
   /// AuraBreathingAnimation: A subtle pulse effect for immersive screens
   static Widget auraBreathing({
     required Widget child,

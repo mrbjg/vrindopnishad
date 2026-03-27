@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/user_stats.dart';
 import '../services/stats_service.dart';
 import '../services/gamification_service.dart';
+import 'dart:convert';
 import 'auth_provider.dart';
+import 'providers.dart';
 
 final statsServiceProvider = Provider<StatsService>((ref) => StatsService());
 
@@ -12,26 +14,64 @@ final userStatsProvider = AsyncNotifierProvider<UserStatsNotifier, UserStats?>((
 });
 
 class UserStatsNotifier extends AsyncNotifier<UserStats?> {
+  static const _cacheKey = 'user_stats_cache';
+
   @override
   Future<UserStats?> build() async {
     final user = ref.watch(authStateProvider).value;
     if (user == null) return null;
     
+    // 1. Try to load from cache immediately for "Instant" feel
+    _loadFromCache();
+    
+    // 2. Sync from remote in background
     final statsService = ref.read(statsServiceProvider);
     
-    // Sync streak on load
-    await statsService.syncStreak(user.uid);
+    try {
+      // Background sync
+      await statsService.syncStreak(user.uid);
+      final remoteStats = await statsService.getOrCreateStats(user.uid);
+      
+      if (remoteStats != null) {
+        _saveToCache(remoteStats);
+        return remoteStats;
+      }
+    } catch (e) {
+      debugPrint('Error syncing stats: $e');
+    }
     
-    return await statsService.getOrCreateStats(user.uid);
+    return state.value; // Return cached value if remote fails
+  }
+
+  void _loadFromCache() {
+    final prefs = ref.read(sharedPreferencesProvider);
+    final cachedData = prefs.getString(_cacheKey);
+    if (cachedData != null) {
+      try {
+        final stats = UserStats.fromJson(jsonDecode(cachedData));
+        state = AsyncValue.data(stats);
+      } catch (e) {
+        debugPrint('Error loading stats cache: $e');
+      }
+    }
+  }
+
+  void _saveToCache(UserStats stats) {
+    final prefs = ref.read(sharedPreferencesProvider);
+    prefs.setString(_cacheKey, jsonEncode(stats.toJson()));
   }
 
   /// Manually refresh stats
   Future<void> refresh() async {
-    state = const AsyncValue.loading();
+    final user = ref.read(authStateProvider).value;
+    if (user == null) return;
+    
     state = await AsyncValue.guard(() async {
-      final user = ref.read(authStateProvider).value;
-      if (user == null) return null;
-      return await ref.read(statsServiceProvider).getOrCreateStats(user.uid);
+      final remoteStats = await ref.read(statsServiceProvider).getOrCreateStats(user.uid);
+      if (remoteStats != null) {
+        _saveToCache(remoteStats);
+      }
+      return remoteStats;
     });
   }
 
@@ -40,7 +80,7 @@ class UserStatsNotifier extends AsyncNotifier<UserStats?> {
     final user = ref.read(authStateProvider).value;
     if (user == null) return;
     
-    // 1. Log activity to Supabase
+    // Optimistic XP update could go here, but keep it simple for now
     await ref.read(statsServiceProvider).logReadingActivity(
       user.uid, 
       contentId: contentId,
@@ -48,11 +88,10 @@ class UserStatsNotifier extends AsyncNotifier<UserStats?> {
       category: category,
     );
     
-    // 2. Award XP via GamificationService
     if (context.mounted) {
       await ref.read(gamificationServiceProvider).awardXP(
         context, 
-        50, // Base XP for reading
+        50, 
         title ?? 'Read Sacred Text',
       );
     }
@@ -66,20 +105,25 @@ class UserStatsNotifier extends AsyncNotifier<UserStats?> {
     final user = ref.read(authStateProvider).value;
     if (user == null) return;
     
-    // Update local state immediately if available to prevent flickering
+    // Update local state immediately (Optimistic UI)
     if (state.hasValue && state.value != null) {
-      state = AsyncValue.data(state.value!.copyWith(totalJapCount: count));
+      final updated = state.value!.copyWith(totalJapCount: count);
+      state = AsyncValue.data(updated);
+      _saveToCache(updated);
     }
     
     await ref.read(statsServiceProvider).updateStats(user.uid, {
       'total_jap_count': count,
     });
     
-    // Refresh fully in background but don't show loading state
     final updatedStats = await ref.read(statsServiceProvider).getOrCreateStats(user.uid);
-    state = AsyncValue.data(updatedStats);
+    if (updatedStats != null) {
+      _saveToCache(updatedStats);
+      state = AsyncValue.data(updatedStats);
+    }
   }
 }
+
 
 final readingHistoryProvider = FutureProvider<List<ReadingHistoryItem>>((ref) async {
   final user = ref.watch(authStateProvider).value;
