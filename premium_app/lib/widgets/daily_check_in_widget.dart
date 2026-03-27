@@ -29,18 +29,19 @@ class _DailyCheckInWidgetState extends ConsumerState<DailyCheckInWidget> {
         final now = DateTime.now().toIso8601String().split('T')[0];
         final isAlreadyClaimed = stats.lastActiveDate?.toIso8601String().split('T')[0] == now;
 
-        return PremiumUI.etherealCard(
+        return PremiumUI.voidCard(
           padding: const EdgeInsets.all(20),
           borderRadius: 24,
+          accentColor: PremiumTokens.celestialSilver.withValues(alpha: 0.1),
           child: Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+                  color: PremiumTokens.celestialSilver.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: EmojiToIcon.getIconWidget('✨', size: 24, color: PremiumTokens.saffronGlow),
+                child: EmojiToIcon.getIconWidget('✨', size: 24, color: PremiumTokens.celestialSilver),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -53,7 +54,7 @@ class _DailyCheckInWidgetState extends ConsumerState<DailyCheckInWidget> {
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
-                        color: PremiumTokens.saffronGlow,
+                        color: PremiumTokens.celestialSilver,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -63,7 +64,7 @@ class _DailyCheckInWidgetState extends ConsumerState<DailyCheckInWidget> {
                         : 'Claim your daily XP bonus',
                       style: PremiumTokens.sansStyle(
                         fontSize: 13,
-                        color: Colors.white70,
+                        color: PremiumTokens.celestialSilver.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -91,7 +92,7 @@ class _DailyCheckInWidgetState extends ConsumerState<DailyCheckInWidget> {
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1,
-                        color: Colors.white,
+                        color: PremiumTokens.celestialSilver,
                       ),
                     ),
                   ),

@@ -39,12 +39,12 @@ class AchievementsScreen extends ConsumerWidget {
                       ),
                       const Spacer(),
                       Text(
-                        'ACHIEVEMENTS',
+                        'CELESTIAL MILESTONES',
                         style: PremiumTokens.sansStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 3,
-                          color: PremiumTokens.saffronGlow,
+                          color: PremiumTokens.celestialSilver,
                         ),
                       ),
                       const Spacer(),
@@ -69,7 +69,7 @@ class AchievementsScreen extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             _statColumn(
-                                '🏆', '$unlocked', 'EARNED', PremiumTokens.saffronGlow),
+                                '🏆', '$unlocked', 'EARNED', PremiumTokens.celestialSilver),
                             Container(
                                 width: 1,
                                 height: 40,
@@ -177,13 +177,13 @@ class AchievementsScreen extends ConsumerWidget {
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isUnlocked
-                ? PremiumTokens.saffronGlow.withValues(alpha: 0.3)
+                ? PremiumTokens.celestialSilver.withValues(alpha: 0.3)
                 : Colors.white.withValues(alpha: 0.05),
           ),
           boxShadow: isUnlocked
               ? [
                   BoxShadow(
-                    color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+                    color: PremiumTokens.etherealBlue.withValues(alpha: 0.1),
                     blurRadius: 20,
                     spreadRadius: 0,
                   ),
@@ -227,7 +227,7 @@ class AchievementsScreen extends ConsumerWidget {
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: isUnlocked
-                      ? PremiumTokens.saffronGlow.withValues(alpha: 0.15)
+                      ? PremiumTokens.celestialSilver.withValues(alpha: 0.1)
                       : Colors.white.withValues(alpha: 0.03),
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -240,7 +240,7 @@ class AchievementsScreen extends ConsumerWidget {
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1,
                     color: isUnlocked
-                        ? PremiumTokens.saffronGlow
+                        ? PremiumTokens.celestialSilver
                         : Colors.white24,
                   ),
                 ),
@@ -287,7 +287,7 @@ class AchievementsScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 32),
-            EmojiToIcon.getIconWidget(achievement.icon, size: 64, color: PremiumTokens.saffronGlow),
+            EmojiToIcon.getIconWidget(achievement.icon, size: 64, color: PremiumTokens.celestialSilver),
             const SizedBox(height: 16),
             Text(
               achievement.title,
@@ -308,10 +308,11 @@ class AchievementsScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 24),
-            PremiumUI.glassCard(
+            PremiumUI.voidCard(
               padding: const EdgeInsets.symmetric(
                   horizontal: 24, vertical: 12),
               borderRadius: 100,
+              accentColor: achievement.isUnlocked ? PremiumTokens.celestialSilver.withValues(alpha: 0.1) : Colors.transparent,
               child: Text(
                 achievement.isUnlocked
                     ? '✓ EARNED +${achievement.xpBonus} XP'
@@ -321,7 +322,7 @@ class AchievementsScreen extends ConsumerWidget {
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1,
                   color: achievement.isUnlocked
-                      ? PremiumTokens.saffronGlow
+                      ? PremiumTokens.celestialSilver
                       : Colors.white38,
                 ),
               ),

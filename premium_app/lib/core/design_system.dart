@@ -20,24 +20,22 @@ class PremiumTokens {
   // ═══════════════════════════════════════════════════════════════════════════
   // COLORS: Enhanced Palette
   // ═══════════════════════════════════════════════════════════════════════════
-  static const Color charcoal = Color(0xFF050510); // Indigo-tinted void
-  static const Color voidBlack = Color(0xFF050510);
   static const Color voidPure = Color(0xFF000000);
-  static const Color background = Color(0xFF050510);
-  static const Color surfaceCharcoal = Color(
-    0xFF0A0A1F,
-  ); // Deep blue-tinted surface
-  static const Color accentDark = Color(0xFF050510);
+  static const Color voidIndigo = Color(0xFF050510);
+  static const Color celestialSilver = Color(0xFFE5E2E1);
+  static const Color etherealBlue = Color(0xFF1A2B48);
+  static const Color celestialGlow = etherealBlue;
+  static const Color charcoal = voidIndigo;
+  static const Color voidBlack = voidIndigo;
+  static const Color accentDark = voidIndigo;
+  static const Color background = voidPure;
+  static const Color surfaceCharcoal = Color(0xFF0A0A1F);
   static const Color nebulaBlue = Color(0xFF256AF4);
-  static const Color voidBlue = Color(0xFF0A0A1A);
-  static const Color primaryAccent = Color(0xFF256AF4); // Blue is now primary
-  static const Color saffronGlow = Color(0xFFF2A60D); // Kept as subtle accent
+  static const Color primaryAccent = nebulaBlue;
+  static const Color saffronGlow = Color(0xFFF2A60D);
+  static const Color silver = celestialSilver;
   static const Color starlight = Color(0xFF93C5FD);
   static const Color silverCloud = Color(0xFFC0C0CF);
-  static const Color deepGold = Color(0xFFC5A059);
-  static const Color celestialGlow = Color(0xFFAC92FF);
-  static const Color voidIndigo = Color(0xFF0D0D1A);
-  static const Color silver = Color(0xFFC0C0C8);
   static const Color starlightBlue = Color(0xFF93C5FD);
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -63,13 +61,13 @@ class PremiumTokens {
   static const LinearGradient saffronPremiumGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFF256AF4), Color(0xFF1A1C2E)], // Unified to Nebula
+    colors: [Color(0xFFE2E8F0), Color(0xFF94A3B8)], // Silver Gradient
   );
 
   static const LinearGradient goldGlassGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0x33C5A059), Color(0x11C5A059)],
+    colors: [Color(0x33E5E2E1), Color(0x11E5E2E1)], // Silver Glass
   );
 
   static const LinearGradient nebulaGradient = LinearGradient(
@@ -161,7 +159,7 @@ class PremiumTokens {
 
   static TextStyle displayStyle({
     double fontSize = 24,
-    Color color = Colors.white,
+    Color color = celestialSilver,
     FontWeight fontWeight = FontWeight.bold,
     double? letterSpacing,
   }) {
@@ -175,7 +173,7 @@ class PremiumTokens {
 
   static TextStyle sansStyle({
     double fontSize = 16,
-    Color color = Colors.white,
+    Color color = celestialSilver,
     FontWeight fontWeight = FontWeight.normal,
     FontStyle fontStyle = FontStyle.normal,
     double? letterSpacing,
@@ -412,7 +410,7 @@ class PremiumUI extends StatelessWidget {
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
           BoxShadow(
-            color: PremiumTokens.saffronGlow.withValues(alpha: 0.1),
+            color: PremiumTokens.celestialSilver.withValues(alpha: 0.05),
             blurRadius: 15,
             spreadRadius: -5,
           ),
@@ -2785,14 +2783,13 @@ class _PremiumNaamJapCounterInternalState
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          PremiumTokens.nebulaBlue.withValues(alpha: 0.18),
-                          PremiumTokens.nebulaBlue.withValues(alpha: 0.04),
-                          PremiumTokens.voidBlack,
+                          PremiumTokens.etherealBlue.withValues(alpha: 0.12),
+                          PremiumTokens.voidIndigo.withValues(alpha: 0.05),
+                          PremiumTokens.voidPure,
                         ],
-                        stops: const [0.0, 0.6, 1.0],
+                        stops: const [0.0, 0.7, 1.0],
                       ),
                     ),
-                    child: PremiumUI.mandalaOverlay(opacity: 0.06),
                   ),
                 ),
               ),
@@ -2805,8 +2802,8 @@ class _PremiumNaamJapCounterInternalState
                   child: CustomPaint(
                     painter: _NaamJapProgressPainter(
                       progress: progress,
-                      color: PremiumTokens.nebulaBlue,
-                      glowColor: PremiumTokens.celestialGlow,
+                      color: PremiumTokens.celestialSilver,
+                      glowColor: PremiumTokens.celestialSilver.withValues(alpha: 0.3),
                     ),
                   ),
                 ),
@@ -2820,17 +2817,16 @@ class _PremiumNaamJapCounterInternalState
                   height: widget.size * 0.55,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF020205).withValues(
-                      alpha: 0.98,
-                    ),
+                    color: PremiumTokens.voidPure,
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.15),
+                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.1),
+                      width: 0.5,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.25),
-                        blurRadius: 40,
-                        spreadRadius: -2,
+                        color: PremiumTokens.etherealBlue.withValues(alpha: 0.3),
+                        blurRadius: 30,
+                        spreadRadius: -10,
                       ),
                     ],
                   ),
@@ -2838,15 +2834,15 @@ class _PremiumNaamJapCounterInternalState
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          'BEAD',
-                          style: PremiumTokens.sansStyle(
-                            fontSize: widget.size * 0.035,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1.5,
-                            color: PremiumTokens.nebulaBlue,
+                          Text(
+                            'RESONANCE',
+                            style: PremiumTokens.sansStyle(
+                              fontSize: widget.size * 0.035,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2,
+                              color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
+                            ),
                           ),
-                        ),
                         Text(
                           currentBead.toString(),
                           style: PremiumTokens.lailaStyle(

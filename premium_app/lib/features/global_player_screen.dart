@@ -48,7 +48,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
     final accentColor = _getCategoryColor(currentContent?.category ?? "");
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: PremiumTokens.voidPure,
       body: Stack(
         children: [
           // Background
@@ -112,7 +112,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
                                 currentContent?.category.toUpperCase() ?? "DIVINE WISDOM",
                                 style: PremiumTokens.sansStyle(
                                   fontSize: 10,
-                                  color: accentColor,
+                                  color: PremiumTokens.celestialSilver.withValues(alpha: 0.4),
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 4,
                                 ),
@@ -148,11 +148,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
   }
 
   Color _getCategoryColor(String category) {
-    category = category.toLowerCase();
-    if (category.contains('shloka')) return PremiumTokens.nebulaBlue;
-    if (category.contains('mantra')) return PremiumTokens.saffronGlow;
-    if (category.contains('poem')) return PremiumTokens.celestialGlow;
-    return PremiumTokens.nebulaBlue;
+    return PremiumTokens.celestialSilver;
   }
 
   Widget _buildHeader(BuildContext context) {
@@ -167,10 +163,11 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
                 Navigator.pop(context);
               }
             },
-            child: PremiumUI.glassCard(
+            child: PremiumUI.voidCard(
               padding: const EdgeInsets.all(12),
               borderRadius: 16,
-              child: const Icon(Iconsax.arrow_down_1, color: Colors.white, size: 24),
+              accentColor: PremiumTokens.celestialSilver.withValues(alpha: 0.1),
+              child: const Icon(Iconsax.arrow_down_1, color: PremiumTokens.celestialSilver, size: 24),
             ),
           ),
           Text(
@@ -200,7 +197,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
                   SacredMenuItem(
                     icon: Iconsax.share,
                     label: "Share",
-                    color: PremiumTokens.nebulaBlue,
+                    color: PremiumTokens.celestialSilver,
                     onTap: () {
                       if (content != null) {
                         Share.share("Listen to '${content.title}' on Sant-Vaani: Sacred Wisdom for Modern Life. 🕉️");
@@ -210,7 +207,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
                   SacredMenuItem(
                     icon: isFav ? Iconsax.heart5 : Iconsax.heart,
                     label: isFav ? "Loved" : "Love",
-                    color: PremiumTokens.saffronGlow,
+                    color: PremiumTokens.celestialSilver,
                     onTap: () {
                       if (content != null) {
                         ref.read(favoritesProvider.notifier).toggleFavorite(content.id);
@@ -227,7 +224,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
                   SacredMenuItem(
                     icon: Iconsax.timer_1,
                     label: "Timer",
-                    color: PremiumTokens.celestialGlow,
+                    color: PremiumTokens.celestialSilver,
                     onTap: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                          const SnackBar(
@@ -242,10 +239,11 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
                 null,
               );
             },
-            child: PremiumUI.glassCard(
+            child: PremiumUI.voidCard(
               padding: const EdgeInsets.all(12),
               borderRadius: 16,
-              child: const Icon(Iconsax.more, color: Colors.white, size: 24),
+              accentColor: PremiumTokens.celestialSilver.withValues(alpha: 0.1),
+              child: const Icon(Iconsax.more, color: PremiumTokens.celestialSilver, size: 24),
             ),
           ),
         ],
@@ -277,26 +275,23 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
               height: 84,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [accentColor, accentColor.withValues(alpha: 0.6)],
-                ),
+                color: PremiumTokens.voidIndigo,
+                border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.1)),
                 boxShadow: [
                   BoxShadow(
-                    color: accentColor.withValues(alpha: 0.4),
-                    blurRadius: 40,
-                    spreadRadius: 2,
+                    color: PremiumTokens.etherealBlue.withValues(alpha: 0.4),
+                    blurRadius: 30,
+                    spreadRadius: -5,
                   ),
                 ],
               ),
               child: Center(
                 child: state.isLoading 
-                  ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 3)
+                  ? const CircularProgressIndicator(color: PremiumTokens.celestialSilver, strokeWidth: 2)
                   : Icon(
                       state.isPlaying ? Iconsax.pause : Iconsax.play,
-                      color: Colors.white,
-                      size: 36,
+                      color: PremiumTokens.celestialSilver,
+                      size: 32,
                     ),
               ),
             ),
@@ -318,11 +313,11 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: PremiumTokens.celestialSilver.withValues(alpha: 0.05),
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.1)),
         ),
-        child: Icon(icon, color: Colors.white, size: 24),
+        child: Icon(icon, color: PremiumTokens.celestialSilver, size: 24),
       ),
     );
   }
@@ -343,10 +338,10 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               trackHeight: 2,
-              thumbShape: _CustomGlowingThumbShape(color: Colors.white, glowColor: accentColor),
+              thumbShape: _CustomGlowingThumbShape(color: PremiumTokens.celestialSilver, glowColor: PremiumTokens.etherealBlue),
               overlayShape: const RoundSliderOverlayShape(overlayRadius: 18),
-              activeTrackColor: accentColor,
-              inactiveTrackColor: Colors.white.withValues(alpha: 0.05),
+              activeTrackColor: PremiumTokens.celestialSilver,
+              inactiveTrackColor: PremiumTokens.celestialSilver.withValues(alpha: 0.05),
               activeTickMarkColor: Colors.transparent,
               inactiveTickMarkColor: Colors.transparent,
             ),

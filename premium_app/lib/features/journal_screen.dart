@@ -99,18 +99,18 @@ class EternalReflectionScreen extends ConsumerWidget {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              gradient: PremiumTokens.nebulaGradient,
+              color: PremiumTokens.voidPure,
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 1.5),
+              border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.2), width: 1.5),
               boxShadow: [
                 BoxShadow(
-                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.4),
+                  color: PremiumTokens.etherealBlue.withValues(alpha: 0.4),
                   blurRadius: 20,
                   spreadRadius: 2,
                 ),
               ],
             ),
-            child: const Icon(Iconsax.add, color: Colors.white, size: 28),
+            child: const Icon(Iconsax.add, color: PremiumTokens.celestialSilver, size: 28),
           ),
         ),
       ),
@@ -129,13 +129,13 @@ class EternalReflectionScreen extends ConsumerWidget {
                 folder: 'Chevron-left',
                 fileName: 'chevron-left.json',
                 size: 20,
-                color: PremiumTokens.nebulaBlue,
+                color: PremiumTokens.celestialSilver,
                 onTap: () => Navigator.pop(context),
               ),
               onPressed: () {},
             )
           else
-            const Icon(Iconsax.sort, color: PremiumTokens.nebulaBlue, size: 24),
+            const Icon(Iconsax.sort, color: PremiumTokens.celestialSilver, size: 24),
           Column(
             children: [
               Text(
@@ -144,22 +144,22 @@ class EternalReflectionScreen extends ConsumerWidget {
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 4,
-                  color: Colors.white,
+                  color: PremiumTokens.celestialSilver,
                 ),
               ),
               Text(
-                "SOUL REFLECTIONS",
-                style: GoogleFonts.manrope(
+                "SOUL RESONANCE",
+                style: PremiumTokens.sansStyle(
                   fontSize: 10,
-                  color: PremiumTokens.nebulaBlue,
+                  color: PremiumTokens.celestialSilver.withValues(alpha: 0.4),
                   fontWeight: FontWeight.w900,
-                  letterSpacing: 2,
+                  letterSpacing: 3,
                 ),
               ),
             ],
           ),
           IconButton(
-            icon: const Icon(Iconsax.search_normal, color: PremiumTokens.nebulaBlue, size: 20),
+            icon: const Icon(Iconsax.search_normal, color: PremiumTokens.celestialSilver, size: 20),
             onPressed: () => _showSearchDialog(context, ref),
           ),
         ],
@@ -237,7 +237,7 @@ class EternalReflectionScreen extends ConsumerWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2),
+                    color: PremiumTokens.etherealBlue.withValues(alpha: 0.15),
                     blurRadius: 40,
                     spreadRadius: 10,
                   ),
@@ -253,7 +253,7 @@ class EternalReflectionScreen extends ConsumerWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.1),
+                        color: PremiumTokens.celestialSilver.withValues(alpha: 0.1),
                         width: 1,
                       ),
                     ),
@@ -265,13 +265,8 @@ class EternalReflectionScreen extends ConsumerWidget {
                     height: 80,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: const RadialGradient(
-                        colors: [
-                          Color(0xFF000000),
-                          Color(0xFF0A0A2D),
-                        ],
-                      ),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 0.5),
+                      color: PremiumTokens.voidPure,
+                      border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.2), width: 0.5),
                     ),
                   ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
                     begin: const Offset(1, 1),
@@ -286,10 +281,10 @@ class EternalReflectionScreen extends ConsumerWidget {
                     height: 40,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
+                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.15),
                       boxShadow: [
                         BoxShadow(
-                          color: PremiumTokens.nebulaBlue.withValues(alpha: 0.5),
+                          color: PremiumTokens.celestialSilver.withValues(alpha: 0.3),
                           blurRadius: 20,
                         ),
                       ],
@@ -367,7 +362,7 @@ class EternalReflectionScreen extends ConsumerWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.white.withValues(alpha: 0.05),
-                      isActive ? PremiumTokens.nebulaBlue : Colors.white10,
+                      isActive ? PremiumTokens.celestialSilver : Colors.white10,
                     ],
                   ),
                 ),
@@ -377,7 +372,7 @@ class EternalReflectionScreen extends ConsumerWidget {
                 height: 12,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isActive ? PremiumTokens.nebulaBlue : Colors.transparent,
+                  color: isActive ? PremiumTokens.celestialSilver : Colors.transparent,
                   border: Border.all(
                     color: isActive ? Colors.white : Colors.white24,
                     width: 2,
@@ -385,7 +380,7 @@ class EternalReflectionScreen extends ConsumerWidget {
                   boxShadow: [
                     if (isActive)
                       BoxShadow(
-                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.5),
+                        color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
                         blurRadius: 10,
                       ),
                   ],
@@ -399,7 +394,7 @@ class EternalReflectionScreen extends ConsumerWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      isActive ? PremiumTokens.nebulaBlue : Colors.white10,
+                      isActive ? PremiumTokens.celestialSilver : Colors.white10,
                       Colors.white.withValues(alpha: 0.05),
                     ],
                   ),
@@ -465,7 +460,7 @@ class EternalReflectionScreen extends ConsumerWidget {
                               style: PremiumTokens.sansStyle(
                                 fontSize: 9,
                                 fontWeight: FontWeight.bold,
-                                color: isActive ? PremiumTokens.nebulaBlue : Colors.white38,
+                                color: isActive ? PremiumTokens.celestialSilver : Colors.white38,
                               ),
                             ),
                           ),
@@ -540,7 +535,7 @@ class EternalReflectionScreen extends ConsumerWidget {
                           hintText: "Title of Enlightenment",
                           hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.2)),
                           enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.white10)),
-                          focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: PremiumTokens.nebulaBlue)),
+                          focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: PremiumTokens.celestialSilver)),
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -585,11 +580,12 @@ class EternalReflectionScreen extends ConsumerWidget {
                                 }
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: PremiumTokens.nebulaBlue,
+                                backgroundColor: PremiumTokens.voidIndigo,
+                                side: BorderSide(color: PremiumTokens.celestialSilver.withValues(alpha: 0.2)),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 padding: const EdgeInsets.symmetric(vertical: 16),
                               ),
-                              child: Text(entry == null ? "ASCEND" : "SAVE", style: const TextStyle(color: Colors.white, letterSpacing: 2, fontWeight: FontWeight.bold)),
+                              child: Text(entry == null ? "ASCEND" : "SAVE", style: const TextStyle(color: PremiumTokens.celestialSilver, letterSpacing: 2, fontWeight: FontWeight.bold)),
                             ),
                           ),
                         ],
