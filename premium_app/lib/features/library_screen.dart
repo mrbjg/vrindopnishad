@@ -25,10 +25,10 @@ class LibraryScreen extends ConsumerWidget {
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [
-                SliverToBoxAdapter(child: _buildHeader()),
-                SliverToBoxAdapter(child: _buildSearchBar(context, ref)),
+                SliverToBoxAdapter(child: RepaintBoundary(child: _buildHeader())),
+                SliverToBoxAdapter(child: RepaintBoundary(child: _buildSearchBar(context, ref))),
                 SliverToBoxAdapter(child: _buildCategoryFilterIndicator(context, ref)),
-                SliverToBoxAdapter(child: _buildNowPlaying()),
+                SliverToBoxAdapter(child: RepaintBoundary(child: _buildNowPlaying())),
                 Consumer(
                   builder: (context, ref, child) {
                     final content = ref.watch(sacredContentProvider);
@@ -49,7 +49,9 @@ class LibraryScreen extends ConsumerWidget {
                         itemExtent: 156.0,
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
-                            return _buildLibraryItem(context, ref, items[index], items);
+                            return RepaintBoundary(
+                              child: _buildLibraryItem(context, ref, items[index], items),
+                            );
                           },
                           childCount: items.length,
                         ),
@@ -217,18 +219,11 @@ class LibraryScreen extends ConsumerWidget {
             SizedBox(
               width: 48,
               height: 48,
-              child: ClipRRect(
+              child: PremiumUI.networkImage(
+                url: 'assets/vaani_icon.png', // Stable local fallback
+                width: 48,
+                height: 48,
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  'https://santvaani.app/logo.png', // Stable fallback
-                  width: 48,
-                  height: 48,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    color: PremiumTokens.surfaceCharcoal,
-                    child: const Icon(Iconsax.music, color: PremiumTokens.celestialSilver, size: 20),
-                  ),
-                ),
               ),
             ),
             const SizedBox(width: 16),

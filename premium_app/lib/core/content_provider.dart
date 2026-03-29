@@ -168,9 +168,10 @@ class SacredContent {
     if (url == null) return null;
     final urlStr = url.toString();
     
-    // Known 404 URL Interception
-    if (urlStr.contains('photo-1518005020480-1090c13ce911')) {
-      return 'https://images.unsplash.com/photo-1528319725582-ddc096101511?auto=format&fit=crop&w=800&q=80';
+    // Known 404 and Placeholder URL Interception
+    if (urlStr.contains('photo-1518005020480-1090c13ce911') || 
+        urlStr.contains('santvaani.app')) {
+      return 'assets/vaani_icon.png';
     }
     
     return urlStr;
