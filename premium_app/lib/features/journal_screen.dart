@@ -21,9 +21,6 @@ class EternalReflectionScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final entriesAsync = ref.watch(journalProvider);
-    final searchQuery = ref.watch(journalSearchProvider).toLowerCase();
-
     return Scaffold(
       backgroundColor: PremiumTokens.voidPure,
       body: Container(
@@ -52,58 +49,13 @@ class EternalReflectionScreen extends ConsumerWidget {
               child: CustomScrollView(
                 physics: const BouncingScrollPhysics(),
                 slivers: [
-                  SliverToBoxAdapter(child: _buildHeader(context, ref)),
-                  SliverToBoxAdapter(child: _buildSoulOrb()),
-                  
-                  entriesAsync.when(
-                    data: (entries) {
-                      if (entries.isEmpty) {
-                        return SliverFillRemaining(
-                          hasScrollBody: false,
-                          child: _buildEmptyState(context, ref),
-                        );
-                      }
-
-                      final filteredEntries = entries.where((e) => 
-                        e.title.toLowerCase().contains(searchQuery) || 
-                        e.content.toLowerCase().contains(searchQuery)
-                      ).toList();
-
-                      if (filteredEntries.isEmpty && searchQuery.isNotEmpty) {
-                        return const SliverFillRemaining(
-                          child: Center(
-                            child: Text(
-                              "No echoes found matching your search",
-                              style: TextStyle(color: Colors.white24),
-                            ),
-                          ),
-                        );
-                      }
-
-                      return SliverPadding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        sliver: SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                              final entry = filteredEntries[index];
-                                return _buildTimelineItem(
-                                  context: context,
-                                  ref: ref,
-                                  entry: entry,
-                                  isActive: index == 0,
-                                ).animate()
-                                 .fadeIn(duration: 400.ms, delay: (index * 50).ms)
-                                 .scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1), curve: Curves.easeOutBack, duration: 500.ms)
-                                 .moveX(begin: 20, end: 0, curve: Curves.easeOutCubic);
-                            },
-                            childCount: filteredEntries.length,
-                          ),
-                        ),
-                      );
-                    },
-                    loading: () => SliverFillRemaining(child: Center(child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue))),
-                    error: (e, __) => SliverFillRemaining(child: Center(child: Text("Error syncing reflections: $e", style: const TextStyle(color: Colors.white38)))),
+                  SliverToBoxAdapter(
+                    child: _JournalHeader(showBackButton: showBackButton),
                   ),
+                  const SliverToBoxAdapter(
+                    child: _AtomicResonanceOrb(),
+                  ),
+                  const _JournalEntryList(),
                   const SliverToBoxAdapter(child: SizedBox(height: 140)),
                 ],
               ),
@@ -139,8 +91,14 @@ class EternalReflectionScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildHeader(BuildContext context, WidgetRef ref) {
+class _JournalHeader extends ConsumerWidget {
+  final bool showBackButton;
+  const _JournalHeader({required this.showBackButton});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final isSearchActive = ref.watch(journalSearchVisibleProvider);
     final searchController = TextEditingController(text: ref.read(journalSearchProvider));
     searchController.selection = TextSelection.fromPosition(TextPosition(offset: searchController.text.length));
@@ -234,65 +192,73 @@ class EternalReflectionScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildEmptyState(BuildContext context, WidgetRef ref) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(32),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white.withValues(alpha: 0.02),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-            ),
-            child: Icon(Iconsax.note_21, color: PremiumTokens.nebulaBlue, size: 64),
-          ).animate(onPlay: (c) => c.repeat(reverse: true)).shimmer(duration: 3.seconds),
-          const SizedBox(height: 32),
-          Text(
-            "THE VOID IS SILENT",
-            style: PremiumTokens.sansStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 4,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            "Capture your echoes of spiritual wisdom",
-            style: PremiumTokens.sansStyle(
-              fontSize: 12, 
-              color: Colors.white38,
-              letterSpacing: 1,
-            ),
-          ),
-          const SizedBox(height: 48),
-          ElevatedButton(
-            onPressed: () => _showEntryDialog(context, ref),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.05),
-              side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-            ),
-            child: Text(
-              "BEGIN REFLECTION",
-              style: PremiumTokens.sansStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 2,
-                color: Colors.white70,
+class _JournalEntryList extends ConsumerWidget {
+  const _JournalEntryList();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final entriesAsync = ref.watch(journalProvider);
+    final searchQuery = ref.watch(journalSearchProvider).toLowerCase();
+
+    return entriesAsync.when(
+      data: (entries) {
+        if (entries.isEmpty) {
+          return SliverFillRemaining(
+            hasScrollBody: false,
+            child: _buildEmptyState(context, ref),
+          );
+        }
+
+        final filteredEntries = entries.where((e) => 
+          e.title.toLowerCase().contains(searchQuery) || 
+          e.content.toLowerCase().contains(searchQuery)
+        ).toList();
+
+        if (filteredEntries.isEmpty && searchQuery.isNotEmpty) {
+          return const SliverFillRemaining(
+            child: Center(
+              child: Text(
+                "No echoes found matching your search",
+                style: TextStyle(color: Colors.white24),
               ),
             ),
+          );
+        }
+
+        return SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final entry = filteredEntries[index];
+                return _buildTimelineItem(
+                  context: context,
+                  ref: ref,
+                  entry: entry,
+                  isActive: index == 0,
+                ).animate()
+                 .fadeIn(duration: 400.ms, delay: (index * 50).ms)
+                 .scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1), curve: Curves.easeOutBack, duration: 500.ms)
+                 .moveX(begin: 20, end: 0, curve: Curves.easeOutCubic);
+              },
+              childCount: filteredEntries.length,
+            ),
           ),
-        ],
-      ),
+        );
+      },
+      loading: () => SliverFillRemaining(child: Center(child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue))),
+      error: (e, __) => SliverFillRemaining(child: Center(child: Text("Error syncing reflections: $e", style: const TextStyle(color: Colors.white38)))),
     );
   }
+}
 
-  Widget _buildSoulOrb() {
+class _AtomicResonanceOrb extends StatelessWidget {
+  const _AtomicResonanceOrb();
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
         const SizedBox(height: 32),
@@ -460,13 +426,72 @@ class EternalReflectionScreen extends ConsumerWidget {
       ],
     );
   }
+}
 
-  Widget _buildTimelineItem({
-    required BuildContext context,
-    required WidgetRef ref,
-    required JournalEntry entry,
-    bool isActive = false,
-  }) {
+
+Widget _buildEmptyState(BuildContext context, WidgetRef ref) {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white.withValues(alpha: 0.02),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+          ),
+          child: Icon(Iconsax.note_21, color: PremiumTokens.nebulaBlue, size: 64),
+        ).animate(onPlay: (c) => c.repeat(reverse: true)).shimmer(duration: 3.seconds),
+        const SizedBox(height: 32),
+        Text(
+          "THE VOID IS SILENT",
+          style: PremiumTokens.sansStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 4,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          "Capture your echoes of spiritual wisdom",
+          style: PremiumTokens.sansStyle(
+            fontSize: 12, 
+            color: Colors.white38,
+            letterSpacing: 1,
+          ),
+        ),
+        const SizedBox(height: 48),
+        ElevatedButton(
+          onPressed: () => _showEntryDialog(context, ref),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white.withValues(alpha: 0.05),
+            side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          ),
+          child: Text(
+            "BEGIN REFLECTION",
+            style: PremiumTokens.sansStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2,
+              color: Colors.white70,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildTimelineItem({
+  required BuildContext context,
+  required WidgetRef ref,
+  required JournalEntry entry,
+  bool isActive = false,
+}) {
     final timeStr = "${entry.createdAt.hour}:${entry.createdAt.minute.toString().padLeft(2, '0')} ${entry.createdAt.hour >= 12 ? 'PM' : 'AM'}";
     final dateStr = "${entry.createdAt.day}/${entry.createdAt.month}";
 
@@ -625,7 +650,7 @@ class EternalReflectionScreen extends ConsumerWidget {
     );
   }
 
-  LinearGradient _getNoteGradient(int seed) {
+LinearGradient _getNoteGradient(int seed) {
     final gradients = [
       // Deep Indigo
       LinearGradient(
@@ -658,7 +683,7 @@ class EternalReflectionScreen extends ConsumerWidget {
     return gradients[seed % gradients.length];
   }
 
-  void _showEntryDialog(BuildContext context, WidgetRef ref, {JournalEntry? entry}) {
+void _showEntryDialog(BuildContext context, WidgetRef ref, {JournalEntry? entry}) {
     final titleController = TextEditingController(text: entry?.title);
     final contentController = TextEditingController(text: entry?.content);
 
@@ -763,16 +788,16 @@ class EternalReflectionScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildElectron({
-    required double radius,
-    required double bodySize,
-    required Color color,
-    required Color glowColor,
-    required Duration duration,
-    double beginAngle = 0.0,
-    double rotation = 0.0,
-    double eccentricity = 0.35,
-  }) {
+Widget _buildElectron({
+  required double radius,
+  required double bodySize,
+  required Color color,
+  required Color glowColor,
+  required Duration duration,
+  double beginAngle = 0.0,
+  double rotation = 0.0,
+  double eccentricity = 0.35,
+}) {
     return SizedBox(
       width: 0, // No size, centers perfectly in Stack
       height: 0,
@@ -839,7 +864,6 @@ class EternalReflectionScreen extends ConsumerWidget {
       ),
     );
   }
-}
 
 class AtomicOrbitPainter extends CustomPainter {
   final Color color;

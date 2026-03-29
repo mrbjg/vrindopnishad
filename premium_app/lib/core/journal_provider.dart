@@ -48,12 +48,23 @@ class JournalNotifier extends AsyncNotifier<List<JournalEntry>> {
       moonPhase: moonPhase,
     );
 
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
+    // OPTIMISTIC UPDATE: Add instantly
+    final previousState = state;
+    if (state.hasValue) {
+      final currentEntries = state.value!;
+      state = AsyncData([newEntry, ...currentEntries]);
+    }
+
+    // Background Sync
+    try {
       final journalService = ref.read(journalServiceProvider);
       await journalService.createEntry(newEntry);
-      return await journalService.fetchEntries(user.uid);
-    });
+      // Optional: Re-fetch or trust the local state
+      // For now, we trust local state and just ensure server-side consistency
+    } catch (e, stack) {
+      // Rollback on error
+      state = previousState;
+    }
   }
 
   Future<void> updateEntry(String id, {String? title, String? content}) async {
@@ -66,24 +77,48 @@ class JournalNotifier extends AsyncNotifier<List<JournalEntry>> {
       'updated_at': DateTime.now().toUtc().toIso8601String(),
     };
 
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
+    // OPTIMISTIC UPDATE: Update instantly
+    final previousState = state;
+    if (state.hasValue) {
+      state = AsyncData(state.value!.map((e) {
+        if (e.id == id) {
+          return e.copyWith(
+            title: title ?? e.title,
+            content: content ?? e.content,
+          );
+        }
+        return e;
+      }).toList());
+    }
+
+    // Background Sync
+    try {
       final journalService = ref.read(journalServiceProvider);
       await journalService.updateEntry(id, updates);
-      return await journalService.fetchEntries(user.uid);
-    });
+    } catch (e, stack) {
+      // Rollback on error
+      state = previousState;
+    }
   }
 
   Future<void> deleteEntry(String id) async {
     final user = ref.read(authStateProvider).value;
     if (user == null) return;
 
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
+    // OPTIMISTIC UPDATE: Remove instantly
+    final previousState = state;
+    if (state.hasValue) {
+      state = AsyncData(state.value!.where((e) => e.id != id).toList());
+    }
+
+    // Background Sync
+    try {
       final journalService = ref.read(journalServiceProvider);
       await journalService.deleteEntry(id);
-      return await journalService.fetchEntries(user.uid);
-    });
+    } catch (e, stack) {
+      // Rollback on error
+      state = previousState;
+    }
   }
 
   Future<void> refresh() async {
