@@ -2468,15 +2468,27 @@ class SacredActionMenuState extends State<SacredActionMenu> {
   }
 
   Offset _getItemPosition(int index) {
-    const double startAngle = 3.14159 + 0.45;
-    const double endAngle = 2 * 3.14159 - 0.45;
+    const double startAngle = 3.14159 + 0.35;
+    const double endAngle = 2 * 3.14159 - 0.35;
     final double angleStep =
         (endAngle - startAngle) / (widget.items.length - 1);
-    final double angle = startAngle + (index * angleStep);
-    const double radius = 125.0; // Optimized Pinterest-like radius
+    final double baseAngle = startAngle + (index * angleStep);
+
+    // Magnetic Separation: Logic same as hit-test for visual sync
+    double dynamicAngle = baseAngle;
+    if (_hoveredIndex != -1) {
+      final int delta = index - _hoveredIndex;
+      if (delta != 0) {
+        final double repulsion = (delta > 0 ? 0.15 : -0.15) / math.sqrt(delta.abs());
+        dynamicAngle += repulsion;
+      }
+    }
+
+    // Dynamic Radius: Active item "pops" out further
+    final double currentRadius = (_hoveredIndex == index) ? 145.0 : 125.0;
 
     return widget.position +
-        Offset(radius * math.cos(angle), radius * math.sin(angle));
+        Offset(currentRadius * math.cos(dynamicAngle), currentRadius * math.sin(dynamicAngle));
   }
 
   void _handleClose() {
@@ -2513,25 +2525,30 @@ class SacredActionMenuState extends State<SacredActionMenu> {
           // Menu Items in an Arc
           ...List.generate(widget.items.length, (index) {
             final item = widget.items[index];
-
-            // Layout logic: Items spread in an arc above the tap point
             final double screenWidth = MediaQuery.sizeOf(context).width;
-            final double minDimension =
-                math.min(screenWidth, MediaQuery.sizeOf(context).height);
-            final double radius =
-                math.min(125.0, minDimension * 0.4); // Responsive radius
+            final double minDimension = math.min(screenWidth, MediaQuery.sizeOf(context).height);
+ 
+            const double startPosAngle = 3.14159 + 0.35;
+            const double endPosAngle = 2 * 3.14159 - 0.35;
+            final double posAngleStep = (endPosAngle - startPosAngle) / (widget.items.length - 1);
+            final double baseAngle = startPosAngle + (index * posAngleStep);
 
-            const double startAngle = 3.14159 + 0.45;
-            const double endAngle = 2 * 3.14159 - 0.45;
-            final double angleStep =
-                (endAngle - startAngle) / (widget.items.length - 1);
-            final double angle = startAngle + (index * angleStep);
+            // Dynamic Separation Logic
+            double dynamicAngle = baseAngle;
+            if (_hoveredIndex != -1) {
+              final int delta = index - _hoveredIndex;
+              if (delta != 0) {
+                final double repulsion = (delta > 0 ? 0.15 : -0.15) / math.sqrt(delta.abs());
+                dynamicAngle += repulsion;
+              }
+            }
 
-            final double offsetX = radius * math.cos(angle);
-            final double offsetY = radius * math.sin(angle);
+            final double currentRadius = (_hoveredIndex == index) ? 145.0 : 125.0;
+            final double offsetX = currentRadius * math.cos(dynamicAngle);
+            final double offsetY = currentRadius * math.sin(dynamicAngle);
 
             return AnimatedPositioned(
-              duration: Duration(milliseconds: 180 + (index * 12)),
+              duration: const Duration(milliseconds: 220),
               curve: Curves.easeOutBack,
               left: widget.position.dx + (_isVisible ? offsetX : 0) - 60,
               top: widget.position.dy + (_isVisible ? offsetY : 0) - 60,
@@ -2629,8 +2646,8 @@ class SacredActionMenuState extends State<SacredActionMenu> {
         AnimatedContainer(
               duration: const Duration(milliseconds: 350),
               curve: Curves.easeOutBack,
-              width: isSelected ? 75 : 65,
-              height: isSelected ? 75 : 65,
+              width: isSelected ? 70 : 60,
+              height: isSelected ? 70 : 60,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: isSelected
