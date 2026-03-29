@@ -289,8 +289,10 @@ class LibraryScreen extends ConsumerWidget {
   }
 
   Widget _buildLibraryItem(BuildContext context, WidgetRef ref, SacredContent item, List<SacredContent> playlist) {
-    final audioState = ref.watch(audioProvider);
-    final isPlaying = audioState.isPlaying && audioState.currentContent?.id == item.id;
+    // ATOMIC SELECTION: Only rebuilds when THIS item's specific playing status changes
+    final isPlaying = ref.watch(audioProvider.select((s) => 
+      s.isPlaying && s.currentContent?.id == item.id
+    ));
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -436,7 +438,7 @@ class LibraryScreen extends ConsumerWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
-                                _getCategoryIcon(item.category),
+                                item.categoryIcon,
                                 size: 10,
                                 color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
                               ),
@@ -540,15 +542,5 @@ class LibraryScreen extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  IconData _getCategoryIcon(String category) {
-    final cat = category.toUpperCase();
-    if (cat.contains('MANTRA')) return Iconsax.music_play;
-    if (cat.contains('SHLOKA') || cat.contains('VERSE')) return Iconsax.quote_up;
-    if (cat.contains('WISDOM') || cat.contains('GYAAN')) return Iconsax.lamp_on;
-    if (cat.contains('RITUAL')) return Iconsax.status_up;
-    if (cat.contains('HISTORY') || cat.contains('KATHA')) return Iconsax.book_1;
-    return Iconsax.document_text;
   }
 }

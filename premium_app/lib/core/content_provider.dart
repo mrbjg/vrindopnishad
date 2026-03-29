@@ -1,5 +1,6 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:iconsax/iconsax.dart';
 import 'database_helper.dart';
 import 'cache_service.dart';
 import '../services/api_service.dart';
@@ -33,9 +34,27 @@ class SacredContent {
   List<String> get videoTags => _videoTags ?? const [];
   List<String> get imageTags => _imageTags ?? const [];
 
-  // Pre-processed display strings for high performance
-  late final String displayTitle;
-  late final String sanskritPreview;
+  // Computed properties for high-performance rendering
+  String get displayTitle => title.replaceAll('\n', ', ');
+  
+  String get sanskritPreview {
+    final parts = sanskritText
+        .split(RegExp(r'[।॥\|!?,.\n]'))
+        .where((s) => s.trim().isNotEmpty)
+        .toList();
+    return parts.isEmpty ? sanskritText : parts.take(2).join(', ');
+  }
+
+  IconData get categoryIcon {
+    switch (category.toLowerCase()) {
+      case 'mantras': return Iconsax.mask_1;
+      case 'shlokas': return Iconsax.message_text;
+      case 'bhajans': return Iconsax.music;
+      case 'wisdom': return Iconsax.lamp_charge;
+      case 'stories': return Iconsax.status_up;
+      default: return Iconsax.folder_open;
+    }
+  }
 
   SacredContent({
     required this.id,
@@ -59,25 +78,7 @@ class SacredContent {
   })  : this._contentTags = contentTags ?? const [],
         this._audioTags = audioTags ?? const [],
         this._videoTags = videoTags ?? const [],
-        this._imageTags = imageTags ?? const [] {
-    _initializePreProcessed();
-  }
-
-  void _initializePreProcessed() {
-    displayTitle = title.replaceAll('\n', ', ');
-
-    // Pre-format sanskrit preview
-    final parts = sanskritText
-        .split(RegExp(r'[।॥\|!?,.\n]'))
-        .where((s) => s.trim().isNotEmpty)
-        .toList();
-
-    if (parts.isEmpty) {
-      sanskritPreview = sanskritText;
-    } else {
-      sanskritPreview = parts.take(2).join(', ');
-    }
-  }
+        this._imageTags = imageTags ?? const [];
 
   Map<String, dynamic> toMap() {
     return {
