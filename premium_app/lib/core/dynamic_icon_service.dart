@@ -10,6 +10,8 @@ final dynamicIconServiceProvider = Provider((ref) => DynamicIconService(ref));
 class DynamicIconService {
   final Ref _ref;
   DateTime _lastCheckedDate = DateTime.now();
+  String? _cachedIconName;
+  DateTime _lastUpdateTime = DateTime.fromMillisecondsSinceEpoch(0);
   
   DynamicIconService(this._ref) {
     Future.microtask(() {
@@ -30,7 +32,7 @@ class DynamicIconService {
       // Listen for toggle changes
       _ref.listen(dynamicIconEnabledProvider, (previous, next) {
         if (!next) {
-          FlutterDynamicIconPlus.setAlternateIconName(iconName: 'MainActivityStarter');
+          _updateIcon('MainActivityStarter');
         } else {
           _checkAndUpdateIcon();
         }
@@ -53,9 +55,9 @@ class DynamicIconService {
       _lastCheckedDate = now;
       
       try {
-        final currentIcon = await FlutterDynamicIconPlus.alternateIconName;
+        final currentIcon = await _getCurrentIcon();
         if (currentIcon != 'MainActivityStarter') {
-          await FlutterDynamicIconPlus.setAlternateIconName(iconName: 'MainActivityStarter');
+          await _updateIcon('MainActivityStarter');
         }
       } catch (e) {
         // Silent fail
@@ -92,22 +94,58 @@ class DynamicIconService {
         targetIcon = 'MainActivityRadiant';
       } 
 
-      final currentIcon = await FlutterDynamicIconPlus.alternateIconName;
+      final currentIcon = await _getCurrentIcon();
       
       if (currentIcon != targetIcon) {
-        await FlutterDynamicIconPlus.setAlternateIconName(
-          iconName: targetIcon,
-        );
+        await _updateIcon(targetIcon);
       }
     } catch (e) {
       // Fail silently to avoid breaking the chant experience
     }
-
   }
 
+  Future<String?> _getCurrentIcon() async {
+    if (_cachedIconName != null) return _cachedIconName;
+    
+    // Fallback to persistence
+    try {
+      final prefs = _ref.read(sharedPreferencesProvider);
+      _cachedIconName = prefs.getString('last_successful_icon');
+    } catch (_) {
+      // Fallback
+    }
+    
+    if (_cachedIconName == null) {
+      // Final fallback to plugin
+      try {
+        _cachedIconName = await FlutterDynamicIconPlus.alternateIconName;
+      } catch (_) {
+        _cachedIconName = 'MainActivityStarter';
+      }
+    }
+    return _cachedIconName;
+  }
+
+  Future<void> _updateIcon(String iconName) async {
+    final now = DateTime.now();
+    // Safety throttle: Max 1 update every 60 seconds for app icon
+    if (now.difference(_lastUpdateTime).inSeconds < 60) return;
+    
+    try {
+      await FlutterDynamicIconPlus.setAlternateIconName(iconName: iconName);
+      _cachedIconName = iconName;
+      _lastUpdateTime = now;
+      
+      // Persist to prevent loop on restart
+      final prefs = _ref.read(sharedPreferencesProvider);
+      await prefs.setString('last_successful_icon', iconName);
+    } catch (e) {
+      // Fail silently
+    }
+  }
 
   // Debug method to force an icon change (useful for testing)
   Future<void> forceSetIcon(String? iconName) async {
-    await FlutterDynamicIconPlus.setAlternateIconName(iconName: iconName);
+    await _updateIcon(iconName ?? 'MainActivityStarter');
   }
 }
