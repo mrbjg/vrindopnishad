@@ -27,8 +27,8 @@ class LibraryScreen extends ConsumerWidget {
               slivers: [
                 SliverToBoxAdapter(child: RepaintBoundary(child: _buildHeader())),
                 SliverToBoxAdapter(child: RepaintBoundary(child: _buildSearchBar(context, ref))),
-                SliverToBoxAdapter(child: _buildCategoryFilterIndicator(context, ref)),
-                SliverToBoxAdapter(child: RepaintBoundary(child: _buildNowPlaying())),
+                SliverToBoxAdapter(child: RepaintBoundary(child: _buildCategoryFilterIndicator(context, ref))),
+                SliverToBoxAdapter(child: RepaintBoundary(child: _buildNowPlaying(context, ref))),
                 Consumer(
                   builder: (context, ref, child) {
                     final content = ref.watch(sacredContentProvider);
@@ -208,9 +208,14 @@ class LibraryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildNowPlaying() {
+  Widget _buildNowPlaying(BuildContext context, WidgetRef ref) {
+    final audioState = ref.watch(audioProvider);
+    final currentTrack = audioState.currentContent;
+    
+    if (currentTrack == null) return const SizedBox.shrink();
+
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: PremiumUI.voidGlassCard(
         padding: const EdgeInsets.all(12),
         borderRadius: 16,
@@ -220,7 +225,7 @@ class LibraryScreen extends ConsumerWidget {
               width: 48,
               height: 48,
               child: PremiumUI.networkImage(
-                url: 'assets/vaani_icon.png', // Stable local fallback
+                url: currentTrack.imageUrl ?? 'assets/vaani_icon.png',
                 width: 48,
                 height: 48,
                 borderRadius: BorderRadius.circular(8),
@@ -233,17 +238,20 @@ class LibraryScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "NOW PLAYING",
+                    audioState.isPlaying ? "NOW PLAYING" : "PAUSED",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: PremiumTokens.sansStyle(
                       fontSize: 10,
-                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.4),
+                      color: audioState.isPlaying 
+                          ? PremiumTokens.nebulaBlue 
+                          : PremiumTokens.celestialSilver.withValues(alpha: 0.4),
                       fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
                     ),
                   ),
                   Text(
-                    "Gayatri Mantra (Divine Peace)",
+                    currentTrack.title,
                     style: PremiumTokens.sansStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -254,18 +262,25 @@ class LibraryScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: PremiumTokens.celestialSilver.withValues(alpha: 0.1),
-              ),
-              child: PremiumUI.animatedIcon(
-                folder: 'Refresh',
-                fileName: 'refresh.json',
-                size: 24,
-                color: PremiumTokens.celestialSilver,
+            const SizedBox(width: 8),
+            // Play/Pause Action
+            GestureDetector(
+              onTap: () {
+                HapticFeedback.mediumImpact();
+                ref.read(audioProvider.notifier).togglePlayPause();
+              },
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: PremiumTokens.celestialSilver.withValues(alpha: 0.1),
+                ),
+                child: Icon(
+                  audioState.isPlaying ? Iconsax.pause5 : Iconsax.play5,
+                  color: PremiumTokens.nebulaBlue,
+                  size: 20,
+                ),
               ),
             ),
           ],
