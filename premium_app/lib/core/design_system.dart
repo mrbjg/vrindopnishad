@@ -2412,6 +2412,7 @@ class SacredActionMenu extends StatefulWidget {
 class SacredActionMenuState extends State<SacredActionMenu> {
   bool _isVisible = false;
   int _hoveredIndex = -1;
+  int _switchCounter = 0;
 
   // Public method to be called via GlobalKey by the trigger (button)
   void handleRelease() {
@@ -2627,7 +2628,7 @@ class SacredActionMenuState extends State<SacredActionMenu> {
                         _hoveredIndex != -1
                             ? widget.items[_hoveredIndex].icon
                             : Icons.close,
-                        key: ValueKey('sacred_$_hoveredIndex'),
+                        key: ValueKey('sacred_${_hoveredIndex}_$_switchCounter'),
                         color: _hoveredIndex != -1
                             ? widget.items[_hoveredIndex].color
                             : Colors.white,
@@ -2676,7 +2677,7 @@ class SacredActionMenuState extends State<SacredActionMenu> {
               child: Center(
                 child: Icon(
                   item.icon,
-                  color: isSelected ? PremiumTokens.voidBlack : Colors.white,
+                  color: Colors.white,
                   size: isSelected ? 28 : 24,
                 ),
               ),
