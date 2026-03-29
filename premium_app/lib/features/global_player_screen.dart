@@ -20,6 +20,10 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
   late AnimationController _diskController;
   bool _isDragging = false;
   double _dragValue = 0.0;
+  
+  // Sacred Menu Pointer Tracking
+  final _pointerPosition = ValueNotifier<Offset?>(null);
+  final _menuKey = GlobalKey<SacredActionMenuState>();
 
   @override
   void initState() {
@@ -30,6 +34,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
   @override
   void dispose() {
     _diskController.dispose();
+    _pointerPosition.dispose();
     super.dispose();
   }
 
@@ -180,9 +185,9 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
             ),
           ),
           GestureDetector(
-            onTapDown: (details) {
+            onLongPressStart: (details) {
               HapticFeedback.heavyImpact();
-              final Offset position = details.globalPosition;
+              _pointerPosition.value = details.globalPosition;
               
               final content = ref.read(audioProvider).currentContent;
               final isFav = content != null 
@@ -191,7 +196,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
               
               showSacredMenu(
                 context,
-                position,
+                details.globalPosition,
                 [
                   SacredMenuItem(
                     icon: Iconsax.share,
@@ -235,14 +240,22 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
                     },
                   ),
                 ],
-                null,
+                _pointerPosition,
+                key: _menuKey,
               );
+            },
+            onLongPressMoveUpdate: (details) {
+              _pointerPosition.value = details.globalPosition;
+            },
+            onLongPressEnd: (details) {
+              _pointerPosition.value = null;
+              _menuKey.currentState?.handleRelease();
             },
             child: PremiumUI.voidCard(
               padding: const EdgeInsets.all(12),
               borderRadius: 16,
               accentColor: PremiumTokens.celestialSilver.withValues(alpha: 0.1),
-              child: const Icon(Iconsax.more, color: PremiumTokens.celestialSilver, size: 24),
+              child: const Icon(Iconsax.element_4, color: PremiumTokens.celestialSilver, size: 24),
             ),
           ),
         ],
