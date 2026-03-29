@@ -633,14 +633,55 @@ class _MalaHistorySheetState extends ConsumerState<_MalaHistorySheet> with Singl
   }
 
   Widget _buildSummaryItem(String label, String value, Color color) {
-    return PremiumUI.glassCard(
-      padding: const EdgeInsets.all(20),
+    // Map labels to relevant sacred icons
+    String emoji = '✨';
+    if (label.contains('Total')) emoji = '📿';
+    if (label.contains('Average')) emoji = '📊';
+    if (label.contains('Peak')) emoji = '🏆';
+
+    return PremiumUI.etherealCard(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       borderRadius: 20,
+      glowColor: color.withValues(alpha: 0.1),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: PremiumTokens.sansStyle(fontSize: 12, color: Colors.white70)),
-          Text(value, style: PremiumTokens.sansStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color)),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.05),
+              shape: BoxShape.circle,
+              border: Border.all(color: color.withValues(alpha: 0.1)),
+            ),
+            child: EmojiToIcon.getIconWidget(emoji, size: 20, color: color),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label.toUpperCase(),
+                  style: PremiumTokens.sansStyle(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.5,
+                    color: Colors.white38,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                PremiumUI.silverText(
+                  value,
+                  style: PremiumTokens.sansStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(Iconsax.arrow_right_3, color: Colors.white10, size: 16),
         ],
       ),
     );

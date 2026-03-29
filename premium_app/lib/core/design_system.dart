@@ -2453,8 +2453,10 @@ class SacredActionMenuState extends State<SacredActionMenu> {
     int closestIndex = -1;
     double minDistance = 65.0; // Optimized hit threshold for smaller radius
 
+    final double screenWidth = MediaQuery.sizeOf(context).width;
+    final double screenHeight = MediaQuery.sizeOf(context).height;
     for (int i = 0; i < widget.items.length; i++) {
-      final itemPos = _getItemPosition(i);
+      final itemPos = _getItemPosition(i, screenWidth, screenHeight);
       final distance = (pointer - itemPos).distance;
       if (distance < minDistance) {
         minDistance = distance;
@@ -2468,11 +2470,47 @@ class SacredActionMenuState extends State<SacredActionMenu> {
     }
   }
 
-  Offset _getItemPosition(int index) {
-    const double startAngle = 3.14159 + 0.55;
-    const double endAngle = 2 * 3.14159 - 0.55;
-    final double angleStep =
-        (endAngle - startAngle) / (widget.items.length - 1);
+  double _getArcCenter(double screenWidth, double screenHeight) {
+    final double dx = widget.position.dx;
+    final double dy = widget.position.dy;
+    
+    final bool isTop = dy < screenHeight * 0.35;
+    final bool isBottom = dy > screenHeight * 0.65;
+    final bool isLeft = dx < screenWidth * 0.25;
+    final bool isRight = dx > screenWidth * 0.75;
+
+    // Use cardinal & ordinal directions for perfect geometric symmetry
+    if (isTop && isRight) return math.pi * 0.75; // 135 deg (Left-Down)
+    if (isTop && isLeft) return math.pi * 0.25;  // 45 deg (Right-Down)
+    if (isBottom && isRight) return math.pi * 1.25; // 225 deg (Left-Up)
+    if (isBottom && isLeft) return math.pi * 1.75;  // 315 deg (Right-Up)
+    
+    if (isTop) return math.pi * 0.5;   // 90 deg (Down)
+    if (isBottom) return math.pi * 1.5; // 270 deg (Up)
+    if (isRight) return math.pi;       // 180 deg (Left)
+    if (isLeft) return 0.0;            // 0 deg (Right)
+    
+    // Default/Center: Point towards screen center
+    return math.atan2(screenHeight / 2 - dy, screenWidth / 2 - dx);
+  }
+
+  double _getSpan() {
+    // Dynamic span based on item count for optimal visual distribution
+    if (widget.items.length <= 1) return 0;
+    if (widget.items.length == 2) return 1.1; // Balanced for 2 side items
+    if (widget.items.length == 3) return 1.6;
+    return 2.2; // Wide fan for 4+
+  }
+
+  Offset _getItemPosition(int index, double screenWidth, double screenHeight) {
+    final double centerAngle = _getArcCenter(screenWidth, screenHeight);
+    final double span = _getSpan();
+    final double startAngle = centerAngle - (span / 2);
+    final double endAngle = centerAngle + (span / 2);
+    
+    final double angleStep = widget.items.length > 1 
+        ? (endAngle - startAngle) / (widget.items.length - 1)
+        : 0;
     final double baseAngle = startAngle + (index * angleStep);
 
     // Magnetic Separation: Logic same as hit-test for visual sync
@@ -2491,8 +2529,16 @@ class SacredActionMenuState extends State<SacredActionMenu> {
       currentRadius = (index == _hoveredIndex) ? 120.0 : 95.0;
     }
 
-    return widget.position +
-        Offset(currentRadius * math.cos(dynamicAngle), currentRadius * math.sin(dynamicAngle));
+    final double rawX = widget.position.dx + currentRadius * math.cos(dynamicAngle);
+    final double rawY = widget.position.dy + currentRadius * math.sin(dynamicAngle);
+
+    // Strict Clamping to Screen Boundaries
+    // Padding should be at least half the container width (60.0)
+    const double padding = 60.0;
+    final double clampedX = rawX.clamp(padding, screenWidth - padding);
+    final double clampedY = rawY.clamp(padding, screenHeight - padding);
+
+    return Offset(clampedX, clampedY);
   }
 
   void _handleClose() {
@@ -2530,11 +2576,14 @@ class SacredActionMenuState extends State<SacredActionMenu> {
           ...List.generate(widget.items.length, (index) {
             final item = widget.items[index];
             final double screenWidth = MediaQuery.sizeOf(context).width;
-            final double minDimension = math.min(screenWidth, MediaQuery.sizeOf(context).height);
- 
-            const double startPosAngle = 3.14159 + 0.55;
-            const double endPosAngle = 2 * 3.14159 - 0.55;
-            final double posAngleStep = (endPosAngle - startPosAngle) / (widget.items.length - 1);
+            final double screenHeight = MediaQuery.sizeOf(context).height;
+            final double centerAngle = _getArcCenter(screenWidth, screenHeight);
+            final double span = _getSpan();
+            final double startPosAngle = centerAngle - (span / 2);
+            final double endPosAngle = centerAngle + (span / 2);
+            final double posAngleStep = widget.items.length > 1 
+                ? (endPosAngle - startPosAngle) / (widget.items.length - 1)
+                : 0;
             final double baseAngle = startPosAngle + (index * posAngleStep);
 
             // Dynamic Separation Logic
@@ -2553,14 +2602,13 @@ class SacredActionMenuState extends State<SacredActionMenu> {
               currentRadius = (index == _hoveredIndex) ? 120.0 : 95.0;
             }
 
-            final double offsetX = currentRadius * math.cos(dynamicAngle);
-            final double offsetY = currentRadius * math.sin(dynamicAngle);
+            final Offset itemPos = _getItemPosition(index, screenWidth, screenHeight);
 
             return AnimatedPositioned(
               duration: const Duration(milliseconds: 220),
               curve: Curves.easeOutBack,
-              left: widget.position.dx + (_isVisible ? offsetX : 0) - 60,
-              top: widget.position.dy + (_isVisible ? offsetY : 0) - 60,
+              left: (_isVisible ? itemPos.dx : widget.position.dx) - 60,
+              top: (_isVisible ? itemPos.dy : widget.position.dy) - 60,
               child: SizedBox(
                 width: 120,
                 height: 120,

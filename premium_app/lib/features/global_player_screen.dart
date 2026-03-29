@@ -182,8 +182,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
           GestureDetector(
             onTapDown: (details) {
               HapticFeedback.heavyImpact();
-              final RenderBox box = context.findRenderObject() as RenderBox;
-              final Offset position = box.localToGlobal(details.localPosition);
+              final Offset position = details.globalPosition;
               
               final content = ref.read(audioProvider).currentContent;
               final isFav = content != null 
