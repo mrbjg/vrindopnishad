@@ -104,7 +104,7 @@ class EternalReflectionScreen extends ConsumerWidget {
                       }
 
                       return SliverPadding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         sliver: SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (context, index) {
@@ -528,16 +528,16 @@ class EternalReflectionScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 20),
+            const SizedBox(width: 16),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 24, right: 8),
+                padding: const EdgeInsets.only(bottom: 24, right: 0),
                 child: Transform.rotate(
                   angle: ((entry.id.hashCode % 3) - 1) * 0.02, // Subtle -1.1 to 1.1 degree rotation
                   child: GestureDetector(
                     onTap: () => _showEntryDialog(context, ref, entry: entry),
                     child: Container(
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         gradient: _getNoteGradient(entry.id.hashCode),
                         borderRadius: BorderRadius.circular(20),

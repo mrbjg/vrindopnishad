@@ -44,7 +44,7 @@ class LibraryScreen extends ConsumerWidget {
                     }
 
                     return SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 120), // Extra bottom padding for FAB
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 120), // Extra bottom padding for FAB
                       sliver: SliverFixedExtentList(
                         itemExtent: 156.0,
                         delegate: SliverChildBuilderDelegate(
@@ -69,7 +69,7 @@ class LibraryScreen extends ConsumerWidget {
 
   Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: SizedBox(
         width: double.infinity, // Robust bounding
         child: Row(
@@ -134,7 +134,7 @@ class LibraryScreen extends ConsumerWidget {
 
   Widget _buildSearchBar(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GestureDetector(
         onTap: () {
           HapticFeedback.lightImpact();
@@ -168,9 +168,8 @@ class LibraryScreen extends ConsumerWidget {
   Widget _buildCategoryFilterIndicator(BuildContext context, WidgetRef ref) {
     final query = ref.watch(libraryCategoryProvider);
     if (query == "ALL" || query.startsWith("SEARCH:")) return const SizedBox.shrink();
-
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Row(
         children: [
           Container(
@@ -215,7 +214,7 @@ class LibraryScreen extends ConsumerWidget {
     if (currentTrack == null) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: PremiumUI.voidGlassCard(
         padding: const EdgeInsets.all(12),
         borderRadius: 16,
@@ -306,7 +305,7 @@ class LibraryScreen extends ConsumerWidget {
           );
         },
         child: PremiumUI.relicStaticCard(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(16),
           borderColor: isPlaying 
               ? PremiumTokens.nebulaBlue.withValues(alpha: 0.3) 
               : PremiumTokens.celestialSilver.withValues(alpha: 0.1),

@@ -213,7 +213,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 ),
 
               SliverPadding(
-                padding: EdgeInsets.fromLTRB(20, isFocusMode ? 100 : 32, 20, 200),
+                padding: EdgeInsets.fromLTRB(16, isFocusMode ? 100 : 32, 16, 200),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
                     // Sanskrit Card - Always visible but styled for focus
