@@ -30,26 +30,58 @@ class EternalReflectionScreen extends ConsumerWidget {
           children: [
             // Twinkling Stardust Background
             Positioned.fill(
-              child: CustomPaint(
-                painter: StardustPainter(),
+              child: RepaintBoundary(
+                child: CustomPaint(
+                  painter: StardustPainter(),
+                ),
               ),
             ),
             
-            // Ambient Nebula Glows
+            // Deep Background Nebula
             Positioned(
-              top: -100,
+              top: -150,
               right: -100,
               child: Container(
-                width: 300,
-                height: 300,
+                width: 500,
+                height: 500,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.15),
+                  gradient: RadialGradient(
+                    colors: [
+                      const Color(0xFF1E3A8A).withValues(alpha: 0.15),
+                      const Color(0xFF0F172A).withValues(alpha: 0.05),
+                      Colors.transparent,
+                    ],
+                  ),
                 ),
               ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
                 begin: const Offset(1, 1),
-                end: const Offset(1.3, 1.3),
-                duration: 4.seconds,
+                end: const Offset(1.4, 1.4),
+                duration: 6.seconds,
+                curve: Curves.easeInOut,
+              ),
+            ),
+            
+            // Teal Resonance Nebula
+            Positioned(
+              top: 100,
+              left: -150,
+              child: Container(
+                width: 400,
+                height: 400,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      const Color(0xFF134E4A).withValues(alpha: 0.1),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
+                begin: const Offset(0.8, 0.8),
+                end: const Offset(1.2, 1.2),
+                duration: 8.seconds,
                 curve: Curves.easeInOut,
               ),
             ),
@@ -60,13 +92,6 @@ class EternalReflectionScreen extends ConsumerWidget {
                 slivers: [
                   SliverToBoxAdapter(child: _buildHeader(context, ref)),
                   SliverToBoxAdapter(child: _buildSoulOrb()),
-                  if (ref.watch(journalSearchVisibleProvider))
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        child: _buildInlineSearch(context, ref),
-                      ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.1),
-                    ),
                   journalAsync.when(
                     data: (entries) {
                       final filteredEntries = entries.where((e) => 
@@ -136,47 +161,96 @@ class EternalReflectionScreen extends ConsumerWidget {
   }
 
   Widget _buildHeader(BuildContext context, WidgetRef ref) {
+    final isSearchActive = ref.watch(journalSearchVisibleProvider);
+    final searchController = TextEditingController(text: ref.read(journalSearchProvider));
+    searchController.selection = TextSelection.fromPosition(TextPosition(offset: searchController.text.length));
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          if (showBackButton)
-            IconButton(
-              icon: const Icon(Iconsax.arrow_left, color: PremiumTokens.celestialSilver, size: 24),
-              onPressed: () => Navigator.pop(context),
-            )
-          else
-            const Icon(Iconsax.menu, color: PremiumTokens.celestialSilver, size: 24),
-          Column(
-            children: [
-              Text(
-                "SANT-VAANI",
-                style: GoogleFonts.spectral(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 4,
-                  color: PremiumTokens.celestialSilver,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: isSearchActive
+            ? Container(
+                key: const ValueKey("search_header"),
+                height: 50,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(25),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                 ),
-              ),
-              Text(
-                "SOUL RESONANCE",
-                style: PremiumTokens.sansStyle(
-                  fontSize: 10,
-                  color: PremiumTokens.celestialSilver.withValues(alpha: 0.4),
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 3,
+                child: Row(
+                  children: [
+                    const Icon(Iconsax.search_normal, color: Colors.white38, size: 18),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextField(
+                        controller: searchController,
+                        autofocus: true,
+                        onChanged: (val) => ref.read(journalSearchProvider.notifier).state = val,
+                        style: PremiumTokens.sansStyle(fontSize: 14, color: Colors.white),
+                        decoration: InputDecoration(
+                          hintText: "Filter reflections...",
+                          hintStyle: PremiumTokens.sansStyle(
+                            fontSize: 14,
+                            color: Colors.white.withValues(alpha: 0.2),
+                          ),
+                          border: InputBorder.none,
+                          isDense: true,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Iconsax.close_circle, color: Colors.white24, size: 18),
+                      onPressed: () {
+                        ref.read(journalSearchVisibleProvider.notifier).state = false;
+                        ref.read(journalSearchProvider.notifier).state = "";
+                      },
+                    ),
+                  ],
                 ),
+              )
+            : Row(
+                key: const ValueKey("title_header"),
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (showBackButton)
+                    IconButton(
+                      icon: const Icon(Iconsax.arrow_left, color: PremiumTokens.celestialSilver, size: 24),
+                      onPressed: () => Navigator.pop(context),
+                    )
+                  else
+                    const Icon(Iconsax.menu, color: PremiumTokens.celestialSilver, size: 24),
+                  Column(
+                    children: [
+                      Text(
+                        "SANT-VAANI",
+                        style: GoogleFonts.spectral(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 4,
+                          color: PremiumTokens.celestialSilver,
+                        ),
+                      ),
+                      Text(
+                        "SOUL RESONANCE",
+                        style: PremiumTokens.sansStyle(
+                          fontSize: 10,
+                          color: PremiumTokens.celestialSilver.withValues(alpha: 0.4),
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 3,
+                        ),
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: const Icon(Iconsax.search_normal, color: PremiumTokens.celestialSilver, size: 20),
+                    onPressed: () {
+                      ref.read(journalSearchVisibleProvider.notifier).state = true;
+                    },
+                  ),
+                ],
               ),
-            ],
-          ),
-          IconButton(
-            icon: const Icon(Iconsax.search_normal, color: PremiumTokens.celestialSilver, size: 20),
-            onPressed: () {
-              ref.read(journalSearchVisibleProvider.notifier).state = !ref.read(journalSearchVisibleProvider);
-            },
-          ),
-        ],
       ),
     );
   }
@@ -242,108 +316,126 @@ class EternalReflectionScreen extends ConsumerWidget {
     return Column(
       children: [
         const SizedBox(height: 32),
-        Center(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              // Deep Void Atmosphere (Base Glow)
-              Container(
-                width: 280,
-                height: 280,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: PremiumTokens.silver.withValues(alpha: 0.05),
-                      blurRadius: 100,
-                      spreadRadius: 20,
-                    ),
-                  ],
-                ),
-              ).animate(onPlay: (c) => c.repeat(reverse: true))
-               .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.2, 1.2), duration: 8.seconds),
-
-              // Evolving Aura (Sacred Pulse)
-              Container(
-                width: 200,
-                height: 200,
-                decoration: PremiumTokens.evolvingAura(
-                  color: PremiumTokens.silver,
-                  intensity: 0.3,
-                ),
-              ),
-
-              // Outer Ring (Slow)
-              Container(
-                width: 240,
-                height: 240,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: PremiumTokens.silver.withValues(alpha: 0.05),
-                    width: 0.5,
-                  ),
-                ),
-              ).animate(onPlay: (c) => c.repeat())
-               .rotate(duration: 30.seconds),
-
-              // Inner Ring (Counter-Rotate)
-              Container(
-                width: 220,
-                height: 220,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: PremiumTokens.silver.withValues(alpha: 0.08),
-                    width: 0.5,
-                  ),
-                ),
-              ).animate(onPlay: (c) => c.repeat())
-               .rotate(begin: 1, end: 0, duration: 20.seconds),
-
-              // The Sacred Core
-              Container(
-                width: 140,
-                height: 140,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      PremiumTokens.silver.withValues(alpha: 0.15),
-                      Colors.transparent,
-                    ],
-                  ),
-                ),
-                child: Center(
-                  child: Container(
-                    width: 60,
-                    height: 60,
+        RepaintBoundary(
+          child: Center(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                  // --- CELESTIAL CHRONOS SYSTEM ---
+                  
+                  // 1. Distant Galactic Dust (Base Atmosphere)
+                  Container(
+                    width: 320,
+                    height: 320,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.white.withValues(alpha: 0.1),
-                          blurRadius: 30,
-                          spreadRadius: 5,
+                          color: const Color(0xFF1E40AF).withValues(alpha: 0.08),
+                          blurRadius: 100,
+                          spreadRadius: 30,
                         ),
                       ],
                     ),
-                    child: Center(
-                      child: Container(
-                        width: 4,
-                        height: 4,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                        ),
-                      ).animate(onPlay: (c) => c.repeat(reverse: true))
-                       .scale(begin: const Offset(1, 1), end: const Offset(2.5, 2.5), duration: 2.seconds)
-                       .blur(begin: const Offset(0, 0), end: const Offset(10, 10)),
+                  ).animate(onPlay: (c) => c.repeat(reverse: true))
+                   .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.1, 1.1), duration: 10.seconds),
+    
+                  // 2. The Textured Saturn Ring (Dusty Debris)
+                  CustomPaint(
+                    size: const Size(280, 280),
+                    painter: const CelestialRingPainter(
+                      color: Color(0x26E5E2E1), // PremiumTokens.silver with alpha 0.15
+                      thickness: 1.5,
+                    ),
+                  ).animate(onPlay: (c) => c.repeat())
+                   .rotate(duration: 40.seconds),
+    
+                  // 3. Inner Cosmic Ring (Faint)
+                  Container(
+                    width: 200,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.05),
+                        width: 0.5,
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ],
+    
+                  // 4. Orbiting Bodies (Planetary Resonances)
+                  
+                  // Planet Indigo (Outer, Slow)
+                  _buildOrbitalBody(
+                    radius: 125,
+                    bodySize: 8,
+                    color: const Color(0xFF312E81),
+                    glowColor: Colors.blueAccent,
+                    duration: 25.seconds,
+                    glowIntensity: 0.6,
+                  ),
+    
+                  // Planet Teal (Middle, Fluid)
+                  _buildOrbitalBody(
+                    radius: 100,
+                    bodySize: 6,
+                    color: const Color(0xFF0F766E),
+                    glowColor: Colors.tealAccent,
+                    duration: 15.seconds,
+                    beginAngle: 2.0, // Start elsewhere
+                    glowIntensity: 0.4,
+                  ),
+    
+                  // Starlight Spark (Inner, Fast)
+                  _buildOrbitalBody(
+                    radius: 75,
+                    bodySize: 3,
+                    color: Colors.white,
+                    glowColor: Colors.white,
+                    duration: 8.seconds,
+                    beginAngle: 4.5,
+                    glowIntensity: 1.0,
+                  ),
+    
+                  // 5. The Sacred Singularity (Core)
+                  Container(
+                    width: 140,
+                    height: 140,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          PremiumTokens.silver.withValues(alpha: 0.2),
+                          const Color(0xFF1E3A8A).withValues(alpha: 0.05),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                    child: Center(
+                      child: Container(
+                        width: 45,
+                        height: 45,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.white.withValues(alpha: 0.15),
+                              blurRadius: 40,
+                              spreadRadius: 10,
+                            ),
+                          ],
+                          gradient: const RadialGradient(
+                            colors: [Colors.white, Colors.transparent],
+                            stops: [0.1, 1.0],
+                          ),
+                        ),
+                      ).animate(onPlay: (c) => c.repeat(reverse: true))
+                       .scale(begin: const Offset(1, 1), end: const Offset(1.2, 1.2), duration: 4.seconds)
+                       .blur(begin: const Offset(5, 5), end: const Offset(15, 15)),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 32),
@@ -674,87 +766,115 @@ class EternalReflectionScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildInlineSearch(BuildContext context, WidgetRef ref) {
-    final searchController = TextEditingController(text: ref.watch(journalSearchProvider));
-    searchController.selection = TextSelection.fromPosition(TextPosition(offset: searchController.text.length));
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: IntrinsicHeight(
-        child: Row(
-          children: [
-            // Timeline line for search bar
-            SizedBox(
-              width: 12,
-              child: Column(
-                children: [
-                  Container(
-                    width: 1,
-                    height: 20,
-                    color: Colors.white.withValues(alpha: 0.1),
-                  ),
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withValues(alpha: 0.4), // Subtle dot for search
-                    ),
-                  ),
-                  Expanded(
+  Widget _buildOrbitalBody({
+    required double radius,
+    required double bodySize,
+    required Color color,
+    required Color glowColor,
+    required Duration duration,
+    double beginAngle = 0.0,
+    double glowIntensity = 0.5,
+  }) {
+    return SizedBox(
+      width: radius * 2 + 20,
+      height: radius * 2 + 20,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Orbital Path (Faint) - Const-like
+          DecoratedBox(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.015),
+                width: 0.5,
+              ),
+            ),
+            child: SizedBox(width: radius * 2, height: radius * 2),
+          ),
+          // Hardware-Accelerated Rotation
+          RepaintBoundary(
+            child: const SizedBox.expand()
+                .animate(onPlay: (c) => c.repeat())
+                .custom(
+              begin: beginAngle,
+              end: beginAngle + 2 * math.pi,
+              duration: duration,
+              builder: (context, value, child) {
+                // Using transform.translate directly
+                final x = radius * math.cos(value);
+                final y = radius * math.sin(value);
+                return Transform.translate(
+                  offset: Offset(x, y),
+                  child: Center(
                     child: Container(
-                      width: 1,
-                      color: Colors.white.withValues(alpha: 0.1),
+                      width: bodySize,
+                      height: bodySize,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: color,
+                        boxShadow: [
+                          BoxShadow(
+                            color: glowColor.withValues(alpha: 0.4 * glowIntensity),
+                            blurRadius: 8 * glowIntensity,
+                            spreadRadius: 1 * glowIntensity,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ],
-              ),
+                );
+              },
             ),
-            const SizedBox(width: 24),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 24),
-                child: PremiumUI.voidGlassCard(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  borderRadius: 16,
-                  child: Row(
-                    children: [
-                      Icon(Iconsax.search_normal, color: Colors.white.withValues(alpha: 0.4), size: 18),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: TextField(
-                          controller: searchController,
-                          onChanged: (val) => ref.read(journalSearchProvider.notifier).state = val,
-                          style: PremiumTokens.sansStyle(fontSize: 14, color: Colors.white),
-                          decoration: InputDecoration(
-                            hintText: "Search reflections...",
-                            hintStyle: PremiumTokens.sansStyle(
-                              fontSize: 14,
-                              color: Colors.white.withValues(alpha: 0.2),
-                            ),
-                            border: InputBorder.none,
-                            isDense: true,
-                          ),
-                        ),
-                      ),
-                      if (searchController.text.isNotEmpty)
-                        IconButton(
-                          icon: const Icon(Iconsax.close_circle, color: Colors.white24, size: 16),
-                          onPressed: () {
-                            searchController.clear();
-                            ref.read(journalSearchProvider.notifier).state = "";
-                          },
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
+}
+
+class CelestialRingPainter extends CustomPainter {
+  final Color color;
+  final double thickness;
+
+  const CelestialRingPainter({required this.color, this.thickness = 1.0});
+
+  // Pre-cached static points for the dust effect
+  static final List<double> _dustAngles = List.generate(180, (i) => i * 2 * (math.pi / 180));
+  static final List<double> _dustOffsets = List.generate(180, (i) => (math.Random(i).nextDouble() - 0.5) * 6);
+  static final List<double> _dustOpacities = List.generate(180, (i) => (math.Random(i + 100).nextDouble() * 0.15 + 0.05));
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = thickness
+      ..style = PaintingStyle.stroke;
+
+    // Faster drawing using pre-calculated lists
+    for (int i = 0; i < _dustAngles.length; i++) {
+      final angle = _dustAngles[i];
+      final rOffset = _dustOffsets[i];
+      final alpha = _dustOpacities[i];
+      
+      paint.color = color.withValues(alpha: alpha);
+      
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius + rOffset), 
+        angle, 
+        0.04, 
+        false, 
+        paint
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CelestialRingPainter oldDelegate) => false;
 }
 
 class StardustPainter extends CustomPainter {
