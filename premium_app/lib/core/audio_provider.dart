@@ -14,6 +14,8 @@ class AudioState {
   final Duration position;
   final Duration duration;
   final PlayerState playerState;
+  final List<SacredContent> playlist;
+  final int currentIndex;
 
   AudioState({
     this.currentContent,
@@ -22,6 +24,8 @@ class AudioState {
     this.position = Duration.zero,
     this.duration = Duration.zero,
     required this.playerState,
+    this.playlist = const [],
+    this.currentIndex = 0,
   });
 
   AudioState copyWith({
@@ -31,6 +35,8 @@ class AudioState {
     Duration? position,
     Duration? duration,
     PlayerState? playerState,
+    List<SacredContent>? playlist,
+    int? currentIndex,
   }) {
     return AudioState(
       currentContent: currentContent ?? this.currentContent,
@@ -39,6 +45,8 @@ class AudioState {
       position: position ?? this.position,
       duration: duration ?? this.duration,
       playerState: playerState ?? this.playerState,
+      playlist: playlist ?? this.playlist,
+      currentIndex: currentIndex ?? this.currentIndex,
     );
   }
 }
@@ -61,6 +69,16 @@ class AudioNotifier extends StateNotifier<AudioState> {
       );
     });
 
+    // Listen to current index changes (Important for playlists)
+    _service.player.currentIndexStream.listen((index) {
+      if (index != null && index < state.playlist.length) {
+        state = state.copyWith(
+          currentIndex: index,
+          currentContent: state.playlist[index],
+        );
+      }
+    });
+
     // Listen to position changes
     _service.player.positionStream.listen((position) {
       state = state.copyWith(position: position);
@@ -73,7 +91,8 @@ class AudioNotifier extends StateNotifier<AudioState> {
       }
     });
 
-    // Handle song completion
+    // Handle song completion - now handled by currentIndexStream for playlists
+    // but we can still reset state if truly finished
     _service.player.processingStateStream.listen((processingState) {
       if (processingState == ProcessingState.completed) {
         state = state.copyWith(isPlaying: false, position: Duration.zero);
@@ -85,6 +104,28 @@ class AudioNotifier extends StateNotifier<AudioState> {
       state = state.copyWith(isLoading: false, isPlaying: false);
       print('Audio Playback Error: $e');
     });
+  }
+
+  Future<void> playWithPlaylist(SacredContent content, List<SacredContent> playlist) async {
+    final index = playlist.indexWhere((item) => item.id == content.id);
+    final initialIndex = index != -1 ? index : 0;
+
+    state = state.copyWith(
+      playlist: playlist,
+      currentIndex: initialIndex,
+      currentContent: content,
+      isLoading: true,
+    );
+
+    await _service.setPlaylist(playlist, initialIndex: initialIndex);
+  }
+
+  Future<void> nextTrack() async {
+    await _service.next();
+  }
+
+  Future<void> previousTrack() async {
+    await _service.previous();
   }
 
   Future<void> play(SacredContent content) async {

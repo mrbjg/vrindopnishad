@@ -138,7 +138,7 @@ class SacredContent {
         translation: (map['translation'] ?? map['english_translation'] ?? '').toString(),
         hindiMeaning: (map['hindiMeaning'] ?? map['hindi_text'] ?? '').toString(),
         commentary: (map['commentary'] ?? map['description'] ?? '').toString(),
-        imageUrl: map['imageUrl'] ?? map['image_url'],
+        imageUrl: _sanitizeImageUrl(map['imageUrl'] ?? map['image_url']),
         audioUrl: map['audioUrl'] ?? map['audio_url'],
         author: map['author'],
         book: map['book'],
@@ -163,12 +163,24 @@ class SacredContent {
       );
     }
   }
+
+  static String? _sanitizeImageUrl(dynamic url) {
+    if (url == null) return null;
+    final urlStr = url.toString();
+    
+    // Known 404 URL Interception
+    if (urlStr.contains('photo-1518005020480-1090c13ce911')) {
+      return 'https://images.unsplash.com/photo-1528319725582-ddc096101511?auto=format&fit=crop&w=800&q=80';
+    }
+    
+    return urlStr;
+  }
 }
 
 class ContentNotifier extends StateNotifier<List<SacredContent>> {
   ContentNotifier() : super([]) {
-    // Start with the featured sample so it's never truly empty
-    state = [_featuredSample];
+    // Start with the featured samples so it's never truly empty
+    state = _featuredSamples;
     _initAndLoad();
   }
 
@@ -192,7 +204,7 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
     // 3. INSTANT: Load from memory cache if available
     final cachedContent = _cache.getCachedContent();
     if (cachedContent != null && cachedContent.isNotEmpty) {
-      state = [_featuredSample, ...cachedContent];
+      state = [..._featuredSamples, ...cachedContent];
       _isLoading = false;
 
       // Background refresh from API for freshness
@@ -203,7 +215,7 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
     // 4. FAST: Load from local SQLite DB
     final dbContent = await DatabaseHelper.instance.fetchAllContent();
     if (dbContent.isNotEmpty) {
-      state = [_featuredSample, ...dbContent];
+      state = [..._featuredSamples, ...dbContent];
       await _cache.cacheContent(dbContent);
       _isLoading = false;
 
@@ -221,8 +233,9 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
     try {
       final apiContent = await ApiService.fetchAllContent();
       if (apiContent.isNotEmpty) {
-        // Compare with current state (excluding the sample) to avoid unnecessary rebuilds
-        final currentContent = state.where((item) => item.id != _featuredSample.id).toList();
+        // Compare with current state (excluding samples) to avoid unnecessary rebuilds
+        final sampleIds = _featuredSamples.map((s) => s.id).toSet();
+        final currentContent = state.where((item) => !sampleIds.contains(item.id)).toList();
         
         bool isChanged = apiContent.length != currentContent.length;
         if (!isChanged) {
@@ -243,12 +256,12 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
           // Update cache
           await _cache.cacheContent(apiContent);
           // Update state (smooth transition)
-          state = [_featuredSample, ...apiContent];
+          state = [..._featuredSamples, ...apiContent];
         }
       }
     } catch (e) {
       // Silent fail - ensure we at least keep the sample if state was empty
-      if (state.isEmpty) state = [_featuredSample];
+      if (state.isEmpty) state = _featuredSamples;
     }
   }
 
@@ -262,12 +275,12 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
           await DatabaseHelper.instance.insertContent(item);
         }
         await _cache.cacheContent(apiContent);
-        state = [_featuredSample, ...apiContent];
+        state = [..._featuredSamples, ...apiContent];
       } else if (state.isEmpty) {
-        state = [_featuredSample];
+        state = _featuredSamples;
       }
     } catch (e) {
-      if (state.isEmpty) state = [_featuredSample];
+      if (state.isEmpty) state = _featuredSamples;
     }
   }
 
@@ -330,29 +343,108 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
   }
 
   /// User-requested featured streaming content
-  final SacredContent _featuredSample = SacredContent(
-    id: 'stream-sample-001',
-    title: 'Aise Kaal Bitayo Nis Din',
-    category: 'Featured Bhajan',
-    sanskritText: 'ऐसे काल बितायो निस दिन...',
-    translation: 'How time was spent, day and night...',
-    hindiMeaning: 'इस प्रकार दिन-रात काल व्यतीत हुआ। ब्रज के रसिक संत श्री वंशी अली जी का भजन भाव।',
-    commentary: 'A soulful bhajan expressing devotion and the passage of time in spiritual practice.',
-    audioUrl: 'https://archive.org/download/aise-kaal-bitayo-nis-din/aise%20kaal%20bitayo%20nis%20din.mp3',
-    imageUrl: 'assets/images/sant_sanatan.png',
-    author: 'Shri Vanshi Ali Ji',
-    book: 'Rasik Vaani',
-    chapter: 'Utsav Bela',
-    contentTags: ['Bhakti', 'Vrindavan', 'Siddha-Vaani'],
-    audioTags: ['Classical', 'Soothing'],
-    videoTags: ['Live Darshan'],
-  );
+  static final List<SacredContent> _featuredSamples = [
+    SacredContent(
+      id: 'stream-sample-001',
+      title: 'Aise Kaal Bitayo Nis Din',
+      category: 'Bhajans',
+      sanskritText: 'ऐसे काल बितायो निस दिन...',
+      translation: 'How time was spent, day and night...',
+      hindiMeaning: 'इस प्रकार दिन-रात काल व्यतीत हुआ। ब्रज के रसिक संत श्री वंशी अली जी का भजन भाव।',
+      commentary: 'A soulful bhajan expressing devotion and the passage of time in spiritual practice.',
+      audioUrl: 'https://archive.org/download/aise-kaal-bitayo-nis-din/aise%20kaal%20bitayo%20nis%20din.mp3',
+      imageUrl: 'https://images.unsplash.com/photo-1528319725582-ddc096101511?auto=format&fit=crop&w=800&q=80',
+      author: 'Shri Vanshi Ali Ji',
+      book: 'Rasik Vaani',
+      chapter: 'Utsav Bela',
+      contentTags: ['Bhakti', 'Vrindavan', 'Siddha-Vaani'],
+      audioTags: ['Classical', 'Soothing'],
+      videoTags: ['Live Darshan'],
+    ),
+    SacredContent(
+      id: 'stream-sample-002',
+      title: 'Mahamantra Japa',
+      category: 'Mantras',
+      sanskritText: 'हरे कृष्ण हरे कृष्ण कृष्ण कृष्ण हरे हरे...',
+      translation: 'Hare Krishna Mahamantra...',
+      hindiMeaning: 'दिव्य महामंत्र का जाप जो मन को शांति और आनंद प्रदान करता है।',
+      commentary: 'The ultimate mantra for spiritual realization and inner peace.',
+      audioUrl: 'https://archive.org/download/HareKrsnaMahamantra/2009-02-14-6-Bhajans-SriPrahlad.mp3',
+      imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=400&q=80',
+      author: 'Sri Prahlad Prabhu',
+      contentTags: ['Mantra', 'Japa', 'Peace', 'Kirtan'],
+    ),
+    SacredContent(
+      id: 'stream-sample-003',
+      title: 'Gita Shloka 2.47',
+      category: 'Shlokas',
+      sanskritText: 'कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।',
+      translation: 'You have a right to perform your prescribed duties...',
+      hindiMeaning: 'तुम्हारा अधिकार केवल कर्म करने में है, उसके फलों में कभी नहीं।',
+      commentary: 'Lord Krishna teaching the essence of Karma Yoga to Arjuna.',
+      imageUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80',
+      audioUrl: 'https://www.gitasupersite.iitk.ac.in/sites/default/files/audio/CHAP2/2-47.MP3',
+      author: 'Lord Krishna',
+      book: 'Bhagavad Gita',
+      chapter: 'Chapter 2',
+      contentTags: ['Wisdom', 'Karma', 'Yoga'],
+    ),
+  ];
 }
 
 final sacredContentProvider =
     StateNotifierProvider<ContentNotifier, List<SacredContent>>((ref) {
-      return ContentNotifier();
-    });
+  return ContentNotifier();
+});
+
+/// UI category data model for deriving category metadata
+class CategoryInfo {
+  final String name;
+  final int count;
+  final String imageUrl;
+
+  CategoryInfo({
+    required this.name,
+    required this.count,
+    required this.imageUrl,
+  });
+}
+
+/// Provider that calculates unique categories and their associated metadata
+final sacredCategoriesProvider = Provider<List<CategoryInfo>>((ref) {
+  final content = ref.watch(sacredContentProvider);
+  if (content.isEmpty) return [];
+
+  final categoriesMap = <String, int>{};
+  final categoryImages = <String, String>{};
+
+  for (final item in content) {
+    final cat = item.category;
+    categoriesMap[cat] = (categoriesMap[cat] ?? 0) + 1;
+    if (item.imageUrl != null && !categoryImages.containsKey(cat)) {
+      categoryImages[cat] = item.imageUrl!;
+    }
+  }
+
+  // Fallback images for common categories if not found in content
+  final fallbackImages = {
+    'Mantras': 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=400&q=80',
+    'Shlokas': 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80',
+    'Bhajans': 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?auto=format&fit=crop&w=400&q=80',
+    'Satsang': 'https://images.unsplash.com/photo-1545127398-14699f92334b?auto=format&fit=crop&w=400&q=80',
+    'Stories': 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=400&q=80',
+  };
+
+  return categoriesMap.entries.map((e) {
+    return CategoryInfo(
+      name: e.key,
+      count: e.value,
+      imageUrl: categoryImages[e.key] ??
+          fallbackImages[e.key] ??
+          'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80',
+    );
+  }).toList();
+});
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// MEMOIZED PROVIDERS - Prevent expensive filtering on every build/frame

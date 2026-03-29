@@ -16,6 +16,7 @@ import 'search_screen.dart';
 import 'daily_motivation_screen.dart';
 import 'daily_gyaan_screen.dart';
 import 'sacred_calendar_screen.dart';
+import 'category_list_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -375,14 +376,12 @@ class _CategoriesHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(languageProvider);
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('Sacred Wisdom',
+          Text('Categories',
               style: PremiumTokens.sansStyle(
                   color: PremiumTokens.celestialSilver,
                   fontSize: 16,
@@ -391,7 +390,10 @@ class _CategoriesHeader extends ConsumerWidget {
           GestureDetector(
             onTap: () {
               HapticFeedback.lightImpact();
-              ref.read(navigationIndexProvider.notifier).state = 1;
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CategoryListScreen()),
+              );
             },
             child: Text('VIEW ALL',
                 style: PremiumTokens.sansStyle(
@@ -559,11 +561,12 @@ class _CategoriesGridLite extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    const categories = [
-      {'name': 'Shlokas', 'count': '124 Verses', 'image': 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80'},
-      {'name': 'Mantras', 'count': '48 Audio', 'image': 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80'},
-      {'name': 'Stories', 'count': '12 Series', 'image': 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?auto=format&fit=crop&w=400&q=80'},
-    ];
+    final categories = ref.watch(sacredCategoriesProvider);
+    final displayCategories = categories.take(4).toList();
+
+    if (displayCategories.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
     return GridView.builder(
       shrinkWrap: true,
@@ -574,12 +577,14 @@ class _CategoriesGridLite extends ConsumerWidget {
         mainAxisSpacing: 16,
         childAspectRatio: 1.0,
       ),
-      itemCount: categories.length,
+      itemCount: displayCategories.length,
       itemBuilder: (context, index) {
-        final cat = categories[index];
+        final cat = displayCategories[index];
         return GestureDetector(
           onTap: () {
             HapticFeedback.lightImpact();
+            // Filter library by this category and switch tab
+            ref.read(libraryCategoryProvider.notifier).state = cat.name;
             ref.read(navigationIndexProvider.notifier).state = 1;
           },
           child: PremiumUI.relicStaticCard(
@@ -590,7 +595,7 @@ class _CategoriesGridLite extends ConsumerWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  PremiumUI.networkImage(url: cat['image']!, width: 200),
+                  PremiumUI.networkImage(url: cat.imageUrl, width: 200),
                   const DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -605,8 +610,8 @@ class _CategoriesGridLite extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(cat['name']!, style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-                        Text(cat['count']!, style: GoogleFonts.manrope(color: Colors.white54, fontSize: 10)),
+                        Text(cat.name, style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                        Text('${cat.count} Items', style: GoogleFonts.manrope(color: Colors.white54, fontSize: 10)),
                       ],
                     ),
                   ),
@@ -703,7 +708,8 @@ class _PremiumContentListLite extends ConsumerWidget {
         child: GestureDetector(
           onTap: () {
             HapticFeedback.heavyImpact();
-            ref.read(audioProvider.notifier).play(item);
+            // Pass the featured items as the playlist
+            ref.read(audioProvider.notifier).playWithPlaylist(item, items);
           },
           child: PremiumUI.relicStaticCard(
             padding: const EdgeInsets.all(20),

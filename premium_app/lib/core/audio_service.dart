@@ -12,7 +12,9 @@ class SacredAudioService {
   static final SacredAudioService _instance = SacredAudioService._internal();
   factory SacredAudioService() => _instance;
 
-  final AudioPlayer _player = AudioPlayer();
+  final AudioPlayer _player = AudioPlayer(
+    userAgent: 'Sant-Vaani/Premium/1.0 (Mobile; Spiritual Audio Engine)',
+  );
   
   SacredAudioService._internal();
 
@@ -25,40 +27,69 @@ class SacredAudioService {
     // For now, we focus on the core player functionality.
   }
 
-  Future<void> play(SacredContent content) async {
+  /// Load and play a playlist starting from a specific index
+  Future<void> setPlaylist(List<SacredContent> items, {int initialIndex = 0}) async {
     try {
-      final audioUrl = content.audioUrl;
-      if (audioUrl == null || audioUrl.isEmpty) {
-        debugPrint('SacredAudioService: No audio URL provided for ${content.title}');
+      // 1. Filter out items without a valid audio URL to prevent Source Errors
+      final playableItems = items.where((item) => 
+        item.audioUrl != null && 
+        item.audioUrl!.isNotEmpty && 
+        item.audioUrl!.startsWith('http')
+      ).toList();
+
+      if (playableItems.isEmpty) {
+        debugPrint('SacredAudioService: No playable audio items found in playlist.');
         return;
       }
 
-      // Metadata for background playback and lock screen
-      final mediaItem = MediaItem(
-        id: content.id,
-        album: content.category,
-        title: content.title,
-        artist: "Sant-Vaani",
-        artUri: content.imageUrl != null ? Uri.parse(content.imageUrl!) : null,
-      );
-
-      // Use LockCachingAudioSource for automatic local caching if it's a network URL
-      AudioSource source;
-      if (audioUrl.startsWith('http')) {
-        source = LockCachingAudioSource(
-          Uri.parse(audioUrl),
-          tag: mediaItem,
-        );
-      } else {
-        // Handle assets or local files if necessary
-        source = AudioSource.uri(Uri.parse(audioUrl), tag: mediaItem);
+      // 2. Adjust initial index if the target item was filtered (fallback to 0)
+      int adjustedIndex = initialIndex;
+      if (initialIndex < items.length) {
+        final targetItem = items[initialIndex];
+        adjustedIndex = playableItems.indexWhere((item) => item.id == targetItem.id);
+        if (adjustedIndex == -1) adjustedIndex = 0;
       }
 
-      await _player.setAudioSource(source);
+      final List<AudioSource> sources = playableItems.map((content) {
+        final audioUrl = content.audioUrl!;
+        final mediaItem = MediaItem(
+          id: content.id,
+          album: content.category,
+          title: content.title,
+          artist: content.author ?? "Sant-Vaani",
+          artUri: _getPlaybackArtUri(content.imageUrl),
+        );
+
+        return AudioSource.uri(
+          Uri.parse(audioUrl), 
+          tag: mediaItem,
+        );
+      }).toList();
+
+      final playlistSource = ConcatenatingAudioSource(children: sources);
+      await _player.setAudioSource(playlistSource, initialIndex: adjustedIndex);
       await _player.play();
     } catch (e) {
-      debugPrint('SacredAudioService Error: $e');
-      // Potential fallback or retry logic could go here
+      debugPrint('SacredAudioService Playlist Error: $e');
+      if (e is UnsupportedError) {
+        debugPrint('Audio URL Format Error: Please verify the protocol (HTTP/HTTPS).');
+      }
+    }
+  }
+
+  Future<void> play(SacredContent content) async {
+    await setPlaylist([content], initialIndex: 0);
+  }
+
+  Future<void> next() async {
+    if (_player.hasNext) {
+      await _player.seekToNext();
+    }
+  }
+
+  Future<void> previous() async {
+    if (_player.hasPrevious) {
+      await _player.seekToPrevious();
     }
   }
 
@@ -80,5 +111,27 @@ class SacredAudioService {
 
   void dispose() {
     _player.dispose();
+  }
+
+  /// ═══════════════════════════════════════════════════════════════════════════
+  /// HELPERS
+  /// ═══════════════════════════════════════════════════════════════════════════
+
+  Uri? _getPlaybackArtUri(String? imageUrl) {
+    if (imageUrl == null || imageUrl.isEmpty) return null;
+    
+    // If it's a relative asset path, convert it to the format 
+    // just_audio_background expects (asset:///assets/...)
+    if (imageUrl.startsWith('assets/')) {
+      return Uri.parse('asset:///$imageUrl');
+    }
+    
+    // Fallback to network URI
+    try {
+      return Uri.parse(imageUrl);
+    } catch (e) {
+      debugPrint('SacredAudioService: Invalid artUri: $imageUrl');
+      return null;
+    }
   }
 }

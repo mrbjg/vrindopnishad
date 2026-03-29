@@ -9,6 +9,7 @@ import 'content_detail_screen.dart';
 import 'search_screen.dart';
 import 'package:flutter/services.dart';
 import '../core/favorites_provider.dart';
+import '../core/audio_provider.dart';
 
 class LibraryScreen extends ConsumerWidget {
   const LibraryScreen({super.key});
@@ -26,6 +27,7 @@ class LibraryScreen extends ConsumerWidget {
               slivers: [
                 SliverToBoxAdapter(child: _buildHeader()),
                 SliverToBoxAdapter(child: _buildSearchBar(context, ref)),
+                SliverToBoxAdapter(child: _buildCategoryFilterIndicator(context, ref)),
                 SliverToBoxAdapter(child: _buildNowPlaying()),
                 Consumer(
                   builder: (context, ref, child) {
@@ -47,7 +49,7 @@ class LibraryScreen extends ConsumerWidget {
                         itemExtent: 156.0,
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
-                            return _buildLibraryItem(context, ref, items[index]);
+                            return _buildLibraryItem(context, ref, items[index], items);
                           },
                           childCount: items.length,
                         ),
@@ -161,6 +163,49 @@ class LibraryScreen extends ConsumerWidget {
     );
   }
 
+  Widget _buildCategoryFilterIndicator(BuildContext context, WidgetRef ref) {
+    final query = ref.watch(libraryCategoryProvider);
+    if (query == "ALL" || query.startsWith("SEARCH:")) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "FILTER: ${query.toUpperCase()}",
+                  style: PremiumTokens.sansStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1,
+                    color: PremiumTokens.nebulaBlue,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    ref.read(libraryCategoryProvider.notifier).state = "ALL";
+                  },
+                  child: const Icon(Iconsax.close_circle, size: 14, color: PremiumTokens.nebulaBlue),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildNowPlaying() {
     return Padding(
       padding: const EdgeInsets.all(24),
@@ -234,38 +279,46 @@ class LibraryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildLibraryItem(BuildContext context, WidgetRef ref, SacredContent item) {
+  Widget _buildLibraryItem(BuildContext context, WidgetRef ref, SacredContent item, List<SacredContent> playlist) {
+    final audioState = ref.watch(audioProvider);
+    final isPlaying = audioState.isPlaying && audioState.currentContent?.id == item.id;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: GestureDetector(
         onTap: () {
-          HapticFeedback.lightImpact();
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ContentDetailScreen(content: item),
-            ),
-          );
+          HapticFeedback.heavyImpact();
+          // Pass the entire filtered list as a playlist
+          ref.read(audioProvider.notifier).playWithPlaylist(item, playlist);
         },
-        child: PremiumUI.relicCard(
-          padding: const EdgeInsets.all(16),
-          borderRadius: 16,
+        child: PremiumUI.relicStaticCard(
+          padding: const EdgeInsets.all(20),
+          borderColor: isPlaying 
+              ? PremiumTokens.nebulaBlue.withValues(alpha: 0.3) 
+              : PremiumTokens.celestialSilver.withValues(alpha: 0.1),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Enhanced Thumbnail
+              // Play/Pause Indicator
               Container(
-                width: 70,
-                height: 70,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
-                  color: PremiumTokens.surfaceCharcoal,
+                  color: isPlaying 
+                      ? PremiumTokens.nebulaBlue.withValues(alpha: 0.1) 
+                      : PremiumTokens.celestialSilver.withValues(alpha: 0.03),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.1)),
+                  border: Border.all(
+                    color: isPlaying 
+                        ? PremiumTokens.nebulaBlue.withValues(alpha: 0.2) 
+                        : PremiumTokens.celestialSilver.withValues(alpha: 0.05),
+                  ),
                 ),
                 child: Center(
-                  child: item.imageUrl != null 
-                    ? PremiumUI.networkImage(url: item.imageUrl, borderRadius: BorderRadius.circular(10))
-                    : const Icon(Icons.spa, color: PremiumTokens.celestialSilver, size: 28),
+                  child: Icon(
+                    isPlaying ? Iconsax.music_play5 : Iconsax.play,
+                    color: isPlaying ? PremiumTokens.nebulaBlue : PremiumTokens.celestialSilver,
+                    size: 20,
+                  ),
                 ),
               ),
               const SizedBox(width: 16),

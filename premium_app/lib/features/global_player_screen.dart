@@ -253,11 +253,14 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
 
   Widget _buildControls(AudioState state, Color accentColor) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 40),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          // Previous/Rewind
+          // Previous Track
+          _buildSmallControl(Iconsax.previous, () => ref.read(audioProvider.notifier).previousTrack()),
+          
+          // Rewind 10s
           _buildSmallControl(Iconsax.backward_10_seconds, () => ref.read(audioProvider.notifier).skipBackward()),
           
           // Play/Pause
@@ -297,8 +300,11 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
             ),
           ),
           
-          // Next/Forward
+          // Forward 10s
           _buildSmallControl(Iconsax.forward_10_seconds, () => ref.read(audioProvider.notifier).skipForward()),
+
+          // Next Track
+          _buildSmallControl(Iconsax.next, () => ref.read(audioProvider.notifier).nextTrack()),
         ],
       ),
     );
