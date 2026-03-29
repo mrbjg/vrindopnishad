@@ -220,13 +220,13 @@ class LibraryScreen extends ConsumerWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
-                  'https://lh3.googleusercontent.com/aida-public/AB6AXuCjQJTEsIPehLdGJWjz8TSfCs7o0uifTz1QfDnl0xe93A5gwv8Ccp6F6nm2FkjhjUj-lsuWJp_6-RmW3i55zjk4S3YdTRrnK9JmL9XsZSc-iTnTfSCX7_p5yEUkOkxMU3MemeaubUJtFNFJYkdACZTW5tDjmWG-00z4idxNYyHwoXDU0xQ0aLM7iRJHndrXYnv81TX6k4McMTD-djipl40MQhHU1yqz82hU_EPJxc4L3nXERe5g9bmTm34Ofr96MF0fmtSB5VA-PLg',
+                  'https://santvaani.app/logo.png', // Stable fallback
                   width: 48,
                   height: 48,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
                     color: PremiumTokens.surfaceCharcoal,
-                    child: const Icon(Icons.music_note, color: PremiumTokens.celestialSilver),
+                    child: const Icon(Iconsax.music, color: PremiumTokens.celestialSilver, size: 20),
                   ),
                 ),
               ),
@@ -287,9 +287,13 @@ class LibraryScreen extends ConsumerWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: GestureDetector(
         onTap: () {
-          HapticFeedback.heavyImpact();
-          // Pass the entire filtered list as a playlist
-          ref.read(audioProvider.notifier).playWithPlaylist(item, playlist);
+          HapticFeedback.lightImpact();
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ContentDetailScreen(content: item),
+            ),
+          );
         },
         child: PremiumUI.relicStaticCard(
           padding: const EdgeInsets.all(20),
@@ -332,15 +336,19 @@ class LibraryScreen extends ConsumerWidget {
                       Row(
                         children: [
                           if (item.author != null)
-                             Text(
-                                item.author!.toUpperCase(),
-                                style: PremiumTokens.sansStyle(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 1.2,
-                                  color: PremiumTokens.saffronGlow.withValues(alpha: 0.8),
+                             Flexible(
+                               child: Text(
+                                  item.author!.toUpperCase(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: PremiumTokens.sansStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 1.2,
+                                    color: PremiumTokens.saffronGlow.withValues(alpha: 0.8),
+                                  ),
                                 ),
-                              ),
+                             ),
                           if (item.author != null && item.book != null)
                             Container(
                               margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -472,14 +480,31 @@ class LibraryScreen extends ConsumerWidget {
                     },
                   ),
                   const SizedBox(height: 20),
-                  Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.2)),
+                  GestureDetector(
+                    onTap: () {
+                      HapticFeedback.heavyImpact();
+                      ref.read(audioProvider.notifier).playWithPlaylist(item, playlist);
+                    },
+                    child: Container(
+                      width: 38,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isPlaying 
+                            ? PremiumTokens.nebulaBlue.withValues(alpha: 0.1) 
+                            : PremiumTokens.celestialSilver.withValues(alpha: 0.05),
+                        border: Border.all(
+                          color: isPlaying 
+                              ? PremiumTokens.nebulaBlue.withValues(alpha: 0.3) 
+                              : PremiumTokens.celestialSilver.withValues(alpha: 0.2)
+                        ),
+                      ),
+                      child: Icon(
+                        isPlaying ? Iconsax.pause : Icons.play_arrow, 
+                        color: isPlaying ? PremiumTokens.nebulaBlue : PremiumTokens.celestialSilver, 
+                        size: 18
+                      ),
                     ),
-                    child: const Icon(Icons.play_arrow, color: PremiumTokens.celestialSilver, size: 18),
                   ),
                 ],
               ),
