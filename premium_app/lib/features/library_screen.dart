@@ -302,7 +302,7 @@ class LibraryScreen extends ConsumerWidget {
               : PremiumTokens.celestialSilver.withValues(alpha: 0.1),
           child: Row(
             children: [
-              // Play/Pause Indicator
+              // Enclaved Status Icon (Music vs. Book)
               Container(
                 width: 44,
                 height: 44,
@@ -319,9 +319,13 @@ class LibraryScreen extends ConsumerWidget {
                 ),
                 child: Center(
                   child: Icon(
-                    isPlaying ? Iconsax.music_play5 : Iconsax.play,
-                    color: isPlaying ? PremiumTokens.nebulaBlue : PremiumTokens.celestialSilver,
-                    size: 20,
+                    isPlaying 
+                      ? Iconsax.music_play5 
+                      : (item.audioUrl != null && item.audioUrl!.isNotEmpty 
+                          ? Iconsax.music 
+                          : Iconsax.book_1),
+                    color: isPlaying ? PremiumTokens.nebulaBlue : PremiumTokens.celestialSilver.withValues(alpha: 0.5),
+                    size: 18,
                   ),
                 ),
               ),
@@ -413,18 +417,31 @@ class LibraryScreen extends ConsumerWidget {
                           const SizedBox(width: 8),
                         ],
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
                             color: PremiumTokens.celestialSilver.withValues(alpha: 0.05),
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.05)),
                           ),
-                          child: Text(
-                            item.category.toUpperCase(),
-                            style: PremiumTokens.sansStyle(
-                              fontSize: 9, 
-                              fontWeight: FontWeight.bold,
-                              color: PremiumTokens.celestialSilver.withValues(alpha: 0.4)
-                            ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                _getCategoryIcon(item.category),
+                                size: 10,
+                                color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                item.category.toUpperCase(),
+                                style: PremiumTokens.sansStyle(
+                                  fontSize: 8, 
+                                  fontWeight: FontWeight.w900,
+                                  color: PremiumTokens.celestialSilver.withValues(alpha: 0.4),
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         if (item.contentTags.isNotEmpty)
@@ -479,33 +496,34 @@ class LibraryScreen extends ConsumerWidget {
                       ref.read(favoritesProvider.notifier).toggleFavorite(item.id);
                     },
                   ),
-                  const SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: () {
-                      HapticFeedback.heavyImpact();
-                      ref.read(audioProvider.notifier).playWithPlaylist(item, playlist);
-                    },
-                    child: Container(
-                      width: 38,
-                      height: 38,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: isPlaying 
-                            ? PremiumTokens.nebulaBlue.withValues(alpha: 0.1) 
-                            : PremiumTokens.celestialSilver.withValues(alpha: 0.05),
-                        border: Border.all(
-                          color: isPlaying 
-                              ? PremiumTokens.nebulaBlue.withValues(alpha: 0.3) 
-                              : PremiumTokens.celestialSilver.withValues(alpha: 0.2)
+                   const SizedBox(height: 20),
+                   if (item.audioUrl != null && item.audioUrl!.isNotEmpty)
+                      GestureDetector(
+                        onTap: () {
+                          HapticFeedback.heavyImpact();
+                          ref.read(audioProvider.notifier).playWithPlaylist(item, playlist);
+                        },
+                        child: Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isPlaying 
+                                ? PremiumTokens.nebulaBlue.withValues(alpha: 0.1) 
+                                : PremiumTokens.celestialSilver.withValues(alpha: 0.05),
+                            border: Border.all(
+                              color: isPlaying 
+                                  ? PremiumTokens.nebulaBlue.withValues(alpha: 0.3) 
+                                  : PremiumTokens.celestialSilver.withValues(alpha: 0.2)
+                            ),
+                          ),
+                          child: Icon(
+                            isPlaying ? Iconsax.pause : Icons.play_arrow, 
+                            color: isPlaying ? PremiumTokens.nebulaBlue : PremiumTokens.celestialSilver, 
+                            size: 18
+                          ),
                         ),
                       ),
-                      child: Icon(
-                        isPlaying ? Iconsax.pause : Icons.play_arrow, 
-                        color: isPlaying ? PremiumTokens.nebulaBlue : PremiumTokens.celestialSilver, 
-                        size: 18
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ],
@@ -513,5 +531,15 @@ class LibraryScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  IconData _getCategoryIcon(String category) {
+    final cat = category.toUpperCase();
+    if (cat.contains('MANTRA')) return Iconsax.music_play;
+    if (cat.contains('SHLOKA') || cat.contains('VERSE')) return Iconsax.quote_up;
+    if (cat.contains('WISDOM') || cat.contains('GYAAN')) return Iconsax.lamp_on;
+    if (cat.contains('RITUAL')) return Iconsax.status_up;
+    if (cat.contains('HISTORY') || cat.contains('KATHA')) return Iconsax.book_1;
+    return Iconsax.document_text;
   }
 }
