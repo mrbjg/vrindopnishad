@@ -7,10 +7,13 @@ class StatsService {
 
   /// Fetch or initialize user stats from Supabase
   Future<UserStats?> getOrCreateStats(String uid) async {
+    const String fullColumns = 'firebase_uid, level, experience_points, streak_count, last_active_date, total_reading_minutes, total_shlokas_read, total_jap_count, highest_daily_japs, daily_mala_goal, reminder_time, dynamic_icon_enabled, spirituality_level, preferred_language, onboarding_completed, total_badges, updated_at';
+    const String fallbackColumns = 'firebase_uid, level, experience_points, streak_count, last_active_date, total_reading_minutes, total_shlokas_read, total_jap_count, daily_mala_goal, reminder_time, dynamic_icon_enabled, spirituality_level, preferred_language, onboarding_completed, total_badges, updated_at';
+
     try {
       final response = await _supabase
           .from('user_stats')
-          .select('firebase_uid, level, experience_points, streak_count, last_active_date, total_reading_minutes, total_shlokas_read, total_jap_count, highest_daily_japs, daily_mala_goal, reminder_time, dynamic_icon_enabled, spirituality_level, preferred_language, onboarding_completed, total_badges, updated_at')
+          .select(fullColumns)
           .eq('firebase_uid', uid)
           .maybeSingle();
 
@@ -46,6 +49,47 @@ class StatsService {
       
       return UserStats.fromJson(response);
     } catch (e) {
+      if (e is sb.PostgrestException && (e.code == '42703' || e.message.contains('highest_daily_japs'))) {
+        // Fallback to query without highest_daily_japs
+        try {
+          final fallbackResponse = await _supabase
+              .from('user_stats')
+              .select(fallbackColumns)
+              .eq('firebase_uid', uid)
+              .maybeSingle();
+              
+          if (fallbackResponse == null) {
+            // Re-run initialization without the missing column
+            final Map<String, dynamic> newStats = {
+              'firebase_uid': uid,
+              'level': 1,
+              'experience_points': 0,
+              'streak_count': 0,
+              'total_reading_minutes': 0,
+              'total_shlokas_read': 0,
+              'total_jap_count': 0,
+              'daily_mala_goal': 11,
+              'reminder_time': '08:00',
+              'dynamic_icon_enabled': true,
+              'spirituality_level': 'seeker',
+              'preferred_language': 'hi',
+              'onboarding_completed': false,
+              'total_badges': 0,
+              'updated_at': DateTime.now().toUtc().toIso8601String(),
+            };
+            
+            final created = await _supabase
+                .from('user_stats')
+                .insert(newStats)
+                .select(fallbackColumns)
+                .single();
+            return UserStats.fromJson(created);
+          }
+          return UserStats.fromJson(fallbackResponse);
+        } catch (innerE) {
+          debugPrint('Fatal error in stats fallback: $innerE');
+        }
+      }
       debugPrint('Error handling user stats: $e');
       rethrow;
     }
@@ -59,6 +103,14 @@ class StatsService {
           .update({...updates, 'updated_at': DateTime.now().toIso8601String()})
           .eq('firebase_uid', uid);
     } catch (e) {
+      if (e is sb.PostgrestException && (e.code == '42703' || e.message.contains('highest_daily_japs'))) {
+        // Retry update without highest_daily_japs if it's there
+        if (updates.containsKey('highest_daily_japs')) {
+          final safeUpdates = Map<String, dynamic>.from(updates);
+          safeUpdates.remove('highest_daily_japs');
+          return updateStats(uid, safeUpdates);
+        }
+      }
       debugPrint('Error updating stats: $e');
     }
   }

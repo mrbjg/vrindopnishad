@@ -2635,7 +2635,15 @@ class SacredActionMenuState extends State<SacredActionMenu> {
                       duration: const Duration(milliseconds: 150),
                       curve: Curves.linear,
                       opacity: _isVisible ? (index == _hoveredIndex ? 1.0 : 0.45) : 0,
-                      child: _buildMenuItem(item, index == _hoveredIndex),
+                      child: GestureDetector(
+                        onTap: () {
+                          HapticFeedback.mediumImpact();
+                          item.onTap();
+                          _handleClose();
+                        },
+                        behavior: HitTestBehavior.opaque,
+                        child: _buildMenuItem(item, index == _hoveredIndex),
+                      ),
                     ),
                   ),
                 ),

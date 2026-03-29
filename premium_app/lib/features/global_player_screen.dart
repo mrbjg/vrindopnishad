@@ -248,8 +248,8 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
               _pointerPosition.value = details.globalPosition;
             },
             onLongPressEnd: (details) {
-              _pointerPosition.value = null;
               _menuKey.currentState?.handleRelease();
+              _pointerPosition.value = null;
             },
             child: PremiumUI.voidCard(
               padding: const EdgeInsets.all(12),
