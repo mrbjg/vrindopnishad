@@ -21,36 +21,16 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final historyAsync = ref.watch(japHistoryProvider);
     final japState = ref.watch(naamJapStateProvider);
-    final count = japState.total;
+    final stats = ref.watch(userStatsProvider).value;
     final isFocusMode = ref.watch(focusModeProvider);
     
-    // Calculate Today's Malas from local state for real-time accuracy (Integer as requested)
-    int todayMalas = japState.today ~/ 108;
-    int highestMalas = 0;
+    // Calculation: Integer Malas (cycles) + Completed Beads
+    final int todayJaps = japState.today;
+    final double todayMalas = todayJaps / 108;
+    final double highestMalas = (stats?.highestDailyJaps ?? 0) / 108;
     
-    if (historyAsync.hasValue) {
-      final history = historyAsync.value!;
-      final Map<String, int> dayTotals = {};
-      
-      for (var entry in history) {
-        final count = (entry['count'] as int);
-        final malaCount = count ~/ 108;
-        final date = DateTime.parse(entry['created_at']).toIso8601String().split('T')[0];
-        
-        dayTotals[date] = (dayTotals[date] ?? 0) + malaCount;
-      }
-      
-      if (dayTotals.isNotEmpty) {
-        highestMalas = dayTotals.values.reduce((a, b) => a > b ? a : b);
-      }
-      
-      // Ensure current session is reflected if it's the highest today
-      if (todayMalas > highestMalas) {
-        highestMalas = todayMalas;
-      }
-    }
+    final int count = japState.total;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -92,7 +72,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                         isFocusMode, 
                         todayMalas,
                         highestMalas,
-                        dailyGoal: 11, // Default goal while 'daily_mala_goal' is disabled
+                        dailyGoal: stats?.dailyMalaGoal ?? 11,
                       ),
                       
                       const SizedBox(height: 140), // Spacing for Navbar + MiniPlayer
@@ -394,7 +374,15 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
     );
   }
 
-  Widget _buildSessionStats(bool isFocusMode, int todayMalas, int highestMalas, {int dailyGoal = 0}) {
+  Widget _buildSessionStats(bool isFocusMode, double todayMalas, double highestMalas, {int dailyGoal = 0}) {
+    // Format: Show integer if it's a whole number, otherwise show 1 decimal
+    String formatMala(double value) {
+      if (value == value.toInt().toDouble()) {
+        return value.toInt().toString();
+      }
+      return value.toStringAsFixed(1);
+    }
+
     return PremiumUI.focusContainer(
       isFocusMode: isFocusMode,
       child: Padding(
@@ -405,11 +393,11 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: _buildStatItem("TODAY MALA", todayMalas.toString(), PremiumTokens.celestialSilver)),
+              Expanded(child: _buildStatItem("TODAY MALA", formatMala(todayMalas), PremiumTokens.celestialSilver)),
               Container(width: 1, height: 30, color: Colors.white10),
-              Expanded(child: _buildStatItem("GOAL", dailyGoal > 0 ? dailyGoal.toString() : "11", PremiumTokens.celestialSilver.withValues(alpha: 0.5))),
+              Expanded(child: _buildStatItem("GOAL", dailyGoal.toString(), PremiumTokens.celestialSilver.withValues(alpha: 0.5))),
               Container(width: 1, height: 30, color: Colors.white10),
-              Expanded(child: _buildStatItem("HIGHEST", highestMalas.toString(), PremiumTokens.celestialSilver.withValues(alpha: 0.8))),
+              Expanded(child: _buildStatItem("HIGHEST", formatMala(highestMalas), PremiumTokens.celestialSilver.withValues(alpha: 0.8))),
             ],
           ),
         ),

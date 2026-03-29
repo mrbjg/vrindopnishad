@@ -100,27 +100,37 @@ class UserStatsNotifier extends AsyncNotifier<UserStats?> {
     ref.invalidate(readingHistoryProvider);
   }
   
-  /// Update total jap count silently to prevent flickering
-  Future<void> syncJaps(int count) async {
+  /// Update total jap count silently to prevent flickering (Optimistic)
+  void updateTotalJapLocally(int total, int today) {
+    if (state.hasValue && state.value != null) {
+      var current = state.value!;
+      var updated = current.copyWith(totalJapCount: total);
+      
+      // Update highest record locally if today's count exceeds it
+      if (today > current.highestDailyJaps) {
+        updated = updated.copyWith(highestDailyJaps: today);
+      }
+      
+      state = AsyncValue.data(updated);
+      _saveToCache(updated);
+    }
+  }
+  
+  /// Sync total jap count with Supabase
+  Future<void> syncJaps(int count, {int? todayCount}) async {
     final user = ref.read(authStateProvider).value;
     if (user == null) return;
     
     // Update local state immediately (Optimistic UI)
-    if (state.hasValue && state.value != null) {
-      final updated = state.value!.copyWith(totalJapCount: count);
-      state = AsyncValue.data(updated);
-      _saveToCache(updated);
-    }
+    updateTotalJapLocally(count, todayCount ?? 0);
     
-    await ref.read(statsServiceProvider).updateStats(user.uid, {
-      'total_jap_count': count,
-    });
+    await ref.read(statsServiceProvider).logJapActivity(
+      user.uid, 
+      0, // Zero count increment if just syncing total (though logJapActivity usually expects an increment)
+      todayCount: todayCount,
+    );
     
-    final updatedStats = await ref.read(statsServiceProvider).getOrCreateStats(user.uid);
-    if (updatedStats != null) {
-      _saveToCache(updatedStats);
-      state = AsyncValue.data(updatedStats);
-    }
+    await refresh();
   }
 }
 

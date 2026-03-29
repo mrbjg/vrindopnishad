@@ -10,7 +10,7 @@ class StatsService {
     try {
       final response = await _supabase
           .from('user_stats')
-          .select('firebase_uid, level, experience_points, streak_count, last_active_date, total_reading_minutes, total_shlokas_read, total_jap_count, daily_mala_goal, reminder_time, dynamic_icon_enabled, spirituality_level, preferred_language, onboarding_completed, total_badges, updated_at')
+          .select('firebase_uid, level, experience_points, streak_count, last_active_date, total_reading_minutes, total_shlokas_read, total_jap_count, highest_daily_japs, daily_mala_goal, reminder_time, dynamic_icon_enabled, spirituality_level, preferred_language, onboarding_completed, total_badges, updated_at')
           .eq('firebase_uid', uid)
           .maybeSingle();
 
@@ -24,6 +24,7 @@ class StatsService {
           'total_reading_minutes': 0,
           'total_shlokas_read': 0,
           'total_jap_count': 0,
+          'highest_daily_japs': 0,
           'daily_mala_goal': 11,
           'reminder_time': '08:00',
           'dynamic_icon_enabled': true,
@@ -37,7 +38,7 @@ class StatsService {
         final created = await _supabase
             .from('user_stats')
             .insert(newStats)
-            .select('firebase_uid, level, experience_points, streak_count, last_active_date, total_reading_minutes, total_shlokas_read, total_jap_count, daily_mala_goal, reminder_time, dynamic_icon_enabled, spirituality_level, preferred_language, onboarding_completed, total_badges, updated_at')
+            .select('firebase_uid, level, experience_points, streak_count, last_active_date, total_reading_minutes, total_shlokas_read, total_jap_count, highest_daily_japs, daily_mala_goal, reminder_time, dynamic_icon_enabled, spirituality_level, preferred_language, onboarding_completed, total_badges, updated_at')
             .single();
             
         return UserStats.fromJson(created);
@@ -62,8 +63,8 @@ class StatsService {
     }
   }
 
-  /// Log a jap activity milestone (e.g. 1 Mala = 108 chants)
-  Future<void> logJapActivity(String uid, int count) async {
+  /// Log a jap activity (can be any number of chants)
+  Future<void> logJapActivity(String uid, int count, {int? todayCount}) async {
     try {
       await _supabase.from('jap_history').insert({
         'firebase_uid': uid,
@@ -71,17 +72,24 @@ class StatsService {
         'created_at': DateTime.now().toIso8601String(),
       });
       
-      // Also update total jap count in stats
+      // Also update total jap count and check for new personal best
       final stats = await getOrCreateStats(uid);
       if (stats != null) {
         final newXp = stats.experiencePoints + (count * 2); // 2 XP per chant
         final newLevel = (newXp / 1000).floor() + 1;
         
-        await updateStats(uid, {
+        final Map<String, dynamic> updates = {
           'total_jap_count': stats.totalJapCount + count,
           'experience_points': newXp,
           'level': newLevel,
-        });
+        };
+
+        // If todayCount is provided, check if it's a new personal record
+        if (todayCount != null && todayCount > stats.highestDailyJaps) {
+          updates['highest_daily_japs'] = todayCount;
+        }
+        
+        await updateStats(uid, updates);
       }
     } catch (e) {
       debugPrint('Error logging jap activity: $e');

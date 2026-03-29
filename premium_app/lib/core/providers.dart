@@ -80,6 +80,7 @@ class NaamJapState {
 class NaamJapNotifier extends StateNotifier<NaamJapState> {
   final SharedPreferences prefs;
   final Ref ref;
+  int _unsyncedCount = 0;
 
   NaamJapNotifier(this.prefs, this.ref) : super(NaamJapState(total: 0, today: 0)) {
     _init();
@@ -114,32 +115,50 @@ class NaamJapNotifier extends StateNotifier<NaamJapState> {
 
     final newTotal = state.total + 1;
     final newToday = state.today + 1;
+    _unsyncedCount++;
     
     state = NaamJapState(total: newTotal, today: newToday);
     
-    // Notify stats service of activity (optionally sync every 108)
-    if (newTotal % 108 == 0) {
+    // Sync with prefs on every tap for local persistence
+    await prefs.setInt('naam_jap_count', newTotal);
+    await prefs.setInt('naam_jap_today_count', newToday);
+    await prefs.setString('naam_jap_last_date', now.toIso8601String().split('T')[0]);
+
+    // Update local UI state (optimistic)
+    final statsNotifier = ref.read(userStatsProvider.notifier);
+    if (ref.read(userStatsProvider).hasValue) {
+      statsNotifier.updateTotalJapLocally(newTotal, newToday);
+    }
+
+    // Professional Milestone Sync (Every 27/quarter or 108/full Mala)
+    // We log every 27 counts to ensure history is granular but not excessive
+    if (_unsyncedCount >= 27 || newTotal % 108 == 0) {
       final user = ref.read(authStateProvider).value;
       if (user != null) {
-        // Award XP via GamificationService
-        if (context.mounted) {
+        final int syncNow = _unsyncedCount;
+        _unsyncedCount = 0;
+        
+        // Log to Supabase (History + Total + Highest)
+        await ref.read(statsServiceProvider).logJapActivity(
+          user.uid, 
+          syncNow, 
+          todayCount: newToday,
+        );
+        
+        // Complete Mala XP Award (Every 108)
+        if (newTotal % 108 == 0 && context.mounted) {
           await ref.read(gamificationServiceProvider).awardXP(
             context,
             216, // 108 chants * 2 XP
             'Completed 1 Mala',
           );
         }
-        ref.read(statsServiceProvider).logJapActivity(user.uid, 108);
+        
+        // Refresh history and stats to keep everything in sync
         ref.invalidate(japHistoryProvider);
+        ref.read(userStatsProvider.notifier).refresh();
       }
     }
-
-    await prefs.setInt('naam_jap_count', newTotal);
-    await prefs.setInt('naam_jap_today_count', newToday);
-    await prefs.setString('naam_jap_last_date', DateTime.now().toIso8601String().split('T')[0]);
-    
-    // Sync total count (real-time feedback)
-    ref.read(userStatsProvider.notifier).syncJaps(newTotal);
   }
 
   Future<void> reset() async {

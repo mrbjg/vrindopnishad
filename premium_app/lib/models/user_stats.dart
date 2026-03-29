@@ -13,6 +13,7 @@ class UserStats {
   final String spiritualityLevel; // seeker, sadhak, tapasvi, siddha
   final String preferredLanguage;
   final bool onboardingCompleted;
+  final int highestDailyJaps;
   final int totalBadges;
   final DateTime updatedAt;
 
@@ -25,6 +26,7 @@ class UserStats {
     this.totalReadingMinutes = 0,
     this.totalShlokasRead = 0,
     this.totalJapCount = 0,
+    this.highestDailyJaps = 0,
     this.dailyMalaGoal = 11,
     this.reminderTime,
     this.dynamicIconEnabled = true,
@@ -47,6 +49,7 @@ class UserStats {
       totalReadingMinutes: json['total_reading_minutes'] ?? 0,
       totalShlokasRead: json['total_shlokas_read'] ?? 0,
       totalJapCount: json['total_jap_count'] ?? 0,
+      highestDailyJaps: json['highest_daily_japs'] ?? 0,
       dailyMalaGoal: json['daily_mala_goal'] ?? 11,
       reminderTime: json['reminder_time'],
       dynamicIconEnabled: json['dynamic_icon_enabled'] ?? true,
@@ -70,6 +73,7 @@ class UserStats {
       'total_reading_minutes': totalReadingMinutes,
       'total_shlokas_read': totalShlokasRead,
       'total_jap_count': totalJapCount,
+      'highest_daily_japs': highestDailyJaps,
       'daily_mala_goal': dailyMalaGoal,
       'reminder_time': reminderTime,
       'dynamic_icon_enabled': dynamicIconEnabled,
@@ -90,6 +94,7 @@ class UserStats {
     int? totalReadingMinutes,
     int? totalShlokasRead,
     int? totalJapCount,
+    int? highestDailyJaps,
     int? dailyMalaGoal,
     String? reminderTime,
     bool? dynamicIconEnabled,
@@ -104,6 +109,7 @@ class UserStats {
       totalReadingMinutes: totalReadingMinutes ?? this.totalReadingMinutes,
       totalShlokasRead: totalShlokasRead ?? this.totalShlokasRead,
       totalJapCount: totalJapCount ?? this.totalJapCount,
+      highestDailyJaps: highestDailyJaps ?? this.highestDailyJaps,
       dailyMalaGoal: dailyMalaGoal ?? this.dailyMalaGoal,
       reminderTime: reminderTime ?? this.reminderTime,
       dynamicIconEnabled: dynamicIconEnabled ?? this.dynamicIconEnabled,
