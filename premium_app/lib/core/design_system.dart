@@ -2468,8 +2468,8 @@ class SacredActionMenuState extends State<SacredActionMenu> {
   }
 
   Offset _getItemPosition(int index) {
-    const double startAngle = 3.14159 + 0.35;
-    const double endAngle = 2 * 3.14159 - 0.35;
+    const double startAngle = 3.14159 + 0.55;
+    const double endAngle = 2 * 3.14159 - 0.55;
     final double angleStep =
         (endAngle - startAngle) / (widget.items.length - 1);
     final double baseAngle = startAngle + (index * angleStep);
@@ -2484,10 +2484,10 @@ class SacredActionMenuState extends State<SacredActionMenu> {
       }
     }
 
-    // Dynamic Radius: Active item stands out by pulling others back
-    double currentRadius = 125.0;
+    // Dynamic Radius: Tighter, more compact spread
+    double currentRadius = 110.0;
     if (_hoveredIndex != -1) {
-      currentRadius = (index == _hoveredIndex) ? 130.0 : 110.0;
+      currentRadius = (index == _hoveredIndex) ? 120.0 : 95.0;
     }
 
     return widget.position +
@@ -2531,8 +2531,8 @@ class SacredActionMenuState extends State<SacredActionMenu> {
             final double screenWidth = MediaQuery.sizeOf(context).width;
             final double minDimension = math.min(screenWidth, MediaQuery.sizeOf(context).height);
  
-            const double startPosAngle = 3.14159 + 0.35;
-            const double endPosAngle = 2 * 3.14159 - 0.35;
+            const double startPosAngle = 3.14159 + 0.55;
+            const double endPosAngle = 2 * 3.14159 - 0.55;
             final double posAngleStep = (endPosAngle - startPosAngle) / (widget.items.length - 1);
             final double baseAngle = startPosAngle + (index * posAngleStep);
 
@@ -2546,10 +2546,10 @@ class SacredActionMenuState extends State<SacredActionMenu> {
               }
             }
 
-            // Dynamic Radius Logic
-            double currentRadius = 125.0;
+            // Dynamic Radius: Tighter, more compact spread
+            double currentRadius = 110.0;
             if (_hoveredIndex != -1) {
-              currentRadius = (index == _hoveredIndex) ? 130.0 : 110.0;
+              currentRadius = (index == _hoveredIndex) ? 120.0 : 95.0;
             }
 
             final double offsetX = currentRadius * math.cos(dynamicAngle);
@@ -2565,7 +2565,7 @@ class SacredActionMenuState extends State<SacredActionMenu> {
                 height: 120,
                 child: Center(
                   child: AnimatedScale(
-                    scale: _isVisible ? (index == _hoveredIndex ? 1.18 : 0.85) : 0,
+                    scale: _isVisible ? (index == _hoveredIndex ? 1.12 : 0.92) : 0,
                     duration: const Duration(milliseconds: 220),
                     curve: Curves.elasticOut,
                     child: AnimatedOpacity(
@@ -2654,8 +2654,8 @@ class SacredActionMenuState extends State<SacredActionMenu> {
         AnimatedContainer(
               duration: const Duration(milliseconds: 350),
               curve: Curves.easeOutBack,
-              width: isSelected ? 70 : 60,
-              height: isSelected ? 70 : 60,
+              width: isSelected ? 60 : 52,
+              height: isSelected ? 60 : 52,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: isSelected
@@ -2677,7 +2677,7 @@ class SacredActionMenuState extends State<SacredActionMenu> {
                 child: Icon(
                   item.icon,
                   color: isSelected ? PremiumTokens.voidBlack : Colors.white,
-                  size: isSelected ? 32 : 26,
+                  size: isSelected ? 28 : 24,
                 ),
               ),
             )
