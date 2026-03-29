@@ -2497,7 +2497,21 @@ class SacredActionMenuState extends State<SacredActionMenu> {
   double _getSpan() {
     // Dynamic span based on item count for optimal visual distribution
     if (widget.items.length <= 1) return 0;
-    if (widget.items.length == 2) return 1.1; // Balanced for 2 side items
+    
+    // For 2 items in a corner, a 90-degree (PI/2) span creates a perfect 
+    // cardinal distribution (one item vertical, one horizontal)
+    final double dx = widget.position.dx;
+    final double dy = widget.position.dy;
+    final double scWidth = MediaQuery.sizeOf(context).width;
+    final double scHeight = MediaQuery.sizeOf(context).height;
+    
+    final bool inCorner = (dx < scWidth * 0.25 || dx > scWidth * 0.75) && 
+                         (dy < scHeight * 0.35 || dy > scHeight * 0.65);
+                         
+    if (widget.items.length == 2) {
+      return inCorner ? math.pi / 2 : 1.2;
+    }
+    
     if (widget.items.length == 3) return 1.6;
     return 2.2; // Wide fan for 4+
   }
