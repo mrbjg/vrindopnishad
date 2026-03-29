@@ -2484,8 +2484,11 @@ class SacredActionMenuState extends State<SacredActionMenu> {
       }
     }
 
-    // Dynamic Radius: Active item "pops" out further
-    final double currentRadius = (_hoveredIndex == index) ? 145.0 : 125.0;
+    // Dynamic Radius: Active item stands out by pulling others back
+    double currentRadius = 125.0;
+    if (_hoveredIndex != -1) {
+      currentRadius = (index == _hoveredIndex) ? 130.0 : 110.0;
+    }
 
     return widget.position +
         Offset(currentRadius * math.cos(dynamicAngle), currentRadius * math.sin(dynamicAngle));
@@ -2543,7 +2546,12 @@ class SacredActionMenuState extends State<SacredActionMenu> {
               }
             }
 
-            final double currentRadius = (_hoveredIndex == index) ? 145.0 : 125.0;
+            // Dynamic Radius Logic
+            double currentRadius = 125.0;
+            if (_hoveredIndex != -1) {
+              currentRadius = (index == _hoveredIndex) ? 130.0 : 110.0;
+            }
+
             final double offsetX = currentRadius * math.cos(dynamicAngle);
             final double offsetY = currentRadius * math.sin(dynamicAngle);
 
@@ -2619,7 +2627,7 @@ class SacredActionMenuState extends State<SacredActionMenu> {
                         _hoveredIndex != -1
                             ? widget.items[_hoveredIndex].icon
                             : Icons.close,
-                        key: ValueKey(_hoveredIndex),
+                        key: ValueKey('sacred_$_hoveredIndex'),
                         color: _hoveredIndex != -1
                             ? widget.items[_hoveredIndex].color
                             : Colors.white,
