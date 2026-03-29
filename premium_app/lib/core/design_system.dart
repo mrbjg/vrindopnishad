@@ -1983,21 +1983,31 @@ class _SacredVoidButtonInternal extends StatefulWidget {
 }
 
 class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _controller;
+  late final AnimationController _pressController;
+  late final Animation<double> _pressAnimation;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000), // Default duration
+      duration: const Duration(milliseconds: 1000),
+    );
+    _pressController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 150),
+    );
+    _pressAnimation = Tween<double>(begin: 1.0, end: 0.88).animate(
+      CurvedAnimation(parent: _pressController, curve: Curves.easeOutCubic),
     );
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _pressController.dispose();
     super.dispose();
   }
 
@@ -2017,6 +2027,7 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal>
 
   void _handleTap() {
     HapticFeedback.mediumImpact();
+    _pressController.forward(from: 0.0).then((_) => _pressController.reverse());
     widget.onTap();
     if (_controller.duration != null) {
       _controller.forward(from: 0.0).then((_) {
@@ -2048,112 +2059,118 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _handleTap,
-      onLongPressStart: _handleLongPressStart,
-      onLongPressMoveUpdate: _handleLongPressMoveUpdate,
-      onLongPressEnd: _handleLongPressEnd,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Outer Glow Aura (Subtle Breathing)
-          Container(
-            width: 75,
-            height: 75,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color:
-                      (widget.isActive
-                              ? PremiumTokens.saffronGlow
-                              : PremiumTokens.nebulaBlue)
-                          .withValues(alpha: widget.isActive ? 0.3 : 0.25),
-                  blurRadius: widget.isActive ? 30 : 25,
-                  spreadRadius: widget.isActive ? 2 : 1,
-                ),
-              ],
-            ),
-          ),
-
-          // Main Button Body
-          Container(
-            width: 58,
-            height: 58,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: const Color(
-                0xFF03030F,
-              ).withValues(alpha: 0.9), // Near-black void
-              border: Border.all(
-                color:
-                    (widget.isActive ? PremiumTokens.saffronGlow : Colors.white)
-                        .withValues(alpha: 0.4),
-                width: 1.5,
-              ),
-              boxShadow: [
-                if (widget.isActive)
+    return ScaleTransition(
+      scale: _pressAnimation,
+      child: GestureDetector(
+        onTapDown: (_) => _pressController.forward(),
+        onTapUp: (_) => _pressController.reverse(),
+        onTapCancel: () => _pressController.reverse(),
+        onTap: _handleTap,
+        onLongPressStart: _handleLongPressStart,
+        onLongPressMoveUpdate: _handleLongPressMoveUpdate,
+        onLongPressEnd: _handleLongPressEnd,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Outer Glow Aura (Subtle Breathing)
+            Container(
+              width: 75,
+              height: 75,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
                   BoxShadow(
-                    color: PremiumTokens.saffronGlow.withValues(alpha: 0.5),
-                    blurRadius: 15,
-                    spreadRadius: -2,
+                    color: (widget.isActive
+                            ? PremiumTokens.saffronGlow
+                            : PremiumTokens.nebulaBlue)
+                        .withValues(alpha: widget.isActive ? 0.3 : 0.25),
+                    blurRadius: widget.isActive ? 30 : 25,
+                    spreadRadius: widget.isActive ? 2 : 1,
                   ),
-              ],
+                ],
+              ),
             ),
-            child: Center(
-              child: widget.count != null && widget.count! > 0
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min, // Ensure min size
-                        children: [
-                          const Icon(
-                                Iconsax.heart5,
-                                color: Colors.white,
-                                size: 24,
-                              )
-                              .animate(onPlay: (c) => c.repeat(reverse: true))
-                              .scale(
-                                begin: const Offset(1, 1),
-                                end: const Offset(1.2, 1.2),
-                                duration: 800.ms,
-                              ),
-                          const SizedBox(height: 2),
-                          Text(
-                            widget.count.toString(),
-                            style: GoogleFonts.spectral(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: ColorFiltered(
-                        colorFilter: const ColorFilter.mode(
-                          Colors.white,
-                          BlendMode.srcIn,
-                        ),
-                        child: Lottie.asset(
-                          'assets/animated_icons/Heart/heart.json',
-                          controller: _controller,
-                          width: 44,
-                          height: 44,
-                          repeat: false,
-                          animate: false,
-                          onLoaded: (composition) {
-                            _controller.duration = composition.duration;
-                            _controller.value = 0.0;
-                          },
-                        ),
-                      ),
+
+            // Main Button Body
+            Container(
+              width: 58,
+              height: 58,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(
+                  0xFF03030F,
+                ).withValues(alpha: 0.9), // Near-black void
+                border: Border.all(
+                  color: (widget.isActive
+                          ? PremiumTokens.saffronGlow
+                          : Colors.white)
+                      .withValues(alpha: 0.4),
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  if (widget.isActive)
+                    BoxShadow(
+                      color: PremiumTokens.saffronGlow.withValues(alpha: 0.5),
+                      blurRadius: 15,
+                      spreadRadius: -2,
                     ),
+                ],
+              ),
+              child: Center(
+                child: widget.count != null && widget.count! > 0
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min, // Ensure min size
+                          children: [
+                            const Icon(
+                                  Iconsax.heart5,
+                                  color: Colors.white,
+                                  size: 24,
+                                )
+                                .animate(onPlay: (c) => c.repeat(reverse: true))
+                                .scale(
+                                  begin: const Offset(1, 1),
+                                  end: const Offset(1.2, 1.2),
+                                  duration: 800.ms,
+                                ),
+                            const SizedBox(height: 2),
+                            Text(
+                              widget.count.toString(),
+                              style: GoogleFonts.spectral(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: ColorFiltered(
+                          colorFilter: const ColorFilter.mode(
+                            Colors.white,
+                            BlendMode.srcIn,
+                          ),
+                          child: Lottie.asset(
+                            'assets/animated_icons/Heart/heart.json',
+                            controller: _controller,
+                            width: 44,
+                            height: 44,
+                            repeat: false,
+                            animate: false,
+                            onLoaded: (composition) {
+                              _controller.duration = composition.duration;
+                              _controller.value = 0.0;
+                            },
+                          ),
+                        ),
+                      ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -2405,16 +2422,15 @@ class SacredActionMenuState extends State<SacredActionMenu> {
 
     if (mounted) {
       setState(() => _isVisible = false);
-      Future.delayed(const Duration(milliseconds: 300), widget.onClose);
+      Future.delayed(const Duration(milliseconds: 150), widget.onClose);
     }
   }
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 10), () {
-      if (mounted) setState(() => _isVisible = true);
-    });
+    // Instant visibility trigger
+    _isVisible = true;
 
     // Listen to pointer movements from the button
     widget.pointerPosition?.addListener(_updateHover);
@@ -2434,7 +2450,7 @@ class SacredActionMenuState extends State<SacredActionMenu> {
     }
 
     int closestIndex = -1;
-    double minDistance = 80.0; // Hit threshold increased for larger radius
+    double minDistance = 65.0; // Optimized hit threshold for smaller radius
 
     for (int i = 0; i < widget.items.length; i++) {
       final itemPos = _getItemPosition(i);
@@ -2452,12 +2468,12 @@ class SacredActionMenuState extends State<SacredActionMenu> {
   }
 
   Offset _getItemPosition(int index) {
-    const double startAngle = 3.14159 + 0.3;
-    const double endAngle = 2 * 3.14159 - 0.3;
+    const double startAngle = 3.14159 + 0.45;
+    const double endAngle = 2 * 3.14159 - 0.45;
     final double angleStep =
         (endAngle - startAngle) / (widget.items.length - 1);
     final double angle = startAngle + (index * angleStep);
-    const double radius = 140.0;
+    const double radius = 125.0; // Optimized Pinterest-like radius
 
     return widget.position +
         Offset(radius * math.cos(angle), radius * math.sin(angle));
@@ -2466,7 +2482,7 @@ class SacredActionMenuState extends State<SacredActionMenu> {
   void _handleClose() {
     // Standard close (e.g. tap on background)
     setState(() => _isVisible = false);
-    Future.delayed(const Duration(milliseconds: 300), widget.onClose);
+    Future.delayed(const Duration(milliseconds: 150), widget.onClose);
   }
 
   @override
@@ -2480,13 +2496,13 @@ class SacredActionMenuState extends State<SacredActionMenu> {
             onTap: _handleClose,
             child: TweenAnimationBuilder<double>(
               tween: Tween(begin: 0, end: _isVisible ? 1 : 0),
-              duration: const Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 150),
               builder: (context, value, child) => Container(
-                color: Colors.black.withValues(alpha: value * 0.7),
+                color: Colors.black.withValues(alpha: value * 0.75),
                 child: BackdropFilter(
                   filter: ImageFilter.blur(
-                    sigmaX: value * 5,
-                    sigmaY: value * 5,
+                    sigmaX: value * 8,
+                    sigmaY: value * 8,
                   ),
                   child: Container(color: Colors.transparent),
                 ),
@@ -2500,11 +2516,13 @@ class SacredActionMenuState extends State<SacredActionMenu> {
 
             // Layout logic: Items spread in an arc above the tap point
             final double screenWidth = MediaQuery.sizeOf(context).width;
-            final double minDimension = math.min(screenWidth, MediaQuery.sizeOf(context).height);
-            final double radius = math.min(140.0, minDimension * 0.35); // Responsive radius
+            final double minDimension =
+                math.min(screenWidth, MediaQuery.sizeOf(context).height);
+            final double radius =
+                math.min(125.0, minDimension * 0.4); // Responsive radius
 
-            const double startAngle = 3.14159 + 0.3; // Top-leftish
-            const double endAngle = 2 * 3.14159 - 0.3; // Top-rightish
+            const double startAngle = 3.14159 + 0.45;
+            const double endAngle = 2 * 3.14159 - 0.45;
             final double angleStep =
                 (endAngle - startAngle) / (widget.items.length - 1);
             final double angle = startAngle + (index * angleStep);
@@ -2513,18 +2531,24 @@ class SacredActionMenuState extends State<SacredActionMenu> {
             final double offsetY = radius * math.sin(angle);
 
             return AnimatedPositioned(
-              duration: Duration(milliseconds: 300 + (index * 60)),
-              curve: Curves.elasticOut,
+              duration: Duration(milliseconds: 180 + (index * 12)),
+              curve: Curves.easeOutBack,
               left: widget.position.dx + (_isVisible ? offsetX : 0) - 60,
               top: widget.position.dy + (_isVisible ? offsetY : 0) - 60,
               child: SizedBox(
                 width: 120,
                 height: 120,
                 child: Center(
-                  child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 200),
-                    opacity: _isVisible ? 1 : 0,
-                    child: _buildMenuItem(item, index == _hoveredIndex),
+                  child: AnimatedScale(
+                    scale: _isVisible ? (index == _hoveredIndex ? 1.18 : 0.85) : 0,
+                    duration: const Duration(milliseconds: 220),
+                    curve: Curves.elasticOut,
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 150),
+                      curve: Curves.linear,
+                      opacity: _isVisible ? (index == _hoveredIndex ? 1.0 : 0.45) : 0,
+                      child: _buildMenuItem(item, index == _hoveredIndex),
+                    ),
                   ),
                 ),
               ),
@@ -2533,60 +2557,66 @@ class SacredActionMenuState extends State<SacredActionMenu> {
 
           // Original Tap Point Indicator / Icon Sync
           Positioned(
-                left: widget.position.dx - 35,
-                top: widget.position.dy - 35,
+            left: widget.position.dx - 30,
+            top: widget.position.dy - 30,
+            child: Hero(
+              tag: 'sacred_void_center',
+              child: AnimatedScale(
+                scale: _hoveredIndex != -1 ? 1.12 : 1.0,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOutBack,
                 child: GestureDetector(
                   onTap: _handleClose,
-                  child: Hero(
-                    tag: 'sacred_void_center',
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      width: 70,
-                      height: 70,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: _hoveredIndex != -1
+                          ? widget.items[_hoveredIndex].color.withValues(
+                              alpha: 0.25,
+                            )
+                          : Colors.white.withValues(alpha: 0.1),
+                      border: Border.all(
                         color: _hoveredIndex != -1
                             ? widget.items[_hoveredIndex].color.withValues(
-                                alpha: 0.2,
+                                alpha: 0.8,
                               )
-                            : Colors.white.withValues(alpha: 0.1),
-                        border: Border.all(
-                          color: _hoveredIndex != -1
-                              ? widget.items[_hoveredIndex].color.withValues(
-                                  alpha: 0.6,
-                                )
-                              : Colors.white.withValues(alpha: 0.3),
-                          width: 2,
-                        ),
-                        boxShadow: [
-                          if (_hoveredIndex != -1)
-                            BoxShadow(
-                              color: widget.items[_hoveredIndex].color
-                                  .withValues(alpha: 0.4),
-                              blurRadius: 20,
-                              spreadRadius: 5,
-                            ),
-                        ],
+                            : Colors.white.withValues(alpha: 0.2),
+                        width: 1.5,
                       ),
-                      child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 200),
-                        child: Icon(
-                          _hoveredIndex != -1
-                              ? widget.items[_hoveredIndex].icon
-                              : Icons.close,
-                          key: ValueKey(_hoveredIndex),
-                          color: _hoveredIndex != -1
-                              ? widget.items[_hoveredIndex].color
-                              : Colors.white,
-                          size: _hoveredIndex != -1 ? 30 : 24,
-                        ),
+                      boxShadow: [
+                        if (_hoveredIndex != -1)
+                          BoxShadow(
+                            color: widget.items[_hoveredIndex].color
+                                .withValues(alpha: 0.5),
+                            blurRadius: 25,
+                            spreadRadius: 8,
+                          ),
+                      ],
+                    ),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      child: Icon(
+                        _hoveredIndex != -1
+                            ? widget.items[_hoveredIndex].icon
+                            : Icons.close,
+                        key: ValueKey(_hoveredIndex),
+                        color: _hoveredIndex != -1
+                            ? widget.items[_hoveredIndex].color
+                            : Colors.white,
+                        size: _hoveredIndex != -1 ? 26 : 20,
                       ),
                     ),
                   ),
                 ),
-              )
-              .animate(target: _isVisible ? 1 : 0)
-              .scale(begin: const Offset(0.5, 0.5), end: const Offset(1, 1)),
+              ),
+            ).animate(target: _isVisible ? 1 : 0).scale(
+                  begin: const Offset(0.5, 0.5),
+                  end: const Offset(1, 1),
+                ),
+          ),
         ],
       ),
     );
@@ -2597,23 +2627,24 @@ class SacredActionMenuState extends State<SacredActionMenu> {
       mainAxisSize: MainAxisSize.min,
       children: [
         AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: isSelected ? 80 : 65,
-              height: isSelected ? 80 : 65,
+              duration: const Duration(milliseconds: 350),
+              curve: Curves.easeOutBack,
+              width: isSelected ? 75 : 65,
+              height: isSelected ? 75 : 65,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: isSelected
                     ? item.color.withValues(alpha: 0.9)
-                    : PremiumTokens.voidBlack.withValues(alpha: 0.9),
+                    : PremiumTokens.voidBlack.withValues(alpha: 0.4),
                 border: Border.all(
-                  color: item.color.withValues(alpha: isSelected ? 0.8 : 0.4),
-                  width: isSelected ? 3 : 1.5,
+                  color: item.color.withValues(alpha: isSelected ? 0.8 : 0.2),
+                  width: isSelected ? 2.5 : 1.0,
                 ),
                 boxShadow: [
                   BoxShadow(
                     color: item.color.withValues(alpha: isSelected ? 0.6 : 0.2),
-                    blurRadius: isSelected ? 25 : 15,
-                    spreadRadius: isSelected ? 5 : 2,
+                    blurRadius: isSelected ? 35 : 10,
+                    spreadRadius: isSelected ? 8 : 2,
                   ),
                 ],
               ),
@@ -2627,27 +2658,36 @@ class SacredActionMenuState extends State<SacredActionMenu> {
             )
             .animate(target: _isVisible ? 1 : 0)
             .scale(
-              begin: const Offset(0, 0),
+              begin: const Offset(0.3, 0.3),
               end: const Offset(1, 1),
               curve: Curves.elasticOut,
-              duration: 500.ms,
+              duration: 400.ms,
             )
-            .fadeIn(duration: 200.ms),
-        const SizedBox(height: 8),
-        Material(
-          color: Colors.transparent,
-          child: Text(
-            item.label.toUpperCase(),
-            style: PremiumTokens.sansStyle(
-              fontSize: isSelected ? 11 : 9,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.5,
-              color: isSelected
-                  ? Colors.white
-                  : Colors.white.withValues(alpha: 0.8),
+            .fadeIn(duration: 150.ms),
+        if (isSelected) ...[
+          const SizedBox(height: 8),
+          Material(
+            color: Colors.transparent,
+            child: Text(
+              item.label.toUpperCase(),
+              style: GoogleFonts.spectral(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+                color: Colors.white,
+                shadows: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.8),
+                    blurRadius: 4,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ).animate(target: _isVisible ? 1 : 0).fadeIn(delay: 200.ms),
+          )
+              .animate()
+              .fadeIn(duration: 150.ms)
+              .slideY(begin: 0.2, end: 0, curve: Curves.easeOutCubic),
+        ],
       ],
     );
   }
