@@ -2622,18 +2622,40 @@ class SacredActionMenuState extends State<SacredActionMenu> {
                           ),
                       ],
                     ),
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      child: Icon(
-                        _hoveredIndex != -1
-                            ? widget.items[_hoveredIndex].icon
-                            : Icons.close,
-                        key: ValueKey('sacred_${_hoveredIndex}_$_switchCounter'),
-                        color: _hoveredIndex != -1
-                            ? widget.items[_hoveredIndex].color
-                            : Colors.white,
-                        size: _hoveredIndex != -1 ? 26 : 20,
-                      ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Selection Icon (Visible when hovering)
+                        AnimatedScale(
+                          scale: _hoveredIndex != -1 ? 1.0 : 0.5,
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeOutBack,
+                          child: AnimatedOpacity(
+                            opacity: _hoveredIndex != -1 ? 1.0 : 0.0,
+                            duration: const Duration(milliseconds: 150),
+                            child: Icon(
+                              _hoveredIndex != -1 ? widget.items[_hoveredIndex].icon : Icons.circle,
+                              color: _hoveredIndex != -1 ? widget.items[_hoveredIndex].color : Colors.white,
+                              size: 26,
+                            ),
+                          ),
+                        ),
+                        // Close Icon (Visible when not hovering)
+                        AnimatedScale(
+                          scale: _hoveredIndex == -1 ? 1.0 : 0.5,
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeOutBack,
+                          child: AnimatedOpacity(
+                            opacity: _hoveredIndex == -1 ? 1.0 : 0.0,
+                            duration: const Duration(milliseconds: 150),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
