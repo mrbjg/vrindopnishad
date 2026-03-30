@@ -12,6 +12,7 @@ import '../core/theme.dart';
 import '../widgets/sacred_ritual_alert.dart';
 
 import '../core/stats_provider.dart';
+import '../core/providers.dart';
 
 class RitualsScreen extends ConsumerWidget {
   const RitualsScreen({super.key});
@@ -65,6 +66,31 @@ class RitualsScreen extends ConsumerWidget {
                 child: const Icon(Icons.add, color: PremiumTokens.voidBlack, size: 32),
               ),
             ).animate().scale(delay: 400.ms, duration: 600.ms, curve: Curves.elasticOut),
+          ),
+
+          // Premium Back Button
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 16,
+            left: 20,
+            child: GestureDetector(
+              onTap: () {
+                HapticFeedback.mediumImpact();
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                } else {
+                  ref.read(navigationIndexProvider.notifier).state = 0;
+                }
+              },
+              child: PremiumUI.glassCard(
+                padding: const EdgeInsets.all(12),
+                borderRadius: 16,
+                child: const Icon(
+                  Iconsax.arrow_left_2, 
+                  color: Colors.white, 
+                  size: 20
+                ),
+              ),
+            ).animate().fadeIn(duration: 500.ms).slideX(begin: -0.2),
           ),
         ],
       ),
