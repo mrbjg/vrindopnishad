@@ -112,6 +112,16 @@
 			<key>UIPrerenderedIcon</key>
 			<false/>
 		</dict>
-	</dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.1027361942428-g0gisvdp87rpufeaij3d16mff3pv7d1d</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
