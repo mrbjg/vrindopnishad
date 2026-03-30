@@ -8,6 +8,7 @@ import '../core/auth_provider.dart';
 import 'content_detail_screen.dart';
 import 'search_screen.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../core/favorites_provider.dart';
 import '../core/audio_provider.dart';
 
@@ -25,7 +26,7 @@ class LibraryScreen extends ConsumerWidget {
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [
-                SliverToBoxAdapter(child: RepaintBoundary(child: _buildHeader())),
+                SliverToBoxAdapter(child: RepaintBoundary(child: _buildHeader(context))),
                 SliverToBoxAdapter(child: RepaintBoundary(child: _buildSearchBar(context, ref))),
                 SliverToBoxAdapter(child: RepaintBoundary(child: _buildCategoryFilterIndicator(context, ref))),
                 SliverToBoxAdapter(child: RepaintBoundary(child: _buildNowPlaying(context, ref))),
@@ -67,7 +68,7 @@ class LibraryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: SizedBox(

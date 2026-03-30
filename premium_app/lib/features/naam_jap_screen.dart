@@ -133,6 +133,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
         children: [
           GestureDetector(
             onTap: () {
+              HapticFeedback.mediumImpact();
               if (Navigator.canPop(context)) {
                 Navigator.pop(context);
               } else {
@@ -144,7 +145,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
               borderRadius: 14,
               child: const Icon(Iconsax.arrow_left_2, color: Colors.white, size: 20),
             ),
-          ),
+          ).animate().fadeIn(duration: 500.ms).slideX(begin: -0.2),
           
           GestureDetector(
             onTap: () {

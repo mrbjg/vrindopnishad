@@ -14,6 +14,7 @@ import '../widgets/sacred_logout_dialog.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/services.dart';
 import '../core/stats_provider.dart';
+import '../core/providers.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
