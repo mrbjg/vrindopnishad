@@ -177,6 +177,10 @@ class PremiumTokens {
     );
   }
 
+  static bool containsHindi(String text) {
+    return RegExp(r'[\u0900-\u097F]').hasMatch(text);
+  }
+
   static TextStyle sansStyle({
     double fontSize = 16,
     Color color = celestialSilver,
@@ -184,12 +188,73 @@ class PremiumTokens {
     FontStyle fontStyle = FontStyle.normal,
     double? letterSpacing,
   }) {
-    return GoogleFonts.manrope(
+    return GoogleFonts.poppins(
       fontSize: fontSize,
       color: color,
       fontWeight: fontWeight,
       fontStyle: fontStyle,
       letterSpacing: letterSpacing,
+    );
+  }
+
+  static TextStyle hindiAwareStyle(
+    String text, {
+    double fontSize = 14,
+    Color color = celestialSilver,
+    FontWeight fontWeight = FontWeight.normal,
+    bool isSacred = false,
+    double? height,
+  }) {
+    if (!containsHindi(text)) {
+      return sansStyle(
+        fontSize: fontSize,
+        color: color,
+        fontWeight: fontWeight,
+      ).copyWith(height: height);
+    }
+
+    if (isSacred) {
+      return hindiSacredStyle(
+        fontSize: fontSize,
+        color: color,
+        fontWeight: fontWeight,
+        height: height ?? 1.8,
+      );
+    }
+
+    return hindiUIStyle(
+      fontSize: fontSize,
+      color: color,
+      fontWeight: fontWeight,
+      height: height ?? 1.6,
+    );
+  }
+
+  static TextStyle hindiSacredStyle({
+    double fontSize = 18,
+    Color color = celestialSilver,
+    FontWeight fontWeight = FontWeight.w500,
+    double height = 1.8,
+  }) {
+    return GoogleFonts.laila(
+      fontSize: fontSize,
+      color: color,
+      fontWeight: fontWeight,
+      height: height,
+    );
+  }
+
+  static TextStyle hindiUIStyle({
+    double fontSize = 14,
+    Color color = celestialSilver,
+    FontWeight fontWeight = FontWeight.w500,
+    double height = 1.6,
+  }) {
+    return GoogleFonts.poppins(
+      fontSize: fontSize,
+      color: color,
+      fontWeight: fontWeight,
+      height: height,
     );
   }
 

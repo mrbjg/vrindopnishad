@@ -392,10 +392,12 @@ class LibraryScreen extends ConsumerWidget {
                       item.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: PremiumTokens.sansStyle(
+                      style: PremiumTokens.hindiAwareStyle(
+                        item.title,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
+                        isSacred: true,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -403,10 +405,11 @@ class LibraryScreen extends ConsumerWidget {
                       item.commentary.startsWith('http') ? 'Sacred Verse Details' : item.commentary,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: PremiumTokens.sansStyle(
+                      style: PremiumTokens.hindiAwareStyle(
+                        item.commentary,
                         fontSize: 11,
                         color: Colors.white.withValues(alpha: 0.45),
-                      ).copyWith(height: 1.3),
+                      ),
                     ),
                     const Spacer(),
                     Row(

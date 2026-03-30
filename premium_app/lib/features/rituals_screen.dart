@@ -14,6 +14,8 @@ import '../widgets/sacred_ritual_alert.dart';
 import '../core/stats_provider.dart';
 import '../core/providers.dart';
 
+enum _RitualCategoryStatus { active, expired, scheduled }
+
 class RitualsScreen extends ConsumerWidget {
   const RitualsScreen({super.key});
 
@@ -202,12 +204,12 @@ class RitualsScreen extends ConsumerWidget {
                   const SizedBox(width: 8),
                   Text(
                     category.toUpperCase(),
-                    style: GoogleFonts.manrope(
+                    style: PremiumTokens.hindiAwareStyle(
+                      category,
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       color: isCategoryDone ? PremiumTokens.saffronGlow : PremiumTokens.starlight.withValues(alpha: 0.6),
-                      letterSpacing: 4,
-                    ),
+                    ).copyWith(letterSpacing: 4),
                   ),
                   const Spacer(),
                   Text(
@@ -230,6 +232,12 @@ class RitualsScreen extends ConsumerWidget {
   }
 
   Widget _buildRitualCard(BuildContext context, WidgetRef ref, Ritual ritual) {
+    final status = _getCategoryStatus(ritual.category);
+    final isMissed = status == _RitualCategoryStatus.expired && !ritual.isCompleted;
+    final isScheduled = status == _RitualCategoryStatus.scheduled;
+    final isActive = status == _RitualCategoryStatus.active;
+    final isLocked = isMissed || isScheduled;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Dismissible(
@@ -255,10 +263,21 @@ class RitualsScreen extends ConsumerWidget {
         ),
         child: GestureDetector(
           onTap: () {
+            if (isLocked && !ritual.isCompleted) {
+              HapticFeedback.vibrate(); // Locked haptic
+              PremiumUI.showNotification(
+                context, 
+                isMissed ? "Time Window Expired" : "Not Yet Scheduled",
+                icon: Iconsax.lock,
+                color: Colors.white24,
+              );
+              return;
+            }
             HapticFeedback.lightImpact();
             ref.read(ritualsProvider.notifier).toggleRitual(ritual.id);
           },
           onLongPress: () {
+            if (isMissed) return; // Cannot edit missed rituals
             HapticFeedback.mediumImpact();
             _showAddRitualDialog(context, ref, ritual: ritual);
           },
@@ -267,12 +286,12 @@ class RitualsScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               color: ritual.isCompleted 
                   ? PremiumTokens.saffronGlow.withValues(alpha: 0.02) 
-                  : Colors.white.withValues(alpha: 0.03),
+                  : (isMissed ? Colors.red.withValues(alpha: 0.02) : Colors.white.withValues(alpha: 0.03)),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
                 color: ritual.isCompleted 
                   ? PremiumTokens.saffronGlow.withValues(alpha: 0.2) 
-                  : Colors.white.withValues(alpha: 0.1), 
+                  : (isMissed ? Colors.red.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.1)), 
                 width: 1
               ),
               boxShadow: ritual.isCompleted ? [
@@ -285,7 +304,10 @@ class RitualsScreen extends ConsumerWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(24),
-              child: _buildGlassContent(ritual),
+              child: Opacity(
+                opacity: isLocked && !ritual.isCompleted ? 0.5 : 1.0,
+                child: _buildGlassContent(ritual, isMissed, isScheduled, isActive),
+              ),
             ),
           ).animate().fadeIn(duration: 400.ms).slideX(begin: 0.05),
         ),
@@ -293,7 +315,25 @@ class RitualsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildGlassContent(Ritual ritual) {
+  _RitualCategoryStatus _getCategoryStatus(String category) {
+    final now = DateTime.now();
+    final hour = now.hour;
+
+    if (category == 'Morning') {
+      if (hour < 4) return _RitualCategoryStatus.scheduled;
+      if (hour < 12) return _RitualCategoryStatus.active;
+      return _RitualCategoryStatus.expired;
+    } else if (category == 'Afternoon') {
+      if (hour < 12) return _RitualCategoryStatus.scheduled;
+      if (hour < 17) return _RitualCategoryStatus.active;
+      return _RitualCategoryStatus.expired;
+    } else { // Evening
+      if (hour < 17 && hour >= 4) return _RitualCategoryStatus.scheduled;
+      return _RitualCategoryStatus.active; // Active 17:00 to 04:00
+    }
+  }
+
+  Widget _buildGlassContent(Ritual ritual, bool isMissed, bool isScheduled, bool isActive) {
     const double blurSigma = 8.0;
     final content = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -303,18 +343,61 @@ class RitualsScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  ritual.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.manrope(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: ritual.isCompleted ? Colors.white24 : PremiumTokens.silver,
-                    decoration: ritual.isCompleted ? TextDecoration.lineThrough : null,
-                    decorationColor: Colors.white24,
-                    letterSpacing: 0.5,
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        ritual.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: PremiumTokens.hindiAwareStyle(
+                          ritual.title,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: ritual.isCompleted ? Colors.white24 : PremiumTokens.silver,
+                          isSacred: true,
+                        ).copyWith(
+                          decoration: ritual.isCompleted ? TextDecoration.lineThrough : null,
+                          decorationColor: Colors.white24,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                    if (isMissed)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
+                        ),
+                        child: Text(
+                          "MISSED",
+                          style: PremiumTokens.sansStyle(
+                            fontSize: 8,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.redAccent.withValues(alpha: 0.7),
+                          ),
+                        ),
+                      ),
+                    if (isScheduled)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                        ),
+                        child: Text(
+                          "LOCKED",
+                          style: PremiumTokens.sansStyle(
+                            fontSize: 8,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white24,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -330,7 +413,7 @@ class RitualsScreen extends ConsumerWidget {
           ),
           const SizedBox(width: 12),
           // Checkmark indicator logic stays same...
-          _buildCheckmark(ritual),
+          _buildCheckmark(ritual, isMissed || isScheduled),
         ],
       ),
     );
@@ -345,10 +428,11 @@ class RitualsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildCheckmark(Ritual ritual) {
+  Widget _buildCheckmark(Ritual ritual, bool isLocked) {
     return Consumer(
       builder: (context, ref, child) => GestureDetector(
         onTap: () {
+          if (isLocked && !ritual.isCompleted) return;
           HapticFeedback.lightImpact();
           final willBeCompleted = !ritual.isCompleted;
           if (willBeCompleted) {
@@ -369,11 +453,11 @@ class RitualsScreen extends ConsumerWidget {
             shape: BoxShape.circle,
             color: ritual.isCompleted 
                 ? PremiumTokens.starlight.withValues(alpha: 0.1) 
-                : Colors.transparent,
+                : (isLocked ? Colors.white.withValues(alpha: 0.05) : Colors.transparent),
             border: Border.all(
               color: ritual.isCompleted 
                   ? PremiumTokens.starlight.withValues(alpha: 0.6) 
-                  : Colors.white.withValues(alpha: 0.2),
+                  : (isLocked ? Colors.white.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.2)),
               width: 1,
             ),
             boxShadow: ritual.isCompleted ? [
@@ -386,7 +470,7 @@ class RitualsScreen extends ConsumerWidget {
           ),
           child: ritual.isCompleted 
               ? const Icon(Icons.check, color: PremiumTokens.starlight, size: 18) 
-              : null,
+              : (isLocked ? const Icon(Icons.lock_outline, color: Colors.white24, size: 14) : null),
         ),
       ),
     );

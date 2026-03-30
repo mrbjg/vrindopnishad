@@ -452,49 +452,49 @@ class AppTheme {
         height: 1.3,
       ),
       // Headlines
-      headlineLarge: GoogleFonts.outfit(
+      headlineLarge: GoogleFonts.poppins(
         fontSize: 22,
         fontWeight: FontWeight.w700,
         color: textColor,
       ),
-      headlineMedium: GoogleFonts.outfit(
+      headlineMedium: GoogleFonts.poppins(
         fontSize: 18,
         fontWeight: FontWeight.w600,
         color: textColor,
       ),
-      headlineSmall: GoogleFonts.outfit(
+      headlineSmall: GoogleFonts.poppins(
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: textColor,
       ),
       // Body text
-      bodyLarge: GoogleFonts.outfit(
+      bodyLarge: GoogleFonts.poppins(
         fontSize: 16,
         color: secondaryColor,
         height: 1.6,
       ),
-      bodyMedium: GoogleFonts.outfit(
+      bodyMedium: GoogleFonts.poppins(
         fontSize: 14,
+        color: secondaryColor,
+        height: 1.6, // Slightly increased for Hindi matras
+      ),
+      bodySmall: GoogleFonts.poppins(
+        fontSize: 12,
         color: secondaryColor,
         height: 1.5,
       ),
-      bodySmall: GoogleFonts.outfit(
-        fontSize: 12,
-        color: secondaryColor,
-        height: 1.4,
-      ),
       // Labels
-      labelLarge: GoogleFonts.outfit(
+      labelLarge: GoogleFonts.poppins(
         fontSize: 14,
         fontWeight: FontWeight.w600,
         color: primaryColor,
       ),
-      labelMedium: GoogleFonts.outfit(
+      labelMedium: GoogleFonts.poppins(
         fontSize: 12,
         fontWeight: FontWeight.w500,
         color: secondaryColor,
       ),
-      labelSmall: GoogleFonts.outfit(
+      labelSmall: GoogleFonts.poppins(
         fontSize: 11,
         fontWeight: FontWeight.w500,
         color: secondaryColor,
@@ -508,29 +508,47 @@ class AppTheme {
 /// PRE-MEMOIZED STYLES - Bypasses GoogleFonts overhead in lists
 /// ═══════════════════════════════════════════════════════════════════════════
 class SacredStyles {
-  // Common Outfit styles
-  static final outfitTitle = GoogleFonts.outfit(
+  // Common Poppins styles
+  static final poppinsTitle = GoogleFonts.poppins(
     fontWeight: FontWeight.w700,
     fontSize: 16,
     height: 1.25,
   );
 
-  static final outfitSubtitle = GoogleFonts.outfit(fontSize: 14, height: 1.5);
+  static final poppinsSubtitle = GoogleFonts.poppins(fontSize: 14, height: 1.5);
 
-  static final outfitLabel = GoogleFonts.outfit(
+  static final poppinsLabel = GoogleFonts.poppins(
     fontSize: 10,
     fontWeight: FontWeight.w600,
   );
 
-  static final outfitMuted = GoogleFonts.outfit(fontSize: 11);
+  static final poppinsMuted = GoogleFonts.poppins(fontSize: 11);
 
-  // Sacred Devanagari styles
-  static final devanagariPreview = GoogleFonts.notoSansDevanagari(
-    fontSize: 11,
-    height: 1.5,
+  // Sacred Hindi styles (Laila for sacred/serif feel)
+  static final hindiSacred = GoogleFonts.laila(
+    fontSize: 16,
+    height: 1.7,
+    fontWeight: FontWeight.w500,
   );
 
-  static final devanagariMain = GoogleFonts.notoSansDevanagari();
+  static final hindiSacredSmall = GoogleFonts.laila(
+    fontSize: 14,
+    height: 1.6,
+  );
+
+  // Functional Hindi styles (Poppins for UI/Modern feel)
+  static final hindiUI = GoogleFonts.poppins(
+    fontSize: 14,
+    height: 1.6,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 0.2,
+  );
+
+  static final hindiUILabel = GoogleFonts.poppins(
+    fontSize: 12,
+    height: 1.4,
+    fontWeight: FontWeight.w600,
+  );
 
   // Spectral display styles
   static final spectralHeader = GoogleFonts.spectral(
