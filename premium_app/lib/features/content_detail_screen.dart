@@ -17,8 +17,6 @@ import '../core/providers/reading_providers.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-
-
 class ContentDetailScreen extends ConsumerStatefulWidget {
   final SacredContent? content;
   final String? title;
@@ -47,6 +45,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   final ValueNotifier<double> _englishScale = ValueNotifier<double>(1.0);
   final ValueNotifier<double> _commentaryScale = ValueNotifier<double>(1.0);
   double _baseScale = 1.0;
+  double _lastScrollOffset = 0.0;
+  bool _isScrollingUp = true;
 
   @override
   void initState() {
@@ -102,7 +102,23 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   }
 
   void _onScroll() {
-    final showCompact = _scrollController.offset > 100;
+    final offset = _scrollController.offset;
+    final showCompact = offset > 100;
+    
+    // Smart reveal logic (Threshold: 20px)
+    if ((offset - _lastScrollOffset).abs() > 20) {
+      final isScrollingUp = offset < _lastScrollOffset;
+      if (isScrollingUp != _isScrollingUp) {
+        setState(() => _isScrollingUp = isScrollingUp);
+      }
+      _lastScrollOffset = offset;
+    }
+
+    // Always show at the top/bottom edges
+    if (offset < 50 && !_isScrollingUp) {
+      setState(() => _isScrollingUp = true);
+    }
+
     if (showCompact != _showCompactHeader) {
       setState(() => _showCompactHeader = showCompact);
     }
@@ -177,8 +193,14 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         children: [
           if (_currentTheme == ReadingTheme.divineFlow)
             Positioned.fill(
-              child: RepaintBoundary(
-                child: PremiumUI.masterBackground(index: 3),
+              child: GestureDetector(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  ref.read(focusModeProvider.notifier).state = !isFocusMode;
+                },
+                child: RepaintBoundary(
+                  child: PremiumUI.masterBackground(index: 3),
+                ),
               ),
             ),
           
@@ -196,13 +218,19 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                ),
              ),
           
-          CustomScrollView(
-            controller: _scrollController,
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              SliverToBoxAdapter(
-                child: SizedBox(height: MediaQuery.of(context).padding.top + 80),
-              ),
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              HapticFeedback.lightImpact();
+              ref.read(focusModeProvider.notifier).state = !isFocusMode;
+            },
+            child: CustomScrollView(
+              controller: _scrollController,
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: SizedBox(height: MediaQuery.of(context).padding.top + 80),
+                ),
 
               if (!isFocusMode) 
                 SliverToBoxAdapter(
@@ -448,25 +476,33 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               ),
             ],
           ),
+        ),
 
-          // Floating Header - Fades away in focus mode unless at the very top
           Positioned(
             top: 0,
             left: 0,
             right: 0,
-            child: AnimatedOpacity(
-              duration: 400.ms,
-              opacity: isFocusMode ? (_scrollController.hasClients && _scrollController.offset < 50 ? 1.0 : 0.0) : 1.0,
-              child: _buildPremiumHeader(content, displayTitle, isFocusMode, themeData),
+            child: AnimatedSlide(
+              duration: 500.ms,
+              offset: (isFocusMode && !_isScrollingUp && _scrollController.hasClients && _scrollController.offset > 50) 
+                 ? const Offset(0, -1) 
+                 : const Offset(0, 0),
+              child: AnimatedOpacity(
+                duration: 400.ms,
+                opacity: (isFocusMode && !_isScrollingUp && _scrollController.hasClients && _scrollController.offset > 50) 
+                   ? 0.0 
+                   : 1.0,
+                child: _buildPremiumHeader(content, displayTitle, isFocusMode, themeData),
+              ),
             ),
           ),
 
-          // Audio Toggle - Fades in Focus Mode
+          // Audio Toggle - Fades in Focus Mode unless scrolling up
           Positioned(
             left: 20,
             right: 20,
             bottom: 32,
-            child: isFocusMode 
+            child: (isFocusMode && !_isScrollingUp) 
               ? const SizedBox.shrink() 
               : PremiumUI.focusContainer(
                   isFocusMode: isFocusMode,
