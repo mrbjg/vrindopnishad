@@ -1,4 +1,4 @@
-package com.vrindavaani.premium
+package com.santvaani.sant_vaani
 
 import io.flutter.embedding.android.FlutterActivity
 import com.ryanheise.audioservice.AudioServiceActivity
