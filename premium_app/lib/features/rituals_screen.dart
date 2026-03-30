@@ -32,6 +32,11 @@ class RitualsScreen extends ConsumerWidget {
             child: Column(
               children: [
                 _buildHeader(context, ref),
+                ritualsAsync.when(
+                  data: (rituals) => _RitualProgressHeader(rituals: rituals),
+                  loading: () => const SizedBox(height: 120),
+                  error: (_, __) => const SizedBox.shrink(),
+                ),
                 Expanded(
                   child: ritualsAsync.when(
                     data: (rituals) => _buildRitualsList(context, ref, rituals),
@@ -99,31 +104,21 @@ class RitualsScreen extends ConsumerWidget {
 
   Widget _buildHeader(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.all(32.0),
+      padding: const EdgeInsets.fromLTRB(32, 24, 32, 16),
       child: Column(
         children: [
-          const Icon(Icons.brightness_4_outlined, color: Colors.white60, size: 40),
-          const SizedBox(height: 16),
+          const Icon(Icons.brightness_4_outlined, color: Colors.white60, size: 32),
+          const SizedBox(height: 12),
           Text(
-            "MY SACRED RITUALS",
+            "SACRED RITUALS",
             textAlign: TextAlign.center,
             style: GoogleFonts.spectral(
-              fontSize: 28,
+              fontSize: 24,
               fontWeight: FontWeight.w200,
               color: PremiumTokens.silver,
-              letterSpacing: 6,
+              letterSpacing: 4,
             ),
           ).animate().fadeIn(duration: 800.ms).slideY(begin: -0.2),
-          const SizedBox(height: 24),
-          Container(
-            height: 1,
-            width: 48,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.transparent, PremiumTokens.silver.withValues(alpha: 0.3), Colors.transparent],
-              ),
-            ),
-          ),
           const SizedBox(height: 16),
           _buildTestTrigger(context, ref),
         ],
@@ -188,24 +183,41 @@ class RitualsScreen extends ConsumerWidget {
         final categoryRituals = rituals.where((r) => r.category == category).toList();
         if (categoryRituals.isEmpty) return const SizedBox.shrink();
 
+        final completedCount = categoryRituals.where((r) => r.isCompleted).length;
+        final totalCount = categoryRituals.length;
+        final isCategoryDone = completedCount == totalCount;
+
+        IconData categoryIcon = Icons.wb_sunny_outlined;
+        if (category == 'Afternoon') categoryIcon = Icons.wb_cloudy_outlined;
+        if (category == 'Evening') categoryIcon = Icons.nightlight_outlined;
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 32, bottom: 24),
+              padding: const EdgeInsets.only(top: 24, bottom: 16),
               child: Row(
                 children: [
+                  Icon(categoryIcon, size: 14, color: isCategoryDone ? PremiumTokens.saffronGlow : PremiumTokens.starlight.withValues(alpha: 0.6)),
+                  const SizedBox(width: 8),
                   Text(
                     category.toUpperCase(),
                     style: GoogleFonts.manrope(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
-                      color: PremiumTokens.starlight.withValues(alpha: 0.6),
+                      color: isCategoryDone ? PremiumTokens.saffronGlow : PremiumTokens.starlight.withValues(alpha: 0.6),
                       letterSpacing: 4,
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.05), thickness: 1)),
+                  const Spacer(),
+                  Text(
+                    "$completedCount/$totalCount",
+                    style: GoogleFonts.manrope(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: isCategoryDone ? PremiumTokens.saffronGlow : Colors.white24,
+                    ),
+                  ),
                 ],
               ),
             ).animate().fadeIn(delay: 200.ms),
@@ -242,6 +254,10 @@ class RitualsScreen extends ConsumerWidget {
           child: const Icon(Iconsax.trash, color: Colors.redAccent),
         ),
         child: GestureDetector(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            ref.read(ritualsProvider.notifier).toggleRitual(ritual.id);
+          },
           onLongPress: () {
             HapticFeedback.mediumImpact();
             _showAddRitualDialog(context, ref, ritual: ritual);
@@ -249,9 +265,23 @@ class RitualsScreen extends ConsumerWidget {
           child: Container(
             margin: const EdgeInsets.only(bottom: 16),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.03),
+              color: ritual.isCompleted 
+                  ? PremiumTokens.saffronGlow.withValues(alpha: 0.02) 
+                  : Colors.white.withValues(alpha: 0.03),
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
+              border: Border.all(
+                color: ritual.isCompleted 
+                  ? PremiumTokens.saffronGlow.withValues(alpha: 0.2) 
+                  : Colors.white.withValues(alpha: 0.1), 
+                width: 1
+              ),
+              boxShadow: ritual.isCompleted ? [
+                BoxShadow(
+                  color: PremiumTokens.saffronGlow.withValues(alpha: 0.05),
+                  blurRadius: 20,
+                  spreadRadius: 2,
+                )
+              ] : [],
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(24),
@@ -281,6 +311,8 @@ class RitualsScreen extends ConsumerWidget {
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: ritual.isCompleted ? Colors.white24 : PremiumTokens.silver,
+                    decoration: ritual.isCompleted ? TextDecoration.lineThrough : null,
+                    decorationColor: Colors.white24,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -606,5 +638,115 @@ class _ConstellationBackground extends StatelessWidget {
              .fadeIn(duration: (1000 + (size * 500)).ms)
              .blur(begin: const Offset(0.5, 0.5), end: const Offset(1.5, 1.5)),
     );
+  }
+}
+
+class _RitualProgressHeader extends StatelessWidget {
+  final List<Ritual> rituals;
+
+  const _RitualProgressHeader({required this.rituals});
+
+  @override
+  Widget build(BuildContext context) {
+    if (rituals.isEmpty) return const SizedBox.shrink();
+
+    final completedCount = rituals.where((r) => r.isCompleted).length;
+    final totalCount = rituals.length;
+    final progress = totalCount > 0 ? (completedCount / totalCount) : 0.0;
+    
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      child: PremiumUI.etherealCard(
+        padding: const EdgeInsets.all(24),
+        borderRadius: 32,
+        glowColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+        child: Row(
+          children: [
+            // Progress Indicator
+            SizedBox(
+              width: 56,
+              height: 56,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  CircularProgressIndicator(
+                    value: progress,
+                    strokeWidth: 5,
+                    color: PremiumTokens.saffronGlow,
+                    backgroundColor: Colors.white.withValues(alpha: 0.05),
+                  ),
+                  Center(
+                    child: Text(
+                      "${(progress * 100).toInt()}%",
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white70,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 24),
+            // Status Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "DAILY PROGRESS",
+                    style: PremiumTokens.sansStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
+                      color: Colors.white38,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Text(
+                        "$completedCount/$totalCount",
+                        style: GoogleFonts.spectral(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: PremiumTokens.silver,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        "DONE",
+                        style: PremiumTokens.sansStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          color: PremiumTokens.saffronGlow.withValues(alpha: 0.6),
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            // Streak Item (Simplified)
+            Column(
+              children: [
+                const Icon(Icons.local_fire_department_rounded, color: PremiumTokens.saffronGlow, size: 24),
+                const SizedBox(height: 4),
+                Text(
+                  "7 DAYS",
+                  style: PremiumTokens.sansStyle(
+                    fontSize: 8,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white38,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1);
   }
 }

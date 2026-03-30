@@ -54,14 +54,35 @@ class RitualsNotifier extends AsyncNotifier<List<Ritual>> {
     }
 
     final List<dynamic> list = jsonDecode(data);
-    return list.map((e) => Ritual.fromJson(e)).toList();
+    final rituals = list.map((e) => Ritual.fromJson(e)).toList();
+    
+    // Daily Reset Logic
+    final now = DateTime.now();
+    final todayStr = "${now.year}-${now.month}-${now.day}";
+    
+    bool needsUpdate = false;
+    final updated = rituals.map((r) {
+      final updatedStr = "${r.updatedAt.year}-${r.updatedAt.month}-${r.updatedAt.day}";
+      if (updatedStr != todayStr && r.isCompleted) {
+        needsUpdate = true;
+        return r.copyWith(isCompleted: false, updatedAt: now);
+      }
+      return r;
+    }).toList();
+
+    if (needsUpdate) {
+      await _persist(updated);
+    }
+    
+    return updated;
   }
 
   Future<void> toggleRitual(String id) async {
     final rituals = state.value ?? [];
+    final now = DateTime.now();
     final updated = rituals.map((r) {
       if (r.id == id) {
-        return r.copyWith(isCompleted: !r.isCompleted, updatedAt: DateTime.now());
+        return r.copyWith(isCompleted: !r.isCompleted, updatedAt: now);
       }
       return r;
     }).toList();
