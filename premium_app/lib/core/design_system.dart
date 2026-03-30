@@ -205,36 +205,40 @@ class PremiumTokens {
     bool isSacred = false,
     double? height,
   }) {
-    if (!containsHindi(text)) {
+    final hasHindi = containsHindi(text);
+    final adjustedFontSize = hasHindi ? (fontSize + 2) : fontSize; // Hindi matches English size better with +2
+    final adjustedFontWeight = hasHindi ? FontWeight.w600 : fontWeight; // Hindi needs more weight in Dark Mode
+
+    if (!hasHindi) {
       return sansStyle(
-        fontSize: fontSize,
+        fontSize: adjustedFontSize,
         color: color,
-        fontWeight: fontWeight,
+        fontWeight: adjustedFontWeight,
       ).copyWith(height: height);
     }
 
     if (isSacred) {
       return hindiSacredStyle(
-        fontSize: fontSize,
+        fontSize: adjustedFontSize,
         color: color,
-        fontWeight: fontWeight,
-        height: height ?? 1.8,
+        fontWeight: adjustedFontWeight,
+        height: height ?? 1.85,
       );
     }
 
     return hindiUIStyle(
-      fontSize: fontSize,
+      fontSize: adjustedFontSize,
       color: color,
-      fontWeight: fontWeight,
-      height: height ?? 1.6,
+      fontWeight: adjustedFontWeight,
+      height: height ?? 1.7,
     );
   }
 
   static TextStyle hindiSacredStyle({
     double fontSize = 18,
     Color color = celestialSilver,
-    FontWeight fontWeight = FontWeight.w500,
-    double height = 1.8,
+    FontWeight fontWeight = FontWeight.w600,
+    double height = 1.85,
   }) {
     return GoogleFonts.laila(
       fontSize: fontSize,
@@ -247,8 +251,8 @@ class PremiumTokens {
   static TextStyle hindiUIStyle({
     double fontSize = 14,
     Color color = celestialSilver,
-    FontWeight fontWeight = FontWeight.w500,
-    double height = 1.6,
+    FontWeight fontWeight = FontWeight.w600,
+    double height = 1.7,
   }) {
     return GoogleFonts.poppins(
       fontSize: fontSize,

@@ -354,15 +354,15 @@ class LibraryScreen extends ConsumerWidget {
                           if (item.author != null)
                              Flexible(
                                child: Text(
-                                  item.author!.toUpperCase(),
+                                  item.author!,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: PremiumTokens.sansStyle(
+                                  style: PremiumTokens.hindiAwareStyle(
+                                    item.author!,
                                     fontSize: 9,
                                     fontWeight: FontWeight.w900,
-                                    letterSpacing: 1.2,
                                     color: PremiumTokens.saffronGlow.withValues(alpha: 0.8),
-                                  ),
+                                  ).copyWith(letterSpacing: 1.2),
                                 ),
                              ),
                           if (item.author != null && item.book != null)
@@ -378,7 +378,8 @@ class LibraryScreen extends ConsumerWidget {
                                 item.book!,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: PremiumTokens.sansStyle(
+                                style: PremiumTokens.hindiAwareStyle(
+                                  item.book!,
                                   fontSize: 9,
                                   fontWeight: FontWeight.bold,
                                   color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
