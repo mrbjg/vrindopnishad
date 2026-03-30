@@ -17,6 +17,8 @@ import 'daily_motivation_screen.dart';
 import 'daily_gyaan_screen.dart';
 import 'sacred_calendar_screen.dart';
 import 'category_list_screen.dart';
+import 'rituals_screen.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -44,7 +46,17 @@ class HomeScreen extends ConsumerWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 4),
-                      child: PremiumUI.logo(height: 28),
+                      child: GestureDetector(
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          PremiumUI.showNotification(
+                            context, 
+                            "Welcome to Divine Path", 
+                            icon: Iconsax.sun_15
+                          );
+                        },
+                        child: PremiumUI.logo(height: 28)
+                      ),
                     ),
                     const Spacer(),
                     const Row(
@@ -770,7 +782,13 @@ class _CompactNotificationButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => HapticFeedback.lightImpact(),
+      onTap: () {
+        HapticFeedback.lightImpact();
+        Navigator.push(
+          context, 
+          MaterialPageRoute(builder: (_) => const RitualsScreen())
+        );
+      },
       child: const Icon(Iconsax.notification,
           color: PremiumTokens.nebulaBlue, size: 22),
     );
@@ -784,23 +802,32 @@ class _CompactProfileButton extends ConsumerWidget {
     final user = ref.watch(authStateProvider).value;
     final photoUrl = user?.photoURL;
 
-    return Container(
-      width: 32,
-      height: 32,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-            color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        Navigator.push(
+          context, 
+          MaterialPageRoute(builder: (_) => const ProfileScreen())
+        );
+      },
+      child: Container(
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
+        ),
+        child: photoUrl != null
+            ? PremiumUI.networkImage(
+                url: photoUrl,
+                borderRadius: BorderRadius.circular(15),
+                width: 32,
+                height: 32,
+              )
+            : const Icon(Iconsax.user,
+                color: PremiumTokens.nebulaBlue, size: 16),
       ),
-      child: photoUrl != null
-          ? PremiumUI.networkImage(
-              url: photoUrl,
-              borderRadius: BorderRadius.circular(15),
-              width: 32,
-              height: 32,
-            )
-          : const Icon(Iconsax.user,
-              color: PremiumTokens.nebulaBlue, size: 16),
     );
   }
 }

@@ -45,8 +45,8 @@ class OnboardingScreen extends ConsumerWidget {
       backgroundColor: PremiumTokens.charcoal,
       body: Stack(
         children: [
-          // Ambient bokeh background
-          Positioned.fill(child: PremiumUI.bokehBackground()),
+          // Ambient master background (index 2 for Void feel)
+          Positioned.fill(child: PremiumUI.masterBackground(index: 2)),
           
           PageView.builder(
             controller: pageController,
@@ -242,64 +242,74 @@ class AssessmentSlide extends ConsumerWidget {
 
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(40, 100, 40, 150),
+      padding: const EdgeInsets.fromLTRB(32, 120, 32, 160),
       child: Column(
         children: [
+          // Header with extra spacing and glow
           Text(
             "TELL US ABOUT YOUR SPIRIT",
             textAlign: TextAlign.center,
-            style: GoogleFonts.manrope(
+            style: PremiumTokens.sansStyle(
               color: PremiumTokens.saffronGlow,
               fontSize: 12,
               fontWeight: FontWeight.w900,
-              letterSpacing: 2,
+              letterSpacing: 4,
             ),
-          ).animate().fadeIn(),
-          const SizedBox(height: 32),
+          ).animate().fadeIn().shimmer(duration: 3.seconds, color: Colors.white24),
+          
+          const SizedBox(height: 48),
+          
           Text(
             "Experience level",
-            style: GoogleFonts.newsreader(
-              color: Colors.white70,
-              fontSize: 18,
+            style: PremiumTokens.soulStyle(
+              color: Colors.white,
+              fontSize: 20,
               fontWeight: FontWeight.w300,
             ),
-          ).animate().fadeIn(delay: 100.ms),
-          const SizedBox(height: 16),
+          ).animate().fadeIn(delay: 100.ms).slideY(begin: 0.1),
+          
+          const SizedBox(height: 24),
 
-          // Level Selection
+          // Level Selection wrapping options in ethereal cards
           _LevelOption(
             title: "Just starting my journey",
             value: "seeker",
             selected: selectedLevel == "seeker",
             onTap: () => ref.read(selectedSpiritualityLevelProvider.notifier).state = "seeker",
-          ),
-          const SizedBox(height: 8),
+          ).animate().fadeIn(delay: 200.ms).slideX(begin: -0.1),
+          
+          const SizedBox(height: 12),
+          
           _LevelOption(
             title: "I practice regularly",
             value: "sadhak",
             selected: selectedLevel == "sadhak",
             onTap: () => ref.read(selectedSpiritualityLevelProvider.notifier).state = "sadhak",
-          ),
-          const SizedBox(height: 8),
+          ).animate().fadeIn(delay: 300.ms).slideX(begin: 0.1),
+          
+          const SizedBox(height: 12),
+          
           _LevelOption(
             title: "I am dedicated to deep practice",
             value: "tapasvi",
             selected: selectedLevel == "tapasvi",
             onTap: () => ref.read(selectedSpiritualityLevelProvider.notifier).state = "tapasvi",
-          ),
+          ).animate().fadeIn(delay: 400.ms).slideX(begin: -0.1),
 
-          const SizedBox(height: 40),
+          const SizedBox(height: 56),
+          
           Text(
             "Daily Naam Jap Goal",
-            style: GoogleFonts.newsreader(
-              color: Colors.white70,
-              fontSize: 18,
+            style: PremiumTokens.soulStyle(
+              color: Colors.white,
+              fontSize: 20,
               fontWeight: FontWeight.w300,
             ),
-          ).animate().fadeIn(delay: 300.ms),
-          const SizedBox(height: 20),
+          ).animate().fadeIn(delay: 500.ms).slideY(begin: 0.1),
+          
+          const SizedBox(height: 32),
 
-          // Goal Selector
+          // Goal Selector with pulsing orbs
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -309,21 +319,21 @@ class AssessmentSlide extends ConsumerWidget {
                 selected: selectedGoal == 3,
                 onTap: () => ref.read(selectedDailyGoalProvider.notifier).state = 3,
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 16),
               _GoalOption(
                 label: "11",
                 value: 11,
                 selected: selectedGoal == 11,
                 onTap: () => ref.read(selectedDailyGoalProvider.notifier).state = 11,
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 16),
               _GoalOption(
                 label: "21",
                 value: 21,
                 selected: selectedGoal == 21,
                 onTap: () => ref.read(selectedDailyGoalProvider.notifier).state = 21,
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 16),
               _GoalOption(
                 label: "108",
                 value: 108,
@@ -331,15 +341,18 @@ class AssessmentSlide extends ConsumerWidget {
                 onTap: () => ref.read(selectedDailyGoalProvider.notifier).state = 108,
               ),
             ],
-          ).animate().fadeIn(delay: 400.ms),
-          const SizedBox(height: 8),
+          ).animate().fadeIn(delay: 600.ms).scale(begin: const Offset(0.9, 0.9)),
+          
+          const SizedBox(height: 16),
+          
           Text(
             "Malas per day",
-            style: GoogleFonts.manrope(
-              color: Colors.white24,
+            style: PremiumTokens.sansStyle(
+              color: Colors.white30,
               fontSize: 12,
+              letterSpacing: 1,
             ),
-          ),
+          ).animate().fadeIn(delay: 800.ms),
         ],
       ),
     );
@@ -361,38 +374,53 @@ class _LevelOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        onTap();
-      },
-      child: AnimatedContainer(
-        duration: 300.ms,
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        decoration: BoxDecoration(
-          color: selected ? PremiumTokens.saffronGlow.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.03),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: selected ? PremiumTokens.saffronGlow : Colors.white10,
-            width: 1,
+    return PremiumUI.etherealCard(
+      padding: EdgeInsets.zero,
+      borderRadius: 20,
+      glowColor: selected ? PremiumTokens.saffronGlow : null,
+      showGlow: selected,
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
+        borderRadius: BorderRadius.circular(20),
+        child: AnimatedContainer(
+          duration: 400.ms,
+          curve: Curves.easeOutQuint,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          decoration: BoxDecoration(
+            color: selected 
+              ? PremiumTokens.saffronGlow.withValues(alpha: 0.15) 
+              : Colors.transparent,
+            border: Border.all(
+              color: selected 
+                ? PremiumTokens.saffronGlow.withValues(alpha: 0.5) 
+                : Colors.white.withValues(alpha: 0.05),
+              width: 1,
+            ),
+            borderRadius: BorderRadius.circular(20),
           ),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                title,
-                style: GoogleFonts.manrope(
-                  color: selected ? Colors.white : Colors.white70,
-                  fontSize: 14,
-                  fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: PremiumTokens.sansStyle(
+                    color: selected ? Colors.white : Colors.white70,
+                    fontSize: 15,
+                    fontWeight: selected ? FontWeight.bold : FontWeight.w500,
+                  ),
                 ),
               ),
-            ),
-            if (selected)
-              const Icon(Iconsax.tick_circle, color: PremiumTokens.saffronGlow, size: 20),
-          ],
+              if (selected)
+                const Icon(
+                  Iconsax.tick_circle, 
+                  color: PremiumTokens.saffronGlow, 
+                  size: 24
+                ).animate().scale(duration: 300.ms, curve: Curves.easeOutBack),
+            ],
+          ),
         ),
       ),
     );
@@ -420,27 +448,59 @@ class _GoalOption extends StatelessWidget {
         onTap();
       },
       child: AnimatedContainer(
-        duration: 300.ms,
-        width: 60,
-        height: 60,
+        duration: 500.ms,
+        curve: Curves.elasticOut,
+        width: selected ? 72 : 64,
+        height: selected ? 72 : 64,
         decoration: BoxDecoration(
-          color: selected ? PremiumTokens.saffronGlow : Colors.white.withValues(alpha: 0.05),
           shape: BoxShape.circle,
+          gradient: selected 
+            ? PremiumTokens.saffronPremiumGradient 
+            : RadialGradient(
+                colors: [
+                  Colors.white.withValues(alpha: 0.08),
+                  Colors.white.withValues(alpha: 0.03),
+                ],
+              ),
           border: Border.all(
-            color: selected ? PremiumTokens.saffronGlow : Colors.white10,
+            color: selected 
+              ? Colors.white.withValues(alpha: 0.4) 
+              : Colors.white.withValues(alpha: 0.1),
+            width: selected ? 2 : 1,
           ),
+          boxShadow: selected ? [
+            BoxShadow(
+              color: PremiumTokens.saffronGlow.withValues(alpha: 0.4),
+              blurRadius: 20,
+              spreadRadius: 2,
+            ),
+            BoxShadow(
+              color: PremiumTokens.saffronGlow.withValues(alpha: 0.2),
+              blurRadius: 40,
+              spreadRadius: 5,
+            ),
+          ] : [],
         ),
         child: Center(
           child: Text(
             label,
-            style: GoogleFonts.manrope(
-              color: selected ? PremiumTokens.charcoal : Colors.white70,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+            style: PremiumTokens.sansStyle(
+              color: selected ? PremiumTokens.charcoal : Colors.white,
+              fontSize: selected ? 18 : 16,
+              fontWeight: FontWeight.w900,
             ),
           ),
         ),
+      ).animate(
+        autoPlay: true,
+        onPlay: (c) => selected ? c.repeat(reverse: true) : c.stop(),
+      ).scale(
+        begin: const Offset(1, 1),
+        end: const Offset(1.05, 1.05),
+        duration: 2.seconds,
+        curve: Curves.easeInOut,
       ),
     );
   }
 }
+
