@@ -3,19 +3,7 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/sitemap.xml",
-      "destination": "/sitemap.xml"
-    },
-    {
-      "source": "/sitemap-images.xml",
-      "destination": "/sitemap-images.xml"
-    },
-    {
-      "source": "/robots.txt",
-      "destination": "/robots.txt"
-    },
-    {
-      "source": "/((?!sitemap|robots|favicon|static|.*\\.).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ],
