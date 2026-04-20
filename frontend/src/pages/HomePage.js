@@ -7,9 +7,37 @@ const HomePage = () => {
   return (
     <div className="animate-fade-in">
       <Helmet>
-        <title>VrindaVaani | Sacred Digital Sanctuary for Shlokas & Poems</title>
-        <meta name="description" content="Discover the spiritual essence of Hindu culture at VrindaVaani. A sacred digital sanctuary for devotional poetry, Sanskrit shlokas, verses, and hymns with deep spiritual insights." />
-        <meta name="keywords" content="VrindaVaani, Bhagavad Gita, Shlokas, Sanskrit, Hindi Poetry, Devotional, Spiritual, Hindu Culture" />
+        <title>Vrindopnishad — Sacred Digital Sanctuary for Shlokas, Strotras & Devotional Poetry</title>
+        <meta name="description" content="Discover the spiritual essence of Hindu culture at Vrindopnishad. Browse the largest collection of sacred Sanskrit shlokas, strotras, devotional poetry, Bhagavad Gita verses, and Vedic wisdom from Vrindavan saints — all in Hindi, Sanskrit & English." />
+        <meta name="keywords" content="Vrindopnishad, Sant Vaani, Bhagavad Gita, Sanskrit Shlokas, Hindi Poetry, Strotras, Devotional Hymns, Spiritual Wisdom, Hindu Culture, Vedic Knowledge, sacred verses, mantras" />
+        <link rel="canonical" href="https://path.vrindopnishad.in/" />
+
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": "Vrindopnishad — Sacred Digital Sanctuary",
+            "description": "The largest digital collection of sacred Sanskrit shlokas, strotras, devotional poetry, and Vedic wisdom.",
+            "url": "https://path.vrindopnishad.in",
+            "inLanguage": ["hi", "en", "sa"],
+            "publisher": {
+              "@type": "Organization",
+              "name": "Vrindopnishad",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png"
+              }
+            },
+            "mainEntity": {
+              "@type": "ItemList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Sacred Verses (Shlokas)", "url": "https://path.vrindopnishad.in/category/shloka" },
+                { "@type": "ListItem", "position": 2, "name": "Strotras (Devotional Hymns)", "url": "https://path.vrindopnishad.in/category/strotra" },
+                { "@type": "ListItem", "position": 3, "name": "Spiritual Poetry", "url": "https://path.vrindopnishad.in/category/poem" }
+              ]
+            }
+          })}
+        </script>
       </Helmet>
       {/* Hero Section */}
       <div className="text-center py-12 md:py-24 max-w-4xl mx-auto">

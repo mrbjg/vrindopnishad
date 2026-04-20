@@ -99,8 +99,26 @@ const ContentListPage = () => {
   return (
     <div className="animate-fade-in">
       <Helmet>
-        <title>{selectedCategory ? `${selectedCategory}s Collection` : 'Spiritual Repository'} | VrindaVaani</title>
-        <meta name="description" content={`Browse our collection of ${selectedCategory || 'sacred shlokas, poems, and hymns'}. Discover timeless wisdom and devotional content in our spiritual sanctuary.`} />
+        <title>{selectedCategory ? `${selectedCategory}s — Sacred ${selectedCategory} Collection` : 'All Sacred Verses, Shlokas, Strotras & Poetry'} | Vrindopnishad</title>
+        <meta name="description" content={`Browse ${filteredContent.length}+ ${selectedCategory || 'sacred shlokas, strotras, poems, and devotional hymns'} in Hindi, Sanskrit & English. The largest curated spiritual repository from Vrindavan saints at Vrindopnishad.`} />
+        <meta name="keywords" content={`${selectedCategory || 'shlokas, strotras, poems'}, Sanskrit verses, Hindi mantras, spiritual collection, Vrindopnishad, Sant Vaani, devotional content`} />
+        <link rel="canonical" href={`https://path.vrindopnishad.in/content${selectedCategory ? `?category=${selectedCategory}` : ''}`} />
+
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": `${selectedCategory ? `${selectedCategory}s Collection` : 'Sacred Spiritual Repository'} — Vrindopnishad`,
+            "description": `Browse ${filteredContent.length}+ ${selectedCategory || 'sacred spiritual texts'} — shlokas, strotras, and devotional poetry in Hindi, Sanskrit & English.`,
+            "url": `https://path.vrindopnishad.in/content${selectedCategory ? `?category=${selectedCategory}` : ''}`,
+            "inLanguage": ["hi", "en", "sa"],
+            "numberOfItems": filteredContent.length,
+            "publisher": {
+              "@type": "Organization",
+              "name": "Vrindopnishad"
+            }
+          })}
+        </script>
       </Helmet>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>

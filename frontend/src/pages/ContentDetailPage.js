@@ -135,9 +135,9 @@ const ContentDetailPage = () => {
   return (
     <div className="animate-fade-in max-w-4xl mx-auto">
       <Helmet>
-        <title>{`${content.title} | Sacred Verses & Sant-Vaani`}</title>
-        <meta name="description" content={`${content.title} - ${content.category} by ${content.author || 'Sant Vaani'}. ${content.sanskrit_text ? content.sanskrit_text.substring(0, 160) : content.description?.substring(0, 160)}`} />
-        <meta name="keywords" content={`${content.title}, ${content.author}, ${content.category}, Padma Purana, Vrindavan Dham, Hindu Shloka, Sanskrit Verses, Devotional Poetry, Spiritual Wisdom`} />
+        <title>{`${content.title} — ${content.category} | ${content.author || 'Sant Vaani'} | Vrindopnishad`}</title>
+        <meta name="description" content={`${content.title} — ${content.category} by ${content.author || 'Sant Vaani'}. ${content.sanskrit_text ? content.sanskrit_text.substring(0, 155) + '...' : content.hindi_text ? content.hindi_text.substring(0, 155) + '...' : content.description?.substring(0, 155) + '...'}`} />
+        <meta name="keywords" content={`${content.title}, ${content.author || 'Sant Vaani'}, ${content.category}, Sanskrit Shloka, Hindi meaning, English translation, Vrindopnishad, Sant Vaani, sacred verse, devotional, spiritual wisdom`} />
 
         {/* Canonical Link */}
         <link rel="canonical" href={`https://path.vrindopnishad.in/content/${content.slug || id}`} />
@@ -188,17 +188,20 @@ const ContentDetailPage = () => {
             "@context": "https://schema.org",
             "@type": "ScholarlyArticle",
             "headline": content.title || "Sacred Verse",
-            "description": content.description || `A sacred ${content.category || 'text'} from the Sant-Vaani repository.`,
+            "description": content.description || `A sacred ${content.category || 'text'} from the Vrindopnishad Sant-Vaani repository.`,
             "author": {
               "@type": "Person",
               "name": content.author || "Sant Vaani"
             },
             "genre": content.category || "Sacred Literature",
-            "keywords": `${content.title || ''}, ${content.category || ''}, Spiritual, Sanskrit, Divine Verses`,
+            "inLanguage": ["hi", "sa", "en"],
+            "keywords": `${content.title || ''}, ${content.category || ''}, ${content.author || ''}, Spiritual, Sanskrit, Divine Verses, Vrindopnishad`,
             "articleBody": `${content.sanskrit_text ? content.sanskrit_text + ' ' : ''}${content.hindi_text ? content.hindi_text + ' ' : ''}${content.english_translation || ''}`,
+            "datePublished": content.created_at || new Date().toISOString(),
+            "dateModified": content.updated_at || content.created_at || new Date().toISOString(),
             "publisher": {
               "@type": "Organization",
-              "name": "VrindaVaani",
+              "name": "Vrindopnishad",
               "logo": {
                 "@type": "ImageObject",
                 "url": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png"
@@ -207,7 +210,8 @@ const ContentDetailPage = () => {
             "mainEntityOfPage": {
               "@type": "WebPage",
               "@id": `https://path.vrindopnishad.in/content/${content.slug || id}`
-            }
+            },
+            ...(content.image_url ? { "image": content.image_url } : {})
           })}
         </script>
       </Helmet>

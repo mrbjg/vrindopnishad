@@ -1,6 +1,14 @@
 User-agent: *
 Allow: /
+Allow: /content
+Allow: /content/
+Allow: /category/
+
+Disallow: /admin-old/
+Disallow: /login
+Disallow: /loader-demo
 
 Sitemap: https://path.vrindopnishad.in/sitemap.xml
 
 # Official Site: https://path.vrindopnishad.in
+# Crawl-delay not set — we want fast, aggressive indexing
