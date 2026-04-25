@@ -22,6 +22,18 @@ const AdminLoginPage = React.lazy(() => import('./pages/AdminLoginPage'));
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const LoaderDemo = React.lazy(() => import('./pages/LoaderDemo'));
 
+// SEO Content Pages
+const WhatIsVrindopnishad = React.lazy(() => import('./pages/seo/WhatIsVrindopnishad'));
+const MeaningPage = React.lazy(() => import('./pages/seo/MeaningPage'));
+const OriginPage = React.lazy(() => import('./pages/seo/OriginPage'));
+const PhilosophyPage = React.lazy(() => import('./pages/seo/PhilosophyPage'));
+const TeachingsPage = React.lazy(() => import('./pages/seo/TeachingsPage'));
+const ImportancePage = React.lazy(() => import('./pages/seo/ImportancePage'));
+const DevotionalPage = React.lazy(() => import('./pages/seo/DevotionalPage'));
+const FAQPage = React.lazy(() => import('./pages/seo/FAQPage'));
+const ComparisonPage = React.lazy(() => import('./pages/seo/ComparisonPage'));
+const GuidePage = React.lazy(() => import('./pages/seo/GuidePage'));
+
 // Backend URL with fallback for development
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const USE_SUPABASE = process.env.REACT_APP_SUPABASE_URL && process.env.REACT_APP_SUPABASE_ANON_KEY;
@@ -196,6 +208,17 @@ function App() {
                     <Route path="/content/:id" element={<ContentDetailPage />} />
                     <Route path="/category/:category" element={<CategoryPage />} />
                     <Route path="/loader-demo" element={<LoaderDemo />} />
+                    {/* SEO Content Pages */}
+                    <Route path="/what-is-vrindopnishad" element={<WhatIsVrindopnishad />} />
+                    <Route path="/meaning" element={<MeaningPage />} />
+                    <Route path="/origin" element={<OriginPage />} />
+                    <Route path="/philosophy" element={<PhilosophyPage />} />
+                    <Route path="/teachings" element={<TeachingsPage />} />
+                    <Route path="/importance" element={<ImportancePage />} />
+                    <Route path="/devotion" element={<DevotionalPage />} />
+                    <Route path="/faq" element={<FAQPage />} />
+                    <Route path="/comparison-with-upanishads" element={<ComparisonPage />} />
+                    <Route path="/guide" element={<GuidePage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/admin-old/login" element={<AdminLoginPage />} />
                     <Route

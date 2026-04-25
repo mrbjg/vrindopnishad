@@ -19,10 +19,32 @@ const generateSlug = (text) => {
     .replace(/-+$/, '');       // Trim - from end of text
 };
 
+// Static SEO pages with high priority
+const SEO_PAGES = [
+  { path: '/what-is-vrindopnishad', priority: '0.9', changefreq: 'weekly' },
+  { path: '/meaning', priority: '0.9', changefreq: 'weekly' },
+  { path: '/origin', priority: '0.9', changefreq: 'weekly' },
+  { path: '/philosophy', priority: '0.9', changefreq: 'weekly' },
+  { path: '/teachings', priority: '0.9', changefreq: 'weekly' },
+  { path: '/importance', priority: '0.9', changefreq: 'weekly' },
+  { path: '/devotion', priority: '0.9', changefreq: 'weekly' },
+  { path: '/faq', priority: '0.9', changefreq: 'weekly' },
+  { path: '/comparison-with-upanishads', priority: '0.9', changefreq: 'weekly' },
+  { path: '/guide', priority: '0.9', changefreq: 'weekly' },
+];
+
+// Category pages
+const CATEGORY_PAGES = [
+  { path: '/category/shloka', priority: '0.8', changefreq: 'weekly' },
+  { path: '/category/strotra', priority: '0.8', changefreq: 'weekly' },
+  { path: '/category/poem', priority: '0.8', changefreq: 'weekly' },
+];
+
 async function generateSitemap() {
   console.log('Fetching content from Supabase for dynamic sitemap...');
+  const today = new Date().toISOString().split('T')[0];
+  
   try {
-    // Verified that select=title,id works. slug might not exist as a column.
     const response = await axios.get(`${SUPABASE_URL}/rest/v1/content?select=title,id`, {
         headers: {
             'apikey': SUPABASE_KEY,
@@ -39,12 +61,32 @@ async function generateSitemap() {
 
     console.log(`Found ${content.length} items. Generating URLs...`);
 
-    const urls = content.map(item => {
-      const slug = generateSlug(item.title); // Generate from title since slug column is missing
+    // SEO pages
+    const seoUrls = SEO_PAGES.map(page => `
+  <url>
+    <loc>${DOMAIN}${page.path}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
+  </url>`).join('');
+
+    // Category pages
+    const categoryUrls = CATEGORY_PAGES.map(page => `
+  <url>
+    <loc>${DOMAIN}${page.path}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
+  </url>`).join('');
+
+    // Dynamic content pages
+    const contentUrls = content.map(item => {
+      const slug = generateSlug(item.title);
       const encodedSlug = slug ? slug.split('/').map(segment => encodeURIComponent(segment)).join('/') : item.id;
       return `
   <url>
     <loc>${DOMAIN}/content/${encodedSlug}</loc>
+    <lastmod>${today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>`;
@@ -54,22 +96,27 @@ async function generateSitemap() {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>${DOMAIN}/</loc>
+    <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>${DOMAIN}/content</loc>
+    <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
-${urls}
+${seoUrls}
+${categoryUrls}
+${contentUrls}
 </urlset>`;
 
-    // Write to public folder (source of truth for some builds)
+    // Write to public folder
     fs.writeFileSync('public/sitemap.xml', sitemap);
     console.log('Dynamic sitemap.xml generated successfully in public/');
+    console.log(`Total URLs: ${2 + SEO_PAGES.length + CATEGORY_PAGES.length + content.length}`);
     
-    // Also write to build folder if it exists (for local production testing or manual deploys)
+    // Also write to build folder if it exists
     if (fs.existsSync('build')) {
         fs.writeFileSync('build/sitemap.xml', sitemap);
         console.log('Dynamic sitemap.xml copied to build/');

@@ -7,15 +7,34 @@ import App from "./App";
 import { SettingsProvider } from "./contexts/SettingsContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <React.StrictMode>
-    <HelmetProvider>
-      <SettingsProvider>
-        <ThemeProvider>
-          <App />
-        </ThemeProvider>
-      </SettingsProvider>
-    </HelmetProvider>
-  </React.StrictMode>,
-);
+const rootElement = document.getElementById("root");
+
+// Support hydration for pre-rendered HTML (react-snap / SSG)
+// Falls back to createRoot for development
+if (rootElement.hasChildNodes()) {
+  ReactDOM.hydrateRoot(
+    rootElement,
+    <React.StrictMode>
+      <HelmetProvider>
+        <SettingsProvider>
+          <ThemeProvider>
+            <App />
+          </ThemeProvider>
+        </SettingsProvider>
+      </HelmetProvider>
+    </React.StrictMode>
+  );
+} else {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(
+    <React.StrictMode>
+      <HelmetProvider>
+        <SettingsProvider>
+          <ThemeProvider>
+            <App />
+          </ThemeProvider>
+        </SettingsProvider>
+      </HelmetProvider>
+    </React.StrictMode>
+  );
+}
