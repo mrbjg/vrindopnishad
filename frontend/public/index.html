@@ -7,7 +7,8 @@
         content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
 
     <!-- Theme colors for light and dark mode -->
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F8F7F4" />
+    <meta name="theme-color" content="#8E7F7F" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#8E7F7F" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0D0D12" />
 
     <title>Vrindopnishad Paath — वृंदोपनिषद् पाठ | Sacred Shlokas, Strotras & Devotional Poetry</title>
@@ -29,6 +30,12 @@
     <link rel="alternate" hreflang="en" href="https://path.vrindopnishad.in/" />
     <link rel="alternate" hreflang="x-default" href="https://path.vrindopnishad.in/" />
 
+    <!-- Favicon Configuration - Sync with Main Site -->
+    <link rel="icon" href="https://vrindopnishad.in/favicon.ico" sizes="48x48">
+    <link rel="icon" href="https://vrindopnishad.in/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://vrindopnishad.in/apple-touch-icon.png">
+    <link rel="manifest" href="https://vrindopnishad.in/site.webmanifest">
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://path.vrindopnishad.in/">
@@ -48,46 +55,51 @@
         content="Read Vrindopnishad Paath online — sacred Sanskrit shlokas, strotras, devotional poetry & Vedic wisdom.">
     <meta property="twitter:image" content="https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png">
 
-    <!-- JSON-LD: WebSite with SearchAction (enables Google search box sitelink) -->
+    <!-- Structured Data (@graph structure like main site) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Vrindopnishad Paath",
-      "alternateName": ["वृंदोपनिषद्", "वृंदोपनिषद् पाठ", "Vrindopnishad", "Vrindopnishad Path", "Sant Vaani", "VrindaVaani"],
-      "url": "https://path.vrindopnishad.in",
-      "description": "Vrindopnishad Paath — the largest digital sanctuary for sacred Sanskrit shlokas, strotras, devotional poetry, and Vedic wisdom from Vrindavan saints.",
-      "inLanguage": ["hi", "en", "sa"],
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://path.vrindopnishad.in/content?q={search_term_string}"
+      "@graph": [
+        {
+          "@type": "Organization",
+          "name": "Vrindopnishad",
+          "url": "https://vrindopnishad.in/",
+          "@id": "https://vrindopnishad.in/#organization",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png",
+            "width": 512,
+            "height": 512
+          },
+          "sameAs": [
+            "https://www.instagram.com/vrindopnishad",
+            "https://www.facebook.com/vrindopnishad",
+            "https://www.youtube.com/@vrindopnishad"
+          ],
+          "description": "Vrindopnishad is a digital sanctuary for authentic spiritual and Vedic knowledge, connecting tradition with modern innovation."
         },
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
-
-    <!-- JSON-LD: Organization (brand knowledge panel) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Vrindopnishad",
-      "alternateName": ["वृंदोपनिषद्", "Vrindopnishad Paath", "वृंदोपनिषद् पाठ"],
-      "url": "https://path.vrindopnishad.in",
-      "logo": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png",
-      "description": "Vrindopnishad is the premier digital platform for authentic Vedic and spiritual knowledge from Vrindavan.",
-      "sameAs": [
-        "https://vrindopnishad.in"
-      ],
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "contactType": "customer support",
-        "url": "https://vrindopnishad.in",
-        "availableLanguage": ["Hindi", "English", "Sanskrit"]
-      }
+        {
+          "@type": "WebSite",
+          "@id": "https://path.vrindopnishad.in/#website",
+          "name": "Vrindopnishad Paath",
+          "url": "https://path.vrindopnishad.in/",
+          "publisher": { "@id": "https://vrindopnishad.in/#organization" },
+          "description": "Bhajan Path — The official digital collection of sacred shlokas and strotras.",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://path.vrindopnishad.in/content?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://path.vrindopnishad.in/#webpage",
+          "url": "https://path.vrindopnishad.in/",
+          "name": "Vrindopnishad Paath — Digital Sanctuary",
+          "isPartOf": { "@id": "https://path.vrindopnishad.in/#website" },
+          "description": "Read sacred Sanskrit shlokas and devotional poetry from Vrindavan saints."
+        }
+      ]
     }
     </script>
 
@@ -107,17 +119,13 @@
         })();
     </script>
 
-    <!-- Preconnect for faster resource loading -->
+    <!-- PERFORMANCE OPTIMIZATION: Preconnect Hints -->
     <link rel="preconnect" href="https://tilimltxgeucefxzerqi.supabase.co" crossorigin>
     <link rel="preconnect" href="https://vrindopnishad.in" crossorigin>
     <link rel="dns-prefetch" href="https://tilimltxgeucefxzerqi.supabase.co">
     <link rel="dns-prefetch" href="https://vrindopnishad.in">
-
-    <!-- Global Vrindopnishad Favicon -->
-    <link rel="icon" href="https://vrindopnishad.in/favicon.ico" sizes="48x48">
-    <link rel="icon" href="https://vrindopnishad.in/favicon.svg" type="image/svg+xml">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://vrindopnishad.in/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="https://vrindopnishad.in/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 
 <body>

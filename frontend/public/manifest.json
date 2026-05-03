@@ -1,11 +1,19 @@
 {
     "short_name": "Vrindopnishad",
     "name": "Vrindopnishad — Authentic Spiritual & Vedic Knowledge",
+    "description": "Vrindopnishad Paath (वृंदोपनिषद् पाठ) — Read and listen to sacred Sanskrit shlokas and devotional poetry.",
     "icons": [
         {
-            "src": "https://vrindopnishad.in/Vrindopnishad%20Web/class/v-logo-rounded/android-chrome-192x192.png",
+            "src": "https://vrindopnishad.in/android-chrome-192x192.png",
             "type": "image/png",
-            "sizes": "192x192"
+            "sizes": "192x192",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "https://vrindopnishad.in/android-chrome-512x512.png",
+            "type": "image/png",
+            "sizes": "512x512",
+            "purpose": "any maskable"
         },
         {
             "src": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png",
