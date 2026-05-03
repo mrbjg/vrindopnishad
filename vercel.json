@@ -2,19 +2,19 @@
   "rewrites": [
     {
       "source": "/sitemap.xml",
-      "destination": "/sitemap.xml"
+      "destination": "/frontend/build/sitemap.xml"
     },
     {
       "source": "/robots.txt",
-      "destination": "/robots.txt"
+      "destination": "/frontend/build/robots.txt"
     },
     {
       "source": "/google27b1a7fc60901288.html",
-      "destination": "/google27b1a7fc60901288.html"
+      "destination": "/frontend/build/google27b1a7fc60901288.html"
     },
     {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/frontend/build/index.html"
     }
   ],
   "headers": [
