@@ -1,0 +1,241 @@
+/**
+ * Hinglish Search Utility — Smart multilingual search for Sant-Vaani
+ * Maps Romanized Hindi (Hinglish) to Devanagari for fuzzy matching.
+ * Users type "radha krishna bhajan" → matches "राधा कृष्ण भजन"
+ */
+
+// Common Hinglish → Hindi keyword mappings (spiritual/devotional domain)
+const HINGLISH_MAP = {
+  // Deities & Names
+  'radha': ['राधा', 'राधे', 'राधिका'],
+  'radhe': ['राधे', 'राधा', 'राधिका'],
+  'radhika': ['राधिका', 'राधा'],
+  'krishna': ['कृष्ण', 'कृष्णा', 'श्री कृष्ण', 'कृष्ण'],
+  'krishn': ['कृष्ण', 'कृष्णा'],
+  'shyam': ['श्याम', 'श्यामा', 'श्याम सुन्दर'],
+  'shyama': ['श्यामा', 'श्याम'],
+  'govind': ['गोविन्द', 'गोविंद'],
+  'govinda': ['गोविन्द', 'गोविंद', 'गोविन्दा'],
+  'gopal': ['गोपाल'],
+  'kanha': ['कान्हा', 'कन्हैया'],
+  'kanhaiya': ['कन्हैया', 'कान्हा'],
+  'murli': ['मुरली', 'मुरलीधर'],
+  'murlidhar': ['मुरलीधर'],
+  'mohan': ['मोहन'],
+  'giridhar': ['गिरिधर', 'गिरधर'],
+  'banke': ['बांके', 'बाँके'],
+  'bihari': ['बिहारी', 'विहारी'],
+  'nand': ['नंद', 'नन्द'],
+  'yashoda': ['यशोदा'],
+  'balram': ['बलराम'],
+  'sita': ['सीता'],
+  'ram': ['राम', 'श्री राम'],
+  'shri': ['श्री', 'श्रि'],
+  'hanuman': ['हनुमान'],
+  'ganesh': ['गणेश', 'गणेशा'],
+  'shiv': ['शिव', 'शिवा'],
+  'mahadev': ['महादेव'],
+  'durga': ['दुर्गा'],
+  'lakshmi': ['लक्ष्मी'],
+  'saraswati': ['सरस्वती'],
+  'meera': ['मीरा', 'मीराबाई'],
+  'mira': ['मीरा', 'मीराबाई'],
+  'surdas': ['सूरदास', 'सूर'],
+  'sur': ['सूर', 'सूरदास'],
+  'tulsidas': ['तुलसीदास'],
+  'kabir': ['कबीर', 'कबीरदास'],
+  'premanand': ['प्रेमानंद', 'प्रेमानन्द'],
+
+  // Places
+  'vrindavan': ['वृंदावन', 'वृन्दावन', 'ब्रिंदावन'],
+  'brindavan': ['वृंदावन', 'वृन्दावन', 'ब्रिंदावन'],
+  'braj': ['ब्रज', 'व्रज'],
+  'barsana': ['बरसाना', 'बरसाने'],
+  'nandgaon': ['नंदगांव', 'नन्दगाँव'],
+  'nandgaav': ['नंदगांव', 'नन्दगाँव'],
+  'govardhan': ['गोवर्धन', 'गोवर्द्धन'],
+  'mathura': ['मथुरा'],
+  'gokul': ['गोकुल'],
+  'yamuna': ['यमुना'],
+  'kunj': ['कुंज', 'कुञ्ज'],
+  'nikunj': ['निकुंज', 'निकुञ्ज'],
+  'mandir': ['मंदिर', 'मन्दिर'],
+  'dham': ['धाम'],
+  'ghat': ['घाट'],
+  'van': ['वन'],
+
+  // Content types & concepts
+  'bhajan': ['भजन', 'भजनी'],
+  'shloka': ['श्लोक', 'श्लोकी'],
+  'shlok': ['श्लोक'],
+  'stotra': ['स्तोत्र', 'स्तोत्रम'],
+  'strotra': ['स्तोत्र', 'स्त्रोत्र'],
+  'mantra': ['मंत्र', 'मन्त्र'],
+  'katha': ['कथा'],
+  'kavita': ['कविता'],
+  'poem': ['कविता', 'पद'],
+  'pad': ['पद', 'पदों'],
+  'doha': ['दोहा', 'दोहे'],
+  'chaupai': ['चौपाई'],
+  'aarti': ['आरती'],
+  'arti': ['आरती'],
+  'chalisa': ['चालीसा'],
+  'stuti': ['स्तुति'],
+  'vandana': ['वंदना', 'वन्दना'],
+  'prarthana': ['प्रार्थना'],
+  'kirtan': ['कीर्तन'],
+  'sankirtan': ['संकीर्तन'],
+  'bhakti': ['भक्ति'],
+  'prem': ['प्रेम'],
+  'ras': ['रस', 'रास'],
+  'leela': ['लीला'],
+  'lila': ['लीला'],
+  'darshan': ['दर्शन'],
+  'seva': ['सेवा'],
+  'paath': ['पाठ'],
+  'path': ['पाठ', 'पथ'],
+  'gyan': ['ज्ञान'],
+  'gian': ['ज्ञान'],
+  'dhyan': ['ध्यान'],
+  'moksha': ['मोक्ष'],
+  'mukti': ['मुक्ति'],
+  'karma': ['कर्म'],
+  'dharma': ['धर्म'],
+  'satya': ['सत्य'],
+  'punya': ['पुण्य'],
+  'rasik': ['रसिक'],
+  'sant': ['संत', 'सन्त'],
+  'guru': ['गुरु', 'गुरू'],
+  'sadhu': ['साधु'],
+  'vani': ['वाणी'],
+  'vaani': ['वाणी'],
+  'updesh': ['उपदेश'],
+  'updesh': ['उपदेश'],
+  'charitra': ['चरित्र'],
+  'mahima': ['महिमा'],
+  'sakhi': ['सखी', 'साखी'],
+  'gopi': ['गोपी', 'गोपियों'],
+
+  // Emotions / Descriptors
+  'pyar': ['प्यार', 'प्यारे', 'प्यारी'],
+  'pyare': ['प्यारे', 'प्यार', 'प्यारी'],
+  'sundar': ['सुंदर', 'सुन्दर'],
+  'divya': ['दिव्य'],
+  'pavitra': ['पवित्र'],
+  'mangal': ['मंगल'],
+  'param': ['परम'],
+  'jai': ['जय', 'जै'],
+  'jay': ['जय', 'जै'],
+  'hare': ['हरे', 'हारे'],
+  'hari': ['हरि', 'हरी'],
+
+  // Scriptures
+  'gita': ['गीता', 'गीत'],
+  'geeta': ['गीता'],
+  'veda': ['वेद', 'वेदों'],
+  'ved': ['वेद', 'वेदों'],
+  'upanishad': ['उपनिषद', 'उपनिषद्'],
+  'puran': ['पुराण'],
+  'purana': ['पुराण'],
+  'ramayan': ['रामायण'],
+  'mahabharat': ['महाभारत'],
+  'bhagwat': ['भागवत', 'भगवत'],
+  'bhagavat': ['भागवत', 'भगवत'],
+};
+
+// Hinglish phonetic transliteration (character-level)
+const TRANSLITERATION_MAP = {
+  'aa': 'आ', 'ee': 'ई', 'oo': 'ऊ', 'ai': 'ऐ', 'au': 'औ',
+  'a': 'अ', 'i': 'इ', 'u': 'उ', 'e': 'ए', 'o': 'ओ',
+  'ka': 'का', 'kha': 'खा', 'ga': 'गा', 'gha': 'घा',
+  'cha': 'चा', 'chha': 'छा', 'ja': 'जा', 'jha': 'झा',
+  'ta': 'ता', 'tha': 'था', 'da': 'दा', 'dha': 'धा', 'na': 'ना',
+  'pa': 'पा', 'pha': 'फा', 'ba': 'बा', 'bha': 'भा', 'ma': 'मा',
+  'ya': 'या', 'ra': 'रा', 'la': 'ला', 'va': 'वा', 'wa': 'वा',
+  'sha': 'शा', 'sa': 'सा', 'ha': 'हा',
+  'k': 'क', 'g': 'ग', 'ch': 'च', 'j': 'ज',
+  't': 'त', 'd': 'द', 'n': 'न',
+  'p': 'प', 'b': 'ब', 'm': 'म',
+  'y': 'य', 'r': 'र', 'l': 'ल', 'v': 'व', 'w': 'व',
+  'sh': 'श', 's': 'स', 'h': 'ह',
+};
+
+/**
+ * Expand a Hinglish search query into multiple search variants
+ * "radha pyari" → ["radha pyari", "राधा", "राधे", "राधिका", "प्यार", "प्यारे", "प्यारी"]
+ */
+export function expandHinglishQuery(query) {
+  if (!query || typeof query !== 'string') return [];
+  
+  const normalizedQuery = query.toLowerCase().trim();
+  const words = normalizedQuery.split(/\s+/);
+  const expandedTerms = new Set();
+  
+  // Always include original query
+  expandedTerms.add(normalizedQuery);
+  
+  for (const word of words) {
+    // Add the original word
+    expandedTerms.add(word);
+    
+    // Look up in dictionary
+    const hindiVariants = HINGLISH_MAP[word];
+    if (hindiVariants) {
+      hindiVariants.forEach(v => expandedTerms.add(v));
+    }
+    
+    // Also try partial matches (e.g., "krishn" matches "krishna")
+    for (const [key, variants] of Object.entries(HINGLISH_MAP)) {
+      if (key.startsWith(word) && word.length >= 3) {
+        variants.forEach(v => expandedTerms.add(v));
+      }
+    }
+  }
+  
+  return Array.from(expandedTerms);
+}
+
+/**
+ * Smart search: check if any expanded term matches the content fields
+ */
+export function hinglishMatch(item, query) {
+  if (!query || !item) return true;
+  
+  const expandedTerms = expandHinglishQuery(query);
+  const searchableText = [
+    item.title,
+    item.hindi_text,
+    item.english_translation,
+    item.english_text,
+    item.description,
+    item.author,
+    item.category,
+    item.slug,
+    ...(item.tags || [])
+  ].filter(Boolean).join(' ').toLowerCase();
+  
+  // Check if ANY expanded term matches
+  return expandedTerms.some(term => searchableText.includes(term.toLowerCase()));
+}
+
+/**
+ * Generate search suggestions based on popular spiritual terms
+ */
+export function getSearchSuggestions(query) {
+  if (!query || query.length < 2) return [];
+  
+  const normalizedQuery = query.toLowerCase().trim();
+  const suggestions = [];
+  
+  for (const [hinglish, hindiArr] of Object.entries(HINGLISH_MAP)) {
+    if (hinglish.startsWith(normalizedQuery) || normalizedQuery.startsWith(hinglish)) {
+      suggestions.push({
+        text: hinglish,
+        hindi: hindiArr[0],
+        label: `${hinglish} — ${hindiArr[0]}`
+      });
+    }
+  }
+  
+  return suggestions.slice(0, 8); // Max 8 suggestions
+}

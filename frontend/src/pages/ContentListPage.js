@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ApiContext } from '../App';
-import { Search, ArrowRight, Tag } from 'lucide-react';
+import { Search, ArrowRight, Tag, Sparkles } from 'lucide-react';
 import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { Helmet } from 'react-helmet-async';
+import { hinglishMatch, getSearchSuggestions } from '../utils/hinglishSearch';
 
 const ContentListPage = () => {
   const { apiService } = useContext(ApiContext);
@@ -18,11 +19,28 @@ const ContentListPage = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchRef = useRef(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+      setSuggestions(getSearchSuggestions(searchQuery));
+    }, 200);
     return () => clearTimeout(timer);
   }, [searchQuery]);
+
+  // Close suggestions on click outside
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -45,10 +63,7 @@ const ContentListPage = () => {
     fetchContent();
   }, [selectedCategory, apiService]);
 
-  const filteredContent = content.filter(item => 
-    item.title?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-    item.hindi_text?.toLowerCase().includes(debouncedSearch.toLowerCase())
-  );
+  const filteredContent = content.filter(item => hinglishMatch(item, debouncedSearch));
 
   const getCategoryColorClasses = (category) => {
     switch (category?.toLowerCase()) {
@@ -126,15 +141,38 @@ const ContentListPage = () => {
           <p className="text-white/50">Explore the vast collection of sacred content</p>
         </div>
 
-        <div className="relative w-full md:w-96">
+        <div className="relative w-full md:w-96" ref={searchRef}>
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={20} />
           <input 
             type="text" 
-            placeholder="Search verses, titles..." 
+            placeholder="Search in Hindi, English or Hinglish..." 
             className="w-full h-12 bg-white/5 border border-white/10 rounded-full pl-12 pr-6 outline-none focus:border-amber-500/50 transition-colors"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
+            onFocus={() => setShowSuggestions(true)}
           />
+          {/* Hinglish Suggestions Dropdown */}
+          {showSuggestions && suggestions.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-[#1a1a24] border border-white/10 rounded-2xl shadow-2xl shadow-black/50 z-50 overflow-hidden">
+              <div className="px-4 py-2 border-b border-white/5 flex items-center gap-2">
+                <Sparkles size={12} className="text-amber-400" />
+                <span className="text-[10px] uppercase tracking-widest text-white/30">Hinglish suggestions</span>
+              </div>
+              {suggestions.map((s, i) => (
+                <button
+                  key={i}
+                  className="w-full px-4 py-3 text-left hover:bg-white/5 transition-colors flex items-center justify-between group"
+                  onClick={() => {
+                    setSearchQuery(s.text);
+                    setShowSuggestions(false);
+                  }}
+                >
+                  <span className="text-white/70 group-hover:text-white transition-colors">{s.text}</span>
+                  <span className="text-amber-400/60 text-sm font-headings">{s.hindi}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
