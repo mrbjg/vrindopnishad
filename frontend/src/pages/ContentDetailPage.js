@@ -109,6 +109,10 @@ const ContentDetailPage = () => {
       case 'strotra': return 'badge-strotra';
       case 'poem': return 'badge-poem';
       case 'katha': return 'badge-katha';
+      case 'sankirtan': return 'badge-sankirtan';
+      case 'saint': return 'badge-saint';
+      case 'dham': return 'badge-dham';
+      case 'literature': return 'badge-literature';
       case 'general': return 'badge-general';
       default: return 'badge-general';
     }
@@ -417,6 +421,37 @@ const ContentDetailPage = () => {
           </div>
         </div>
       </article>
+
+      {/* SEO Internal Linking: Related Content Section */}
+      <section className="mt-24 mb-12">
+        <div className="flex items-center gap-4 mb-10">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/10"></div>
+          <h2 className="text-2xl font-bold text-sacred-gradient px-4">Related Braj Heritage</h2>
+          <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/10"></div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* We'll pull a few items from the collection as related content */}
+          {/* This increases page session duration and site crawl depth */}
+          <Link to="/braj-rasik-heritage" className="glass-card p-6 group hover:border-amber-500/30 transition-all">
+            <span className="text-[10px] uppercase tracking-widest text-amber-500 mb-3 block">Featured</span>
+            <h4 className="text-lg font-bold mb-2 group-hover:text-amber-400 transition-colors">Explore Braj Rasik Heritage</h4>
+            <p className="text-white/40 text-xs line-clamp-2">Discover the complete collection of saints, dham, and literature from the Braj tradition.</p>
+          </Link>
+          
+          <Link to="/category/saint" className="glass-card p-6 group hover:border-amber-500/30 transition-all">
+            <span className="text-[10px] uppercase tracking-widest text-white/30 mb-3 block">Explore More</span>
+            <h4 className="text-lg font-bold mb-2 group-hover:text-amber-400 transition-colors">Rasik Saints Biography</h4>
+            <p className="text-white/40 text-xs line-clamp-2">Read about the life and teachings of the great masters of Vrindavan.</p>
+          </Link>
+
+          <Link to="/content" className="glass-card p-6 group hover:border-amber-500/30 transition-all">
+            <span className="text-[10px] uppercase tracking-widest text-white/30 mb-3 block">Collection</span>
+            <h4 className="text-lg font-bold mb-2 group-hover:text-amber-400 transition-colors">Full Content Library</h4>
+            <p className="text-white/40 text-xs line-clamp-2">Access our complete library of Sanskrit shlokas, Hindi strotras, and spiritual poetry.</p>
+          </Link>
+        </div>
+      </section>
     </div>
   );
 };

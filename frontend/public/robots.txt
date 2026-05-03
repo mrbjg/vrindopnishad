@@ -1,25 +1,17 @@
 User-agent: *
 Allow: /
-Allow: /content
 Allow: /content/
 Allow: /category/
-Allow: /what-is-vrindopnishad
-Allow: /meaning
-Allow: /origin
-Allow: /philosophy
-Allow: /teachings
-Allow: /importance
-Allow: /devotion
-Allow: /faq
-Allow: /comparison-with-upanishads
-Allow: /guide
+Allow: /braj-rasik-heritage
 
+# SEO Rule: Disallow internal API to save crawl budget
+Disallow: /api/
 Disallow: /admin-old/
 Disallow: /login
-Disallow: /loader-demo
 
+# SEO Rule: Sitemap location
 Sitemap: https://path.vrindopnishad.in/sitemap.xml
 
-# Vrindopnishad Paath — वृंदोपनिषद् पाठ
-# Official Site: https://path.vrindopnishad.in
-# Crawl-delay not set — we want fast, aggressive indexing
+# Vrindopnishad — Authentic Braj Rasik Heritage
+# Digital Sanctuary for Sacred Knowledge
+# Contact: admin@vrindopnishad.in

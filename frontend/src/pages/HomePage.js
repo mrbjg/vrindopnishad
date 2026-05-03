@@ -9,7 +9,7 @@ const HomePage = () => {
       <Helmet>
         <title>Vrindopnishad Paath — वृंदोपनिषद् पाठ | Sacred Shlokas, Strotras & Devotional Poetry</title>
         <meta name="description" content="Vrindopnishad Paath (वृंदोपनिषद् पाठ) — Read and listen to authentic sacred Sanskrit shlokas, devotional strotras, spiritual poetry & Vedic wisdom from Vrindavan saints. Free online paath of Bhagavad Gita, mantras & hymns in Hindi, Sanskrit & English." />
-        <meta name="keywords" content="vrindopnishad, vrindopnishad paath, वृंदोपनिषद्, वृंदोपनिषद् पाठ, vrindopnishad path, vrindopnishad app, vrindopnishad.in, sant vaani, sacred shlokas, sanskrit shlokas, strotras, devotional poetry, bhagavad gita, vedic wisdom, vrindavan, भक्ति, श्लोक, स्तोत्र, कविता, वेद, उपनिषद, मंत्र, हिंदी भजन, radha krishna, premanand ji maharaj, barsana, nandgaav, govardhan" />
+        <meta name="keywords" content="vrindopnishad, vrindopnishad paath, वृंदोपनिषद्, वृंदोपनिषद् पाठ, vrindopnishad path, vrindopnishad app, vrindopnishad.in, sant vaani, sacred shlokas, sanskrit shlokas, strotras, devotional poetry, bhagavad gita, vedic wisdom, vrindavan, भक्ति, श्लोक, स्तोत्र, कविता, वेद, उपनिषद, मंत्र, हिंदी भजन, radha krishna, premanand ji maharaj, barsana, nandgaav, govardhan, braj rasik, brajrasik, rasik sant" />
         <link rel="canonical" href="https://path.vrindopnishad.in/" />
 
         {/* Hindi-specific meta for Google India */}
@@ -160,6 +160,54 @@ const HomePage = () => {
              <p className="text-white/60 text-sm leading-relaxed">
                Contemporary and classic spiritual poetry from Vrindavan saints — Surdas, Meera Bai, Kabir, and modern devotional poets.
              </p>
+          </Link>
+        </div>
+      </div>
+
+      {/* Braj Heritage Section */}
+      <div className="py-12">
+        <div className="flex items-center gap-4 mb-12">
+          <div className="h-[1px] flex-1 bg-white/10"></div>
+          <h2 className="text-2xl font-semibold opacity-60 uppercase tracking-widest text-primary">ब्रज रसिक विरासत — Braj Heritage</h2>
+          <div className="h-[1px] flex-1 bg-white/10"></div>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Link to="/category/sankirtan" className="glass-card flex flex-col items-center text-center hover:border-rose-400/30 hover:shadow-2xl hover:shadow-rose-400/10 transition-all duration-500 group">
+             <div className="w-14 h-14 rounded-full bg-rose-400/10 flex items-center justify-center text-rose-400 mb-4 group-hover:scale-110 transition-transform">
+               <Heart size={28} />
+             </div>
+             <h3 className="font-bold mb-1">Sankirtan</h3>
+             <p className="text-white/50 text-xs px-2">Divine lyrics & bhajans</p>
+          </Link>
+
+          <Link to="/category/saint" className="glass-card flex flex-col items-center text-center hover:border-indigo-400/30 hover:shadow-2xl hover:shadow-indigo-400/10 transition-all duration-500 group">
+             <div className="w-14 h-14 rounded-full bg-indigo-400/10 flex items-center justify-center text-indigo-400 mb-4 group-hover:scale-110 transition-transform">
+               <Users size={28} />
+             </div>
+             <h3 className="font-bold mb-1">Rasik Saints</h3>
+             <p className="text-white/50 text-xs px-2">Biographies of masters</p>
+          </Link>
+
+          <Link to="/category/dham" className="glass-card flex flex-col items-center text-center hover:border-orange-400/30 hover:shadow-2xl hover:shadow-orange-400/10 transition-all duration-500 group">
+             <div className="w-14 h-14 rounded-full bg-orange-400/10 flex items-center justify-center text-orange-400 mb-4 group-hover:scale-110 transition-transform">
+               <MapPin size={28} />
+             </div>
+             <h3 className="font-bold mb-1">Braj Dham</h3>
+             <p className="text-white/50 text-xs px-2">Sacred places of Braj</p>
+          </Link>
+
+          <Link to="/category/literature" className="glass-card flex flex-col items-center text-center hover:border-violet-400/30 hover:shadow-2xl hover:shadow-violet-400/10 transition-all duration-500 group">
+             <div className="w-14 h-14 rounded-full bg-violet-400/10 flex items-center justify-center text-violet-400 mb-4 group-hover:scale-110 transition-transform">
+               <Book size={28} />
+             </div>
+             <h3 className="font-bold mb-1">Literature</h3>
+             <p className="text-white/50 text-xs px-2">Authentic Rasik texts</p>
+          </Link>
+        </div>
+        <div className="text-center mt-8">
+          <Link to="/braj-rasik-heritage" className="text-primary hover:underline text-sm font-medium flex items-center justify-center gap-2">
+            Learn more about Braj Rasik Heritage <ArrowRight size={14} />
           </Link>
         </div>
       </div>

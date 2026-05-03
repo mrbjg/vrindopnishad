@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ApiContext } from '../App';
-import { Scroll, Music, FileText, BookOpen, Music as MusicIcon, Image as ImageIcon, Video, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Scroll, Music, FileText, BookOpen, Music as MusicIcon, Image as ImageIcon, Video, ArrowLeft, ArrowRight, MapPin, Users, Book } from 'lucide-react';
 
 const CategoryPage = () => {
   const { category } = useParams();
@@ -34,6 +34,30 @@ const CategoryPage = () => {
       description: 'Divine stories and spiritual narratives',
       icon: Scroll,
       color: 'text-orange-400'
+    },
+    sankirtan: {
+      name: 'Sankirtan',
+      description: 'Divine lyrics and devotional bhajans',
+      icon: Music,
+      color: 'text-rose-400'
+    },
+    saint: {
+      name: 'Rasik Saints',
+      description: 'Biographies and teachings of devotional masters',
+      icon: Users,
+      color: 'text-indigo-400'
+    },
+    dham: {
+      name: 'Braj Dham',
+      description: 'Sacred places and heritage of Braj',
+      icon: MapPin,
+      color: 'text-orange-400'
+    },
+    literature: {
+      name: 'Literature',
+      description: 'Authentic Rasik texts and scriptures',
+      icon: Book,
+      color: 'text-violet-400'
     }
   };
 
@@ -43,6 +67,10 @@ const CategoryPage = () => {
       case 'strotra': return { hover: 'hover:border-sky-400/30 hover:shadow-sky-400/5' };
       case 'poem': return { hover: 'hover:border-emerald-400/30 hover:shadow-emerald-400/5' };
       case 'katha': return { hover: 'hover:border-orange-400/30 hover:shadow-orange-400/5' };
+      case 'sankirtan': return { hover: 'hover:border-rose-400/30 hover:shadow-rose-400/5' };
+      case 'saint': return { hover: 'hover:border-indigo-400/30 hover:shadow-indigo-400/5' };
+      case 'dham': return { hover: 'hover:border-orange-400/30 hover:shadow-orange-400/5' };
+      case 'literature': return { hover: 'hover:border-violet-400/30 hover:shadow-violet-400/5' };
       default: return { hover: 'hover:border-slate-400/30 hover:shadow-slate-400/5' };
     }
   };
@@ -53,6 +81,10 @@ const CategoryPage = () => {
       case 'strotra': return 'badge-strotra';
       case 'poem': return 'badge-poem';
       case 'katha': return 'badge-katha';
+      case 'sankirtan': return 'badge-sankirtan';
+      case 'saint': return 'badge-saint';
+      case 'dham': return 'badge-dham';
+      case 'literature': return 'badge-literature';
       default: return 'badge-general';
     }
   };

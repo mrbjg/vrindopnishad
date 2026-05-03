@@ -1,26 +1,34 @@
 import fs from 'fs';
 import axios from 'axios';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-const SUPABASE_URL = 'https://tilimltxgeucefxzerqi.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpbGltbHR4Z2V1Y2VmeHplcnFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2MjQyNTQsImV4cCI6MjA4MzIwMDI1NH0.lwaCJyTRW6jNsfQJ32R_wAwp11yj6bvsJ4fzC0EX_00';
+// Load .env
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+dotenv.config({ path: join(__dirname, '../.env') });
+
+const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || 'https://tilimltxgeucefxzerqi.supabase.co';
+const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || '';
 const DOMAIN = 'https://path.vrindopnishad.in';
 
 const generateSlug = (text) => {
   if (!text) return '';
-  // Support Hindi characters in slugs for better SEO and readability
   return text
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, '-')     // Replace spaces with -
-    .replace(/[^\u0900-\u097F\w-]+/g, '')  // Remove non-word and non-Hindi chars
-    .replace(/--+/g, '-')     // Replace multiple - with single -
-    .replace(/^-+/, '')        // Trim - from start of text
-    .replace(/-+$/, '');       // Trim - from end of text
+    .replace(/\s+/g, '-')
+    .replace(/[^\u0900-\u097F\w-]+/g, '')
+    .replace(/--+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
 };
 
-// Static SEO pages with high priority
 const SEO_PAGES = [
+  { path: '/', priority: '1.0', changefreq: 'daily' },
+  { path: '/content', priority: '0.9', changefreq: 'daily' },
   { path: '/what-is-vrindopnishad', priority: '0.9', changefreq: 'weekly' },
   { path: '/meaning', priority: '0.9', changefreq: 'weekly' },
   { path: '/origin', priority: '0.9', changefreq: 'weekly' },
@@ -31,99 +39,95 @@ const SEO_PAGES = [
   { path: '/faq', priority: '0.9', changefreq: 'weekly' },
   { path: '/comparison-with-upanishads', priority: '0.9', changefreq: 'weekly' },
   { path: '/guide', priority: '0.9', changefreq: 'weekly' },
+  { path: '/braj-rasik-heritage', priority: '0.9', changefreq: 'weekly' },
 ];
 
-// Category pages
 const CATEGORY_PAGES = [
   { path: '/category/shloka', priority: '0.8', changefreq: 'weekly' },
   { path: '/category/strotra', priority: '0.8', changefreq: 'weekly' },
   { path: '/category/poem', priority: '0.8', changefreq: 'weekly' },
+  { path: '/category/sankirtan', priority: '0.8', changefreq: 'weekly' },
+  { path: '/category/saint', priority: '0.8', changefreq: 'weekly' },
+  { path: '/category/dham', priority: '0.8', changefreq: 'weekly' },
+  { path: '/category/literature', priority: '0.8', changefreq: 'weekly' },
 ];
 
 async function generateSitemap() {
-  console.log('Fetching content from Supabase for dynamic sitemap...');
+  console.log('--- SEO Sitemap Generator ---');
   const today = new Date().toISOString().split('T')[0];
-  
-  try {
-    const response = await axios.get(`${SUPABASE_URL}/rest/v1/content?select=title,id`, {
-        headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`
-        }
-    });
-    
-    const content = response.data;
-    
-    if (!content || content.length === 0) {
-        console.error('No content found in Supabase!');
-        return;
-    }
+  let contentUrls = '';
 
-    console.log(`Found ${content.length} items. Generating URLs...`);
-
-    // SEO pages
-    const seoUrls = SEO_PAGES.map(page => `
-  <url>
-    <loc>${DOMAIN}${page.path}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
-  </url>`).join('');
-
-    // Category pages
-    const categoryUrls = CATEGORY_PAGES.map(page => `
-  <url>
-    <loc>${DOMAIN}${page.path}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
-  </url>`).join('');
-
-    // Dynamic content pages
-    const contentUrls = content.map(item => {
-      const slug = generateSlug(item.title);
-      const encodedSlug = slug ? slug.split('/').map(segment => encodeURIComponent(segment)).join('/') : item.id;
-      return `
+  if (SUPABASE_KEY) {
+    try {
+      console.log('Fetching dynamic content from Supabase...');
+      const response = await axios.get(`${SUPABASE_URL}/rest/v1/content?select=title,id`, {
+          headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`
+          },
+          timeout: 10000
+      });
+      
+      const content = response.data;
+      if (content && content.length > 0) {
+        console.log(`Found ${content.length} dynamic items.`);
+        contentUrls = content.map(item => {
+          const slug = generateSlug(item.title);
+          const encodedSlug = slug ? slug.split('/').map(segment => encodeURIComponent(segment)).join('/') : item.id;
+          return `
   <url>
     <loc>${DOMAIN}/content/${encodedSlug}</loc>
     <lastmod>${today}</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>`;
-    }).join('');
+        }).join('');
+      }
+    } catch (error) {
+      console.warn('Warning: Could not fetch dynamic content. Sitemap will include static pages only.');
+      console.warn('Error detail:', error.message);
+    }
+  } else {
+    console.log('SUPABASE_KEY not found. Skipping dynamic content.');
+  }
 
-    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+  const staticUrls = SEO_PAGES.map(page => `
+  <url>
+    <loc>${DOMAIN}${page.path === '/' ? '/' : page.path}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
+  </url>`).join('');
+
+  const catUrls = CATEGORY_PAGES.map(page => `
+  <url>
+    <loc>${DOMAIN}${page.path}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
+  </url>`).join('');
+
+  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${DOMAIN}/</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>${DOMAIN}/content</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-${seoUrls}
-${categoryUrls}
+${staticUrls}
+${catUrls}
 ${contentUrls}
 </urlset>`;
 
-    // Write to public folder
+  try {
+    // Ensure public folder exists
+    if (!fs.existsSync('public')) {
+        fs.mkdirSync('public');
+    }
     fs.writeFileSync('public/sitemap.xml', sitemap);
-    console.log('Dynamic sitemap.xml generated successfully in public/');
-    console.log(`Total URLs: ${2 + SEO_PAGES.length + CATEGORY_PAGES.length + content.length}`);
-    
-    // Also write to build folder if it exists
+    console.log('✅ sitemap.xml generated in public/');
+
     if (fs.existsSync('build')) {
         fs.writeFileSync('build/sitemap.xml', sitemap);
-        console.log('Dynamic sitemap.xml copied to build/');
+        console.log('✅ sitemap.xml copied to build/');
     }
-
-  } catch (error) {
-    console.error('Error generating sitemap:', error.message);
+  } catch (err) {
+    console.error('Error writing sitemap file:', err.message);
   }
 }
 

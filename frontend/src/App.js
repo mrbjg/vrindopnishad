@@ -33,6 +33,7 @@ const DevotionalPage = React.lazy(() => import('./pages/seo/DevotionalPage'));
 const FAQPage = React.lazy(() => import('./pages/seo/FAQPage'));
 const ComparisonPage = React.lazy(() => import('./pages/seo/ComparisonPage'));
 const GuidePage = React.lazy(() => import('./pages/seo/GuidePage'));
+const BrajRasikHeritage = React.lazy(() => import('./pages/seo/BrajRasikHeritage'));
 
 // Backend URL with fallback for development
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -219,6 +220,7 @@ function App() {
                     <Route path="/faq" element={<FAQPage />} />
                     <Route path="/comparison-with-upanishads" element={<ComparisonPage />} />
                     <Route path="/guide" element={<GuidePage />} />
+                    <Route path="/braj-rasik-heritage" element={<BrajRasikHeritage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/admin-old/login" element={<AdminLoginPage />} />
                     <Route
