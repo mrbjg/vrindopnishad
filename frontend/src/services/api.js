@@ -151,18 +151,38 @@ export const apiService = {
     } catch (error) {
       console.warn('Firebase fetch failed, falling back to Supabase...', error.message);
       try {
-          // Try lookup by ID first (safe across all tables)
-          let { data } = await supabase.from('content').select('*').eq('id', id).maybeSingle();
-          
+          const decodedId = decodeURIComponent(id);
+          let data = null;
+
+          // 1. Try lookup by slug column first (most common case from card links)
+          const { data: slugData } = await supabase.from('content').select('*').eq('slug', id).maybeSingle();
+          if (slugData) {
+            data = slugData;
+          }
+
+          // 2. Try decoded slug
+          if (!data && decodedId !== id) {
+            const { data: decodedSlugData } = await supabase.from('content').select('*').eq('slug', decodedId).maybeSingle();
+            if (decodedSlugData) data = decodedSlugData;
+          }
+
+          // 3. Try lookup by UUID id
           if (!data) {
-             // If not found by ID, it might be a slug. Fetch all and search by generated slug
-             console.log('Not found by ID in Supabase, searching by generated slug...');
+            const { data: idData } = await supabase.from('content').select('*').eq('id', id).maybeSingle();
+            if (idData) data = idData;
+          }
+
+          // 4. Last resort: fetch all and match by generated slug from title
+          if (!data) {
+             console.log('Not found by slug/id in Supabase, searching by generated slug...');
              const { data: allData, error: allErr } = await supabase.from('content').select('*');
              if (allErr) throw allErr;
              
              data = allData.find(item => 
+                item.slug === id ||
+                item.slug === decodedId ||
                 generateSlug(item.title) === id || 
-                generateSlug(item.title) === decodeURIComponent(id)
+                generateSlug(item.title) === decodedId
              );
           }
 
