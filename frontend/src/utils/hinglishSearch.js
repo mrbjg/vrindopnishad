@@ -166,24 +166,24 @@ const TRANSLITERATION_MAP = {
  */
 export function expandHinglishQuery(query) {
   if (!query || typeof query !== 'string') return [];
-  
+
   const normalizedQuery = query.toLowerCase().trim();
   const words = normalizedQuery.split(/\s+/);
   const expandedTerms = new Set();
-  
+
   // Always include original query
   expandedTerms.add(normalizedQuery);
-  
+
   for (const word of words) {
     // Add the original word
     expandedTerms.add(word);
-    
+
     // Look up in dictionary
     const hindiVariants = HINGLISH_MAP[word];
     if (hindiVariants) {
       hindiVariants.forEach(v => expandedTerms.add(v));
     }
-    
+
     // Also try partial matches (e.g., "krishn" matches "krishna")
     for (const [key, variants] of Object.entries(HINGLISH_MAP)) {
       if (key.startsWith(word) && word.length >= 3) {
@@ -191,7 +191,7 @@ export function expandHinglishQuery(query) {
       }
     }
   }
-  
+
   return Array.from(expandedTerms);
 }
 
@@ -200,7 +200,7 @@ export function expandHinglishQuery(query) {
  */
 export function hinglishMatch(item, query) {
   if (!query || !item) return true;
-  
+
   const expandedTerms = expandHinglishQuery(query);
   const searchableText = [
     item.title,
@@ -213,7 +213,7 @@ export function hinglishMatch(item, query) {
     item.slug,
     ...(item.tags || [])
   ].filter(Boolean).join(' ').toLowerCase();
-  
+
   // Check if ANY expanded term matches
   return expandedTerms.some(term => searchableText.includes(term.toLowerCase()));
 }
@@ -223,10 +223,10 @@ export function hinglishMatch(item, query) {
  */
 export function getSearchSuggestions(query) {
   if (!query || query.length < 2) return [];
-  
+
   const normalizedQuery = query.toLowerCase().trim();
   const suggestions = [];
-  
+
   for (const [hinglish, hindiArr] of Object.entries(HINGLISH_MAP)) {
     if (hinglish.startsWith(normalizedQuery) || normalizedQuery.startsWith(hinglish)) {
       suggestions.push({
@@ -236,6 +236,6 @@ export function getSearchSuggestions(query) {
       });
     }
   }
-  
+
   return suggestions.slice(0, 8); // Max 8 suggestions
 }
