@@ -290,7 +290,11 @@ async def get_categories():
             "categories": [
                 {"id": "shloka", "name": "Shlokas"},
                 {"id": "strotra", "name": "Strotras"},
-                {"id": "poem", "name": "Poems"}
+                {"id": "poem", "name": "Poems"},
+                {"id": "sankirtan", "name": "Sankirtan"},
+                {"id": "saint", "name": "Rasik Saints"},
+                {"id": "dham", "name": "Braj Dham"},
+                {"id": "literature", "name": "Literature"}
             ]
         }
     
@@ -309,7 +313,11 @@ async def get_categories():
                 "categories": [
                     {"id": "shloka", "name": "Shlokas"},
                     {"id": "strotra", "name": "Strotras"},
-                    {"id": "poem", "name": "Poems"}
+                    {"id": "poem", "name": "Poems"},
+                    {"id": "sankirtan", "name": "Sankirtan"},
+                    {"id": "saint", "name": "Rasik Saints"},
+                    {"id": "dham", "name": "Braj Dham"},
+                    {"id": "literature", "name": "Literature"}
                 ]
             }
 
@@ -324,7 +332,11 @@ async def get_categories():
             "categories": [
                 {"id": "shloka", "name": "Shlokas"},
                 {"id": "strotra", "name": "Strotras"},
-                {"id": "poem", "name": "Poems"}
+                {"id": "poem", "name": "Poems"},
+                {"id": "sankirtan", "name": "Sankirtan"},
+                {"id": "saint", "name": "Rasik Saints"},
+                {"id": "dham", "name": "Braj Dham"},
+                {"id": "literature", "name": "Literature"}
             ]
         }
 
