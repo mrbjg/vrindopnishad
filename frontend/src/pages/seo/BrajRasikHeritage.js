@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Compass, Heart, MapPin, Users, Book, ArrowRight, Star, Globe } from 'lucide-react';
+import { Compass, Heart, MapPin, Book, ArrowRight, Globe } from 'lucide-react';
 import { generateArticleSchema, generateBreadcrumbSchema, SITE_URL } from '../../utils/seoSchemas';
 import InternalLinks from '../../components/InternalLinks';
 import SEOFooter from '../../components/SEOFooter';
