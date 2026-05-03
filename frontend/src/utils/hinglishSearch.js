@@ -142,23 +142,6 @@ const HINGLISH_MAP = {
   'bhagavat': ['भागवत', 'भगवत'],
 };
 
-// Hinglish phonetic transliteration (character-level)
-const TRANSLITERATION_MAP = {
-  'aa': 'आ', 'ee': 'ई', 'oo': 'ऊ', 'ai': 'ऐ', 'au': 'औ',
-  'a': 'अ', 'i': 'इ', 'u': 'उ', 'e': 'ए', 'o': 'ओ',
-  'ka': 'का', 'kha': 'खा', 'ga': 'गा', 'gha': 'घा',
-  'cha': 'चा', 'chha': 'छा', 'ja': 'जा', 'jha': 'झा',
-  'ta': 'ता', 'tha': 'था', 'da': 'दा', 'dha': 'धा', 'na': 'ना',
-  'pa': 'पा', 'pha': 'फा', 'ba': 'बा', 'bha': 'भा', 'ma': 'मा',
-  'ya': 'या', 'ra': 'रा', 'la': 'ला', 'va': 'वा', 'wa': 'वा',
-  'sha': 'शा', 'sa': 'सा', 'ha': 'हा',
-  'k': 'क', 'g': 'ग', 'ch': 'च', 'j': 'ज',
-  't': 'त', 'd': 'द', 'n': 'न',
-  'p': 'प', 'b': 'ब', 'm': 'म',
-  'y': 'य', 'r': 'र', 'l': 'ल', 'v': 'व', 'w': 'व',
-  'sh': 'श', 's': 'स', 'h': 'ह',
-};
-
 /**
  * Expand a Hinglish search query into multiple search variants
  * "radha pyari" → ["radha pyari", "राधा", "राधे", "राधिका", "प्यार", "प्यारे", "प्यारी"]
