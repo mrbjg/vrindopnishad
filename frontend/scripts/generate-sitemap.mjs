@@ -1,13 +1,28 @@
 import fs from 'fs';
-import axios from 'axios';
-import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+
+// Helper to manually load .env without dependencies
+const loadEnv = (path) => {
+  if (fs.existsSync(path)) {
+    const content = fs.readFileSync(path, 'utf-8');
+    content.split('\n').forEach(line => {
+      const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
+      if (match) {
+        const key = match[1];
+        let value = match[2] || '';
+        if (value.startsWith('"') && value.endsWith('"')) value = value.slice(1, -1);
+        if (value.startsWith("'") && value.endsWith("'")) value = value.slice(1, -1);
+        process.env[key] = value;
+      }
+    });
+  }
+};
 
 // Load .env
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-dotenv.config({ path: join(__dirname, '../.env') });
+loadEnv(join(__dirname, '../.env'));
 
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || 'https://tilimltxgeucefxzerqi.supabase.co';
 const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || '';
@@ -55,33 +70,49 @@ const CATEGORY_PAGES = [
 async function generateSitemap() {
   console.log('--- SEO Sitemap Generator ---');
   const today = new Date().toISOString().split('T')[0];
-  let contentUrls = '';
+  const urlSet = new Set();
+  const urls = [];
 
+  // Helper to add unique URLs
+  const addUrl = (loc, priority, freq) => {
+    const fullLoc = loc.startsWith('http') ? loc : `${DOMAIN}${loc}`;
+    if (!urlSet.has(fullLoc)) {
+      urlSet.add(fullLoc);
+      urls.push({ loc: fullLoc, priority, freq });
+    }
+  };
+
+  // 1. Static SEO Pages
+  SEO_PAGES.forEach(page => addUrl(page.path, page.priority, page.changefreq));
+
+  // 2. Category Pages
+  CATEGORY_PAGES.forEach(page => addUrl(page.path, page.priority, page.changefreq));
+
+  // 3. Dynamic Content from Supabase
   if (SUPABASE_KEY) {
     try {
       console.log('Fetching dynamic content from Supabase...');
-      const response = await axios.get(`${SUPABASE_URL}/rest/v1/content?select=title,id`, {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/content?select=title,id`, {
           headers: {
               'apikey': SUPABASE_KEY,
               'Authorization': `Bearer ${SUPABASE_KEY}`
-          },
-          timeout: 10000
+          }
       });
       
-      const content = response.data;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const content = await response.json();
       if (content && content.length > 0) {
         console.log(`Found ${content.length} dynamic items.`);
-        contentUrls = content.map(item => {
+        content.forEach(item => {
           const slug = generateSlug(item.title);
           const encodedSlug = slug ? slug.split('/').map(segment => encodeURIComponent(segment)).join('/') : item.id;
-          return `
-  <url>
-    <loc>${DOMAIN}/content/${encodedSlug}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>`;
-        }).join('');
+          if (encodedSlug) {
+            addUrl(`/content/${encodedSlug}`, '0.8', 'daily');
+          }
+        });
       }
     } catch (error) {
       console.warn('Warning: Could not fetch dynamic content. Sitemap will include static pages only.');
@@ -91,27 +122,15 @@ async function generateSitemap() {
     console.log('SUPABASE_KEY not found. Skipping dynamic content.');
   }
 
-  const staticUrls = SEO_PAGES.map(page => `
-  <url>
-    <loc>${DOMAIN}${page.path === '/' ? '/' : page.path}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
-  </url>`).join('');
-
-  const catUrls = CATEGORY_PAGES.map(page => `
-  <url>
-    <loc>${DOMAIN}${page.path}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
-  </url>`).join('');
-
-  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+  // Generate XML
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${staticUrls}
-${catUrls}
-${contentUrls}
+${urls.map(u => `  <url>
+    <loc>${u.loc}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${u.freq}</changefreq>
+    <priority>${u.priority}</priority>
+  </url>`).join('\n')}
 </urlset>`;
 
   try {
@@ -119,11 +138,11 @@ ${contentUrls}
     if (!fs.existsSync('public')) {
         fs.mkdirSync('public');
     }
-    fs.writeFileSync('public/sitemap.xml', sitemap);
-    console.log('✅ sitemap.xml generated in public/');
+    fs.writeFileSync('public/sitemap.xml', xml);
+    console.log(`✅ sitemap.xml generated in public/ (${urls.length} unique URLs)`);
 
     if (fs.existsSync('build')) {
-        fs.writeFileSync('build/sitemap.xml', sitemap);
+        fs.writeFileSync('build/sitemap.xml', xml);
         console.log('✅ sitemap.xml copied to build/');
     }
   } catch (err) {
@@ -132,3 +151,6 @@ ${contentUrls}
 }
 
 generateSitemap();
+
+
+
