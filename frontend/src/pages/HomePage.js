@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Compass, Scroll, Music, FileText, ArrowRight, BookOpen, Heart, Star, Globe } from 'lucide-react';
+import { Compass, Scroll, Music, FileText, ArrowRight, BookOpen, Heart, Star, Globe, Users, MapPin, Book } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 
 const HomePage = () => {
