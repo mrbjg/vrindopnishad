@@ -110,7 +110,6 @@ const HINGLISH_MAP = {
   'vani': ['वाणी'],
   'vaani': ['वाणी'],
   'updesh': ['उपदेश'],
-  'updesh': ['उपदेश'],
   'charitra': ['चरित्र'],
   'mahima': ['महिमा'],
   'sakhi': ['सखी', 'साखी'],
