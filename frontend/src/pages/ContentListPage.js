@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ApiContext } from '../App';
-import { Search, ArrowRight, Tag, Sparkles } from 'lucide-react';
+import { Search, ArrowRight, Tag, Sparkles, Brain } from 'lucide-react';
 import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { Helmet } from 'react-helmet-async';
 import { hinglishMatch, getSearchSuggestions } from '../utils/hinglishSearch';
+import { semanticSearch } from '../utils/semanticSearch';
 
 const ContentListPage = () => {
   const { apiService } = useContext(ApiContext);
@@ -21,6 +22,8 @@ const ContentListPage = () => {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [aiResults, setAiResults] = useState([]);
+  const [aiLoading, setAiLoading] = useState(false);
   const searchRef = useRef(null);
 
   useEffect(() => {
@@ -41,6 +44,20 @@ const ContentListPage = () => {
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
+
+  // AI Semantic Search (runs in background, doesn't block UI)
+  useEffect(() => {
+    if (debouncedSearch.length < 3) { setAiResults([]); return; }
+    let cancelled = false;
+    setAiLoading(true);
+    semanticSearch(debouncedSearch).then(results => {
+      if (!cancelled) {
+        setAiResults(results);
+        setAiLoading(false);
+      }
+    }).catch(() => { if (!cancelled) setAiLoading(false); });
+    return () => { cancelled = true; };
+  }, [debouncedSearch]);
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -267,6 +284,58 @@ const ContentListPage = () => {
            <Search size={48} className="mx-auto text-white/20 mb-6" />
            <p className="text-white/40">No content found matching your search.</p>
         </div>
+      )}
+
+      {/* AI Semantic Recommendations */}
+      {debouncedSearch.length >= 3 && (aiResults.length > 0 || aiLoading) && (
+        <section className="mt-16">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="p-2 bg-purple-500/10 rounded-xl">
+              <Brain size={20} className="text-purple-400" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold flex items-center gap-2">
+                AI Recommendations
+                <span className="text-[9px] uppercase tracking-widest text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full">Semantic</span>
+              </h3>
+              <p className="text-white/30 text-xs">Powered by multilingual AI — understands meaning across Hindi, English & Sanskrit</p>
+            </div>
+          </div>
+
+          {aiLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1,2,3].map(i => (
+                <div key={i} className="glass-card h-36 animate-pulse">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="skeleton w-16 h-5 rounded-full" />
+                    <div className="skeleton w-10 h-4 rounded" />
+                  </div>
+                  <div className="skeleton w-3/4 h-5 rounded mb-2" />
+                  <div className="skeleton w-full h-3 rounded" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {aiResults.map((item, i) => (
+                <Link
+                  key={item.id}
+                  to={`/content/${item.slug || item.id}`}
+                  className="glass-card group hover:border-purple-400/30 transition-all duration-300 relative overflow-hidden"
+                >
+                  <div className="absolute top-0 right-0 px-3 py-1 bg-purple-500/10 rounded-bl-xl">
+                    <span className="text-[10px] text-purple-300 font-mono">{Math.round(item.score * 100)}%</span>
+                  </div>
+                  <span className="text-[10px] uppercase tracking-widest text-purple-400/60 mb-2 block">{item.category}</span>
+                  <h4 className="text-base font-bold mb-2 line-clamp-2 group-hover:text-purple-300 transition-colors">{item.title}</h4>
+                  {item.author && (
+                    <p className="text-white/30 text-xs">— {item.author}</p>
+                  )}
+                </Link>
+              ))}
+            </div>
+          )}
+        </section>
       )}
     </div>
   );
