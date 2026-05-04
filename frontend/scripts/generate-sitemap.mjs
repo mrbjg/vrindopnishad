@@ -123,35 +123,37 @@ async function generateSitemap() {
   const uniqueCategories = [...new Set(allContentItems.map(item => item.category).filter(Boolean))];
   console.log(`📂 Found ${uniqueCategories.length} unique categories.`);
 
-  // 4. Generate XML entries for content
-  const contentUrls = allContentItems.map(item => {
-    const slug = item.slug || generateSlug(item.title);
-    const encodedSlug = encodeURIComponent(slug);
-    return `
-  <url>
-    <loc>${DOMAIN}/content/${encodedSlug}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>`;
-  }).join('');
+  // 4. Sanitize slug for XML-safe URLs
+  const sanitizeSlug = (slug) => {
+    if (!slug) return '';
+    return slug.toString()
+      .replace(/[\r\n\t]+/g, '')
+      .replace(/["'<>&,;:!?()[\]{}]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/--+/g, '-')
+      .replace(/^-+/, '').replace(/-+$/, '')
+      .trim();
+  };
 
-  // 5. Static and Category URLs
-  const staticUrls = SEO_PAGES.map(page => `
-  <url>
-    <loc>${DOMAIN}${page.path === '/' ? '/' : page.path}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
-  </url>`).join('');
+  // 5. Generate XML — single-line <url> blocks to prevent whitespace corruption
+  const contentUrls = allContentItems
+    .map(item => {
+      const rawSlug = item.slug || generateSlug(item.title);
+      const slug = sanitizeSlug(rawSlug);
+      if (!slug) return null;
+      const encoded = encodeURIComponent(slug);
+      return `  <url><loc>${DOMAIN}/content/${encoded}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`;
+    })
+    .filter(Boolean)
+    .join('\n');
 
-  const catUrls = uniqueCategories.map(cat => `
-  <url>
-    <loc>${DOMAIN}/category/${encodeURIComponent(cat.toLowerCase().replace(/\s+/g, '-'))}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>`).join('');
+  const staticUrls = SEO_PAGES.map(page =>
+    `  <url><loc>${DOMAIN}${page.path}</loc><lastmod>${today}</lastmod><changefreq>${page.changefreq}</changefreq><priority>${page.priority}</priority></url>`
+  ).join('\n');
+
+  const catUrls = uniqueCategories.map(cat =>
+    `  <url><loc>${DOMAIN}/category/${encodeURIComponent(cat.toLowerCase().replace(/\s+/g, '-'))}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
+  ).join('\n');
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
