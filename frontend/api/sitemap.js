@@ -1,15 +1,12 @@
 /**
  * Vercel Serverless Function: Dynamic Sitemap Generator
  * 
- * This fetches ALL content from Firebase RTDB at request time and 
- * generates a fresh sitemap XML. Vercel CDN caches it via s-maxage.
- * 
- * WHY: Static sitemap.xml served by Vercel can conflict with SPA 
- * catch-all rewrites, causing Google Search Console "Couldn't fetch" errors.
- * A serverless function guarantees correct Content-Type and HTTP 200.
+ * Fetches ALL content from Supabase and generates sitemap XML on the fly.
+ * Vercel CDN caches via s-maxage so this only runs once per hour.
  */
 
-const FIREBASE_DB_URL = 'https://santvaanig-default-rtdb.asia-southeast1.firebasedatabase.app';
+const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || 'https://tilimltxgeucefxzerqi.supabase.co';
+const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpbGltbHR4Z2V1Y2VmeHplcnFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2MjQyNTQsImV4cCI6MjA4MzIwMDI1NH0.lwaCJyTRW6jNsfQJ32R_wAwp11yj6bvsJ4fzC0EX_00';
 const DOMAIN = 'https://path.vrindopnishad.in';
 
 const generateSlug = (text) => {
@@ -41,20 +38,25 @@ export default async function handler(req, res) {
   const today = new Date().toISOString().split('T')[0];
   let contentItems = [];
 
-  // Fetch all content from Firebase RTDB (public REST endpoint)
+  // Fetch from Supabase (primary — Firebase RTDB returns 401)
   try {
-    const response = await fetch(`${FIREBASE_DB_URL}/public/content.json`, {
-      signal: AbortSignal.timeout(8000)
-    });
-    const rawData = await response.json();
-
-    if (rawData) {
-      contentItems = Array.isArray(rawData)
-        ? rawData.filter(Boolean)
-        : Object.keys(rawData).map(key => ({ id: key, ...rawData[key] }));
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/content?select=title,id,slug,category&order=created_at.desc`,
+      {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Range': '0-9999'
+        },
+        signal: AbortSignal.timeout(8000)
+      }
+    );
+    const data = await response.json();
+    if (Array.isArray(data)) {
+      contentItems = data;
     }
   } catch (e) {
-    console.error('Firebase fetch failed:', e.message);
+    console.error('Supabase fetch failed:', e.message);
   }
 
   // Extract unique categories

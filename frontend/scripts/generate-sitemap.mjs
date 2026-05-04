@@ -84,7 +84,7 @@ async function generateSitemap() {
       console.log('📡 Fetching content from Supabase...');
       // Note: Supabase REST API has a 1000 row limit by default. 
       // For now, we fetch up to 1000. If there are more, pagination would be needed.
-      const response = await axios.get(`${SUPABASE_URL}/rest/v1/content?select=title,id,slug`, {
+      const response = await axios.get(`${SUPABASE_URL}/rest/v1/content?select=title,id,slug,category`, {
         headers: {
           'apikey': SUPABASE_KEY,
           'Authorization': `Bearer ${SUPABASE_KEY}`,
