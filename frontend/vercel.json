@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/sitemap.xml",
-      "destination": "/sitemap.xml"
+      "destination": "/api/sitemap"
     },
     {
       "source": "/robots.txt",
@@ -13,17 +13,17 @@
       "destination": "/google27b1a7fc60901288.html"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!api|sitemap\\.xml|robots\\.txt|google27b1a7fc60901288\\.html|static|manifest\\.json|favicon).*)",
       "destination": "/index.html"
     }
   ],
   "headers": [
     {
-      "source": "/sitemap.xml",
+      "source": "/api/sitemap",
       "headers": [
         {
           "key": "Content-Type",
-          "value": "application/xml"
+          "value": "application/xml; charset=utf-8"
         },
         {
           "key": "Cache-Control",
@@ -36,7 +36,7 @@
       "headers": [
         {
           "key": "Content-Type",
-          "value": "text/plain"
+          "value": "text/plain; charset=utf-8"
         },
         {
           "key": "Cache-Control",

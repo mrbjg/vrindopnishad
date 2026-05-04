@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Generated sitemap (served dynamically via /api/sitemap on Vercel)
+public/sitemap.xml

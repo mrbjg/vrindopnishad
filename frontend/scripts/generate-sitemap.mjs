@@ -44,15 +44,16 @@ const SEO_PAGES = [
   { path: '/braj-rasik-heritage', priority: '0.9', changefreq: 'weekly' },
 ];
 
-const CATEGORY_PAGES = [
-  { path: '/category/shloka', priority: '0.8', changefreq: 'weekly' },
-  { path: '/category/strotra', priority: '0.8', changefreq: 'weekly' },
-  { path: '/category/poem', priority: '0.8', changefreq: 'weekly' },
-  { path: '/category/sankirtan', priority: '0.8', changefreq: 'weekly' },
-  { path: '/category/saint', priority: '0.8', changefreq: 'weekly' },
-  { path: '/category/dham', priority: '0.8', changefreq: 'weekly' },
-  { path: '/category/literature', priority: '0.8', changefreq: 'weekly' },
-];
+// Temperory removed as not required
+// const CATEGORY_PAGES = [
+//   { path: '/category/shloka', priority: '0.8', changefreq: 'weekly' },
+//   { path: '/category/strotra', priority: '0.8', changefreq: 'weekly' },
+//   { path: '/category/poem', priority: '0.8', changefreq: 'weekly' },
+//   { path: '/category/sankirtan', priority: '0.8', changefreq: 'weekly' },
+//   { path: '/category/saint', priority: '0.8', changefreq: 'weekly' },
+//   { path: '/category/dham', priority: '0.8', changefreq: 'weekly' },
+//   { path: '/category/literature', priority: '0.8', changefreq: 'weekly' },
+// ];
 
 async function generateSitemap() {
   console.log('--- 🚀 SEO Sitemap Generator ---');
@@ -149,25 +150,16 @@ ${contentUrls}
 </urlset>`;
 
   try {
-    // Ensure public folder exists
+    // Write to public/ only (for local dev).
+    // DO NOT write to build/ — on Vercel, a static build/sitemap.xml 
+    // would take priority over the /api/sitemap serverless rewrite.
     if (!fs.existsSync('public')) {
       fs.mkdirSync('public');
     }
 
     fs.writeFileSync('public/sitemap.xml', sitemap);
-    console.log(`✅ sitemap.xml generated in public/ with ${SEO_PAGES.length + CATEGORY_PAGES.length + allContentItems.length} URLs`);
-
-    if (fs.existsSync('build')) {
-      fs.writeFileSync('build/sitemap.xml', sitemap);
-      console.log('✅ sitemap.xml copied to build/');
-    }
-
-    // Also generate a simple robots.txt just in case it's missing in build
-    const robots = `User-agent: *
-Allow: /
-Sitemap: ${DOMAIN}/sitemap.xml`;
-    fs.writeFileSync('public/robots.txt', robots);
-    if (fs.existsSync('build')) fs.writeFileSync('build/robots.txt', robots);
+    const totalUrls = SEO_PAGES.length + uniqueCategories.length + allContentItems.length;
+    console.log(`✅ sitemap.xml generated in public/ with ${totalUrls} URLs`);
 
   } catch (err) {
     console.error('❌ Error writing sitemap file:', err.message);
