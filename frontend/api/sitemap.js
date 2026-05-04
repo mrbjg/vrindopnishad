@@ -1,8 +1,7 @@
 /**
  * Vercel Serverless Function: Dynamic Sitemap Generator
- * 
- * Fetches ALL content from Supabase and generates sitemap XML on the fly.
- * Vercel CDN caches via s-maxage so this only runs once per hour.
+ * Fetches ALL content from Supabase (paginated) and generates XML.
+ * Cached by Vercel CDN for 1 hour via s-maxage.
  */
 
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || 'https://tilimltxgeucefxzerqi.supabase.co';
@@ -38,22 +37,31 @@ export default async function handler(req, res) {
   const today = new Date().toISOString().split('T')[0];
   let contentItems = [];
 
-  // Fetch from Supabase (primary — Firebase RTDB returns 401)
+  // Paginated fetch from Supabase (1000 per page)
   try {
-    const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/content?select=title,id,slug,category&order=created_at.desc`,
-      {
-        headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': `Bearer ${SUPABASE_KEY}`,
-          'Range': '0-9999'
-        },
-        signal: AbortSignal.timeout(8000)
+    const PAGE_SIZE = 1000;
+    let offset = 0;
+    let hasMore = true;
+
+    while (hasMore) {
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/content?select=title,id,slug,category&order=id&offset=${offset}&limit=${PAGE_SIZE}`,
+        {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        }
+      );
+      const items = await response.json();
+
+      if (Array.isArray(items) && items.length > 0) {
+        contentItems = contentItems.concat(items);
+        offset += PAGE_SIZE;
+        hasMore = items.length === PAGE_SIZE;
+      } else {
+        hasMore = false;
       }
-    );
-    const data = await response.json();
-    if (Array.isArray(data)) {
-      contentItems = data;
     }
   } catch (e) {
     console.error('Supabase fetch failed:', e.message);

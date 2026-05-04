@@ -78,31 +78,42 @@ async function generateSitemap() {
     console.warn('⚠️ Firebase fetch failed:', error.message);
   }
 
-  // 2. Fetch from Supabase (Secondary source)
+  // 2. Fetch from Supabase with pagination (1000 rows per page)
   if (SUPABASE_KEY) {
     try {
-      console.log('📡 Fetching content from Supabase...');
-      // Note: Supabase REST API has a 1000 row limit by default. 
-      // For now, we fetch up to 1000. If there are more, pagination would be needed.
-      const response = await axios.get(`${SUPABASE_URL}/rest/v1/content?select=title,id,slug,category`, {
-        headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': `Bearer ${SUPABASE_KEY}`,
-          'Range': '0-9999'
-        },
-        timeout: 1000000
-      });
+      console.log('📡 Fetching content from Supabase (paginated)...');
+      const PAGE_SIZE = 1000;
+      let offset = 0;
+      let hasMore = true;
 
-      const items = response.data;
-      if (items && items.length > 0) {
-        console.log(`✅ Found ${items.length} items in Supabase.`);
-        // Add only if not already present from Firebase (using ID matching if possible)
-        items.forEach(item => {
-          if (!allContentItems.some(existing => existing.id === item.id)) {
-            allContentItems.push(item);
+      while (hasMore) {
+        const response = await axios.get(
+          `${SUPABASE_URL}/rest/v1/content?select=title,id,slug,category&order=id&offset=${offset}&limit=${PAGE_SIZE}`,
+          {
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`,
+              'Prefer': 'count=exact'
+            },
+            timeout: 30000
           }
-        });
+        );
+
+        const items = response.data;
+        if (items && items.length > 0) {
+          items.forEach(item => {
+            if (!allContentItems.some(existing => existing.id === item.id)) {
+              allContentItems.push(item);
+            }
+          });
+          console.log(`  📦 Fetched ${items.length} items (total: ${allContentItems.length})`);
+          offset += PAGE_SIZE;
+          hasMore = items.length === PAGE_SIZE;
+        } else {
+          hasMore = false;
+        }
       }
+      console.log(`✅ Total: ${allContentItems.length} items from Supabase.`);
     } catch (error) {
       console.warn('⚠️ Supabase fetch failed:', error.message);
     }
