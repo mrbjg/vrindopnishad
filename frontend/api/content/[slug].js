@@ -1,0 +1,150 @@
+/**
+ * Vercel Serverless Function: Dynamic Meta Tag Injector for SEO
+ * 
+ * When Googlebot requests /content/:slug, this function:
+ * 1. Fetches the content data from Supabase
+ * 2. Injects proper <title>, <meta description>, and JSON-LD into the HTML
+ * 3. Returns the modified HTML so Google sees unique titles WITHOUT waiting for JS
+ * 
+ * This is "dynamic rendering" — Google officially supports this approach.
+ */
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || 'https://tilimltxgeucefxzerqi.supabase.co';
+const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpbGltbHR4Z2V1Y2VmeHplcnFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2MjQyNTQsImV4cCI6MjA4MzIwMDI1NH0.lwaCJyTRW6jNsfQJ32R_wAwp11yj6bvsJ4fzC0EX_00';
+const DOMAIN = 'https://path.vrindopnishad.in';
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+export default async function handler(req, res) {
+  const slug = req.query.slug;
+  if (!slug) {
+    res.status(400).send('Missing slug');
+    return;
+  }
+
+  // Fetch content from Supabase by slug
+  let content = null;
+  try {
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/content?slug=eq.${encodeURIComponent(slug)}&limit=1`,
+      {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        }
+      }
+    );
+    const data = await response.json();
+    if (Array.isArray(data) && data.length > 0) {
+      content = data[0];
+    }
+  } catch (e) {
+    console.error('Supabase fetch failed:', e.message);
+  }
+
+  // If no content found by slug, try by title match
+  if (!content) {
+    try {
+      const decodedSlug = decodeURIComponent(slug);
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/content?title=ilike.*${encodeURIComponent(decodedSlug.replace(/-/g, '*'))}*&limit=1`,
+        {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        }
+      );
+      const data = await response.json();
+      if (Array.isArray(data) && data.length > 0) {
+        content = data[0];
+      }
+    } catch (e) { /* fallback failed */ }
+  }
+
+  // Build the meta tags
+  const title = content
+    ? `${escapeHtml(content.title)} — ${escapeHtml(content.category || 'Sacred Verse')} | ${escapeHtml(content.author || 'Vrindopnishad')}`
+    : 'Vrindopnishad Paath — वृंदोपनिषद् पाठ';
+
+  const description = content
+    ? escapeHtml(
+        (content.sanskrit_text || content.hindi_text || content.description || '')
+          .substring(0, 160)
+          .replace(/[\r\n]+/g, ' ')
+      ) + '...'
+    : 'Sacred shlokas, strotras, and devotional poetry from Vrindavan saints.';
+
+  const pageUrl = `${DOMAIN}/content/${encodeURIComponent(slug)}`;
+  const imageUrl = content?.image_url || 'https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png';
+
+  // JSON-LD structured data
+  const jsonLd = content ? JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": content.title || "Sacred Verse",
+    "description": (content.description || content.hindi_text || '').substring(0, 200),
+    "author": { "@type": "Person", "name": content.author || "Vrindopnishad" },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Vrindopnishad",
+      "logo": { "@type": "ImageObject", "url": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png" }
+    },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": pageUrl },
+    "inLanguage": ["hi", "sa", "en"],
+    "genre": content.category || "Sacred Literature",
+    "datePublished": content.created_at || new Date().toISOString(),
+    ...(content.image_url ? { "image": content.image_url } : {})
+  }) : '';
+
+  // Build full HTML page with pre-rendered meta tags + React root
+  const html = `<!doctype html>
+<html lang="hi" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover"/>
+  <title>${title}</title>
+  <meta name="description" content="${description}"/>
+  <meta name="keywords" content="${escapeHtml((content?.title || '') + ', ' + (content?.author || '') + ', ' + (content?.category || '') + ', vrindopnishad, sant vaani, sacred shloka, braj rasik')}"/>
+  <link rel="canonical" href="${pageUrl}"/>
+  <meta property="og:type" content="article"/>
+  <meta property="og:title" content="${title}"/>
+  <meta property="og:description" content="${description}"/>
+  <meta property="og:url" content="${pageUrl}"/>
+  <meta property="og:image" content="${escapeHtml(imageUrl)}"/>
+  <meta property="og:site_name" content="Vrindopnishad Paath — वृंदोपनिषद् पाठ"/>
+  <meta property="og:locale" content="hi_IN"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="${title}"/>
+  <meta name="twitter:description" content="${description}"/>
+  <meta name="twitter:image" content="${escapeHtml(imageUrl)}"/>
+  ${jsonLd ? `<script type="application/ld+json">${jsonLd}</script>` : ''}
+  <meta name="theme-color" content="#0D0D12"/>
+  <link rel="icon" href="https://vrindopnishad.in/favicon.ico" sizes="48x48"/>
+  <meta http-equiv="refresh" content="0;url=${pageUrl}"/>
+</head>
+<body>
+  <noscript>
+    <div style="max-width:800px;margin:0 auto;padding:40px 20px;font-family:sans-serif;">
+      <h1>${content ? escapeHtml(content.title) : 'Vrindopnishad Paath'}</h1>
+      ${content?.author ? `<p><strong>Author:</strong> ${escapeHtml(content.author)}</p>` : ''}
+      ${content?.category ? `<p><strong>Category:</strong> ${escapeHtml(content.category)}</p>` : ''}
+      ${content?.sanskrit_text ? `<div lang="sa"><h2>Sanskrit</h2><p>${escapeHtml(content.sanskrit_text.substring(0, 500))}</p></div>` : ''}
+      ${content?.hindi_text ? `<div lang="hi"><h2>Hindi</h2><p>${escapeHtml(content.hindi_text.substring(0, 500))}</p></div>` : ''}
+      <p><a href="${DOMAIN}/content">Browse all sacred content at Vrindopnishad</a></p>
+    </div>
+  </noscript>
+  <div id="root"></div>
+  <script>window.location.replace("${pageUrl}");</script>
+</body>
+</html>`;
+
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');
+  res.status(200).send(html);
+}
