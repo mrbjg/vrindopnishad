@@ -27,7 +27,7 @@
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "android": "npx cap run android",
-    "build": "react-scripts build",
+    "build": "react-scripts build && react-snap",
     "postbuild": "node scripts/generate-sitemap.mjs",
     "generate-sitemap": "node scripts/generate-sitemap.mjs",
     "test": "react-scripts test",
@@ -53,5 +53,33 @@
   "devDependencies": {
     "gh-pages": "^6.3.0",
     "react-scripts": "5.0.1"
+  },
+  "reactSnap": {
+    "include": [
+      "/",
+      "/content",
+      "/what-is-vrindopnishad",
+      "/meaning",
+      "/origin",
+      "/philosophy",
+      "/teachings",
+      "/importance",
+      "/devotion",
+      "/faq",
+      "/comparison-with-upanishads",
+      "/guide",
+      "/braj-rasik-heritage",
+      "/category/shloka",
+      "/category/strotra",
+      "/category/poem",
+      "/category/sankirtan",
+      "/category/saint",
+      "/category/dham",
+      "/category/literature"
+    ],
+    "puppeteerArgs": [
+      "--no-sandbox",
+      "--disable-setuid-sandbox"
+    ]
   }
 }

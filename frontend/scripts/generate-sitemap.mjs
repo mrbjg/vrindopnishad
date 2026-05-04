@@ -11,8 +11,10 @@ dotenv.config({ path: join(__dirname, '../.env') });
 
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || 'https://tilimltxgeucefxzerqi.supabase.co';
 const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || '';
+const FIREBASE_DB_URL = 'https://santvaanig-default-rtdb.asia-southeast1.firebasedatabase.app';
 const DOMAIN = 'https://path.vrindopnishad.in';
 
+// Consistent slug generation logic matching frontend/src/services/api.js
 const generateSlug = (text) => {
   if (!text) return '';
   return text
@@ -53,44 +55,76 @@ const CATEGORY_PAGES = [
 ];
 
 async function generateSitemap() {
-  console.log('--- SEO Sitemap Generator ---');
+  console.log('--- 🚀 SEO Sitemap Generator ---');
   const today = new Date().toISOString().split('T')[0];
-  let contentUrls = '';
+  let allContentItems = [];
 
+  // 1. Fetch from Firebase RTDB (Primary source)
+  try {
+    console.log('📡 Fetching content from Firebase RTDB...');
+    const response = await axios.get(`${FIREBASE_DB_URL}/public/content.json`, { timeout: 15000 });
+    const rawData = response.data;
+
+    if (rawData) {
+      const items = Array.isArray(rawData)
+        ? rawData.filter(Boolean)
+        : Object.keys(rawData).map(key => ({ id: key, ...rawData[key] }));
+
+      console.log(`✅ Found ${items.length} items in Firebase.`);
+      allContentItems = [...allContentItems, ...items];
+    }
+  } catch (error) {
+    console.warn('⚠️ Firebase fetch failed:', error.message);
+  }
+
+  // 2. Fetch from Supabase (Secondary source)
   if (SUPABASE_KEY) {
     try {
-      console.log('Fetching dynamic content from Supabase...');
-      const response = await axios.get(`${SUPABASE_URL}/rest/v1/content?select=title,id`, {
+      console.log('📡 Fetching content from Supabase...');
+      // Note: Supabase REST API has a 1000 row limit by default. 
+      // For now, we fetch up to 1000. If there are more, pagination would be needed.
+      const response = await axios.get(`${SUPABASE_URL}/rest/v1/content?select=title,id,slug`, {
         headers: {
           'apikey': SUPABASE_KEY,
-          'Authorization': `Bearer ${SUPABASE_KEY}`
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Range': '0-9999'
         },
-        timeout: 10000
+        timeout: 1000000
       });
 
-      const content = response.data;
-      if (content && content.length > 0) {
-        console.log(`Found ${content.length} dynamic items.`);
-        contentUrls = content.map(item => {
-          const slug = generateSlug(item.title);
-          const encodedSlug = slug ? slug.split('/').map(segment => encodeURIComponent(segment)).join('/') : item.id;
-          return `
+      const items = response.data;
+      if (items && items.length > 0) {
+        console.log(`✅ Found ${items.length} items in Supabase.`);
+        // Add only if not already present from Firebase (using ID matching if possible)
+        items.forEach(item => {
+          if (!allContentItems.some(existing => existing.id === item.id)) {
+            allContentItems.push(item);
+          }
+        });
+      }
+    } catch (error) {
+      console.warn('⚠️ Supabase fetch failed:', error.message);
+    }
+  }
+
+  // 3. Extract unique categories dynamically
+  const uniqueCategories = [...new Set(allContentItems.map(item => item.category).filter(Boolean))];
+  console.log(`📂 Found ${uniqueCategories.length} unique categories.`);
+
+  // 4. Generate XML entries for content
+  const contentUrls = allContentItems.map(item => {
+    const slug = item.slug || generateSlug(item.title);
+    const encodedSlug = encodeURIComponent(slug);
+    return `
   <url>
     <loc>${DOMAIN}/content/${encodedSlug}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>`;
-        }).join('');
-      }
-    } catch (error) {
-      console.warn('Warning: Could not fetch dynamic content. Sitemap will include static pages only.');
-      console.warn('Error detail:', error.message);
-    }
-  } else {
-    console.log('SUPABASE_KEY not found. Skipping dynamic content.');
-  }
+  }).join('');
 
+  // 5. Static and Category URLs
   const staticUrls = SEO_PAGES.map(page => `
   <url>
     <loc>${DOMAIN}${page.path === '/' ? '/' : page.path}</loc>
@@ -99,12 +133,12 @@ async function generateSitemap() {
     <priority>${page.priority}</priority>
   </url>`).join('');
 
-  const catUrls = CATEGORY_PAGES.map(page => `
+  const catUrls = uniqueCategories.map(cat => `
   <url>
-    <loc>${DOMAIN}${page.path}</loc>
+    <loc>${DOMAIN}/category/${encodeURIComponent(cat.toLowerCase().replace(/\s+/g, '-'))}</loc>
     <lastmod>${today}</lastmod>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>`).join('');
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -119,15 +153,24 @@ ${contentUrls}
     if (!fs.existsSync('public')) {
       fs.mkdirSync('public');
     }
-    fs.writeFileSync('public/sitemap.xml', xml);
-    console.log(`✅ sitemap.xml generated in public/ (${urls.length} unique URLs)`);
+
+    fs.writeFileSync('public/sitemap.xml', sitemap);
+    console.log(`✅ sitemap.xml generated in public/ with ${SEO_PAGES.length + CATEGORY_PAGES.length + allContentItems.length} URLs`);
 
     if (fs.existsSync('build')) {
-      fs.writeFileSync('build/sitemap.xml', xml);
+      fs.writeFileSync('build/sitemap.xml', sitemap);
       console.log('✅ sitemap.xml copied to build/');
     }
+
+    // Also generate a simple robots.txt just in case it's missing in build
+    const robots = `User-agent: *
+Allow: /
+Sitemap: ${DOMAIN}/sitemap.xml`;
+    fs.writeFileSync('public/robots.txt', robots);
+    if (fs.existsSync('build')) fs.writeFileSync('build/robots.txt', robots);
+
   } catch (err) {
-    console.error('Error writing sitemap file:', err.message);
+    console.error('❌ Error writing sitemap file:', err.message);
   }
 }
 
