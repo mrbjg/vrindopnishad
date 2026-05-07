@@ -102,7 +102,10 @@ export default async function handler(req, res) {
     ...(content.image_url ? { "image": content.image_url } : {})
   }) : '';
 
-  // Build full HTML page with pre-rendered meta tags + React root
+  // Build full HTML page with pre-rendered meta tags for bots
+  // CRITICAL: Do NOT add meta http-equiv="refresh" or window.location.replace here!
+  // This handler only serves bots (Googlebot etc.) via the vercel.json user-agent rewrite.
+  // Adding redirects causes an infinite loop: bot → /content/slug → rewrite → /api/content/slug → redirect → /content/slug → loop
   const html = `<!doctype html>
 <html lang="hi" dir="ltr">
 <head>
@@ -126,21 +129,22 @@ export default async function handler(req, res) {
   ${jsonLd ? `<script type="application/ld+json">${jsonLd}</script>` : ''}
   <meta name="theme-color" content="#0D0D12"/>
   <link rel="icon" href="https://vrindopnishad.in/favicon.ico" sizes="48x48"/>
-  <meta http-equiv="refresh" content="0;url=${pageUrl}"/>
+  <meta name="robots" content="index, follow"/>
 </head>
 <body>
-  <noscript>
-    <div style="max-width:800px;margin:0 auto;padding:40px 20px;font-family:sans-serif;">
-      <h1>${content ? escapeHtml(content.title) : 'Vrindopnishad Paath'}</h1>
-      ${content?.author ? `<p><strong>Author:</strong> ${escapeHtml(content.author)}</p>` : ''}
-      ${content?.category ? `<p><strong>Category:</strong> ${escapeHtml(content.category)}</p>` : ''}
-      ${content?.sanskrit_text ? `<div lang="sa"><h2>Sanskrit</h2><p>${escapeHtml(content.sanskrit_text.substring(0, 500))}</p></div>` : ''}
-      ${content?.hindi_text ? `<div lang="hi"><h2>Hindi</h2><p>${escapeHtml(content.hindi_text.substring(0, 500))}</p></div>` : ''}
-      <p><a href="${DOMAIN}/content">Browse all sacred content at Vrindopnishad</a></p>
-    </div>
-  </noscript>
+  <div style="max-width:800px;margin:0 auto;padding:40px 20px;font-family:sans-serif;">
+    <h1>${content ? escapeHtml(content.title) : 'Vrindopnishad Paath'}</h1>
+    ${content?.author ? `<p><strong>Author:</strong> ${escapeHtml(content.author)}</p>` : ''}
+    ${content?.category ? `<p><strong>Category:</strong> ${escapeHtml(content.category)}</p>` : ''}
+    ${content?.sanskrit_text ? `<div lang="sa"><h2>Sanskrit</h2><p>${escapeHtml(content.sanskrit_text.substring(0, 1000))}</p></div>` : ''}
+    ${content?.hindi_text ? `<div lang="hi"><h2>Hindi</h2><p>${escapeHtml(content.hindi_text.substring(0, 1000))}</p></div>` : ''}
+    ${content?.english_text ? `<div lang="en"><h2>English</h2><p>${escapeHtml(content.english_text.substring(0, 1000))}</p></div>` : ''}
+    <nav>
+      <p><a href="${DOMAIN}/">Vrindopnishad Home</a> | <a href="${DOMAIN}/content">Browse All Content</a></p>
+      <p><a href="${DOMAIN}/category/shloka">Shlokas</a> | <a href="${DOMAIN}/category/dham">Dham</a> | <a href="${DOMAIN}/category/saint">Saints</a></p>
+    </nav>
+  </div>
   <div id="root"></div>
-  <script>window.location.replace("${pageUrl}");</script>
 </body>
 </html>`;
 
