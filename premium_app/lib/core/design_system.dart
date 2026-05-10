@@ -82,6 +82,19 @@ class PremiumTokens {
     colors: [Color(0xFF256AF4), Color(0xFF0A0A1A)],
   );
 
+  /// Apple Liquid Glass — diagonal refraction highlight
+  static const LinearGradient liquidGlassRefraction = LinearGradient(
+    begin: Alignment(-0.8, -1.0),
+    end: Alignment(0.8, 1.0),
+    colors: [
+      Color(0x18FFFFFF),
+      Color(0x00FFFFFF),
+      Color(0x08FFFFFF),
+      Color(0x00FFFFFF),
+    ],
+    stops: [0.0, 0.35, 0.65, 1.0],
+  );
+
   static Gradient nebulaRadialGlow(double intensity) {
     return RadialGradient(
       center: Alignment.center,
@@ -760,25 +773,25 @@ class PremiumUI extends StatelessWidget {
                   children: [
                     // Capsule Indicator
                     AnimatedPositioned(
-                      duration: const Duration(milliseconds: 350),
-                      curve: Curves.fastOutSlowIn,
-                      left:
-                          (selectedIndex * slotWidth) +
-                          (slotWidth - capsuleWidth) / 2,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOutBack,
+                      left: (selectedIndex * slotWidth) + (slotWidth - capsuleWidth) / 2,
                       top: (70 - capsuleHeight) / 2,
-                      child: Container(
-                        width: capsuleWidth,
-                        height: capsuleHeight,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(22),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.white.withValues(alpha: 0.05),
-                              blurRadius: 10,
-                              spreadRadius: 2,
-                            ),
-                          ],
+                      child: RepaintBoundary(
+                        child: Container(
+                          width: capsuleWidth,
+                          height: capsuleHeight,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(22),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.white.withValues(alpha: 0.05),
+                                blurRadius: 10,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -973,6 +986,52 @@ class PremiumUI extends StatelessWidget {
                 child: cardContent,
               ),
       ),
+    );
+  }
+
+  /// ═══════════════════════════════════════════════════════════════════════════
+  /// LIQUID GLASS SYSTEM — Apple-Inspired Premium Components
+  /// ═══════════════════════════════════════════════════════════════════════════
+
+  /// Premium Liquid Glass Card — iOS-style glassmorphism with spring press
+  static Widget liquidGlassCard({
+    required Widget child,
+    double blur = 12,
+    double borderRadius = 28,
+    EdgeInsets? padding,
+    EdgeInsets? margin,
+    Color? glowColor,
+    bool showGlow = false,
+    bool interactive = true,
+    VoidCallback? onTap,
+  }) {
+    return _LiquidGlassCardInternal(
+      blur: blur,
+      borderRadius: borderRadius,
+      padding: padding,
+      margin: margin,
+      glowColor: glowColor,
+      showGlow: showGlow,
+      interactive: interactive,
+      onTap: onTap,
+      child: child,
+    );
+  }
+
+  /// Premium Liquid Glass Button — spring bounce + refraction highlight
+  static Widget liquidGlassButton({
+    required Widget child,
+    required VoidCallback onTap,
+    Color? glowColor,
+    double borderRadius = 20,
+    EdgeInsets? padding,
+  }) {
+    return _LiquidGlassButtonInternal(
+      onTap: onTap,
+      glowColor: glowColor,
+      borderRadius: borderRadius,
+      padding: padding,
+      child: child,
     );
   }
 
@@ -1386,6 +1445,7 @@ class PremiumUI extends StatelessWidget {
 
   /// Premium Custom Icon (SVG)
   static Widget customIcon({
+    Key? key,
     required String fileName,
     double size = 24,
     Color? color,
@@ -1395,6 +1455,7 @@ class PremiumUI extends StatelessWidget {
         : '$svgRoot$fileName';
     return SvgPicture.asset(
       path,
+      key: key,
       width: size,
       height: size,
       colorFilter: color != null
@@ -1727,6 +1788,249 @@ class PremiumUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const SizedBox.shrink();
+  }
+}
+
+/// ═══════════════════════════════════════════════════════════════════════════
+/// LIQUID GLASS CARD — Stateful with Spring Press Animation
+/// ═══════════════════════════════════════════════════════════════════════════
+class _LiquidGlassCardInternal extends StatefulWidget {
+  final Widget child;
+  final double blur;
+  final double borderRadius;
+  final EdgeInsets? padding;
+  final EdgeInsets? margin;
+  final Color? glowColor;
+  final bool showGlow;
+  final bool interactive;
+  final VoidCallback? onTap;
+
+  const _LiquidGlassCardInternal({
+    required this.child,
+    this.blur = 12,
+    this.borderRadius = 28,
+    this.padding,
+    this.margin,
+    this.glowColor,
+    this.showGlow = false,
+    this.interactive = true,
+    this.onTap,
+  });
+
+  @override
+  State<_LiquidGlassCardInternal> createState() => _LiquidGlassCardInternalState();
+}
+
+class _LiquidGlassCardInternalState extends State<_LiquidGlassCardInternal>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pressController;
+  late final Animation<double> _scaleAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _pressController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 120),
+      reverseDuration: const Duration(milliseconds: 300),
+    );
+    _scaleAnim = Tween<double>(begin: 1.0, end: 0.965).animate(
+      CurvedAnimation(parent: _pressController, curve: Curves.easeOut, reverseCurve: Curves.easeOutBack),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pressController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cardBody = Container(
+      padding: widget.padding ?? const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment(-0.8, -1.0),
+          end: Alignment(0.8, 1.0),
+          colors: [
+            Color(0x15FFFFFF),
+            Color(0x08FFFFFF),
+            Color(0x0AFFFFFF),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(widget.borderRadius),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.12),
+          width: 0.8,
+        ),
+      ),
+      child: widget.child,
+    );
+
+    final glassWidget = Container(
+      margin: widget.margin,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(widget.borderRadius),
+        boxShadow: widget.showGlow
+            ? [
+                BoxShadow(
+                  color: (widget.glowColor ?? PremiumTokens.nebulaBlue).withValues(alpha: 0.1),
+                  blurRadius: 30,
+                  spreadRadius: -8,
+                ),
+              ]
+            : null,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(widget.borderRadius),
+        child: RepaintBoundary(
+          child: AppTheme.lowPerformanceMode
+              ? cardBody
+              : BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: widget.blur, sigmaY: widget.blur),
+                  child: cardBody,
+                ),
+        ),
+      ),
+    );
+
+    if (!widget.interactive) return glassWidget;
+
+    return GestureDetector(
+      onTapDown: (_) => _pressController.forward(),
+      onTapUp: (_) {
+        _pressController.reverse();
+        if (widget.onTap != null) {
+          HapticFeedback.lightImpact();
+          widget.onTap!();
+        }
+      },
+      onTapCancel: () => _pressController.reverse(),
+      child: ScaleTransition(
+        scale: _scaleAnim,
+        child: glassWidget,
+      ),
+    );
+  }
+}
+
+/// ═══════════════════════════════════════════════════════════════════════════
+/// LIQUID GLASS BUTTON — Spring Bounce + Glow Halo
+/// ═══════════════════════════════════════════════════════════════════════════
+class _LiquidGlassButtonInternal extends StatefulWidget {
+  final Widget child;
+  final VoidCallback onTap;
+  final Color? glowColor;
+  final double borderRadius;
+  final EdgeInsets? padding;
+
+  const _LiquidGlassButtonInternal({
+    required this.child,
+    required this.onTap,
+    this.glowColor,
+    this.borderRadius = 20,
+    this.padding,
+  });
+
+  @override
+  State<_LiquidGlassButtonInternal> createState() => _LiquidGlassButtonInternalState();
+}
+
+class _LiquidGlassButtonInternalState extends State<_LiquidGlassButtonInternal>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _bounceController;
+  late final Animation<double> _bounceAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _bounceController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+      reverseDuration: const Duration(milliseconds: 350),
+    );
+    _bounceAnim = Tween<double>(begin: 1.0, end: 0.92).animate(
+      CurvedAnimation(parent: _bounceController, curve: Curves.easeOut, reverseCurve: Curves.easeOutBack),
+    );
+  }
+
+  @override
+  void dispose() {
+    _bounceController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final activeGlow = widget.glowColor ?? PremiumTokens.nebulaBlue;
+    return GestureDetector(
+      onTapDown: (_) => _bounceController.forward(),
+      onTapUp: (_) {
+        _bounceController.reverse();
+        HapticFeedback.lightImpact();
+        widget.onTap();
+      },
+      onTapCancel: () => _bounceController.reverse(),
+      child: ScaleTransition(
+        scale: _bounceAnim,
+        child: Container(
+          padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                activeGlow.withValues(alpha: 0.15),
+                activeGlow.withValues(alpha: 0.05),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(widget.borderRadius),
+            border: Border.all(
+              color: activeGlow.withValues(alpha: 0.3),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: activeGlow.withValues(alpha: 0.15),
+                blurRadius: 20,
+                spreadRadius: -4,
+              ),
+            ],
+          ),
+          child: widget.child,
+        ),
+      ),
+    );
+  }
+}
+
+/// ═══════════════════════════════════════════════════════════════════════════
+/// GLASS SHIMMER OVERLAY — Animated diagonal light sweep
+/// ═══════════════════════════════════════════════════════════════════════════
+class GlassShimmerOverlay extends StatelessWidget {
+  final Widget child;
+  final Duration duration;
+  final Duration delay;
+
+  const GlassShimmerOverlay({
+    super.key,
+    required this.child,
+    this.duration = const Duration(seconds: 4),
+    this.delay = Duration.zero,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (AppTheme.lowPerformanceMode) return child;
+    return child
+        .animate(onPlay: (c) => c.repeat())
+        .shimmer(
+          delay: delay,
+          duration: duration,
+          color: Colors.white.withValues(alpha: 0.06),
+          angle: 0.8,
+        );
   }
 }
 
@@ -2273,22 +2577,16 @@ class _PremiumAnimatedNavButtonState extends State<_PremiumAnimatedNavButton>
     super.initState();
     _pulseController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 250),
     );
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(
-          begin: 1.0,
-          end: 1.2,
-        ).chain(CurveTween(curve: Curves.easeOut)),
-        weight: 50,
+        tween: Tween(begin: 1.0, end: 1.25).chain(CurveTween(curve: Curves.easeOutCubic)),
+        weight: 35,
       ),
       TweenSequenceItem(
-        tween: Tween(
-          begin: 1.2,
-          end: 1.0,
-        ).chain(CurveTween(curve: Curves.easeIn)),
-        weight: 50,
+        tween: Tween(begin: 1.25, end: 1.0).chain(CurveTween(curve: Curves.easeOutBack)),
+        weight: 65,
       ),
     ]).animate(_pulseController);
   }
@@ -2300,7 +2598,7 @@ class _PremiumAnimatedNavButtonState extends State<_PremiumAnimatedNavButton>
   }
 
   void _handleTap() {
-    HapticFeedback.lightImpact();
+    HapticFeedback.mediumImpact();
     widget.onTap(widget.index);
     _pulseController.forward(from: 0.0);
   }
@@ -2310,31 +2608,56 @@ class _PremiumAnimatedNavButtonState extends State<_PremiumAnimatedNavButton>
     return GestureDetector(
       onTap: _handleTap,
       behavior: HitTestBehavior.opaque,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ScaleTransition(
-            scale: _scaleAnimation,
-            child: PremiumUI.customIcon(
-              fileName: widget.isSelected
-                  ? widget.item.activeIconSvg
-                  : widget.item.iconSvg,
-              color: widget.isSelected ? Colors.white : Colors.white24,
-              size: 24,
+      child: RepaintBoundary(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ScaleTransition(
+              scale: _scaleAnimation,
+              child: SizedBox(
+                width: 44,
+                height: 44,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Inactive Icon (Outline)
+                    AnimatedScale(
+                      scale: widget.isSelected ? 0.8 : 1.0,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOutCubic,
+                      child: AnimatedOpacity(
+                        opacity: widget.isSelected ? 0.0 : 0.25,
+                        duration: const Duration(milliseconds: 250),
+                        child: PremiumUI.customIcon(
+                          fileName: widget.item.iconSvg,
+                          color: Colors.white,
+                          size: 26,
+                        ),
+                      ),
+                    ),
+                    
+                    // Active Icon (Filled)
+                    AnimatedScale(
+                      scale: widget.isSelected ? 1.0 : 0.7,
+                      duration: const Duration(milliseconds: 350),
+                      curve: Curves.easeOutBack,
+                      child: AnimatedOpacity(
+                        opacity: widget.isSelected ? 1.0 : 0.0,
+                        duration: const Duration(milliseconds: 250),
+                        child: PremiumUI.customIcon(
+                          fileName: widget.item.activeIconSvg,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            widget.item.label,
-            style: GoogleFonts.manrope(
-              fontSize: 8,
-              color: widget.isSelected ? Colors.white : Colors.white24,
-              fontWeight: widget.isSelected ? FontWeight.w800 : FontWeight.w500,
-              letterSpacing: 0.5,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

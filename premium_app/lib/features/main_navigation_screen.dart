@@ -1,7 +1,9 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import '../core/design_system.dart';
+import '../core/theme.dart';
 import 'home_screen.dart';
 import 'naam_jap_screen.dart';
 import 'library_screen.dart';
@@ -13,7 +15,6 @@ import '../core/dynamic_icon_service.dart';
 import '../widgets/mini_player.dart';
 import 'rituals_screen.dart';
 import '../core/stats_provider.dart';
-
 import '../core/notification_manager.dart';
 
 class MainNavigationScreen extends ConsumerStatefulWidget {
@@ -57,14 +58,6 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
     final statsAsync = ref.read(userStatsProvider);
     statsAsync.whenData((stats) {
       // Temporarily disabled due to database schema mismatch with 'daily_mala_goal'
-      /*
-      if (stats != null && stats.dailyMalaGoal == 0) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const SacredGoalScreen(isOnboarding: true)),
-        );
-      }
-      */
     });
   }
 
@@ -102,11 +95,11 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
           const Positioned(
             left: 0,
             right: 0,
-            bottom: 102, // Tightened from 120 to clear the Nav Button while feeling more compact
+            bottom: 102,
             child: MiniPlayer(),
           ),
 
-          // Mind-Blowing Ethereal NavBar
+          // Liquid Glass NavBar with Backdrop Blur
           Positioned(
             left: 0,
             right: 0,
@@ -117,6 +110,41 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                 return Stack(
                   alignment: Alignment.bottomCenter,
                   children: [
+                    // Backdrop blur layer behind the nav bar
+                    ClipRect(
+                      child: RepaintBoundary(
+                        child: AppTheme.lowPerformanceMode
+                            ? Container(
+                                height: 90,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.transparent,
+                                      PremiumTokens.voidBlack.withValues(alpha: 0.95),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                                child: Container(
+                                  height: 90,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.transparent,
+                                        PremiumTokens.voidBlack.withValues(alpha: 0.85),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ),
                     PremiumUI.floatingNavBar(
                       selectedIndex: currentIndex,
                       onTap: (index) => ref.read(navigationIndexProvider.notifier).state = index,
@@ -129,7 +157,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                       ],
                     ),
                     Positioned(
-                      bottom: 22, // Tightened from 26 for a more compact look
+                      bottom: 22,
                       child: Consumer(
                         builder: (context, ref, child) {
                           final count = ref.watch(naamJapStateProvider);
@@ -138,7 +166,6 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                             count: count.total,
                             onTap: () {
                               HapticFeedback.heavyImpact();
-                              // Only increment count (Naam Jap) as requested
                               ref.read(naamJapStateProvider.notifier).increment(context);
                             },
                             onLongPressStart: (details) {
@@ -213,7 +240,6 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                               _menuPointerPosition.value = details.globalPosition;
                             },
                             onLongPressEnd: (details) {
-                              // Notify the menu to trigger the highlighted action and close
                               _menuKey.currentState?.handleRelease();
                               _menuPointerPosition.value = null;
                             },

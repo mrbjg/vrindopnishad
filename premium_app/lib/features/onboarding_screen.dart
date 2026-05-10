@@ -444,62 +444,67 @@ class _GoalOption extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        HapticFeedback.selectionClick();
+        HapticFeedback.mediumImpact();
         onTap();
       },
-      child: AnimatedContainer(
-        duration: 500.ms,
-        curve: Curves.elasticOut,
-        width: selected ? 72 : 64,
-        height: selected ? 72 : 64,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: selected 
-            ? PremiumTokens.saffronPremiumGradient 
-            : RadialGradient(
-                colors: [
-                  Colors.white.withValues(alpha: 0.08),
-                  Colors.white.withValues(alpha: 0.03),
-                ],
+      child: AnimatedScale(
+        scale: selected ? 1.1 : 1.0,
+        duration: 250.ms,
+        curve: Curves.easeOutBack,
+        child: AnimatedContainer(
+          duration: 200.ms,
+          curve: Curves.easeOutQuart,
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: selected 
+              ? PremiumTokens.saffronPremiumGradient 
+              : RadialGradient(
+                  colors: [
+                    Colors.white.withValues(alpha: 0.08),
+                    Colors.white.withValues(alpha: 0.03),
+                  ],
+                ),
+            border: Border.all(
+              color: selected 
+                ? Colors.white.withValues(alpha: 0.4) 
+                : Colors.white.withValues(alpha: 0.1),
+              width: selected ? 2 : 1,
+            ),
+            boxShadow: selected ? [
+              BoxShadow(
+                color: PremiumTokens.saffronGlow.withValues(alpha: 0.4),
+                blurRadius: 20,
+                spreadRadius: 2,
               ),
-          border: Border.all(
-            color: selected 
-              ? Colors.white.withValues(alpha: 0.4) 
-              : Colors.white.withValues(alpha: 0.1),
-            width: selected ? 2 : 1,
+              BoxShadow(
+                color: PremiumTokens.saffronGlow.withValues(alpha: 0.2),
+                blurRadius: 40,
+                spreadRadius: 5,
+              ),
+            ] : [],
           ),
-          boxShadow: selected ? [
-            BoxShadow(
-              color: PremiumTokens.saffronGlow.withValues(alpha: 0.4),
-              blurRadius: 20,
-              spreadRadius: 2,
-            ),
-            BoxShadow(
-              color: PremiumTokens.saffronGlow.withValues(alpha: 0.2),
-              blurRadius: 40,
-              spreadRadius: 5,
-            ),
-          ] : [],
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: PremiumTokens.sansStyle(
-              color: selected ? PremiumTokens.charcoal : Colors.white,
-              fontSize: selected ? 18 : 16,
-              fontWeight: FontWeight.w900,
+          child: Center(
+            child: Text(
+              label,
+              style: PremiumTokens.sansStyle(
+                color: selected ? PremiumTokens.charcoal : Colors.white,
+                fontSize: selected ? 18 : 16,
+                fontWeight: FontWeight.w900,
+              ),
             ),
           ),
         ),
-      ).animate(
-        autoPlay: true,
-        onPlay: (c) => selected ? c.repeat(reverse: true) : c.stop(),
-      ).scale(
-        begin: const Offset(1, 1),
-        end: const Offset(1.05, 1.05),
-        duration: 2.seconds,
-        curve: Curves.easeInOut,
       ),
+    ).animate(
+      autoPlay: true,
+      onPlay: (c) => selected ? c.repeat(reverse: true) : c.stop(),
+    ).scale(
+      begin: const Offset(1, 1),
+      end: const Offset(1.05, 1.05),
+      duration: 2.seconds,
+      curve: Curves.easeInOut,
     );
   }
 }

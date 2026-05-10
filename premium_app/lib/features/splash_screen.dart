@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../core/design_system.dart';
+import '../core/theme.dart';
 
 class SplashScreen extends StatefulWidget {
   final VoidCallback onComplete;
@@ -18,8 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _startTransition() async {
-    // Reduced delay for "Instant" feel, but enough for the animation to be seen
-    await Future.delayed(const Duration(milliseconds: 800));
+    await Future.delayed(const Duration(milliseconds: 1200));
     if (mounted) widget.onComplete();
   }
 
@@ -29,20 +29,64 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
+          // Cosmic Background
           Positioned.fill(
             child: PremiumUI.masterBackground(index: 0),
           ),
+
+          // Liquid Glass Orb — expanding radial glow behind logo
+          Center(
+            child: RepaintBoundary(
+              child: Container(
+                width: 280,
+                height: 280,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      PremiumTokens.nebulaBlue.withValues(alpha: 0.12),
+                      PremiumTokens.nebulaBlue.withValues(alpha: 0.04),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
+                  ),
+                ),
+              )
+              .animate()
+              .scale(
+                begin: const Offset(0.3, 0.3),
+                end: const Offset(1.2, 1.2),
+                duration: 1200.ms,
+                curve: Curves.easeOutCubic,
+              )
+              .fadeIn(duration: 800.ms),
+            ),
+          ),
+
+          // Main Content
           Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Logo with elastic entrance
                 PremiumUI.logo(height: 120)
                 .animate()
-                .fadeIn(duration: 1.seconds)
-                .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0), curve: Curves.easeOutBack),
+                .scale(
+                  begin: const Offset(0.5, 0.5),
+                  end: const Offset(1.0, 1.0),
+                  duration: 800.ms,
+                  curve: Curves.elasticOut,
+                )
+                .fadeIn(duration: 600.ms)
+                .then()
+                .shimmer(
+                  duration: 2.seconds,
+                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
+                ),
                 
                 const SizedBox(height: 32),
                 
+                // Title with staggered letter appearance
                 Text(
                   "SANT-VAANI",
                   style: PremiumTokens.sansStyle(
@@ -52,11 +96,14 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                 )
                 .animate()
-                .fadeIn(delay: 500.ms, duration: 1.seconds)
-                .shimmer(delay: 2.seconds, duration: 2.seconds, color: PremiumTokens.nebulaBlue),
+                .fadeIn(delay: 400.ms, duration: 800.ms)
+                .slideY(begin: 0.3, end: 0, delay: 400.ms, duration: 600.ms, curve: Curves.easeOutCubic)
+                .then()
+                .shimmer(delay: 1.seconds, duration: 2.seconds, color: PremiumTokens.nebulaBlue),
                 
                 const SizedBox(height: 8),
                 
+                // Subtitle
                 Text(
                   "THE ETHEREAL VOID",
                   style: PremiumTokens.sansStyle(
@@ -67,7 +114,8 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                 )
                 .animate()
-                .fadeIn(delay: 800.ms, duration: 1.seconds),
+                .fadeIn(delay: 700.ms, duration: 800.ms)
+                .slideY(begin: 0.5, end: 0, delay: 700.ms, duration: 500.ms, curve: Curves.easeOutCubic),
               ],
             ),
           ),

@@ -563,15 +563,21 @@ Widget _buildTimelineItem({
                       decoration: BoxDecoration(
                         gradient: _getNoteGradient(entry.id.hashCode),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.2),
-                            blurRadius: 15,
-                            offset: const Offset(0, 8),
+                            color: Colors.black.withValues(alpha: 0.25),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
                           ),
                         ],
                       ),
+                      foregroundDecoration: AppTheme.lowPerformanceMode
+                          ? null
+                          : BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              gradient: PremiumTokens.liquidGlassRefraction,
+                            ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -702,7 +708,24 @@ void _showEntryDialog(BuildContext context, WidgetRef ref, {JournalEntry? entry}
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Container(
                   padding: const EdgeInsets.all(32),
-                  decoration: PremiumTokens.indigoGlass(),
+                  decoration: BoxDecoration(
+                    color: PremiumTokens.voidIndigo.withValues(alpha: 0.85),
+                    borderRadius: BorderRadius.circular(40),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: PremiumTokens.etherealBlue.withValues(alpha: 0.15),
+                        blurRadius: 40,
+                        spreadRadius: -10,
+                      ),
+                    ],
+                  ),
+                  foregroundDecoration: AppTheme.lowPerformanceMode
+                      ? null
+                      : BoxDecoration(
+                          borderRadius: BorderRadius.circular(40),
+                          gradient: PremiumTokens.liquidGlassRefraction,
+                        ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -783,7 +806,7 @@ void _showEntryDialog(BuildContext context, WidgetRef ref, {JournalEntry? entry}
               ),
             ),
           ),
-        ).animate(delay: (animation.value * 0).ms).fadeIn(duration: 300.ms).scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1), curve: Curves.easeOutBack, duration: 400.ms).moveY(begin: 40, end: 0);
+        ).animate(delay: (animation.value * 0).ms).fadeIn(duration: 300.ms).scale(begin: const Offset(0.85, 0.85), end: const Offset(1, 1), curve: Curves.easeOutBack, duration: 450.ms).moveY(begin: 30, end: 0);
       },
     );
   }
