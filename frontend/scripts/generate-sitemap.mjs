@@ -136,16 +136,22 @@ async function generateSitemap() {
   };
 
   // 5. Generate XML — single-line <url> blocks to prevent whitespace corruption
+  // CRITICAL: Deduplicate by slug to prevent Google from seeing duplicate URLs
+  const seenSlugs = new Set();
   const contentUrls = allContentItems
     .map(item => {
       const rawSlug = item.slug || generateSlug(item.title);
       const slug = sanitizeSlug(rawSlug);
       if (!slug) return null;
       const encoded = encodeURIComponent(slug);
+      // Skip duplicates
+      if (seenSlugs.has(encoded)) return null;
+      seenSlugs.add(encoded);
       return `  <url><loc>${DOMAIN}/content/${encoded}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`;
     })
     .filter(Boolean)
     .join('\n');
+  console.log(`📊 Deduplicated: ${allContentItems.length} items → ${seenSlugs.size} unique URLs`);
 
   const staticUrls = SEO_PAGES.map(page =>
     `  <url><loc>${DOMAIN}${page.path}</loc><lastmod>${today}</lastmod><changefreq>${page.changefreq}</changefreq><priority>${page.priority}</priority></url>`

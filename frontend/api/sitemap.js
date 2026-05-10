@@ -113,12 +113,17 @@ export default async function handler(req, res) {
     `  <url><loc>${DOMAIN}/category/${encodeURIComponent(cat.toLowerCase())}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
   ).join('\n');
 
+  const seenSlugs = new Set();
   const contentUrls = contentItems
     .map(item => {
       const rawSlug = item.slug || generateSlug(item.title);
       const slug = sanitizeSlug(rawSlug);
       if (!slug) return null; // Skip items with empty slugs
-      const url = escapeXmlUrl(`${DOMAIN}/content/${encodeURIComponent(slug)}`);
+      const encoded = encodeURIComponent(slug);
+      // Skip duplicates
+      if (seenSlugs.has(encoded)) return null;
+      seenSlugs.add(encoded);
+      const url = escapeXmlUrl(`${DOMAIN}/content/${encoded}`);
       return `  <url><loc>${url}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`;
     })
     .filter(Boolean)
