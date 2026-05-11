@@ -759,15 +759,8 @@ class PremiumUI extends StatelessWidget {
                   borderRadius: BorderRadius.circular(35),
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.1),
-                    width: 1,
+                    width: 0.5,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.5),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
                 ),
                 child: Stack(
                   children: [
@@ -784,13 +777,6 @@ class PremiumUI extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(22),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.white.withValues(alpha: 0.05),
-                                blurRadius: 10,
-                                spreadRadius: 2,
-                              ),
-                            ],
                           ),
                         ),
                       ),
@@ -1104,12 +1090,6 @@ class PremiumUI extends StatelessWidget {
             Colors.transparent,
           ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF256AF4).withValues(alpha: 0.1 * opacity),
-            blurRadius: 80 * opacity,
-          ),
-        ],
       ),
     );
   }
@@ -1260,13 +1240,13 @@ class PremiumUI extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.white.withValues(alpha: 0.15),
-            blurRadius: 40,
-            spreadRadius: 5,
-          ),
-        ],
+        gradient: RadialGradient(
+          colors: [
+            Colors.white.withValues(alpha: 0.1),
+            Colors.transparent,
+          ],
+          stops: const [0.4, 1.0],
+        ),
       ),
       child: CustomPaint(painter: _CrescentMoonPainter()),
     );
