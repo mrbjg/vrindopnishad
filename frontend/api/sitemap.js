@@ -110,7 +110,7 @@ export default async function handler(req, res) {
   ).join('\n');
 
   const catUrls = categories.map(cat =>
-    `  <url><loc>${DOMAIN}/category/${encodeURIComponent(cat.toLowerCase())}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
+    `  <url><loc>${DOMAIN}/category/${cat.toLowerCase()}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
   ).join('\n');
 
   const seenSlugs = new Set();
@@ -119,11 +119,12 @@ export default async function handler(req, res) {
       const rawSlug = item.slug || generateSlug(item.title);
       const slug = sanitizeSlug(rawSlug);
       if (!slug) return null; // Skip items with empty slugs
-      const encoded = encodeURIComponent(slug);
       // Skip duplicates
-      if (seenSlugs.has(encoded)) return null;
-      seenSlugs.add(encoded);
-      const url = escapeXmlUrl(`${DOMAIN}/content/${encoded}`);
+      if (seenSlugs.has(slug)) return null;
+      seenSlugs.add(slug);
+      // Use slug directly — avoid double-encoding which causes redirect errors
+      // encodeURIComponent creates %XX URLs that 308-redirect to decoded versions
+      const url = escapeXmlUrl(`${DOMAIN}/content/${slug}`);
       return `  <url><loc>${url}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`;
     })
     .filter(Boolean)

@@ -75,7 +75,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       backgroundColor: PremiumTokens.charcoal,
       body: Stack(
         children: [
-          Positioned.fill(child: PremiumUI.bokehBackground()),
+          Positioned.fill(child: PremiumUI.bokehBackground(context)),
           Positioned.fill(child: PremiumUI.mandalaOverlay(opacity: 0.05)),
           
           SafeArea(

@@ -14,7 +14,7 @@ class AboutScreen extends StatelessWidget {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          PremiumUI.voidBackground(),
+          PremiumUI.voidBackground(context),
           
           // Celestial Nebula Overlays
           Positioned(

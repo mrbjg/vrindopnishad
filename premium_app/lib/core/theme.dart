@@ -42,14 +42,14 @@ class AppTheme {
   // MODERNIZED THEMES
   // ═══════════════════════════════════════════════════════════════════════════
 
-  // LIGHT: Champagne Silk
-  static const Color lightBackground = Color(0xFFFFFDF5);
-  static const Color lightCard = Colors.white;
-  static const Color lightSurface = Color(0xFFFFF9E6);
-  static const Color lightTextPrimary = Color(0xFF1A1A1A);
-  static const Color lightTextSecondary = Color(0xFF424242);
-  static const Color lightTextMuted = Color(0xFF9E9E9E);
-  static const Color lightBorder = Color(0xFFF0E6D2);
+  // LIGHT: Champagne Silk (Morning Sun)
+  static const Color lightBackground = Color(0xFFFFFDF2);
+  static const Color lightCard = Color(0xFFFFFFFF);
+  static const Color lightSurface = Color(0xFFFFF9E0);
+  static const Color lightTextPrimary = Color(0xFF2D2D2D);
+  static const Color lightTextSecondary = Color(0xFF5D5D5D);
+  static const Color lightTextMuted = Color(0xFFA0A0A0);
+  static const Color lightBorder = Color(0xFFE8DFCA);
 
   // DARK: Midnight Void
   static const Color darkBackground = Color(0xFF050510);
@@ -152,7 +152,18 @@ class AppTheme {
     end: Alignment.bottomRight,
     colors: isDark(context)
         ? [const Color(0xFF1A1A2E), const Color(0xFF16213E)]
-        : [const Color(0xFFFEF3C7), const Color(0xFFFBD38D)],
+        : [const Color(0xFFFFF9E0), const Color(0xFFFFECB3)],
+  );
+
+  /// Sun Morning background gradient
+  static LinearGradient morningGradient = const LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      Color(0xFFFFF9E0),
+      Color(0xFFFFECB3),
+      Color(0xFFFFFDF2),
+    ],
   );
 
   // ═══════════════════════════════════════════════════════════════════════════

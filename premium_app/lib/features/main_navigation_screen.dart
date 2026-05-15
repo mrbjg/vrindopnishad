@@ -75,7 +75,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
               builder: (context, ref, child) {
                 final currentIndex = ref.watch(navigationIndexProvider);
                 return RepaintBoundary(
-                  child: PremiumUI.masterBackground(index: currentIndex),
+                  child: PremiumUI.masterBackground(index: currentIndex, context: context),
                 );
               },
             ),
@@ -170,72 +170,72 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                             },
                             onLongPressStart: (details) {
                               _menuPointerPosition.value = details.globalPosition;
-                              showSacredMenu(
-                                context,
-                                details.globalPosition,
-                                [
-                                  SacredMenuItem(
-                                    icon: Iconsax.heart, 
-                                    label: "Naam Jap",
-                                    color: PremiumTokens.saffronGlow,
-                                    onTap: () {
-                                      ref.read(navigationIndexProvider.notifier).state = 2;
-                                    },
-                                  ),
-                                  SacredMenuItem(
-                                    icon: Iconsax.sun_1, 
-                                    label: "Rituals",
-                                    color: PremiumTokens.nebulaBlue,
-                                    onTap: () {
-                                      ref.read(navigationIndexProvider.notifier).state = 5;
-                                    },
-                                  ),
-                                  SacredMenuItem(
-                                    icon: Iconsax.rotate_left,
-                                    label: "Reset",
-                                    color: Colors.redAccent,
-                                    onTap: () {
-                                      ref.read(naamJapStateProvider.notifier).reset();
-                                      PremiumUI.showNotification(
-                                        context, 
-                                        "Naam Jap counter reset",
-                                        icon: Iconsax.rotate_left,
-                                        color: Colors.redAccent,
-                                      );
-                                    },
-                                  ),
-                                  SacredMenuItem(
-                                    icon: Icons.vibration,
-                                    label: "Haptics",
-                                    color: PremiumTokens.nebulaBlue,
-                                    onTap: () {
-                                      HapticFeedback.vibrate();
-                                      PremiumUI.showNotification(
-                                        context, 
-                                        "Haptic Feedback: Heavy",
-                                        icon: Icons.vibration,
-                                        color: PremiumTokens.nebulaBlue,
-                                      );
-                                    },
-                                  ),
-                                  SacredMenuItem(
-                                    icon: Iconsax.send_2,
-                                    label: "Share",
-                                    color: Colors.greenAccent,
-                                    onTap: () {
-                                      PremiumUI.showNotification(
-                                        context, 
-                                        "Sharing Sant-Vaani...",
-                                        icon: Iconsax.send_2,
-                                        color: Colors.greenAccent,
-                                      );
-                                    },
-                                  ),
-                                ],
-                                _menuPointerPosition,
-                                key: _menuKey,
-                              );
-                            },
+                                showSacredMenu(
+                                  context,
+                                  details.globalPosition,
+                                  [
+                                    SacredMenuItem(
+                                      icon: Iconsax.heart, 
+                                      label: "Naam Jap",
+                                      color: PremiumTokens.saffronGlow,
+                                      onTap: () {
+                                        ref.read(navigationIndexProvider.notifier).state = 2;
+                                      },
+                                    ),
+                                    SacredMenuItem(
+                                      icon: Iconsax.sun_1, 
+                                      label: "Rituals",
+                                      color: PremiumTokens.nebulaBlue,
+                                      onTap: () {
+                                        ref.read(navigationIndexProvider.notifier).state = 5;
+                                      },
+                                    ),
+                                    SacredMenuItem(
+                                      icon: Iconsax.rotate_left,
+                                      label: "Reset",
+                                      color: Colors.redAccent,
+                                      onTap: () {
+                                        ref.read(naamJapStateProvider.notifier).reset();
+                                        PremiumUI.showNotification(
+                                          context, 
+                                          "Naam Jap counter reset",
+                                          icon: Iconsax.rotate_left,
+                                          color: Colors.redAccent,
+                                        );
+                                      },
+                                    ),
+                                    SacredMenuItem(
+                                      icon: Icons.vibration,
+                                      label: "Haptics",
+                                      color: PremiumTokens.nebulaBlue,
+                                      onTap: () {
+                                        HapticFeedback.vibrate();
+                                        PremiumUI.showNotification(
+                                          context, 
+                                          "Haptic Feedback: Heavy",
+                                          icon: Icons.vibration,
+                                          color: PremiumTokens.nebulaBlue,
+                                        );
+                                      },
+                                    ),
+                                    SacredMenuItem(
+                                      icon: Iconsax.send_2,
+                                      label: "Share",
+                                      color: Colors.greenAccent,
+                                      onTap: () {
+                                        PremiumUI.showNotification(
+                                          context, 
+                                          "Sharing Sant-Vaani...",
+                                          icon: Iconsax.send_2,
+                                          color: Colors.greenAccent,
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                  pointerPosition: _menuPointerPosition,
+                                  key: _menuKey,
+                                );
+                             },
                             onLongPressMoveUpdate: (details) {
                               _menuPointerPosition.value = details.globalPosition;
                             },

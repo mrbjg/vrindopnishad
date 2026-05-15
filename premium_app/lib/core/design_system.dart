@@ -17,6 +17,9 @@ import '../widgets/sacred_ritual_alert.dart';
 /// ═══════════════════════════════════════════════════════════════════════════
 
 class PremiumTokens {
+  static Brightness brightness = Brightness.dark;
+  static bool get isDark => brightness == Brightness.dark;
+
   // ═══════════════════════════════════════════════════════════════════════════
   // COLORS: Enhanced Palette
   // ═══════════════════════════════════════════════════════════════════════════
@@ -178,13 +181,13 @@ class PremiumTokens {
 
   static TextStyle displayStyle({
     double fontSize = 24,
-    Color color = celestialSilver,
+    Color? color,
     FontWeight fontWeight = FontWeight.bold,
     double? letterSpacing,
   }) {
     return GoogleFonts.notoSerif(
       fontSize: fontSize,
-      color: color,
+      color: color ?? (isDark ? celestialSilver : const Color(0xFF1A1A1A)),
       fontWeight: fontWeight,
       letterSpacing: letterSpacing,
     );
@@ -196,14 +199,14 @@ class PremiumTokens {
 
   static TextStyle sansStyle({
     double fontSize = 16,
-    Color color = celestialSilver,
+    Color? color,
     FontWeight fontWeight = FontWeight.normal,
     FontStyle fontStyle = FontStyle.normal,
     double? letterSpacing,
   }) {
     return GoogleFonts.poppins(
       fontSize: fontSize,
-      color: color,
+      color: color ?? (isDark ? celestialSilver : const Color(0xFF2D2D2D)),
       fontWeight: fontWeight,
       fontStyle: fontStyle,
       letterSpacing: letterSpacing,
@@ -366,8 +369,7 @@ class EmojiToIcon {
   }
 }
 
-class PremiumUI extends StatelessWidget {
-  const PremiumUI({super.key});
+class PremiumUI {
 
   /// Silver gradient text wrapper
   static Widget silverText(
@@ -691,14 +693,19 @@ class PremiumUI extends StatelessWidget {
     EdgeInsets padding = const EdgeInsets.all(16),
     EdgeInsets? margin,
   }) {
-    return Container(
-      margin: margin ?? const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius),
-        color: Colors.white.withValues(alpha: 0.02),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-      ),
-      child: Padding(padding: padding, child: child),
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Container(
+          margin: margin ?? const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(borderRadius),
+            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.02),
+            border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05)),
+          ),
+          child: Padding(padding: padding, child: child),
+        );
+      },
     );
   }
 
@@ -882,38 +889,45 @@ class PremiumUI extends StatelessWidget {
     EdgeInsets? margin,
     bool optimized = true,
   }) {
-    return Container(
-      margin: margin,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(borderRadius),
-        child: optimized
-            ? Container(
-                padding: padding ?? const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(
-                    alpha: opacity * 1.5,
-                  ), // High-perf opacity
-                  borderRadius: BorderRadius.circular(borderRadius),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.1),
-                    width: 1,
-                  ),
-                ),
-                child: child,
-              )
-            : BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-                child: Container(
-                  padding: padding ?? const EdgeInsets.all(20),
-                  decoration: PremiumTokens.glassDecoration(
-                    blur: blur,
-                    opacity: opacity,
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final baseColor = isDark ? Colors.white : Colors.black;
+        
+        return Container(
+          margin: margin,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(borderRadius),
+            child: optimized
+                ? Container(
+                    padding: padding ?? const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: baseColor.withValues(
+                        alpha: isDark ? opacity * 1.5 : opacity * 0.05,
+                      ), // High-perf opacity
+                      borderRadius: BorderRadius.circular(borderRadius),
+                      border: Border.all(
+                        color: baseColor.withValues(alpha: isDark ? 0.1 : 0.05),
+                        width: 1,
+                      ),
+                    ),
+                    child: child,
+                  )
+                : BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                    child: Container(
+                      padding: padding ?? const EdgeInsets.all(20),
+                      decoration: PremiumTokens.glassDecoration(
+                        blur: blur,
+                        opacity: opacity,
                     borderRadius: borderRadius,
                   ),
                   child: child,
                 ),
               ),
-      ),
+            ),
+        );
+      },
     );
   }
 
@@ -1095,13 +1109,20 @@ class PremiumUI extends StatelessWidget {
   }
 
   /// Optimized Master Background switcher to prevent overdraw
-  static Widget masterBackground({required int index}) {
-    // 0: Home, 1: Library, 4: Profile -> Bokeh
-    // 2: Naam Jap, 3: Journal -> Void
+  static Widget masterBackground({required int index, BuildContext? context}) {
+    final bool isDarkMode = context == null || Theme.of(context).brightness == Brightness.dark;
+    
+    // 0: Home, 1: Library, 4: Profile -> Bokeh/Clouds
+    // 2: Naam Jap, 3: Journal -> Void/Sky
     final isVoid = index == 2 || index == 3;
 
+    final backgroundColor = isDarkMode ? PremiumTokens.voidBlack : AppTheme.lightBackground;
+    final ambientGlow = isDarkMode 
+        ? PremiumTokens.nebulaBlue.withValues(alpha: 0.08)
+        : Colors.orange.withValues(alpha: 0.15);
+
     return Container(
-      decoration: const BoxDecoration(color: PremiumTokens.voidBlack),
+      decoration: BoxDecoration(color: backgroundColor),
       child: Stack(
         children: [
           // Base Ambient Glow (Always present)
@@ -1112,7 +1133,7 @@ class PremiumUI extends StatelessWidget {
                   center: Alignment.center,
                   radius: 1.5,
                   colors: [
-                    PremiumTokens.nebulaBlue.withValues(alpha: 0.08),
+                    ambientGlow,
                     Colors.transparent,
                   ],
                 ),
@@ -1120,52 +1141,109 @@ class PremiumUI extends StatelessWidget {
             ),
           ),
 
-          // Primary Nebula Flare
+          // Primary Flare/Nebula
           _buildBokeh(
             top: -100,
             right: -50,
             size: 400,
-            color: PremiumTokens.nebulaBlue.withValues(
-              alpha: isVoid ? 0.12 : 0.08,
-            ),
+            color: isDarkMode 
+                ? PremiumTokens.nebulaBlue.withValues(alpha: isVoid ? 0.12 : 0.08)
+                : Colors.orangeAccent.withValues(alpha: isVoid ? 0.2 : 0.1),
           ),
 
-          // Transitionary Elements
-          if (isVoid) ...[
-            _buildBokeh(
-              bottom: -50,
-              left: -50,
-              size: 350,
-              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.06),
-            ),
-            _buildMoon(bottom: 120, left: 60, size: 80),
+          // Transitionary Elements (Moon/Stars vs Sun/Clouds)
+          if (isDarkMode) ...[
+            if (isVoid) ...[
+              _buildBokeh(
+                bottom: -50,
+                left: -50,
+                size: 350,
+                color: PremiumTokens.nebulaBlue.withValues(alpha: 0.06),
+              ),
+              _buildMoon(bottom: 120, left: 60, size: 80),
+            ] else ...[
+              _buildBokeh(
+                bottom: -100,
+                left: -50,
+                size: 300,
+                color: PremiumTokens.celestialGlow.withValues(alpha: 0.04),
+              ),
+              _buildMoon(top: 60, left: 40, size: 60),
+            ],
           ] else ...[
-            _buildBokeh(
+            // LIGHT MODE: Sun Morning
+            if (isVoid) ...[
+              _buildSun(bottom: 120, left: 60, size: 120),
+            ] else ...[
+              _buildSun(top: 80, right: 40, size: 100),
+            ],
+            // Soft clouds instead of bokeh
+            Positioned(
               bottom: -100,
               left: -50,
-              size: 300,
-              color: PremiumTokens.celestialGlow.withValues(alpha: 0.04),
+              child: Opacity(
+                opacity: 0.3,
+                child: Icon(Icons.cloud, size: 300, color: Colors.white.withValues(alpha: 0.5)),
+              ),
             ),
-            _buildMoon(top: 60, left: 40, size: 60),
           ],
-
-          // Unified Planet (Subtle)
-          _buildPlanet(
-            top: isVoid ? 200 : 120,
-            right: isVoid ? 80 : 60,
-            size: 30,
-            color: isVoid
-                ? Colors.deepPurpleAccent.withValues(alpha: 0.2)
-                : Colors.blueAccent.withValues(alpha: 0.15),
-          ),
         ],
       ),
     );
   }
 
-  /// Deprecated in favor of masterBackground, kept for single-screen use if needed
-  static Widget bokehBackground() => masterBackground(index: 0);
-  static Widget voidBackground() => masterBackground(index: 2);
+  static Widget _buildSun({
+    double? top,
+    double? bottom,
+    double? left,
+    double? right,
+    required double size,
+  }) {
+    return Positioned(
+      top: top,
+      bottom: bottom,
+      left: left,
+      right: right,
+      child: RepaintBoundary(
+        child: Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: RadialGradient(
+              colors: [
+                Colors.orange.withValues(alpha: 0.4),
+                Colors.orange.withValues(alpha: 0.1),
+                Colors.transparent,
+              ],
+              stops: const [0.2, 0.5, 1.0],
+            ),
+          ),
+          child: Center(
+            child: Container(
+              width: size * 0.4,
+              height: size * 0.4,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.orangeAccent,
+                    blurRadius: 20,
+                    spreadRadius: 5,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Deprecated in favor of masterBackground, kept for compatibility
+  static Widget bokehBackground(BuildContext context) => masterBackground(index: 0, context: context);
+  static Widget voidBackground(BuildContext context) => masterBackground(index: 2, context: context);
 
   /// Subtle mandala pattern overlay for sacred screens
   static Widget mandalaOverlay({double opacity = 0.03}) {
@@ -1763,11 +1841,6 @@ class PremiumUI extends StatelessWidget {
         systemNavigationBarIconBrightness: Brightness.light,
       ),
     );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return const SizedBox.shrink();
   }
 }
 
@@ -3201,8 +3274,8 @@ class SacredMenuItem {
 void showSacredMenu(
   BuildContext context,
   Offset position,
-  List<SacredMenuItem> items,
-  ValueNotifier<Offset?>? pointerPosition, {
+  List<SacredMenuItem> items, {
+  ValueNotifier<Offset?>? pointerPosition,
   Key? key,
 }) {
   HapticFeedback.heavyImpact();

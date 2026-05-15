@@ -38,10 +38,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         : [];
 
     return Scaffold(
-      backgroundColor: PremiumTokens.charcoal,
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          Positioned.fill(child: PremiumUI.bokehBackground()),
+          Positioned.fill(child: PremiumUI.bokehBackground(context)),
           Positioned.fill(child: PremiumUI.mandalaOverlay(opacity: 0.03)),
           
           SafeArea(

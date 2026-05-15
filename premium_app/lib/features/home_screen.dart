@@ -26,7 +26,7 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: PremiumTokens.voidPure,
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
           CustomScrollView(
@@ -40,7 +40,7 @@ class HomeScreen extends ConsumerWidget {
                 floating: false,
                 elevation: 0,
                 scrolledUnderElevation: 0,
-                backgroundColor: PremiumTokens.voidPure,
+                backgroundColor: Colors.transparent,
                 titleSpacing: 20,
                 title: Row(
                   children: [

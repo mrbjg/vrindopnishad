@@ -48,7 +48,7 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          PremiumUI.voidBackground(),
+          PremiumUI.voidBackground(context),
           CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [

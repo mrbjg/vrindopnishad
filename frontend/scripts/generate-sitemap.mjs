@@ -143,11 +143,11 @@ async function generateSitemap() {
       const rawSlug = item.slug || generateSlug(item.title);
       const slug = sanitizeSlug(rawSlug);
       if (!slug) return null;
-      const encoded = encodeURIComponent(slug);
       // Skip duplicates
-      if (seenSlugs.has(encoded)) return null;
-      seenSlugs.add(encoded);
-      return `  <url><loc>${DOMAIN}/content/${encoded}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`;
+      if (seenSlugs.has(slug)) return null;
+      seenSlugs.add(slug);
+      // Use slug directly — avoid encodeURIComponent which creates redirect chains
+      return `  <url><loc>${DOMAIN}/content/${slug}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`;
     })
     .filter(Boolean)
     .join('\n');
@@ -158,7 +158,7 @@ async function generateSitemap() {
   ).join('\n');
 
   const catUrls = uniqueCategories.map(cat =>
-    `  <url><loc>${DOMAIN}/category/${encodeURIComponent(cat.toLowerCase().replace(/\s+/g, '-'))}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
+    `  <url><loc>${DOMAIN}/category/${cat.toLowerCase().replace(/\s+/g, '-')}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
   ).join('\n');
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

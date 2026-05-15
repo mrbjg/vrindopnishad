@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/design_system.dart';
+import '../core/theme.dart';
 import '../core/auth_provider.dart';
 import 'profile/saved_items_screen.dart';
 import 'profile/reading_history_screen.dart';
@@ -233,6 +234,28 @@ class _PremiumProfileHeader extends ConsumerWidget {
       ),
       child: Column(
         children: [
+          // Theme Toggle
+          Align(
+            alignment: Alignment.topRight,
+            child: PremiumUI.glassCard(
+              padding: const EdgeInsets.all(4),
+              borderRadius: 100,
+              child: IconButton(
+                icon: Icon(
+                  AppTheme.isDark(context) ? Iconsax.sun_1 : Iconsax.moon,
+                  color: Colors.white,
+                  size: 20,
+                ),
+                onPressed: () {
+                  HapticFeedback.mediumImpact();
+                  ref.read(themeProvider.notifier).toggleTheme(!AppTheme.isDark(context));
+                },
+              ),
+            ),
+          ),
+          
+          const SizedBox(height: 8),
+
           // Elegant Avatar with Evolving Aura
           Container(
             padding: const EdgeInsets.all(4),

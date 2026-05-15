@@ -31,7 +31,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          PremiumUI.voidBackground(),
+          PremiumUI.voidBackground(context),
           CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [

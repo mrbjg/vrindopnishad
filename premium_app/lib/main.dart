@@ -83,20 +83,22 @@ class _SantVaaniPremiumAppState extends ConsumerState<SantVaaniPremiumApp> {
 
   @override
   Widget build(BuildContext context) {
-    // Force dark mode for premium spiritual aesthetic
+    final themeMode = ref.watch(themeProvider);
     final authState = ref.watch(authStateProvider);
     final hasSeenOnboarding = ref.watch(hasSeenOnboardingProvider);
+    
+    // Update global brightness for static tokens
+    final brightness = themeMode == ThemeMode.system 
+      ? MediaQuery.platformBrightnessOf(context)
+      : (themeMode == ThemeMode.dark ? Brightness.dark : Brightness.light);
+    PremiumTokens.brightness = brightness;
 
     return MaterialApp(
       title: 'Sant-Vaani Premium',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme.copyWith(
-        scaffoldBackgroundColor: PremiumTokens.charcoal,
-      ),
-      darkTheme: AppTheme.darkTheme.copyWith(
-        scaffoldBackgroundColor: PremiumTokens.charcoal,
-      ),
-      themeMode: ThemeMode.dark, // Defaulting to dark for premium feel
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeMode,
       home: _showSplash 
         ? SplashScreen(onComplete: () => setState(() => _showSplash = false))
         : AnimatedSwitcher(

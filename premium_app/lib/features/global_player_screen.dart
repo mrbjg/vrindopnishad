@@ -240,7 +240,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
                     },
                   ),
                 ],
-                _pointerPosition,
+                pointerPosition: _pointerPosition,
                 key: _menuKey,
               );
             },

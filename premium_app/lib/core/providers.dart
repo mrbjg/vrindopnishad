@@ -14,19 +14,32 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
 });
 
 class ThemeNotifier extends StateNotifier<ThemeMode> {
-  ThemeNotifier() : super(ThemeMode.system);
+  final SharedPreferences prefs;
+
+  ThemeNotifier(this.prefs) : super(ThemeMode.system) {
+    _loadTheme();
+  }
+
+  void _loadTheme() {
+    final modeIndex = prefs.getInt('theme_mode');
+    if (modeIndex != null) {
+      state = ThemeMode.values[modeIndex];
+    }
+  }
 
   void setThemeMode(ThemeMode mode) {
     state = mode;
+    prefs.setInt('theme_mode', mode.index);
   }
 
   void toggleTheme(bool isDark) {
-    state = isDark ? ThemeMode.dark : ThemeMode.light;
+    final newMode = isDark ? ThemeMode.dark : ThemeMode.light;
+    setThemeMode(newMode);
   }
 
   /// Reset to follow system theme
   void useSystemTheme() {
-    state = ThemeMode.system;
+    setThemeMode(ThemeMode.system);
   }
 
   /// Check if currently using system theme
@@ -34,7 +47,8 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
 }
 
 final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
-  return ThemeNotifier();
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return ThemeNotifier(prefs);
 });
 
 enum AppLanguage { english, hindi, sanskrit }
