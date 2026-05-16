@@ -7,7 +7,6 @@ import 'package:iconsax/iconsax.dart';
 import '../core/design_system.dart';
 import '../core/spirituality_provider.dart';
 import '../core/spirituality_engine.dart';
-import '../services/gamification_service.dart';
 
 class DailyMotivationScreen extends ConsumerWidget {
   const DailyMotivationScreen({super.key});
@@ -22,7 +21,7 @@ class DailyMotivationScreen extends ConsumerWidget {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          Positioned.fill(child: PremiumUI.masterBackground(index: 0)),
+          Positioned.fill(child: PremiumUI.masterBackground(index: 0, context: context)),
           SafeArea(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -39,8 +38,8 @@ class DailyMotivationScreen extends ConsumerWidget {
                         child: PremiumUI.glassCard(
                           padding: const EdgeInsets.all(10),
                           borderRadius: 14,
-                          child: const Icon(Iconsax.arrow_left_2,
-                              color: Colors.white, size: 20),
+                          child: Icon(Iconsax.arrow_left_2,
+                              color: PremiumTokens.textPrimary, size: 20),
                         ),
                       ),
                       const Spacer(),
@@ -74,7 +73,7 @@ class DailyMotivationScreen extends ConsumerWidget {
                         style: PremiumTokens.sansStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                          color: PremiumTokens.textPrimary,
                           letterSpacing: 1,
                         ),
                       ),
@@ -98,7 +97,7 @@ class DailyMotivationScreen extends ConsumerWidget {
                           textAlign: TextAlign.center,
                           style: GoogleFonts.spectral(
                             fontSize: 20,
-                            color: Colors.white,
+                            color: PremiumTokens.textPrimary,
                             fontWeight: FontWeight.w300,
                             height: 1.6,
                           ),
@@ -126,7 +125,7 @@ class DailyMotivationScreen extends ConsumerWidget {
                               textAlign: TextAlign.center,
                               style: GoogleFonts.spectral(
                                 fontSize: 18,
-                                color: Colors.white,
+                                color: PremiumTokens.textPrimary,
                                 fontStyle: FontStyle.italic,
                                 height: 1.5,
                                 fontWeight: FontWeight.w300,
@@ -171,7 +170,7 @@ class DailyMotivationScreen extends ConsumerWidget {
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,
-                            color: Colors.white38,
+                            color: PremiumTokens.textMuted,
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -179,7 +178,7 @@ class DailyMotivationScreen extends ConsumerWidget {
                           SpiritualityEngine.levelDescription(levelTier),
                           style: GoogleFonts.spectral(
                             fontSize: 15,
-                            color: Colors.white70,
+                            color: PremiumTokens.textSecondary,
                             height: 1.5,
                           ),
                         ),
@@ -220,7 +219,7 @@ class DailyMotivationScreen extends ConsumerWidget {
                                 fontSize: 11,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 2,
-                                color: Colors.white,
+                                color: PremiumTokens.textPrimary,
                               ),
                             ),
                           ],

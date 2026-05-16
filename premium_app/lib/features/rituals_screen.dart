@@ -43,7 +43,7 @@ class RitualsScreen extends ConsumerWidget {
                   child: ritualsAsync.when(
                     data: (rituals) => _buildRitualsList(context, ref, rituals),
                     loading: () => const Center(child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue)),
-                    error: (e, _) => Center(child: Text("Error loading rituals: $e", style: const TextStyle(color: Colors.redAccent))),
+                    error: (e, _) => Center(child: Text("Error loading rituals: $e", style: const TextStyle(color: PremiumTokens.nebulaBlue))),
                   ),
                 ),
               ],
@@ -64,13 +64,13 @@ class RitualsScreen extends ConsumerWidget {
                   gradient: PremiumTokens.silverGradient,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: PremiumTokens.glassBase.withValues(alpha: 0.2),
                       blurRadius: 20,
                       spreadRadius: 2,
                     ),
                   ],
                 ),
-                child: const Icon(Icons.add, color: PremiumTokens.voidBlack, size: 32),
+                child: Icon(Icons.add, color: PremiumTokens.surfaceMain, size: 32),
               ),
             ).animate().scale(delay: 400.ms, duration: 600.ms, curve: Curves.elasticOut),
           ),
@@ -91,9 +91,9 @@ class RitualsScreen extends ConsumerWidget {
               child: PremiumUI.glassCard(
                 padding: const EdgeInsets.all(12),
                 borderRadius: 16,
-                child: const Icon(
+                child: Icon(
                   Iconsax.arrow_left_2, 
-                  color: Colors.white, 
+                  color: PremiumTokens.textPrimary, 
                   size: 20
                 ),
               ),
@@ -109,7 +109,7 @@ class RitualsScreen extends ConsumerWidget {
       padding: const EdgeInsets.fromLTRB(32, 24, 32, 16),
       child: Column(
         children: [
-          const Icon(Icons.brightness_4_outlined, color: Colors.white60, size: 32),
+          Icon(Icons.brightness_4_outlined, color: PremiumTokens.textMuted, size: 32),
           const SizedBox(height: 12),
           Text(
             "SACRED RITUALS",
@@ -217,7 +217,7 @@ class RitualsScreen extends ConsumerWidget {
                     style: GoogleFonts.manrope(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: isCategoryDone ? PremiumTokens.saffronGlow : Colors.white24,
+                      color: isCategoryDone ? PremiumTokens.saffronGlow : PremiumTokens.textHint,
                     ),
                   ),
                 ],
@@ -249,17 +249,17 @@ class RitualsScreen extends ConsumerWidget {
             context, 
             "Ritual removed",
             icon: Iconsax.trash,
-            color: Colors.redAccent,
+            color: PremiumTokens.nebulaBlue,
           );
         },
         background: Container(
           alignment: Alignment.centerRight,
           padding: const EdgeInsets.only(right: 24),
           decoration: BoxDecoration(
-            color: Colors.redAccent.withValues(alpha: 0.1),
+            color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(24),
           ),
-          child: const Icon(Iconsax.trash, color: Colors.redAccent),
+          child: const Icon(Iconsax.trash, color: PremiumTokens.nebulaBlue),
         ),
         child: GestureDetector(
           onTap: () {
@@ -269,7 +269,7 @@ class RitualsScreen extends ConsumerWidget {
                 context, 
                 isMissed ? "Time Window Expired" : "Not Yet Scheduled",
                 icon: Iconsax.lock,
-                color: Colors.white24,
+                color: PremiumTokens.textHint,
               );
               return;
             }
@@ -286,12 +286,12 @@ class RitualsScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               color: ritual.isCompleted 
                   ? PremiumTokens.saffronGlow.withValues(alpha: 0.02) 
-                  : (isMissed ? Colors.red.withValues(alpha: 0.02) : Colors.white.withValues(alpha: 0.03)),
+                  : (isMissed ? PremiumTokens.nebulaBlue.withValues(alpha: 0.02) : PremiumTokens.borderSubtle),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
                 color: ritual.isCompleted 
                   ? PremiumTokens.saffronGlow.withValues(alpha: 0.2) 
-                  : (isMissed ? Colors.red.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.1)), 
+                  : (isMissed ? PremiumTokens.nebulaBlue.withValues(alpha: 0.15) : PremiumTokens.borderMedium), 
                 width: 1
               ),
               boxShadow: ritual.isCompleted ? [
@@ -354,11 +354,11 @@ class RitualsScreen extends ConsumerWidget {
                           ritual.title,
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: ritual.isCompleted ? Colors.white24 : PremiumTokens.silver,
+                          color: ritual.isCompleted ? PremiumTokens.textHint : PremiumTokens.silver,
                           isSacred: true,
                         ).copyWith(
                           decoration: ritual.isCompleted ? TextDecoration.lineThrough : null,
-                          decorationColor: Colors.white24,
+                          decorationColor: PremiumTokens.textHint,
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -367,16 +367,16 @@ class RitualsScreen extends ConsumerWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
-                          color: Colors.red.withValues(alpha: 0.1),
+                          color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
+                          border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
                         ),
                         child: Text(
                           "MISSED",
                           style: PremiumTokens.sansStyle(
                             fontSize: 8,
                             fontWeight: FontWeight.w900,
-                            color: Colors.redAccent.withValues(alpha: 0.7),
+                            color: PremiumTokens.nebulaBlue.withValues(alpha: 0.7),
                           ),
                         ),
                       ),
@@ -384,16 +384,16 @@ class RitualsScreen extends ConsumerWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.05),
+                          color: PremiumTokens.borderSubtle,
                           borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                          border: Border.all(color: PremiumTokens.borderMedium),
                         ),
                         child: Text(
                           "LOCKED",
                           style: PremiumTokens.sansStyle(
                             fontSize: 8,
                             fontWeight: FontWeight.w900,
-                            color: Colors.white24,
+                            color: PremiumTokens.textHint,
                           ),
                         ),
                       ),
@@ -453,11 +453,11 @@ class RitualsScreen extends ConsumerWidget {
             shape: BoxShape.circle,
             color: ritual.isCompleted 
                 ? PremiumTokens.starlight.withValues(alpha: 0.1) 
-                : (isLocked ? Colors.white.withValues(alpha: 0.05) : Colors.transparent),
+                : (isLocked ? PremiumTokens.borderSubtle : Colors.transparent),
             border: Border.all(
               color: ritual.isCompleted 
                   ? PremiumTokens.starlight.withValues(alpha: 0.6) 
-                  : (isLocked ? Colors.white.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.2)),
+                  : (isLocked ? PremiumTokens.borderMedium : PremiumTokens.glassBase.withValues(alpha: 0.2)),
               width: 1,
             ),
             boxShadow: ritual.isCompleted ? [
@@ -470,7 +470,7 @@ class RitualsScreen extends ConsumerWidget {
           ),
           child: ritual.isCompleted 
               ? const Icon(Icons.check, color: PremiumTokens.starlight, size: 18) 
-              : (isLocked ? const Icon(Icons.lock_outline, color: Colors.white24, size: 14) : null),
+              : (isLocked ? Icon(Icons.lock_outline, color: PremiumTokens.textHint, size: 14) : null),
         ),
       ),
     );
@@ -507,7 +507,7 @@ class RitualsScreen extends ConsumerWidget {
                   height: 4,
                   margin: const EdgeInsets.only(bottom: 24),
                   decoration: BoxDecoration(
-                    color: Colors.white10,
+                    color: PremiumTokens.borderSubtle,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -525,7 +525,7 @@ class RitualsScreen extends ConsumerWidget {
               _buildInputLabel("TITLE"),
               TextField(
                 controller: titleController,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: PremiumTokens.textPrimary),
                 decoration: _inputDecoration("e.g., Morning Meditation"),
               ),
               const SizedBox(height: 20),
@@ -538,7 +538,7 @@ class RitualsScreen extends ConsumerWidget {
                         _buildInputLabel("TIME"),
                         TextField(
                           controller: timeController,
-                          style: const TextStyle(color: Colors.white),
+                          style: TextStyle(color: PremiumTokens.textPrimary),
                           decoration: _inputDecoration("06:00 AM"),
                         ),
                       ],
@@ -552,7 +552,7 @@ class RitualsScreen extends ConsumerWidget {
                         _buildInputLabel("SUBTITLE"),
                         TextField(
                           controller: subtitleController,
-                          style: const TextStyle(color: Colors.white),
+                          style: TextStyle(color: PremiumTokens.textPrimary),
                           decoration: _inputDecoration("15 Mins"),
                         ),
                       ],
@@ -571,14 +571,14 @@ class RitualsScreen extends ConsumerWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       decoration: BoxDecoration(
-                        color: isSelected ? PremiumTokens.nebulaBlue : Colors.white.withValues(alpha: 0.05),
+                        color: isSelected ? PremiumTokens.nebulaBlue : PremiumTokens.borderSubtle,
                         borderRadius: BorderRadius.circular(100),
-                        border: Border.all(color: isSelected ? PremiumTokens.nebulaBlue : Colors.white.withValues(alpha: 0.1)),
+                        border: Border.all(color: isSelected ? PremiumTokens.nebulaBlue : PremiumTokens.borderMedium),
                       ),
                       child: Text(
                         cat,
                         style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.white54,
+                          color: isSelected ? PremiumTokens.textPrimary : PremiumTokens.textMuted,
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           fontSize: 12,
                         ),
@@ -632,7 +632,7 @@ class RitualsScreen extends ConsumerWidget {
         style: GoogleFonts.manrope(
           fontSize: 10,
           fontWeight: FontWeight.w900,
-          color: Colors.white24,
+          color: PremiumTokens.textHint,
           letterSpacing: 2,
         ),
       ),
@@ -642,13 +642,13 @@ class RitualsScreen extends ConsumerWidget {
   InputDecoration _inputDecoration(String hint) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Colors.white10),
+      hintStyle: TextStyle(color: PremiumTokens.borderSubtle),
       filled: true,
-      fillColor: Colors.white.withValues(alpha: 0.03),
+      fillColor: PremiumTokens.borderSubtle,
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(20),
-        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+        borderSide: BorderSide(color: PremiumTokens.borderSubtle),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(20),
@@ -663,18 +663,18 @@ class _ConstellationBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: RadialGradient(
           center: Alignment.center,
           radius: 1.2,
-          colors: [
-            Color(0xFF0A0F1D), // void-deep
-            Color(0xFF020408), // void-black
-          ],
+          colors: isDark
+            ? [const Color(0xFF0A0F1D), const Color(0xFF020408)]
+            : [PremiumTokens.scaffoldBg, const Color(0xFFF5EFE0)],
         ),
       ),
-      child: Stack(
+      child: isDark ? Stack(
         children: [
           _buildStar(top: 100, left: 40, size: 2, opacity: 0.3),
           _buildStar(top: 250, right: 60, size: 3, opacity: 0.2),
@@ -683,7 +683,7 @@ class _ConstellationBackground extends StatelessWidget {
           _buildStar(top: 40, right: 120, size: 2, opacity: 0.3),
           _buildStar(bottom: 100, right: 100, size: 2, opacity: 0.2),
         ],
-      ),
+      ) : null,
     );
   }
 
@@ -699,11 +699,11 @@ class _ConstellationBackground extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: opacity),
+        color: PremiumTokens.textPrimary.withValues(alpha: opacity),
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.white.withValues(alpha: opacity),
+            color: PremiumTokens.textPrimary.withValues(alpha: opacity),
             blurRadius: size * (AppTheme.lowPerformanceMode ? 1 : 2),
             spreadRadius: 1,
           ),
@@ -757,7 +757,7 @@ class _RitualProgressHeader extends StatelessWidget {
                     value: progress,
                     strokeWidth: 5,
                     color: PremiumTokens.saffronGlow,
-                    backgroundColor: Colors.white.withValues(alpha: 0.05),
+                    backgroundColor: PremiumTokens.borderSubtle,
                   ),
                   Center(
                     child: Text(
@@ -765,7 +765,7 @@ class _RitualProgressHeader extends StatelessWidget {
                       style: PremiumTokens.sansStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w900,
-                        color: Colors.white70,
+                        color: PremiumTokens.textSecondary,
                       ),
                     ),
                   ),
@@ -784,7 +784,7 @@ class _RitualProgressHeader extends StatelessWidget {
                       fontSize: 9,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2,
-                      color: Colors.white38,
+                      color: PremiumTokens.textMuted,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -823,7 +823,7 @@ class _RitualProgressHeader extends StatelessWidget {
                   style: PremiumTokens.sansStyle(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white38,
+                    color: PremiumTokens.textMuted,
                   ),
                 ),
               ],

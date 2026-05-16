@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../core/design_system.dart';
 import '../core/providers.dart';
 import '../core/spirituality_provider.dart';
-import '../core/spirituality_engine.dart';
 import '../core/stats_provider.dart';
 import '../core/auth_provider.dart';
 import '../core/audio_provider.dart';
@@ -142,7 +141,7 @@ class _DailyMotivationSection extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     EmojiToIcon.getIconWidget('🌅',
-                        size: 14, color: PremiumTokens.celestialSilver.withValues(alpha: 0.4)),
+                        size: 14, color: PremiumTokens.textMuted),
                     const SizedBox(width: 8),
                     Text(
                       'CELESTIAL INSIGHT',
@@ -150,7 +149,7 @@ class _DailyMotivationSection extends ConsumerWidget {
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 3,
-                        color: PremiumTokens.celestialSilver.withValues(alpha: 0.4),
+                        color: PremiumTokens.textMuted,
                       ),
                     ),
                   ],
@@ -161,7 +160,7 @@ class _DailyMotivationSection extends ConsumerWidget {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.spectral(
                     fontSize: 18,
-                    color: PremiumTokens.celestialSilver.withValues(alpha: 0.9),
+                    color: PremiumTokens.textPrimary,
                     fontWeight: FontWeight.w300,
                     height: 1.6,
                     fontStyle: FontStyle.italic,
@@ -179,111 +178,6 @@ class _DailyMotivationSection extends ConsumerWidget {
 
 // ─── Streak & Level Bar ────────────────────────────────────
 
-class _StreakLevelBar extends ConsumerWidget {
-  const _StreakLevelBar();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final statsAsync = ref.watch(userStatsProvider);
-    final challengesAsync = ref.watch(dailyChallengesProvider);
-
-    // Use .value to prevent UI from hiding during subsequent loading states
-    final stats = statsAsync.value;
-    final challenges = challengesAsync.value;
-
-    // 1. Initial Loading State (No data and no cache)
-    if (stats == null || challenges == null) {
-      if (statsAsync.isLoading || challengesAsync.isLoading) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-          child: PremiumUI.skeleton(width: double.infinity, height: 60, borderRadius: 16),
-        );
-      }
-      return const SizedBox.shrink();
-    }
-
-    final level = stats.level;
-    final xp = stats.experiencePoints;
-    final streak = stats.streakCount;
-    final xpForNext = SpiritualityEngine.xpForLevel(level);
-    final progress = xpForNext > 0 ? (xp % xpForNext) / xpForNext : 0.0;
-    final completed = challenges.where((c) => c.isCompleted).length;
-
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-      child: PremiumUI.glassCard(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        borderRadius: 16,
-        child: Row(
-          children: [
-            // Streak & Level info
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text('STREAK: $streak',
-                        style: PremiumTokens.sansStyle(
-                            fontSize: 9, fontWeight: FontWeight.w900, color: PremiumTokens.celestialSilver.withValues(alpha: 0.5))),
-                    const SizedBox(width: 12),
-                    Text('L$level',
-                        style: PremiumTokens.sansStyle(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w900,
-                            color: PremiumTokens.celestialSilver)),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: 120,
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    backgroundColor: PremiumTokens.celestialSilver.withValues(alpha: 0.05),
-                    valueColor:
-                        const AlwaysStoppedAnimation(PremiumTokens.celestialSilver),
-                    minHeight: 2,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ],
-            ),
-            const Spacer(),
-            // Challenges compact view
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text('CHALLENGES: $completed/${challenges.length}',
-                    style: PremiumTokens.sansStyle(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white54)),
-                const SizedBox(height: 6),
-                Row(
-                  children: challenges.take(3).map((c) {
-                    return Padding(
-                      padding: const EdgeInsets.only(left: 4),
-                      child: Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: c.isCompleted
-                              ? Colors.greenAccent
-                              : Colors.white10,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 
 
@@ -306,7 +200,7 @@ class _QuickActionsGrid extends StatelessWidget {
           _QuickActionTile(
             emoji: '📚',
             label: 'Gyaan',
-            color: PremiumTokens.celestialSilver,
+            color: PremiumTokens.textPrimary,
             onTap: () => Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const DailyGyaanScreen())),
           ),
@@ -314,7 +208,7 @@ class _QuickActionsGrid extends StatelessWidget {
           _QuickActionTile(
             emoji: '📅',
             label: 'Calendar',
-            color: PremiumTokens.celestialSilver,
+            color: PremiumTokens.textPrimary,
             onTap: () => Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const SacredCalendarScreen())),
           ),
@@ -355,7 +249,7 @@ class _QuickActionTile extends StatelessWidget {
               Icon(
                 label == 'Gyaan' ? Iconsax.teacher : Iconsax.calendar,
                 size: 24,
-                color: PremiumTokens.celestialSilver.withValues(alpha: 0.6),
+                color: PremiumTokens.textMuted,
               ),
               const SizedBox(height: 12),
               Text(
@@ -364,7 +258,7 @@ class _QuickActionTile extends StatelessWidget {
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 2,
-                  color: PremiumTokens.celestialSilver.withValues(alpha: 0.8),
+                  color: PremiumTokens.textSecondary,
                 ),
               ),
             ],
@@ -395,7 +289,7 @@ class _CategoriesHeader extends ConsumerWidget {
         children: [
           Text('Categories',
               style: PremiumTokens.sansStyle(
-                  color: PremiumTokens.celestialSilver,
+                  color: PremiumTokens.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.5)),
@@ -409,7 +303,7 @@ class _CategoriesHeader extends ConsumerWidget {
             },
             child: Text('VIEW ALL',
                 style: PremiumTokens.sansStyle(
-                    color: PremiumTokens.celestialSilver.withValues(alpha: 0.4),
+                    color: PremiumTokens.textMuted,
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2)),
@@ -452,8 +346,8 @@ class _PremiumNaamJapSection extends ConsumerWidget {
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        PremiumTokens.celestialSilver.withValues(alpha: 0.1),
-                        PremiumTokens.celestialSilver.withValues(alpha: 0.02),
+                        PremiumTokens.accentSilver.withValues(alpha: 0.1),
+                        PremiumTokens.accentSilver.withValues(alpha: 0.02),
                         Colors.transparent,
                       ],
                       stops: const [0.0, 0.5, 1.0],
@@ -468,7 +362,7 @@ class _PremiumNaamJapSection extends ConsumerWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.03),
+                      color: PremiumTokens.textPrimary.withValues(alpha: 0.03),
                       width: 1,
                     ),
                   ),
@@ -482,9 +376,9 @@ class _PremiumNaamJapSection extends ConsumerWidget {
                     value: progress,
                     strokeWidth: 8,
                     strokeCap: StrokeCap.round,
-                    backgroundColor: Colors.white.withValues(alpha: 0.05),
-                    valueColor: const AlwaysStoppedAnimation(
-                      PremiumTokens.celestialSilver,
+                    backgroundColor: PremiumTokens.textPrimary.withValues(alpha: 0.05),
+                    valueColor: AlwaysStoppedAnimation(
+                      PremiumTokens.accentSilver,
                     ),
                   ),
                 ),
@@ -495,13 +389,13 @@ class _PremiumNaamJapSection extends ConsumerWidget {
                   height: 154,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: PremiumTokens.voidIndigo,
+                    color: PremiumTokens.surfaceMain,
                     border: Border.all(
-                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.1),
+                      color: PremiumTokens.borderSubtle,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.5),
+                        color: PremiumTokens.scaffoldBg.withValues(alpha: 0.5),
                         blurRadius: 20,
                       ),
                     ],
@@ -517,7 +411,7 @@ class _PremiumNaamJapSection extends ConsumerWidget {
                           '${japState.total}',
                           style: GoogleFonts.spectral(
                             fontSize: 52,
-                            color: Colors.white,
+                            color: PremiumTokens.textPrimary,
                             fontWeight: FontWeight.w200,
                             letterSpacing: -2,
                           ),
@@ -529,7 +423,7 @@ class _PremiumNaamJapSection extends ConsumerWidget {
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 2,
-                          color: Colors.white38,
+                          color: PremiumTokens.textMuted,
                         ),
                       ),
                     ],
@@ -543,10 +437,10 @@ class _PremiumNaamJapSection extends ConsumerWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.05),
+                      color: PremiumTokens.borderSubtle,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.05),
+                        color: PremiumTokens.borderSubtle,
                       ),
                     ),
                     child: Text(
@@ -555,7 +449,7 @@ class _PremiumNaamJapSection extends ConsumerWidget {
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1,
-                        color: Colors.white70,
+                        color: PremiumTokens.textSecondary,
                       ),
                     ),
                   ),
@@ -608,12 +502,12 @@ class _CategoriesGridLite extends ConsumerWidget {
                 fit: StackFit.expand,
                 children: [
                   PremiumUI.networkImage(url: cat.imageUrl, width: 200),
-                  const DecoratedBox(
+                  DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
-                        colors: [Colors.black87, Colors.transparent],
+                        colors: [PremiumTokens.scaffoldBg.withValues(alpha: 0.87), Colors.transparent],
                       ),
                     ),
                   ),
@@ -622,8 +516,8 @@ class _CategoriesGridLite extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(cat.name, style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-                        Text('${cat.count} Items', style: GoogleFonts.manrope(color: Colors.white54, fontSize: 10)),
+                        Text(cat.name, style: GoogleFonts.manrope(color: PremiumTokens.textPrimary, fontWeight: FontWeight.bold, fontSize: 14)),
+                        Text('${cat.count} Items', style: GoogleFonts.manrope(color: PremiumTokens.textMuted, fontSize: 10)),
                       ],
                     ),
                   ),
@@ -651,7 +545,7 @@ class _RecentReflectionPreviewLite extends ConsumerWidget {
         children: [
           Text('LATEST REFLECTION',
               style: PremiumTokens.sansStyle(
-                color: Colors.white38,
+                color: PremiumTokens.textMuted,
                 fontSize: 10,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 2,
@@ -669,7 +563,7 @@ class _RecentReflectionPreviewLite extends ConsumerWidget {
                   padding: const EdgeInsets.all(20),
                   child: Row(
                     children: [
-                      const Icon(Iconsax.moon, color: PremiumTokens.celestialSilver, size: 24),
+                      const Icon(Iconsax.moon, color: PremiumTokens.nebulaBlue, size: 24),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
@@ -677,18 +571,18 @@ class _RecentReflectionPreviewLite extends ConsumerWidget {
                           children: [
                             Text(latest.title ?? 'Sacred Reflection',
                                 style: GoogleFonts.spectral(
-                                  color: Colors.white,
+                                  color: PremiumTokens.textPrimary,
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 )),
                             Text(
                                 "${latest.category ?? 'Spiritual'} • Just Read",
                                 style: PremiumTokens.sansStyle(
-                                    color: Colors.white38, fontSize: 11)),
+                                    color: PremiumTokens.textMuted, fontSize: 11)),
                           ],
                         ),
                       ),
-                      const Icon(Iconsax.arrow_right_3, color: Colors.white24, size: 20),
+                      Icon(Iconsax.arrow_right_3, color: PremiumTokens.textMuted, size: 20),
                     ],
                   ),
                 ),
@@ -725,30 +619,30 @@ class _PremiumContentListLite extends ConsumerWidget {
           },
           child: PremiumUI.relicStaticCard(
             padding: const EdgeInsets.all(20),
-            borderColor: PremiumTokens.celestialSilver.withValues(alpha: 0.1),
+            borderColor: PremiumTokens.borderSubtle,
             child: Row(
               children: [
                 Container(
                   width: 44, height: 44,
                   decoration: BoxDecoration(
-                    color: PremiumTokens.celestialSilver.withValues(alpha: 0.03),
+                    color: PremiumTokens.borderSubtle,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.05)),
+                    border: Border.all(color: PremiumTokens.borderSubtle),
                   ),
-                  child: const Center(child: Text('ॐ', style: TextStyle(color: PremiumTokens.celestialSilver, fontSize: 20))),
+                  child: Center(child: Text('ॐ', style: TextStyle(color: PremiumTokens.textPrimary, fontSize: 20))),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(item.title, style: PremiumTokens.sansStyle(color: PremiumTokens.celestialSilver, fontWeight: FontWeight.bold, fontSize: 14)),
+                      Text(item.title, style: PremiumTokens.sansStyle(color: PremiumTokens.textPrimary, fontWeight: FontWeight.bold, fontSize: 14)),
                       const SizedBox(height: 4),
-                      Text(item.category.toUpperCase(), style: PremiumTokens.sansStyle(color: PremiumTokens.celestialSilver.withValues(alpha: 0.4), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                      Text(item.category.toUpperCase(), style: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1)),
                     ],
                   ),
                 ),
-                Icon(Iconsax.arrow_right_3, color: PremiumTokens.celestialSilver.withValues(alpha: 0.2), size: 14),
+                Icon(Iconsax.arrow_right_3, color: PremiumTokens.textMuted, size: 14),
               ],
             ),
           ),
@@ -842,7 +736,7 @@ class PremiumQuoteCard extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: PremiumTokens.borderSubtle),
       ),
       child: Stack(
         alignment: Alignment.center,
@@ -877,7 +771,7 @@ class PremiumQuoteCard extends StatelessWidget {
                   '"The soul is neither born, nor does it ever die; nor having once existed, does it ever cease to be."',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.newsreader(
-                    color: Colors.white,
+                    color: PremiumTokens.textPrimary,
                     fontSize: 22,
                     fontStyle: FontStyle.italic,
                     height: 1.4,

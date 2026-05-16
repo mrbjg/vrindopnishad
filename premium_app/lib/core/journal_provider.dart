@@ -61,7 +61,7 @@ class JournalNotifier extends AsyncNotifier<List<JournalEntry>> {
       await journalService.createEntry(newEntry);
       // Optional: Re-fetch or trust the local state
       // For now, we trust local state and just ensure server-side consistency
-    } catch (e, stack) {
+    } catch (e) {
       // Rollback on error
       state = previousState;
     }
@@ -95,7 +95,7 @@ class JournalNotifier extends AsyncNotifier<List<JournalEntry>> {
     try {
       final journalService = ref.read(journalServiceProvider);
       await journalService.updateEntry(id, updates);
-    } catch (e, stack) {
+    } catch (e) {
       // Rollback on error
       state = previousState;
     }
@@ -115,7 +115,7 @@ class JournalNotifier extends AsyncNotifier<List<JournalEntry>> {
     try {
       final journalService = ref.read(journalServiceProvider);
       await journalService.deleteEntry(id);
-    } catch (e, stack) {
+    } catch (e) {
       // Rollback on error
       state = previousState;
     }

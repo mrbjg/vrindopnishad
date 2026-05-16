@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'audio_service.dart';
@@ -102,7 +103,7 @@ class AudioNotifier extends StateNotifier<AudioState> {
     // Handle errors to prevent permanent loading state
     _service.player.playbackEventStream.listen((event) {}, onError: (Object e, StackTrace st) {
       state = state.copyWith(isLoading: false, isPlaying: false);
-      print('Audio Playback Error: $e');
+      debugPrint('Audio Playback Error: $e');
     });
   }
 

@@ -22,10 +22,10 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: PremiumTokens.scaffoldBg,
       body: Stack(
         children: [
-          Positioned.fill(child: PremiumUI.masterBackground(index: 3)),
+          Positioned.fill(child: PremiumUI.masterBackground(index: 3, context: context)),
           
           SafeArea(
             child: Padding(
@@ -40,7 +40,7 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
                       fontSize: 14,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 4,
-                      color: Colors.white,
+                      color: PremiumTokens.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -49,7 +49,7 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
                     textAlign: TextAlign.center,
                     style: PremiumTokens.sansStyle(
                       fontSize: 16,
-                      color: Colors.white54,
+                      color: PremiumTokens.textMuted,
                     ),
                   ),
                   
@@ -70,7 +70,7 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
                   if (!widget.isOnboarding)
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: Text("CANCEL", style: PremiumTokens.sansStyle(color: Colors.white24, letterSpacing: 2)),
+                      child: Text("CANCEL", style: PremiumTokens.sansStyle(color: PremiumTokens.textHint, letterSpacing: 2)),
                     ),
                 ],
               ),
@@ -94,23 +94,23 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
           children: [
             IconButton(
               onPressed: () => setState(() => _malaGoal = (_malaGoal > 1) ? _malaGoal - 1 : 1),
-              icon: const Icon(Iconsax.minus, color: Colors.white38),
+              icon: Icon(Iconsax.minus, color: PremiumTokens.textMuted),
             ),
             const SizedBox(width: 24),
             Text(
               "$_malaGoal",
-              style: GoogleFonts.spectral(fontSize: 84, fontWeight: FontWeight.w300, color: Colors.white),
+              style: GoogleFonts.spectral(fontSize: 84, fontWeight: FontWeight.w300, color: PremiumTokens.textPrimary),
             ),
             const SizedBox(width: 24),
             IconButton(
               onPressed: () => setState(() => _malaGoal++),
-              icon: const Icon(Iconsax.add, color: Colors.white38),
+              icon: Icon(Iconsax.add, color: PremiumTokens.textMuted),
             ),
           ],
         ),
         Text(
           "${_malaGoal * 108} CHANTS",
-          style: PremiumTokens.sansStyle(fontSize: 14, color: Colors.white24),
+          style: PremiumTokens.sansStyle(fontSize: 14, color: PremiumTokens.textHint),
         ),
       ],
     );
@@ -123,8 +123,10 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
           context: context,
           initialTime: _reminderTime,
           builder: (context, child) => Theme(
-            data: ThemeData.dark().copyWith(
-              colorScheme: const ColorScheme.dark(primary: PremiumTokens.nebulaBlue, onPrimary: Colors.white, surface: PremiumTokens.voidIndigo),
+            data: (PremiumTokens.isDark ? ThemeData.dark() : ThemeData.light()).copyWith(
+              colorScheme: PremiumTokens.isDark 
+                  ? ColorScheme.dark(primary: PremiumTokens.nebulaBlue, onPrimary: PremiumTokens.textPrimary, surface: PremiumTokens.surfaceMain)
+                  : ColorScheme.light(primary: PremiumTokens.nebulaBlue, onPrimary: Colors.white, surface: PremiumTokens.surfaceMain),
             ),
             child: child!,
           ),
@@ -141,7 +143,7 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
             const SizedBox(width: 16),
             Text(
               "REMINDER: ${_reminderTime.format(context)}",
-              style: PremiumTokens.sansStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+              style: PremiumTokens.sansStyle(fontSize: 14, fontWeight: FontWeight.bold, color: PremiumTokens.textPrimary),
             ),
           ],
         ),
@@ -179,7 +181,7 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
         child: Center(
           child: Text(
             "SET INTENTION",
-            style: PremiumTokens.sansStyle(fontSize: 14, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 2),
+            style: PremiumTokens.sansStyle(fontSize: 14, fontWeight: FontWeight.w900, color: PremiumTokens.textPrimary, letterSpacing: 2),
           ),
         ),
       ),

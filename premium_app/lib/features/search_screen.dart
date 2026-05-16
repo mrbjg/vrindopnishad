@@ -78,7 +78,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               folder: 'Chevron-left',
               fileName: 'chevron-left.json',
               size: 20,
-              color: Colors.white,
+              color: PremiumTokens.textPrimary,
               onTap: () {
                 HapticFeedback.mediumImpact();
                 Navigator.pop(context);
@@ -91,7 +91,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             style: GoogleFonts.manrope(
               fontSize: 20,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: PremiumTokens.textPrimary,
               letterSpacing: 1.5,
             ),
           ),
@@ -112,17 +112,17 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           controller: _searchController,
           focusNode: _focusNode,
           autofocus: false,
-          style: GoogleFonts.manrope(color: Colors.white, fontSize: 15),
+          style: GoogleFonts.manrope(color: PremiumTokens.textPrimary, fontSize: 15),
           cursorColor: PremiumTokens.nebulaBlue,
           decoration: InputDecoration(
             hintText: "Search mantras, stories, shlokas...",
-            hintStyle: GoogleFonts.manrope(color: Colors.white24, fontSize: 14),
+            hintStyle: GoogleFonts.manrope(color: PremiumTokens.textHint, fontSize: 14),
             border: InputBorder.none,
             contentPadding: const EdgeInsets.symmetric(vertical: 15),
             prefixIcon: const Icon(Iconsax.search_normal, color: PremiumTokens.nebulaBlue, size: 20),
             suffixIcon: _searchQuery.isNotEmpty
                 ? IconButton(
-                    icon: const Icon(Iconsax.close_circle, size: 18, color: Colors.white38),
+                    icon: Icon(Iconsax.close_circle, size: 18, color: PremiumTokens.textMuted),
                     onPressed: () {
                       _searchController.clear();
                       setState(() {
@@ -195,7 +195,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   Text(
                     item.displayTitle,
                     style: GoogleFonts.manrope(
-                      color: Colors.white,
+                      color: PremiumTokens.textPrimary,
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                     ),
@@ -220,7 +220,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 folder: 'Heart',
                 fileName: 'heart.json',
                 size: 20,
-                color: ref.watch(isFavoriteProvider(item.id)) ? PremiumTokens.saffronGlow : Colors.white24,
+                color: ref.watch(isFavoriteProvider(item.id)) ? PremiumTokens.saffronGlow : PremiumTokens.textMuted,
                 isToggled: ref.watch(isFavoriteProvider(item.id)),
                 resetAfterPlay: false,
                 onTap: () {
@@ -229,7 +229,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 },
               ),
               const SizedBox(width: 16),
-              const Icon(Iconsax.arrow_right_3, color: Colors.white24, size: 20),
+              Icon(Iconsax.arrow_right_3, color: PremiumTokens.textMuted, size: 20),
           ],
         ),
       ),
@@ -255,7 +255,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       style: GoogleFonts.manrope(
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
-                        color: Colors.white24,
+                        color: PremiumTokens.textMuted,
                         letterSpacing: 2,
                       ),
                     ),
@@ -283,7 +283,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           style: GoogleFonts.manrope(
             fontSize: 10,
             fontWeight: FontWeight.w900,
-            color: Colors.white24,
+            color: PremiumTokens.textMuted,
             letterSpacing: 2,
           ),
         ),
@@ -321,7 +321,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         child: Text(
           text,
           style: GoogleFonts.manrope(
-            color: Colors.white70, 
+            color: PremiumTokens.textSecondary, 
             fontSize: 12, 
             fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
@@ -349,14 +349,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Icon(Iconsax.search_status, size: 64, color: Colors.white10),
+        Icon(Iconsax.search_status, size: 64, color: PremiumTokens.textMuted),
         const SizedBox(height: 24),
         Text(
           "NO SACRED ECHOES FOUND",
           style: GoogleFonts.manrope(
             fontSize: 12,
             fontWeight: FontWeight.w900,
-            color: Colors.white24,
+            color: PremiumTokens.textMuted,
             letterSpacing: 2,
           ),
         ),

@@ -33,7 +33,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
     final int count = japState.total;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: PremiumTokens.scaffoldBg,
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {
@@ -43,7 +43,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
         child: Stack(
           children: [
             // Ethereal Background
-            Positioned.fill(child: PremiumUI.masterBackground(index: 2)),
+            Positioned.fill(child: PremiumUI.masterBackground(index: 2, context: context)),
             
             if (!_isImmersive)
               SafeArea(
@@ -94,7 +94,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 4,
-                        color: Colors.white.withValues(alpha: 0.15),
+                        color: PremiumTokens.textMuted,
                       ),
                     ).animate(onPlay: (c) => c.repeat(reverse: true))
                      .fadeIn(duration: 1.seconds)
@@ -115,7 +115,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                   child: PremiumUI.glassCard(
                     padding: const EdgeInsets.all(12),
                     borderRadius: 16,
-                    child: const Icon(Iconsax.arrow_left_2, color: Colors.white, size: 24),
+                    child: Icon(Iconsax.arrow_left_2, color: PremiumTokens.textPrimary, size: 24),
                   ),
                 ),
               ),
@@ -143,7 +143,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
             child: PremiumUI.glassCard(
               padding: const EdgeInsets.all(10),
               borderRadius: 14,
-              child: const Icon(Iconsax.arrow_left_2, color: Colors.white, size: 20),
+              child: Icon(Iconsax.arrow_left_2, color: PremiumTokens.textPrimary, size: 20),
             ),
           ).animate().fadeIn(duration: 500.ms).slideX(begin: -0.2),
           
@@ -161,7 +161,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                     fontSize: 12,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 4,
-                    color: PremiumTokens.celestialSilver,
+                    color: PremiumTokens.textPrimary,
                   ),
                 ),
                 Text(
@@ -170,7 +170,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 2,
-                    color: Colors.white.withValues(alpha: 0.3),
+                    color: PremiumTokens.glassBase.withValues(alpha: 0.3),
                   ),
                 ),
               ],
@@ -187,7 +187,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                 child: PremiumUI.glassCard(
                   padding: const EdgeInsets.all(10),
                   borderRadius: 14,
-                  child: const Icon(Iconsax.maximize_1, color: Colors.white, size: 20),
+                  child: Icon(Iconsax.maximize_1, color: PremiumTokens.textPrimary, size: 20),
                 ),
               ),
               const SizedBox(width: 12),
@@ -199,7 +199,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                 child: PremiumUI.glassCard(
                   padding: const EdgeInsets.all(10),
                   borderRadius: 14,
-                  child: const Icon(Iconsax.clock, color: Colors.white, size: 20),
+                  child: Icon(Iconsax.clock, color: PremiumTokens.textPrimary, size: 20),
                 ),
               ),
             ],
@@ -232,7 +232,9 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      PremiumTokens.celestialSilver.withValues(alpha: 0.1),
+                      PremiumTokens.isDark 
+                          ? PremiumTokens.textMuted
+                          : PremiumTokens.nebulaBlue.withValues(alpha: 0.15),
                       Colors.transparent,
                     ],
                   ),
@@ -246,8 +248,19 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
               height: simplified ? 240 : 200,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.02),
-                border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.15)),
+                color: PremiumTokens.isDark 
+                    ? PremiumTokens.borderSubtle
+                    : Colors.white.withValues(alpha: 0.85),
+                border: Border.all(color: PremiumTokens.isDark 
+                    ? PremiumTokens.textMuted 
+                    : PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
+                boxShadow: PremiumTokens.isDark ? null : [
+                  BoxShadow(
+                    color: PremiumTokens.nebulaBlue.withValues(alpha: 0.08),
+                    blurRadius: 20,
+                    spreadRadius: 2,
+                  ),
+                ],
               ),
               child: Center(
                 child: Animate(
@@ -261,7 +274,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: PremiumTokens.celestialSilver.withValues(alpha: 0.1 * value),
+                              color: PremiumTokens.accentSilver.withValues(alpha: 0.1 * value),
                               blurRadius: 40 * value,
                               spreadRadius: 2 * value,
                             )
@@ -276,9 +289,9 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                     style: GoogleFonts.spectral(
                       fontSize: simplified ? 96 : 72,
                       fontWeight: FontWeight.w300,
-                      color: Colors.white,
+                      color: PremiumTokens.textPrimary,
                       shadows: [
-                        Shadow(color: PremiumTokens.celestialSilver.withValues(alpha: 0.3), blurRadius: 20),
+                        Shadow(color: PremiumTokens.textMuted, blurRadius: 20),
                       ],
                     ),
                   ),
@@ -299,7 +312,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 3,
-                color: PremiumTokens.celestialSilver.withValues(alpha: 0.7),
+                color: PremiumTokens.textSecondary,
               ),
             ),
           ),
@@ -310,7 +323,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.5,
-              color: Colors.white38,
+              color: PremiumTokens.textMuted,
             ),
           ),
         ],
@@ -333,18 +346,18 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
               height: 100,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    PremiumTokens.voidIndigo,
-                    PremiumTokens.voidPure,
+                    PremiumTokens.surfaceMain,
+                    PremiumTokens.scaffoldBg,
                   ],
                 ),
-                border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.2)),
+                border: Border.all(color: PremiumTokens.textMuted),
                 boxShadow: [
                   BoxShadow(
-                    color: PremiumTokens.celestialSilver.withValues(alpha: 0.05),
+                    color: PremiumTokens.textMuted,
                     blurRadius: 30,
                     spreadRadius: 0,
                   ),
@@ -356,8 +369,8 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                     'assets/shriJiMukut.svg',
                     width: 54,
                     height: 54,
-                    colorFilter: const ColorFilter.mode(
-                      Colors.white, 
+                    colorFilter: ColorFilter.mode(
+                      PremiumTokens.textPrimary, 
                       BlendMode.srcIn,
                     ),
                   ),
@@ -368,7 +381,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
           const SizedBox(height: 24),
           Text(
             "Tap to chant",
-            style: PremiumTokens.sansStyle(fontSize: 14, color: Colors.white54),
+            style: PremiumTokens.sansStyle(fontSize: 14, color: PremiumTokens.textMuted),
           ),
         ],
       ),
@@ -394,11 +407,11 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: _buildStatItem("TODAY MALA", formatMala(todayMalas), PremiumTokens.celestialSilver)),
-              Container(width: 1, height: 30, color: Colors.white10),
-              Expanded(child: _buildStatItem("GOAL", dailyGoal.toString(), PremiumTokens.celestialSilver.withValues(alpha: 0.5))),
-              Container(width: 1, height: 30, color: Colors.white10),
-              Expanded(child: _buildStatItem("HIGHEST", formatMala(highestMalas), PremiumTokens.celestialSilver.withValues(alpha: 0.8))),
+              Expanded(child: _buildStatItem("TODAY MALA", formatMala(todayMalas), PremiumTokens.accentSilver)),
+              Container(width: 1, height: 30, color: PremiumTokens.borderSubtle),
+              Expanded(child: _buildStatItem("GOAL", dailyGoal.toString(), PremiumTokens.textSecondary)),
+              Container(width: 1, height: 30, color: PremiumTokens.borderSubtle),
+              Expanded(child: _buildStatItem("HIGHEST", formatMala(highestMalas), PremiumTokens.textSecondary)),
             ],
           ),
         ),
@@ -411,7 +424,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
       children: [
         Text(
           label,
-          style: PremiumTokens.sansStyle(fontSize: 8, fontWeight: FontWeight.w900, color: Colors.white38, letterSpacing: 1),
+          style: PremiumTokens.sansStyle(fontSize: 8, fontWeight: FontWeight.w900, color: PremiumTokens.textMuted, letterSpacing: 1),
         ),
         const SizedBox(height: 4),
         Text(
@@ -465,12 +478,12 @@ class _MalaHistorySheetState extends ConsumerState<_MalaHistorySheet> with Singl
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            PremiumTokens.voidIndigo.withValues(alpha: 0.95),
-            PremiumTokens.voidBlack,
+            PremiumTokens.sheetBgTop,
+            PremiumTokens.sheetBgBottom,
           ],
         ),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: PremiumTokens.borderSubtle),
       ),
       child: Column(
         children: [
@@ -479,7 +492,7 @@ class _MalaHistorySheetState extends ConsumerState<_MalaHistorySheet> with Singl
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.white24,
+              color: PremiumTokens.textHint,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -490,7 +503,7 @@ class _MalaHistorySheetState extends ConsumerState<_MalaHistorySheet> with Singl
               fontSize: 14,
               fontWeight: FontWeight.w900,
               letterSpacing: 4,
-              color: Colors.white,
+              color: PremiumTokens.textPrimary,
             ),
           ),
           const SizedBox(height: 24),
@@ -498,10 +511,10 @@ class _MalaHistorySheetState extends ConsumerState<_MalaHistorySheet> with Singl
           // Ethereal TabBar
           TabBar(
             controller: _tabController,
-            indicatorColor: PremiumTokens.celestialSilver,
+            indicatorColor: PremiumTokens.accentSilver,
             dividerColor: Colors.transparent,
             labelStyle: PremiumTokens.sansStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2),
-            unselectedLabelColor: PremiumTokens.celestialSilver.withValues(alpha: 0.2),
+            unselectedLabelColor: PremiumTokens.textMuted,
             tabs: const [
               Tab(text: "DAILY"),
               Tab(text: "WEEKLY"),
@@ -520,7 +533,7 @@ class _MalaHistorySheetState extends ConsumerState<_MalaHistorySheet> with Singl
                 ],
               ),
               loading: () => const Center(child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue)),
-              error: (e, _) => const Center(child: Text("Error loading history", style: TextStyle(color: Colors.white54))),
+              error: (e, _) => Center(child: Text("Error loading history", style: TextStyle(color: PremiumTokens.textMuted))),
             ),
           ),
         ],
@@ -534,11 +547,11 @@ class _MalaHistorySheetState extends ConsumerState<_MalaHistorySheet> with Singl
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Iconsax.radar, color: Colors.white10, size: 64),
+            Icon(Iconsax.radar, color: PremiumTokens.borderSubtle, size: 64),
             const SizedBox(height: 16),
             Text(
               "No sacred history found yet",
-              style: PremiumTokens.sansStyle(color: Colors.white24, fontSize: 13),
+              style: PremiumTokens.sansStyle(color: PremiumTokens.textHint, fontSize: 13),
             ),
           ],
         ),
@@ -597,7 +610,7 @@ class _MalaHistorySheetState extends ConsumerState<_MalaHistorySheet> with Singl
           PremiumUI.etherealCard(
             padding: const EdgeInsets.all(24),
             borderRadius: 24,
-            glowColor: PremiumTokens.celestialSilver.withValues(alpha: 0.1),
+            glowColor: PremiumTokens.textMuted,
             child: Column(
               children: [
                 Row(
@@ -605,9 +618,9 @@ class _MalaHistorySheetState extends ConsumerState<_MalaHistorySheet> with Singl
                   children: [
                     Text(
                       timeframe.toUpperCase(),
-                      style: PremiumTokens.sansStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: PremiumTokens.sansStyle(fontSize: 12, fontWeight: FontWeight.bold, color: PremiumTokens.textPrimary),
                     ),
-                    const Icon(Iconsax.status_up, color: PremiumTokens.celestialSilver, size: 20),
+                    Icon(Iconsax.status_up, color: PremiumTokens.textPrimary, size: 20),
                   ],
                 ),
                 const SizedBox(height: 32),
@@ -623,11 +636,11 @@ class _MalaHistorySheetState extends ConsumerState<_MalaHistorySheet> with Singl
             ),
           ),
           const SizedBox(height: 24),
-          _buildSummaryItem("Total Malas", totalMalas.toStringAsFixed(1), PremiumTokens.celestialSilver),
+          _buildSummaryItem("Total Malas", totalMalas.toStringAsFixed(1), PremiumTokens.accentSilver),
           const SizedBox(height: 12),
-          _buildSummaryItem("Daily Average", dailyAvg.toStringAsFixed(1), Colors.white70),
+          _buildSummaryItem("Daily Average", dailyAvg.toStringAsFixed(1), PremiumTokens.textSecondary),
           const SizedBox(height: 12),
-          _buildSummaryItem("Peak Milestone", "$peakCount Chants", PremiumTokens.celestialSilver.withValues(alpha: 0.7)),
+          _buildSummaryItem("Peak Milestone", "$peakCount Chants", PremiumTokens.textSecondary),
         ],
       ),
     );
@@ -667,7 +680,7 @@ class _MalaHistorySheetState extends ConsumerState<_MalaHistorySheet> with Singl
                     fontSize: 9,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
-                    color: Colors.white38,
+                    color: PremiumTokens.textMuted,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -682,7 +695,7 @@ class _MalaHistorySheetState extends ConsumerState<_MalaHistorySheet> with Singl
               ],
             ),
           ),
-          Icon(Iconsax.arrow_right_3, color: Colors.white10, size: 16),
+          Icon(Iconsax.arrow_right_3, color: PremiumTokens.borderSubtle, size: 16),
         ],
       ),
     );
@@ -697,8 +710,8 @@ class _MalaHistorySheetState extends ConsumerState<_MalaHistorySheet> with Singl
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
           colors: [
-            PremiumTokens.celestialSilver.withValues(alpha: 0.05),
-            PremiumTokens.celestialSilver.withValues(alpha: 0.4),
+            PremiumTokens.textMuted,
+            PremiumTokens.textMuted,
           ],
         ),
         borderRadius: BorderRadius.circular(6),

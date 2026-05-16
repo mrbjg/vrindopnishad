@@ -31,7 +31,7 @@ class SacredRitualAlert extends StatelessWidget {
     showGeneralDialog(
       context: context,
       barrierDismissible: false,
-      barrierColor: Colors.black.withValues(alpha: 0.8),
+      barrierColor: PremiumTokens.scaffoldBg.withValues(alpha: 0.8),
       transitionDuration: const Duration(milliseconds: 600),
       pageBuilder: (context, animation, secondaryAnimation) {
         return SacredRitualAlert(
@@ -55,7 +55,7 @@ class SacredRitualAlert extends StatelessWidget {
           Positioned.fill(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(color: Colors.black.withValues(alpha: 0.3)),
+              child: Container(color: PremiumTokens.scaffoldBg.withValues(alpha: 0.3)),
             ),
           ),
 
@@ -90,7 +90,7 @@ class SacredRitualAlert extends StatelessWidget {
                 width: 120,
                 height: 5,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: PremiumTokens.glassBase.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(100),
                 ),
               ),
@@ -115,10 +115,10 @@ class SacredRitualAlert extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.1),
+              color: PremiumTokens.borderMedium,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Icon(Icons.wb_sunny_outlined, color: PremiumTokens.silver, size: 28),
+            child: Icon(Icons.wb_sunny_outlined, color: PremiumTokens.silver, size: 28),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -222,7 +222,7 @@ class SacredRitualAlert extends StatelessWidget {
                   borderRadius: BorderRadius.circular(100),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.white.withValues(alpha: 0.3),
+                      color: PremiumTokens.glassBase.withValues(alpha: 0.3),
                       blurRadius: 20,
                     ),
                   ],
@@ -234,7 +234,7 @@ class SacredRitualAlert extends StatelessWidget {
                     style: GoogleFonts.manrope(
                       fontSize: 12,
                       fontWeight: FontWeight.w900,
-                      color: PremiumTokens.voidBlack,
+                      color: PremiumTokens.surfaceMain,
                       letterSpacing: 4,
                     ),
                   ),

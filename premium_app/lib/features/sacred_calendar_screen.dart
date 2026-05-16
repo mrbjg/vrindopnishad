@@ -39,7 +39,7 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          Positioned.fill(child: PremiumUI.masterBackground(index: 3)),
+          Positioned.fill(child: PremiumUI.masterBackground(index: 3, context: context)),
           SafeArea(
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
@@ -55,8 +55,8 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                           child: PremiumUI.glassCard(
                             padding: const EdgeInsets.all(10),
                             borderRadius: 14,
-                            child: const Icon(Iconsax.arrow_left_2,
-                                color: Colors.white, size: 20),
+                            child: Icon(Iconsax.arrow_left_2,
+                                color: PremiumTokens.textPrimary, size: 20),
                           ),
                         ),
                         const Spacer(),
@@ -76,7 +76,7 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                               style: GoogleFonts.spectral(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
-                                color: Colors.white38,
+                                color: PremiumTokens.textMuted,
                                 letterSpacing: 1,
                               ),
                             ),
@@ -105,7 +105,7 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 3,
-                        color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
+                        color: PremiumTokens.textSecondary,
                       ),
                     ),
                   ),
@@ -122,19 +122,19 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                       childCount: events.length,
                     ),
                   ),
-                  loading: () => const SliverToBoxAdapter(
+                  loading: () => SliverToBoxAdapter(
                     child: Center(
                       child: Padding(
-                        padding: EdgeInsets.all(40),
+                        padding: const EdgeInsets.all(40),
                         child: CircularProgressIndicator(
-                            color: PremiumTokens.celestialSilver),
+                            color: PremiumTokens.textPrimary),
                       ),
                     ),
                   ),
                   error: (e, _) => SliverToBoxAdapter(
                     child: Center(
                       child: Text('Error: $e',
-                          style: const TextStyle(color: Colors.white54)),
+                          style: TextStyle(color: PremiumTokens.textMuted)),
                     ),
                   ),
                 ),
@@ -150,7 +150,7 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 3,
-                        color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
+                        color: PremiumTokens.textSecondary,
                       ),
                     ),
                   ),
@@ -165,13 +165,13 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                           child: Center(
                             child: Column(
                               children: [
-                                const Icon(Iconsax.calendar_2,
-                                    color: Colors.white10, size: 48),
+                                 Icon(Iconsax.calendar_2,
+                                    color: PremiumTokens.borderSubtle, size: 48),
                                 const SizedBox(height: 16),
                                 Text(
                                   'No events this month',
                                   style: PremiumTokens.sansStyle(
-                                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.2), 
+                                      color: PremiumTokens.textMuted, 
                                       fontSize: 12,
                                       letterSpacing: 3,
                                   ),
@@ -190,12 +190,12 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                       ),
                     );
                   },
-                  loading: () => const SliverToBoxAdapter(
+                  loading: () => SliverToBoxAdapter(
                     child: Center(
                       child: Padding(
-                        padding: EdgeInsets.all(40),
+                        padding: const EdgeInsets.all(40),
                         child: CircularProgressIndicator(
-                            color: PremiumTokens.celestialSilver),
+                            color: PremiumTokens.textPrimary),
                       ),
                     ),
                   ),
@@ -238,9 +238,9 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               margin: const EdgeInsets.symmetric(vertical: 4),
               decoration: BoxDecoration(
-                color: isSelected ? PremiumTokens.celestialSilver.withValues(alpha: 0.1) : Colors.transparent,
+                color: isSelected ? PremiumTokens.textMuted : Colors.transparent,
                 borderRadius: BorderRadius.circular(12),
-                border: isSelected ? Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.15)) : null,
+                border: isSelected ? Border.all(color: PremiumTokens.textMuted) : null,
               ),
               child: Center(
                 child: Text(
@@ -249,7 +249,7 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                     fontSize: 11,
                     fontWeight: isSelected ? FontWeight.w900 : FontWeight.w500,
                     letterSpacing: 2,
-                    color: isSelected ? Colors.white : PremiumTokens.celestialSilver.withValues(alpha: 0.4),
+                    color: isSelected ? PremiumTokens.textPrimary : PremiumTokens.textMuted,
                   ),
                 ),
               ),
@@ -306,7 +306,7 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                     style: PremiumTokens.sansStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w900,
-                      color: Colors.white,
+                      color: PremiumTokens.textPrimary,
                     ),
                   ),
                   Text(
@@ -329,7 +329,7 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                   Text(
                     event.title,
                     style: PremiumTokens.sansStyle(
-                      color: Colors.white,
+                      color: PremiumTokens.textPrimary,
                       fontWeight: FontWeight.w700,
                       fontSize: 15,
                     ),
@@ -360,7 +360,7 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                             event.description!,
                             style: PremiumTokens.sansStyle(
                               fontSize: 11,
-                              color: Colors.white38,
+                              color: PremiumTokens.textMuted,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -382,14 +382,14 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                 ),
                 child: Icon(Iconsax.calendar_tick, color: accentColor, size: 16),
               ).animate(onPlay: (controller) => controller.repeat())
-               .shimmer(duration: 2.seconds, color: Colors.white24)
+               .shimmer(duration: 2.seconds, color: PremiumTokens.textHint)
             else
               Text(
                 daysUntil == 1 ? 'TOMORROW' : '${daysUntil}d',
                 style: PremiumTokens.sansStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
-                  color: Colors.white24,
+                  color: PremiumTokens.textHint,
                   letterSpacing: 1,
                 ),
               ),

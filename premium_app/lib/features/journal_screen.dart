@@ -8,7 +8,6 @@ import 'package:iconsax/iconsax.dart';
 import 'package:premium_app/core/design_system.dart';
 import 'package:premium_app/core/journal_provider.dart';
 import 'package:premium_app/core/theme.dart';
-import 'package:premium_app/features/home_screen.dart';
 import 'package:premium_app/models/journal_entry.dart';
 
 final journalSearchProvider = StateProvider<String>((ref) => "");
@@ -22,15 +21,15 @@ class EternalReflectionScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: PremiumTokens.voidPure,
+      backgroundColor: PremiumTokens.scaffoldBg,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              PremiumTokens.voidIndigo.withValues(alpha: 0.8),
-              PremiumTokens.voidPure,
+            PremiumTokens.surfaceMain,
+            PremiumTokens.scaffoldBg,
             ],
           ),
         ),
@@ -74,9 +73,9 @@ class EternalReflectionScreen extends ConsumerWidget {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: PremiumTokens.voidPure,
+              color: PremiumTokens.fabBg,
               shape: BoxShape.circle,
-              border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.2), width: 1.5),
+              border: Border.all(color: PremiumTokens.textMuted, width: 1.5),
               boxShadow: [
                 BoxShadow(
                   color: PremiumTokens.etherealBlue.withValues(alpha: 0.4),
@@ -85,7 +84,7 @@ class EternalReflectionScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            child: Icon(Iconsax.add, color: PremiumTokens.celestialSilver, size: 28),
+            child: Icon(Iconsax.add, color: PremiumTokens.textPrimary, size: 28),
           ),
         ),
       ),
@@ -113,25 +112,25 @@ class _JournalHeader extends ConsumerWidget {
                 height: 50,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.05),
+                  color: PremiumTokens.borderSubtle,
                   borderRadius: BorderRadius.circular(25),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                  border: Border.all(color: PremiumTokens.borderMedium),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Iconsax.search_normal, color: Colors.white38, size: 18),
+                    Icon(Iconsax.search_normal, color: PremiumTokens.textMuted, size: 18),
                     const SizedBox(width: 12),
                     Expanded(
                       child: TextField(
                         controller: searchController,
                         autofocus: true,
                         onChanged: (val) => ref.read(journalSearchProvider.notifier).state = val,
-                        style: PremiumTokens.sansStyle(fontSize: 14, color: Colors.white),
+                        style: PremiumTokens.sansStyle(fontSize: 14, color: PremiumTokens.textPrimary),
                         decoration: InputDecoration(
                           hintText: "Filter reflections...",
                           hintStyle: PremiumTokens.sansStyle(
                             fontSize: 14,
-                            color: Colors.white.withValues(alpha: 0.2),
+                            color: PremiumTokens.glassBase.withValues(alpha: 0.2),
                           ),
                           border: InputBorder.none,
                           isDense: true,
@@ -139,7 +138,7 @@ class _JournalHeader extends ConsumerWidget {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Iconsax.close_circle, color: Colors.white24, size: 18),
+                      icon: Icon(Iconsax.close_circle, color: PremiumTokens.textHint, size: 18),
                       onPressed: () {
                         ref.read(journalSearchVisibleProvider.notifier).state = false;
                         ref.read(journalSearchProvider.notifier).state = "";
@@ -154,11 +153,11 @@ class _JournalHeader extends ConsumerWidget {
                 children: [
                   if (showBackButton)
                     IconButton(
-                      icon: Icon(Iconsax.arrow_left, color: PremiumTokens.celestialSilver, size: 24),
+                      icon: Icon(Iconsax.arrow_left, color: PremiumTokens.textPrimary, size: 24),
                       onPressed: () => Navigator.pop(context),
                     )
                   else
-                    Icon(Iconsax.menu, color: PremiumTokens.celestialSilver, size: 24),
+                    Icon(Iconsax.menu, color: PremiumTokens.textPrimary, size: 24),
                   Column(
                     children: [
                       Text(
@@ -167,14 +166,14 @@ class _JournalHeader extends ConsumerWidget {
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 4,
-                          color: PremiumTokens.celestialSilver,
+                          color: PremiumTokens.textPrimary,
                         ),
                       ),
                       Text(
                         "SOUL RESONANCE",
                         style: PremiumTokens.sansStyle(
                           fontSize: 10,
-                          color: PremiumTokens.celestialSilver.withValues(alpha: 0.4),
+                          color: PremiumTokens.textMuted,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 3,
                         ),
@@ -182,7 +181,7 @@ class _JournalHeader extends ConsumerWidget {
                     ],
                   ),
                   IconButton(
-                    icon: Icon(Iconsax.search_normal, color: PremiumTokens.celestialSilver, size: 20),
+                    icon: Icon(Iconsax.search_normal, color: PremiumTokens.textPrimary, size: 20),
                     onPressed: () {
                       ref.read(journalSearchVisibleProvider.notifier).state = true;
                     },
@@ -217,11 +216,11 @@ class _JournalEntryList extends ConsumerWidget {
         ).toList();
 
         if (filteredEntries.isEmpty && searchQuery.isNotEmpty) {
-          return const SliverFillRemaining(
+          return SliverFillRemaining(
             child: Center(
               child: Text(
                 "No echoes found matching your search",
-                style: TextStyle(color: Colors.white24),
+                style: TextStyle(color: PremiumTokens.textHint),
               ),
             ),
           );
@@ -248,8 +247,8 @@ class _JournalEntryList extends ConsumerWidget {
           ),
         );
       },
-      loading: () => SliverFillRemaining(child: Center(child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue))),
-      error: (e, __) => SliverFillRemaining(child: Center(child: Text("Error syncing reflections: $e", style: const TextStyle(color: Colors.white38)))),
+      loading: () => const SliverFillRemaining(child: Center(child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue))),
+      error: (e, __) => SliverFillRemaining(child: Center(child: Text("Error syncing reflections: $e", style: TextStyle(color: PremiumTokens.textMuted)))),
     );
   }
 }
@@ -290,8 +289,8 @@ class _AtomicResonanceOrb extends StatelessWidget {
                   RepaintBoundary(
                     child: CustomPaint(
                       size: const Size(340, 340),
-                      painter: const CelestialRingPainter(
-                        color: Colors.white,
+                      painter: CelestialRingPainter(
+                        color: PremiumTokens.textPrimary,
                         thickness: 1.0,
                         isDotted: true,
                         dotCount: 40,
@@ -304,7 +303,7 @@ class _AtomicResonanceOrb extends StatelessWidget {
                   ...List.generate(3, (i) => CustomPaint(
                     size: const Size(260, 260),
                     painter: AtomicOrbitPainter(
-                      color: Colors.white.withValues(alpha: 0.05),
+                      color: PremiumTokens.borderSubtle,
                       radius: 120,
                       rotation: i * math.pi / 3, // 0, 60, 120 degrees
                     ),
@@ -322,12 +321,12 @@ class _AtomicResonanceOrb extends StatelessWidget {
                         boxShadow: [
                           BoxShadow(
                             color: [
-                              Colors.white.withValues(alpha: 0.2), 
+                              PremiumTokens.glassBase.withValues(alpha: 0.2), 
                               const Color(0xFF1E3A8A).withValues(alpha: 0.4), 
                               const Color(0xFF0F766E).withValues(alpha: 0.3),
                               const Color(0xFF3B82F6).withValues(alpha: 0.2),
                               const Color(0xFF14B8A6).withValues(alpha: 0.2),
-                              Colors.white.withValues(alpha: 0.1),
+                              PremiumTokens.borderMedium,
                               const Color(0xFF4F46E5).withValues(alpha: 0.3),
                             ][i % 7],
                             blurRadius: 12,
@@ -337,12 +336,12 @@ class _AtomicResonanceOrb extends StatelessWidget {
                         gradient: RadialGradient(
                           colors: [
                             [
-                              Colors.white, 
+                              PremiumTokens.textPrimary, 
                               const Color(0xFF3B82F6), 
                               const Color(0xFF0D9488),
                               const Color(0xFF60A5FA),
                               const Color(0xFF2DD4BF),
-                              Colors.white,
+                              PremiumTokens.textPrimary,
                               const Color(0xFF818CF8),
                             ][i % 7],
                             Colors.transparent,
@@ -358,16 +357,16 @@ class _AtomicResonanceOrb extends StatelessWidget {
                   _buildElectron(
                     radius: 120,
                     bodySize: 7.0, // Larger
-                    color: Colors.white,
-                    glowColor: Colors.white, // All white
+                    color: PremiumTokens.textPrimary,
+                    glowColor: PremiumTokens.textPrimary, // All white
                     duration: 1.25.seconds, // Much faster
                     rotation: 0,
                   ),
                   _buildElectron(
                     radius: 120,
                     bodySize: 6.5,
-                    color: Colors.white,
-                    glowColor: Colors.white,
+                    color: PremiumTokens.textPrimary,
+                    glowColor: PremiumTokens.textPrimary,
                     duration: 1.5.seconds,
                     beginAngle: 2.1,
                     rotation: math.pi / 3, // 60 deg
@@ -375,8 +374,8 @@ class _AtomicResonanceOrb extends StatelessWidget {
                   _buildElectron(
                     radius: 120,
                     bodySize: 6.0,
-                    color: Colors.white,
-                    glowColor: Colors.white,
+                    color: PremiumTokens.textPrimary,
+                    glowColor: PremiumTokens.textPrimary,
                     duration: 1.85.seconds,
                     beginAngle: 4.5,
                     rotation: 2 * math.pi / 3, // 120 deg
@@ -438,10 +437,10 @@ Widget _buildEmptyState(BuildContext context, WidgetRef ref) {
           padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.white.withValues(alpha: 0.02),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+            color: PremiumTokens.borderSubtle,
+            border: Border.all(color: PremiumTokens.borderSubtle),
           ),
-          child: Icon(Iconsax.note_21, color: PremiumTokens.nebulaBlue, size: 64),
+          child: const Icon(Iconsax.note_21, color: PremiumTokens.nebulaBlue, size: 64),
         ).animate(onPlay: (c) => c.repeat(reverse: true)).shimmer(duration: 3.seconds),
         const SizedBox(height: 32),
         Text(
@@ -450,7 +449,7 @@ Widget _buildEmptyState(BuildContext context, WidgetRef ref) {
             fontSize: 14,
             fontWeight: FontWeight.w900,
             letterSpacing: 4,
-            color: Colors.white,
+            color: PremiumTokens.textPrimary,
           ),
         ),
         const SizedBox(height: 12),
@@ -458,7 +457,7 @@ Widget _buildEmptyState(BuildContext context, WidgetRef ref) {
           "Capture your echoes of spiritual wisdom",
           style: PremiumTokens.sansStyle(
             fontSize: 12, 
-            color: Colors.white38,
+            color: PremiumTokens.textMuted,
             letterSpacing: 1,
           ),
         ),
@@ -466,8 +465,8 @@ Widget _buildEmptyState(BuildContext context, WidgetRef ref) {
         ElevatedButton(
           onPressed: () => _showEntryDialog(context, ref),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white.withValues(alpha: 0.05),
-            side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+            backgroundColor: PremiumTokens.borderSubtle,
+            side: BorderSide(color: PremiumTokens.borderMedium),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
           ),
@@ -477,7 +476,7 @@ Widget _buildEmptyState(BuildContext context, WidgetRef ref) {
               fontSize: 12,
               fontWeight: FontWeight.bold,
               letterSpacing: 2,
-              color: Colors.white70,
+              color: PremiumTokens.textSecondary,
             ),
           ),
         ),
@@ -524,17 +523,17 @@ Widget _buildTimelineItem({
                   Container(
                     width: 1,
                     height: 40,
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: PremiumTokens.borderMedium,
                   ),
                   Container(
                     width: 8,
                     height: 8,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white,
+                      color: PremiumTokens.textPrimary,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.white.withValues(alpha: 0.8),
+                          color: PremiumTokens.textPrimary.withValues(alpha: 0.8),
                           blurRadius: 10,
                           spreadRadius: 1,
                         ),
@@ -544,7 +543,7 @@ Widget _buildTimelineItem({
                   Expanded(
                     child: Container(
                       width: 1,
-                      color: Colors.white.withValues(alpha: 0.1),
+                      color: PremiumTokens.borderMedium,
                     ),
                   ),
                 ],
@@ -563,10 +562,10 @@ Widget _buildTimelineItem({
                       decoration: BoxDecoration(
                         gradient: _getNoteGradient(entry.id.hashCode),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                        border: Border.all(color: PremiumTokens.borderSubtle),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.25),
+                            color: PremiumTokens.scaffoldBg.withValues(alpha: 0.25),
                             blurRadius: 20,
                             offset: const Offset(0, 10),
                           ),
@@ -599,7 +598,7 @@ Widget _buildTimelineItem({
                                 timeStr,
                                 style: PremiumTokens.sansStyle(
                                   fontSize: 10,
-                                  color: Colors.white24,
+                                  color: PremiumTokens.textHint,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -610,7 +609,7 @@ Widget _buildTimelineItem({
                             entry.content,
                             style: GoogleFonts.manrope(
                               fontSize: 15,
-                              color: Colors.white.withValues(alpha: 0.7),
+                              color: PremiumTokens.textPrimary.withValues(alpha: 0.7),
                               height: 1.5,
                               letterSpacing: 0.3,
                             ),
@@ -623,7 +622,7 @@ Widget _buildTimelineItem({
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.05),
+                                  color: PremiumTokens.borderSubtle,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Text(
@@ -639,7 +638,7 @@ Widget _buildTimelineItem({
                               Icon(
                                 Iconsax.arrow_right_1, 
                                 size: 14, 
-                                color: Colors.white.withValues(alpha: 0.1),
+                                color: PremiumTokens.borderMedium,
                               ),
                             ],
                           ),
@@ -657,7 +656,8 @@ Widget _buildTimelineItem({
   }
 
 LinearGradient _getNoteGradient(int seed) {
-    final gradients = [
+    final isDark = PremiumTokens.isDark;
+    final gradients = isDark ? [
       // Deep Indigo
       LinearGradient(
         begin: Alignment.topLeft,
@@ -685,6 +685,34 @@ LinearGradient _getNoteGradient(int seed) {
           const Color(0xFF0A0A1A).withValues(alpha: 0.6),
         ],
       ),
+    ] : [
+      // Warm Cream
+      LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          const Color(0xFFFFF8F0).withValues(alpha: 0.95),
+          const Color(0xFFFFF3E0).withValues(alpha: 0.9),
+        ],
+      ),
+      // Soft Lavender
+      LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          const Color(0xFFF3E8FF).withValues(alpha: 0.95),
+          const Color(0xFFEDE7F6).withValues(alpha: 0.9),
+        ],
+      ),
+      // Sage Mist
+      LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          const Color(0xFFE8F5E9).withValues(alpha: 0.95),
+          const Color(0xFFF1F8E9).withValues(alpha: 0.9),
+        ],
+      ),
     ];
     return gradients[seed % gradients.length];
   }
@@ -697,7 +725,7 @@ void _showEntryDialog(BuildContext context, WidgetRef ref, {JournalEntry? entry}
       context: context,
       barrierDismissible: true,
       barrierLabel: "Dismiss",
-      barrierColor: Colors.black.withValues(alpha: 0.85),
+      barrierColor: PremiumTokens.scaffoldBg.withValues(alpha: 0.85),
       transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (ctx, animation, secondaryAnimation) {
         return Center(
@@ -709,9 +737,9 @@ void _showEntryDialog(BuildContext context, WidgetRef ref, {JournalEntry? entry}
                 child: Container(
                   padding: const EdgeInsets.all(32),
                   decoration: BoxDecoration(
-                    color: PremiumTokens.voidIndigo.withValues(alpha: 0.85),
+                    color: PremiumTokens.sheetBgTop,
                     borderRadius: BorderRadius.circular(40),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                    border: Border.all(color: PremiumTokens.borderMedium),
                     boxShadow: [
                       BoxShadow(
                         color: PremiumTokens.etherealBlue.withValues(alpha: 0.15),
@@ -740,22 +768,22 @@ void _showEntryDialog(BuildContext context, WidgetRef ref, {JournalEntry? entry}
                       const SizedBox(height: 32),
                       TextField(
                         controller: titleController,
-                        style: const TextStyle(color: Colors.white, fontSize: 18),
+                        style: TextStyle(color: PremiumTokens.textPrimary, fontSize: 18),
                         decoration: InputDecoration(
                           hintText: "Title of Enlightenment",
-                          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.2)),
-                          enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.white10)),
-                          focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: PremiumTokens.celestialSilver)),
+                          hintStyle: TextStyle(color: PremiumTokens.glassBase.withValues(alpha: 0.2)),
+                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: PremiumTokens.borderSubtle)),
+                          focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: PremiumTokens.textPrimary)),
                         ),
                       ),
                       const SizedBox(height: 24),
                       TextField(
                         controller: contentController,
                         maxLines: 8,
-                        style: GoogleFonts.manrope(color: Colors.white70, fontSize: 15, height: 1.6),
+                        style: GoogleFonts.manrope(color: PremiumTokens.textSecondary, fontSize: 15, height: 1.6),
                         decoration: InputDecoration(
                           hintText: "Descend into your thoughts...",
-                          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.2)),
+                          hintStyle: TextStyle(color: PremiumTokens.glassBase.withValues(alpha: 0.2)),
                           border: InputBorder.none,
                         ),
                       ),
@@ -766,11 +794,11 @@ void _showEntryDialog(BuildContext context, WidgetRef ref, {JournalEntry? entry}
                             child: OutlinedButton(
                               onPressed: () => Navigator.pop(ctx),
                               style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: Colors.white10),
+                                side: BorderSide(color: PremiumTokens.borderSubtle),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 padding: const EdgeInsets.symmetric(vertical: 16),
                               ),
-                              child: const Text("CLOSE", style: TextStyle(color: Colors.white38, letterSpacing: 2)),
+                              child: Text("CLOSE", style: TextStyle(color: PremiumTokens.textMuted, letterSpacing: 2)),
                             ),
                           ),
                           const SizedBox(width: 16),
@@ -790,12 +818,12 @@ void _showEntryDialog(BuildContext context, WidgetRef ref, {JournalEntry? entry}
                                 }
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: PremiumTokens.voidIndigo,
-                                side: BorderSide(color: PremiumTokens.celestialSilver.withValues(alpha: 0.2)),
+                                backgroundColor: PremiumTokens.surfaceMain,
+                                side: BorderSide(color: PremiumTokens.textMuted),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 padding: const EdgeInsets.symmetric(vertical: 16),
                               ),
-                              child: Text(entry == null ? "ASCEND" : "SAVE", style: TextStyle(color: PremiumTokens.celestialSilver, letterSpacing: 2, fontWeight: FontWeight.bold)),
+                              child: Text(entry == null ? "ASCEND" : "SAVE", style: TextStyle(color: PremiumTokens.textPrimary, letterSpacing: 2, fontWeight: FontWeight.bold)),
                             ),
                           ),
                         ],
@@ -839,12 +867,12 @@ Widget _buildElectron({
               curve: Curves.linear, // Keep linear for smooth orbital velocity
               builder: (context, value, child) {
                 // Elliptical Math
-                final x_prime = radius * math.cos(value);
-                final y_prime = radius * eccentricity * math.sin(value);
+                final xPrime = radius * math.cos(value);
+                final yPrime = radius * eccentricity * math.sin(value);
                 
                 // Rotational Math
-                final x = x_prime * math.cos(rotation) - y_prime * math.sin(rotation);
-                final y = x_prime * math.sin(rotation) + y_prime * math.cos(rotation);
+                final x = xPrime * math.cos(rotation) - yPrime * math.sin(rotation);
+                final y = xPrime * math.sin(rotation) + yPrime * math.cos(rotation);
                 
                 return Stack(
                   clipBehavior: Clip.none,
@@ -912,11 +940,11 @@ class AtomicOrbitPainter extends CustomPainter {
     const int dotCount = 60;
     for (int i = 0; i < dotCount; i++) {
       final double angle = (2 * math.pi / dotCount) * i;
-      final x_prime = radius * math.cos(angle);
-      final y_prime = radius * eccentricity * math.sin(angle);
+      final xPrime = radius * math.cos(angle);
+      final yPrime = radius * eccentricity * math.sin(angle);
       
-      final x = center.dx + x_prime * math.cos(rotation) - y_prime * math.sin(rotation);
-      final y = center.dy + x_prime * math.sin(rotation) + y_prime * math.cos(rotation);
+      final x = center.dx + xPrime * math.cos(rotation) - yPrime * math.sin(rotation);
+      final y = center.dy + xPrime * math.sin(rotation) + yPrime * math.cos(rotation);
       
       final double opacity = 0.05 + (math.Random(i).nextDouble() * 0.1);
       paint.color = color.withValues(alpha: opacity);
@@ -958,8 +986,6 @@ class CelestialRingPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     if (isDotted) {
-      final double dashWidth = 2.0;
-      final double dashSpace = (2 * math.pi * radius) / dotCount - dashWidth;
       
       for (int i = 0; i < dotCount; i++) {
         final double angle = (i * 2 * math.pi) / dotCount;
@@ -1011,7 +1037,7 @@ class CometTrailPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     
-    final double tailLength = 0.35; //radians
+    const double tailLength = 0.35; //radians
     final double startAngle = currentAngle - tailLength;
     
     final paint = Paint()
@@ -1066,11 +1092,11 @@ class StardustPainter extends CustomPainter {
     for (int i = 0; i < 150; i++) {
       final x = random.nextDouble() * size.width;
       final y = random.nextDouble() * size.height;
-      final size_star = random.nextDouble() * 1.8;
+      final sizeStar = random.nextDouble() * 1.8;
       final opacity = random.nextDouble() * 0.3 + 0.1;
       
-      paint.color = Colors.white.withValues(alpha: opacity);
-      canvas.drawCircle(Offset(x, y), size_star, paint);
+      paint.color = PremiumTokens.textPrimary.withValues(alpha: opacity);
+      canvas.drawCircle(Offset(x, y), sizeStar, paint);
     }
   }
 

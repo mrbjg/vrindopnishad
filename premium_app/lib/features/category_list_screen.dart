@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 import '../core/design_system.dart';
 import '../core/content_provider.dart';
@@ -32,19 +31,19 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
     }).toList();
 
     return Scaffold(
-      backgroundColor: PremiumTokens.voidPure,
+      backgroundColor: PremiumTokens.scaffoldBg,
       body: Stack(
         children: [
           // Background Gradient
           Positioned.fill(
             child: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Color(0xFF0A0A1F),
-                    Color(0xFF000000),
+                    PremiumTokens.surfaceMain,
+                    PremiumTokens.scaffoldBg,
                   ],
                 ),
               ),
@@ -59,11 +58,11 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
                 expandedHeight: 0,
                 collapsedHeight: 80,
                 pinned: true,
-                backgroundColor: PremiumTokens.voidPure.withValues(alpha: 0.8),
+                backgroundColor: PremiumTokens.scaffoldBg.withValues(alpha: 0.8),
                 elevation: 0,
                 scrolledUnderElevation: 0,
                 leading: IconButton(
-                  icon: const Icon(Iconsax.arrow_left, color: PremiumTokens.celestialSilver),
+                  icon: Icon(Iconsax.arrow_left, color: PremiumTokens.textPrimary),
                   onPressed: () => Navigator.pop(context),
                 ),
                 title: Text(
@@ -71,7 +70,7 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
                   style: PremiumTokens.sansStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: PremiumTokens.celestialSilver,
+                    color: PremiumTokens.textPrimary,
                   ),
                 ),
                 centerTitle: true,
@@ -83,18 +82,18 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
                   padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.05),
+                      color: PremiumTokens.borderSubtle,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                      border: Border.all(color: PremiumTokens.borderMedium),
                     ),
                     child: TextField(
                       controller: _searchController,
                       onChanged: (value) => setState(() => _searchQuery = value),
-                      style: PremiumTokens.sansStyle(color: Colors.white),
+                      style: PremiumTokens.sansStyle(color: PremiumTokens.textPrimary),
                       decoration: InputDecoration(
                         hintText: 'Search categories...',
-                        hintStyle: PremiumTokens.sansStyle(color: Colors.white24),
-                        prefixIcon: const Icon(Iconsax.search_normal, color: Colors.white24, size: 20),
+                        hintStyle: PremiumTokens.sansStyle(color: PremiumTokens.textHint),
+                        prefixIcon: Icon(Iconsax.search_normal, color: PremiumTokens.textHint, size: 20),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       ),
@@ -155,17 +154,17 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
               ),
               
               // Gradient Overlay
-              const DecoratedBox(
+              DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
                     colors: [
-                      Colors.black87,
-                      Colors.black26,
+                      PremiumTokens.scaffoldBg.withValues(alpha: 0.87),
+                      PremiumTokens.scaffoldBg.withValues(alpha: 0.26),
                       Colors.transparent,
                     ],
-                    stops: [0.0, 0.4, 1.0],
+                    stops: const [0.0, 0.4, 1.0],
                   ),
                 ),
               ),
@@ -183,7 +182,7 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
                         fontSize: 14,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
-                        color: Colors.white,
+                        color: PremiumTokens.textPrimary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -200,7 +199,7 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
                         style: PremiumTokens.sansStyle(
                           fontSize: 9,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white70,
+                          color: PremiumTokens.textSecondary,
                         ),
                       ),
                     ),

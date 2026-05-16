@@ -81,7 +81,7 @@ class ShareContentWidget extends StatelessWidget {
                 content.sanskritText,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.notoSansDevanagari(
-                  color: Colors.white,
+                  color: PremiumTokens.textPrimary,
                   fontSize: 22,
                   fontWeight: FontWeight.w500,
                   height: 1.6,
@@ -94,7 +94,7 @@ class ShareContentWidget extends StatelessWidget {
             Container(
               width: 80,
               height: 1,
-              color: Colors.white.withValues(alpha: 0.2),
+              color: PremiumTokens.glassBase.withValues(alpha: 0.2),
             ),
 
             const SizedBox(height: 20),
@@ -105,7 +105,7 @@ class ShareContentWidget extends StatelessWidget {
                 content.translation,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
-                  color: Colors.white.withValues(alpha: 0.75),
+                  color: PremiumTokens.textPrimary.withValues(alpha: 0.75),
                   fontSize: 14,
                   fontStyle: FontStyle.italic,
                   height: 1.6,
@@ -139,14 +139,14 @@ class ShareContentWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Center(
-                    child: PremiumUI.logo(height: 16, color: Colors.black),
+                    child: PremiumUI.logo(height: 16, color: PremiumTokens.voidPure),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Text(
                   'Vrindopnishad',
                   style: GoogleFonts.inter(
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: PremiumTokens.textPrimary.withValues(alpha: 0.6),
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),

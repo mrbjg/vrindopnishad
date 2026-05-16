@@ -55,7 +55,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
     }
 
     return Scaffold(
-      backgroundColor: PremiumTokens.charcoal,
+      backgroundColor: PremiumTokens.scaffoldBg,
       body: Stack(
         children: [
           const Positioned.fill(child: AnimatedSacredBackground()),
@@ -94,7 +94,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                                   style: GoogleFonts.spectral(
                                     fontSize: 32,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: PremiumTokens.textPrimary,
                                   ),
                                 ),
                               ),
@@ -119,12 +119,12 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                               child: TextField(
                                 controller: _searchController,
                                 autofocus: true,
-                                style: GoogleFonts.outfit(color: Colors.white),
+                                style: GoogleFonts.outfit(color: PremiumTokens.textPrimary),
                                 decoration: InputDecoration(
                                   hintText: "${l.translate('search')}...",
-                                  hintStyle: GoogleFonts.outfit(color: Colors.white38),
+                                  hintStyle: GoogleFonts.outfit(color: PremiumTokens.textMuted),
                                   border: InputBorder.none,
-                                  icon: const Icon(Iconsax.search_normal, color: Colors.white38, size: 20),
+                                  icon: Icon(Iconsax.search_normal, color: PremiumTokens.textMuted, size: 20),
                                 ),
                                 onChanged: (v) => setState(() => _searchQuery = v),
                               ),
@@ -135,13 +135,13 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.05),
+                              color: PremiumTokens.borderSubtle,
                               borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.white10),
+                              border: Border.all(color: PremiumTokens.borderSubtle),
                             ),
                             child: Text(
                               "${filteredContent.length} ${l.translate('sacred_texts')}",
-                              style: GoogleFonts.outfit(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.bold),
+                              style: GoogleFonts.outfit(color: PremiumTokens.textSecondary, fontSize: 12, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ],
@@ -187,7 +187,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
           HapticFeedback.lightImpact();
           onTap();
         },
-        child: Icon(icon, color: Colors.white, size: 22),
+        child: Icon(icon, color: PremiumTokens.textPrimary, size: 22),
       ),
     );
   }
@@ -212,7 +212,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                 gradient: LinearGradient(colors: widget.gradientColors),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(Iconsax.book_1, color: Colors.white, size: 24),
+              child: Icon(Iconsax.book_1, color: PremiumTokens.textPrimary, size: 24),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -221,14 +221,14 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                 children: [
                   Text(
                     item.displayTitle,
-                    style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                    style: GoogleFonts.outfit(color: PremiumTokens.textPrimary, fontWeight: FontWeight.bold, fontSize: 16),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 6),
                   Text(
                     item.translation,
-                    style: GoogleFonts.outfit(color: Colors.white38, fontSize: 13),
+                    style: GoogleFonts.outfit(color: PremiumTokens.textMuted, fontSize: 13),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -248,11 +248,11 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Iconsax.folder_open, size: 64, color: Colors.white10),
+          Icon(Iconsax.folder_open, size: 64, color: PremiumTokens.borderSubtle),
           const SizedBox(height: 16),
           Text(
             l.translate('no_content'),
-            style: GoogleFonts.outfit(color: Colors.white38, fontSize: 16),
+            style: GoogleFonts.outfit(color: PremiumTokens.textMuted, fontSize: 16),
           ),
         ],
       ),

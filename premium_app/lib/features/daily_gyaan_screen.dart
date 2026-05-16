@@ -7,7 +7,6 @@ import 'package:iconsax/iconsax.dart';
 import '../core/design_system.dart';
 import '../core/spirituality_provider.dart';
 import '../models/daily_gyaan.dart';
-import '../services/gamification_service.dart';
 
 class DailyGyaanScreen extends ConsumerWidget {
   const DailyGyaanScreen({super.key});
@@ -20,7 +19,7 @@ class DailyGyaanScreen extends ConsumerWidget {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          Positioned.fill(child: PremiumUI.masterBackground(index: 2)), // Deeper cosmic vibe
+          Positioned.fill(child: PremiumUI.masterBackground(index: 2, context: context)), // Deeper cosmic vibe
           SafeArea(
             child: Column(
               children: [
@@ -34,8 +33,8 @@ class DailyGyaanScreen extends ConsumerWidget {
                         child: PremiumUI.glassCard(
                           padding: const EdgeInsets.all(10),
                           borderRadius: 14,
-                          child: const Icon(Iconsax.arrow_left_2,
-                              color: Colors.white, size: 20),
+                          child: Icon(Iconsax.arrow_left_2,
+                              color: PremiumTokens.textPrimary, size: 20),
                         ),
                       ),
                       const Spacer(),
@@ -45,7 +44,7 @@ class DailyGyaanScreen extends ConsumerWidget {
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 4,
-                          color: PremiumTokens.celestialSilver,
+                          color: PremiumTokens.textPrimary,
                         ),
                       ),
                       const Spacer(),
@@ -73,7 +72,7 @@ class DailyGyaanScreen extends ConsumerWidget {
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
-                        color: Colors.white38,
+                        color: PremiumTokens.textMuted,
                       ),
                     ),
                   ),
@@ -88,7 +87,7 @@ class DailyGyaanScreen extends ConsumerWidget {
                             color: PremiumTokens.nebulaBlue)),
                     error: (e, _) => Center(
                       child: Text('Error: $e',
-                          style: const TextStyle(color: Colors.white54)),
+                          style: TextStyle(color: PremiumTokens.textMuted)),
                     ),
                   ),
                 ),
@@ -111,14 +110,14 @@ class DailyGyaanScreen extends ConsumerWidget {
             borderRadius: 24, // Matches the Echoes cards more closely
             child: Column(
               children: [
-                const Icon(Iconsax.book, color: PremiumTokens.celestialSilver, size: 40),
+                Icon(Iconsax.book, color: PremiumTokens.textPrimary, size: 40),
                 const SizedBox(height: 16),
                 Text(
                   'The silence holds no wisdom for today.',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.spectral(
                     fontSize: 16,
-                    color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
+                    color: PremiumTokens.textSecondary,
                   ),
                 ),
               ],
@@ -152,7 +151,7 @@ class DailyGyaanScreen extends ConsumerWidget {
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 4,
-                        color: PremiumTokens.celestialSilver.withValues(alpha: 0.6),
+                        color: PremiumTokens.textSecondary,
                       ),
                     ),
                     _difficultyBadge(gyaan.difficulty),
@@ -163,7 +162,7 @@ class DailyGyaanScreen extends ConsumerWidget {
                   gyaan.title,
                   style: GoogleFonts.spectral(
                     fontSize: 26,
-                    color: Colors.white,
+                    color: PremiumTokens.textPrimary,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.2,
                     height: 1.2,
@@ -174,7 +173,7 @@ class DailyGyaanScreen extends ConsumerWidget {
                   gyaan.content,
                   style: GoogleFonts.spectral(
                     fontSize: 18,
-                    color: Colors.white.withValues(alpha: 0.75),
+                    color: PremiumTokens.textPrimary.withValues(alpha: 0.75),
                     height: 1.7,
                     fontStyle: FontStyle.italic,
                   ),
@@ -192,7 +191,7 @@ class DailyGyaanScreen extends ConsumerWidget {
                         fontSize: 11,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2.5,
-                        color: PremiumTokens.voidIndigo,
+                        color: PremiumTokens.surfaceMain,
                       ),
                     ),
                   ),
@@ -216,12 +215,12 @@ class DailyGyaanScreen extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Iconsax.book, color: Colors.white10, size: 64),
+            Icon(Iconsax.book, color: PremiumTokens.borderSubtle, size: 64),
             const SizedBox(height: 16),
             Text(
               'THE VOID IS SILENT',
               style: PremiumTokens.sansStyle(
-                  color: PremiumTokens.celestialSilver.withValues(alpha: 0.2), 
+                  color: PremiumTokens.textMuted, 
                   fontSize: 12,
                   letterSpacing: 3,
               ),
@@ -253,12 +252,12 @@ class DailyGyaanScreen extends ConsumerWidget {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: PremiumTokens.voidIndigo.withValues(alpha: 0.4),
+                      color: PremiumTokens.surfaceElevated,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                      border: Border.all(color: PremiumTokens.borderSubtle),
                     ),
-                    child: const Center(
-                        child: Icon(Iconsax.book_1, color: PremiumTokens.celestialSilver, size: 20)),
+                    child: Center(
+                        child: Icon(Iconsax.book_1, color: PremiumTokens.textPrimary, size: 20)),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -268,7 +267,7 @@ class DailyGyaanScreen extends ConsumerWidget {
                         Text(
                           gyaan.title,
                           style: PremiumTokens.sansStyle(
-                            color: Colors.white,
+                            color: PremiumTokens.textPrimary,
                             fontWeight: FontWeight.w700,
                             fontSize: 13,
                           ),
@@ -279,7 +278,7 @@ class DailyGyaanScreen extends ConsumerWidget {
                         Text(
                           gyaan.content,
                           style: PremiumTokens.sansStyle(
-                            color: Colors.white.withValues(alpha: 0.4),
+                            color: PremiumTokens.textPrimary.withValues(alpha: 0.4),
                             fontSize: 11,
                           ),
                           maxLines: 1,
@@ -309,7 +308,7 @@ class DailyGyaanScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: (colors[difficulty] ?? Colors.white).withValues(alpha: 0.1),
+        color: (colors[difficulty] ?? PremiumTokens.textPrimary).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
@@ -318,7 +317,7 @@ class DailyGyaanScreen extends ConsumerWidget {
           fontSize: 8,
           fontWeight: FontWeight.w800,
           letterSpacing: 2,
-          color: colors[difficulty] == Colors.greenAccent ? PremiumTokens.celestialSilver : (colors[difficulty] ?? Colors.white),
+          color: colors[difficulty] == Colors.greenAccent ? PremiumTokens.accentSilver : (colors[difficulty] ?? PremiumTokens.textPrimary),
         ),
       ),
     );
@@ -336,13 +335,13 @@ class DailyGyaanScreen extends ConsumerWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              PremiumTokens.voidIndigo.withValues(alpha: 0.98),
-              PremiumTokens.voidBlack,
+            PremiumTokens.sheetBgTop,
+            PremiumTokens.sheetBgBottom,
             ],
           ),
           borderRadius:
               const BorderRadius.vertical(top: Radius.circular(40)),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+          border: Border.all(color: PremiumTokens.borderSubtle),
         ),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(32),
@@ -354,7 +353,7 @@ class DailyGyaanScreen extends ConsumerWidget {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.white24,
+                    color: PremiumTokens.textHint,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -366,7 +365,7 @@ class DailyGyaanScreen extends ConsumerWidget {
                 gyaan.title,
                 style: GoogleFonts.spectral(
                   fontSize: 28,
-                  color: Colors.white,
+                  color: PremiumTokens.textPrimary,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -375,7 +374,7 @@ class DailyGyaanScreen extends ConsumerWidget {
                 gyaan.content,
                 style: GoogleFonts.spectral(
                   fontSize: 17,
-                  color: Colors.white70,
+                  color: PremiumTokens.textSecondary,
                   height: 1.7,
                 ),
               ),
@@ -385,7 +384,7 @@ class DailyGyaanScreen extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.05),
+                    color: PremiumTokens.borderSubtle,
                     borderRadius: BorderRadius.circular(100),
                   ),
                   child: Text(

@@ -69,7 +69,7 @@ class SavedItemsScreen extends ConsumerWidget {
                                 ),
                                 child: PremiumUI.customIcon(
                                   fileName: 'iconsax-archive-27ilzneb-.svg',
-                                  color: Colors.white,
+                                  color: PremiumTokens.textPrimary,
                                   size: 20,
                                 ),
                               ),
@@ -88,10 +88,10 @@ class SavedItemsScreen extends ConsumerWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              trailing: const Icon(
+                              trailing: Icon(
                                 Iconsax.arrow_right_3,
                                 size: 18,
-                                color: Colors.white24,
+                                color: PremiumTokens.textHint,
                               ),
                               onTap: () {
                                   Navigator.push(
@@ -151,7 +151,7 @@ class SavedItemsScreen extends ConsumerWidget {
           Text(
             "Bookmark your favorite content",
             style: PremiumTokens.sansStyle(
-              color: Colors.white38,
+              color: PremiumTokens.textMuted,
               fontSize: 14,
             ),
           ),

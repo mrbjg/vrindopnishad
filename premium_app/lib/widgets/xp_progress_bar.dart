@@ -38,7 +38,7 @@ class XPProgressBar extends StatelessWidget {
               style: PremiumTokens.sansStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
-                color: Colors.white54,
+                color: PremiumTokens.textMuted,
               ),
             ),
           ],
@@ -48,9 +48,9 @@ class XPProgressBar extends StatelessWidget {
           height: 8,
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: PremiumTokens.borderSubtle,
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+            border: Border.all(color: PremiumTokens.borderSubtle),
           ),
           child: Stack(
             children: [

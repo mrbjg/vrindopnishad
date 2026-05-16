@@ -42,11 +42,11 @@ class OnboardingScreen extends ConsumerWidget {
     ];
 
     return Scaffold(
-      backgroundColor: PremiumTokens.charcoal,
+      backgroundColor: PremiumTokens.scaffoldBg,
       body: Stack(
         children: [
           // Ambient master background (index 2 for Void feel)
-          Positioned.fill(child: PremiumUI.masterBackground(index: 2)),
+          Positioned.fill(child: PremiumUI.masterBackground(index: 2, context: context)),
           
           PageView.builder(
             controller: pageController,
@@ -76,7 +76,7 @@ class OnboardingScreen extends ConsumerWidget {
                       decoration: BoxDecoration(
                         color: currentIndex == index 
                             ? PremiumTokens.saffronGlow 
-                            : Colors.white.withValues(alpha: 0.2),
+                            : PremiumTokens.glassBase.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     );
@@ -126,7 +126,7 @@ class OnboardingScreen extends ConsumerWidget {
                     child: Text(
                       "SKIP",
                       style: GoogleFonts.manrope(
-                        color: Colors.white38,
+                        color: PremiumTokens.textMuted,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 2,
@@ -202,7 +202,7 @@ class OnboardingSlide extends StatelessWidget {
             subtitle,
             textAlign: TextAlign.center,
             style: GoogleFonts.newsreader(
-              color: Colors.white,
+              color: PremiumTokens.textPrimary,
               fontSize: 24,
               height: 1.4,
               fontWeight: FontWeight.w300,
@@ -220,7 +220,7 @@ class OnboardingSlide extends StatelessWidget {
             child: Text(
               quote,
               style: GoogleFonts.newsreader(
-                color: Colors.white38,
+                color: PremiumTokens.textMuted,
                 fontSize: 16,
                 fontStyle: FontStyle.italic,
               ),
@@ -255,14 +255,14 @@ class AssessmentSlide extends ConsumerWidget {
               fontWeight: FontWeight.w900,
               letterSpacing: 4,
             ),
-          ).animate().fadeIn().shimmer(duration: 3.seconds, color: Colors.white24),
+          ).animate().fadeIn().shimmer(duration: 3.seconds, color: PremiumTokens.textHint),
           
           const SizedBox(height: 48),
           
           Text(
             "Experience level",
             style: PremiumTokens.soulStyle(
-              color: Colors.white,
+              color: PremiumTokens.textPrimary,
               fontSize: 20,
               fontWeight: FontWeight.w300,
             ),
@@ -301,7 +301,7 @@ class AssessmentSlide extends ConsumerWidget {
           Text(
             "Daily Naam Jap Goal",
             style: PremiumTokens.soulStyle(
-              color: Colors.white,
+              color: PremiumTokens.textPrimary,
               fontSize: 20,
               fontWeight: FontWeight.w300,
             ),
@@ -348,7 +348,7 @@ class AssessmentSlide extends ConsumerWidget {
           Text(
             "Malas per day",
             style: PremiumTokens.sansStyle(
-              color: Colors.white30,
+              color: PremiumTokens.textPrimary30,
               fontSize: 12,
               letterSpacing: 1,
             ),
@@ -396,7 +396,7 @@ class _LevelOption extends StatelessWidget {
             border: Border.all(
               color: selected 
                 ? PremiumTokens.saffronGlow.withValues(alpha: 0.5) 
-                : Colors.white.withValues(alpha: 0.05),
+                : PremiumTokens.borderSubtle,
               width: 1,
             ),
             borderRadius: BorderRadius.circular(20),
@@ -407,7 +407,7 @@ class _LevelOption extends StatelessWidget {
                 child: Text(
                   title,
                   style: PremiumTokens.sansStyle(
-                    color: selected ? Colors.white : Colors.white70,
+                    color: selected ? PremiumTokens.textPrimary : PremiumTokens.textSecondary,
                     fontSize: 15,
                     fontWeight: selected ? FontWeight.bold : FontWeight.w500,
                   ),
@@ -462,14 +462,14 @@ class _GoalOption extends StatelessWidget {
               ? PremiumTokens.saffronPremiumGradient 
               : RadialGradient(
                   colors: [
-                    Colors.white.withValues(alpha: 0.08),
-                    Colors.white.withValues(alpha: 0.03),
+                    PremiumTokens.borderSubtle,
+                    PremiumTokens.borderSubtle,
                   ],
                 ),
             border: Border.all(
               color: selected 
-                ? Colors.white.withValues(alpha: 0.4) 
-                : Colors.white.withValues(alpha: 0.1),
+                ? PremiumTokens.textPrimary.withValues(alpha: 0.4) 
+                : PremiumTokens.borderMedium,
               width: selected ? 2 : 1,
             ),
             boxShadow: selected ? [
@@ -489,7 +489,7 @@ class _GoalOption extends StatelessWidget {
             child: Text(
               label,
               style: PremiumTokens.sansStyle(
-                color: selected ? PremiumTokens.charcoal : Colors.white,
+                color: selected ? PremiumTokens.charcoal : PremiumTokens.textPrimary,
                 fontSize: selected ? 18 : 16,
                 fontWeight: FontWeight.w900,
               ),

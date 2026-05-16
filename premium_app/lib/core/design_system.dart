@@ -36,10 +36,45 @@ class PremiumTokens {
   static const Color nebulaBlue = Color(0xFF256AF4);
   static const Color primaryAccent = nebulaBlue;
   static const Color saffronGlow = Color(0xFFF2A60D);
-  static const Color silver = celestialSilver;
+  static Color get silver => accentSilver;
   static const Color starlight = Color(0xFF93C5FD);
   static const Color silverCloud = Color(0xFFC0C0CF);
   static const Color starlightBlue = Color(0xFF93C5FD);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ADAPTIVE COLORS — Auto-switch on isDark
+  // Use these instead of hardcoded celestialSilver/Colors.white/voidIndigo
+  // ═══════════════════════════════════════════════════════════════════════════
+  static Color get textPrimary => isDark ? celestialSilver : const Color(0xFF1A1A2E);
+  static Color get textPrimary80 => textPrimary.withValues(alpha: 0.8);
+  static Color get textPrimary60 => textPrimary.withValues(alpha: 0.6);
+  static Color get textPrimary54 => textPrimary.withValues(alpha: 0.54);
+  static Color get textPrimary40 => textPrimary.withValues(alpha: 0.4);
+  static Color get textPrimary30 => textPrimary.withValues(alpha: 0.3);
+  static Color get textPrimary20 => textPrimary.withValues(alpha: 0.2);
+  static Color get voidPure87 => voidPure.withValues(alpha: 0.87);
+  static Color get voidPure26 => voidPure.withValues(alpha: 0.26);
+  static Color get voidPure54 => voidPure.withValues(alpha: 0.54);
+  static Color get nebulaBlueAccent => const Color(0xFF4D7FFF);
+  static Color get textSecondary => isDark ? silverCloud : const Color(0xFF4A4A5A);
+  static Color get textMuted => isDark ? celestialSilver.withValues(alpha: 0.4) : const Color(0xFF9A9AAA);
+  static Color get textHint => isDark ? const Color(0x3DFFFFFF) : const Color(0x3D000000);
+  static Color get iconPrimary => isDark ? celestialSilver : const Color(0xFF3A3A4A);
+  static Color get iconMuted => isDark ? const Color(0x61FFFFFF) : const Color(0x61000000);
+  static Color get surfaceMain => isDark ? voidIndigo : const Color(0xFFFFFDF5);
+  static Color get surfaceCard => isDark ? const Color(0xFF0E0E1A) : Colors.white;
+  static Color get surfaceElevated => isDark ? const Color(0xFF0F0F2D) : const Color(0xFFF8F5EE);
+  static Color get borderSubtle => isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
+  static Color get borderMedium => isDark ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.1);
+  static Color get overlayFill => isDark ? Colors.white : Colors.black;
+  static Color get glassBase => isDark ? Colors.white : Colors.black;
+  static Color get navBarBg => isDark ? const Color(0xE60A0A1F) : const Color(0xF0FFFFFF);
+  static Color get dividerColor => isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.06);
+  static Color get scaffoldBg => isDark ? voidPure : const Color(0xFFFFFDF5);
+  static Color get sheetBgTop => isDark ? voidIndigo : const Color(0xFFF8F5EE);
+  static Color get sheetBgBottom => isDark ? voidBlack : const Color(0xFFFFFDF5);
+  static Color get fabBg => isDark ? voidPure : Colors.white;
+  static Color get accentSilver => isDark ? celestialSilver : const Color(0xFF3A3A4A);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // GRADIENTS: Immersive & Smooth
@@ -121,24 +156,26 @@ class PremiumTokens {
     Border? border,
   }) {
     return BoxDecoration(
-      color: (color ?? Colors.white).withValues(alpha: opacity),
+      color: (color ?? overlayFill).withValues(alpha: opacity),
       borderRadius: BorderRadius.circular(borderRadius),
       border:
           border ??
-          Border.all(color: Colors.white.withValues(alpha: 0.12), width: 1.0),
+          Border.all(color: glassBase.withValues(alpha: 0.12), width: 1.0),
     );
   }
 
   static BoxDecoration indigoGlass({double opacity = 0.7}) {
     return BoxDecoration(
-      color: voidIndigo.withValues(alpha: opacity),
+      color: isDark ? voidIndigo.withValues(alpha: opacity) : Colors.white.withValues(alpha: 0.95),
       borderRadius: BorderRadius.circular(40),
-      border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+      border: Border.all(color: isDark ? glassBase.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.08)),
       boxShadow: [
         BoxShadow(
-          color: const Color(0xFF1E3A8A).withValues(alpha: 0.3),
+          color: isDark 
+              ? const Color(0xFF1E3A8A).withValues(alpha: 0.3)
+              : Colors.black.withValues(alpha: 0.1),
           blurRadius: 40,
-          spreadRadius: 2,
+          spreadRadius: isDark ? 2 : -5,
         ),
       ],
     );
@@ -216,11 +253,12 @@ class PremiumTokens {
   static TextStyle hindiAwareStyle(
     String text, {
     double fontSize = 14,
-    Color color = celestialSilver,
+    Color? color,
     FontWeight fontWeight = FontWeight.normal,
     bool isSacred = false,
     double? height,
   }) {
+    final effectiveColor = color ?? textPrimary;
     final hasHindi = containsHindi(text);
     final adjustedFontSize = hasHindi ? (fontSize + 2) : fontSize; // Hindi matches English size better with +2
     final adjustedFontWeight = hasHindi ? FontWeight.w600 : fontWeight; // Hindi needs more weight in Dark Mode
@@ -228,7 +266,7 @@ class PremiumTokens {
     if (!hasHindi) {
       return sansStyle(
         fontSize: adjustedFontSize,
-        color: color,
+        color: effectiveColor,
         fontWeight: adjustedFontWeight,
       ).copyWith(height: height);
     }
@@ -236,7 +274,7 @@ class PremiumTokens {
     if (isSacred) {
       return hindiSacredStyle(
         fontSize: adjustedFontSize,
-        color: color,
+        color: effectiveColor,
         fontWeight: adjustedFontWeight,
         height: height ?? 1.85,
       );
@@ -244,7 +282,7 @@ class PremiumTokens {
 
     return hindiUIStyle(
       fontSize: adjustedFontSize,
-      color: color,
+      color: effectiveColor,
       fontWeight: adjustedFontWeight,
       height: height ?? 1.7,
     );
@@ -252,13 +290,13 @@ class PremiumTokens {
 
   static TextStyle hindiSacredStyle({
     double fontSize = 18,
-    Color color = celestialSilver,
+    Color? color,
     FontWeight fontWeight = FontWeight.w600,
     double height = 1.85,
   }) {
     return GoogleFonts.laila(
       fontSize: fontSize,
-      color: color,
+      color: color ?? textPrimary,
       fontWeight: fontWeight,
       height: height,
     );
@@ -266,13 +304,13 @@ class PremiumTokens {
 
   static TextStyle hindiUIStyle({
     double fontSize = 14,
-    Color color = celestialSilver,
+    Color? color,
     FontWeight fontWeight = FontWeight.w600,
     double height = 1.7,
   }) {
     return GoogleFonts.poppins(
       fontSize: fontSize,
-      color: color,
+      color: color ?? textPrimary,
       fontWeight: fontWeight,
       height: height,
     );
@@ -280,13 +318,13 @@ class PremiumTokens {
 
   static TextStyle soulStyle({
     double fontSize = 24,
-    Color color = Colors.white,
+    Color? color,
     FontWeight fontWeight = FontWeight.w300,
     double? letterSpacing,
   }) {
     return GoogleFonts.newsreader(
       fontSize: fontSize,
-      color: color,
+      color: color ?? textPrimary,
       fontWeight: fontWeight,
       letterSpacing: letterSpacing,
     );
@@ -294,13 +332,13 @@ class PremiumTokens {
 
   static TextStyle lailaStyle({
     double fontSize = 24,
-    Color color = Colors.white,
+    Color? color,
     FontWeight fontWeight = FontWeight.normal,
     double? letterSpacing,
   }) {
     return GoogleFonts.laila(
       fontSize: fontSize,
-      color: color,
+      color: color ?? textPrimary,
       fontWeight: fontWeight,
       letterSpacing: letterSpacing,
     );
@@ -377,9 +415,16 @@ class PremiumUI {
     required TextStyle style,
     TextAlign textAlign = TextAlign.start,
   }) {
+    final gradient = PremiumTokens.isDark 
+        ? PremiumTokens.silverGradient 
+        : const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF2D3748), Color(0xFF4A5568)],
+          );
     return ShaderMask(
       blendMode: BlendMode.srcIn,
-      shaderCallback: (bounds) => PremiumTokens.silverGradient.createShader(
+      shaderCallback: (bounds) => gradient.createShader(
         Rect.fromLTWH(0, 0, bounds.width, bounds.height),
       ),
       child: Text(text, style: style, textAlign: textAlign),
@@ -399,7 +444,7 @@ class PremiumUI {
             shape: BoxShape.circle,
           ),
           child: Center(
-            child: Icon(icon, color: PremiumTokens.silver, size: size),
+            child: Icon(icon, color: PremiumTokens.accentSilver, size: size),
           ),
         )
         .animate(onPlay: (c) => c.repeat(reverse: true))
@@ -512,12 +557,12 @@ class PremiumUI {
             ? Container(
                 padding: padding ?? const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: const Color(
-                    0xCC0A0A1F,
-                  ), // Solid high-performance surface
+                  color: PremiumTokens.isDark
+                      ? const Color(0xCC0A0A1F)
+                      : Colors.white.withValues(alpha: 0.85),
                   borderRadius: BorderRadius.circular(borderRadius),
                   border: Border.all(
-                    color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                    color: PremiumTokens.borderSubtle,
                     width: 1,
                   ),
                 ),
@@ -561,12 +606,21 @@ class PremiumUI {
                     .infinity, // Ensure bounded width for children (Expanded/Row)
                 padding: padding ?? const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0F0F2D), // Deep solid void
+                  color: PremiumTokens.isDark
+                      ? const Color(0xFF0F0F2D)
+                      : Colors.white.withValues(alpha: 0.9),
                   borderRadius: BorderRadius.circular(borderRadius),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.08),
+                    color: PremiumTokens.borderSubtle,
                     width: 1,
                   ),
+                  boxShadow: PremiumTokens.isDark ? null : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: child,
               )
@@ -700,8 +754,21 @@ class PremiumUI {
           margin: margin ?? const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(borderRadius),
-            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.02),
-            border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05)),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.02)
+                : Colors.white.withValues(alpha: 0.85),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : Colors.black.withValues(alpha: 0.08),
+            ),
+            boxShadow: isDark ? null : [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Padding(padding: padding, child: child),
         );
@@ -717,17 +784,33 @@ class PremiumUI {
     EdgeInsets? margin,
     Color? borderColor,
   }) {
-    return Container(
-      margin: margin,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.03),
-        borderRadius: BorderRadius.circular(borderRadius),
-        border: Border.all(
-          color: borderColor ?? PremiumTokens.celestialSilver.withValues(alpha: 0.15),
-          width: 0.5,
-        ),
-      ),
-      child: Padding(padding: padding, child: child),
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Container(
+          margin: margin,
+          decoration: BoxDecoration(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.03)
+                : Colors.white.withValues(alpha: 0.9),
+            borderRadius: BorderRadius.circular(borderRadius),
+            border: Border.all(
+              color: borderColor ?? (isDark
+                  ? PremiumTokens.celestialSilver.withValues(alpha: 0.15)
+                  : Colors.black.withValues(alpha: 0.08)),
+              width: 0.5,
+            ),
+            boxShadow: isDark ? null : [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 6,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          child: Padding(padding: padding, child: child),
+        );
+      },
     );
   }
 
@@ -762,12 +845,19 @@ class PremiumUI {
                 height: 70,
                 width: effectiveWidth - 32, // Strictly bound to parent width
                 decoration: BoxDecoration(
-                  color: const Color(0xE60A0A1F),
+                  color: PremiumTokens.navBarBg,
                   borderRadius: BorderRadius.circular(35),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: PremiumTokens.borderSubtle,
                     width: 0.5,
                   ),
+                  boxShadow: PremiumTokens.isDark ? null : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.08),
+                      blurRadius: 20,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: Stack(
                   children: [
@@ -782,7 +872,7 @@ class PremiumUI {
                           width: capsuleWidth,
                           height: capsuleHeight,
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.1),
+                            color: PremiumTokens.overlayFill.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(22),
                           ),
                         ),
@@ -864,18 +954,34 @@ class PremiumUI {
     EdgeInsets? margin,
     Color? borderColor,
   }) {
-    return Container(
-      margin: margin,
-      padding: padding ?? const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: PremiumTokens.voidIndigo.withValues(alpha: 0.8),
-        borderRadius: BorderRadius.circular(borderRadius),
-        border: Border.all(
-          color: borderColor ?? PremiumTokens.celestialSilver.withValues(alpha: 0.1),
-          width: 0.5,
-        ),
-      ),
-      child: child,
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Container(
+          margin: margin,
+          padding: padding ?? const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: isDark
+                ? PremiumTokens.voidIndigo.withValues(alpha: 0.8)
+                : Colors.white.withValues(alpha: 0.9),
+            borderRadius: BorderRadius.circular(borderRadius),
+            border: Border.all(
+              color: borderColor ?? (isDark
+                  ? PremiumTokens.celestialSilver.withValues(alpha: 0.1)
+                  : Colors.black.withValues(alpha: 0.06)),
+              width: 0.5,
+            ),
+            boxShadow: isDark ? null : [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: child,
+        );
+      },
     );
   }
 
@@ -902,14 +1008,23 @@ class PremiumUI {
                 ? Container(
                     padding: padding ?? const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: baseColor.withValues(
-                        alpha: isDark ? opacity * 1.5 : opacity * 0.05,
-                      ), // High-perf opacity
+                      color: isDark 
+                          ? baseColor.withValues(alpha: opacity * 1.5)
+                          : Colors.white.withValues(alpha: 0.85),
                       borderRadius: BorderRadius.circular(borderRadius),
                       border: Border.all(
-                        color: baseColor.withValues(alpha: isDark ? 0.1 : 0.05),
+                        color: isDark 
+                            ? baseColor.withValues(alpha: 0.1)
+                            : Colors.black.withValues(alpha: 0.06),
                         width: 1,
                       ),
+                      boxShadow: isDark ? null : [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.04),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: child,
                   )
@@ -942,23 +1057,32 @@ class PremiumUI {
     bool optimized = true, // Added optimized toggle for high-performance rebuilds
   }) {
     final activeGlow = glowColor ?? PremiumTokens.nebulaBlue;
+    final isDark = PremiumTokens.isDark;
+    final baseOverlay = isDark ? Colors.white : Colors.black;
     final cardContent = Container(
       padding: padding ?? const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0x15FFFFFF),
+        color: isDark ? const Color(0x15FFFFFF) : Colors.white.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(borderRadius),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.12),
+          color: baseOverlay.withValues(alpha: isDark ? 0.12 : 0.06),
           width: 1,
         ),
-        gradient: LinearGradient(
+        gradient: isDark ? LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
             Colors.white.withValues(alpha: 0.05),
             Colors.white.withValues(alpha: 0.02),
           ],
-        ),
+        ) : null,
+        boxShadow: isDark ? null : [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: child,
     );
@@ -1098,9 +1222,13 @@ class PremiumUI {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: RadialGradient(
-          colors: [
+          colors: PremiumTokens.isDark ? [
             Colors.white.withValues(alpha: 0.15 * opacity),
             const Color(0xFF256AF4).withValues(alpha: 0.05 * opacity),
+            Colors.transparent,
+          ] : [
+            const Color(0xFF256AF4).withValues(alpha: 0.08 * opacity),
+            Colors.orange.withValues(alpha: 0.03 * opacity),
             Colors.transparent,
           ],
         ),
@@ -1110,7 +1238,7 @@ class PremiumUI {
 
   /// Optimized Master Background switcher to prevent overdraw
   static Widget masterBackground({required int index, BuildContext? context}) {
-    final bool isDarkMode = context == null || Theme.of(context).brightness == Brightness.dark;
+    final bool isDarkMode = context != null ? Theme.of(context).brightness == Brightness.dark : PremiumTokens.isDark;
     
     // 0: Home, 1: Library, 4: Profile -> Bokeh/Clouds
     // 2: Naam Jap, 3: Journal -> Void/Sky
@@ -1350,46 +1478,46 @@ class PremiumUI {
     );
   }
 
-  static Widget _buildPlanet({
-    double? top,
-    double? bottom,
-    double? left,
-    double? right,
-    required double size,
-    required Color color,
-  }) {
-    return Positioned(
-      top: top,
-      bottom: bottom,
-      left: left,
-      right: right,
-      child: Opacity(
-        opacity: 0.4,
-        child: Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: RadialGradient(
-              colors: [
-                color.withValues(alpha: 0.8),
-                color.withValues(alpha: 0.1),
-                Colors.transparent,
-              ],
-            ),
-            boxShadow: [
-              BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 20),
-            ],
-          ),
-          child: CustomPaint(
-            painter: _PlanetRingsPainter(color: color.withValues(alpha: 0.2)),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Silver Capsule Button for Void/Journal
+//   static Widget _buildPlanet({
+//     double? top,
+//     double? bottom,
+//     double? left,
+//     double? right,
+//     required double size,
+//     required Color color,
+//   }) {
+//     return Positioned(
+//       top: top,
+//       bottom: bottom,
+//       left: left,
+//       right: right,
+//       child: Opacity(
+//         opacity: 0.4,
+//         child: Container(
+//           width: size,
+//           height: size,
+//           decoration: BoxDecoration(
+//             shape: BoxShape.circle,
+//             gradient: RadialGradient(
+//               colors: [
+//                 color.withValues(alpha: 0.8),
+//                 color.withValues(alpha: 0.1),
+//                 Colors.transparent,
+//               ],
+//             ),
+//             boxShadow: [
+//               BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 20),
+//             ],
+//           ),
+//           child: CustomPaint(
+//             painter: _PlanetRingsPainter(color: color.withValues(alpha: 0.2)),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// 
+//   /// Silver Capsule Button for Void/Journal
   static Widget capsuleButton({
     required String text,
     required VoidCallback onTap,
@@ -1573,7 +1701,7 @@ class PremiumUI {
       maxWidthDiskCache: 1200, // Prevent huge disk cache
       maxHeightDiskCache: 1200,
       errorWidget: (context, url, error) {
-        print("Image Loading Error: $error");
+        debugPrint('Image Loading Error: $error');
         return Container(
           width: width,
           height: height,
@@ -1657,13 +1785,20 @@ class PremiumUI {
     required double height, 
     double borderRadius = 12,
   }) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(borderRadius),
-      ),
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.05)
+                : Colors.black.withValues(alpha: 0.06),
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+        );
+      },
     );
   }
 
@@ -1831,14 +1966,15 @@ class PremiumUI {
 
   /// Sync System Status Bar with Sacred Void Aesthetic
   static void setSacredStatus() {
+    final isDark = PremiumTokens.isDark;
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: PremiumTokens.voidBlack,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+        systemNavigationBarColor: isDark ? PremiumTokens.voidBlack : const Color(0xFFFFFDF5),
         systemNavigationBarDividerColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+        systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
       ),
     );
   }
@@ -2311,36 +2447,36 @@ class _SacredNotification extends StatelessWidget {
   }
 }
 
-class _PlanetRingsPainter extends CustomPainter {
-  final Color color;
-  _PlanetRingsPainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
-
-    final center = Offset(size.width / 2, size.height / 2);
-    final rect = Rect.fromCenter(
-      center: center,
-      width: size.width * 1.8,
-      height: size.height * 0.4,
-    );
-
-    // Rotate the rings slightly
-    canvas.save();
-    canvas.translate(center.dx, center.dy);
-    canvas.rotate(0.5);
-    canvas.translate(-center.dx, -center.dy);
-    canvas.drawOval(rect, paint);
-    canvas.restore();
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
+// class _PlanetRingsPainter extends CustomPainter {
+//   final Color color;
+//   _PlanetRingsPainter({required this.color});
+// 
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     final paint = Paint()
+//       ..color = color
+//       ..style = PaintingStyle.stroke
+//       ..strokeWidth = 1;
+// 
+//     final center = Offset(size.width / 2, size.height / 2);
+//     final rect = Rect.fromCenter(
+//       center: center,
+//       width: size.width * 1.8,
+//       height: size.height * 0.4,
+//     );
+// 
+//     // Rotate the rings slightly
+//     canvas.save();
+//     canvas.translate(center.dx, center.dy);
+//     canvas.rotate(0.5);
+//     canvas.translate(-center.dx, -center.dy);
+//     canvas.drawOval(rect, paint);
+//     canvas.restore();
+//   }
+// 
+//   @override
+//   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+// }
 
 class _CrescentMoonPainter extends CustomPainter {
   @override
@@ -2684,7 +2820,7 @@ class _PremiumAnimatedNavButtonState extends State<_PremiumAnimatedNavButton>
                         duration: const Duration(milliseconds: 250),
                         child: PremiumUI.customIcon(
                           fileName: widget.item.iconSvg,
-                          color: Colors.white,
+                          color: PremiumTokens.iconPrimary,
                           size: 26,
                         ),
                       ),
@@ -2700,7 +2836,7 @@ class _PremiumAnimatedNavButtonState extends State<_PremiumAnimatedNavButton>
                         duration: const Duration(milliseconds: 250),
                         child: PremiumUI.customIcon(
                           fileName: widget.item.activeIconSvg,
-                          color: Colors.white,
+                          color: PremiumTokens.textPrimary,
                           size: 30,
                         ),
                       ),
@@ -2857,7 +2993,7 @@ class SacredActionMenu extends StatefulWidget {
 class SacredActionMenuState extends State<SacredActionMenu> {
   bool _isVisible = false;
   int _hoveredIndex = -1;
-  int _switchCounter = 0;
+//   final int _switchCounter = 0;
 
   // Public method to be called via GlobalKey by the trigger (button)
   void handleRelease() {
@@ -3036,6 +3172,8 @@ class SacredActionMenuState extends State<SacredActionMenu> {
             final item = widget.items[index];
             final double screenWidth = MediaQuery.sizeOf(context).width;
             final double screenHeight = MediaQuery.sizeOf(context).height;
+            
+            /*
             final double centerAngle = _getArcCenter(screenWidth, screenHeight);
             final double span = _getSpan();
             final double startPosAngle = centerAngle - (span / 2);
@@ -3060,6 +3198,7 @@ class SacredActionMenuState extends State<SacredActionMenu> {
             if (_hoveredIndex != -1) {
               currentRadius = (index == _hoveredIndex) ? 120.0 : 95.0;
             }
+            */
 
             final Offset itemPos = _getItemPosition(index, screenWidth, screenHeight);
 
@@ -3414,9 +3553,13 @@ class _PremiumNaamJapCounterInternalState
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          PremiumTokens.etherealBlue.withValues(alpha: 0.12),
-                          PremiumTokens.voidIndigo.withValues(alpha: 0.05),
-                          PremiumTokens.voidPure,
+                          PremiumTokens.isDark 
+                              ? PremiumTokens.etherealBlue.withValues(alpha: 0.12)
+                              : PremiumTokens.nebulaBlue.withValues(alpha: 0.06),
+                          PremiumTokens.isDark
+                              ? PremiumTokens.voidIndigo.withValues(alpha: 0.05)
+                              : Colors.white.withValues(alpha: 0.3),
+                          PremiumTokens.scaffoldBg,
                         ],
                         stops: const [0.0, 0.7, 1.0],
                       ),
@@ -3433,8 +3576,8 @@ class _PremiumNaamJapCounterInternalState
                   child: CustomPaint(
                     painter: _NaamJapProgressPainter(
                       progress: progress,
-                      color: PremiumTokens.celestialSilver,
-                      glowColor: PremiumTokens.celestialSilver.withValues(alpha: 0.3),
+                      color: PremiumTokens.accentSilver,
+                      glowColor: PremiumTokens.accentSilver.withValues(alpha: 0.3),
                     ),
                   ),
                 ),
@@ -3448,14 +3591,16 @@ class _PremiumNaamJapCounterInternalState
                   height: widget.size * 0.55,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: PremiumTokens.voidPure,
+                    color: PremiumTokens.scaffoldBg,
                     border: Border.all(
-                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.1),
+                      color: PremiumTokens.accentSilver.withValues(alpha: 0.1),
                       width: 0.5,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: PremiumTokens.etherealBlue.withValues(alpha: 0.3),
+                        color: PremiumTokens.isDark 
+                            ? PremiumTokens.etherealBlue.withValues(alpha: 0.3)
+                            : PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
                         blurRadius: 30,
                         spreadRadius: -10,
                       ),
@@ -3471,7 +3616,7 @@ class _PremiumNaamJapCounterInternalState
                               fontSize: widget.size * 0.035,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 2,
-                              color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
+                              color: PremiumTokens.textMuted,
                             ),
                           ),
                         Text(
@@ -3479,7 +3624,7 @@ class _PremiumNaamJapCounterInternalState
                           style: PremiumTokens.lailaStyle(
                             fontSize: widget.size * 0.18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: PremiumTokens.textPrimary,
                           ),
                         ),
                         Text(
@@ -3488,7 +3633,7 @@ class _PremiumNaamJapCounterInternalState
                             fontSize: widget.size * 0.045,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1,
-                            color: Colors.white38,
+                            color: PremiumTokens.textHint,
                           ),
                         ),
                       ],

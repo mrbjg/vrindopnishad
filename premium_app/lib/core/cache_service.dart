@@ -88,6 +88,7 @@ class CacheService {
         }
       }
     } catch (e) {
+      // Ignore cache loading errors
     }
   }
 
@@ -97,6 +98,9 @@ class CacheService {
       final jsonList = content.map((c) => c.toMap()).toList();
       await _prefs?.setString(_contentCacheKey, json.encode(jsonList));
       await _prefs?.setString(_cacheTimeKey, DateTime.now().toIso8601String());
+      // Ignore cache saving errors
+      // Ignore cache saving errors
+      // Ignore cache saving errors
     } catch (e) {
     }
   }

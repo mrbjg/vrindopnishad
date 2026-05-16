@@ -8,7 +8,6 @@ import '../core/auth_provider.dart';
 import 'content_detail_screen.dart';
 import 'search_screen.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../core/favorites_provider.dart';
 import '../core/audio_provider.dart';
 
@@ -76,7 +75,7 @@ class LibraryScreen extends ConsumerWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(Iconsax.element_plus, color: PremiumTokens.celestialSilver.withValues(alpha: 0.4), size: 24),
+            Icon(Iconsax.element_plus, color: PremiumTokens.textMuted, size: 24),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -94,7 +93,7 @@ class LibraryScreen extends ConsumerWidget {
                     "SACRED LIBRARY",
                     style: PremiumTokens.sansStyle(
                       fontSize: 10,
-                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.4),
+                      color: PremiumTokens.textMuted,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
                     ),
@@ -111,17 +110,17 @@ class LibraryScreen extends ConsumerWidget {
                   height: 38,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: PremiumTokens.surfaceCharcoal,
-                    border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.1)),
+                    color: PremiumTokens.surfaceElevated,
+                    border: Border.all(color: PremiumTokens.borderSubtle),
                   ),
                   child: user?.photoURL != null 
                     ? PremiumUI.networkImage(
                         url: user!.photoURL!,
                         borderRadius: BorderRadius.circular(19),
                       )
-                    : const Icon(
+                    : Icon(
                         Iconsax.user,
-                        color: PremiumTokens.celestialSilver,
+                        color: PremiumTokens.textMuted,
                         size: 20,
                       ),
                 );
@@ -147,17 +146,17 @@ class LibraryScreen extends ConsumerWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
-            color: PremiumTokens.surfaceCharcoal.withValues(alpha: 0.5),
+            color: PremiumTokens.surfaceElevated.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.1)),
+            border: Border.all(color: PremiumTokens.borderSubtle),
           ),
           child: Row(
             children: [
-              const Icon(Iconsax.search_normal, color: PremiumTokens.celestialSilver, size: 20),
+              Icon(Iconsax.search_normal, color: PremiumTokens.textMuted, size: 20),
               const SizedBox(width: 12),
               Text(
                 "Search sacred mantras...",
-                style: PremiumTokens.sansStyle(color: Colors.white24, fontSize: 14),
+                style: PremiumTokens.sansStyle(color: PremiumTokens.textHint, fontSize: 14),
               ),
             ],
           ),
@@ -245,7 +244,7 @@ class LibraryScreen extends ConsumerWidget {
                       fontSize: 10,
                       color: audioState.isPlaying 
                           ? PremiumTokens.nebulaBlue 
-                          : PremiumTokens.celestialSilver.withValues(alpha: 0.4),
+                          : PremiumTokens.textMuted,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,
                     ),
@@ -274,7 +273,7 @@ class LibraryScreen extends ConsumerWidget {
                 height: 40,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: PremiumTokens.celestialSilver.withValues(alpha: 0.1),
+                  color: PremiumTokens.borderSubtle,
                 ),
                 child: Icon(
                   audioState.isPlaying ? Iconsax.pause5 : Iconsax.play5,
@@ -311,7 +310,7 @@ class LibraryScreen extends ConsumerWidget {
           padding: const EdgeInsets.all(16),
           borderColor: isPlaying 
               ? PremiumTokens.nebulaBlue.withValues(alpha: 0.3) 
-              : PremiumTokens.celestialSilver.withValues(alpha: 0.1),
+              : PremiumTokens.borderSubtle,
           child: Row(
             children: [
               // Enclaved Status Icon (Music vs. Book)
@@ -321,12 +320,12 @@ class LibraryScreen extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: isPlaying 
                       ? PremiumTokens.nebulaBlue.withValues(alpha: 0.1) 
-                      : PremiumTokens.celestialSilver.withValues(alpha: 0.03),
+                      : PremiumTokens.borderSubtle,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isPlaying 
                         ? PremiumTokens.nebulaBlue.withValues(alpha: 0.2) 
-                        : PremiumTokens.celestialSilver.withValues(alpha: 0.05),
+                        : PremiumTokens.borderSubtle,
                   ),
                 ),
                 child: Center(
@@ -336,7 +335,7 @@ class LibraryScreen extends ConsumerWidget {
                       : (item.audioUrl != null && item.audioUrl!.isNotEmpty 
                           ? Iconsax.music 
                           : Iconsax.book_1),
-                    color: isPlaying ? PremiumTokens.nebulaBlue : PremiumTokens.celestialSilver.withValues(alpha: 0.5),
+                    color: isPlaying ? PremiumTokens.nebulaBlue : PremiumTokens.textMuted,
                     size: 18,
                   ),
                 ),
@@ -370,7 +369,7 @@ class LibraryScreen extends ConsumerWidget {
                               margin: const EdgeInsets.symmetric(horizontal: 4),
                               width: 3,
                               height: 3,
-                              decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white24),
+                              decoration: BoxDecoration(shape: BoxShape.circle, color: PremiumTokens.textMuted),
                             ),
                           if (item.book != null)
                             Expanded(
@@ -382,7 +381,7 @@ class LibraryScreen extends ConsumerWidget {
                                   item.book!,
                                   fontSize: 9,
                                   fontWeight: FontWeight.bold,
-                                  color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
+                                  color: PremiumTokens.textMuted,
                                 ),
                               ),
                             ),
@@ -397,7 +396,7 @@ class LibraryScreen extends ConsumerWidget {
                         item.title,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: PremiumTokens.textPrimary,
                         isSacred: true,
                       ),
                     ),
@@ -409,35 +408,35 @@ class LibraryScreen extends ConsumerWidget {
                       style: PremiumTokens.hindiAwareStyle(
                         item.commentary,
                         fontSize: 11,
-                        color: Colors.white.withValues(alpha: 0.45),
+                        color: PremiumTokens.textMuted,
                       ),
                     ),
                     const Spacer(),
                     Row(
                       children: [
                         if (item.audioUrl != null && item.audioUrl!.isNotEmpty) ...[
-                          const Icon(Icons.schedule, color: Colors.white24, size: 10),
+                          Icon(Icons.schedule, color: PremiumTokens.textMuted, size: 10),
                           const SizedBox(width: 4),
                           Text(
                             "10:45",
-                            style: PremiumTokens.sansStyle(fontSize: 10, color: Colors.white24),
+                            style: PremiumTokens.sansStyle(fontSize: 10, color: PremiumTokens.textMuted),
                           ),
                           const SizedBox(width: 8),
                         ] else ...[
-                          const Icon(Icons.auto_stories, color: Colors.white24, size: 10),
+                          Icon(Icons.auto_stories, color: PremiumTokens.textMuted, size: 10),
                           const SizedBox(width: 4),
                           Text(
                             (item.chapter ?? "READ").toUpperCase(),
-                            style: PremiumTokens.sansStyle(fontSize: 10, color: Colors.white24, letterSpacing: 1.0),
+                            style: PremiumTokens.sansStyle(fontSize: 10, color: PremiumTokens.textMuted, letterSpacing: 1.0),
                           ),
                           const SizedBox(width: 8),
                         ],
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: PremiumTokens.celestialSilver.withValues(alpha: 0.05),
+                            color: PremiumTokens.borderSubtle,
                             borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.05)),
+                            border: Border.all(color: PremiumTokens.borderSubtle),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -445,7 +444,7 @@ class LibraryScreen extends ConsumerWidget {
                               Icon(
                                 item.categoryIcon,
                                 size: 10,
-                                color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
+                                color: PremiumTokens.textMuted,
                               ),
                               const SizedBox(width: 4),
                               Text(
@@ -453,7 +452,7 @@ class LibraryScreen extends ConsumerWidget {
                                 style: PremiumTokens.sansStyle(
                                   fontSize: 8, 
                                   fontWeight: FontWeight.w900,
-                                  color: PremiumTokens.celestialSilver.withValues(alpha: 0.4),
+                                  color: PremiumTokens.textMuted,
                                   letterSpacing: 0.5,
                                 ),
                               ),
@@ -472,16 +471,16 @@ class LibraryScreen extends ConsumerWidget {
                                     margin: const EdgeInsets.only(right: 4),
                                     padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.03),
+                                      color: PremiumTokens.borderSubtle,
                                       borderRadius: BorderRadius.circular(4),
-                                      border: Border.all(color: PremiumTokens.celestialSilver.withValues(alpha: 0.05)),
+                                      border: Border.all(color: PremiumTokens.borderSubtle),
                                     ),
                                     child: Text(
                                       tag.toUpperCase(),
                                       style: PremiumTokens.sansStyle(
                                         fontSize: 8, 
                                         fontWeight: FontWeight.bold,
-                                        color: PremiumTokens.celestialSilver.withValues(alpha: 0.25),
+                                        color: PremiumTokens.textMuted,
                                         letterSpacing: 0.5,
                                       ),
                                     ),
@@ -504,7 +503,7 @@ class LibraryScreen extends ConsumerWidget {
                     folder: 'Heart',
                     fileName: 'heart.json',
                     size: 20,
-                    color: ref.watch(isFavoriteProvider(item.id)) ? PremiumTokens.saffronGlow : Colors.white24,
+                    color: ref.watch(isFavoriteProvider(item.id)) ? PremiumTokens.saffronGlow : PremiumTokens.textMuted,
                     isToggled: ref.watch(isFavoriteProvider(item.id)),
                     resetAfterPlay: false,
                     onTap: () {
@@ -526,16 +525,16 @@ class LibraryScreen extends ConsumerWidget {
                             shape: BoxShape.circle,
                             color: isPlaying 
                                 ? PremiumTokens.nebulaBlue.withValues(alpha: 0.1) 
-                                : PremiumTokens.celestialSilver.withValues(alpha: 0.05),
+                                : PremiumTokens.borderSubtle,
                             border: Border.all(
                               color: isPlaying 
                                   ? PremiumTokens.nebulaBlue.withValues(alpha: 0.3) 
-                                  : PremiumTokens.celestialSilver.withValues(alpha: 0.2)
+                                  : PremiumTokens.borderMedium
                             ),
                           ),
                           child: Icon(
                             isPlaying ? Iconsax.pause : Icons.play_arrow, 
-                            color: isPlaying ? PremiumTokens.nebulaBlue : PremiumTokens.celestialSilver, 
+                            color: isPlaying ? PremiumTokens.nebulaBlue : PremiumTokens.textPrimary, 
                             size: 18
                           ),
                         ),

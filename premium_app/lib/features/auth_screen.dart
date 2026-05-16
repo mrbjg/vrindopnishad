@@ -72,7 +72,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: PremiumTokens.charcoal,
+      backgroundColor: PremiumTokens.scaffoldBg,
       body: Stack(
         children: [
           Positioned.fill(child: PremiumUI.bokehBackground(context)),
@@ -96,7 +96,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       style: GoogleFonts.newsreader(
                         fontSize: 44,
                         fontWeight: FontWeight.w300,
-                        color: Colors.white,
+                        color: PremiumTokens.textPrimary,
                         letterSpacing: 2,
                       ),
                     ),
@@ -105,7 +105,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       "THE VOICE OF SAINTS",
                       textAlign: TextAlign.center,
                       style: GoogleFonts.manrope(
-                        color: Colors.white38,
+                        color: PremiumTokens.textMuted,
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 4,
@@ -136,7 +136,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _obscurePassword ? Iconsax.eye_slash : Iconsax.eye,
-                                  color: Colors.white38,
+                                  color: PremiumTokens.textMuted,
                                   size: 20,
                                 ),
                                 onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
@@ -160,24 +160,24 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
                     const SizedBox(height: 40),
 
-                    const Center(
+                    Center(
                       child: Text(
                         "Enter your details to continue your journey.",
-                        style: TextStyle(color: Colors.white24, fontSize: 13),
+                        style: TextStyle(color: PremiumTokens.textHint, fontSize: 13),
                       ),
                     ),
                     
                     const SizedBox(height: 32),
                     
                     // Social hint
-                    const Row(
+                    Row(
                       children: [
-                        Expanded(child: Divider(color: Colors.white10)),
+                        Expanded(child: Divider(color: PremiumTokens.borderSubtle)),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text("OR", style: TextStyle(color: Colors.white24, fontSize: 12)),
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text("OR", style: TextStyle(color: PremiumTokens.textHint, fontSize: 12)),
                         ),
-                        Expanded(child: Divider(color: Colors.white10)),
+                        Expanded(child: Divider(color: PremiumTokens.borderSubtle)),
                       ],
                     ),
                     
@@ -223,12 +223,12 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(100),
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+                          border: Border.all(color: PremiumTokens.glassBase.withValues(alpha: 0.3)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Iconsax.user, color: Colors.white38, size: 16),
+                            Icon(Iconsax.user, color: PremiumTokens.textMuted, size: 16),
                             const SizedBox(width: 12),
                             Text(
                               "CONTINUE AS GUEST",
@@ -236,7 +236,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                 fontSize: 11,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: 2,
-                                color: Colors.white70,
+                                color: PremiumTokens.textSecondary,
                               ),
                             ),
                           ],
@@ -267,11 +267,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       obscureText: obscureText,
       keyboardType: keyboardType,
       validator: validator,
-      style: PremiumTokens.sansStyle(color: Colors.white, fontSize: 15),
+      style: PremiumTokens.sansStyle(color: PremiumTokens.textPrimary, fontSize: 15),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(color: Colors.white30),
-        prefixIcon: Icon(icon, color: Colors.white38, size: 20),
+        hintStyle: TextStyle(color: PremiumTokens.textPrimary30),
+        prefixIcon: Icon(icon, color: PremiumTokens.textMuted, size: 20),
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.05),
@@ -299,14 +299,14 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         width: 56,
         height: 56,
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: PremiumTokens.borderSubtle,
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: PremiumTokens.borderMedium),
         ),
         child: Center(
           child: image != null 
             ? PremiumUI.networkImage(url: image, width: 24, height: 24)
-            : Icon(icon, color: Colors.white, size: 24),
+            : Icon(icon, color: PremiumTokens.textPrimary, size: 24),
         ),
       ),
     );

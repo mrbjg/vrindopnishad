@@ -41,7 +41,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
       const HomeScreen(),
       const LibraryScreen(),
       const NaamJapScreen(),
-      EternalReflectionScreen(),
+      const EternalReflectionScreen(),
       const ProfileScreen(),
       const RitualsScreen(),
     ];
@@ -67,7 +67,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
     ref.watch(dynamicIconServiceProvider);
 
     return Scaffold(
-      backgroundColor: PremiumTokens.voidBlack,
+      backgroundColor: PremiumTokens.surfaceMain,
       body: Stack(
         children: [
           Positioned.fill(
@@ -122,7 +122,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                                     end: Alignment.bottomCenter,
                                     colors: [
                                       Colors.transparent,
-                                      PremiumTokens.voidBlack.withValues(alpha: 0.95),
+                                      PremiumTokens.surfaceMain.withValues(alpha: 0.95),
                                     ],
                                   ),
                                 ),
@@ -137,7 +137,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                                       end: Alignment.bottomCenter,
                                       colors: [
                                         Colors.transparent,
-                                        PremiumTokens.voidBlack.withValues(alpha: 0.85),
+                                        PremiumTokens.surfaceMain.withValues(alpha: 0.85),
                                       ],
                                     ),
                                   ),

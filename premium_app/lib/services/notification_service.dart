@@ -115,9 +115,13 @@ class NotificationService {
     String channelId = 'sacred_reminders';
     String sound = data['sound'] ?? 'default';
     
-    if (sound == 'flute') channelId = 'divine_flute';
-    else if (sound == 'temple_bell') channelId = 'temple_bell';
-    else if (sound == 'shankh') channelId = 'sacred_shankh';
+    if (sound == 'flute') {
+      channelId = 'divine_flute';
+    } else if (sound == 'temple_bell') {
+      channelId = 'temple_bell';
+    } else if (sound == 'shankh') {
+      channelId = 'sacred_shankh';
+    }
 
     await _notifications.show(
       notification.hashCode,

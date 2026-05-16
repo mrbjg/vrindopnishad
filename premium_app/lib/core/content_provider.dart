@@ -75,10 +75,10 @@ class SacredContent {
     List<String>? audioTags,
     List<String>? videoTags,
     List<String>? imageTags,
-  })  : this._contentTags = contentTags ?? const [],
-        this._audioTags = audioTags ?? const [],
-        this._videoTags = videoTags ?? const [],
-        this._imageTags = imageTags ?? const [];
+  })  : _contentTags = contentTags ?? const [],
+        _audioTags = audioTags ?? const [],
+        _videoTags = videoTags ?? const [],
+        _imageTags = imageTags ?? const [];
 
   Map<String, dynamic> toMap() {
     return {

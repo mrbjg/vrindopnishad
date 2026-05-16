@@ -89,10 +89,10 @@ class _MiniPlayerState extends ConsumerState<MiniPlayer> {
                     filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.04),
+                        color: PremiumTokens.borderSubtle,
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.08),
+                          color: PremiumTokens.borderSubtle,
                           width: 0.5,
                         ),
                       ),
@@ -129,7 +129,7 @@ class _MiniPlayerState extends ConsumerState<MiniPlayer> {
                                       Text(
                                         content.title,
                                         style: GoogleFonts.manrope(
-                                          color: Colors.white,
+                                          color: PremiumTokens.textPrimary,
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                           letterSpacing: -0.2,
@@ -152,7 +152,7 @@ class _MiniPlayerState extends ConsumerState<MiniPlayer> {
                                 ),
                                 
                                 IconButton(
-                                  icon: Icon(Iconsax.backward_10_seconds, color: Colors.white.withValues(alpha: 0.4), size: 18),
+                                  icon: Icon(Iconsax.backward_10_seconds, color: PremiumTokens.textPrimary.withValues(alpha: 0.4), size: 18),
                                   onPressed: () {
                                     HapticFeedback.lightImpact();
                                     ref.read(audioProvider.notifier).skipBackward();
@@ -172,7 +172,7 @@ class _MiniPlayerState extends ConsumerState<MiniPlayer> {
                                           height: 20, 
                                           child: CircularProgressIndicator(strokeWidth: 2, color: accentColor)
                                         )
-                                      : Icon(isPlaying ? Iconsax.pause5 : Iconsax.play5, color: Colors.white, size: 28),
+                                      : Icon(isPlaying ? Iconsax.pause5 : Iconsax.play5, color: PremiumTokens.textPrimary, size: 28),
                                     onPressed: () {
                                       HapticFeedback.mediumImpact();
                                       ref.read(audioProvider.notifier).togglePlayPause();
@@ -191,7 +191,7 @@ class _MiniPlayerState extends ConsumerState<MiniPlayer> {
                             child: Container(
                               height: 2,
                               width: double.infinity,
-                              color: Colors.white.withValues(alpha: 0.05),
+                              color: PremiumTokens.borderSubtle,
                               child: FractionallySizedBox(
                                 alignment: Alignment.centerLeft,
                                 widthFactor: progress.clamp(0.0, 1.0),
@@ -248,7 +248,7 @@ class _MiniPlayerState extends ConsumerState<MiniPlayer> {
     )
     .shimmer(
       duration: 2.seconds,
-      color: Colors.white.withValues(alpha: 0.1),
+      color: PremiumTokens.borderMedium,
     )
     .custom(
       builder: (context, value, child) {

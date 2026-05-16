@@ -56,7 +56,7 @@ class AboutScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     letterSpacing: 4,
                     fontSize: 16,
-                    color: Colors.white,
+                    color: PremiumTokens.textPrimary,
                   ),
                 ),
               ),
@@ -88,7 +88,7 @@ class AboutScreen extends StatelessWidget {
                          style: GoogleFonts.spectral(
                            fontSize: 42,
                            fontWeight: FontWeight.w900,
-                           color: Colors.white,
+                           color: PremiumTokens.textPrimary,
                            letterSpacing: 8,
                          ),
                       ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.2, end: 0),
@@ -138,7 +138,7 @@ class AboutScreen extends StatelessWidget {
                           fontWeight: FontWeight.w900,
                           fontSize: 11,
                           letterSpacing: 3,
-                          color: Colors.white24,
+                          color: PremiumTokens.textHint,
                         ),
                       ),
                       
@@ -163,7 +163,7 @@ class AboutScreen extends StatelessWidget {
                       Text(
                         "© 2026 VRINDOPNISHAD",
                         style: GoogleFonts.manrope(
-                          color: Colors.white24,
+                          color: PremiumTokens.textHint,
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 2,
@@ -175,9 +175,9 @@ class AboutScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("MADE WITH ", style: TextStyle(color: Colors.white.withValues(alpha: 0.2), fontSize: 10)),
+                          Text("MADE WITH ", style: TextStyle(color: PremiumTokens.glassBase.withValues(alpha: 0.2), fontSize: 10)),
                           const Icon(Icons.favorite, color: Colors.redAccent, size: 10),
-                          Text(" FOR ", style: TextStyle(color: Colors.white.withValues(alpha: 0.2), fontSize: 10)),
+                          Text(" FOR ", style: TextStyle(color: PremiumTokens.glassBase.withValues(alpha: 0.2), fontSize: 10)),
                           Text(
                             "SANT-SANATAN",
                             style: GoogleFonts.manrope(
@@ -225,7 +225,7 @@ class AboutScreen extends StatelessWidget {
                   fontSize: 14,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 3,
-                  color: Colors.white.withValues(alpha: 0.9),
+                  color: PremiumTokens.textPrimary.withValues(alpha: 0.9),
                 ),
               ),
             ],
@@ -238,7 +238,7 @@ class AboutScreen extends StatelessWidget {
               style: GoogleFonts.manrope(
                 height: 1.8,
                 fontSize: 14,
-                color: Colors.white.withValues(alpha: 0.5),
+                color: PremiumTokens.textPrimary.withValues(alpha: 0.5),
                 fontWeight: FontWeight.w300,
               ),
             ),

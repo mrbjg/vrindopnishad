@@ -71,7 +71,7 @@ class AchievementUnlockDialog extends StatelessWidget {
                     achievement.title,
                     style: GoogleFonts.spectral(
                       fontSize: 26,
-                      color: Colors.white,
+                      color: PremiumTokens.textPrimary,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -81,7 +81,7 @@ class AchievementUnlockDialog extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: GoogleFonts.spectral(
                       fontSize: 15,
-                      color: Colors.white54,
+                      color: PremiumTokens.textMuted,
                       height: 1.3,
                     ),
                   ),
@@ -89,9 +89,9 @@ class AchievementUnlockDialog extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.05),
+                      color: PremiumTokens.borderSubtle,
                       borderRadius: BorderRadius.circular(100),
-                      border: Border.all(color: Colors.white10),
+                      border: Border.all(color: PremiumTokens.borderSubtle),
                     ),
                     child: Text(
                       'BONUS +${achievement.xpBonus} XP',
@@ -127,7 +127,7 @@ class AchievementUnlockDialog extends StatelessWidget {
                 width: 90,
                 height: 90,
                 decoration: BoxDecoration(
-                  color: PremiumTokens.voidIndigo,
+                  color: PremiumTokens.surfaceMain,
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: PremiumTokens.saffronGlow.withValues(alpha: 0.3),

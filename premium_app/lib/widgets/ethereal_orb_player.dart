@@ -114,11 +114,11 @@ class EtherealOrbPlayer extends ConsumerWidget {
                   height: 68,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.02),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.15), width: 1.5),
+                    color: PremiumTokens.borderSubtle,
+                    border: Border.all(color: PremiumTokens.borderMedium, width: 1.5),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.3),
+                        color: PremiumTokens.voidPure.withValues(alpha: 0.3),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -149,8 +149,8 @@ class EtherealOrbPlayer extends ConsumerWidget {
                               'assets/shriJiMukut.svg',
                               width: 32,
                               height: 32,
-                              colorFilter: const ColorFilter.mode(
-                                Colors.white, 
+                              colorFilter: ColorFilter.mode(
+                                PremiumTokens.textPrimary, 
                                 BlendMode.srcIn,
                               ),
                             ),
@@ -182,7 +182,7 @@ class EtherealOrbPlayer extends ConsumerWidget {
                 if (!isPlaying)
                   Positioned(
                     bottom: 12,
-                    child: Icon(Icons.play_arrow_rounded, color: Colors.white.withValues(alpha: 0.5), size: 12),
+                    child: Icon(Icons.play_arrow_rounded, color: PremiumTokens.textPrimary.withValues(alpha: 0.5), size: 12),
                   ),
               ],
             ),
@@ -214,7 +214,7 @@ class _CelestialProgressPainter extends CustomPainter {
 
     // Rim Background
     final bgPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.05)
+      ..color = PremiumTokens.borderSubtle
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     canvas.drawCircle(center, radius, bgPaint);

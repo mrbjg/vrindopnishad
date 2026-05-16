@@ -86,10 +86,10 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
              if (mounted) {
                ScaffoldMessenger.of(context).showSnackBar(
                  SnackBar(
-                   backgroundColor: Colors.redAccent.withValues(alpha: 0.8),
+                   backgroundColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.8),
                    content: Text(
                      "VAANI SYNC ERROR: $e",
-                     style: const TextStyle(color: Colors.white, fontSize: 12),
+                     style: TextStyle(color: PremiumTokens.textPrimary, fontSize: 12),
                    ),
                    behavior: SnackBarBehavior.floating,
                    duration: const Duration(seconds: 5),
@@ -149,7 +149,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           context, 
           'Error: $e',
           icon: Iconsax.info_circle,
-          color: Colors.redAccent,
+          color: PremiumTokens.nebulaBlue,
         );
       }
     }
@@ -179,8 +179,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
     // If no content is found and no title/category provided, we are effectively in a dead state
     if (content == null && widget.title == null && widget.content == null) {
-      return const Scaffold(
-        backgroundColor: PremiumTokens.voidBlack,
+      return Scaffold(
+        backgroundColor: PremiumTokens.scaffoldBg,
         body: Center(child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue)),
       );
     }
@@ -199,7 +199,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   ref.read(focusModeProvider.notifier).state = !isFocusMode;
                 },
                 child: RepaintBoundary(
-                  child: PremiumUI.masterBackground(index: 3),
+                  child: PremiumUI.masterBackground(index: 3, context: context),
                 ),
               ),
             ),
@@ -443,9 +443,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           alignment: WrapAlignment.center,
                           children: [
                             ...(content.contentTags).map((tag) => _buildTagChip("#$tag", themeData.accentColor.withValues(alpha: 0.05))),
-                            ...(content.audioTags).map((tag) => _buildTagChip("🎧 $tag", Colors.blue.withValues(alpha: 0.1))),
-                            ...(content.videoTags).map((tag) => _buildTagChip("🎬 $tag", Colors.red.withValues(alpha: 0.1))),
-                            ...(content.imageTags).map((tag) => _buildTagChip("🖼️ $tag", Colors.green.withValues(alpha: 0.1))),
+                            ...(content.audioTags).map((tag) => _buildTagChip("🎧 $tag", PremiumTokens.nebulaBlue.withValues(alpha: 0.1))),
+                            ...(content.videoTags).map((tag) => _buildTagChip("🎬 $tag", PremiumTokens.nebulaBlue.withValues(alpha: 0.1))),
+                            ...(content.imageTags).map((tag) => _buildTagChip("🖼️ $tag", PremiumTokens.saffronGlow.withValues(alpha: 0.1))),
                           ],
                         ),
                       ),
@@ -902,31 +902,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
+  /*
   Widget _buildMetadataChip(IconData icon, String label, Color accentColor) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: accentColor.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: accentColor.withValues(alpha: 0.1), width: 0.5),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: accentColor.withValues(alpha: 0.7)),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: GoogleFonts.manrope(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: accentColor.withValues(alpha: 0.9),
-            ),
-          ),
-        ],
-      ),
-    );
+    ...
   }
+  */
 
   Widget _buildTagChip(String label, Color bgColor) {
     final themeData = _getThemeData();
@@ -985,7 +965,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: PremiumTokens.scaffoldBg.withValues(alpha: 0.2),
             blurRadius: 40,
             offset: const Offset(0, 10),
           )
@@ -1128,8 +1108,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                       ),
                       child: Center(
                         child: isLoading 
-                          ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 3)
-                          : Icon(isPlaying ? Iconsax.pause : Iconsax.play, color: Colors.white, size: 28),
+                          ? CircularProgressIndicator(color: PremiumTokens.textPrimary, strokeWidth: 3)
+                          : Icon(isPlaying ? Iconsax.pause : Iconsax.play, color: PremiumTokens.textPrimary, size: 28),
                       ),
                     ),
                   ),
@@ -1173,11 +1153,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     switch (_currentTheme) {
       case ReadingTheme.divineFlow:
         return _ReadingThemeData(
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          cardColor: Colors.white.withValues(alpha: 0.08),
+          backgroundColor: PremiumTokens.scaffoldBg,
+          textColor: PremiumTokens.textPrimary,
+          cardColor: PremiumTokens.borderSubtle,
           accentColor: PremiumTokens.saffronGlow,
-          secondaryAccent: Colors.blueAccent,
+          secondaryAccent: PremiumTokens.nebulaBlueAccent,
           lineHeight: 1.8,
           glassOpacity: 0.08,
           showTextShadows: true,
@@ -1289,16 +1269,16 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         curve: Curves.easeInOut,
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
-                          color: isSelected ? PremiumTokens.nebulaBlue : Colors.white.withValues(alpha: 0.05),
+                          color: isSelected ? PremiumTokens.nebulaBlue : PremiumTokens.borderSubtle,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: isSelected ? Colors.transparent : Colors.white.withValues(alpha: 0.1)),
+                          border: Border.all(color: isSelected ? Colors.transparent : PremiumTokens.borderMedium),
                         ),
                         child: Text(
                           theme.name.replaceAll(RegExp(r'(?=[A-Z])'), ' ').toUpperCase(),
                           style: GoogleFonts.manrope(
                             fontSize: 10, 
                             fontWeight: FontWeight.w800, 
-                            color: isSelected ? Colors.white : themeData.textColor.withValues(alpha: 0.6)
+                            color: isSelected ? PremiumTokens.textPrimary : themeData.textColor.withValues(alpha: 0.6)
                           ),
                         ),
                       ),

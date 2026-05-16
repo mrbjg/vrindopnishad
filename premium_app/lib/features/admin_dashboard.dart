@@ -97,9 +97,9 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                                       ),
                                     ],
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                     Iconsax.shield_tick,
-                                    color: Colors.white,
+                                    color: PremiumTokens.textPrimary,
                                     size: 24,
                                   ),
                                 ),
@@ -115,7 +115,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                                           fontSize: 26,
                                           fontWeight: FontWeight.bold,
                                           color: isDark
-                                              ? Colors.white
+                                              ? PremiumTokens.textPrimary
                                               : const Color(0xFF1A1A2E),
                                         ),
                                       ),
@@ -125,8 +125,8 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                                         style: GoogleFonts.outfit(
                                           fontSize: 13,
                                           color: isDark
-                                              ? Colors.white60
-                                              : Colors.black54,
+                                              ? PremiumTokens.textPrimary60
+                                              : PremiumTokens.voidPure54,
                                         ),
                                       ),
                                     ],
@@ -149,13 +149,13 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
                     color: isDark
-                        ? Colors.white.withValues(alpha: 0.06)
-                        : Colors.white.withValues(alpha: 0.8),
+                        ? PremiumTokens.borderSubtle
+                        : PremiumTokens.textPrimary.withValues(alpha: 0.8),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: isDark
-                          ? Colors.white.withValues(alpha: 0.1)
-                          : Colors.black.withValues(alpha: 0.05),
+                          ? PremiumTokens.borderMedium
+                          : PremiumTokens.voidPure.withValues(alpha: 0.05),
                       width: 1.5,
                     ),
                   ),
@@ -166,10 +166,10 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                       borderRadius: BorderRadius.circular(12),
                     ),
                     dividerColor: Colors.transparent,
-                    labelColor: Colors.white,
+                    labelColor: PremiumTokens.textPrimary,
                     unselectedLabelColor: isDark
-                        ? Colors.white60
-                        : Colors.black54,
+                        ? PremiumTokens.textPrimary60
+                        : PremiumTokens.voidPure54,
                     labelStyle: GoogleFonts.outfit(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -202,14 +202,14 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
           if (_isProcessing)
             Positioned.fill(
               child: Container(
-                color: Colors.black.withValues(alpha: 0.5),
+                color: PremiumTokens.voidPure.withValues(alpha: 0.5),
                 child: Center(
                   child: Container(
                     padding: const EdgeInsets.all(32),
                     decoration: BoxDecoration(
                       color: isDark
                           ? const Color(0xFF1A1A2E).withValues(alpha: 0.95)
-                          : Colors.white.withValues(alpha: 0.95),
+                          : PremiumTokens.textPrimary.withValues(alpha: 0.95),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Column(
@@ -220,7 +220,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                         Text(
                           "Processing...",
                           style: GoogleFonts.outfit(
-                            color: isDark ? Colors.white : Colors.black87,
+                            color: isDark ? PremiumTokens.textPrimary : PremiumTokens.voidPure87,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -245,19 +245,19 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : Colors.black.withValues(alpha: 0.05),
+              ? PremiumTokens.borderSubtle
+              : PremiumTokens.voidPure.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isDark
-                ? Colors.white.withValues(alpha: 0.1)
-                : Colors.black.withValues(alpha: 0.05),
+                ? PremiumTokens.borderMedium
+                : PremiumTokens.voidPure.withValues(alpha: 0.05),
           ),
         ),
         child: Icon(
           Iconsax.arrow_left,
           size: 20,
-          color: isDark ? Colors.white : Colors.black87,
+          color: isDark ? PremiumTokens.textPrimary : PremiumTokens.voidPure87,
         ),
       ),
     );
@@ -293,12 +293,12 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Iconsax.add, color: Colors.white, size: 20),
+                  Icon(Iconsax.add, color: PremiumTokens.textPrimary, size: 20),
                   const SizedBox(width: 12),
                   Text(
                     "Add Single Content",
                     style: GoogleFonts.outfit(
-                      color: Colors.white,
+                      color: PremiumTokens.textPrimary,
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),
@@ -339,7 +339,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
             title: "Upload CSV File",
             description: "Import content from a CSV file",
             color: const Color(0xFF10B981),
-            onTap: () => _handleCSVUpload(context, l),
+            onTap: () => _handleCSVUpload(l),
           ),
           const SizedBox(height: 16),
 
@@ -350,7 +350,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
             title: "Upload JSON File",
             description: "Import content from a JSON file",
             color: const Color(0xFF3B82F6),
-            onTap: () => _handleJSONUpload(context, l),
+            onTap: () => _handleJSONUpload(l),
           ),
           const SizedBox(height: 16),
 
@@ -361,7 +361,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
             title: "Upload Images",
             description: "Add multiple images for content",
             color: const Color(0xFFEC4899),
-            onTap: () => _handleImageUpload(context, l),
+            onTap: () => _handleImageUpload(l),
           ),
           const SizedBox(height: 16),
 
@@ -372,7 +372,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
             title: "Upload Audio Files",
             description: "Add audio narrations in bulk",
             color: const Color(0xFF8B5CF6),
-            onTap: () => _handleAudioUpload(context, l),
+            onTap: () => _handleAudioUpload(l),
           ),
 
           const SizedBox(height: 32),
@@ -383,13 +383,13 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: isDark
-                    ? Colors.white.withValues(alpha: 0.06)
-                    : Colors.black.withValues(alpha: 0.04),
+                    ? PremiumTokens.borderSubtle
+                    : PremiumTokens.voidPure.withValues(alpha: 0.04),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: isDark
-                      ? Colors.white.withValues(alpha: 0.1)
-                      : Colors.black.withValues(alpha: 0.1),
+                      ? PremiumTokens.borderMedium
+                      : PremiumTokens.voidPure.withValues(alpha: 0.1),
                 ),
               ),
               child: Row(
@@ -471,7 +471,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
               gradient: AppTheme.primaryGradient(context),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: Colors.white, size: 20),
+            child: Icon(icon, color: PremiumTokens.textPrimary, size: 20),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -483,7 +483,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                   style: GoogleFonts.outfit(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : const Color(0xFF1A1A2E),
+                    color: isDark ? PremiumTokens.textPrimary : const Color(0xFF1A1A2E),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -491,7 +491,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                   description,
                   style: GoogleFonts.outfit(
                     fontSize: 12,
-                    color: isDark ? Colors.white60 : Colors.black54,
+                    color: isDark ? PremiumTokens.textPrimary60 : PremiumTokens.voidPure54,
                   ),
                 ),
               ],
@@ -521,13 +521,13 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
           color: isDark
-              ? Colors.white.withValues(alpha: 0.06)
-              : Colors.white.withValues(alpha: 0.8),
+              ? PremiumTokens.borderSubtle
+              : PremiumTokens.textPrimary.withValues(alpha: 0.8),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDark
-                ? Colors.white.withValues(alpha: 0.1)
-                : Colors.black.withValues(alpha: 0.05),
+                ? PremiumTokens.borderMedium
+                : PremiumTokens.voidPure.withValues(alpha: 0.05),
             width: 1.5,
           ),
         ),
@@ -551,7 +551,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                     style: GoogleFonts.outfit(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : const Color(0xFF1A1A2E),
+                      color: isDark ? PremiumTokens.textPrimary : const Color(0xFF1A1A2E),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -559,7 +559,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                     description,
                     style: GoogleFonts.outfit(
                       fontSize: 12,
-                      color: isDark ? Colors.white60 : Colors.black54,
+                      color: isDark ? PremiumTokens.textPrimary60 : PremiumTokens.voidPure54,
                     ),
                   ),
                 ],
@@ -569,8 +569,8 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
               Iconsax.arrow_right_3,
               size: 20,
               color: isDark
-                  ? Colors.white.withValues(alpha: 0.4)
-                  : Colors.black.withValues(alpha: 0.26),
+                  ? PremiumTokens.textPrimary.withValues(alpha: 0.4)
+                  : PremiumTokens.voidPure.withValues(alpha: 0.26),
             ),
           ],
         ),
@@ -588,13 +588,13 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.white.withValues(alpha: 0.06)
-            : Colors.white.withValues(alpha: 0.8),
+            ? PremiumTokens.borderSubtle
+            : PremiumTokens.textPrimary.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: isDark
-              ? Colors.white.withValues(alpha: 0.1)
-              : Colors.black.withValues(alpha: 0.05),
+              ? PremiumTokens.borderMedium
+              : PremiumTokens.voidPure.withValues(alpha: 0.05),
         ),
       ),
       child: Row(
@@ -606,8 +606,8 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
               gradient: AppTheme.primaryGradient(context),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(Iconsax.document_text,
-              color: Colors.white,
+            child: Icon(Iconsax.document_text,
+              color: PremiumTokens.textPrimary,
               size: 18,
             ),
           ),
@@ -621,7 +621,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                   style: GoogleFonts.outfit(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Colors.black87,
+                    color: isDark ? PremiumTokens.textPrimary : PremiumTokens.voidPure87,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -660,7 +660,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
           constraints: const BoxConstraints(maxWidth: 500),
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1A1A2E) : Colors.white,
+            color: isDark ? const Color(0xFF1A1A2E) : PremiumTokens.textPrimary,
             borderRadius: BorderRadius.circular(24),
           ),
           child: SingleChildScrollView(
@@ -672,14 +672,14 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                   style: GoogleFonts.spectral(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Colors.black87,
+                    color: isDark ? PremiumTokens.textPrimary : PremiumTokens.voidPure87,
                   ),
                 ),
                 const SizedBox(height: 20),
                 Text(
                   "Use the form to add one item",
                   style: GoogleFonts.outfit(
-                    color: isDark ? Colors.white60 : Colors.black54,
+                    color: isDark ? PremiumTokens.textPrimary60 : PremiumTokens.voidPure54,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -695,7 +695,9 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
     );
   }
 
-  Future<void> _handleCSVUpload(BuildContext context, AppLocalization l) async {
+  Future<void> _handleCSVUpload(
+    AppLocalization l,
+  ) async {
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
@@ -718,7 +720,6 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
   }
 
   Future<void> _handleJSONUpload(
-    BuildContext context,
     AppLocalization l,
   ) async {
     try {
@@ -743,7 +744,6 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
   }
 
   Future<void> _handleImageUpload(
-    BuildContext context,
     AppLocalization l,
   ) async {
     try {
@@ -768,7 +768,6 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
   }
 
   Future<void> _handleAudioUpload(
-    BuildContext context,
     AppLocalization l,
   ) async {
     try {
@@ -885,12 +884,12 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.04) : Colors.white,
+        color: isDark ? PremiumTokens.borderSubtle : PremiumTokens.textPrimary,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: isDark
-              ? Colors.white.withValues(alpha: 0.06)
-              : Colors.black.withValues(alpha: 0.05),
+              ? PremiumTokens.borderSubtle
+              : PremiumTokens.voidPure.withValues(alpha: 0.05),
         ),
       ),
       child: Column(
@@ -905,7 +904,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                 style: GoogleFonts.outfit(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : const Color(0xFF1A1A2E),
+                  color: isDark ? PremiumTokens.textPrimary : const Color(0xFF1A1A2E),
                 ),
               ),
             ],
@@ -915,7 +914,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
             content,
             style: GoogleFonts.outfit(
               fontSize: 14,
-              color: isDark ? Colors.white70 : Colors.black87,
+              color: isDark ? PremiumTokens.textSecondary : PremiumTokens.voidPure87,
               height: 1.5,
             ),
           ),

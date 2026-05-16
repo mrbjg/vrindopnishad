@@ -51,14 +51,14 @@ class StreakFireAnimation extends StatelessWidget {
             right: -2,
             child: Container(
               padding: const EdgeInsets.all(4),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: PremiumTokens.textPrimary,
                 shape: BoxShape.circle,
               ),
               child: Text(
                 '$streak',
-                style: const TextStyle(
-                  color: PremiumTokens.voidIndigo,
+                style: TextStyle(
+                  color: PremiumTokens.surfaceMain,
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
                 ),

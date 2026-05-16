@@ -30,7 +30,7 @@ class XPToast {
                     spreadRadius: -5,
                   ),
                 ],
-                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                border: Border.all(color: PremiumTokens.borderMedium),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -42,11 +42,11 @@ class XPToast {
                     style: PremiumTokens.sansStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w900,
-                      color: Colors.white,
+                      color: PremiumTokens.textPrimary,
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Container(width: 1, height: 16, color: Colors.white24),
+                  Container(width: 1, height: 16, color: PremiumTokens.textHint),
                   const SizedBox(width: 8),
                   Flexible(
                     child: Text(
@@ -55,7 +55,7 @@ class XPToast {
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1,
-                        color: Colors.white70,
+                        color: PremiumTokens.textSecondary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

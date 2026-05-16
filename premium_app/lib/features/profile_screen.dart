@@ -34,7 +34,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     super.build(context);
     final authState = ref.watch(authStateProvider);
     final user = authState.value;
-    final statsAsync = ref.watch(userStatsProvider);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -63,7 +62,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       icon: Iconsax.edit_2,
                       title: "Journal Reflections",
                       subtitle: "Your spiritual diary",
-                      color: PremiumTokens.celestialSilver,
+                      color: PremiumTokens.textPrimary,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const EternalReflectionScreen(showBackButton: true)),
@@ -74,7 +73,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       icon: Iconsax.heart,
                       title: "Saved Items",
                       subtitle: "Your spiritual vault",
-                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.7),
+                      color: PremiumTokens.textSecondary,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const SavedItemsScreen()),
@@ -85,7 +84,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       icon: Iconsax.clock,
                       title: "Reading History",
                       subtitle: "Continue your reflections",
-                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.5),
+                      color: PremiumTokens.textMuted,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const ReadingHistoryScreen()),
@@ -99,7 +98,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       icon: Iconsax.setting_2,
                       title: "Settings",
                       subtitle: "Notifications & Account",
-                      color: PremiumTokens.celestialSilver.withValues(alpha: 0.3),
+                      color: PremiumTokens.textMuted,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const SettingsScreen()),
@@ -110,7 +109,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       icon: Iconsax.info_circle,
                       title: "About Divine Path",
                       subtitle: "Vision & Mission",
-                      color: PremiumTokens.silver,
+                      color: PremiumTokens.textSecondary,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const AboutScreen()),
@@ -122,10 +121,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                     Center(
                       child: TextButton.icon(
                         onPressed: () => _handleLogout(context, ref),
-                        icon: const Icon(Iconsax.logout, color: Colors.white24, size: 20),
+                        icon: Icon(Iconsax.logout, color: PremiumTokens.textMuted, size: 20),
                         label: Text(
                           "Sign Out from Path",
-                          style: GoogleFonts.outfit(color: Colors.white24, fontWeight: FontWeight.bold),
+                          style: GoogleFonts.outfit(color: PremiumTokens.textMuted, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -148,7 +147,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           width: 3,
           height: 16,
           decoration: BoxDecoration(
-            color: PremiumTokens.celestialSilver.withValues(alpha: 0.3),
+            color: PremiumTokens.textMuted,
             borderRadius: BorderRadius.circular(0),
           ),
         ),
@@ -158,7 +157,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           style: GoogleFonts.manrope(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: Colors.white38,
+            color: PremiumTokens.textMuted,
             letterSpacing: 2,
           ),
         ),
@@ -193,13 +192,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
         ),
         title: Text(
           title,
-          style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+          style: GoogleFonts.manrope(color: PremiumTokens.textPrimary, fontWeight: FontWeight.bold, fontSize: 16),
         ),
         subtitle: Text(
           subtitle,
-          style: GoogleFonts.manrope(color: Colors.white38, fontSize: 13),
+          style: GoogleFonts.manrope(color: PremiumTokens.textMuted, fontSize: 13),
         ),
-        trailing: const Icon(Iconsax.arrow_right_3, color: Colors.white12, size: 18),
+        trailing: Icon(Iconsax.arrow_right_3, color: PremiumTokens.textMuted, size: 18),
       ),
     );
   }
@@ -243,7 +242,7 @@ class _PremiumProfileHeader extends ConsumerWidget {
               child: IconButton(
                 icon: Icon(
                   AppTheme.isDark(context) ? Iconsax.sun_1 : Iconsax.moon,
-                  color: Colors.white,
+                  color: PremiumTokens.textPrimary,
                   size: 20,
                 ),
                 onPressed: () {
@@ -260,7 +259,7 @@ class _PremiumProfileHeader extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(4),
             decoration: PremiumTokens.evolvingAura(
-              color: PremiumTokens.celestialSilver,
+              color: PremiumTokens.textPrimary,
               intensity: 0.5,
             ),
             child: Container(
@@ -271,14 +270,14 @@ class _PremiumProfileHeader extends ConsumerWidget {
                 gradient: PremiumTokens.nebulaGradient,
               ),
               child: Container(
-                decoration: const BoxDecoration(shape: BoxShape.circle, color: PremiumTokens.charcoal),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: PremiumTokens.surfaceMain),
                 child: user?.photoURL != null
                     ? PremiumUI.networkImage(
                         url: user!.photoURL!,
                         fit: BoxFit.cover,
                         borderRadius: BorderRadius.circular(60),
                       )
-                    : const Icon(Iconsax.user, color: Colors.white24, size: 48),
+                    : Icon(Iconsax.user, color: PremiumTokens.textMuted, size: 48),
               ),
             ),
           ).animate().scale(delay: 200.ms, duration: 600.ms, curve: Curves.easeOutBack),
@@ -290,7 +289,7 @@ class _PremiumProfileHeader extends ConsumerWidget {
             style: GoogleFonts.manrope(
               fontSize: 28,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: PremiumTokens.textPrimary,
               letterSpacing: 1,
             ),
           ),
@@ -302,11 +301,11 @@ class _PremiumProfileHeader extends ConsumerWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Iconsax.sms, color: PremiumTokens.celestialSilver, size: 14),
+                const Icon(Iconsax.sms, color: PremiumTokens.nebulaBlue, size: 14),
                 const SizedBox(width: 8),
                   Text(
                     user?.email ?? "Exploring the Path",
-                    style: GoogleFonts.manrope(color: Colors.white70, fontSize: 13),
+                    style: GoogleFonts.manrope(color: PremiumTokens.textSecondary, fontSize: 13),
                   ),
               ],
             ),
@@ -322,7 +321,7 @@ class _PremiumProfileHeader extends ConsumerWidget {
                 data: (stats) => Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildStat("Japs", _formatCount(stats?.totalJapCount ?? 0), PremiumTokens.celestialSilver.withValues(alpha: 0.7)),
+                    _buildStat("Japs", _formatCount(stats?.totalJapCount ?? 0), PremiumTokens.textSecondary),
                   ],
                 ),
                 loading: () => Row(
@@ -346,7 +345,7 @@ class _PremiumProfileHeader extends ConsumerWidget {
         Text(
           value,
           style: GoogleFonts.manrope(
-            color: Colors.white,
+            color: PremiumTokens.textPrimary,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),

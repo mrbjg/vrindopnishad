@@ -233,7 +233,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         style: GoogleFonts.spectral(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: PremiumTokens.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -241,7 +241,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         "Version 1.0.0",
                         style: GoogleFonts.outfit(
                           fontSize: 13,
-                          color: Colors.white38,
+                          color: PremiumTokens.textMuted,
                         ),
                       ),
                     ],
@@ -264,17 +264,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.08),
+          color: PremiumTokens.borderSubtle,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: PremiumTokens.borderMedium,
           ),
         ),
         child: PremiumUI.animatedIcon(
           folder: 'Chevron-left',
           fileName: 'chevron-left.json',
           size: 20,
-          color: Colors.white,
+          color: PremiumTokens.textPrimary,
           onTap: () => Navigator.pop(context),
         ),
       ),
@@ -328,10 +328,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: PremiumTokens.borderSubtle,
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.08),
+          color: PremiumTokens.borderSubtle,
           width: 1.5,
         ),
       ),
@@ -357,7 +357,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                 ],
               ),
-              child: Icon(icon, color: Colors.white, size: 20),
+              child: Icon(icon, color: PremiumTokens.textPrimary, size: 20),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -376,7 +376,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     subtitle,
                     style: PremiumTokens.sansStyle(
                       fontSize: 13,
-                      color: Colors.white38,
+                      color: PremiumTokens.textMuted,
                     ),
                   ),
                 ],
@@ -403,7 +403,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         height: 32,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: value ? activeColor : Colors.grey.withValues(alpha: 0.3),
+          color: value ? activeColor : PremiumTokens.textMuted.withValues(alpha: 0.3),
           boxShadow: value
               ? [
                   BoxShadow(
@@ -423,11 +423,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             width: 26,
             height: 26,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: PremiumTokens.textPrimary,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.15),
+                  color: PremiumTokens.scaffoldBg.withValues(alpha: 0.15),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -448,10 +448,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       onTap: () => _showLanguageDialog(context, l),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.06),
+          color: PremiumTokens.borderSubtle,
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.08),
+            color: PremiumTokens.borderSubtle,
             width: 1.5,
           ),
         ),
@@ -473,9 +473,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                   ],
                 ),
-                child: const Icon(
+                child: Icon(
                   Iconsax.language_circle,
-                  color: Colors.white,
+                  color: PremiumTokens.textPrimary,
                   size: 20,
                 ),
               ),
@@ -496,7 +496,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ref.read(languageProvider.notifier).languageName,
                       style: PremiumTokens.sansStyle(
                         fontSize: 13,
-                        color: Colors.white38,
+                        color: PremiumTokens.textMuted,
                       ),
                     ),
                   ],
@@ -505,7 +505,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.05),
+                  color: PremiumTokens.borderSubtle,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -529,10 +529,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       builder: (context) => Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: const Color(0xFF1A1A2E),
+          color: PremiumTokens.sheetBgTop,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: PremiumTokens.borderMedium,
           ),
         ),
         child: SafeArea(
@@ -546,7 +546,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     width: 48,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: Colors.white38.withValues(alpha: 0.3),
+                      color: PremiumTokens.textMuted.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
@@ -560,9 +560,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         gradient: PremiumTokens.nebulaGradient,
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Iconsax.global,
-                        color: Colors.white,
+                        color: PremiumTokens.textPrimary,
                         size: 22,
                       ),
                     ),
@@ -580,7 +580,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 Text(
                   "Choose your preferred language",
                   style: GoogleFonts.outfit(
-                    color: Colors.white38,
+                    color: PremiumTokens.textMuted,
                     fontSize: 14,
                   ),
                 ),
@@ -623,7 +623,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         decoration: BoxDecoration(
                           color: isSelected
                               ? PremiumTokens.nebulaBlue.withValues(alpha: 0.1)
-                              : Colors.white.withValues(alpha: 0.05),
+                              : PremiumTokens.borderSubtle,
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
                             color: isSelected
@@ -639,7 +639,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? PremiumTokens.nebulaBlue.withValues(alpha: 0.15)
-                                    : Colors.white.withValues(alpha: 0.05),
+                                    : PremiumTokens.borderSubtle,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Icon(
@@ -647,7 +647,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 size: 20,
                                 color: isSelected
                                     ? PremiumTokens.nebulaBlue
-                                    : Colors.white38,
+                                    : PremiumTokens.textMuted,
                               ),
                             ),
                             const SizedBox(width: 16),
@@ -664,14 +664,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                       fontSize: 16,
                                       color: isSelected
                                           ? PremiumTokens.nebulaBlue
-                                          : Colors.white,
+                                          : PremiumTokens.textPrimary,
                                     ),
                                   ),
                                   Text(
                                     nativeName,
                                     style: GoogleFonts.outfit(
                                       fontSize: 13,
-                                      color: Colors.white38,
+                                      color: PremiumTokens.textMuted,
                                     ),
                                   ),
                                 ],
@@ -684,9 +684,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   color: PremiumTokens.nebulaBlue,
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Iconsax.tick_circle,
-                                  color: Colors.white,
+                                  color: PremiumTokens.textPrimary,
                                   size: 14,
                                 ),
                               ),
@@ -730,12 +730,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.06),
+          color: PremiumTokens.borderSubtle,
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
             color: isDestructive
                 ? Colors.red.withValues(alpha: 0.15)
-                : Colors.white.withValues(alpha: 0.08),
+                : PremiumTokens.borderSubtle,
             width: 1.5,
           ),
         ),
@@ -761,7 +761,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                   ],
                 ),
-                child: Icon(icon, color: Colors.white, size: 20),
+                child: Icon(icon, color: PremiumTokens.textPrimary, size: 20),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -772,7 +772,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     fontSize: 16,
                     color: isDestructive
                         ? Colors.red
-                        : Colors.white,
+                        : PremiumTokens.textPrimary,
                     letterSpacing: -0.2,
                   ),
                 ),
@@ -780,7 +780,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.05),
+                  color: PremiumTokens.borderSubtle,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -802,9 +802,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: PremiumTokens.borderSubtle,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PremiumTokens.borderSubtle),
       ),
       child: Row(
         children: [
@@ -829,7 +829,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ReadingTheme.voidFocus,
             "Void",
             currentTheme == ReadingTheme.voidFocus,
-            Colors.white54,
+            PremiumTokens.textMuted,
           ),
         ],
       ),
@@ -856,7 +856,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             color: isSelected ? accentColor.withValues(alpha: 0.15) : Colors.transparent,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isSelected ? accentColor.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.05),
+              color: isSelected ? accentColor.withValues(alpha: 0.3) : PremiumTokens.borderSubtle,
               width: 1.5,
             ),
           ),
@@ -869,7 +869,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 child: Icon(
                   isSelected ? Iconsax.tick_circle5 : Iconsax.stop,
                   size: 16,
-                  color: isSelected ? accentColor : Colors.white24,
+                  color: isSelected ? accentColor : PremiumTokens.textHint,
                 ),
               ),
               const SizedBox(height: 6),
@@ -878,7 +878,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 style: GoogleFonts.manrope(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
-                  color: isSelected ? accentColor : Colors.white38,
+                  color: isSelected ? accentColor : PremiumTokens.textMuted,
                 ),
               ),
             ],
@@ -896,7 +896,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     String levelName = "Starter";
     String nextUnlock = "Reach 21 Malas today for Radiant";
     IconData icon = Iconsax.star_1;
-    Color color = Colors.white60;
+    Color color = PremiumTokens.textPrimary60;
 
     if (totalMalas >= 1008) {
       levelName = "Divine Level";
@@ -950,7 +950,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   nextUnlock,
                   style: PremiumTokens.sansStyle(
                     fontSize: 12,
-                    color: Colors.white38,
+                    color: PremiumTokens.textMuted,
                   ),
                 ),
               ],

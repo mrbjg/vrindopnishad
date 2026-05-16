@@ -147,14 +147,14 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
                                           Text(
                                             "${item.category ?? 'Divine'} • ${_formatTime(item.readAt)}",
                                             style: PremiumTokens.sansStyle(
-                                              color: Colors.white38, 
+                                              color: PremiumTokens.textMuted, 
                                               fontSize: 11,
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
-                                    const Icon(Iconsax.arrow_right_3, size: 18, color: Colors.white12),
+                                    Icon(Iconsax.arrow_right_3, size: 18, color: PremiumTokens.borderMedium),
                                   ],
                                 ),
                               ),
@@ -181,7 +181,7 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
       context: context,
       barrierDismissible: true,
       barrierLabel: "Dismiss",
-      barrierColor: Colors.black.withValues(alpha: 0.85),
+      barrierColor: PremiumTokens.scaffoldBg.withValues(alpha: 0.85),
       transitionDuration: const Duration(milliseconds: 500),
       pageBuilder: (ctx, animation, secondaryAnimation) {
         return Center(
@@ -267,7 +267,7 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
           ).animate(onPlay: (c) => c.forward())
            .scale(begin: const Offset(0.7, 0.7), end: const Offset(1, 1), curve: Curves.easeOutBack, duration: 400.ms)
            .fadeIn(duration: 400.ms)
-           .shimmer(delay: 500.ms, duration: 2.seconds, color: Colors.white10),
+           .shimmer(delay: 500.ms, duration: 2.seconds, color: PremiumTokens.borderSubtle),
         );
       },
     );
@@ -303,7 +303,7 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
           Text(
             "Start exploring sacred content",
             style: PremiumTokens.sansStyle(
-              color: Colors.white38,
+              color: PremiumTokens.textMuted,
               fontSize: 14,
             ),
           ),
@@ -340,7 +340,7 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
                     style: GoogleFonts.manrope(
                       fontSize: 11,
                       fontWeight: FontWeight.w900,
-                      color: PremiumTokens.voidBlack,
+                      color: PremiumTokens.surfaceMain,
                       letterSpacing: 2.5,
                     ),
                   ),

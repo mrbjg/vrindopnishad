@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
+import '../core/design_system.dart';
 import 'package:flutter/services.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
@@ -227,7 +228,7 @@ class _FlowerOfLifePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = (isDark ? Colors.white : AppTheme.primaryColor).withValues(alpha: 0.05,)
+      ..color = (isDark ? PremiumTokens.textPrimary : AppTheme.primaryColor).withValues(alpha: 0.05,)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.5;
 
@@ -284,12 +285,12 @@ class GlassCard extends StatelessWidget {
     Widget contents = Container(
       padding: padding ?? const EdgeInsets.all(AppTheme.space16),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.black : Colors.white).withValues(alpha: AppTheme.lowPerformanceMode ? opacity * 1.5 : opacity,),
+        color: (isDark ? PremiumTokens.voidPure : PremiumTokens.textPrimary).withValues(alpha: AppTheme.lowPerformanceMode ? opacity * 1.5 : opacity,),
         borderRadius: radius,
         border: Border.all(
           color:
               borderColor ??
-              (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+              (isDark ? PremiumTokens.textPrimary : PremiumTokens.voidPure).withValues(alpha: 0.05),
           width: 0.8,
         ),
       ),
@@ -347,8 +348,8 @@ class ShimmerLoading extends StatelessWidget {
           height: height,
           decoration: BoxDecoration(
             color: isDark
-                ? Colors.white.withValues(alpha: 0.05)
-                : Colors.black.withValues(alpha: 0.05),
+                ? PremiumTokens.borderSubtle
+                : PremiumTokens.voidPure.withValues(alpha: 0.05),
             borderRadius:
                 borderRadius ?? BorderRadius.circular(AppTheme.radiusSmall),
           ),
@@ -357,8 +358,8 @@ class ShimmerLoading extends StatelessWidget {
         .shimmer(
           duration: 1500.ms,
           color: isDark
-              ? Colors.white.withValues(alpha: 0.1)
-              : Colors.white.withValues(alpha: 0.8),
+              ? PremiumTokens.borderMedium
+              : PremiumTokens.textPrimary.withValues(alpha: 0.8),
         );
   }
 }
@@ -415,7 +416,7 @@ class GradientCategoryCard extends StatelessWidget {
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.12),
+                  color: PremiumTokens.borderMedium,
                 ),
               ),
             ),
@@ -428,18 +429,18 @@ class GradientCategoryCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.18),
+                      color: PremiumTokens.borderMedium,
                       borderRadius: BorderRadius.circular(
                         AppTheme.radiusMedium,
                       ),
                     ),
-                    child: Icon(icon, color: Colors.white, size: 20),
+                    child: Icon(icon, color: PremiumTokens.textPrimary, size: 20),
                   ),
                   const Spacer(),
                   Text(
                     title,
                     style: GoogleFonts.outfit(
-                      color: Colors.white,
+                      color: PremiumTokens.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                     ),
@@ -448,7 +449,7 @@ class GradientCategoryCard extends StatelessWidget {
                     Text(
                       '$itemCount items',
                       style: GoogleFonts.outfit(
-                        color: Colors.white.withValues(alpha: 0.9),
+                        color: PremiumTokens.textPrimary.withValues(alpha: 0.9),
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                       ),
@@ -586,7 +587,7 @@ class PulsingOmButton extends StatelessWidget {
                       'ॐ',
                       style: TextStyle(
                         fontSize: size * 0.5,
-                        color: Colors.white,
+                        color: PremiumTokens.textPrimary,
                         fontWeight: FontWeight.w300,
                         height: 1.0,
                       ),
@@ -704,7 +705,7 @@ class _RadialMenuState extends State<RadialMenu>
                             ),
                           ],
                         ),
-                        child: Icon(item.icon, color: Colors.white, size: 20),
+                        child: Icon(item.icon, color: PremiumTokens.textPrimary, size: 20),
                       ),
                     ),
                   ),
@@ -761,7 +762,7 @@ class QuoteCard extends StatelessWidget {
             Icons.format_quote,
             size: 32,
             color: isDark
-                ? Colors.white24
+                ? PremiumTokens.textHint
                 : AppTheme.primaryColor.withValues(alpha: 0.3),
           ),
           const SizedBox(height: AppTheme.space12),
@@ -770,7 +771,7 @@ class QuoteCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w500,
-              color: isDark ? Colors.white : AppTheme.lightTextPrimary,
+              color: isDark ? PremiumTokens.textPrimary : AppTheme.lightTextPrimary,
               height: 1.5,
               fontStyle: FontStyle.italic,
             ),
@@ -781,7 +782,7 @@ class QuoteCard extends StatelessWidget {
               '— $source',
               style: TextStyle(
                 fontSize: 14,
-                color: isDark ? Colors.white60 : AppTheme.lightTextSecondary,
+                color: isDark ? PremiumTokens.textPrimary60 : AppTheme.lightTextSecondary,
               ),
             ),
           ],
@@ -867,7 +868,7 @@ class CategoryPill extends StatelessWidget {
                 icon,
                 size: 16,
                 color: isSelected
-                    ? Colors.white
+                    ? PremiumTokens.textPrimary
                     : AppTheme.textSecondary(context),
               ),
               const SizedBox(width: 6),
@@ -878,7 +879,7 @@ class CategoryPill extends StatelessWidget {
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 color: isSelected
-                    ? Colors.white
+                    ? PremiumTokens.textPrimary
                     : AppTheme.textPrimary(context),
               ),
             ),

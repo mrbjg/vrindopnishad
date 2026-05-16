@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../core/theme.dart';
+import '../core/design_system.dart';
 import 'animated_effects.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
@@ -60,7 +61,7 @@ class SacredCard extends StatelessWidget {
                 'ॐ',
                 style: TextStyle(
                   fontSize: 120,
-                  color: (isDark ? Colors.white : AppTheme.primaryColor)
+                  color: (isDark ? PremiumTokens.textPrimary : AppTheme.primaryColor)
                       .withValues(alpha: 0.06),
                   fontWeight: FontWeight.w300,
                 ),
@@ -78,7 +79,7 @@ class SacredCard extends StatelessWidget {
                       vertical: AppTheme.space4,
                     ),
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.white : AppTheme.primaryColor)
+                      color: (isDark ? PremiumTokens.textPrimary : AppTheme.primaryColor)
                           .withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(AppTheme.radiusFull),
                     ),
@@ -88,7 +89,7 @@ class SacredCard extends StatelessWidget {
                         Icon(
                           Iconsax.magic_star,
                           size: 12,
-                          color: isDark ? Colors.white : AppTheme.primaryDark,
+                          color: isDark ? PremiumTokens.textPrimary : AppTheme.primaryDark,
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -96,7 +97,7 @@ class SacredCard extends StatelessWidget {
                           style: GoogleFonts.outfit(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white : AppTheme.primaryDark,
+                            color: isDark ? PremiumTokens.textPrimary : AppTheme.primaryDark,
                             letterSpacing: 0.5,
                           ),
                         ),
@@ -110,7 +111,7 @@ class SacredCard extends StatelessWidget {
                   style: GoogleFonts.spectral(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : AppTheme.lightTextPrimary,
+                    color: isDark ? PremiumTokens.textPrimary : AppTheme.lightTextPrimary,
                     height: 1.3,
                   ),
                   maxLines: 2,
@@ -123,7 +124,7 @@ class SacredCard extends StatelessWidget {
                     style: GoogleFonts.outfit(
                       fontSize: 14,
                       color:
-                          (isDark ? Colors.white : AppTheme.lightTextSecondary)
+                          (isDark ? PremiumTokens.textPrimary : AppTheme.lightTextSecondary)
                               .withValues(alpha: 0.8),
                       height: 1.5,
                     ),
@@ -182,7 +183,7 @@ class SacredCard extends StatelessWidget {
           Icon(
             icon,
             size: 16,
-            color: isPrimary ? Colors.white : AppTheme.primaryColor,
+            color: isPrimary ? PremiumTokens.textPrimary : AppTheme.primaryColor,
           ),
           const SizedBox(width: 8),
           Text(
@@ -190,7 +191,7 @@ class SacredCard extends StatelessWidget {
             style: GoogleFonts.outfit(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: isPrimary ? Colors.white : AppTheme.primaryColor,
+              color: isPrimary ? PremiumTokens.textPrimary : AppTheme.primaryColor,
             ),
           ),
         ],
@@ -214,12 +215,12 @@ class SacredCard extends StatelessWidget {
                 gradient: AppTheme.primaryGradient(context),
                 borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
               ),
-              child: const Center(
+              child: Center(
                 child: Text(
                   'ॐ',
                   style: TextStyle(
                     fontSize: 24,
-                    color: Colors.white,
+                    color: PremiumTokens.textPrimary,
                     fontWeight: FontWeight.w300,
                   ),
                 ),

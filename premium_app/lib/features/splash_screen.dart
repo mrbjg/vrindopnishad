@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../core/design_system.dart';
-import '../core/theme.dart';
 
 class SplashScreen extends StatefulWidget {
   final VoidCallback onComplete;
@@ -26,12 +25,12 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: PremiumTokens.scaffoldBg,
       body: Stack(
         children: [
           // Cosmic Background
           Positioned.fill(
-            child: PremiumUI.masterBackground(index: 0),
+            child: PremiumUI.masterBackground(index: 0, context: context),
           ),
 
           // Liquid Glass Orb — expanding radial glow behind logo
