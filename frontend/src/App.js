@@ -227,6 +227,8 @@ function App() {
                       path="/admin-old/dashboard"
                       element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin-old/login" />}
                     />
+                    {/* Catch-all: redirect unknown routes to home */}
+                    <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
                 </React.Suspense>
               </Layout>
