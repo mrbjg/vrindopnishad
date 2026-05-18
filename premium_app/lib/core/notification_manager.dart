@@ -43,7 +43,11 @@ class NotificationManager {
       final todayDate = now.toIso8601String().split('T')[0];
 
       if (lastDate != todayDate) {
-        await ref.read(notificationServiceProvider).scheduleStreakWarning(stats.streakCount);
+        try {
+          await ref.read(notificationServiceProvider).scheduleStreakWarning(stats.streakCount);
+        } catch (e) {
+          // Android 13+ may deny exact alarms — gracefully ignore
+        }
       }
     }
   }
@@ -53,16 +57,24 @@ class NotificationManager {
     for (final event in events) {
       // Only schedule for future events within next 7 days to avoid flooding
       if (event.date.isAfter(now) && event.date.difference(now).inDays <= 7) {
-        await ref.read(notificationServiceProvider).scheduleSacredEventReminder(
-          event.id,
-          event.title,
-          event.date,
-        );
+        try {
+          await ref.read(notificationServiceProvider).scheduleSacredEventReminder(
+            event.id,
+            event.title,
+            event.date,
+          );
+        } catch (e) {
+          // Gracefully handle exact alarm permission denial
+        }
       }
     }
   }
 
   Future<void> _syncGyaanReminder(DailyGyaan gyaan) async {
-    await ref.read(notificationServiceProvider).scheduleDailyGyaanNotification(gyaan.title);
+    try {
+      await ref.read(notificationServiceProvider).scheduleDailyGyaanNotification(gyaan.title);
+    } catch (e) {
+      // Gracefully handle exact alarm permission denial
+    }
   }
 }

@@ -20,6 +20,14 @@ class PremiumTokens {
   static Brightness brightness = Brightness.dark;
   static bool get isDark => brightness == Brightness.dark;
 
+  /// Context-aware brightness sync. Call this at the top of any build()
+  /// method to ensure PremiumTokens reads the correct theme from the
+  /// widget tree. This also subscribes the widget to Theme changes via
+  /// the InheritedWidget mechanism, ensuring instant rebuilds.
+  static void of(BuildContext context) {
+    brightness = Theme.of(context).brightness;
+  }
+
   // ═══════════════════════════════════════════════════════════════════════════
   // COLORS: Enhanced Palette
   // ═══════════════════════════════════════════════════════════════════════════

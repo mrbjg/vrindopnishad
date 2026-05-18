@@ -29,22 +29,10 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   final ValueNotifier<Offset?> _menuPointerPosition = ValueNotifier<Offset?>(null);
   final GlobalKey<SacredActionMenuState> _menuKey = GlobalKey<SacredActionMenuState>();
 
-  // Optimized screen instances to prevent recreation on every rebuild
-  late final List<Widget> _screens;
-
   @override
   void initState() {
     super.initState();
     PremiumUI.setSacredStatus();
-    
-    _screens = [
-      const HomeScreen(),
-      const LibraryScreen(),
-      const NaamJapScreen(),
-      const EternalReflectionScreen(),
-      const ProfileScreen(),
-      const RitualsScreen(),
-    ];
 
     // Initialize notifications and sync reminders
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -63,8 +51,22 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // CRITICAL: Watch themeProvider to force rebuild on theme change.
+    // Without this, IndexedStack caches old-theme screens indefinitely.
+    final themeMode = ref.watch(themeProvider);
     // Activate Dynamic Icon Service
     ref.watch(dynamicIconServiceProvider);
+
+    // Screens are built fresh on each rebuild so they pick up the new theme.
+    // IndexedStack keeps them alive between tab switches within the same theme.
+    final screens = [
+      const HomeScreen(),
+      const LibraryScreen(),
+      const NaamJapScreen(),
+      const EternalReflectionScreen(),
+      const ProfileScreen(),
+      const RitualsScreen(),
+    ];
 
     return Scaffold(
       backgroundColor: PremiumTokens.surfaceMain,
@@ -85,7 +87,11 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
               builder: (context, ref, child) {
                 final currentIndex = ref.watch(navigationIndexProvider);
                 return RepaintBoundary(
-                  child: IndexedStack(index: currentIndex, children: _screens),
+                  child: IndexedStack(
+                    key: ValueKey(themeMode),
+                    index: currentIndex,
+                    children: screens,
+                  ),
                 );
               },
             ),
