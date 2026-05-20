@@ -36,7 +36,7 @@ class SavedItemsScreen extends ConsumerWidget {
                     folder: 'Chevron-left',
                     fileName: 'chevron-left.json',
                     size: 20,
-                    color: PremiumTokens.nebulaBlue,
+                    color: PremiumTokens.activeAccent,
                     onTap: () => Navigator.pop(context),
                   ),
                   onPressed: () {}, // Handled by animatedIcon onTap
@@ -83,7 +83,7 @@ class SavedItemsScreen extends ConsumerWidget {
                               subtitle: Text(
                                 item.category,
                                 style: PremiumTokens.sansStyle(
-                                  color: PremiumTokens.nebulaBlue,
+                                  color: PremiumTokens.activeAccent,
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -128,15 +128,15 @@ class SavedItemsScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+              color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
               shape: BoxShape.circle,
-              border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
+              border: Border.all(color: PremiumTokens.activeAccent.withValues(alpha: 0.2)),
             ),
             child: PremiumUI.animatedIcon(
               folder: 'Heart',
               fileName: 'heart.json',
               size: 80,
-              color: PremiumTokens.nebulaBlue,
+              color: PremiumTokens.activeAccent,
             ),
           ),
           const SizedBox(height: 20),

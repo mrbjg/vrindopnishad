@@ -18,14 +18,14 @@ class XPToast {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    PremiumTokens.nebulaBlue.withValues(alpha: 0.9),
+                    PremiumTokens.activeAccent.withValues(alpha: 0.9),
                     PremiumTokens.voidIndigo.withValues(alpha: 0.9),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(100),
                 boxShadow: [
                   BoxShadow(
-                    color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
+                    color: PremiumTokens.activeAccent.withValues(alpha: 0.3),
                     blurRadius: 20,
                     spreadRadius: -5,
                   ),

@@ -194,10 +194,10 @@ class EtherealOrbPlayer extends ConsumerWidget {
 
   Color _getCategoryColor(String category) {
     category = category.toLowerCase();
-    if (category.contains('shloka')) return PremiumTokens.nebulaBlue;
+    if (category.contains('shloka')) return PremiumTokens.activeAccent;
     if (category.contains('mantra')) return PremiumTokens.saffronGlow;
     if (category.contains('poem')) return PremiumTokens.celestialGlow;
-    return PremiumTokens.nebulaBlue;
+    return PremiumTokens.activeAccent;
   }
 }
 

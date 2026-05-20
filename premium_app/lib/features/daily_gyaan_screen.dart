@@ -82,9 +82,9 @@ class DailyGyaanScreen extends ConsumerWidget {
                 Expanded(
                   child: gyaanAsync.when(
                     data: (gyaanList) => _buildGyaanList(context, gyaanList),
-                    loading: () => const Center(
+                    loading: () => Center(
                         child: CircularProgressIndicator(
-                            color: PremiumTokens.nebulaBlue)),
+                            color: PremiumTokens.activeAccent)),
                     error: (e, _) => Center(
                       child: Text('Error: $e',
                           style: TextStyle(color: PremiumTokens.textMuted)),
@@ -130,7 +130,7 @@ class DailyGyaanScreen extends ConsumerWidget {
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
                 blurRadius: 40,
                 spreadRadius: -10,
               )
@@ -201,10 +201,10 @@ class DailyGyaanScreen extends ConsumerWidget {
           ),
         ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.05, curve: Curves.easeOutCubic);
       },
-      loading: () => const SizedBox(
+      loading: () => SizedBox(
           height: 200,
           child: Center(
-              child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue))),
+              child: CircularProgressIndicator(color: PremiumTokens.activeAccent))),
       error: (e, _) => const SizedBox.shrink(),
     );
   }
@@ -393,7 +393,7 @@ class DailyGyaanScreen extends ConsumerWidget {
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 2,
-                      color: PremiumTokens.nebulaBlue,
+                      color: PremiumTokens.activeAccent,
                     ),
                   ),
                 ),

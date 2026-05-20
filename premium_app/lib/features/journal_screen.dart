@@ -247,7 +247,7 @@ class _JournalEntryList extends ConsumerWidget {
           ),
         );
       },
-      loading: () => const SliverFillRemaining(child: Center(child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue))),
+      loading: () => SliverFillRemaining(child: Center(child: CircularProgressIndicator(color: PremiumTokens.activeAccent))),
       error: (e, __) => SliverFillRemaining(child: Center(child: Text("Error syncing reflections: $e", style: TextStyle(color: PremiumTokens.textMuted)))),
     );
   }
@@ -440,7 +440,7 @@ Widget _buildEmptyState(BuildContext context, WidgetRef ref) {
             color: PremiumTokens.borderSubtle,
             border: Border.all(color: PremiumTokens.borderSubtle),
           ),
-          child: const Icon(Iconsax.note_21, color: PremiumTokens.nebulaBlue, size: 64),
+          child: Icon(Iconsax.note_21, color: PremiumTokens.activeAccent, size: 64),
         ).animate(onPlay: (c) => c.repeat(reverse: true)).shimmer(duration: 3.seconds),
         const SizedBox(height: 32),
         Text(

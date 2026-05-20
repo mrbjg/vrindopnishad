@@ -147,7 +147,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                             SizedBox(
                               width: double.infinity,
                               child: _isLoading 
-                                ? const Center(child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue))
+                                ? Center(child: CircularProgressIndicator(color: PremiumTokens.activeAccent))
                                 : PremiumUI.primaryButton(
                                     text: "SECURE ENTRY",
                                     onTap: _handleEmailAuth,
@@ -274,15 +274,15 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         prefixIcon: Icon(icon, color: PremiumTokens.textMuted, size: 20),
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.05),
+        fillColor: PremiumTokens.activeAccent.withValues(alpha: 0.05),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
+          borderSide: BorderSide(color: PremiumTokens.activeAccent.withValues(alpha: 0.2)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: PremiumTokens.nebulaBlue, width: 1.5),
+          borderSide: BorderSide(color: PremiumTokens.activeAccent, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),

@@ -362,7 +362,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                 ],
               ),
-              child: Icon(icon, color: PremiumTokens.textPrimary, size: 20),
+              child: Icon(icon, color: PremiumTokens.onAccent, size: 20),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -766,7 +766,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                   ],
                 ),
-                child: Icon(icon, color: PremiumTokens.textPrimary, size: 20),
+                child: Icon(icon, color: PremiumTokens.onAccent, size: 20),
               ),
               const SizedBox(width: 16),
               Expanded(

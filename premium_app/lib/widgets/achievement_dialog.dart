@@ -98,7 +98,7 @@ class AchievementUnlockDialog extends StatelessWidget {
                       style: PremiumTokens.sansStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w900,
-                        color: PremiumTokens.nebulaBlue,
+                        color: PremiumTokens.activeAccent,
                         letterSpacing: 1,
                       ),
                     ),

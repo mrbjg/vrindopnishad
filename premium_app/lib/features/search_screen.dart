@@ -107,19 +107,19 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         borderRadius: 32,
         showGlow: true,
-        glowColor: PremiumTokens.nebulaBlue,
+        glowColor: PremiumTokens.activeAccent,
         child: TextField(
           controller: _searchController,
           focusNode: _focusNode,
           autofocus: false,
           style: GoogleFonts.manrope(color: PremiumTokens.textPrimary, fontSize: 15),
-          cursorColor: PremiumTokens.nebulaBlue,
+          cursorColor: PremiumTokens.activeAccent,
           decoration: InputDecoration(
             hintText: "Search mantras, stories, shlokas...",
             hintStyle: GoogleFonts.manrope(color: PremiumTokens.textHint, fontSize: 14),
             border: InputBorder.none,
             contentPadding: const EdgeInsets.symmetric(vertical: 15),
-            prefixIcon: const Icon(Iconsax.search_normal, color: PremiumTokens.nebulaBlue, size: 20),
+            prefixIcon: Icon(Iconsax.search_normal, color: PremiumTokens.activeAccent, size: 20),
             suffixIcon: _searchQuery.isNotEmpty
                 ? IconButton(
                     icon: Icon(Iconsax.close_circle, size: 18, color: PremiumTokens.textMuted),
@@ -206,7 +206,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   Text(
                     item.category.toUpperCase(),
                     style: GoogleFonts.manrope(
-                      color: PremiumTokens.nebulaBlue,
+                      color: PremiumTokens.activeAccent,
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 1,
@@ -261,7 +261,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     ),
                     TextButton(
                       onPressed: () => ref.read(recentSearchesProvider.notifier).clear(),
-                      child: const Text("Clear", style: TextStyle(color: PremiumTokens.nebulaBlue, fontSize: 12)),
+                      child: Text("Clear", style: TextStyle(color: PremiumTokens.activeAccent, fontSize: 12)),
                     ),
                   ],
                 ),

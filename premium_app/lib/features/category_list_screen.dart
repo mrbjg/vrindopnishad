@@ -191,7 +191,7 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
+                        color: PremiumTokens.activeAccent.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(

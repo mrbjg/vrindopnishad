@@ -234,7 +234,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                     colors: [
                       PremiumTokens.isDark 
                           ? PremiumTokens.textMuted
-                          : PremiumTokens.nebulaBlue.withValues(alpha: 0.15),
+                          : PremiumTokens.activeAccent.withValues(alpha: 0.15),
                       Colors.transparent,
                     ],
                   ),
@@ -253,10 +253,10 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                     : Colors.white.withValues(alpha: 0.85),
                 border: Border.all(color: PremiumTokens.isDark 
                     ? PremiumTokens.textMuted 
-                    : PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
+                    : PremiumTokens.activeAccent.withValues(alpha: 0.3)),
                 boxShadow: PremiumTokens.isDark ? null : [
                   BoxShadow(
-                    color: PremiumTokens.nebulaBlue.withValues(alpha: 0.08),
+                    color: PremiumTokens.activeAccent.withValues(alpha: 0.08),
                     blurRadius: 20,
                     spreadRadius: 2,
                   ),
@@ -532,7 +532,7 @@ class _MalaHistorySheetState extends ConsumerState<_MalaHistorySheet> with Singl
                   _buildHistoryContent(history, "yearly"),
                 ],
               ),
-              loading: () => const Center(child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue)),
+              loading: () => Center(child: CircularProgressIndicator(color: PremiumTokens.activeAccent)),
               error: (e, _) => Center(child: Text("Error loading history", style: TextStyle(color: PremiumTokens.textMuted))),
             ),
           ),

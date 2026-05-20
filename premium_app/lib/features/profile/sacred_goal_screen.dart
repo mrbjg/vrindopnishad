@@ -86,7 +86,7 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
       children: [
         Text(
           "DAILY MALAS",
-          style: PremiumTokens.sansStyle(fontSize: 12, fontWeight: FontWeight.bold, color: PremiumTokens.nebulaBlue, letterSpacing: 2),
+          style: PremiumTokens.sansStyle(fontSize: 12, fontWeight: FontWeight.bold, color: PremiumTokens.activeAccent, letterSpacing: 2),
         ),
         const SizedBox(height: 32),
         Row(
@@ -125,8 +125,8 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
           builder: (context, child) => Theme(
             data: (PremiumTokens.isDark ? ThemeData.dark() : ThemeData.light()).copyWith(
               colorScheme: PremiumTokens.isDark 
-                  ? ColorScheme.dark(primary: PremiumTokens.nebulaBlue, onPrimary: PremiumTokens.textPrimary, surface: PremiumTokens.surfaceMain)
-                  : ColorScheme.light(primary: PremiumTokens.nebulaBlue, onPrimary: Colors.white, surface: PremiumTokens.surfaceMain),
+                  ? ColorScheme.dark(primary: PremiumTokens.activeAccent, onPrimary: PremiumTokens.textPrimary, surface: PremiumTokens.surfaceMain)
+                  : ColorScheme.light(primary: PremiumTokens.activeAccent, onPrimary: Colors.white, surface: PremiumTokens.surfaceMain),
             ),
             child: child!,
           ),
@@ -139,7 +139,7 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Iconsax.notification, color: PremiumTokens.nebulaBlue, size: 24),
+            Icon(Iconsax.notification, color: PremiumTokens.activeAccent, size: 24),
             const SizedBox(width: 16),
             Text(
               "REMINDER: ${_reminderTime.format(context)}",
@@ -175,7 +175,7 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
           gradient: PremiumTokens.nebulaGradient,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
-            BoxShadow(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3), blurRadius: 20, spreadRadius: 2),
+            BoxShadow(color: PremiumTokens.activeAccent.withValues(alpha: 0.3), blurRadius: 20, spreadRadius: 2),
           ],
         ),
         child: Center(

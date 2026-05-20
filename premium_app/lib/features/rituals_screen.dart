@@ -42,8 +42,8 @@ class RitualsScreen extends ConsumerWidget {
                 Expanded(
                   child: ritualsAsync.when(
                     data: (rituals) => _buildRitualsList(context, ref, rituals),
-                    loading: () => const Center(child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue)),
-                    error: (e, _) => Center(child: Text("Error loading rituals: $e", style: const TextStyle(color: PremiumTokens.nebulaBlue))),
+                    loading: () => Center(child: CircularProgressIndicator(color: PremiumTokens.activeAccent)),
+                    error: (e, _) => Center(child: Text("Error loading rituals: $e", style: TextStyle(color: PremiumTokens.activeAccent))),
                   ),
                 ),
               ],
@@ -249,17 +249,17 @@ class RitualsScreen extends ConsumerWidget {
             context, 
             "Ritual removed",
             icon: Iconsax.trash,
-            color: PremiumTokens.nebulaBlue,
+            color: PremiumTokens.activeAccent,
           );
         },
         background: Container(
           alignment: Alignment.centerRight,
           padding: const EdgeInsets.only(right: 24),
           decoration: BoxDecoration(
-            color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+            color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(24),
           ),
-          child: const Icon(Iconsax.trash, color: PremiumTokens.nebulaBlue),
+          child: Icon(Iconsax.trash, color: PremiumTokens.activeAccent),
         ),
         child: GestureDetector(
           onTap: () {
@@ -286,12 +286,12 @@ class RitualsScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               color: ritual.isCompleted 
                   ? PremiumTokens.saffronGlow.withValues(alpha: 0.02) 
-                  : (isMissed ? PremiumTokens.nebulaBlue.withValues(alpha: 0.02) : PremiumTokens.borderSubtle),
+                  : (isMissed ? PremiumTokens.activeAccent.withValues(alpha: 0.02) : PremiumTokens.borderSubtle),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
                 color: ritual.isCompleted 
                   ? PremiumTokens.saffronGlow.withValues(alpha: 0.2) 
-                  : (isMissed ? PremiumTokens.nebulaBlue.withValues(alpha: 0.15) : PremiumTokens.borderMedium), 
+                  : (isMissed ? PremiumTokens.activeAccent.withValues(alpha: 0.15) : PremiumTokens.borderMedium), 
                 width: 1
               ),
               boxShadow: ritual.isCompleted ? [
@@ -367,16 +367,16 @@ class RitualsScreen extends ConsumerWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
-                          color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                          color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
+                          border: Border.all(color: PremiumTokens.activeAccent.withValues(alpha: 0.2)),
                         ),
                         child: Text(
                           "MISSED",
                           style: PremiumTokens.sansStyle(
                             fontSize: 8,
                             fontWeight: FontWeight.w900,
-                            color: PremiumTokens.nebulaBlue.withValues(alpha: 0.7),
+                            color: PremiumTokens.activeAccent.withValues(alpha: 0.7),
                           ),
                         ),
                       ),
@@ -571,9 +571,9 @@ class RitualsScreen extends ConsumerWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       decoration: BoxDecoration(
-                        color: isSelected ? PremiumTokens.nebulaBlue : PremiumTokens.borderSubtle,
+                        color: isSelected ? PremiumTokens.activeAccent : PremiumTokens.borderSubtle,
                         borderRadius: BorderRadius.circular(100),
-                        border: Border.all(color: isSelected ? PremiumTokens.nebulaBlue : PremiumTokens.borderMedium),
+                        border: Border.all(color: isSelected ? PremiumTokens.activeAccent : PremiumTokens.borderMedium),
                       ),
                       child: Text(
                         cat,
@@ -652,7 +652,7 @@ class RitualsScreen extends ConsumerWidget {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(20),
-        borderSide: const BorderSide(color: PremiumTokens.nebulaBlue, width: 1),
+        borderSide: BorderSide(color: PremiumTokens.activeAccent, width: 1),
       ),
     );
   }
@@ -743,7 +743,7 @@ class _RitualProgressHeader extends StatelessWidget {
       child: PremiumUI.etherealCard(
         padding: const EdgeInsets.all(24),
         borderRadius: 32,
-        glowColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+        glowColor: PremiumTokens.activeAccent.withValues(alpha: 0.1),
         child: Row(
           children: [
             // Progress Indicator

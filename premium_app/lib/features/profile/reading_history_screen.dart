@@ -70,7 +70,7 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
                     folder: 'Chevron-left',
                     fileName: 'chevron-left.json',
                     size: 20,
-                    color: PremiumTokens.nebulaBlue,
+                    color: PremiumTokens.activeAccent,
                     onTap: () => Navigator.pop(context),
                   ),
                   onPressed: () {}, // Handled by animatedIcon onTap
@@ -108,7 +108,7 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
                             padding: const EdgeInsets.only(bottom: 12),
                             child: PremiumUI.voidCard(
                               padding: const EdgeInsets.all(16),
-                              accentColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.5),
+                              accentColor: PremiumTokens.activeAccent.withValues(alpha: 0.5),
                               child: InkWell(
                                 onTap: () {
                                   Navigator.push(
@@ -126,10 +126,10 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
                                     Container(
                                       padding: const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
-                                        color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                                        color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
-                                      child: const Icon(Iconsax.clock, color: PremiumTokens.nebulaBlue, size: 20),
+                                      child: Icon(Iconsax.clock, color: PremiumTokens.activeAccent, size: 20),
                                     ),
                                     const SizedBox(width: 16),
                                     Expanded(
@@ -281,14 +281,14 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+              color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
               shape: BoxShape.circle,
-              border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
+              border: Border.all(color: PremiumTokens.activeAccent.withValues(alpha: 0.2)),
             ),
-            child: const Icon(
+            child: Icon(
               Iconsax.clock,
               size: 48,
-              color: PremiumTokens.nebulaBlue,
+              color: PremiumTokens.activeAccent,
             ),
           ),
           const SizedBox(height: 20),

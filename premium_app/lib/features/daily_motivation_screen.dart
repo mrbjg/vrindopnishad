@@ -117,8 +117,8 @@ class DailyMotivationScreen extends ConsumerWidget {
                         borderRadius: 28,
                         child: Column(
                           children: [
-                            const Icon(Iconsax.quote_up5,
-                                color: PremiumTokens.nebulaBlue, size: 32),
+                            Icon(Iconsax.quote_up5,
+                                color: PremiumTokens.activeAccent, size: 32),
                             const SizedBox(height: 20),
                             Text(
                               motivation.content,
@@ -138,7 +138,7 @@ class DailyMotivationScreen extends ConsumerWidget {
                                 style: PremiumTokens.sansStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
-                                  color: PremiumTokens.nebulaBlue,
+                                  color: PremiumTokens.activeAccent,
                                   letterSpacing: 1,
                                 ),
                               ),
@@ -149,9 +149,9 @@ class DailyMotivationScreen extends ConsumerWidget {
                           .fadeIn(delay: 400.ms, duration: 800.ms)
                           .slideY(begin: 0.1);
                     },
-                    loading: () => const Center(
+                    loading: () => Center(
                         child: CircularProgressIndicator(
-                            color: PremiumTokens.nebulaBlue)),
+                            color: PremiumTokens.activeAccent)),
                     error: (e, _) => const SizedBox.shrink(),
                   ),
 
@@ -199,7 +199,7 @@ class DailyMotivationScreen extends ConsumerWidget {
                             context,
                             'Sharing sacred wisdom...',
                             icon: Iconsax.share,
-                            color: PremiumTokens.nebulaBlue,
+                            color: PremiumTokens.activeAccent,
                           );
                         }
                       },
@@ -210,8 +210,8 @@ class DailyMotivationScreen extends ConsumerWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Iconsax.share,
-                                color: PremiumTokens.nebulaBlue, size: 18),
+                            Icon(Iconsax.share,
+                                color: PremiumTokens.activeAccent, size: 18),
                             const SizedBox(width: 12),
                             Text(
                               'SHARE WISDOM',

@@ -25,7 +25,7 @@ class AboutScreen extends StatelessWidget {
               height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: PremiumTokens.nebulaBlue.withValues(alpha: 0.15),
+                color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
               ),
             ).animate(onPlay: (controller) => controller.repeat(reverse: true))
              .scale(duration: 5.seconds, begin: const Offset(1, 1), end: const Offset(1.2, 1.2))
@@ -45,7 +45,7 @@ class AboutScreen extends StatelessWidget {
                     folder: 'Chevron-left',
                     fileName: 'chevron-left.json',
                     size: 20,
-                    color: PremiumTokens.nebulaBlue,
+                    color: PremiumTokens.activeAccent,
                     onTap: () => Navigator.pop(context),
                   ),
                   onPressed: () {},
@@ -71,7 +71,7 @@ class AboutScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(24),
                         decoration: PremiumTokens.evolvingAura(
-                          color: PremiumTokens.nebulaBlue,
+                          color: PremiumTokens.activeAccent,
                           intensity: 0.5,
                         ),
                         child: PremiumUI.pulsingCelestialIcon(
@@ -98,7 +98,7 @@ class AboutScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         decoration: BoxDecoration(
-                          border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
+                          border: Border.all(color: PremiumTokens.activeAccent.withValues(alpha: 0.3)),
                           borderRadius: BorderRadius.circular(100),
                         ),
                         child: Text(
@@ -107,7 +107,7 @@ class AboutScreen extends StatelessWidget {
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,
-                            color: PremiumTokens.nebulaBlue,
+                            color: PremiumTokens.activeAccent,
                           ),
                         ),
                       ).animate().fadeIn(delay: 600.ms),
@@ -147,7 +147,7 @@ class AboutScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _buildPremiumSocialIcon(context, Iconsax.instagram, "Instagram", PremiumTokens.nebulaBlue),
+                          _buildPremiumSocialIcon(context, Iconsax.instagram, "Instagram", PremiumTokens.activeAccent),
                           const SizedBox(width: 24),
                           _buildPremiumSocialIcon(context, Iconsax.message_2, "WhatsApp", Colors.greenAccent),
                           const SizedBox(width: 24),
@@ -181,7 +181,7 @@ class AboutScreen extends StatelessWidget {
                           Text(
                             "SANT-SANATAN",
                             style: GoogleFonts.manrope(
-                              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.6),
+                              color: PremiumTokens.activeAccent.withValues(alpha: 0.6),
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
                             ),
@@ -204,7 +204,7 @@ class AboutScreen extends StatelessWidget {
   Widget _buildCelestialSection(String title, String description, IconData icon) {
     return PremiumUI.voidCard(
       padding: const EdgeInsets.all(28),
-      accentColor: PremiumTokens.nebulaBlue,
+      accentColor: PremiumTokens.activeAccent,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -213,10 +213,10 @@ class AboutScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                  color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(icon, color: PremiumTokens.nebulaBlue, size: 16),
+                child: Icon(icon, color: PremiumTokens.activeAccent, size: 16),
               ),
               const SizedBox(width: 16),
               Text(

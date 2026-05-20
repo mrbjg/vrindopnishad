@@ -175,9 +175,9 @@ class LibraryScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+              color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: PremiumTokens.nebulaBlue.withValues(alpha: 0.2)),
+              border: Border.all(color: PremiumTokens.activeAccent.withValues(alpha: 0.2)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -188,7 +188,7 @@ class LibraryScreen extends ConsumerWidget {
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1,
-                    color: PremiumTokens.nebulaBlue,
+                    color: PremiumTokens.activeAccent,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -197,7 +197,7 @@ class LibraryScreen extends ConsumerWidget {
                     HapticFeedback.lightImpact();
                     ref.read(libraryCategoryProvider.notifier).state = "ALL";
                   },
-                  child: const Icon(Iconsax.close_circle, size: 14, color: PremiumTokens.nebulaBlue),
+                  child: Icon(Iconsax.close_circle, size: 14, color: PremiumTokens.activeAccent),
                 ),
               ],
             ),
@@ -243,7 +243,7 @@ class LibraryScreen extends ConsumerWidget {
                     style: PremiumTokens.sansStyle(
                       fontSize: 10,
                       color: audioState.isPlaying 
-                          ? PremiumTokens.nebulaBlue 
+                          ? PremiumTokens.activeAccent 
                           : PremiumTokens.textMuted,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,
@@ -277,7 +277,7 @@ class LibraryScreen extends ConsumerWidget {
                 ),
                 child: Icon(
                   audioState.isPlaying ? Iconsax.pause5 : Iconsax.play5,
-                  color: PremiumTokens.nebulaBlue,
+                  color: PremiumTokens.activeAccent,
                   size: 20,
                 ),
               ),
@@ -309,7 +309,7 @@ class LibraryScreen extends ConsumerWidget {
         child: PremiumUI.relicStaticCard(
           padding: const EdgeInsets.all(16),
           borderColor: isPlaying 
-              ? PremiumTokens.nebulaBlue.withValues(alpha: 0.3) 
+              ? PremiumTokens.activeAccent.withValues(alpha: 0.3) 
               : PremiumTokens.borderSubtle,
           child: Row(
             children: [
@@ -319,12 +319,12 @@ class LibraryScreen extends ConsumerWidget {
                 height: 44,
                 decoration: BoxDecoration(
                   color: isPlaying 
-                      ? PremiumTokens.nebulaBlue.withValues(alpha: 0.1) 
+                      ? PremiumTokens.activeAccent.withValues(alpha: 0.1) 
                       : PremiumTokens.borderSubtle,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isPlaying 
-                        ? PremiumTokens.nebulaBlue.withValues(alpha: 0.2) 
+                        ? PremiumTokens.activeAccent.withValues(alpha: 0.2) 
                         : PremiumTokens.borderSubtle,
                   ),
                 ),
@@ -335,7 +335,7 @@ class LibraryScreen extends ConsumerWidget {
                       : (item.audioUrl != null && item.audioUrl!.isNotEmpty 
                           ? Iconsax.music 
                           : Iconsax.book_1),
-                    color: isPlaying ? PremiumTokens.nebulaBlue : PremiumTokens.textMuted,
+                    color: isPlaying ? PremiumTokens.activeAccent : PremiumTokens.textMuted,
                     size: 18,
                   ),
                 ),
@@ -524,17 +524,17 @@ class LibraryScreen extends ConsumerWidget {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: isPlaying 
-                                ? PremiumTokens.nebulaBlue.withValues(alpha: 0.1) 
+                                ? PremiumTokens.activeAccent.withValues(alpha: 0.1) 
                                 : PremiumTokens.borderSubtle,
                             border: Border.all(
                               color: isPlaying 
-                                  ? PremiumTokens.nebulaBlue.withValues(alpha: 0.3) 
+                                  ? PremiumTokens.activeAccent.withValues(alpha: 0.3) 
                                   : PremiumTokens.borderMedium
                             ),
                           ),
                           child: Icon(
                             isPlaying ? Iconsax.pause : Icons.play_arrow, 
-                            color: isPlaying ? PremiumTokens.nebulaBlue : PremiumTokens.textPrimary, 
+                            color: isPlaying ? PremiumTokens.activeAccent : PremiumTokens.textPrimary, 
                             size: 18
                           ),
                         ),

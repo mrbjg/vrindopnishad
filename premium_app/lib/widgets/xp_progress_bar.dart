@@ -16,7 +16,7 @@ class XPProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final barColor = color ?? PremiumTokens.nebulaBlue;
+    final barColor = color ?? PremiumTokens.activeAccent;
 
     return Column(
       mainAxisSize: MainAxisSize.min,

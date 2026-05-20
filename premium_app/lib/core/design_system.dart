@@ -65,6 +65,11 @@ class PremiumTokens {
     colors: _activeGradientColors,
   );
 
+  /// Contrast-safe foreground color for text/icons ON accent backgrounds.
+  /// Returns white for dark accents, dark for light accents (saffron, gold).
+  static Color get onAccent =>
+      _activeAccent.computeLuminance() > 0.4 ? const Color(0xFF1A1A2E) : Colors.white;
+
   // ═══════════════════════════════════════════════════════════════════════════
   // COLORS: Enhanced Palette
   // ═══════════════════════════════════════════════════════════════════════════

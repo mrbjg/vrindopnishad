@@ -268,11 +268,11 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
       'vrat': Colors.orangeAccent,
       'utsav': Colors.pinkAccent,
       'tithi': Colors.cyanAccent,
-      'ekadashi': PremiumTokens.nebulaBlue,
+      'ekadashi': PremiumTokens.activeAccent,
       'purnima': Colors.amberAccent,
     };
 
-    final accentColor = typeColors[event.type] ?? PremiumTokens.nebulaBlue;
+    final accentColor = typeColors[event.type] ?? PremiumTokens.activeAccent;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),

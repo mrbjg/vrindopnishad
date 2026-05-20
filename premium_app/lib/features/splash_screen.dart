@@ -43,8 +43,8 @@ class _SplashScreenState extends State<SplashScreen> {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      PremiumTokens.nebulaBlue.withValues(alpha: 0.12),
-                      PremiumTokens.nebulaBlue.withValues(alpha: 0.04),
+                      PremiumTokens.activeAccent.withValues(alpha: 0.12),
+                      PremiumTokens.activeAccent.withValues(alpha: 0.04),
                       Colors.transparent,
                     ],
                     stops: const [0.0, 0.5, 1.0],
@@ -80,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 .then()
                 .shimmer(
                   duration: 2.seconds,
-                  color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3),
+                  color: PremiumTokens.activeAccent.withValues(alpha: 0.3),
                 ),
                 
                 const SizedBox(height: 32),
@@ -98,7 +98,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 .fadeIn(delay: 400.ms, duration: 800.ms)
                 .slideY(begin: 0.3, end: 0, delay: 400.ms, duration: 600.ms, curve: Curves.easeOutCubic)
                 .then()
-                .shimmer(delay: 1.seconds, duration: 2.seconds, color: PremiumTokens.nebulaBlue),
+                .shimmer(delay: 1.seconds, duration: 2.seconds, color: PremiumTokens.activeAccent),
                 
                 const SizedBox(height: 8),
                 
@@ -107,7 +107,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   "THE ETHEREAL VOID",
                   style: PremiumTokens.sansStyle(
                     fontSize: 10,
-                    color: PremiumTokens.nebulaBlue,
+                    color: PremiumTokens.activeAccent,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 4,
                   ),

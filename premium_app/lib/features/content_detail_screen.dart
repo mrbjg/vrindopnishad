@@ -86,7 +86,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
              if (mounted) {
                ScaffoldMessenger.of(context).showSnackBar(
                  SnackBar(
-                   backgroundColor: PremiumTokens.nebulaBlue.withValues(alpha: 0.8),
+                   backgroundColor: PremiumTokens.activeAccent.withValues(alpha: 0.8),
                    content: Text(
                      "VAANI SYNC ERROR: $e",
                      style: TextStyle(color: PremiumTokens.textPrimary, fontSize: 12),
@@ -149,7 +149,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           context, 
           'Error: $e',
           icon: Iconsax.info_circle,
-          color: PremiumTokens.nebulaBlue,
+          color: PremiumTokens.activeAccent,
         );
       }
     }
@@ -181,7 +181,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     if (content == null && widget.title == null && widget.content == null) {
       return Scaffold(
         backgroundColor: PremiumTokens.scaffoldBg,
-        body: Center(child: CircularProgressIndicator(color: PremiumTokens.nebulaBlue)),
+        body: Center(child: CircularProgressIndicator(color: PremiumTokens.activeAccent)),
       );
     }
 
@@ -443,8 +443,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           alignment: WrapAlignment.center,
                           children: [
                             ...(content.contentTags).map((tag) => _buildTagChip("#$tag", themeData.accentColor.withValues(alpha: 0.05))),
-                            ...(content.audioTags).map((tag) => _buildTagChip("🎧 $tag", PremiumTokens.nebulaBlue.withValues(alpha: 0.1))),
-                            ...(content.videoTags).map((tag) => _buildTagChip("🎬 $tag", PremiumTokens.nebulaBlue.withValues(alpha: 0.1))),
+                            ...(content.audioTags).map((tag) => _buildTagChip("🎧 $tag", PremiumTokens.activeAccent.withValues(alpha: 0.1))),
+                            ...(content.videoTags).map((tag) => _buildTagChip("🎬 $tag", PremiumTokens.activeAccent.withValues(alpha: 0.1))),
                             ...(content.imageTags).map((tag) => _buildTagChip("🖼️ $tag", PremiumTokens.saffronGlow.withValues(alpha: 0.1))),
                           ],
                         ),
@@ -1157,7 +1157,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           textColor: PremiumTokens.textPrimary,
           cardColor: PremiumTokens.borderSubtle,
           accentColor: PremiumTokens.saffronGlow,
-          secondaryAccent: PremiumTokens.nebulaBlueAccent,
+          secondaryAccent: PremiumTokens.activeAccent,
           lineHeight: 1.8,
           glassOpacity: 0.08,
           showTextShadows: true,
@@ -1269,7 +1269,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         curve: Curves.easeInOut,
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
-                          color: isSelected ? PremiumTokens.nebulaBlue : PremiumTokens.borderSubtle,
+                          color: isSelected ? PremiumTokens.activeAccent : PremiumTokens.borderSubtle,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(color: isSelected ? Colors.transparent : PremiumTokens.borderMedium),
                         ),
