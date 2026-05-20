@@ -191,7 +191,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                                     SacredMenuItem(
                                       icon: Iconsax.sun_1, 
                                       label: "Rituals",
-                                      color: PremiumTokens.nebulaBlue,
+                                      color: PremiumTokens.activeAccent,
                                       onTap: () {
                                         ref.read(navigationIndexProvider.notifier).state = 5;
                                       },
@@ -213,14 +213,14 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                                     SacredMenuItem(
                                       icon: Icons.vibration,
                                       label: "Haptics",
-                                      color: PremiumTokens.nebulaBlue,
+                                      color: PremiumTokens.activeAccent,
                                       onTap: () {
                                         HapticFeedback.vibrate();
                                         PremiumUI.showNotification(
                                           context, 
                                           "Haptic Feedback: Heavy",
                                           icon: Icons.vibration,
-                                          color: PremiumTokens.nebulaBlue,
+                                          color: PremiumTokens.activeAccent,
                                         );
                                       },
                                     ),

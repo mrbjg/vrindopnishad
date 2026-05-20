@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'core/theme.dart';
 import 'core/design_system.dart';
+import 'core/color_theme_provider.dart';
 import 'core/auth_provider.dart';
 import 'core/providers.dart';
 import 'core/dynamic_icon_service.dart';
@@ -86,12 +87,22 @@ class _SantVaaniPremiumAppState extends ConsumerState<SantVaaniPremiumApp> {
     final themeMode = ref.watch(themeProvider);
     final authState = ref.watch(authStateProvider);
     final hasSeenOnboarding = ref.watch(hasSeenOnboardingProvider);
+    final colorPalette = ref.watch(colorPaletteProvider);
     
     // Update global brightness for static tokens
     final brightness = themeMode == ThemeMode.system 
       ? MediaQuery.platformBrightnessOf(context)
       : (themeMode == ThemeMode.dark ? Brightness.dark : Brightness.light);
     PremiumTokens.brightness = brightness;
+
+    // Sync active color palette to PremiumTokens
+    PremiumTokens.setColorTheme(
+      accent: colorPalette.accent,
+      accentLight: colorPalette.accentLight,
+      accentDark: colorPalette.accentDark,
+      glow: colorPalette.glow,
+      gradientColors: colorPalette.gradient,
+    );
 
     return MaterialApp(
       title: 'Sant-Vaani Premium',

@@ -7,6 +7,7 @@ import '../../core/providers.dart';
 import '../../core/localization.dart';
 import '../../core/providers/reading_providers.dart';
 import '../../core/auth_provider.dart';
+import '../../core/color_theme_provider.dart';
 import '../../widgets/animated_effects.dart';
 import 'package:flutter/services.dart';
 
@@ -60,12 +61,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                      color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: PremiumUI.customIcon(
                       fileName: 'iconsax-chart-2-jqsol9gq-.svg',
-                      color: PremiumTokens.nebulaBlue,
+                      color: PremiumTokens.activeAccent,
                       size: 22,
                     ),
                   ),
@@ -97,8 +98,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     HapticFeedback.lightImpact();
                     ref.read(themeProvider.notifier).toggleTheme(val);
                   },
-                  gradientColors: [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)],
+                  gradientColors: [PremiumTokens.activeAccent, PremiumTokens.activeAccent.withValues(alpha: 0.8)],
                 ),
+                const SizedBox(height: 16),
+
+                // Custom Color Theme Picker
+                _buildColorThemePicker(context),
                 const SizedBox(height: 16),
 
                 // Divine Icon Status Card
@@ -166,7 +171,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     HapticFeedback.lightImpact();
                     setState(() => _notifications = val);
                   },
-                  gradientColors: [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)],
+                  gradientColors: [PremiumTokens.activeAccent, PremiumTokens.activeAccent.withValues(alpha: 0.8)],
                 ),
                 const SizedBox(height: 32),
 
@@ -183,7 +188,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   l.translate('privacy_policy'),
                   l.translate('privacy_policy'),
                   Iconsax.shield_tick,
-                  gradientColors: [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)],
+                  gradientColors: [PremiumTokens.activeAccent, PremiumTokens.activeAccent.withValues(alpha: 0.8)],
                 ),
                 const SizedBox(height: 12),
 
@@ -192,7 +197,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   l.translate('terms_service'),
                   l.translate('terms_service'),
                   Iconsax.document,
-                  gradientColors: [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)],
+                  gradientColors: [PremiumTokens.activeAccent, PremiumTokens.activeAccent.withValues(alpha: 0.8)],
                 ),
                 const SizedBox(height: 12),
 
@@ -214,8 +219,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
-                              PremiumTokens.nebulaBlue.withValues(alpha: 0.05),
+                              PremiumTokens.activeAccent.withValues(alpha: 0.1),
+                              PremiumTokens.activeAccent.withValues(alpha: 0.05),
                             ],
                           ),
                           borderRadius: BorderRadius.circular(20),
@@ -223,7 +228,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         child: PremiumUI.animatedIcon(
                           folder: 'Heart',
                           fileName: 'heart.json',
-                          color: PremiumTokens.nebulaBlue,
+                          color: PremiumTokens.activeAccent,
                           size: 24,
                         ),
                       ),
@@ -293,10 +298,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+              color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, size: 16, color: PremiumTokens.nebulaBlue),
+            child: Icon(icon, size: 16, color: PremiumTokens.activeAccent),
           ),
           const SizedBox(width: 12),
           Text(
@@ -304,7 +309,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             style: PremiumTokens.sansStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: PremiumTokens.nebulaBlue,
+              color: PremiumTokens.activeAccent,
               letterSpacing: 1.5,
             ),
           ),
@@ -324,7 +329,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     List<Color>? gradientColors,
   }) {
     final colors =
-        gradientColors ?? [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)];
+        gradientColors ?? [PremiumTokens.activeAccent, PremiumTokens.activeAccent.withValues(alpha: 0.8)];
 
     return Container(
       decoration: BoxDecoration(
@@ -466,7 +471,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
-                      color: PremiumTokens.nebulaBlue.withValues(alpha: 0.4),
+                      color: PremiumTokens.activeAccent.withValues(alpha: 0.4),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                       spreadRadius: -4,
@@ -508,10 +513,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   color: PremiumTokens.borderSubtle,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
+                child: Icon(
                   Iconsax.arrow_right_3,
                   size: 18,
-                  color: PremiumTokens.nebulaBlue,
+                  color: PremiumTokens.activeAccent,
                 ),
               ),
             ],
@@ -622,12 +627,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? PremiumTokens.nebulaBlue.withValues(alpha: 0.1)
+                              ? PremiumTokens.activeAccent.withValues(alpha: 0.1)
                               : PremiumTokens.borderSubtle,
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
                             color: isSelected
-                                ? PremiumTokens.nebulaBlue.withValues(alpha: 0.3)
+                                ? PremiumTokens.activeAccent.withValues(alpha: 0.3)
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -638,7 +643,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? PremiumTokens.nebulaBlue.withValues(alpha: 0.15)
+                                    ? PremiumTokens.activeAccent.withValues(alpha: 0.15)
                                     : PremiumTokens.borderSubtle,
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -646,7 +651,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 flagIcon,
                                 size: 20,
                                 color: isSelected
-                                    ? PremiumTokens.nebulaBlue
+                                    ? PremiumTokens.activeAccent
                                     : PremiumTokens.textMuted,
                               ),
                             ),
@@ -663,7 +668,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                           : FontWeight.w500,
                                       fontSize: 16,
                                       color: isSelected
-                                          ? PremiumTokens.nebulaBlue
+                                          ? PremiumTokens.activeAccent
                                           : PremiumTokens.textPrimary,
                                     ),
                                   ),
@@ -680,8 +685,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             if (isSelected)
                               Container(
                                 padding: const EdgeInsets.all(6),
-                                decoration: const BoxDecoration(
-                                  color: PremiumTokens.nebulaBlue,
+                                decoration: BoxDecoration(
+                                  color: PremiumTokens.activeAccent,
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
@@ -716,7 +721,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }) {
     final colors = isDestructive
         ? [const Color(0xFFEF4444), const Color(0xFFF87171)]
-        : gradientColors ?? [PremiumTokens.nebulaBlue, PremiumTokens.nebulaBlue.withValues(alpha: 0.8)];
+        : gradientColors ?? [PremiumTokens.activeAccent, PremiumTokens.activeAccent.withValues(alpha: 0.8)];
 
     return PressableScale(
       onTap: () {
@@ -725,7 +730,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           context, 
           "Action: $title",
           icon: icon,
-          color: isDestructive ? Colors.red : PremiumTokens.nebulaBlue,
+          color: isDestructive ? Colors.red : PremiumTokens.activeAccent,
         );
       },
       child: Container(
@@ -786,7 +791,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 child: Icon(
                   Iconsax.arrow_right_3,
                   size: 18,
-                  color: isDestructive ? Colors.red : PremiumTokens.nebulaBlue,
+                  color: isDestructive ? Colors.red : PremiumTokens.activeAccent,
                 ),
               ),
             ],
@@ -912,7 +917,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       levelName = "Radiant Level";
       nextUnlock = "${108 - totalMalas} Total Malas for Golden";
       icon = Iconsax.sun_1;
-      color = PremiumTokens.nebulaBlue;
+      color = PremiumTokens.activeAccent;
     }
 
     return Container(
@@ -957,6 +962,341 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // COLOR THEME PICKER — Beautiful palette selector
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  Widget _buildColorThemePicker(BuildContext context) {
+    final currentTheme = ref.watch(colorThemeProvider);
+    final currentPalette = AppColorThemes.getPalette(currentTheme);
+
+    return PressableScale(
+      onTap: () => _showColorThemeSheet(context),
+      child: Container(
+        decoration: BoxDecoration(
+          color: PremiumTokens.borderSubtle,
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(
+            color: currentPalette.accent.withValues(alpha: 0.15),
+            width: 1.5,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [currentPalette.accent, currentPalette.accentDark],
+                      ),
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: currentPalette.glow.withValues(alpha: 0.4),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                          spreadRadius: -4,
+                        ),
+                      ],
+                    ),
+                    child: Icon(Iconsax.colorfilter, color: Colors.white, size: 20),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Color Theme",
+                          style: PremiumTokens.displayStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          currentPalette.name,
+                          style: PremiumTokens.sansStyle(
+                            fontSize: 13,
+                            color: currentPalette.accent,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: PremiumTokens.borderSubtle,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Iconsax.arrow_right_3,
+                      size: 18,
+                      color: currentPalette.accent,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              // Mini palette preview row
+              Row(
+                children: AppColorTheme.values.map((theme) {
+                  final palette = AppColorThemes.getPalette(theme);
+                  final isActive = theme == currentTheme;
+                  return Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        HapticFeedback.mediumImpact();
+                        ref.read(colorThemeProvider.notifier).setTheme(theme);
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOutCubic,
+                        height: 32,
+                        margin: const EdgeInsets.symmetric(horizontal: 2),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [palette.accent, palette.accentDark],
+                          ),
+                          borderRadius: BorderRadius.circular(isActive ? 10 : 6),
+                          border: isActive ? Border.all(
+                            color: Colors.white.withValues(alpha: 0.6),
+                            width: 2,
+                          ) : null,
+                          boxShadow: isActive ? [
+                            BoxShadow(
+                              color: palette.glow.withValues(alpha: 0.5),
+                              blurRadius: 8,
+                              spreadRadius: -2,
+                            ),
+                          ] : null,
+                        ),
+                        child: isActive
+                            ? const Icon(Iconsax.tick_circle5, color: Colors.white, size: 14)
+                            : null,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showColorThemeSheet(BuildContext context) {
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Consumer(
+        builder: (context, ref, _) {
+          final selected = ref.watch(colorThemeProvider);
+          return Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: PremiumTokens.sheetBgTop,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+              border: Border.all(color: PremiumTokens.borderMedium),
+            ),
+            child: SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 48,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: PremiumTokens.textMuted.withValues(alpha: 0.3),
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            gradient: PremiumTokens.activeGradient,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: const Icon(Iconsax.colorfilter, color: Colors.white, size: 22),
+                        ),
+                        const SizedBox(width: 16),
+                        Text(
+                          "Color Theme",
+                          style: PremiumTokens.displayStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Choose a color palette for your spiritual experience",
+                      style: GoogleFonts.outfit(
+                        color: PremiumTokens.textMuted,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    ...AppColorTheme.values.map((theme) {
+                      final palette = AppColorThemes.getPalette(theme);
+                      final isSelected = theme == selected;
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: PressableScale(
+                          onTap: () {
+                            HapticFeedback.mediumImpact();
+                            ref.read(colorThemeProvider.notifier).setTheme(theme);
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 250),
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? palette.accent.withValues(alpha: 0.1)
+                                  : PremiumTokens.borderSubtle,
+                              borderRadius: BorderRadius.circular(18),
+                              border: Border.all(
+                                color: isSelected
+                                    ? palette.accent.withValues(alpha: 0.4)
+                                    : Colors.transparent,
+                                width: 2,
+                              ),
+                              boxShadow: isSelected
+                                  ? [
+                                      BoxShadow(
+                                        color: palette.glow.withValues(alpha: 0.15),
+                                        blurRadius: 20,
+                                        spreadRadius: -4,
+                                      ),
+                                    ]
+                                  : null,
+                            ),
+                            child: Row(
+                              children: [
+                                // Gradient orb preview
+                                Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [palette.accentLight, palette.accentDark],
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: palette.glow.withValues(alpha: 0.3),
+                                        blurRadius: 12,
+                                        spreadRadius: -4,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      palette.emoji,
+                                      style: const TextStyle(fontSize: 20),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        palette.name,
+                                        style: GoogleFonts.outfit(
+                                          fontWeight: isSelected
+                                              ? FontWeight.bold
+                                              : FontWeight.w500,
+                                          fontSize: 16,
+                                          color: isSelected
+                                              ? palette.accent
+                                              : PremiumTokens.textPrimary,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      // Mini color swatches
+                                      Row(
+                                        children: [
+                                          _swatch(palette.accent),
+                                          _swatch(palette.accentLight),
+                                          _swatch(palette.accentDark),
+                                          _swatch(palette.glow.withValues(alpha: 0.6)),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (isSelected)
+                                  Container(
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      color: palette.accent,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Iconsax.tick_circle,
+                                      color: Colors.white,
+                                      size: 14,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                    SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _swatch(Color color) {
+    return Container(
+      width: 16,
+      height: 16,
+      margin: const EdgeInsets.only(right: 6),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 0.5,
+        ),
       ),
     );
   }

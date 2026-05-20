@@ -563,7 +563,7 @@ class _RecentReflectionPreviewLite extends ConsumerWidget {
                   padding: const EdgeInsets.all(20),
                   child: Row(
                     children: [
-                      const Icon(Iconsax.moon, color: PremiumTokens.nebulaBlue, size: 24),
+                      Icon(Iconsax.moon, color: PremiumTokens.activeAccent, size: 24),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
@@ -665,8 +665,8 @@ class _CompactSearchButton extends StatelessWidget {
             context, MaterialPageRoute(builder: (_) => const SearchScreen()));
 
       },
-      child: const Icon(Iconsax.search_normal,
-          color: PremiumTokens.nebulaBlue, size: 22),
+      child: Icon(Iconsax.search_normal,
+          color: PremiumTokens.activeAccent, size: 22),
     );
   }
 }
@@ -683,8 +683,8 @@ class _CompactNotificationButton extends StatelessWidget {
           MaterialPageRoute(builder: (_) => const RitualsScreen())
         );
       },
-      child: const Icon(Iconsax.notification,
-          color: PremiumTokens.nebulaBlue, size: 22),
+      child: Icon(Iconsax.notification,
+          color: PremiumTokens.activeAccent, size: 22),
     );
   }
 }
@@ -709,8 +709,8 @@ class _CompactProfileButton extends ConsumerWidget {
         height: 32,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(
-              color: PremiumTokens.nebulaBlue.withValues(alpha: 0.3)),
+           border: Border.all(
+              color: PremiumTokens.activeAccent.withValues(alpha: 0.3)),
         ),
         child: photoUrl != null
             ? PremiumUI.networkImage(
@@ -719,8 +719,8 @@ class _CompactProfileButton extends ConsumerWidget {
                 width: 32,
                 height: 32,
               )
-            : const Icon(Iconsax.user,
-                color: PremiumTokens.nebulaBlue, size: 16),
+            : Icon(Iconsax.user,
+                color: PremiumTokens.activeAccent, size: 16),
       ),
     );
   }
@@ -765,7 +765,7 @@ class PremiumQuoteCard extends StatelessWidget {
             child: Column(
               children: [
                 const Icon(Iconsax.quote_up5,
-                    color: PremiumTokens.nebulaBlue, size: 40),
+                    color: PremiumTokens.saffronGlow, size: 40),
                 const SizedBox(height: 24),
                 Text(
                   '"The soul is neither born, nor does it ever die; nor having once existed, does it ever cease to be."',
@@ -781,7 +781,7 @@ class PremiumQuoteCard extends StatelessWidget {
                 const SizedBox(height: 20),
                 Text('BHAGAVAD GITA 2.20',
                     style: GoogleFonts.manrope(
-                      color: PremiumTokens.nebulaBlue,
+                      color: PremiumTokens.activeAccent,
                       fontWeight: FontWeight.w800,
                       fontSize: 10,
                       letterSpacing: 2,

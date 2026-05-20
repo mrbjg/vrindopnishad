@@ -266,8 +266,8 @@ class _PremiumProfileHeader extends ConsumerWidget {
               width: 120,
               height: 120,
               padding: const EdgeInsets.all(3),
-              decoration: const BoxDecoration(shape: BoxShape.circle,
-                gradient: PremiumTokens.nebulaGradient,
+              decoration: BoxDecoration(shape: BoxShape.circle,
+                gradient: PremiumTokens.activeGradient,
               ),
               child: Container(
                 decoration: BoxDecoration(shape: BoxShape.circle, color: PremiumTokens.surfaceMain),
@@ -301,7 +301,7 @@ class _PremiumProfileHeader extends ConsumerWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Iconsax.sms, color: PremiumTokens.nebulaBlue, size: 14),
+                Icon(Iconsax.sms, color: PremiumTokens.activeAccent, size: 14),
                 const SizedBox(width: 8),
                   Text(
                     user?.email ?? "Exploring the Path",

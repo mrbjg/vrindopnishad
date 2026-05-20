@@ -29,6 +29,43 @@ class PremiumTokens {
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
+  // DYNAMIC COLOR THEME — Set by ColorThemeNotifier
+  // ═══════════════════════════════════════════════════════════════════════════
+  /// The currently active accent color. Defaults to nebulaBlue.
+  /// Set via `PremiumTokens.setColorTheme(palette)` from ColorThemeProvider.
+  static Color _activeAccent = const Color(0xFF256AF4);
+  static Color _activeAccentLight = const Color(0xFF4D8BFF);
+  static Color _activeAccentDark = const Color(0xFF1A4FBF);
+  static Color _activeGlow = const Color(0xFF256AF4);
+  static List<Color> _activeGradientColors = const [Color(0xFF256AF4), Color(0xFF0A0A1A)];
+
+  /// Call this from main.dart build() to sync the active color palette
+  static void setColorTheme({
+    required Color accent,
+    required Color accentLight,
+    required Color accentDark,
+    required Color glow,
+    required List<Color> gradientColors,
+  }) {
+    _activeAccent = accent;
+    _activeAccentLight = accentLight;
+    _activeAccentDark = accentDark;
+    _activeGlow = glow;
+    _activeGradientColors = gradientColors;
+  }
+
+  /// Dynamic accent — use this everywhere instead of hardcoded nebulaBlue
+  static Color get activeAccent => _activeAccent;
+  static Color get activeAccentLight => _activeAccentLight;
+  static Color get activeAccentDark => _activeAccentDark;
+  static Color get activeGlow => _activeGlow;
+  static LinearGradient get activeGradient => LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: _activeGradientColors,
+  );
+
+  // ═══════════════════════════════════════════════════════════════════════════
   // COLORS: Enhanced Palette
   // ═══════════════════════════════════════════════════════════════════════════
   static const Color voidPure = Color(0xFF000000);
