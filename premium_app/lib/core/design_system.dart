@@ -10,6 +10,7 @@ import 'package:lottie/lottie.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'theme.dart';
 import '../widgets/sacred_ritual_alert.dart';
+import 'mood_theme_provider.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// SANT-VAANI PREMIUM DESIGN SYSTEM
@@ -18,7 +19,9 @@ import '../widgets/sacred_ritual_alert.dart';
 
 class PremiumTokens {
   static Brightness brightness = Brightness.dark;
-  static bool get isDark => brightness == Brightness.dark;
+  static bool get isDark => _moodActive 
+      ? (_moodBrightness == Brightness.dark) 
+      : (brightness == Brightness.dark);
 
   /// Context-aware brightness sync. Call this at the top of any build()
   /// method to ensure PremiumTokens reads the correct theme from the
@@ -75,6 +78,56 @@ class PremiumTokens {
   // ═══════════════════════════════════════════════════════════════════════════
   static bool trueDarkEnabled = false;
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // MOOD THEME — Immersive atmospheric backgrounds
+  // ═══════════════════════════════════════════════════════════════════════════
+  static Color _moodScaffold = const Color(0xFFFFFDF5);
+  static Color _moodSurface = const Color(0xFFFFF9E0);
+  static Color _moodCard = const Color(0xFFFFFFFF);
+  static Color _moodTextPrimary = const Color(0xFF2D2D2D);
+  static Color _moodTextSecondary = const Color(0xFF5D5D5D);
+  static Color _moodTextMuted = const Color(0xFFA0A0A0);
+  static Color _moodBorder = const Color(0xFFE8E0D0);
+  static List<Color> _moodGradient = const [Color(0xFFFFFDF5), Color(0xFFFFF0D0), Color(0xFFFFFDF5)];
+  static bool _moodActive = false;
+  static Brightness _moodBrightness = Brightness.light;
+  static AppMoodTheme _currentMood = AppMoodTheme.sereneDawn;
+  static AppMoodTheme get currentMood => _currentMood;
+  static bool get isMoodActive => _moodActive;
+
+  /// Call this from main.dart build() to sync the active mood palette
+  static void setMoodTheme({
+    required AppMoodTheme theme,
+    required Brightness brightness,
+    required Color scaffold,
+    required Color surface,
+    required Color card,
+    required Color textPrimary,
+    required Color textSecondary,
+    required Color textMuted,
+    required Color border,
+    required List<Color> gradient,
+  }) {
+    _moodActive = true;
+    _currentMood = theme;
+    _moodBrightness = brightness;
+    _moodScaffold = scaffold;
+    _moodSurface = surface;
+    _moodCard = card;
+    _moodTextPrimary = textPrimary;
+    _moodTextSecondary = textSecondary;
+    _moodTextMuted = textMuted;
+    _moodBorder = border;
+    _moodGradient = gradient;
+  }
+
+  /// The background gradient for the current mood
+  static LinearGradient get moodBackgroundGradient => LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: _moodGradient,
+  );
+
   static const Color voidPure = Color(0xFF000000);
   static Color get voidIndigo => trueDarkEnabled ? const Color(0xFF000000) : const Color(0xFF050510);
   static const Color celestialSilver = Color(0xFFE5E2E1);
@@ -94,10 +147,9 @@ class PremiumTokens {
   static const Color starlightBlue = Color(0xFF93C5FD);
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // ADAPTIVE COLORS — Auto-switch on isDark
-  // Use these instead of hardcoded celestialSilver/Colors.white/voidIndigo
+  // ADAPTIVE COLORS — Now reads from mood palette when active
   // ═══════════════════════════════════════════════════════════════════════════
-  static Color get textPrimary => isDark ? celestialSilver : const Color(0xFF1A1A2E);
+  static Color get textPrimary => _moodActive ? _moodTextPrimary : (isDark ? celestialSilver : const Color(0xFF1A1A2E));
   static Color get textPrimary80 => textPrimary.withValues(alpha: 0.8);
   static Color get textPrimary60 => textPrimary.withValues(alpha: 0.6);
   static Color get textPrimary54 => textPrimary.withValues(alpha: 0.54);
@@ -108,25 +160,26 @@ class PremiumTokens {
   static Color get voidPure26 => voidPure.withValues(alpha: 0.26);
   static Color get voidPure54 => voidPure.withValues(alpha: 0.54);
   static Color get nebulaBlueAccent => const Color(0xFF4D7FFF);
-  static Color get textSecondary => isDark ? silverCloud : const Color(0xFF4A4A5A);
-  static Color get textMuted => isDark ? celestialSilver.withValues(alpha: 0.4) : const Color(0xFF9A9AAA);
+  static Color get textSecondary => _moodActive ? _moodTextSecondary : (isDark ? silverCloud : const Color(0xFF4A4A5A));
+  static Color get textMuted => _moodActive ? _moodTextMuted : (isDark ? celestialSilver.withValues(alpha: 0.4) : const Color(0xFF9A9AAA));
   static Color get textHint => isDark ? const Color(0x3DFFFFFF) : const Color(0x3D000000);
   static Color get iconPrimary => isDark ? celestialSilver : const Color(0xFF3A3A4A);
   static Color get iconMuted => isDark ? const Color(0x61FFFFFF) : const Color(0x61000000);
-  static Color get surfaceMain => isDark ? voidIndigo : const Color(0xFFFFFDF5);
-  static Color get surfaceCard => isDark ? const Color(0xFF0E0E1A) : Colors.white;
+  static Color get surfaceMain => _moodActive ? _moodSurface : (isDark ? voidIndigo : const Color(0xFFFFFDF5));
+  static Color get surfaceCard => _moodActive ? _moodCard : (isDark ? const Color(0xFF0E0E1A) : Colors.white);
   static Color get surfaceElevated => isDark ? const Color(0xFF0F0F2D) : const Color(0xFFF8F5EE);
-  static Color get borderSubtle => isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
-  static Color get borderMedium => isDark ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.1);
+  static Color get borderSubtle => _moodActive ? _moodBorder.withValues(alpha: 0.5) : (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06));
+  static Color get borderMedium => _moodActive ? _moodBorder : (isDark ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.1));
   static Color get overlayFill => isDark ? Colors.white : Colors.black;
   static Color get glassBase => isDark ? Colors.white : Colors.black;
-  static Color get navBarBg => isDark ? const Color(0xE60A0A1F) : const Color(0xF0FFFFFF);
+  static Color get navBarBg => _moodActive ? _moodScaffold.withValues(alpha: 0.95) : (isDark ? const Color(0xE60A0A1F) : const Color(0xF0FFFFFF));
   static Color get dividerColor => isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.06);
-  static Color get scaffoldBg => isDark ? voidPure : const Color(0xFFFFFDF5);
-  static Color get sheetBgTop => isDark ? voidIndigo : const Color(0xFFF8F5EE);
-  static Color get sheetBgBottom => isDark ? voidBlack : const Color(0xFFFFFDF5);
+  static Color get scaffoldBg => _moodActive ? _moodScaffold : (isDark ? voidPure : const Color(0xFFFFFDF5));
+  static Color get sheetBgTop => _moodActive ? _moodSurface : (isDark ? voidIndigo : const Color(0xFFF8F5EE));
+  static Color get sheetBgBottom => _moodActive ? _moodScaffold : (isDark ? voidBlack : const Color(0xFFFFFDF5));
   static Color get fabBg => isDark ? voidPure : Colors.white;
   static Color get accentSilver => isDark ? celestialSilver : const Color(0xFF3A3A4A);
+
 
   // ═══════════════════════════════════════════════════════════════════════════
   // GRADIENTS: Immersive & Smooth
@@ -874,6 +927,7 @@ class PremiumUI {
   }) {
     return LayoutBuilder(
       builder: (context, constraints) {
+        PremiumTokens.of(context);
         final width = constraints.maxWidth;
         // Ensure width is bounded for web/desktop or large screens
         final effectiveWidth = width.isFinite
@@ -1288,14 +1342,167 @@ class PremiumUI {
     );
   }
 
-  /// Optimized Master Background switcher to prevent overdraw
+  /// Optimized Master Background switcher to prevent overdraw, updated to support 10 rich atmospheric mood themes
   static Widget masterBackground({required int index, BuildContext? context}) {
-    final bool isDarkMode = context != null ? Theme.of(context).brightness == Brightness.dark : PremiumTokens.isDark;
+    final bool isDarkMode = PremiumTokens.isMoodActive
+        ? (PremiumTokens.brightness == Brightness.dark)
+        : (context != null ? Theme.of(context).brightness == Brightness.dark : PremiumTokens.isDark);
     
-    // 0: Home, 1: Library, 4: Profile -> Bokeh/Clouds
-    // 2: Naam Jap, 3: Journal -> Void/Sky
     final isVoid = index == 2 || index == 3;
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // 1. RICH MOOD ATMOSPHERIC BACKGROUND SYSTEM
+    // ─────────────────────────────────────────────────────────────────────────
+    if (PremiumTokens.isMoodActive) {
+      final mood = PremiumTokens.currentMood;
+      return Container(
+        decoration: BoxDecoration(
+          gradient: PremiumTokens.moodBackgroundGradient,
+        ),
+        child: Stack(
+          children: [
+            // Ambient particle engine (Dynamic mood-based animation)
+            Positioned.fill(
+              child: CosmicDriftParticles(color: PremiumTokens.activeAccent),
+            ),
+
+            // Render specific decorations depending on mood
+            if (mood == AppMoodTheme.sereneDawn) ...[
+              // Rising sun behind clouds
+              if (isVoid)
+                _buildSun(bottom: 120, left: 60, size: 110)
+              else
+                _buildSun(top: 80, right: 40, size: 90),
+              // Soft drifting clouds
+              const Positioned.fill(child: DriftingClouds()),
+            ] else if (mood == AppMoodTheme.midnightVoid) ...[
+              // Glowing crescent moon
+              if (isVoid)
+                _buildMoon(bottom: 120, left: 60, size: 80)
+              else
+                _buildMoon(top: 60, left: 40, size: 60),
+            ] else if (mood == AppMoodTheme.cloudyCalm) ...[
+              // Atmospheric drifting clouds
+              const Positioned.fill(child: DriftingClouds()),
+            ] else if (mood == AppMoodTheme.shinyBloom) ...[
+              // Sun behind clouds
+              if (isVoid)
+                _buildSun(bottom: 120, left: 60, size: 120)
+              else
+                _buildSun(top: 80, right: 40, size: 100),
+              // Sunny day clouds
+              const Positioned.fill(child: DriftingClouds()),
+            ] else if (mood == AppMoodTheme.coldMist) ...[
+              // Soft frost glow & mist moon
+              if (isVoid)
+                _buildMoon(bottom: 120, left: 60, size: 85)
+              else
+                _buildMoon(top: 60, left: 40, size: 65),
+            ] else if (mood == AppMoodTheme.rainyPeace || mood == AppMoodTheme.monsoonGreen) ...[
+              // Rainy storm/monsoon cloud outlines at the top
+              Positioned(
+                top: -40,
+                left: -20,
+                right: -20,
+                child: Opacity(
+                  opacity: 0.15,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: const [
+                      Icon(Icons.cloud, size: 160, color: Colors.white),
+                      Icon(Icons.cloud, size: 210, color: Colors.white),
+                      Icon(Icons.cloud, size: 150, color: Colors.white),
+                    ],
+                  ),
+                ),
+              ),
+              if (mood == AppMoodTheme.monsoonGreen) ...[
+                // Foliage branch shadows at corners
+                Positioned(
+                  top: -20,
+                  left: -20,
+                  child: Opacity(
+                    opacity: 0.08,
+                    child: Transform.rotate(
+                      angle: 0.6,
+                      child: const Icon(Icons.eco, size: 180, color: Colors.green),
+                    ),
+                  ),
+                ),
+              ],
+            ] else if (mood == AppMoodTheme.forestHaven) ...[
+              // Forest greenery/leafy shadows on edges
+              Positioned(
+                top: -30,
+                left: -30,
+                child: Opacity(
+                  opacity: 0.07,
+                  child: Transform.rotate(
+                    angle: 0.5,
+                    child: const Icon(Icons.eco, size: 200, color: Colors.green),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: -30,
+                right: -30,
+                child: Opacity(
+                  opacity: 0.07,
+                  child: Transform.rotate(
+                    angle: -0.5,
+                    child: const Icon(Icons.eco, size: 240, color: Colors.green),
+                  ),
+                ),
+              ),
+            ] else if (mood == AppMoodTheme.waterfallBlue) ...[
+              // Soft rising mist cloud
+              Positioned(
+                bottom: -80,
+                left: -50,
+                right: -50,
+                child: Opacity(
+                  opacity: 0.2,
+                  child: Container(
+                    height: 200,
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                        colors: [
+                          Colors.white.withValues(alpha: 0.6),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ] else if (mood == AppMoodTheme.mountainPeak) ...[
+              // Moon behind peaks
+              if (isVoid)
+                _buildMoon(bottom: 160, left: 80, size: 70)
+              else
+                _buildMoon(top: 80, left: 50, size: 55),
+              // Distant silhouette of mountain peaks at the bottom
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: 160,
+                child: CustomPaint(
+                  painter: MountainPainter(
+                    color: PremiumTokens.activeAccent,
+                  ),
+                  child: const SizedBox.expand(),
+                ),
+              ),
+            ],
+          ],
+        ),
+      );
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 2. DEFAULT FALLBACK THEME BACKGROUND (DAY / NIGHT)
+    // ─────────────────────────────────────────────────────────────────────────
     final backgroundColor = isDarkMode ? PremiumTokens.voidBlack : AppTheme.lightBackground;
     final ambientGlow = isDarkMode 
         ? PremiumTokens.activeAccent.withValues(alpha: 0.08)
@@ -1322,10 +1529,9 @@ class PremiumUI {
           ),
 
           // Cosmic micro-particles animation
-          if (isDarkMode)
-            Positioned.fill(
-              child: CosmicDriftParticles(color: PremiumTokens.activeAccent),
-            ),
+          Positioned.fill(
+            child: CosmicDriftParticles(color: PremiumTokens.activeAccent),
+          ),
 
           // Primary Flare/Nebula
           _buildBokeh(
@@ -1391,36 +1597,75 @@ class PremiumUI {
       left: left,
       right: right,
       child: RepaintBoundary(
-        child: Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: RadialGradient(
-              colors: [
-                Colors.orange.withValues(alpha: 0.4),
-                Colors.orange.withValues(alpha: 0.1),
-                Colors.transparent,
-              ],
-              stops: const [0.2, 0.5, 1.0],
-            ),
-          ),
-          child: Center(
-            child: Container(
-              width: size * 0.4,
-              height: size * 0.4,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.orangeAccent,
-                    blurRadius: 20,
-                    spreadRadius: 5,
+        child: SizedBox(
+          width: size * 1.5,
+          height: size * 1.5,
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              // Outer ambient sun glow
+              Container(
+                width: size * 1.2,
+                height: size * 1.2,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      const Color(0xFFFFF6E0).withValues(alpha: 0.35),
+                      const Color(0xFFFFE5B4).withValues(alpha: 0.2),
+                      const Color(0xFFFFD180).withValues(alpha: 0.08),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.0, 0.3, 0.6, 1.0],
                   ),
-                ],
+                ),
               ),
-            ),
+              
+              // Soft Sun Core
+              Container(
+                width: size * 0.4,
+                height: size * 0.4,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      const Color(0xFFFFFDF5).withValues(alpha: 0.5),
+                      const Color(0xFFFFECC8).withValues(alpha: 0.25),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+
+              // Cloud overlay 1: Soft cloud partially in front of sun from the bottom-right
+              Positioned(
+                right: size * 0.1,
+                bottom: size * 0.15,
+                child: Opacity(
+                  opacity: 0.85,
+                  child: Icon(
+                    Icons.cloud,
+                    size: size * 0.8,
+                    color: Colors.white.withValues(alpha: 0.92),
+                  ),
+                ),
+              ),
+
+              // Cloud overlay 2: A wispy cloud crossing the center-left of the sun
+              Positioned(
+                left: size * 0.05,
+                top: size * 0.35,
+                child: Opacity(
+                  opacity: 0.7,
+                  child: Icon(
+                    Icons.cloud,
+                    size: size * 0.65,
+                    color: Colors.white.withValues(alpha: 0.85),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -2679,6 +2924,7 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal>
 
   @override
   Widget build(BuildContext context) {
+    PremiumTokens.of(context);
     return ScaleTransition(
       scale: _pressAnimation,
       child: GestureDetector(
@@ -2848,6 +3094,7 @@ class _PremiumAnimatedNavButtonState extends State<_PremiumAnimatedNavButton>
 
   @override
   Widget build(BuildContext context) {
+    PremiumTokens.of(context);
     return GestureDetector(
       onTap: _handleTap,
       behavior: HitTestBehavior.opaque,
@@ -3795,27 +4042,40 @@ class CosmicDriftParticles extends StatefulWidget {
 class _CosmicDriftParticlesState extends State<CosmicDriftParticles>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  final List<_Particle> _particles = [];
+  final List<_AtmosphericParticle> _particles = [];
   final math.Random _random = math.Random();
+  AppMoodTheme _currentInitializedMood = AppMoodTheme.sereneDawn;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 20),
+      duration: const Duration(seconds: 15),
     )..repeat();
+    _initParticles();
+  }
 
-    // Initialize 15 particles with random offsets
-    for (int i = 0; i < 15; i++) {
-      _particles.add(_Particle(
-        x: _random.nextDouble(),
-        y: _random.nextDouble(),
-        size: _random.nextDouble() * 4 + 2,
-        speedX: (_random.nextDouble() - 0.5) * 0.05,
-        speedY: (_random.nextDouble() - 0.5) * 0.05,
-        opacity: _random.nextDouble() * 0.4 + 0.1,
-      ));
+  void _initParticles() {
+    _particles.clear();
+    final mood = PremiumTokens.isMoodActive ? PremiumTokens.currentMood : AppMoodTheme.sereneDawn;
+    _currentInitializedMood = mood;
+    
+    final count = mood == AppMoodTheme.coldMist ? 15 : 25;
+    for (int i = 0; i < count; i++) {
+      final p = _AtmosphericParticle();
+      p.reset(_random, mood);
+      p.y = _random.nextDouble();
+      _particles.add(p);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant CosmicDriftParticles oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final mood = PremiumTokens.isMoodActive ? PremiumTokens.currentMood : AppMoodTheme.sereneDawn;
+    if (mood != _currentInitializedMood) {
+      _initParticles();
     }
   }
 
@@ -3831,11 +4091,13 @@ class _CosmicDriftParticlesState extends State<CosmicDriftParticles>
       child: AnimatedBuilder(
         animation: _controller,
         builder: (context, _) {
+          final mood = PremiumTokens.isMoodActive ? PremiumTokens.currentMood : AppMoodTheme.sereneDawn;
           return CustomPaint(
-            painter: _ParticlePainter(
+            painter: _AtmosphericParticlePainter(
               particles: _particles,
               color: widget.color,
               progress: _controller.value,
+              mood: mood,
             ),
             child: const SizedBox.expand(),
           );
@@ -3845,64 +4107,331 @@ class _CosmicDriftParticlesState extends State<CosmicDriftParticles>
   }
 }
 
-class _Particle {
-  double x;
-  double y;
-  final double size;
-  final double speedX;
-  final double speedY;
-  final double opacity;
+class _AtmosphericParticle {
+  double x = 0.0;
+  double y = 0.0;
+  double size = 0.0;
+  double speedX = 0.0;
+  double speedY = 0.0;
+  double opacity = 0.0;
+  double phase = 0.0;
+  double rotation = 0.0;
+  double rotationSpeed = 0.0;
 
-  _Particle({
-    required this.x,
-    required this.y,
-    required this.size,
-    required this.speedX,
-    required this.speedY,
-    required this.opacity,
-  });
+  void reset(math.Random random, AppMoodTheme mood) {
+    x = random.nextDouble();
+    phase = random.nextDouble() * 2 * math.pi;
+    rotation = random.nextDouble() * 2 * math.pi;
+    rotationSpeed = (random.nextDouble() - 0.5) * 0.04;
 
-  void update(double progress) {
-    // Drifts slowly over time
-    x = (x + speedX * 0.01) % 1.0;
-    y = (y + speedY * 0.01) % 1.0;
+    switch (mood) {
+      case AppMoodTheme.rainyPeace:
+      case AppMoodTheme.monsoonGreen:
+        y = -0.05;
+        size = random.nextDouble() * 1.5 + 1.0;
+        speedX = -0.02 - random.nextDouble() * 0.03;
+        speedY = 0.25 + random.nextDouble() * 0.15;
+        opacity = random.nextDouble() * 0.4 + 0.3;
+        break;
+      case AppMoodTheme.coldMist:
+        y = -0.05;
+        size = random.nextDouble() * 5.0 + 4.5; // Larger size for visible crystal details
+        speedX = (random.nextDouble() - 0.5) * 0.005;
+        speedY = 0.006 + random.nextDouble() * 0.010; // Gentle tranquil drift speed
+        opacity = random.nextDouble() * 0.45 + 0.35; // Higher opacity for crystal visibility
+        break;
+      case AppMoodTheme.forestHaven:
+        y = -0.05;
+        size = random.nextDouble() * 6 + 4;
+        speedX = -0.04 - random.nextDouble() * 0.04;
+        speedY = 0.03 + random.nextDouble() * 0.03;
+        opacity = random.nextDouble() * 0.3 + 0.2;
+        break;
+      case AppMoodTheme.waterfallBlue:
+        y = 1.05;
+        size = random.nextDouble() * 4 + 2;
+        speedX = (random.nextDouble() - 0.5) * 0.02;
+        speedY = -0.05 - random.nextDouble() * 0.05;
+        opacity = random.nextDouble() * 0.4 + 0.2;
+        break;
+      case AppMoodTheme.shinyBloom:
+      case AppMoodTheme.sereneDawn:
+        y = 1.05;
+        size = random.nextDouble() * 3 + 2;
+        speedX = (random.nextDouble() - 0.5) * 0.03;
+        speedY = -0.03 - random.nextDouble() * 0.03;
+        opacity = random.nextDouble() * 0.6 + 0.2;
+        break;
+      default:
+        y = random.nextDouble();
+        size = random.nextDouble() * 1.8 + 0.8;
+        speedX = 0;
+        speedY = 0;
+        opacity = random.nextDouble() * 0.8 + 0.2;
+        break;
+    }
+  }
+
+  void update(double progress, AppMoodTheme mood, math.Random random) {
+    if (mood == AppMoodTheme.midnightVoid || mood == AppMoodTheme.mountainPeak) {
+      opacity = (math.sin(progress * 2 * math.pi + phase) + 1.0) / 2.0 * 0.75 + 0.15;
+      return;
+    }
+
+    if (mood == AppMoodTheme.coldMist) {
+      x += (speedX + math.sin(progress * 4 * math.pi + phase) * 0.003) * 0.35;
+      y += speedY * 0.35;
+    } else {
+      x += speedX * 0.35;
+      y += speedY * 0.35;
+    }
+    rotation += rotationSpeed;
+
+    if (y > 1.05 || y < -0.05 || x > 1.05 || x < -0.05) {
+      reset(random, mood);
+    }
   }
 }
 
-class _ParticlePainter extends CustomPainter {
-  final List<_Particle> particles;
+class _AtmosphericParticlePainter extends CustomPainter {
+  final List<_AtmosphericParticle> particles;
   final Color color;
   final double progress;
+  final AppMoodTheme mood;
+  final math.Random _random = math.Random();
 
-  _ParticlePainter({
+  _AtmosphericParticlePainter({
     required this.particles,
     required this.color,
     required this.progress,
+    required this.mood,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
+    final paint = Paint()..style = PaintingStyle.fill;
 
     for (final p in particles) {
-      p.update(progress);
-      
+      p.update(progress, mood, _random);
+
       final dx = p.x * size.width;
       final dy = p.y * size.height;
-      
-      // Draw glow ring
-      paint.color = color.withValues(alpha: p.opacity * 0.3);
-      canvas.drawCircle(Offset(dx, dy), p.size * 2.5, paint);
-      
-      // Draw inner solid particle
-      paint.color = color.withValues(alpha: p.opacity);
-      canvas.drawCircle(Offset(dx, dy), p.size, paint);
+
+      switch (mood) {
+        case AppMoodTheme.rainyPeace:
+        case AppMoodTheme.monsoonGreen:
+          paint.color = Colors.white.withValues(alpha: p.opacity * 0.5);
+          paint.strokeWidth = p.size;
+          canvas.drawLine(
+            Offset(dx, dy),
+            Offset(dx + p.speedX * 25, dy + p.speedY * 25),
+            paint..style = PaintingStyle.stroke,
+          );
+          break;
+        case AppMoodTheme.coldMist:
+          // Draw a stylized, premium 6-point snowflake crystal!
+          paint.color = Colors.white.withValues(alpha: p.opacity * 0.85); // High contrast visibility
+          paint.style = PaintingStyle.stroke;
+          paint.strokeWidth = 1.0; // Sharp, clear lines
+          
+          canvas.save();
+          canvas.translate(dx, dy);
+          canvas.rotate(p.rotation);
+          
+          // Draw a small solid center core
+          final centerPaint = Paint()
+            ..color = Colors.white.withValues(alpha: p.opacity * 0.9)
+            ..style = PaintingStyle.fill;
+          canvas.drawCircle(Offset.zero, p.size * 0.15, centerPaint);
+          
+          // Draw 6 symmetrical arms with mini-branches
+          for (int i = 0; i < 6; i++) {
+            // Main radial arm
+            canvas.drawLine(
+              Offset.zero,
+              Offset(0, -p.size),
+              paint,
+            );
+            // V-shaped crystal branches at 55% height
+            final double branchStartY = -p.size * 0.55;
+            canvas.drawLine(
+              Offset(0, branchStartY),
+              Offset(-p.size * 0.25, branchStartY - p.size * 0.18),
+              paint,
+            );
+            canvas.drawLine(
+              Offset(0, branchStartY),
+              Offset(p.size * 0.25, branchStartY - p.size * 0.18),
+              paint,
+            );
+            canvas.rotate(math.pi / 3); // Rotate 60 degrees for the next arm
+          }
+          canvas.restore();
+          break;
+        case AppMoodTheme.forestHaven:
+          paint.color = const Color(0xFF8FA882).withValues(alpha: p.opacity * 0.7);
+          paint.style = PaintingStyle.fill;
+          canvas.save();
+          canvas.translate(dx, dy);
+          canvas.rotate(p.rotation);
+          canvas.drawOval(
+            Rect.fromCenter(center: Offset.zero, width: p.size * 1.8, height: p.size * 0.8),
+            paint,
+          );
+          canvas.restore();
+          break;
+        case AppMoodTheme.waterfallBlue:
+          paint.color = Colors.white.withValues(alpha: p.opacity * 0.4);
+          paint.style = PaintingStyle.stroke;
+          paint.strokeWidth = 1.0;
+          canvas.drawCircle(Offset(dx, dy), p.size, paint);
+          break;
+        case AppMoodTheme.shinyBloom:
+        case AppMoodTheme.sereneDawn:
+          paint.color = const Color(0xFFFFDF9F).withValues(alpha: p.opacity * 0.75);
+          paint.style = PaintingStyle.fill;
+          canvas.drawCircle(Offset(dx, dy), p.size, paint);
+          break;
+        default:
+          paint.color = Colors.white.withValues(alpha: p.opacity);
+          paint.style = PaintingStyle.fill;
+          canvas.drawCircle(Offset(dx, dy), p.size, paint);
+          break;
+      }
     }
   }
 
   @override
-  bool shouldRepaint(covariant _ParticlePainter oldDelegate) => true;
+  bool shouldRepaint(covariant _AtmosphericParticlePainter oldDelegate) => true;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ATMOSPHERIC BACKDROP DECORATIONS
+// ─────────────────────────────────────────────────────────────────────────────
+
+class DriftingClouds extends StatefulWidget {
+  const DriftingClouds({super.key});
+
+  @override
+  State<DriftingClouds> createState() => _DriftingCloudsState();
+}
+
+class _DriftingCloudsState extends State<DriftingClouds>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 50),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        final screenWidth = MediaQuery.of(context).size.width;
+        return Stack(
+          children: [
+            // Cloud 1
+            Positioned(
+              left: (screenWidth + 240) * _controller.value - 180,
+              top: 80,
+              child: Opacity(
+                opacity: 0.18,
+                child: Icon(
+                  Icons.cloud,
+                  size: 160,
+                  color: Colors.white.withValues(alpha: 0.8),
+                ),
+              ),
+            ),
+            // Cloud 2
+            Positioned(
+              left: (screenWidth + 320) * ((_controller.value + 0.4) % 1.0) - 220,
+              top: 220,
+              child: Opacity(
+                opacity: 0.12,
+                child: Icon(
+                  Icons.cloud,
+                  size: 200,
+                  color: Colors.white.withValues(alpha: 0.7),
+                ),
+              ),
+            ),
+            // Cloud 3
+            Positioned(
+              left: (screenWidth + 280) * ((_controller.value + 0.75) % 1.0) - 200,
+              top: 360,
+              child: Opacity(
+                opacity: 0.15,
+                child: Icon(
+                  Icons.cloud,
+                  size: 180,
+                  color: Colors.white.withValues(alpha: 0.75),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class MountainPainter extends CustomPainter {
+  final Color color;
+  MountainPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color.withValues(alpha: 0.12)
+      ..style = PaintingStyle.fill;
+
+    final path = Path()
+      ..moveTo(0, size.height)
+      ..lineTo(0, size.height * 0.75)
+      ..lineTo(size.width * 0.25, size.height * 0.45)
+      ..lineTo(size.width * 0.45, size.height * 0.65)
+      ..lineTo(size.width * 0.7, size.height * 0.35)
+      ..lineTo(size.width * 0.85, size.height * 0.55)
+      ..lineTo(size.width, size.height * 0.25)
+      ..lineTo(size.width, size.height)
+      ..close();
+
+    canvas.drawPath(path, paint);
+
+    final paint2 = Paint()
+      ..color = color.withValues(alpha: 0.18)
+      ..style = PaintingStyle.fill;
+
+    final path2 = Path()
+      ..moveTo(0, size.height)
+      ..lineTo(0, size.height * 0.85)
+      ..lineTo(size.width * 0.15, size.height * 0.62)
+      ..lineTo(size.width * 0.38, size.height * 0.75)
+      ..lineTo(size.width * 0.55, size.height * 0.48)
+      ..lineTo(size.width * 0.75, size.height * 0.7)
+      ..lineTo(size.width * 0.9, size.height * 0.58)
+      ..lineTo(size.width, size.height * 0.8)
+      ..lineTo(size.width, size.height)
+      ..close();
+
+    canvas.drawPath(path2, paint2);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 

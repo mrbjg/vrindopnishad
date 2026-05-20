@@ -1,0 +1,10 @@
+# Global Rules
+
+Verify Config Signatures Rule:
+Whenever configuring third-party providers (e.g. Firebase, Google Sign-In, Supabase), always automatically run local diagnostics (such as retrieving key fingerprints with keytool) to verify that the local Android/iOS build credentials perfectly match the remote configuration file specifications.
+
+Automated Error Mapping Rule:
+When designing seamless authentication screens (e.g. unified login/register entry points), always verify that all possible SDK exceptions (such as user-already-exists, wrong credentials, or rate limits) are explicitly mapped to specific user-friendly prompts rather than fallback default notices.
+
+Cross-Device Theme Sync Rule:
+When implementing or modifying theme/preference systems (e.g. mood themes, color accents, dark mode, reading themes), always auto-persist the user's selections to Supabase when authenticated, and restore them on login. Local SharedPreferences should serve as the fast cache, with Supabase as the source of truth for cross-device consistency.

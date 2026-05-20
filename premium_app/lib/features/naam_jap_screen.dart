@@ -113,24 +113,27 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
               const SizedBox(height: 20),
               ..._ambianceTracks.keys.map((key) {
                 final isSelected = _selectedAmbiance == key;
-                return ListTile(
-                  title: Text(
-                    key,
-                    style: PremiumTokens.sansStyle(
-                      fontSize: 14,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      color: isSelected ? PremiumTokens.activeAccent : PremiumTokens.textPrimary,
+                return Material(
+                  color: Colors.transparent,
+                  child: ListTile(
+                    title: Text(
+                      key,
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 14,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        color: isSelected ? PremiumTokens.activeAccent : PremiumTokens.textPrimary,
+                      ),
                     ),
+                    trailing: isSelected
+                        ? Icon(Iconsax.tick_circle, color: PremiumTokens.activeAccent)
+                        : null,
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      setSheetState(() => _selectedAmbiance = key);
+                      _playAmbiance(key);
+                      Navigator.pop(context);
+                    },
                   ),
-                  trailing: isSelected
-                      ? Icon(Iconsax.tick_circle, color: PremiumTokens.activeAccent)
-                      : null,
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    setSheetState(() => _selectedAmbiance = key);
-                    _playAmbiance(key);
-                    Navigator.pop(context);
-                  },
                 );
               }),
             ],

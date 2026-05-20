@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'core/theme.dart';
 import 'core/design_system.dart';
 import 'core/color_theme_provider.dart';
+import 'core/mood_theme_provider.dart';
 import 'core/auth_provider.dart';
 import 'core/providers.dart';
 import 'core/dynamic_icon_service.dart';
@@ -20,7 +21,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
-import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -97,13 +97,34 @@ class _SantVaaniPremiumAppState extends ConsumerState<SantVaaniPremiumApp> {
     final hasSeenOnboarding = ref.watch(hasSeenOnboardingProvider);
     final colorPalette = ref.watch(colorPaletteProvider);
     final trueDarkEnabled = ref.watch(trueDarkEnabledProvider);
+    final moodPalette = ref.watch(moodPaletteProvider);
+
+    // Determine effective brightness from mood palette
+    final moodBrightness = moodPalette.brightness;
+    final effectiveThemeMode = themeMode == ThemeMode.system
+        ? (moodBrightness == Brightness.dark ? ThemeMode.dark : ThemeMode.light)
+        : themeMode;
     
     // Update global brightness for static tokens
-    final brightness = themeMode == ThemeMode.system 
-      ? MediaQuery.platformBrightnessOf(context)
-      : (themeMode == ThemeMode.dark ? Brightness.dark : Brightness.light);
+    final brightness = effectiveThemeMode == ThemeMode.dark ? Brightness.dark : Brightness.light;
     PremiumTokens.brightness = brightness;
     PremiumTokens.trueDarkEnabled = trueDarkEnabled;
+
+    final activeMood = ref.watch(moodThemeProvider);
+
+    // Sync mood palette to PremiumTokens
+    PremiumTokens.setMoodTheme(
+      theme: activeMood,
+      brightness: moodPalette.brightness,
+      scaffold: moodPalette.scaffoldBg,
+      surface: moodPalette.surfaceColor,
+      card: moodPalette.cardColor,
+      textPrimary: moodPalette.textPrimary,
+      textSecondary: moodPalette.textSecondary,
+      textMuted: moodPalette.textMuted,
+      border: moodPalette.borderColor,
+      gradient: moodPalette.backgroundGradient,
+    );
 
     // Sync active color palette to PremiumTokens
     PremiumTokens.setColorTheme(
@@ -114,12 +135,15 @@ class _SantVaaniPremiumAppState extends ConsumerState<SantVaaniPremiumApp> {
       gradientColors: colorPalette.gradient,
     );
 
+    // Generate ThemeData from mood palette
+    final moodTheme = AppTheme.fromMood(moodPalette);
+
     return MaterialApp(
       title: 'Sant-Vaani Premium',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: themeMode,
+      theme: moodTheme,
+      darkTheme: moodTheme,
+      themeMode: effectiveThemeMode,
       home: _showSplash 
         ? SplashScreen(onComplete: () => setState(() => _showSplash = false))
         : AnimatedSwitcher(

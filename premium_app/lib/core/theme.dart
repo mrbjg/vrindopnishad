@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
+import 'mood_theme_provider.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// VRINDAVAANI DESIGN SYSTEM
@@ -510,6 +511,26 @@ class AppTheme {
         fontWeight: FontWeight.w500,
         color: secondaryColor,
         letterSpacing: 0.5,
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // MOOD-BASED THEME FACTORY
+  // ═══════════════════════════════════════════════════════════════════════════
+  static ThemeData fromMood(AppMoodPalette mood) {
+    final isLight = mood.brightness == Brightness.light;
+    final base = isLight ? lightTheme : darkTheme;
+
+    return base.copyWith(
+      scaffoldBackgroundColor: mood.scaffoldBg,
+      colorScheme: base.colorScheme.copyWith(
+        surface: mood.surfaceColor,
+      ),
+      cardTheme: base.cardTheme.copyWith(color: mood.cardColor),
+      dividerTheme: base.dividerTheme.copyWith(color: mood.borderColor),
+      appBarTheme: base.appBarTheme.copyWith(
+        systemOverlayStyle: isLight ? SystemUiOverlayStyle.dark : SystemUiOverlayStyle.light,
       ),
     );
   }

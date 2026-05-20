@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../core/content_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -574,107 +575,121 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   }
 
   Widget _buildPremiumHeader(SacredContent? content, String title, bool isFocusMode, _ReadingThemeData themeData) {
-    return Container(
-        padding: EdgeInsets.only(
-          top: MediaQuery.of(context).padding.top + 8,
-          bottom: 12,
-          left: 12,
-          right: 12,
-        ),
-        decoration: BoxDecoration(
-          color: (_showCompactHeader && !isFocusMode) 
-            ? themeData.backgroundColor.withValues(alpha: 0.85) 
-            : Colors.transparent,
-          border: Border(
-            bottom: BorderSide(
-              color: (_showCompactHeader && !isFocusMode) 
-                ? themeData.textColor.withValues(alpha: 0.1) 
-                : Colors.transparent,
-              width: 1,
-            ),
+    final showCompact = _showCompactHeader && !isFocusMode;
+    final isParchment = _currentTheme == ReadingTheme.sacredParchment;
+    
+    final Widget headerContent = Container(
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + 8,
+        bottom: 12,
+        left: 12,
+        right: 12,
+      ),
+      decoration: BoxDecoration(
+        color: showCompact
+          ? themeData.backgroundColor.withValues(alpha: isParchment ? 0.96 : 0.75) 
+          : Colors.transparent,
+        border: Border(
+          bottom: BorderSide(
+            color: showCompact 
+              ? themeData.textColor.withValues(alpha: 0.1) 
+              : Colors.transparent,
+            width: 1,
           ),
         ),
-        child: Row(
-          children: [
-            _buildHeaderCircleButton(
-              null, 
-              () async {
-                HapticFeedback.mediumImpact();
-                await Future.delayed(200.ms); // Allow pulse to be seen
-                if (mounted) Navigator.pop(context);
-              },
-              isToggled: false,
-              isAnimated: true,
-              animFolder: 'Chevron-left',
-              animFile: 'chevron-left.json',
-              themeData: themeData,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: AnimatedOpacity(
-                duration: 200.ms,
-                opacity: (_showCompactHeader && !isFocusMode) ? 1.0 : 0.0,
-                child: Text(
-                  title,
-                  style: GoogleFonts.outfit(color: themeData.textColor, fontWeight: FontWeight.bold, fontSize: 16),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ),
-            // Reading Settings
-             _buildHeaderCircleButton(
-              Iconsax.setting_2, 
-              () => _showReadingSettings(context),
-              isActive: false,
-              isAnimated: false, // Standard icon to fix "Un ab" artifact
-              themeData: themeData,
-            ),
-            const SizedBox(width: 8),
-            // Focus Mode Toggle
-            _buildHeaderCircleButton(
-              null,
-              () {
-                HapticFeedback.mediumImpact();
-                ref.read(focusModeProvider.notifier).state = !isFocusMode;
-              },
-              isActive: isFocusMode,
-              isToggled: isFocusMode,
-              isAnimated: true,
-              resetAfterPlay: false,
-              animFolder: 'Visibility V2',
-              animFile: 'visibilityV2.json',
-              themeData: themeData,
-            ),
-            const SizedBox(width: 8),
-            PremiumUI.focusContainer(
-              isFocusMode: isFocusMode,
-              child: Row(mainAxisSize: MainAxisSize.min,
-                children: [
-                   _buildHeaderCircleButton(
-                    null,
-                    () => _toggleFavoriteResolved(content),
-                    isToggled: content != null && ref.watch(isFavoriteProvider(content.id)),
-                    isAnimated: true,
-                    resetAfterPlay: false,
-                    animFolder: 'Heart',
-                    animFile: 'heart.json',
-                    themeData: themeData,
-                  ),
-                  const SizedBox(width: 8),
-                  _buildHeaderCircleButton(
-                    null, 
-                    () => _shareContentResolved(content),
-                    isCustomSvg: true,
-                    svgFile: 'iconsax-ai-send-message-m26q6m1j-.svg',
-                    themeData: themeData,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+      ),
+      child: Row(
+        children: [
+          _buildHeaderCircleButton(
+            null, 
+            () async {
+              HapticFeedback.mediumImpact();
+              await Future.delayed(200.ms); // Allow pulse to be seen
+              if (mounted) Navigator.pop(context);
+            },
+            isToggled: false,
+            isAnimated: true,
+            animFolder: 'Chevron-left',
+            animFile: 'chevron-left.json',
+            themeData: themeData,
           ),
-        );
+          const SizedBox(width: 12),
+          Expanded(
+            child: AnimatedOpacity(
+              duration: 200.ms,
+              opacity: showCompact ? 1.0 : 0.0,
+              child: Text(
+                title,
+                style: GoogleFonts.outfit(color: themeData.textColor, fontWeight: FontWeight.bold, fontSize: 16),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+          // Reading Settings
+          _buildHeaderCircleButton(
+            Iconsax.setting_2, 
+            () => _showReadingSettings(context),
+            isActive: false,
+            isAnimated: false, // Standard icon to fix "Un ab" artifact
+            themeData: themeData,
+          ),
+          const SizedBox(width: 8),
+          // Focus Mode Toggle
+          _buildHeaderCircleButton(
+            null,
+            () {
+              HapticFeedback.mediumImpact();
+              ref.read(focusModeProvider.notifier).state = !isFocusMode;
+            },
+            isActive: isFocusMode,
+            isToggled: isFocusMode,
+            isAnimated: true,
+            resetAfterPlay: false,
+            animFolder: 'Visibility V2',
+            animFile: 'visibilityV2.json',
+            themeData: themeData,
+          ),
+          const SizedBox(width: 8),
+          PremiumUI.focusContainer(
+            isFocusMode: isFocusMode,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildHeaderCircleButton(
+                  null,
+                  () => _toggleFavoriteResolved(content),
+                  isToggled: content != null && ref.watch(isFavoriteProvider(content.id)),
+                  isAnimated: true,
+                  resetAfterPlay: false,
+                  animFolder: 'Heart',
+                  animFile: 'heart.json',
+                  themeData: themeData,
+                ),
+                const SizedBox(width: 8),
+                _buildHeaderCircleButton(
+                  null, 
+                  () => _shareContentResolved(content),
+                  isCustomSvg: true,
+                  svgFile: 'iconsax-ai-send-message-m26q6m1j-.svg',
+                  themeData: themeData,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (showCompact) {
+      return ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+          child: headerContent,
+        ),
+      );
+    }
+    return headerContent;
   }
 
   Widget _buildHeaderCircleButton(
@@ -1166,7 +1181,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           secondaryAccent: PremiumTokens.activeAccent,
           lineHeight: 1.8,
           glassOpacity: 0.08,
-          showTextShadows: true,
+          showTextShadows: PremiumTokens.isDark,
         );
       case ReadingTheme.sacredParchment:
         return _ReadingThemeData(

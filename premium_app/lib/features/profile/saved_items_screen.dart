@@ -58,55 +58,58 @@ class SavedItemsScreen extends ConsumerWidget {
                           child: PremiumUI.voidGlassCard(
                             padding: EdgeInsets.zero,
                             optimized: true,
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              leading: Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  gradient: PremiumTokens.activeGradient,
-                                  borderRadius: BorderRadius.circular(12),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
                                 ),
-                                child: PremiumUI.customIcon(
-                                  fileName: 'iconsax-archive-27ilzneb-.svg',
-                                  color: PremiumTokens.textPrimary,
-                                  size: 20,
+                                leading: Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    gradient: PremiumTokens.activeGradient,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: PremiumUI.customIcon(
+                                    fileName: 'iconsax-archive-27ilzneb-.svg',
+                                    color: PremiumTokens.textPrimary,
+                                    size: 20,
+                                  ),
                                 ),
-                              ),
-                              title: Text(
-                                item.title,
-                                style: PremiumTokens.displayStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                                title: Text(
+                                  item.title,
+                                  style: PremiumTokens.displayStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              subtitle: Text(
-                                item.category,
-                                style: PremiumTokens.sansStyle(
-                                  color: PremiumTokens.activeAccent,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
+                                subtitle: Text(
+                                  item.category,
+                                  style: PremiumTokens.sansStyle(
+                                    color: PremiumTokens.activeAccent,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              trailing: Icon(
-                                Iconsax.arrow_right_3,
-                                size: 18,
-                                color: PremiumTokens.textHint,
-                              ),
-                              onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ContentDetailScreen(
-                                        content: item,
-                                        title: item.title,
-                                        category: item.category,
+                                trailing: Icon(
+                                  Iconsax.arrow_right_3,
+                                  size: 18,
+                                  color: PremiumTokens.textHint,
+                                ),
+                                onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ContentDetailScreen(
+                                          content: item,
+                                          title: item.title,
+                                          category: item.category,
+                                        ),
                                       ),
-                                    ),
-                                  );
-                              },
+                                    );
+                                },
+                              ),
                             ),
                           ),
                         );

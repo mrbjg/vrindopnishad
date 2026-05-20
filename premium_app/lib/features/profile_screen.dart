@@ -177,31 +177,35 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     required VoidCallback onTap,
   }) {
     return PremiumUI.voidCard(
-      padding: const EdgeInsets.all(12),
-      child: ListTile(
-        onTap: () {
-          HapticFeedback.lightImpact();
-          onTap();
-        },
-        leading: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
+      padding: EdgeInsets.zero,
+      child: Material(
+        color: Colors.transparent,
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          onTap: () {
+            HapticFeedback.lightImpact();
+            onTap();
+          },
+          leading: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: customIconFile != null
+                ? PremiumUI.customIcon(fileName: customIconFile, color: color, size: 22)
+                : Icon(icon, color: color, size: 22),
           ),
-          child: customIconFile != null
-              ? PremiumUI.customIcon(fileName: customIconFile, color: color, size: 22)
-              : Icon(icon, color: color, size: 22),
+          title: Text(
+            title,
+            style: GoogleFonts.manrope(color: PremiumTokens.textPrimary, fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          subtitle: Text(
+            subtitle,
+            style: GoogleFonts.manrope(color: PremiumTokens.textMuted, fontSize: 13),
+          ),
+          trailing: Icon(Iconsax.arrow_right_3, color: PremiumTokens.textMuted, size: 18),
         ),
-        title: Text(
-          title,
-          style: GoogleFonts.manrope(color: PremiumTokens.textPrimary, fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: GoogleFonts.manrope(color: PremiumTokens.textMuted, fontSize: 13),
-        ),
-        trailing: Icon(Iconsax.arrow_right_3, color: PremiumTokens.textMuted, size: 18),
       ),
     );
   }

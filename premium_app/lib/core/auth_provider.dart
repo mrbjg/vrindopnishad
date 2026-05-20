@@ -49,6 +49,16 @@ class AuthService {
         // If sign-in fails because user doesn't exist, we sign them up.
         try {
           return await signUpWithEmail(email, password);
+        } on FirebaseAuthException catch (signUpError) {
+          if (signUpError.code == 'email-already-in-use') {
+            // This means the user exists, but the sign-in failed (likely due to wrong password)
+            // Throw a FirebaseAuthException with wrong-password code
+            throw FirebaseAuthException(
+              code: 'wrong-password',
+              message: 'The password does not resonate. Please try again.',
+            );
+          }
+          rethrow;
         } catch (signUpError) {
           rethrow;
         }

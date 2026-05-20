@@ -105,11 +105,26 @@ class RitualsScreen extends ConsumerWidget {
   }
 
   Widget _buildHeader(BuildContext context, WidgetRef ref) {
+    final isDark = PremiumTokens.isDark;
     return Padding(
       padding: const EdgeInsets.fromLTRB(32, 24, 32, 16),
       child: Column(
         children: [
-          Icon(Icons.brightness_4_outlined, color: PremiumTokens.textMuted, size: 32),
+          GestureDetector(
+            onTap: () {
+              HapticFeedback.mediumImpact();
+              ref.read(themeProvider.notifier).toggleTheme(!isDark);
+            },
+            child: PremiumUI.glassCard(
+              padding: const EdgeInsets.all(10),
+              borderRadius: 100,
+              child: Icon(
+                isDark ? Iconsax.moon : Iconsax.sun_1,
+                color: isDark ? PremiumTokens.activeAccent : Colors.orangeAccent,
+                size: 24,
+              ),
+            ),
+          ),
           const SizedBox(height: 12),
           Text(
             "SACRED RITUALS",
@@ -263,21 +278,19 @@ class RitualsScreen extends ConsumerWidget {
         ),
         child: GestureDetector(
           onTap: () {
-            if (isLocked && !ritual.isCompleted) {
-              HapticFeedback.vibrate(); // Locked haptic
-              PremiumUI.showNotification(
-                context, 
-                isMissed ? "Time Window Expired" : "Not Yet Scheduled",
-                icon: Iconsax.lock,
-                color: PremiumTokens.textHint,
-              );
-              return;
-            }
             HapticFeedback.lightImpact();
+            final willBeCompleted = !ritual.isCompleted;
+            if (willBeCompleted) {
+              ref.read(userStatsProvider.notifier).recordReading(
+                context,
+                "ritual_done_${ritual.id}",
+                title: "Completed: ${ritual.title}",
+                category: "Ritual",
+              );
+            }
             ref.read(ritualsProvider.notifier).toggleRitual(ritual.id);
           },
           onLongPress: () {
-            if (isMissed) return; // Cannot edit missed rituals
             HapticFeedback.mediumImpact();
             _showAddRitualDialog(context, ref, ritual: ritual);
           },
@@ -305,7 +318,7 @@ class RitualsScreen extends ConsumerWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(24),
               child: Opacity(
-                opacity: isLocked && !ritual.isCompleted ? 0.5 : 1.0,
+                opacity: isLocked && !ritual.isCompleted ? 0.8 : 1.0,
                 child: _buildGlassContent(ritual, isMissed, isScheduled, isActive),
               ),
             ),
@@ -432,7 +445,6 @@ class RitualsScreen extends ConsumerWidget {
     return Consumer(
       builder: (context, ref, child) => GestureDetector(
         onTap: () {
-          if (isLocked && !ritual.isCompleted) return;
           HapticFeedback.lightImpact();
           final willBeCompleted = !ritual.isCompleted;
           if (willBeCompleted) {
@@ -453,11 +465,11 @@ class RitualsScreen extends ConsumerWidget {
             shape: BoxShape.circle,
             color: ritual.isCompleted 
                 ? PremiumTokens.starlight.withValues(alpha: 0.1) 
-                : (isLocked ? PremiumTokens.borderSubtle : Colors.transparent),
+                : Colors.transparent,
             border: Border.all(
               color: ritual.isCompleted 
                   ? PremiumTokens.starlight.withValues(alpha: 0.6) 
-                  : (isLocked ? PremiumTokens.borderMedium : PremiumTokens.glassBase.withValues(alpha: 0.2)),
+                  : PremiumTokens.glassBase.withValues(alpha: 0.2),
               width: 1,
             ),
             boxShadow: ritual.isCompleted ? [
@@ -470,7 +482,7 @@ class RitualsScreen extends ConsumerWidget {
           ),
           child: ritual.isCompleted 
               ? const Icon(Icons.check, color: PremiumTokens.starlight, size: 18) 
-              : (isLocked ? Icon(Icons.lock_outline, color: PremiumTokens.textHint, size: 14) : null),
+              : null,
         ),
       ),
     );
