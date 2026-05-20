@@ -88,12 +88,14 @@ class _SantVaaniPremiumAppState extends ConsumerState<SantVaaniPremiumApp> {
     final authState = ref.watch(authStateProvider);
     final hasSeenOnboarding = ref.watch(hasSeenOnboardingProvider);
     final colorPalette = ref.watch(colorPaletteProvider);
+    final trueDarkEnabled = ref.watch(trueDarkEnabledProvider);
     
     // Update global brightness for static tokens
     final brightness = themeMode == ThemeMode.system 
       ? MediaQuery.platformBrightnessOf(context)
       : (themeMode == ThemeMode.dark ? Brightness.dark : Brightness.light);
     PremiumTokens.brightness = brightness;
+    PremiumTokens.trueDarkEnabled = trueDarkEnabled;
 
     // Sync active color palette to PremiumTokens
     PremiumTokens.setColorTheme(

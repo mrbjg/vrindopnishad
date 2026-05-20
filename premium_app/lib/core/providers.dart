@@ -272,3 +272,22 @@ final dynamicIconEnabledProvider = StateProvider<bool>((ref) {
   final stats = ref.watch(userStatsProvider).value;
   return stats?.dynamicIconEnabled ?? true;
 });
+
+class TrueDarkNotifier extends StateNotifier<bool> {
+  final SharedPreferences prefs;
+  static const _key = 'true_dark_enabled';
+
+  TrueDarkNotifier(this.prefs) : super(false) {
+    state = prefs.getBool(_key) ?? false;
+  }
+
+  void toggle(bool value) {
+    state = value;
+    prefs.setBool(_key, value);
+  }
+}
+
+final trueDarkEnabledProvider = StateNotifierProvider<TrueDarkNotifier, bool>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return TrueDarkNotifier(prefs);
+});

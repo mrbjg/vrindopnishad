@@ -62,7 +62,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       icon: Iconsax.edit_2,
                       title: "Journal Reflections",
                       subtitle: "Your spiritual diary",
-                      color: PremiumTokens.textPrimary,
+                      color: PremiumTokens.activeAccent,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const EternalReflectionScreen(showBackButton: true)),
@@ -73,7 +73,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       icon: Iconsax.heart,
                       title: "Saved Items",
                       subtitle: "Your spiritual vault",
-                      color: PremiumTokens.textSecondary,
+                      color: PremiumTokens.activeAccent,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const SavedItemsScreen()),
@@ -84,7 +84,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       icon: Iconsax.clock,
                       title: "Reading History",
                       subtitle: "Continue your reflections",
-                      color: PremiumTokens.textMuted,
+                      color: PremiumTokens.activeAccent,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const ReadingHistoryScreen()),
@@ -98,7 +98,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       icon: Iconsax.setting_2,
                       title: "Settings",
                       subtitle: "Notifications & Account",
-                      color: PremiumTokens.textMuted,
+                      color: PremiumTokens.activeAccent,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const SettingsScreen()),
@@ -109,7 +109,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       icon: Iconsax.info_circle,
                       title: "About Divine Path",
                       subtitle: "Vision & Mission",
-                      color: PremiumTokens.textSecondary,
+                      color: PremiumTokens.activeAccent,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const AboutScreen()),

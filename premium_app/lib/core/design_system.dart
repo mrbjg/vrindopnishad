@@ -73,14 +73,16 @@ class PremiumTokens {
   // ═══════════════════════════════════════════════════════════════════════════
   // COLORS: Enhanced Palette
   // ═══════════════════════════════════════════════════════════════════════════
+  static bool trueDarkEnabled = false;
+
   static const Color voidPure = Color(0xFF000000);
-  static const Color voidIndigo = Color(0xFF050510);
+  static Color get voidIndigo => trueDarkEnabled ? const Color(0xFF000000) : const Color(0xFF050510);
   static const Color celestialSilver = Color(0xFFE5E2E1);
   static const Color etherealBlue = Color(0xFF1A2B48);
   static const Color celestialGlow = etherealBlue;
-  static const Color charcoal = voidIndigo;
-  static const Color voidBlack = voidIndigo;
-  static const Color accentDark = voidIndigo;
+  static Color get charcoal => voidIndigo;
+  static Color get voidBlack => voidIndigo;
+  static Color get accentDark => voidIndigo;
   static const Color background = voidPure;
   static const Color surfaceCharcoal = Color(0xFF0A0A1F);
   static const Color nebulaBlue = Color(0xFF256AF4);
@@ -626,7 +628,7 @@ class PremiumUI {
                     color: const Color(0x990A0A1F),
                     borderRadius: BorderRadius.circular(borderRadius),
                     border: Border.all(
-                      color: PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                      color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
                       width: 1,
                     ),
                   ),
@@ -758,7 +760,7 @@ class PremiumUI {
 
   /// Aesthetic Waveform Visualization
   static Widget aestheticWaveform({bool isPlaying = false, Color? color}) {
-    final activeColor = color ?? PremiumTokens.nebulaBlue;
+    final activeColor = color ?? PremiumTokens.activeAccent;
     return SizedBox(
       height: 40,
       child: Row(
@@ -1106,7 +1108,7 @@ class PremiumUI {
     bool showGlow = true,
     bool optimized = true, // Added optimized toggle for high-performance rebuilds
   }) {
-    final activeGlow = glowColor ?? PremiumTokens.nebulaBlue;
+    final activeGlow = glowColor ?? PremiumTokens.activeAccent;
     final isDark = PremiumTokens.isDark;
     final baseOverlay = isDark ? Colors.white : Colors.black;
     final cardContent = Container(
@@ -1219,7 +1221,7 @@ class PremiumUI {
     EdgeInsets? padding,
     bool optimized = true, // Added optimized toggle
   }) {
-    final activeColor = color ?? PremiumTokens.nebulaBlue;
+    final activeColor = color ?? PremiumTokens.activeAccent;
     final buttonBody = Container(
       padding:
           padding ??
@@ -1296,7 +1298,7 @@ class PremiumUI {
 
     final backgroundColor = isDarkMode ? PremiumTokens.voidBlack : AppTheme.lightBackground;
     final ambientGlow = isDarkMode 
-        ? PremiumTokens.nebulaBlue.withValues(alpha: 0.08)
+        ? PremiumTokens.activeAccent.withValues(alpha: 0.08)
         : Colors.orange.withValues(alpha: 0.15);
 
     return Container(
@@ -1319,13 +1321,19 @@ class PremiumUI {
             ),
           ),
 
+          // Cosmic micro-particles animation
+          if (isDarkMode)
+            Positioned.fill(
+              child: CosmicDriftParticles(color: PremiumTokens.activeAccent),
+            ),
+
           // Primary Flare/Nebula
           _buildBokeh(
             top: -100,
             right: -50,
             size: 400,
             color: isDarkMode 
-                ? PremiumTokens.nebulaBlue.withValues(alpha: isVoid ? 0.12 : 0.08)
+                ? PremiumTokens.activeAccent.withValues(alpha: isVoid ? 0.12 : 0.08)
                 : Colors.orangeAccent.withValues(alpha: isVoid ? 0.2 : 0.1),
           ),
 
@@ -1336,7 +1344,7 @@ class PremiumUI {
                 bottom: -50,
                 left: -50,
                 size: 350,
-                color: PremiumTokens.nebulaBlue.withValues(alpha: 0.06),
+                color: PremiumTokens.activeAccent.withValues(alpha: 0.06),
               ),
               _buildMoon(bottom: 120, left: 60, size: 80),
             ] else ...[
@@ -1769,10 +1777,10 @@ class PremiumUI {
             width: width,
             height: height,
             color: PremiumTokens.accentDark.withValues(alpha: 0.5),
-            child: const Center(
+            child: Center(
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation(PremiumTokens.nebulaBlue),
+                valueColor: AlwaysStoppedAnimation(PremiumTokens.activeAccent),
               ),
             ),
           ),
@@ -1926,7 +1934,7 @@ class PremiumUI {
       builder: (context) => _PremiumNotificationOverlay(
         message: message,
         icon: icon,
-        color: color ?? PremiumTokens.nebulaBlue,
+        color: color ?? PremiumTokens.activeAccent,
         onDismiss: () => overlayEntry.remove(),
       ),
     );
@@ -2114,7 +2122,7 @@ class _LiquidGlassCardInternalState extends State<_LiquidGlassCardInternal>
         boxShadow: widget.showGlow
             ? [
                 BoxShadow(
-                  color: (widget.glowColor ?? PremiumTokens.nebulaBlue).withValues(alpha: 0.1),
+                  color: (widget.glowColor ?? PremiumTokens.activeAccent).withValues(alpha: 0.1),
                   blurRadius: 30,
                   spreadRadius: -8,
                 ),
@@ -2202,7 +2210,7 @@ class _LiquidGlassButtonInternalState extends State<_LiquidGlassButtonInternal>
 
   @override
   Widget build(BuildContext context) {
-    final activeGlow = widget.glowColor ?? PremiumTokens.nebulaBlue;
+    final activeGlow = widget.glowColor ?? PremiumTokens.activeAccent;
     return GestureDetector(
       onTapDown: (_) => _bounceController.forward(),
       onTapUp: (_) {
@@ -2692,12 +2700,10 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal>
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: (widget.isActive
-                            ? PremiumTokens.saffronGlow
-                            : PremiumTokens.nebulaBlue)
-                        .withValues(alpha: widget.isActive ? 0.3 : 0.25),
-                    blurRadius: widget.isActive ? 30 : 25,
-                    spreadRadius: widget.isActive ? 2 : 1,
+                    color: PremiumTokens.activeAccent
+                        .withValues(alpha: widget.isActive ? 0.45 : 0.25),
+                    blurRadius: widget.isActive ? 32 : 24,
+                    spreadRadius: widget.isActive ? 3 : 1,
                   ),
                 ],
               ),
@@ -2713,16 +2719,14 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal>
                   0xFF03030F,
                 ).withValues(alpha: 0.9), // Near-black void
                 border: Border.all(
-                  color: (widget.isActive
-                          ? PremiumTokens.saffronGlow
-                          : Colors.white)
-                      .withValues(alpha: 0.4),
+                  color: PremiumTokens.activeAccent
+                      .withValues(alpha: widget.isActive ? 0.8 : 0.35),
                   width: 1.5,
                 ),
                 boxShadow: [
                   if (widget.isActive)
                     BoxShadow(
-                      color: PremiumTokens.saffronGlow.withValues(alpha: 0.5),
+                      color: PremiumTokens.activeAccent.withValues(alpha: 0.5),
                       blurRadius: 15,
                       spreadRadius: -2,
                     ),
@@ -2886,7 +2890,7 @@ class _PremiumAnimatedNavButtonState extends State<_PremiumAnimatedNavButton>
                         duration: const Duration(milliseconds: 250),
                         child: PremiumUI.customIcon(
                           fileName: widget.item.activeIconSvg,
-                          color: PremiumTokens.textPrimary,
+                          color: PremiumTokens.activeAccent,
                           size: 30,
                         ),
                       ),
@@ -3605,7 +3609,7 @@ class _PremiumNaamJapCounterInternalState
                         colors: [
                           PremiumTokens.isDark 
                               ? PremiumTokens.etherealBlue.withValues(alpha: 0.12)
-                              : PremiumTokens.nebulaBlue.withValues(alpha: 0.06),
+                              : PremiumTokens.activeAccent.withValues(alpha: 0.06),
                           PremiumTokens.isDark
                               ? PremiumTokens.voidIndigo.withValues(alpha: 0.05)
                               : Colors.white.withValues(alpha: 0.3),
@@ -3650,7 +3654,7 @@ class _PremiumNaamJapCounterInternalState
                       BoxShadow(
                         color: PremiumTokens.isDark 
                             ? PremiumTokens.etherealBlue.withValues(alpha: 0.3)
-                            : PremiumTokens.nebulaBlue.withValues(alpha: 0.1),
+                            : PremiumTokens.activeAccent.withValues(alpha: 0.1),
                         blurRadius: 30,
                         spreadRadius: -10,
                       ),
@@ -3776,3 +3780,129 @@ class _NaamJapProgressPainter extends CustomPainter {
     return oldDelegate.progress != progress;
   }
 }
+
+/// ═══════════════════════════════════════════════════════════════════════════
+/// COSMIC DRIFT PARTICLES — Low-resource micro-animations for ambient background
+/// ═══════════════════════════════════════════════════════════════════════════
+class CosmicDriftParticles extends StatefulWidget {
+  final Color color;
+  const CosmicDriftParticles({super.key, required this.color});
+
+  @override
+  State<CosmicDriftParticles> createState() => _CosmicDriftParticlesState();
+}
+
+class _CosmicDriftParticlesState extends State<CosmicDriftParticles>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  final List<_Particle> _particles = [];
+  final math.Random _random = math.Random();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 20),
+    )..repeat();
+
+    // Initialize 15 particles with random offsets
+    for (int i = 0; i < 15; i++) {
+      _particles.add(_Particle(
+        x: _random.nextDouble(),
+        y: _random.nextDouble(),
+        size: _random.nextDouble() * 4 + 2,
+        speedX: (_random.nextDouble() - 0.5) * 0.05,
+        speedY: (_random.nextDouble() - 0.5) * 0.05,
+        opacity: _random.nextDouble() * 0.4 + 0.1,
+      ));
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RepaintBoundary(
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, _) {
+          return CustomPaint(
+            painter: _ParticlePainter(
+              particles: _particles,
+              color: widget.color,
+              progress: _controller.value,
+            ),
+            child: const SizedBox.expand(),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _Particle {
+  double x;
+  double y;
+  final double size;
+  final double speedX;
+  final double speedY;
+  final double opacity;
+
+  _Particle({
+    required this.x,
+    required this.y,
+    required this.size,
+    required this.speedX,
+    required this.speedY,
+    required this.opacity,
+  });
+
+  void update(double progress) {
+    // Drifts slowly over time
+    x = (x + speedX * 0.01) % 1.0;
+    y = (y + speedY * 0.01) % 1.0;
+  }
+}
+
+class _ParticlePainter extends CustomPainter {
+  final List<_Particle> particles;
+  final Color color;
+  final double progress;
+
+  _ParticlePainter({
+    required this.particles,
+    required this.color,
+    required this.progress,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+
+    for (final p in particles) {
+      p.update(progress);
+      
+      final dx = p.x * size.width;
+      final dy = p.y * size.height;
+      
+      // Draw glow ring
+      paint.color = color.withValues(alpha: p.opacity * 0.3);
+      canvas.drawCircle(Offset(dx, dy), p.size * 2.5, paint);
+      
+      // Draw inner solid particle
+      paint.color = color.withValues(alpha: p.opacity);
+      canvas.drawCircle(Offset(dx, dy), p.size, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _ParticlePainter oldDelegate) => true;
+}
+

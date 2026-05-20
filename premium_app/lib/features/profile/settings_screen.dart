@@ -106,6 +106,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 _buildColorThemePicker(context),
                 const SizedBox(height: 16),
 
+                if (isDark) ...[
+                  _buildToggleCard(
+                    context,
+                    "AMOLED True Dark",
+                    "Pure pitch black theme for battery saving",
+                    Iconsax.setting_3,
+                    ref.watch(trueDarkEnabledProvider),
+                    (val) {
+                      HapticFeedback.lightImpact();
+                      ref.read(trueDarkEnabledProvider.notifier).toggle(val);
+                    },
+                    gradientColors: [PremiumTokens.activeAccent, PremiumTokens.activeAccent.withValues(alpha: 0.8)],
+                  ),
+                  const SizedBox(height: 16),
+                ],
+
                 // Divine Icon Status Card
                 _buildDivineIconStatus(context),
                 const SizedBox(height: 12),
@@ -1010,7 +1026,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         ),
                       ],
                     ),
-                    child: Icon(Iconsax.colorfilter, color: Colors.white, size: 20),
+                    child: const Icon(Iconsax.colorfilter, color: Colors.white, size: 20),
                   ),
                   const SizedBox(width: 16),
                   Expanded(

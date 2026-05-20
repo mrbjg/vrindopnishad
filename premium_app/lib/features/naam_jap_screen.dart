@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:just_audio/just_audio.dart';
 import '../core/design_system.dart';
 import '../core/providers.dart';
 import '../core/stats_provider.dart';
@@ -18,6 +19,124 @@ class NaamJapScreen extends ConsumerStatefulWidget {
 
 class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
   bool _isImmersive = false;
+  late final AudioPlayer _ambiencePlayer;
+  bool _isAudioPlaying = false;
+  String _selectedAmbiance = 'None';
+
+  final Map<String, String> _ambianceTracks = {
+    'None': '',
+    'Sacred Drone': 'https://actions.google.com/sounds/v1/ambiences/wind_constant.ogg',
+    'Flowing Ganges': 'https://actions.google.com/sounds/v1/ambiences/river_flowing.ogg',
+    'Temple Chimes': 'https://actions.google.com/sounds/v1/ambiences/morning_birds.ogg',
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _ambiencePlayer = AudioPlayer();
+    _ambiencePlayer.setLoopMode(LoopMode.one);
+  }
+
+  @override
+  void dispose() {
+    _ambiencePlayer.dispose();
+    super.dispose();
+  }
+
+  Future<void> _playAmbiance(String key) async {
+    final url = _ambianceTracks[key]!;
+    if (url.isEmpty) {
+      await _ambiencePlayer.stop();
+      setState(() {
+        _selectedAmbiance = 'None';
+        _isAudioPlaying = false;
+      });
+      return;
+    }
+
+    try {
+      setState(() {
+        _selectedAmbiance = key;
+        _isAudioPlaying = true;
+      });
+      await _ambiencePlayer.setUrl(url);
+      await _ambiencePlayer.play();
+    } catch (e) {
+      setState(() {
+        _isAudioPlaying = false;
+      });
+    }
+  }
+
+  void _showAmbianceSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setSheetState) => Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                PremiumTokens.sheetBgTop,
+                PremiumTokens.sheetBgBottom,
+              ],
+            ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+            border: Border.all(color: PremiumTokens.borderSubtle),
+          ),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: PremiumTokens.textHint,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                "SELECT AMBIANCE",
+                style: PremiumTokens.sansStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 4,
+                  color: PremiumTokens.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ..._ambianceTracks.keys.map((key) {
+                final isSelected = _selectedAmbiance == key;
+                return ListTile(
+                  title: Text(
+                    key,
+                    style: PremiumTokens.sansStyle(
+                      fontSize: 14,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isSelected ? PremiumTokens.activeAccent : PremiumTokens.textPrimary,
+                    ),
+                  ),
+                  trailing: isSelected
+                      ? Icon(Iconsax.tick_circle, color: PremiumTokens.activeAccent)
+                      : null,
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    setSheetState(() => _selectedAmbiance = key);
+                    _playAmbiance(key);
+                    Navigator.pop(context);
+                  },
+                );
+              }),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +156,15 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {
-          HapticFeedback.lightImpact();
+          final int nextCount = count + 1;
+          if (nextCount > 0 && nextCount % 108 == 0) {
+            // High-fidelity physical vibration sequence on completing 108 chants
+            HapticFeedback.heavyImpact();
+            Future.delayed(const Duration(milliseconds: 120), () => HapticFeedback.heavyImpact());
+            Future.delayed(const Duration(milliseconds: 240), () => HapticFeedback.heavyImpact());
+          } else {
+            HapticFeedback.lightImpact();
+          }
           ref.read(naamJapStateProvider.notifier).increment(context);
         },
         child: Stack(
@@ -188,6 +315,22 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                   padding: const EdgeInsets.all(10),
                   borderRadius: 14,
                   child: Icon(Iconsax.maximize_1, color: PremiumTokens.textPrimary, size: 20),
+                ),
+              ),
+              const SizedBox(width: 12),
+              GestureDetector(
+                onTap: () {
+                  HapticFeedback.mediumImpact();
+                  _showAmbianceSheet(context);
+                },
+                child: PremiumUI.glassCard(
+                  padding: const EdgeInsets.all(10),
+                  borderRadius: 14,
+                  child: Icon(
+                    _isAudioPlaying ? Iconsax.volume_high : Iconsax.volume_cross,
+                    color: _isAudioPlaying ? PremiumTokens.activeAccent : PremiumTokens.textPrimary,
+                    size: 20,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
