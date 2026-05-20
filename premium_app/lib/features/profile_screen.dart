@@ -16,6 +16,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/services.dart';
 import '../core/stats_provider.dart';
 import '../core/providers.dart';
+import '../core/color_theme_provider.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -34,6 +35,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     super.build(context);
     final authState = ref.watch(authStateProvider);
     final user = authState.value;
+    // Watch colorPaletteProvider to trigger a rebuild when custom theme changes
+    ref.watch(colorPaletteProvider);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -224,6 +227,7 @@ class _PremiumProfileHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(colorPaletteProvider);
     return Container(
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top + 20,

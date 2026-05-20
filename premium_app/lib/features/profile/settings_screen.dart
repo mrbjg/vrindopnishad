@@ -27,6 +27,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final isDark = themeMode == ThemeMode.dark;
     final currentLanguage = ref.watch(languageProvider);
     final l = AppLocalization(currentLanguage);
+    ref.watch(colorPaletteProvider);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -483,7 +484,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  gradient: PremiumTokens.nebulaGradient,
+                  gradient: PremiumTokens.activeGradient,
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
@@ -578,7 +579,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        gradient: PremiumTokens.nebulaGradient,
+                        gradient: PremiumTokens.activeGradient,
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: Icon(

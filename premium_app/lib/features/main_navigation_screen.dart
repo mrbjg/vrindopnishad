@@ -11,6 +11,7 @@ import 'journal_screen.dart';
 import 'profile_screen.dart';
 import 'package:flutter/services.dart';
 import '../core/providers.dart';
+import '../core/color_theme_provider.dart';
 import '../core/dynamic_icon_service.dart';
 import '../widgets/mini_player.dart';
 import 'rituals_screen.dart';
@@ -51,9 +52,10 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // CRITICAL: Watch themeProvider to force rebuild on theme change.
+    // CRITICAL: Watch themeProvider and colorPaletteProvider to force rebuild on theme change.
     // Without this, IndexedStack caches old-theme screens indefinitely.
     final themeMode = ref.watch(themeProvider);
+    final colorPalette = ref.watch(colorPaletteProvider);
     // Activate Dynamic Icon Service
     ref.watch(dynamicIconServiceProvider);
 
@@ -88,7 +90,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                 final currentIndex = ref.watch(navigationIndexProvider);
                 return RepaintBoundary(
                   child: IndexedStack(
-                    key: ValueKey(themeMode),
+                    key: ValueKey('${themeMode.name}_${colorPalette.name}'),
                     index: currentIndex,
                     children: screens,
                   ),

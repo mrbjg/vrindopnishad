@@ -8,6 +8,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:premium_app/core/design_system.dart';
 import 'package:premium_app/core/journal_provider.dart';
 import 'package:premium_app/core/theme.dart';
+import 'package:premium_app/core/color_theme_provider.dart';
 import 'package:premium_app/models/journal_entry.dart';
 
 final journalSearchProvider = StateProvider<String>((ref) => "");
@@ -52,7 +53,7 @@ class EternalReflectionScreen extends ConsumerWidget {
                     child: _JournalHeader(showBackButton: showBackButton),
                   ),
                   const SliverToBoxAdapter(
-                    child: _AtomicResonanceOrb(),
+                    child: _SacredResonanceOrb(),
                   ),
                   const _JournalEntryList(),
                   const SliverToBoxAdapter(child: SizedBox(height: 140)),
@@ -253,177 +254,232 @@ class _JournalEntryList extends ConsumerWidget {
   }
 }
 
-class _AtomicResonanceOrb extends StatelessWidget {
-  const _AtomicResonanceOrb();
+class _SacredResonanceOrb extends StatefulWidget {
+  const _SacredResonanceOrb();
+
+  @override
+  State<_SacredResonanceOrb> createState() => _SacredResonanceOrbState();
+}
+
+class _SacredResonanceOrbState extends State<_SacredResonanceOrb>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 32),
-        RepaintBoundary(
-          child: Center(
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                  // --- CELESTIAL CHRONOS SYSTEM ---
-                  
-                  // 1. Distant Galactic Dust (Base Atmosphere)
-                  Container(
-                    width: 320,
-                    height: 320,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF1E40AF).withValues(alpha: 0.12),
-                          blurRadius: 100,
-                          spreadRadius: 30,
-                        ),
-                      ],
-                    ),
-                  ).animate(onPlay: (c) => c.repeat(reverse: true))
-                   .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.1, 1.1), duration: 10.seconds),
-
-                  // 1.5 Outer Dotted Orbit (Slow & Shimmering) [NEW]
-                  RepaintBoundary(
-                    child: CustomPaint(
-                      size: const Size(340, 340),
-                      painter: CelestialRingPainter(
-                        color: PremiumTokens.textPrimary,
-                        thickness: 1.0,
-                        isDotted: true,
-                        dotCount: 40,
-                      ),
-                    ).animate(onPlay: (c) => c.repeat())
-                     .rotate(duration: 60.seconds),
-                  ),
-    
-                  // 2. Atomic Shell Orbits (Elliptical Paths) [NEW]
-                  ...List.generate(3, (i) => CustomPaint(
-                    size: const Size(260, 260),
-                    painter: AtomicOrbitPainter(
-                      color: PremiumTokens.borderSubtle,
-                      radius: 120,
-                      rotation: i * math.pi / 3, // 0, 60, 120 degrees
-                    ),
-                  )),
-
-                  // 3. The Dense Clustered Nucleus (Protons & Neutrons) [UPGRADED]
-                  ...List.generate(7, (i) => Positioned(
-                    left: 153 + (math.cos(i * 2 * math.pi / 7) * 8),
-                    top: 153 + (math.sin(i * 2 * math.pi / 7) * 8),
-                    child: Container(
-                      width: i % 2 == 0 ? 14 : 12,
-                      height: i % 2 == 0 ? 14 : 12,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: [
-                              PremiumTokens.glassBase.withValues(alpha: 0.2), 
-                              const Color(0xFF1E3A8A).withValues(alpha: 0.4), 
-                              const Color(0xFF0F766E).withValues(alpha: 0.3),
-                              const Color(0xFF3B82F6).withValues(alpha: 0.2),
-                              const Color(0xFF14B8A6).withValues(alpha: 0.2),
-                              PremiumTokens.borderMedium,
-                              const Color(0xFF4F46E5).withValues(alpha: 0.3),
-                            ][i % 7],
-                            blurRadius: 12,
-                            spreadRadius: 1,
+    return Consumer(
+      builder: (context, ref, child) {
+        final activeColor = ref.watch(colorPaletteProvider).accent;
+        return Column(
+          children: [
+            const SizedBox(height: 32),
+            SizedBox(
+              width: 300,
+              height: 300,
+              child: AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // Inner glowing core
+                      Container(
+                        width: 95,
+                        height: 95,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: RadialGradient(
+                            colors: [
+                              activeColor.withValues(alpha: 0.28),
+                              activeColor.withValues(alpha: 0.05),
+                              Colors.transparent,
+                            ],
                           ),
-                        ],
-                        gradient: RadialGradient(
-                          colors: [
-                            [
-                              PremiumTokens.textPrimary, 
-                              const Color(0xFF3B82F6), 
-                              const Color(0xFF0D9488),
-                              const Color(0xFF60A5FA),
-                              const Color(0xFF2DD4BF),
-                              PremiumTokens.textPrimary,
-                              const Color(0xFF818CF8),
-                            ][i % 7],
-                            Colors.transparent,
-                          ],
                         ),
                       ),
-                    ).animate(onPlay: (c) => c.repeat(reverse: true))
-                     .scale(begin: const Offset(1, 1), end: const Offset(1.3, 1.3), duration: (1.2 + (i * 0.4)).seconds, curve: Curves.easeInOutSine)
-                     .move(begin: const Offset(-3, -3), end: const Offset(3, 3), duration: (1.8 + (i * 0.2)).seconds, curve: Curves.easeInOutQuad),
-                  )),
-
-                  // 4. Electrons (Orbital Resonances) [HIGH VELOCITY]
-                  _buildElectron(
-                    radius: 120,
-                    bodySize: 7.0, // Larger
-                    color: PremiumTokens.textPrimary,
-                    glowColor: PremiumTokens.textPrimary, // All white
-                    duration: 1.25.seconds, // Much faster
-                    rotation: 0,
-                  ),
-                  _buildElectron(
-                    radius: 120,
-                    bodySize: 6.5,
-                    color: PremiumTokens.textPrimary,
-                    glowColor: PremiumTokens.textPrimary,
-                    duration: 1.5.seconds,
-                    beginAngle: 2.1,
-                    rotation: math.pi / 3, // 60 deg
-                  ),
-                  _buildElectron(
-                    radius: 120,
-                    bodySize: 6.0,
-                    color: PremiumTokens.textPrimary,
-                    glowColor: PremiumTokens.textPrimary,
-                    duration: 1.85.seconds,
-                    beginAngle: 4.5,
-                    rotation: 2 * math.pi / 3, // 120 deg
-                  ),
-                  
-                  // 5. The Core Singularity (Base Glow)
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.blueAccent.withValues(alpha: 0.1),
-                          blurRadius: 50,
-                          spreadRadius: 10,
+                      
+                      // Secondary inner core with pulse animation
+                      Transform.scale(
+                        scale: 1.0 + (math.sin(_controller.value * 2 * math.pi) * 0.08),
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: activeColor.withValues(alpha: 0.6),
+                              width: 1.5,
+                            ),
+                            gradient: RadialGradient(
+                              colors: [
+                                activeColor.withValues(alpha: 0.15),
+                                Colors.transparent,
+                              ],
+                            ),
+                          ),
+                          child: Center(
+                            child: Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: activeColor,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: activeColor.withValues(alpha: 0.8),
+                                    blurRadius: 12,
+                                    spreadRadius: 2,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
-                      ],
-                    ),
-                  ),
-              ],
+                      ),
+
+                      // Ripple Painter
+                      Positioned.fill(
+                        child: CustomPaint(
+                          painter: _ResonanceRipplePainter(
+                            progress: _controller.value,
+                            color: activeColor,
+                          ),
+                        ),
+                      ),
+                      
+                      // Floating delicate light nodes
+                      ...List.generate(4, (index) {
+                        final angle = (index * math.pi / 2) + (_controller.value * 2 * math.pi * (index % 2 == 0 ? 1 : -1) * 0.15);
+                        final distance = 65.0 + (math.sin(_controller.value * 2 * math.pi + index) * 10);
+                        return Transform.translate(
+                          offset: Offset(
+                            math.cos(angle) * distance,
+                            math.sin(angle) * distance,
+                          ),
+                          child: Container(
+                            width: 4,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: activeColor.withValues(alpha: 0.7),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: activeColor.withValues(alpha: 0.6),
+                                  blurRadius: 6,
+                                  spreadRadius: 1,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
+                  );
+                },
+              ),
             ),
-          ),
-        ),
-        const SizedBox(height: 32),
-        Text(
-          "SOUL RESONANCE",
-          style: GoogleFonts.spectral(
-            fontSize: 28,
-            fontWeight: FontWeight.w300,
-            fontStyle: FontStyle.italic,
-            letterSpacing: 8,
-            color: PremiumTokens.silver,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          "Phase of Release & Clarity",
-          style: PremiumTokens.sansStyle(
-            fontSize: 10,
-            color: PremiumTokens.silver.withValues(alpha: 0.3),
-            letterSpacing: 4,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 48),
-      ],
+            const SizedBox(height: 32),
+            Text(
+              "SOUL RESONANCE",
+              style: GoogleFonts.spectral(
+                fontSize: 26,
+                fontWeight: FontWeight.w300,
+                fontStyle: FontStyle.italic,
+                letterSpacing: 8,
+                color: PremiumTokens.silver,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              "Phase of Release & Clarity",
+              style: PremiumTokens.sansStyle(
+                fontSize: 10,
+                color: PremiumTokens.silver.withValues(alpha: 0.3),
+                letterSpacing: 4,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 48),
+          ],
+        );
+      },
     );
+  }
+}
+
+class _ResonanceRipplePainter extends CustomPainter {
+  final double progress;
+  final Color color;
+
+  _ResonanceRipplePainter({required this.progress, required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final maxRadius = size.width / 2;
+
+    final solidPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+
+    for (int i = 0; i < 3; i++) {
+      final ringProgress = (progress + (i / 3.0)) % 1.0;
+      final radius = 35.0 + (ringProgress * (maxRadius - 35.0));
+      final opacity = math.sin(ringProgress * math.pi) * 0.25;
+
+      solidPaint.color = color.withValues(alpha: opacity);
+      
+      if (i % 2 == 0) {
+        canvas.drawCircle(center, radius, solidPaint);
+      } else {
+        _drawDashedCircle(canvas, center, radius, solidPaint, dashLength: 6, gapLength: 4);
+      }
+    }
+  }
+
+  void _drawDashedCircle(
+    Canvas canvas,
+    Offset center,
+    double radius,
+    Paint paint, {
+    required double dashLength,
+    required double gapLength,
+  }) {
+    final double circumference = 2 * math.pi * radius;
+    final int dashCount = (circumference / (dashLength + gapLength)).floor();
+    
+    for (int i = 0; i < dashCount; i++) {
+      final double startAngle = (i * 2 * math.pi) / dashCount;
+      final double sweepAngle = (dashLength / circumference) * 2 * math.pi;
+      
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        startAngle,
+        sweepAngle,
+        false,
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _ResonanceRipplePainter oldDelegate) {
+    return oldDelegate.progress != progress || oldDelegate.color != color;
   }
 }
 
@@ -839,247 +895,6 @@ void _showEntryDialog(BuildContext context, WidgetRef ref, {JournalEntry? entry}
     );
   }
 
-Widget _buildElectron({
-  required double radius,
-  required double bodySize,
-  required Color color,
-  required Color glowColor,
-  required Duration duration,
-  double beginAngle = 0.0,
-  double rotation = 0.0,
-  double eccentricity = 0.35,
-}) {
-    return SizedBox(
-      width: 0, // No size, centers perfectly in Stack
-      height: 0,
-      child: Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.center,
-        children: [
-          // Hardware-Accelerated Rotation
-          RepaintBoundary(
-            child: const SizedBox.expand()
-                .animate(onPlay: (c) => c.repeat())
-                .custom(
-              begin: beginAngle,
-              end: beginAngle + 2 * math.pi,
-              duration: duration,
-              curve: Curves.linear, // Keep linear for smooth orbital velocity
-              builder: (context, value, child) {
-                // Elliptical Math
-                final xPrime = radius * math.cos(value);
-                final yPrime = radius * eccentricity * math.sin(value);
-                
-                // Rotational Math
-                final x = xPrime * math.cos(rotation) - yPrime * math.sin(rotation);
-                final y = xPrime * math.sin(rotation) + yPrime * math.cos(rotation);
-                
-                return Stack(
-                  clipBehavior: Clip.none,
-                  alignment: Alignment.center,
-                  children: [
-                    CustomPaint(
-                      painter: CometTrailPainter(
-                        radius: radius,
-                        currentAngle: value,
-                        color: glowColor.withValues(alpha: 0.2),
-                        rotation: rotation,
-                        eccentricity: eccentricity,
-                        isAtomic: true,
-                      ),
-                    ),
-                    Transform.translate(
-                      offset: Offset(x, y), 
-                      child: Container(
-                        width: bodySize,
-                        height: bodySize,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: color,
-                          boxShadow: [
-                            BoxShadow(
-                              color: glowColor.withValues(alpha: 0.9), // Near-full luminosity
-                              blurRadius: 15,
-                              spreadRadius: 2.5,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-class AtomicOrbitPainter extends CustomPainter {
-  final Color color;
-  final double radius;
-  final double rotation;
-  final double eccentricity;
-
-  const AtomicOrbitPainter({
-    required this.color,
-    required this.radius,
-    required this.rotation,
-    this.eccentricity = 0.35,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-
-    // Draw discrete dots instead of a continuous line
-    const int dotCount = 60;
-    for (int i = 0; i < dotCount; i++) {
-      final double angle = (2 * math.pi / dotCount) * i;
-      final xPrime = radius * math.cos(angle);
-      final yPrime = radius * eccentricity * math.sin(angle);
-      
-      final x = center.dx + xPrime * math.cos(rotation) - yPrime * math.sin(rotation);
-      final y = center.dy + xPrime * math.sin(rotation) + yPrime * math.cos(rotation);
-      
-      final double opacity = 0.05 + (math.Random(i).nextDouble() * 0.1);
-      paint.color = color.withValues(alpha: opacity);
-      
-      canvas.drawCircle(Offset(x, y), 0.8, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant AtomicOrbitPainter oldDelegate) => false;
-}
-
-class CelestialRingPainter extends CustomPainter {
-  final Color color;
-  final double thickness;
-  final bool isDotted;
-  final int dotCount;
-
-  const CelestialRingPainter({
-    required this.color, 
-    this.thickness = 1.0, 
-    this.isDotted = false,
-    this.dotCount = 180,
-  });
-
-  // Pre-cached static points for the dust effect
-  static final List<double> _dustAngles = List.generate(180, (i) => i * 2 * (math.pi / 180));
-  static final List<double> _dustOffsets = List.generate(180, (i) => (math.Random(i).nextDouble() - 0.5) * 6);
-  static final List<double> _dustOpacities = List.generate(180, (i) => (math.Random(i + 100).nextDouble() * 0.15 + 0.05));
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2;
-
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = thickness
-      ..style = PaintingStyle.stroke;
-
-    if (isDotted) {
-      
-      for (int i = 0; i < dotCount; i++) {
-        final double angle = (i * 2 * math.pi) / dotCount;
-        final x = center.dx + radius * math.cos(angle);
-        final y = center.dy + radius * math.sin(angle);
-        canvas.drawCircle(Offset(x, y), 1.0, paint..style = PaintingStyle.fill..color = color.withValues(alpha: 0.15));
-      }
-    } else {
-      // Artistic dusty ring with static distribution
-      for (int i = 0; i < 180; i++) {
-        final double angle = _dustAngles[i];
-        final double offset = _dustOffsets[i];
-        final double opacity = _dustOpacities[i];
-        
-        final x = center.dx + (radius + offset) * math.cos(angle);
-        final y = center.dy + (radius + offset) * math.sin(angle);
-        
-        canvas.drawCircle(
-          Offset(x, y), 
-          0.6, 
-          paint..style = PaintingStyle.fill..color = color.withValues(alpha: opacity)
-        );
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CelestialRingPainter oldDelegate) => false;
-}
-
-class CometTrailPainter extends CustomPainter {
-  final double radius;
-  final double currentAngle;
-  final Color color;
-  final double rotation;
-  final double eccentricity;
-  final bool isAtomic;
-
-  const CometTrailPainter({
-    required this.radius,
-    required this.currentAngle,
-    required this.color,
-    this.rotation = 0.0,
-    this.eccentricity = 0.35,
-    this.isAtomic = false,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    
-    const double tailLength = 0.35; //radians
-    final double startAngle = currentAngle - tailLength;
-    
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0
-      ..strokeCap = StrokeCap.round
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
-
-    const int segments = 12;
-    for (int i = 0; i < segments; i++) {
-      final double progress = i / segments;
-      final double angle = startAngle + (progress * tailLength);
-      
-      paint.color = color.withValues(alpha: progress * 0.6); // Increased trail opacity
-      paint.strokeWidth = 0.2 + (progress * 2.5); // Thicker trail
-      
-      if (!isAtomic) {
-        // Circular Trail
-        final rect = Rect.fromCircle(center: center, radius: radius);
-        canvas.drawArc(rect, angle, 0.1, false, paint);
-      } else {
-        // Elliptical Atomic Trail (segment by segment)
-        final double nextAngle = angle + (tailLength / segments) * 1.2;
-        
-        final x1p = radius * math.cos(angle);
-        final y1p = radius * eccentricity * math.sin(angle);
-        final x1 = center.dx + x1p * math.cos(rotation) - y1p * math.sin(rotation);
-        final y1 = center.dy + x1p * math.sin(rotation) + y1p * math.cos(rotation);
-
-        final x2p = radius * math.cos(nextAngle);
-        final y2p = radius * eccentricity * math.sin(nextAngle);
-        final x2 = center.dx + x2p * math.cos(rotation) - y2p * math.sin(rotation);
-        final y2 = center.dy + x2p * math.sin(rotation) + y2p * math.cos(rotation);
-
-        canvas.drawLine(Offset(x1, y1), Offset(x2, y2), paint);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CometTrailPainter oldDelegate) => true;
-}
 
 class StardustPainter extends CustomPainter {
   const StardustPainter();

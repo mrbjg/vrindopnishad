@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../core/design_system.dart';
 import '../core/providers.dart';
+import '../core/color_theme_provider.dart';
 import '../core/spirituality_provider.dart';
 import '../core/stats_provider.dart';
 import '../core/auth_provider.dart';
@@ -654,10 +655,11 @@ class _PremiumContentListLite extends ConsumerWidget {
 
 // ─── Header Buttons (preserved) ───────────────────────────
 
-class _CompactSearchButton extends StatelessWidget {
+class _CompactSearchButton extends ConsumerWidget {
   const _CompactSearchButton();
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(colorPaletteProvider);
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -671,10 +673,11 @@ class _CompactSearchButton extends StatelessWidget {
   }
 }
 
-class _CompactNotificationButton extends StatelessWidget {
+class _CompactNotificationButton extends ConsumerWidget {
   const _CompactNotificationButton();
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(colorPaletteProvider);
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -693,6 +696,7 @@ class _CompactProfileButton extends ConsumerWidget {
   const _CompactProfileButton();
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(colorPaletteProvider);
     final user = ref.watch(authStateProvider).value;
     final photoUrl = user?.photoURL;
 
