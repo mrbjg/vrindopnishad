@@ -8,6 +8,7 @@ import '../core/providers.dart';
 import '../features/content_detail_screen.dart';
 import 'package:flutter/services.dart';
 import '../core/favorites_provider.dart';
+import '../core/color_theme_provider.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -31,6 +32,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(colorPaletteProvider);
     final recentSearchesAsync = ref.watch(recentSearchesProvider);
     
     final List<SacredContent> displayItems = _isSearching
@@ -177,7 +179,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               height: 60,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                gradient: PremiumTokens.nebulaGradient,
+                gradient: PremiumTokens.activeGradient,
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),

@@ -6,6 +6,7 @@ import '../../core/design_system.dart';
 import '../../core/stats_provider.dart';
 import '../../core/auth_provider.dart';
 import '../../services/notification_service.dart';
+import '../../core/color_theme_provider.dart';
 
 class SacredGoalScreen extends ConsumerStatefulWidget {
   final bool isOnboarding;
@@ -21,6 +22,7 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(colorPaletteProvider);
     return Scaffold(
       backgroundColor: PremiumTokens.scaffoldBg,
       body: Stack(
@@ -172,7 +174,7 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
         width: double.infinity,
         height: 60,
         decoration: BoxDecoration(
-          gradient: PremiumTokens.nebulaGradient,
+          gradient: PremiumTokens.activeGradient,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(color: PremiumTokens.activeAccent.withValues(alpha: 0.3), blurRadius: 20, spreadRadius: 2),

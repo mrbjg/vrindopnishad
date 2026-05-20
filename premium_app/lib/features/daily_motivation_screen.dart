@@ -7,12 +7,14 @@ import 'package:iconsax/iconsax.dart';
 import '../core/design_system.dart';
 import '../core/spirituality_provider.dart';
 import '../core/spirituality_engine.dart';
+import '../core/color_theme_provider.dart';
 
 class DailyMotivationScreen extends ConsumerWidget {
   const DailyMotivationScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(colorPaletteProvider);
     final motivationAsync = ref.watch(dailyMotivationProvider);
     final contextMotivation = ref.watch(contextualMotivationProvider);
     final levelTier = ref.watch(spiritualityLevelProvider);
@@ -65,7 +67,7 @@ class DailyMotivationScreen extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 10),
                       decoration: BoxDecoration(
-                        gradient: PremiumTokens.nebulaGradient,
+                        gradient: PremiumTokens.activeGradient,
                         borderRadius: BorderRadius.circular(100),
                       ),
                       child: Text(

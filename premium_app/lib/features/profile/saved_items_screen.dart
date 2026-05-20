@@ -5,6 +5,7 @@ import '../../core/design_system.dart';
 import '../../core/content_provider.dart';
 import '../../core/favorites_provider.dart';
 import '../content_detail_screen.dart';
+import '../../core/color_theme_provider.dart';
 
 class SavedItemsScreen extends ConsumerWidget {
   const SavedItemsScreen({super.key});
@@ -13,6 +14,7 @@ class SavedItemsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final allContent = ref.watch(sacredContentProvider);
     final favoriteIds = ref.watch(favoritesProvider);
+    ref.watch(colorPaletteProvider);
     
     // Filter content to only show favorites
     final savedItems = allContent.where((c) => favoriteIds.contains(c.id)).toList();
@@ -64,7 +66,7 @@ class SavedItemsScreen extends ConsumerWidget {
                               leading: Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  gradient: PremiumTokens.nebulaGradient,
+                                  gradient: PremiumTokens.activeGradient,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: PremiumUI.customIcon(
