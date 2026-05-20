@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'providers.dart';
 import 'stats_provider.dart';
+import 'color_theme_provider.dart';
 
 final dynamicIconServiceProvider = Provider((ref) => DynamicIconService(ref));
 
@@ -31,11 +32,12 @@ class DynamicIconService {
       
       // Listen for toggle changes
       _ref.listen(dynamicIconEnabledProvider, (previous, next) {
-        if (!next) {
-          _updateIcon('MainActivityStarter');
-        } else {
-          _checkAndUpdateIcon();
-        }
+        _checkAndUpdateIcon();
+      });
+
+      // Listen to Color Theme changes
+      _ref.listen(colorThemeProvider, (previous, next) {
+        _checkAndUpdateIcon();
       });
 
       // Check on initial load
@@ -55,9 +57,11 @@ class DynamicIconService {
       _lastCheckedDate = now;
       
       try {
+        final theme = _ref.read(colorThemeProvider);
+        final themeIcon = _getThemeIcon(theme);
         final currentIcon = await _getCurrentIcon();
-        if (currentIcon != 'MainActivityStarter') {
-          await _updateIcon('MainActivityStarter');
+        if (currentIcon != themeIcon) {
+          await _updateIcon(themeIcon);
         }
       } catch (e) {
         // Silent fail
@@ -66,33 +70,44 @@ class DynamicIconService {
   }
 
   Future<void> _checkAndUpdateIcon() async {
-    // Respect user preference and platform constraints
-    if (kIsWeb || !_ref.read(dynamicIconEnabledProvider)) return;
+    // Respect platform constraints
+    if (kIsWeb) return;
     if (!Platform.isAndroid && !Platform.isIOS) return;
 
     try {
       // Midnight reset check
       await _checkMidnightReset();
 
-      final japState = _ref.read(naamJapStateProvider);
-      final statsState = _ref.read(userStatsProvider).value;
-      
-      String targetIcon = 'MainActivityStarter';
-      
-      final todayMalas = japState.today / 108.0; 
-      final streak = statsState?.streakCount ?? 0;
-      final level = statsState?.level ?? 1;
+      final theme = _ref.read(colorThemeProvider);
+      final isMilestoneEnabled = _ref.read(dynamicIconEnabledProvider);
 
-      // Milestone Logic (Highest first)
-      if (todayMalas >= 108 || (streak >= 30 && todayMalas >= 21) || level >= 50) {
-        targetIcon = 'MainActivityDivine';
-      } 
-      else if (todayMalas >= 54 || (streak >= 7 && todayMalas >= 11) || level >= 20) {
-        targetIcon = 'MainActivityGolden';
-      } 
-      else if (todayMalas >= 0.19) { // ~21 Japs
-        targetIcon = 'MainActivityRadiant';
-      } 
+      String targetIcon = 'MainActivityStarter';
+
+      if (isMilestoneEnabled) {
+        final japState = _ref.read(naamJapStateProvider);
+        final statsState = _ref.read(userStatsProvider).value;
+        
+        final todayMalas = japState.today / 108.0; 
+        final streak = statsState?.streakCount ?? 0;
+        final level = statsState?.level ?? 1;
+
+        // Milestone Logic (Highest first)
+        if (todayMalas >= 108 || (streak >= 30 && todayMalas >= 21) || level >= 50) {
+          targetIcon = 'MainActivityDivine';
+        } 
+        else if (todayMalas >= 54 || (streak >= 7 && todayMalas >= 11) || level >= 20) {
+          targetIcon = 'MainActivityGolden';
+        } 
+        else if (todayMalas >= 0.19) { // ~21 Japs
+          targetIcon = 'MainActivityRadiant';
+        } else {
+          // If milestone-enabled but no milestones hit today, default to theme icon
+          targetIcon = _getThemeIcon(theme);
+        }
+      } else {
+        // Milestone disabled: match the selected color theme icon
+        targetIcon = _getThemeIcon(theme);
+      }
 
       final currentIcon = await _getCurrentIcon();
       
@@ -101,6 +116,23 @@ class DynamicIconService {
       }
     } catch (e) {
       // Fail silently to avoid breaking the chant experience
+    }
+  }
+
+  String _getThemeIcon(AppColorTheme theme) {
+    switch (theme) {
+      case AppColorTheme.nebulaBlue:
+      case AppColorTheme.oceanTeal:
+      case AppColorTheme.midnightIndigo:
+        return 'MainActivityStarter';
+      case AppColorTheme.lotusRose:
+      case AppColorTheme.amethystMystic:
+        return 'MainActivityRadiant';
+      case AppColorTheme.celestialGold:
+        return 'MainActivityGolden';
+      case AppColorTheme.saffronSacred:
+      case AppColorTheme.emeraldDivine:
+        return 'MainActivityDivine';
     }
   }
 
