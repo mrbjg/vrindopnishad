@@ -218,16 +218,23 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                ),
              ),
           
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              HapticFeedback.lightImpact();
-              ref.read(focusModeProvider.notifier).state = !isFocusMode;
-            },
-            child: CustomScrollView(
-              controller: _scrollController,
-              physics: const BouncingScrollPhysics(),
-              slivers: [
+          // Dismiss focus mode when tapping empty background area
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: () {
+                if (isFocusMode) {
+                  HapticFeedback.lightImpact();
+                  ref.read(focusModeProvider.notifier).state = false;
+                }
+              },
+            ),
+          ),
+
+          // ── Scroll Content ───────────────────────────────────────────────
+          CustomScrollView(
+            controller: _scrollController,
+            physics: const BouncingScrollPhysics(),
+            slivers: [
                 SliverToBoxAdapter(
                   child: SizedBox(height: MediaQuery.of(context).padding.top + 80),
                 ),
@@ -470,13 +477,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           .custom(builder: (c, v, child) => Opacity(opacity: 0.1 + (v * 0.1), child: child)),
                       ),
                     ),
-                    const SizedBox(height: 32),
-                  ]),
-                ),
-              ),
-            ],
-          ),
-        ),
+                     const SizedBox(height: 32),
+                  ]),  // SliverChildListDelegate
+                ),    // SliverList
+              ),      // SliverPadding
+            ],        // slivers: [
+          ),          // CustomScrollView
 
           Positioned(
             top: 0,
@@ -816,7 +822,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 isFocusMode: isFocusMode,
                 child: Column(
                   children: [
-                    Icon(icon, color: accentColor.withValues(alpha: 0.4), size: 16),
+                    Icon(icon, color: accentColor.withValues(alpha: 0.75), size: 16),
                     const SizedBox(height: 12),
                     Builder(
                       builder: (context) {
@@ -824,7 +830,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         return Text(
                           title.toUpperCase(),
                           style: GoogleFonts.manrope(
-                            color: accentColor.withValues(alpha: 0.7),
+                            color: accentColor.withValues(alpha: 0.9),
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: isHindi ? 0.5 : 2.5,
@@ -1256,29 +1262,40 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: ReadingTheme.values.map((theme) {
                     final isSelected = _currentTheme == theme;
+                    // Use theme-aware background so text stays legible in light mode
+                    final btnBg = isSelected
+                        ? themeData.accentColor
+                        : themeData.textColor.withValues(alpha: 0.08);
+                    final btnText = isSelected
+                        ? themeData.backgroundColor
+                        : themeData.textColor.withValues(alpha: 0.75);
                     return GestureDetector(
                       onTap: () {
                         HapticFeedback.lightImpact();
                         setState(() => _currentTheme = theme);
                         setModalState(() {});
-                        // Update universal preference
                         ref.read(readerThemeProvider.notifier).state = theme;
                       },
                       child: AnimatedContainer(
                         duration: 300.ms,
                         curve: Curves.easeInOut,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                         decoration: BoxDecoration(
-                          color: isSelected ? PremiumTokens.activeAccent : PremiumTokens.borderSubtle,
+                          color: btnBg,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: isSelected ? Colors.transparent : PremiumTokens.borderMedium),
+                          border: Border.all(
+                            color: isSelected
+                                ? themeData.accentColor
+                                : themeData.textColor.withValues(alpha: 0.15),
+                          ),
                         ),
                         child: Text(
                           theme.name.replaceAll(RegExp(r'(?=[A-Z])'), ' ').toUpperCase(),
                           style: GoogleFonts.manrope(
-                            fontSize: 10, 
-                            fontWeight: FontWeight.w800, 
-                            color: isSelected ? PremiumTokens.textPrimary : themeData.textColor.withValues(alpha: 0.6)
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            color: btnText,
+                            letterSpacing: 0.8,
                           ),
                         ),
                       ),

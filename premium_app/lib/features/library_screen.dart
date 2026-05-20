@@ -10,6 +10,7 @@ import 'search_screen.dart';
 import 'package:flutter/services.dart';
 import '../core/favorites_provider.dart';
 import '../core/audio_provider.dart';
+import '../core/color_theme_provider.dart';
 
 class LibraryScreen extends ConsumerWidget {
   const LibraryScreen({super.key});
@@ -20,13 +21,14 @@ class LibraryScreen extends ConsumerWidget {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // Background handled by Master Layer
           SafeArea(
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [
                 SliverToBoxAdapter(child: RepaintBoundary(child: _buildHeader(context))),
                 SliverToBoxAdapter(child: RepaintBoundary(child: _buildSearchBar(context, ref))),
+                // Personalized For You section
+                SliverToBoxAdapter(child: RepaintBoundary(child: _buildForYouSection(context, ref))),
                 SliverToBoxAdapter(child: RepaintBoundary(child: _buildCategoryFilterIndicator(context, ref))),
                 SliverToBoxAdapter(child: RepaintBoundary(child: _buildNowPlaying(context, ref))),
                 Consumer(
@@ -34,7 +36,7 @@ class LibraryScreen extends ConsumerWidget {
                     final content = ref.watch(sacredContentProvider);
                     final query = ref.watch(libraryCategoryProvider);
                     final List<SacredContent> items;
-                    
+
                     if (query.startsWith("SEARCH:")) {
                       items = ref.watch(searchedContentProvider(query.replaceFirst("SEARCH:", "")));
                     } else if (query == "ALL") {
@@ -44,9 +46,8 @@ class LibraryScreen extends ConsumerWidget {
                     }
 
                     return SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 120), // Extra bottom padding for FAB
-                      sliver: SliverFixedExtentList(
-                        itemExtent: 156.0,
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
+                      sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
                             return RepaintBoundary(
@@ -69,9 +70,9 @@ class LibraryScreen extends ConsumerWidget {
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
       child: SizedBox(
-        width: double.infinity, // Robust bounding
+        width: double.infinity,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -134,7 +135,7 @@ class LibraryScreen extends ConsumerWidget {
 
   Widget _buildSearchBar(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: GestureDetector(
         onTap: () {
           HapticFeedback.lightImpact();
@@ -162,6 +163,203 @@ class LibraryScreen extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+
+  /// Personalized "For You" horizontal scroll section.
+  /// Shows content from categories the user has favorited.
+  Widget _buildForYouSection(BuildContext context, WidgetRef ref) {
+    final allContent = ref.watch(sacredContentProvider);
+    final favorites = ref.watch(favoritesProvider); // Set<String> of IDs
+    final palette = ref.watch(colorPaletteProvider);
+    final query = ref.watch(libraryCategoryProvider);
+
+    // Don't show when a filter/search is active
+    if (query != "ALL" || allContent.isEmpty) return const SizedBox.shrink();
+
+    // Determine top categories from favorites, fallback to first 2 categories
+    final favoriteItems = allContent.where((c) => favorites.contains(c.id)).toList();
+    final Set<String> preferredCategories = favoriteItems
+        .map((c) => c.category)
+        .toSet()
+        .take(3)
+        .toSet();
+
+    // If no favorites yet, pick the top 2 categories by count
+    final List<SacredContent> forYouItems;
+    if (preferredCategories.isEmpty) {
+      forYouItems = allContent.take(8).toList();
+    } else {
+      forYouItems = allContent
+          .where((c) => preferredCategories.contains(c.category))
+          .take(8)
+          .toList();
+    }
+
+    if (forYouItems.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+          child: Row(
+            children: [
+              Container(
+                width: 3,
+                height: 14,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(2),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [palette.accent, palette.accentDark],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                favorites.isEmpty ? "DISCOVER" : "FOR YOU",
+                style: PremiumTokens.sansStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
+                  color: PremiumTokens.textPrimary,
+                  letterSpacing: 2.5,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                favorites.isEmpty ? "Popular picks" : "Based on your favorites",
+                style: PremiumTokens.sansStyle(
+                  fontSize: 10,
+                  color: PremiumTokens.textMuted,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 120,
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            itemCount: forYouItems.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              final item = forYouItems[index];
+              return GestureDetector(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ContentDetailScreen(content: item),
+                    ),
+                  );
+                },
+                child: Container(
+                  width: 160,
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: PremiumTokens.surfaceMain.withValues(alpha: 0.7),
+                    border: Border.all(
+                      color: palette.accent.withValues(alpha: 0.14),
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: palette.glow.withValues(alpha: 0.08),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: palette.accent.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          item.category.toUpperCase(),
+                          style: PremiumTokens.sansStyle(
+                            fontSize: 8,
+                            fontWeight: FontWeight.w900,
+                            color: palette.accent,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: Text(
+                          item.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: PremiumTokens.hindiAwareStyle(
+                            item.title,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: PremiumTokens.textPrimary,
+                          ),
+                        ),
+                      ),
+                      if (item.author != null)
+                        Text(
+                          item.author!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: PremiumTokens.sansStyle(
+                            fontSize: 9,
+                            color: PremiumTokens.saffronGlow.withValues(alpha: 0.8),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: 1,
+                  color: PremiumTokens.borderSubtle,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Text(
+                  "ALL CONTENT",
+                  style: PremiumTokens.sansStyle(
+                    fontSize: 9,
+                    color: PremiumTokens.textMuted,
+                    letterSpacing: 2,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  height: 1,
+                  color: PremiumTokens.borderSubtle,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+      ],
     );
   }
 
@@ -289,70 +487,70 @@ class LibraryScreen extends ConsumerWidget {
   }
 
   Widget _buildLibraryItem(BuildContext context, WidgetRef ref, SacredContent item, List<SacredContent> playlist) {
-    // ATOMIC SELECTION: Only rebuilds when THIS item's specific playing status changes
-    final isPlaying = ref.watch(audioProvider.select((s) => 
+    final isPlaying = ref.watch(audioProvider.select((s) =>
       s.isPlaying && s.currentContent?.id == item.id
     ));
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: GestureDetector(
-        onTap: () {
-          HapticFeedback.lightImpact();
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ContentDetailScreen(content: item),
-            ),
-          );
-        },
-        child: PremiumUI.relicStaticCard(
-          padding: const EdgeInsets.all(16),
-          borderColor: isPlaying 
-              ? PremiumTokens.activeAccent.withValues(alpha: 0.3) 
-              : PremiumTokens.borderSubtle,
-          child: Row(
-            children: [
-              // Enclaved Status Icon (Music vs. Book)
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: isPlaying 
-                      ? PremiumTokens.activeAccent.withValues(alpha: 0.1) 
-                      : PremiumTokens.borderSubtle,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: isPlaying 
-                        ? PremiumTokens.activeAccent.withValues(alpha: 0.2) 
-                        : PremiumTokens.borderSubtle,
-                  ),
-                ),
-                child: Center(
-                  child: Icon(
-                    isPlaying 
-                      ? Iconsax.music_play5 
-                      : (item.audioUrl != null && item.audioUrl!.isNotEmpty 
-                          ? Iconsax.music 
-                          : Iconsax.book_1),
-                    color: isPlaying ? PremiumTokens.activeAccent : PremiumTokens.textMuted,
-                    size: 18,
-                  ),
-                ),
+    return SizedBox(
+      height: 142,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 14),
+        child: GestureDetector(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ContentDetailScreen(content: item),
               ),
-              const SizedBox(width: 16),
-              
-              // Enriched Content Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (item.author != null || item.book != null)
-                      Row(
-                        children: [
-                          if (item.author != null)
-                             Flexible(
-                               child: Text(
+            );
+          },
+          child: PremiumUI.relicStaticCard(
+            padding: const EdgeInsets.all(16),
+            borderColor: isPlaying
+                ? PremiumTokens.activeAccent.withValues(alpha: 0.3)
+                : PremiumTokens.borderSubtle,
+            child: Row(
+              children: [
+                // Status Icon
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: isPlaying
+                        ? PremiumTokens.activeAccent.withValues(alpha: 0.1)
+                        : PremiumTokens.borderSubtle,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isPlaying
+                          ? PremiumTokens.activeAccent.withValues(alpha: 0.2)
+                          : PremiumTokens.borderSubtle,
+                    ),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      isPlaying
+                        ? Iconsax.music_play5
+                        : (item.audioUrl != null && item.audioUrl!.isNotEmpty
+                            ? Iconsax.music
+                            : Iconsax.book_1),
+                      color: isPlaying ? PremiumTokens.activeAccent : PremiumTokens.textMuted,
+                      size: 18,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (item.author != null || item.book != null)
+                        Row(
+                          children: [
+                            if (item.author != null)
+                              Flexible(
+                                child: Text(
                                   item.author!,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -363,156 +561,139 @@ class LibraryScreen extends ConsumerWidget {
                                     color: PremiumTokens.saffronGlow.withValues(alpha: 0.8),
                                   ).copyWith(letterSpacing: 1.2),
                                 ),
-                             ),
-                          if (item.author != null && item.book != null)
-                            Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 4),
-                              width: 3,
-                              height: 3,
-                              decoration: BoxDecoration(shape: BoxShape.circle, color: PremiumTokens.textMuted),
-                            ),
-                          if (item.book != null)
-                            Expanded(
-                              child: Text(
-                                item.book!,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: PremiumTokens.hindiAwareStyle(
+                              ),
+                            if (item.author != null && item.book != null)
+                              Container(
+                                margin: const EdgeInsets.symmetric(horizontal: 4),
+                                width: 3,
+                                height: 3,
+                                decoration: BoxDecoration(shape: BoxShape.circle, color: PremiumTokens.textMuted),
+                              ),
+                            if (item.book != null)
+                              Expanded(
+                                child: Text(
                                   item.book!,
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.bold,
-                                  color: PremiumTokens.textMuted,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: PremiumTokens.hindiAwareStyle(
+                                    item.book!,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                    color: PremiumTokens.textMuted,
+                                  ),
                                 ),
                               ),
-                            ),
-                        ],
-                      ),
-                    const SizedBox(height: 2),
-                    Text(
-                      item.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: PremiumTokens.hindiAwareStyle(
-                        item.title,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: PremiumTokens.textPrimary,
-                        isSacred: true,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      item.commentary.startsWith('http') ? 'Sacred Verse Details' : item.commentary,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: PremiumTokens.hindiAwareStyle(
-                        item.commentary,
-                        fontSize: 11,
-                        color: PremiumTokens.textMuted,
-                      ),
-                    ),
-                    const Spacer(),
-                    Row(
-                      children: [
-                        if (item.audioUrl != null && item.audioUrl!.isNotEmpty) ...[
-                          Icon(Icons.schedule, color: PremiumTokens.textMuted, size: 10),
-                          const SizedBox(width: 4),
-                          Text(
-                            "10:45",
-                            style: PremiumTokens.sansStyle(fontSize: 10, color: PremiumTokens.textMuted),
-                          ),
-                          const SizedBox(width: 8),
-                        ] else ...[
-                          Icon(Icons.auto_stories, color: PremiumTokens.textMuted, size: 10),
-                          const SizedBox(width: 4),
-                          Text(
-                            (item.chapter ?? "READ").toUpperCase(),
-                            style: PremiumTokens.sansStyle(fontSize: 10, color: PremiumTokens.textMuted, letterSpacing: 1.0),
-                          ),
-                          const SizedBox(width: 8),
-                        ],
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: PremiumTokens.borderSubtle,
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: PremiumTokens.borderSubtle),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                item.categoryIcon,
-                                size: 10,
-                                color: PremiumTokens.textMuted,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                item.category.toUpperCase(),
-                                style: PremiumTokens.sansStyle(
-                                  fontSize: 8, 
-                                  fontWeight: FontWeight.w900,
-                                  color: PremiumTokens.textMuted,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                            ],
-                          ),
+                          ],
                         ),
-                        if (item.contentTags.isNotEmpty)
-                          Expanded(
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              physics: const NeverScrollableScrollPhysics(), // Keep it passive, or remove and allow scroll
-                              child: Row(
-                                children: [
-                                  const SizedBox(width: 8),
-                                  ...item.contentTags.take(3).map((tag) => Container(
-                                    margin: const EdgeInsets.only(right: 4),
-                                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: PremiumTokens.borderSubtle,
-                                      borderRadius: BorderRadius.circular(4),
-                                      border: Border.all(color: PremiumTokens.borderSubtle),
-                                    ),
-                                    child: Text(
-                                      tag.toUpperCase(),
-                                      style: PremiumTokens.sansStyle(
-                                        fontSize: 8, 
-                                        fontWeight: FontWeight.bold,
-                                        color: PremiumTokens.textMuted,
-                                        letterSpacing: 0.5,
-                                      ),
-                                    ),
-                                  )),
-                                ],
-                              ),
+                      const SizedBox(height: 2),
+                      Text(
+                        item.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: PremiumTokens.hindiAwareStyle(
+                          item.title,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: PremiumTokens.textPrimary,
+                          isSacred: true,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        item.commentary.startsWith('http') ? 'Sacred Verse Details' : item.commentary,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: PremiumTokens.hindiAwareStyle(
+                          item.commentary,
+                          fontSize: 11,
+                          color: PremiumTokens.textMuted,
+                        ),
+                      ),
+                      const Spacer(),
+                      Row(
+                        children: [
+                          if (item.audioUrl != null && item.audioUrl!.isNotEmpty) ...[
+                            Icon(Icons.schedule, color: PremiumTokens.textMuted, size: 10),
+                            const SizedBox(width: 4),
+                            Text("10:45", style: PremiumTokens.sansStyle(fontSize: 10, color: PremiumTokens.textMuted)),
+                            const SizedBox(width: 8),
+                          ] else ...[
+                            Icon(Icons.auto_stories, color: PremiumTokens.textMuted, size: 10),
+                            const SizedBox(width: 4),
+                            Text(
+                              (item.chapter ?? "READ").toUpperCase(),
+                              style: PremiumTokens.sansStyle(fontSize: 10, color: PremiumTokens.textMuted, letterSpacing: 1.0),
+                            ),
+                            const SizedBox(width: 8),
+                          ],
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: PremiumTokens.borderSubtle,
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: PremiumTokens.borderSubtle),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(item.categoryIcon, size: 10, color: PremiumTokens.textMuted),
+                                const SizedBox(width: 4),
+                                Text(
+                                  item.category.toUpperCase(),
+                                  style: PremiumTokens.sansStyle(fontSize: 8, fontWeight: FontWeight.w900, color: PremiumTokens.textMuted, letterSpacing: 0.5),
+                                ),
+                              ],
                             ),
                           ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              
-              // Interaction Column
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  PremiumUI.animatedIcon(
-                    folder: 'Heart',
-                    fileName: 'heart.json',
-                    size: 20,
-                    color: ref.watch(isFavoriteProvider(item.id)) ? PremiumTokens.saffronGlow : PremiumTokens.textMuted,
-                    isToggled: ref.watch(isFavoriteProvider(item.id)),
-                    resetAfterPlay: false,
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      ref.read(favoritesProvider.notifier).toggleFavorite(item.id);
-                    },
+                          if (item.contentTags.isNotEmpty)
+                            Expanded(
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                physics: const NeverScrollableScrollPhysics(),
+                                child: Row(
+                                  children: [
+                                    const SizedBox(width: 8),
+                                    ...item.contentTags.take(3).map((tag) => Container(
+                                      margin: const EdgeInsets.only(right: 4),
+                                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: PremiumTokens.borderSubtle,
+                                        borderRadius: BorderRadius.circular(4),
+                                        border: Border.all(color: PremiumTokens.borderSubtle),
+                                      ),
+                                      child: Text(
+                                        tag.toUpperCase(),
+                                        style: PremiumTokens.sansStyle(fontSize: 8, fontWeight: FontWeight.bold, color: PremiumTokens.textMuted, letterSpacing: 0.5),
+                                      ),
+                                    )),
+                                  ],
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ],
                   ),
-                   const SizedBox(height: 20),
-                   if (item.audioUrl != null && item.audioUrl!.isNotEmpty)
+                ),
+
+                // Action Column
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    PremiumUI.animatedIcon(
+                      folder: 'Heart',
+                      fileName: 'heart.json',
+                      size: 20,
+                      color: ref.watch(isFavoriteProvider(item.id)) ? PremiumTokens.saffronGlow : PremiumTokens.textMuted,
+                      isToggled: ref.watch(isFavoriteProvider(item.id)),
+                      resetAfterPlay: false,
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        ref.read(favoritesProvider.notifier).toggleFavorite(item.id);
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    if (item.audioUrl != null && item.audioUrl!.isNotEmpty)
                       GestureDetector(
                         onTap: () {
                           HapticFeedback.heavyImpact();
@@ -523,28 +704,30 @@ class LibraryScreen extends ConsumerWidget {
                           height: 38,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: isPlaying 
-                                ? PremiumTokens.activeAccent.withValues(alpha: 0.1) 
+                            color: isPlaying
+                                ? PremiumTokens.activeAccent.withValues(alpha: 0.1)
                                 : PremiumTokens.borderSubtle,
                             border: Border.all(
-                              color: isPlaying 
-                                  ? PremiumTokens.activeAccent.withValues(alpha: 0.3) 
-                                  : PremiumTokens.borderMedium
+                              color: isPlaying
+                                  ? PremiumTokens.activeAccent.withValues(alpha: 0.3)
+                                  : PremiumTokens.borderMedium,
                             ),
                           ),
                           child: Icon(
-                            isPlaying ? Iconsax.pause : Icons.play_arrow, 
-                            color: isPlaying ? PremiumTokens.activeAccent : PremiumTokens.textPrimary, 
-                            size: 18
+                            isPlaying ? Iconsax.pause : Icons.play_arrow,
+                            color: isPlaying ? PremiumTokens.activeAccent : PremiumTokens.textPrimary,
+                            size: 18,
                           ),
                         ),
                       ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
+
