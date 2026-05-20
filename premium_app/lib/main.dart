@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,6 +13,7 @@ import 'features/auth_screen.dart';
 import 'features/onboarding_screen.dart';
 import 'features/splash_screen.dart';
 import 'core/cache_service.dart';
+import 'services/notification_service.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:firebase_core/firebase_core.dart';
@@ -56,6 +58,12 @@ void main() async {
     // Now safe to initialize notifications
     NotificationService().init(),
   ]);
+
+  // Schedule daily Naam Jap reminders: 7 AM morning + 8 PM evening
+  unawaited(NotificationService().scheduleJapReminders(
+    morningHour: 7,
+    eveningHour: 20,
+  ));
 
   runApp(ProviderScope(
     overrides: [

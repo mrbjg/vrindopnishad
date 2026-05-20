@@ -96,6 +96,14 @@ class NotificationService {
           playSound: true,
           sound: RawResourceAndroidNotificationSound('shankh'),
         ));
+        await androidPlugin.createNotificationChannel(const AndroidNotificationChannel(
+          'naam_jap_reminders',
+          'Naam Jap Reminders',
+          description: 'Daily morning and evening reminders to complete your Naam Jap',
+          importance: Importance.high,
+          playSound: true,
+          enableVibration: true,
+        ));
       }
     }
 
@@ -309,4 +317,117 @@ class NotificationService {
   Future<void> cancelAll() async {
     await _notifications.cancelAll();
   }
+
+  // ── Naam Jap Smart Reminders ──────────────────────────────────────────────
+  // ID range 4001-4002 reserved for jap reminders (morning + evening).
+
+  static const _japMorningMessages = [
+    ("ॐ उठो, जपो।", "सूर्योदय आपका जप बुला रहा है। आज की माला पूरी करें।"),
+    ("🙏 भोर में जप।", "सुबह का समय प्रभु के चिंतन के लिए सर्वोत्तम है।"),
+    ("✨ नाम जप करें।", "हर श्वास में राम, हर पल में शांति।"),
+    ("🪷 जागो, जपो।", "माला के 108 मनकों में आज की शुरुआत करें।"),
+  ];
+
+  static const _japEveningMessages = [
+    ("🌙 संध्या जप।", "दिन ढलने से पहले अपनी माला पूरी करें।"),
+    ("🪔 दीप जलाओ।", "रात की शांति में प्रभु-नाम का स्मरण करें।"),
+    ("✨ अभी जपो।", "कल का भरोसा नहीं — आज की माला आज ही पूरी करें।"),
+    ("🙏 माला शेष है।", "एक पल रुकें, राम का नाम लें।"),
+  ];
+
+  /// Schedule two daily Naam Jap reminders — morning at [morningHour]:00
+  /// and evening at [eveningHour]:00. Rotates through spiritual messages.
+  Future<void> scheduleJapReminders({
+    int morningHour = 7,
+    int eveningHour = 20,
+  }) async {
+    await cancelJapReminders();
+
+    final now = tz.TZDateTime.now(tz.local);
+    final dayOfYear = now.difference(DateTime(now.year)).inDays;
+
+    // Pick message variant based on day of year (rotates every 4 days)
+    final morningMsg = _japMorningMessages[dayOfYear % _japMorningMessages.length];
+    final eveningMsg = _japEveningMessages[dayOfYear % _japEveningMessages.length];
+
+    await _scheduleJapAt(
+      id: 4001,
+      hour: morningHour,
+      minute: 0,
+      title: morningMsg.$1,
+      body: morningMsg.$2,
+    );
+
+    await _scheduleJapAt(
+      id: 4002,
+      hour: eveningHour,
+      minute: 0,
+      title: eveningMsg.$1,
+      body: eveningMsg.$2,
+    );
+
+    debugPrint('Naam Jap reminders scheduled: ${morningHour}:00 & ${eveningHour}:00');
+  }
+
+  Future<void> _scheduleJapAt({
+    required int id,
+    required int hour,
+    required int minute,
+    required String title,
+    required String body,
+  }) async {
+    final now = tz.TZDateTime.now(tz.local);
+    var scheduled = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
+    if (scheduled.isBefore(now)) {
+      scheduled = scheduled.add(const Duration(days: 1));
+    }
+
+    const details = NotificationDetails(
+      android: AndroidNotificationDetails(
+        'naam_jap_reminders',
+        'Naam Jap Reminders',
+        channelDescription: 'Daily reminders to complete your Naam Jap practice',
+        importance: Importance.high,
+        priority: Priority.high,
+        enableLights: true,
+        enableVibration: true,
+      ),
+      iOS: DarwinNotificationDetails(
+        presentAlert: true,
+        presentSound: true,
+        presentBadge: true,
+      ),
+    );
+
+    try {
+      await _notifications.zonedSchedule(
+        id,
+        title,
+        body,
+        scheduled,
+        details,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time,
+      );
+    } catch (_) {
+      // Fall back to inexact on restricted devices
+      await _notifications.zonedSchedule(
+        id,
+        title,
+        body,
+        scheduled,
+        details,
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time,
+      );
+    }
+  }
+
+  Future<void> cancelJapReminders() async {
+    await _notifications.cancel(4001);
+    await _notifications.cancel(4002);
+  }
 }
+

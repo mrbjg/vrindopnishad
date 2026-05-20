@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +10,7 @@ import 'package:just_audio/just_audio.dart';
 import '../core/design_system.dart';
 import '../core/providers.dart';
 import '../core/stats_provider.dart';
+import '../core/color_theme_provider.dart';
 
 class NaamJapScreen extends ConsumerStatefulWidget {
   const NaamJapScreen({super.key});
@@ -353,90 +355,110 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
   }
 
   Widget _buildProfessionalCounter(int totalCount, {bool simplified = false}) {
-    // Mathematical correction for Mala / Bead display
     final int completedMalas = totalCount ~/ 108;
     final int currentBead = totalCount == 0 ? 0 : (totalCount - 1) % 108 + 1;
-    
+    final double progress = (currentBead / 108).clamp(0.0, 1.0);
+    final palette = ref.watch(colorPaletteProvider);
+
     return Column(
       children: [
         Stack(
           alignment: Alignment.center,
           children: [
-            // Breathing Aura
+            // Outer breathing glow aura
             Animate(
               onPlay: (c) => c.repeat(reverse: true),
               effects: [
-                ScaleEffect(begin: const Offset(1, 1), end: const Offset(1.2, 1.2), duration: 2.seconds),
+                ScaleEffect(
+                  begin: const Offset(1.0, 1.0),
+                  end: const Offset(1.16, 1.16),
+                  duration: 3.seconds,
+                  curve: Curves.easeInOut,
+                ),
               ],
               child: Container(
-                width: simplified ? 300 : 250,
-                height: simplified ? 300 : 250,
+                width: simplified ? 310 : 262,
+                height: simplified ? 310 : 262,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      PremiumTokens.isDark 
-                          ? PremiumTokens.textMuted
-                          : PremiumTokens.activeAccent.withValues(alpha: 0.15),
+                      palette.glow.withValues(alpha: 0.20),
+                      palette.glow.withValues(alpha: 0.05),
                       Colors.transparent,
                     ],
+                    stops: const [0.0, 0.55, 1.0],
                   ),
                 ),
               ),
             ),
-            
-            // Glass Disk with dynamic number
+
+            // Progress arc ring
+            SizedBox(
+              width: simplified ? 270 : 226,
+              height: simplified ? 270 : 226,
+              child: CustomPaint(
+                painter: _ChantArcPainter(
+                  progress: progress,
+                  accent: palette.accent,
+                  glow: palette.glow,
+                  completedMalas: completedMalas,
+                ),
+              ),
+            ),
+
+            // Inner glass disc
             Container(
-              width: simplified ? 240 : 200,
-              height: simplified ? 240 : 200,
+              width: simplified ? 224 : 186,
+              height: simplified ? 224 : 186,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: PremiumTokens.isDark 
-                    ? PremiumTokens.borderSubtle
-                    : Colors.white.withValues(alpha: 0.85),
-                border: Border.all(color: PremiumTokens.isDark 
-                    ? PremiumTokens.textMuted 
-                    : PremiumTokens.activeAccent.withValues(alpha: 0.3)),
-                boxShadow: PremiumTokens.isDark ? null : [
+                color: PremiumTokens.surfaceMain.withValues(alpha: 0.72),
+                border: Border.all(
+                  color: palette.accent.withValues(alpha: 0.12),
+                  width: 1,
+                ),
+                boxShadow: [
                   BoxShadow(
-                    color: PremiumTokens.activeAccent.withValues(alpha: 0.08),
-                    blurRadius: 20,
+                    color: palette.glow.withValues(alpha: 0.22),
+                    blurRadius: 32,
                     spreadRadius: 2,
                   ),
                 ],
               ),
               child: Center(
                 child: Animate(
-                  key: ValueKey(totalCount), // Triggers animation on every increment
+                  key: ValueKey(totalCount),
                   effects: [
-                    ScaleEffect(begin: const Offset(1, 1), end: const Offset(1.15, 1.15), duration: 150.ms, curve: Curves.easeOutCubic),
-                    CustomEffect(
-                      duration: 150.ms,
-                      builder: (context, value, child) => Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: PremiumTokens.accentSilver.withValues(alpha: 0.1 * value),
-                              blurRadius: 40 * value,
-                              spreadRadius: 2 * value,
-                            )
-                          ],
-                        ),
-                        child: child,
-                      ),
+                    ScaleEffect(
+                      begin: const Offset(1.0, 1.0),
+                      end: const Offset(1.13, 1.13),
+                      duration: 140.ms,
+                      curve: Curves.easeOutCubic,
                     ),
                   ],
-                  child: Text(
-                    currentBead.toString(),
-                    style: GoogleFonts.spectral(
-                      fontSize: simplified ? 96 : 72,
-                      fontWeight: FontWeight.w300,
-                      color: PremiumTokens.textPrimary,
-                      shadows: [
-                        Shadow(color: PremiumTokens.textMuted, blurRadius: 20),
-                      ],
-                    ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        currentBead.toString(),
+                        style: GoogleFonts.spectral(
+                          fontSize: simplified ? 88 : 68,
+                          fontWeight: FontWeight.w200,
+                          color: PremiumTokens.textPrimary,
+                          height: 1.0,
+                        ),
+                      ),
+                      if (currentBead > 0)
+                        Text(
+                          "of 108",
+                          style: PremiumTokens.sansStyle(
+                            fontSize: 10,
+                            color: palette.accent.withValues(alpha: 0.6),
+                            letterSpacing: 2,
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ),
@@ -444,8 +466,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
           ],
         ),
         if (!simplified) ...[
-          const SizedBox(height: 16),
-          // Continuous Status Display
+          const SizedBox(height: 20),
           Animate(
             key: ValueKey(completedMalas),
             effects: [FadeEffect(duration: 400.ms), const SlideEffect(begin: Offset(0, 0.2), end: Offset.zero)],
@@ -475,61 +496,96 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
   }
 
   Widget _buildInteractionArea(int count, bool isFocusMode) {
+    final palette = ref.watch(colorPaletteProvider);
     return PremiumUI.focusContainer(
       isFocusMode: isFocusMode,
       child: Column(
         children: [
+          // Glowing gradient chant button
           GestureDetector(
             onTap: () {
               HapticFeedback.mediumImpact();
               ref.read(naamJapStateProvider.notifier).increment(context);
             },
-            child: Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    PremiumTokens.surfaceMain,
-                    PremiumTokens.scaffoldBg,
+            child: Animate(
+              key: ValueKey(count),
+              effects: [
+                ScaleEffect(
+                  begin: const Offset(1.0, 1.0),
+                  end: const Offset(0.93, 0.93),
+                  duration: 120.ms,
+                  curve: Curves.easeOutCubic,
+                ),
+              ],
+              child: Container(
+                width: 108,
+                height: 108,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [palette.accent, palette.accentDark],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: palette.glow.withValues(alpha: 0.55),
+                      blurRadius: 28,
+                      spreadRadius: 2,
+                    ),
+                    BoxShadow(
+                      color: palette.glow.withValues(alpha: 0.20),
+                      blurRadius: 60,
+                      spreadRadius: 10,
+                    ),
                   ],
                 ),
-                border: Border.all(color: PremiumTokens.textMuted),
-                boxShadow: [
-                  BoxShadow(
-                    color: PremiumTokens.textMuted,
-                    blurRadius: 30,
-                    spreadRadius: 0,
-                  ),
-                ],
-              ),
-              child: Center(
-                child: RepaintBoundary(
-                  child: SvgPicture.asset(
-                    'assets/shriJiMukut.svg',
-                    width: 54,
-                    height: 54,
-                    colorFilter: ColorFilter.mode(
-                      PremiumTokens.textPrimary, 
-                      BlendMode.srcIn,
+                child: Center(
+                  child: RepaintBoundary(
+                    child: SvgPicture.asset(
+                      'assets/shriJiMukut.svg',
+                      width: 52,
+                      height: 52,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.white,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
-          const SizedBox(height: 24),
-          Text(
-            "Tap to chant",
-            style: PremiumTokens.sansStyle(fontSize: 14, color: PremiumTokens.textMuted),
+          ).animate().scale(duration: 700.ms, curve: Curves.easeOutBack),
+          const SizedBox(height: 20),
+          // Pulsing hint label
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: palette.accent.withValues(alpha: 0.7),
+                ),
+              ).animate(onPlay: (c) => c.repeat(reverse: true))
+               .scaleXY(end: 1.5, duration: 1.2.seconds),
+              const SizedBox(width: 8),
+              Text(
+                "Tap to chant",
+                style: PremiumTokens.sansStyle(
+                  fontSize: 12,
+                  color: PremiumTokens.textMuted,
+                  letterSpacing: 1.5,
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
+
 
   Widget _buildSessionStats(bool isFocusMode, double todayMalas, double highestMalas, {int dailyGoal = 0}) {
     // Format: Show integer if it's a whole number, otherwise show 1 decimal
@@ -862,3 +918,90 @@ class _MalaHistorySheetState extends ConsumerState<_MalaHistorySheet> with Singl
     );
   }
 }
+
+/// Draws a glowing progress arc ring around the chant counter disc.
+class _ChantArcPainter extends CustomPainter {
+  final double progress;
+  final Color accent;
+  final Color glow;
+  final int completedMalas;
+
+  _ChantArcPainter({
+    required this.progress,
+    required this.accent,
+    required this.glow,
+    required this.completedMalas,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (size.width / 2) - 6;
+    const startAngle = -math.pi / 2; // top
+
+    // Track ring (dim background)
+    final trackPaint = Paint()
+      ..color = accent.withValues(alpha: 0.12)
+      ..strokeWidth = 5
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+    canvas.drawCircle(center, radius, trackPaint);
+
+    if (progress <= 0) return;
+
+    // Glow layer
+    final glowPaint = Paint()
+      ..color = glow.withValues(alpha: 0.25)
+      ..strokeWidth = 14
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      startAngle,
+      2 * math.pi * progress,
+      false,
+      glowPaint,
+    );
+
+    // Solid arc
+    final arcPaint = Paint()
+      ..shader = SweepGradient(
+        startAngle: startAngle,
+        endAngle: startAngle + 2 * math.pi * progress,
+        colors: [accent.withValues(alpha: 0.6), accent],
+        tileMode: TileMode.clamp,
+      ).createShader(Rect.fromCircle(center: center, radius: radius))
+      ..strokeWidth = 5
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      startAngle,
+      2 * math.pi * progress,
+      false,
+      arcPaint,
+    );
+
+    // Dot at tip of arc
+    if (progress > 0.01) {
+      final tipAngle = startAngle + 2 * math.pi * progress;
+      final tipX = center.dx + radius * math.cos(tipAngle);
+      final tipY = center.dy + radius * math.sin(tipAngle);
+      final dotPaint = Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(Offset(tipX, tipY), 5, dotPaint);
+      final dotGlowPaint = Paint()
+        ..color = glow.withValues(alpha: 0.7)
+        ..style = PaintingStyle.fill
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
+      canvas.drawCircle(Offset(tipX, tipY), 7, dotGlowPaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_ChantArcPainter old) =>
+      old.progress != progress || old.accent != accent || old.completedMalas != completedMalas;
+}
+
