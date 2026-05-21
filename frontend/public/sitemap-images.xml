@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://vrindopnishad.in/Vrindopnishad%20Web/Pictures/main/Gallery.html</loc>
+    
+    <!-- Featured Collections -->
+    <image:image>
+      <image:loc>https://i.postimg.cc/G2Jtvrzx/tempImageN7Ynt8.avif</image:loc>
+      <image:title>Sacred Temples</image:title>
+      <image:caption>Ancient temples and spiritual architecture in Vrindavan</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://i.postimg.cc/yx32SQ76/62.avif</image:loc>
+      <image:title>Divine Portraits</image:title>
+      <image:caption>Beautiful deity artwork and paintings of Radha Krishna</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://i.postimg.cc/nzYrqZTT/tempImagepeTFpY.avif</image:loc>
+      <image:title>Spiritual Landscapes</image:title>
+      <image:caption>Sacred places and holy sites of Brij Bhoomi</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://i.postimg.cc/L82pZfGK/tempImage0MZ1Qo.avif</image:loc>
+      <image:title>Festival Moments</image:title>
+      <image:caption>Captured spiritual celebrations and Holi in Vrindavan</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://i.postimg.cc/hjgy2bbR/tempImageO8LIr2.avif</image:loc>
+      <image:title>Meditation Spaces</image:title>
+      <image:caption>Peaceful environments for contemplation and Bhakti</image:caption>
+    </image:image>
+
+    <!-- Popular -->
+    <image:image>
+      <image:loc>https://i.postimg.cc/SsNLXZf8/tempImageXR0Khf.avif</image:loc>
+      <image:title>Trending Spiritual Art</image:title>
+      <image:caption>Most viewed divine collections this week</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://i.postimg.cc/66ZV8GdG/tempImageEpdAxY.avif</image:loc>
+      <image:title>Rising Spiritual Stars</image:title>
+      <image:caption>Newly popular devotional artworks</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://i.postimg.cc/L89jQCG1/tempImageQAFHVQ.avif</image:loc>
+      <image:title>Community Favorites</image:title>
+      <image:caption>Highly rated by the Vrindopnishad community</image:caption>
+    </image:image>
+
+    <!-- Anime & Art Style -->
+    <image:image>
+      <image:loc>https://i.postimg.cc/VsxMwHMk/temp-Image-DVx-VWQ.avif</image:loc>
+      <image:title>Mountain Vistas Anime Style</image:title>
+      <image:caption>Breathtaking mountain landscapes in spiritual anime style</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://i.postimg.cc/h4zxHqXr/temp-Image0m4o-HY.avif</image:loc>
+      <image:title>Ocean Views Spiritual Art</image:title>
+      <image:caption>Stunning seascapes and sacred beaches</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://i.postimg.cc/g2Yxk92N/temp-Image-Y61d7-W.avif</image:loc>
+      <image:title>Mystical Forest Paths</image:title>
+      <image:caption>Mystical forest photography from the groves of Vrindavan</image:caption>
+    </image:image>
+
+    <!-- Rapper / Modern Style -->
+    <image:image>
+      <image:loc>https://i.postimg.cc/15935GrX/temp-Image5xgxp-E.avif</image:loc>
+      <image:title>Modern Spiritual Expressions</image:title>
+      <image:caption>Contemporary devotional artwork with modern aesthetics</image:caption>
+    </image:image>
+    
+    <!-- Dark Aesthetic -->
+    <image:image>
+      <image:loc>https://i.postimg.cc/rsQv1t57/temp-Imageq2-Af-Gz.avif</image:loc>
+      <image:title>Modern Sacred Buildings</image:title>
+      <image:caption>Contemporary spiritual architecture and temple design</image:caption>
+    </image:image>
+
+    <!-- Warrior Theme -->
+    <image:image>
+      <image:loc>https://i.postimg.cc/XqVRBgBX/temp-Image-KVsh-Fy.avif</image:loc>
+      <image:title>Samurai Spiritual Culture</image:title>
+      <image:caption>Traditional warrior discipline and spiritual focus</image:caption>
+    </image:image>
+  </url>
+  
+  <url>
+    <loc>https://vrindopnishad.in/Vrindopnishad%20Web/Pictures/main/photos.html</loc>
+    <image:image>
+      <image:loc>https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png</image:loc>
+      <image:title>Vrindopnishad Logo</image:title>
+      <image:caption>Digital sanctuary for authentic spiritual knowledge</image:caption>
+    </image:image>
+  </url>
+</urlset>
