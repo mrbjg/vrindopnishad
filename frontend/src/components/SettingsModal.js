@@ -57,18 +57,20 @@ const SettingsModal = ({ isOpen, onClose }) => {
       ></div>
 
       {/* Modal Card */}
-      <div className="glass-card w-full max-w-md relative z-10 animate-scale-in flex flex-col max-h-[90vh] border border-white/20 shadow-2xl p-0 overflow-hidden">
+      <div 
+        className="settings-modal-card w-full max-w-md relative z-10 animate-scale-in flex flex-col max-h-[90vh] shadow-2xl p-0 overflow-hidden"
+      >
         {/* Fixed Header */}
-        <div className="flex justify-between items-center p-8 pb-4 border-b border-white/5">
+        <div className="settings-modal-header flex justify-between items-center p-8 pb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/20 rounded-lg text-primary">
+            <div className="settings-modal-icon-wrap p-2 rounded-lg">
               <Type size={20} />
             </div>
-            <h2 className="text-2xl font-bold font-headings">Sanctuary Settings</h2>
+            <h2 className="settings-modal-title text-2xl font-bold font-headings">Sanctuary Settings</h2>
           </div>
           <button 
             onClick={onClose}
-            className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/40 hover:text-white"
+            className="settings-modal-close p-2 rounded-full transition-colors"
           >
             <X size={24} />
           </button>
@@ -79,7 +81,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
           {/* Personal Profile Section */}
           {user && (
             <div className="space-y-4">
-              <h3 className="text-xs uppercase tracking-[0.2em] text-white/30 font-bold flex items-center gap-2">
+              <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">
                 <User size={14} /> Personal Profile
               </h3>
               <form onSubmit={handleUpdateProfile} className="space-y-3">
@@ -88,7 +90,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
                     type="text"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
-                    className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 outline-none focus:border-primary/60 focus:bg-white/10 transition-all text-sm"
+                    className="settings-modal-input w-full h-12 rounded-xl px-4 outline-none transition-all text-sm"
                     placeholder="Your Full Name"
                   />
                   <button
@@ -97,11 +99,11 @@ const SettingsModal = ({ isOpen, onClose }) => {
                     className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-all ${
                       displayName !== user?.displayName && !isUpdating
                         ? 'bg-primary text-white shadow-lg'
-                        : 'bg-white/5 text-white/20'
+                        : 'settings-modal-btn-disabled'
                     }`}
                   >
                     {isUpdating ? (
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <div className="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin"></div>
                     ) : (
                       <Check size={16} />
                     )}
@@ -109,7 +111,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
                 </div>
                 {updateStatus.message && (
                   <div className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider animate-in fade-in slide-in-from-top-1 ${
-                    updateStatus.type === 'success' ? 'text-green-400' : 'text-red-400'
+                    updateStatus.type === 'success' ? 'text-green-500' : 'text-red-500'
                   }`}>
                     {updateStatus.type === 'success' ? <Check size={12} /> : <AlertCircle size={12} />}
                     {updateStatus.message}
@@ -121,14 +123,14 @@ const SettingsModal = ({ isOpen, onClose }) => {
 
           {/* Sanctuary Themes & Celestial Moods */}
           <div className="space-y-4">
-            <h3 className="text-xs uppercase tracking-[0.2em] text-white/30 font-bold flex items-center gap-2">
+            <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">
               <Palette size={14} /> Sanctuary Theme
             </h3>
             
             <div className="space-y-4">
               {/* Base Themes */}
               <div>
-                <span className="text-[10px] uppercase tracking-widest text-white/40 block mb-2 font-semibold">Core Modes</span>
+                <span className="settings-modal-subsection text-[10px] uppercase tracking-widest block mb-2 font-semibold">Core Modes</span>
                 <div className="grid grid-cols-2 gap-2">
                   {THEMES.filter(t => t.group === 'base').map((t) => (
                     <button
@@ -137,11 +139,11 @@ const SettingsModal = ({ isOpen, onClose }) => {
                       className={`flex items-center gap-3 p-3 rounded-xl text-sm font-semibold transition-all border ${
                         settings.theme === t.id 
                           ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20' 
-                          : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10'
+                          : 'settings-modal-option'
                       }`}
                     >
                       <div 
-                        className="w-5 h-5 rounded-full flex-shrink-0 border border-white/20 shadow-sm"
+                        className="w-5 h-5 rounded-full flex-shrink-0 border settings-modal-swatch"
                         style={{ background: themeGradients[t.id] }}
                       ></div>
                       <span className="flex items-center gap-2">
@@ -155,7 +157,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
 
               {/* Moods */}
               <div>
-                <span className="text-[10px] uppercase tracking-widest text-white/40 block mb-2 font-semibold">Celestial Moods</span>
+                <span className="settings-modal-subsection text-[10px] uppercase tracking-widest block mb-2 font-semibold">Celestial Moods</span>
                 <div className="grid grid-cols-2 gap-2">
                   {THEMES.filter(t => t.group === 'mood').map((t) => (
                     <button
@@ -164,11 +166,11 @@ const SettingsModal = ({ isOpen, onClose }) => {
                       className={`flex items-center gap-3 p-3 rounded-xl text-xs font-semibold transition-all border ${
                         settings.theme === t.id 
                           ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20' 
-                          : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10'
+                          : 'settings-modal-option'
                       }`}
                     >
                       <div 
-                        className="w-5 h-5 rounded-full flex-shrink-0 border border-white/20 shadow-sm"
+                        className="w-5 h-5 rounded-full flex-shrink-0 border settings-modal-swatch"
                         style={{ background: themeGradients[t.id] }}
                       ></div>
                       <span className="flex items-center gap-2">
@@ -184,7 +186,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
 
           {/* Font Size */}
           <div className="space-y-4">
-            <h3 className="text-xs uppercase tracking-[0.2em] text-white/30 font-bold flex items-center gap-2">
+            <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">
               <Type size={14} /> Font Size
             </h3>
             <div className="grid grid-cols-5 gap-2">
@@ -195,7 +197,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
                   className={`py-3 rounded-xl text-xs font-bold transition-all border ${
                     settings.fontSize === size 
                       ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20' 
-                      : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10'
+                      : 'settings-modal-option'
                   }`}
                 >
                   {size === 1 ? 'XS' : size === 2 ? 'SM' : size === 3 ? 'MD' : size === 4 ? 'LG' : 'XL'}
@@ -206,7 +208,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
 
           {/* Font Style */}
           <div className="space-y-4">
-            <h3 className="text-xs uppercase tracking-[0.2em] text-white/30 font-bold flex items-center gap-2">
+            <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">
               <AlignLeft size={14} /> Typography
             </h3>
             <div className="grid grid-cols-3 gap-3">
@@ -217,7 +219,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
                   className={`py-3 rounded-xl text-sm font-semibold transition-all border ${
                     settings.fontStyle === style 
                       ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20' 
-                      : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10'
+                      : 'settings-modal-option'
                   }`}
                 >
                   {style}
@@ -228,20 +230,20 @@ const SettingsModal = ({ isOpen, onClose }) => {
 
           {/* Reading Mode */}
           <div className="space-y-4">
-            <h3 className="text-xs uppercase tracking-[0.2em] text-white/30 font-bold flex items-center gap-2">
+            <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">
               <Layout size={14} /> Reading Experience
             </h3>
             
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl transition-all hover:bg-white/10 group">
+              <div className="settings-modal-toggle-row flex items-center justify-between p-4 rounded-2xl transition-all group">
                 <div className="flex flex-col">
-                  <span className="font-bold text-sm transition-all duration-300">Line-by-Line Reading</span>
-                  <span className="text-xs text-white/30">Auto-split Hindi/Sanskrit verses</span>
+                  <span className="settings-modal-toggle-title font-bold text-sm transition-all duration-300">Line-by-Line Reading</span>
+                  <span className="settings-modal-toggle-desc text-xs">Auto-split Hindi/Sanskrit verses</span>
                 </div>
                 <button
                   onClick={() => updateSetting('lineByLine', !settings.lineByLine)}
                   className={`w-14 h-8 rounded-full transition-all relative ${
-                    settings.lineByLine ? 'sacred-toggle-active' : 'bg-white/10'
+                    settings.lineByLine ? 'sacred-toggle-active' : 'settings-modal-toggle-off'
                   }`}
                 >
                   <div className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-all shadow-md ${
@@ -250,15 +252,15 @@ const SettingsModal = ({ isOpen, onClose }) => {
                 </button>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl transition-all hover:bg-white/10 group">
+              <div className="settings-modal-toggle-row flex items-center justify-between p-4 rounded-2xl transition-all group">
                 <div className="flex flex-col">
-                  <span className="font-bold text-sm transition-all duration-300">Fluid Motion</span>
-                  <span className="text-xs text-white/30">Premium smooth scrolling experience</span>
+                  <span className="settings-modal-toggle-title font-bold text-sm transition-all duration-300">Fluid Motion</span>
+                  <span className="settings-modal-toggle-desc text-xs">Premium smooth scrolling experience</span>
                 </div>
                 <button
                   onClick={() => updateSetting('smoothScroll', !settings.smoothScroll)}
                   className={`w-14 h-8 rounded-full transition-all relative ${
-                    settings.smoothScroll ? 'sacred-toggle-active' : 'bg-white/10'
+                    settings.smoothScroll ? 'sacred-toggle-active' : 'settings-modal-toggle-off'
                   }`}
                 >
                   <div className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-all shadow-md ${
@@ -271,7 +273,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
         </div>
 
         {/* Fixed Footer */}
-        <div className="p-8 pt-4 border-t border-white/5 bg-white/[0.02]">
+        <div className="settings-modal-footer p-8 pt-4">
           <button 
             onClick={onClose}
             className="w-full btn-sacred-gold py-4 font-bold text-sm tracking-widest uppercase shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"

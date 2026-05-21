@@ -84,20 +84,20 @@ const LoginPage = () => {
 
   return (
     <div className="animate-fade-in flex items-center justify-center py-12 px-4">
-      <div className="glass-card w-full max-w-md p-8 md:p-12 relative overflow-hidden">
+      <div className="login-card glass-card w-full max-w-md p-8 md:p-12 relative overflow-hidden">
         {/* Decorative Background Elements */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-[60px] rounded-full -mr-16 -mt-16 pointer-events-none"></div>
         
         <div className="text-center mb-10 relative z-10">
-           <Link to="/" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-6 transition-all duration-300 hover:-translate-x-1">
+           <Link to="/" className="login-back-link inline-flex items-center gap-2 mb-6 transition-all duration-300 hover:-translate-x-1">
              <ArrowLeft size={16} />
              Back to Home
            </Link>
-           <div className="text-5xl mb-4 animate-bounce-slow">ॐ</div>
-           <h1 className="text-3xl font-bold mb-2 tracking-tight">
+           <div className="text-5xl mb-4 animate-bounce-slow login-om-symbol">ॐ</div>
+           <h1 className="login-title text-3xl font-bold mb-2 tracking-tight">
              {isSignUp ? 'Begin Journey' : 'Devotee Login'}
            </h1>
-           <p className="text-white/40 font-medium">
+           <p className="login-subtitle font-medium">
              {isSignUp ? 'Create your spiritual profile' : 'Access your sacred digital library'}
            </p>
         </div>
@@ -105,8 +105,8 @@ const LoginPage = () => {
         {message.text && (
           <div className={`mb-6 p-4 rounded-2xl border flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300 ${
             message.type === 'error' 
-              ? 'bg-red-500/10 border-red-500/20 text-red-400' 
-              : 'bg-green-500/10 border-green-500/20 text-green-400'
+              ? 'bg-red-500/10 border-red-500/20 text-red-500' 
+              : 'bg-green-500/10 border-green-500/20 text-green-500'
           }`}>
              {message.type === 'error' ? <Info size={18} /> : <span>✨</span>}
              <span className="text-sm font-medium">{message.text}</span>
@@ -116,13 +116,13 @@ const LoginPage = () => {
         <form onSubmit={handleAuth} className="space-y-6 relative z-10">
           {isSignUp && (
             <div className="space-y-2 animate-in fade-in slide-in-from-left-4 duration-500">
-              <label className="text-xs uppercase tracking-[0.2em] text-white/40 ml-1 font-semibold">Full Name</label>
+              <label className="login-label text-xs uppercase tracking-[0.2em] ml-1 font-semibold">Full Name</label>
               <div className="relative group">
                 <input 
                   type="text" 
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full h-14 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl pl-6 pr-6 outline-none focus:border-primary/60 focus:bg-white/10 focus:ring-4 focus:ring-primary/10 transition-all duration-300 placeholder:text-white/20"
+                  className="login-input w-full h-14 rounded-2xl pl-6 pr-6 outline-none transition-all duration-300"
                   placeholder="Your Name"
                   required={isSignUp}
                 />
@@ -131,14 +131,14 @@ const LoginPage = () => {
           )}
 
           <div className="space-y-2">
-            <label className="text-xs uppercase tracking-[0.2em] text-white/40 ml-1 font-semibold">Email Address</label>
+            <label className="login-label text-xs uppercase tracking-[0.2em] ml-1 font-semibold">Email Address</label>
             <div className="relative group">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary/60 transition-colors" size={18} />
+              <Mail className="login-input-icon absolute left-4 top-1/2 -translate-y-1/2 transition-colors" size={18} />
               <input 
                 type="email" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-14 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl pl-12 pr-6 outline-none focus:border-primary/60 focus:bg-white/10 focus:ring-4 focus:ring-primary/10 transition-all duration-300 placeholder:text-white/20"
+                className="login-input w-full h-14 rounded-2xl pl-12 pr-6 outline-none transition-all duration-300"
                 placeholder="name@example.com"
                 required
               />
@@ -147,7 +147,7 @@ const LoginPage = () => {
 
           <div className="space-y-2">
             <div className="flex justify-between items-center px-1">
-              <label className="text-xs uppercase tracking-[0.2em] text-white/40 font-semibold">Password</label>
+              <label className="login-label text-xs uppercase tracking-[0.2em] font-semibold">Password</label>
               {!isSignUp && (
                 <button 
                   type="button" 
@@ -159,12 +159,12 @@ const LoginPage = () => {
               )}
             </div>
             <div className="relative group">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary/60 transition-colors" size={18} />
+              <Lock className="login-input-icon absolute left-4 top-1/2 -translate-y-1/2 transition-colors" size={18} />
               <input 
                 type="password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full h-14 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl pl-12 pr-6 outline-none focus:border-primary/60 focus:bg-white/10 focus:ring-4 focus:ring-primary/10 transition-all duration-300 placeholder:text-white/20"
+                className="login-input w-full h-14 rounded-2xl pl-12 pr-6 outline-none transition-all duration-300"
                 placeholder="••••••••"
                 required
               />
@@ -185,23 +185,23 @@ const LoginPage = () => {
           </button>
         </form>
 
-        <div className="relative my-8 flex items-center gap-4">
-          <div className="h-[1px] flex-1 bg-white/5"></div>
-          <div className="text-xs uppercase text-white/30 tracking-[0.3em] font-bold">OR</div>
-          <div className="h-[1px] flex-1 bg-white/5"></div>
+        <div className="login-divider relative my-8 flex items-center gap-4">
+          <div className="login-divider-line h-[1px] flex-1"></div>
+          <div className="login-divider-text text-xs uppercase tracking-[0.3em] font-bold">OR</div>
+          <div className="login-divider-line h-[1px] flex-1"></div>
         </div>
 
         <button 
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="w-full h-14 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl flex items-center justify-center gap-3 hover:bg-white/10 hover:border-white/30 hover:shadow-lg hover:shadow-white/5 transition-all duration-300 active:scale-[0.98] mb-10 group"
+          className="login-google-btn w-full h-14 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 active:scale-[0.98] mb-10 group"
         >
-          <Chrome size={20} className="text-white/60 group-hover:text-white transition-colors" />
+          <Chrome size={20} className="login-google-icon group-hover:opacity-100 transition-colors" />
           <span className="text-sm font-bold tracking-wider">Continue with Google</span>
         </button>
 
-        <div className="pt-6 border-t border-white/5 text-center relative z-10">
-            <p className="text-sm text-white/30 font-medium">
+        <div className="login-footer pt-6 text-center relative z-10">
+            <p className="text-sm font-medium">
                 {isSignUp ? 'Already have an account?' : "Don't have an account?"}
                 <button 
                   onClick={() => setIsSignUp(!isSignUp)}

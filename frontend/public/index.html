@@ -25,22 +25,25 @@
     <!-- Canonical is set per-page via react-helmet-async to avoid GSC "alternate page" errors -->
     <!-- Do NOT add a hardcoded canonical here — it conflicts with Helmet on subpages -->
 
-    <!-- Favicon Configuration - Full local icon set matching main vrindopnishad.in -->
-    <link rel="icon" type="image/x-icon" href="%PUBLIC_URL%/favicon.ico?v=3">
-    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/apple-touch-icon.png?v=3">
+    <!-- Favicon Configuration - SVG primary (scales perfectly), ICO fallback -->
+    <!-- SVG favicon with built-in prefers-color-scheme support — scales to any tab size -->
+    <link rel="icon" type="image/svg+xml" href="%PUBLIC_URL%/favicon.svg?v=4">
+    <!-- Multi-resolution ICO fallback (contains 32x32 + 16x16) for browsers without SVG support -->
+    <link rel="icon" type="image/x-icon" href="%PUBLIC_URL%/favicon.ico?v=4" sizes="32x32 16x16">
+    <!-- PNG fallback for explicit sizes -->
+    <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon-32x32.png?v=4">
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/apple-touch-icon.png?v=4">
     
-    <!-- Light Theme Favicon (Dark Pixels) -->
-    <link rel="icon" href="%PUBLIC_URL%/favicon-light-theme.ico?v=3" sizes="48x48" media="(prefers-color-scheme: light)">
-    <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon-32x32-light-theme.png?v=3" media="(prefers-color-scheme: light)">
-    <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon-16x16-light-theme.png?v=3" media="(prefers-color-scheme: light)">
-    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/apple-touch-icon-light-theme.png?v=3" media="(prefers-color-scheme: light)">
+    <!-- Light Theme Favicon (Dark Pixels on Light BG) -->
+    <link rel="icon" href="%PUBLIC_URL%/favicon-light-theme.ico?v=4" sizes="32x32 16x16" media="(prefers-color-scheme: light)">
+    <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon-32x32-light-theme.png?v=4" media="(prefers-color-scheme: light)">
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/apple-touch-icon-light-theme.png?v=4" media="(prefers-color-scheme: light)">
     
-    <!-- Dark Theme Favicon (Light Pixels) -->
-    <link rel="icon" href="%PUBLIC_URL%/favicon-dark-theme.ico?v=3" sizes="48x48" media="(prefers-color-scheme: dark)">
-    <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon-32x32-dark-theme.png?v=3" media="(prefers-color-scheme: dark)">
-    <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon-16x16-dark-theme.png?v=3" media="(prefers-color-scheme: dark)">
-    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/apple-touch-icon-dark-theme.png?v=3" media="(prefers-color-scheme: dark)">
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json?v=3">
+    <!-- Dark Theme Favicon (Light Pixels on Dark BG) -->
+    <link rel="icon" href="%PUBLIC_URL%/favicon-dark-theme.ico?v=4" sizes="32x32 16x16" media="(prefers-color-scheme: dark)">
+    <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon-32x32-dark-theme.png?v=4" media="(prefers-color-scheme: dark)">
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/apple-touch-icon-dark-theme.png?v=4" media="(prefers-color-scheme: dark)">
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json?v=4">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">

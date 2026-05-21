@@ -51,10 +51,10 @@ const Layout = ({ children }) => {
 
           <div className="flex items-center gap-6">
             <nav className="hidden lg:flex items-center gap-6">
-              <Link to="/" className={`nav-link text-sm font-semibold tracking-wide transition-all ${isActive('/') ? 'active text-amber-400' : 'text-white/50 hover:text-white'}`}>
+              <Link to="/" className={`header-nav-link ${isActive('/') ? 'active' : ''}`}>
                 Home
               </Link>
-              <Link to="/content" className={`nav-link text-sm font-semibold tracking-wide transition-all ${isActive('/content') ? 'active text-amber-400' : 'text-white/50 hover:text-white'}`}>
+              <Link to="/content" className={`header-nav-link ${isActive('/content') ? 'active' : ''}`}>
                 Sanctuary Library
               </Link>
             </nav>
@@ -63,16 +63,16 @@ const Layout = ({ children }) => {
               {/* Standalone Settings Button */}
               <button 
                 onClick={() => setIsSettingsOpen(true)}
-                className="p-2 sm:p-2.5 bg-white/5 border border-white/10 rounded-full hover:bg-amber-500/20 hover:border-amber-400/40 text-white/60 hover:text-amber-400 hover:scale-110 active:scale-95 transition-all flex items-center justify-center shadow-lg"
+                className="header-control-btn"
                 title="Settings"
               >
                 <Settings size={20} className="w-[18px] h-[18px] sm:w-[20px] sm:h-[20px]" />
               </button>
 
               {user ? (
-                <div className="flex items-center gap-2 sm:gap-3 bg-white/5 backdrop-blur-xl border border-white/10 p-1 sm:p-1.5 sm:pr-4 rounded-full hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer group shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+                <div className="header-profile-pill">
                   {/* Avatar Section */}
-                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden flex-shrink-0 border border-white/20 shadow-inner bg-gradient-to-br from-primary/40 to-primary/10 flex items-center justify-center relative">
+                  <div className="header-profile-avatar">
                     {user.photoURL ? (
                       <img 
                         src={user.photoURL} 
@@ -88,7 +88,7 @@ const Layout = ({ children }) => {
                       />
                     ) : null}
                     <span 
-                      className={`text-xs font-bold text-white uppercase tracking-wider flex items-center justify-center w-full h-full ${user.photoURL ? 'hidden' : 'flex'}`}
+                      className={`text-xs font-bold uppercase tracking-wider flex items-center justify-center w-full h-full ${user.photoURL ? 'hidden' : 'flex'}`}
                     >
                       {(user.displayName || user.email || 'V')[0]}
                     </span>
@@ -96,14 +96,14 @@ const Layout = ({ children }) => {
                   
                   {/* User Name Section - Hidden on Mobile for clean look */}
                   <div className="hidden sm:flex flex-col">
-                    <span className="text-[10px] uppercase tracking-widest text-white/30 font-bold leading-none mb-0.5">Devotee</span>
-                    <span className="text-[13px] font-bold truncate max-w-[140px] leading-none">
+                    <span className="header-profile-label">Devotee</span>
+                    <span className="header-profile-name">
                       {user.displayName || (user.email?.split('@')[0].match(/^[a-zA-Z]/) ? user.email?.split('@')[0] : 'Member')}
                     </span>
                   </div>
 
                   {/* Divider */}
-                  <div className="w-[1px] h-4 bg-white/10 mx-0.5"></div>
+                  <div className="header-profile-divider"></div>
                   
                   {/* Logout Button */}
                   <button 
@@ -111,7 +111,7 @@ const Layout = ({ children }) => {
                       e.stopPropagation();
                       logout();
                     }} 
-                    className="text-white/40 hover:text-red-400 hover:scale-110 active:scale-95 transition-all p-1.5 sm:p-1"
+                    className="header-profile-logout"
                     title="Logout"
                   >
                     <LogOut size={18} className="sm:w-[16px] sm:h-[16px]" />
@@ -124,7 +124,7 @@ const Layout = ({ children }) => {
               )}
               
               {isAdmin && (
-                 <Link to="/admin-old/dashboard" className="p-2.5 bg-white/5 border border-white/10 rounded-full hover:bg-amber-500/20 hover:border-amber-400/40 transition-all">
+                 <Link to="/admin-old/dashboard" className="header-control-btn" title="Dashboard">
                    <LayoutDashboard size={20} className="text-amber-300" />
                  </Link>
               )}
@@ -164,17 +164,17 @@ const Layout = ({ children }) => {
 
       {/* Mobile Bottom Nav */}
       {!isAuthPage && (
-        <div className="md:hidden fixed bottom-6 left-6 right-6 h-16 glass rounded-full z-[1000] flex items-center justify-around px-4 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-fade-in-up">
-          <Link to="/" className={`p-2 rounded-full transition-all ${isActive('/') ? 'text-amber-400 scale-125' : 'text-white/30'}`}>
+        <div className="mobile-bottom-nav">
+          <Link to="/" className={`mobile-nav-item ${isActive('/') ? 'active' : ''}`} title="Home">
             <Home size={24} />
           </Link>
-          <Link to="/content" className={`p-2 rounded-full transition-all ${isActive('/content') ? 'text-amber-400 scale-125' : 'text-white/30'}`}>
+          <Link to="/content" className={`mobile-nav-item ${isActive('/content') ? 'active' : ''}`} title="All Content">
             <BookOpen size={24} />
           </Link>
-          <Link to="/category/shloka" className={`p-2 rounded-full transition-all ${isCategoryActive('shloka') ? 'text-amber-400 scale-125' : 'text-white/30'}`}>
+          <Link to="/category/shloka" className={`mobile-nav-item ${isCategoryActive('shloka') ? 'active' : ''}`} title="Shlokas">
             <Scroll size={24} />
           </Link>
-          <Link to="/category/strotra" className={`p-2 rounded-full transition-all ${isCategoryActive('strotra') ? 'text-amber-400 scale-125' : 'text-white/30'}`}>
+          <Link to="/category/strotra" className={`mobile-nav-item ${isCategoryActive('strotra') ? 'active' : ''}`} title="Strotras">
             <Music size={24} />
           </Link>
         </div>

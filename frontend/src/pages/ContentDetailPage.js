@@ -237,7 +237,7 @@ const ContentDetailPage = () => {
                 
                 {content.author && (
                   <div className="flex flex-col items-center lg:items-start">
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-white/30 mb-1 font-bold">Written By</span>
+                    <span className="content-section-label text-[10px] uppercase tracking-[0.3em] mb-1 font-bold">Written By</span>
                     <span className={`text-sacred-gradient font-headings font-bold tracking-wide text-center lg:text-left ${
                       content.author.length > 25 ? 'text-lg' : 'text-xl sm:text-2xl'
                     }`}>
@@ -265,11 +265,12 @@ const ContentDetailPage = () => {
 
           {content.description && (
             <p 
-              className="text-white/60 font-light leading-relaxed mb-8 italic border-l-4 border-white/10 pl-6 break-words"
+              className="content-body-text font-light leading-relaxed mb-8 italic pl-6 break-words"
               style={{ 
                 fontSize: `${Math.max(14, settings.fontSize * 1.2)}px`,
                 wordBreak: 'break-word',
-                paddingBottom: '0.1em' 
+                paddingBottom: '0.1em',
+                borderLeft: '4px solid hsl(var(--foreground) / 0.1)'
               }}
             >
               {content.description}
@@ -280,12 +281,12 @@ const ContentDetailPage = () => {
             {content.sanskrit_text && (
               <div className="relative group py-8 sm:py-12 border-b border-white/5">
                 <div className="absolute top-0 right-0 p-8 opacity-5 text-9xl font-serif pointer-events-none">ॐ</div>
-                <h3 className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-white/30 mb-6 sm:mb-8 flex items-center justify-center sm:justify-start gap-4 py-2">
-                  <span className="h-[1px] w-12 bg-gradient-to-r from-transparent to-white/10 hidden sm:block"></span>
+                <h3 className="content-section-heading text-[10px] sm:text-xs uppercase tracking-[0.4em] mb-6 sm:mb-8 flex items-center justify-center sm:justify-start gap-4 py-2">
+                  <span className="content-section-line h-[1px] w-12 hidden sm:block"></span>
                   Sanskrit Text
-                  <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-white/10 hidden sm:block"></span>
+                  <span className="content-section-line h-[1px] w-12 hidden sm:block"></span>
                 </h3>
-                <div className={`text-center font-medium text-white/95 drop-shadow-lg hindi-text ${
+                <div className={`text-center font-medium content-verse-text drop-shadow-lg hindi-text ${
                   settings.fontStyle === 'Sans' ? 'font-sans' :
                   settings.fontStyle === 'Inter' ? 'font-inter' :
                   'font-headings'
@@ -302,12 +303,12 @@ const ContentDetailPage = () => {
 
             {content.hindi_text && (
               <div className="py-8 sm:py-12 border-b border-white/5">
-                <h3 className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-amber-500/50 mb-6 sm:mb-8 flex items-center justify-center sm:justify-start gap-4 py-2">
-                  <span className="h-[1px] w-12 bg-gradient-to-r from-transparent to-amber-500/10 hidden sm:block"></span>
+                <h3 className="content-section-heading content-section-heading--hindi text-[10px] sm:text-xs uppercase tracking-[0.4em] mb-6 sm:mb-8 flex items-center justify-center sm:justify-start gap-4 py-2">
+                  <span className="content-section-line content-section-line--hindi h-[1px] w-12 hidden sm:block"></span>
                   Hindi Meaning
-                  <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-amber-500/10 hidden sm:block"></span>
+                  <span className="content-section-line content-section-line--hindi h-[1px] w-12 hidden sm:block"></span>
                 </h3>
-                <div className={`text-white/85 hindi-text ${
+                <div className={`content-verse-text hindi-text ${
                   settings.fontStyle === 'Sans' ? 'font-sans' :
                   settings.fontStyle === 'Inter' ? 'font-inter' :
                   'font-headings'
@@ -324,8 +325,8 @@ const ContentDetailPage = () => {
 
             {content.english_text && (
               <div>
-                <h3 className="text-xs uppercase tracking-[0.3em] text-white/20 mb-6 font-semibold">Transliteration</h3>
-                <div className="leading-relaxed text-white/60 font-inter" style={{
+                <h3 className="content-section-heading text-xs uppercase tracking-[0.3em] mb-6 font-semibold">Transliteration</h3>
+                <div className="content-body-text leading-relaxed font-inter" style={{
                   fontSize: settings.fontSize === 1 ? '0.9rem' :
                             settings.fontSize === 2 ? '1.1rem' :
                             settings.fontSize === 3 ? '1.4rem' :
@@ -338,11 +339,11 @@ const ContentDetailPage = () => {
 
             {content.english_translation && (
               <div className="py-12">
-                <h3 className="text-xs uppercase tracking-[0.3em] text-blue-400/40 mb-10 flex items-center gap-3">
-                  <span className="h-[1px] w-8 bg-blue-500/10"></span>
+                <h3 className="content-section-heading content-section-heading--english text-xs uppercase tracking-[0.3em] mb-10 flex items-center gap-3">
+                  <span className="content-section-line content-section-line--english h-[1px] w-8"></span>
                   English Translation
                 </h3>
-                <div className="leading-relaxed text-white/70 font-light" style={{
+                <div className="content-body-text leading-relaxed font-light" style={{
                   fontSize: settings.fontSize === 1 ? '1.2rem' :
                             settings.fontSize === 2 ? '1.8rem' :
                             settings.fontSize === 3 ? '2.5rem' :
@@ -410,7 +411,7 @@ const ContentDetailPage = () => {
             )}
             {/* End of Content - Mobile Appearance Dial */}
             <div className="lg:hidden mt-20 pt-10 border-t border-white/5 flex flex-col items-center gap-6">
-              <span className="text-[10px] uppercase tracking-[0.3em] text-white/30 font-bold">Reading Settings</span>
+              <span className="content-section-label text-[10px] uppercase tracking-[0.3em] font-bold">Reading Settings</span>
               <div className="w-full max-w-[320px]">
                 <FontWheel 
                   value={settings.fontSize} 

@@ -205,9 +205,9 @@ body {
     }
 }
 
-/* Sacred Text Gradient - Optimized to prevent cropping */
+/* Sacred Text Gradient - Theme-aware */
 .text-sacred-gradient {
-    background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.6) 100%);
+    background: linear-gradient(135deg, var(--text-color) 0%, hsl(var(--foreground) / 0.6) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -608,8 +608,7 @@ body {
 .reading-card .hindi-text {
     line-height: 2.2 !important;
     letter-spacing: 0.01em;
-    color: rgba(255, 255, 255, 0.95);
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    color: hsl(var(--foreground) / 0.92);
     will-change: transform;
 }
 
@@ -1477,6 +1476,400 @@ h6 {
 /* Active scroll styling overrides removed to preserve visual rendering, layout, and GPU layers stability */
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
+/* SETTINGS MODAL — Theme-aware Styling                                       */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+.settings-modal-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    color: var(--text-color);
+}
+
+.settings-modal-header {
+    border-bottom: 1px solid hsl(var(--foreground) / 0.06);
+}
+
+.settings-modal-icon-wrap {
+    background: hsl(var(--primary) / 0.15);
+    color: var(--primary-color);
+}
+
+.settings-modal-title {
+    color: var(--text-color);
+}
+
+.settings-modal-close {
+    color: hsl(var(--foreground) / 0.35);
+}
+.settings-modal-close:hover {
+    color: var(--text-color);
+    background: hsl(var(--foreground) / 0.08);
+}
+
+.settings-modal-section-label {
+    color: hsl(var(--foreground) / 0.4);
+}
+
+.settings-modal-subsection {
+    color: hsl(var(--foreground) / 0.35);
+}
+
+.settings-modal-input {
+    background: hsl(var(--foreground) / 0.05);
+    border: 1px solid hsl(var(--foreground) / 0.1);
+    color: var(--text-color);
+}
+.settings-modal-input:focus {
+    border-color: hsl(var(--primary) / 0.5);
+    background: hsl(var(--foreground) / 0.08);
+}
+.settings-modal-input::placeholder {
+    color: hsl(var(--foreground) / 0.25);
+}
+
+.settings-modal-btn-disabled {
+    background: hsl(var(--foreground) / 0.05);
+    color: hsl(var(--foreground) / 0.2);
+}
+
+.settings-modal-option {
+    background: hsl(var(--foreground) / 0.04);
+    border-color: hsl(var(--foreground) / 0.1);
+    color: hsl(var(--foreground) / 0.55);
+}
+.settings-modal-option:hover {
+    background: hsl(var(--foreground) / 0.08);
+    color: hsl(var(--foreground) / 0.8);
+}
+
+.settings-modal-swatch {
+    border-color: hsl(var(--foreground) / 0.15);
+}
+
+.settings-modal-toggle-row {
+    background: hsl(var(--foreground) / 0.04);
+    border: 1px solid hsl(var(--foreground) / 0.08);
+}
+.settings-modal-toggle-row:hover {
+    background: hsl(var(--foreground) / 0.08);
+}
+
+.settings-modal-toggle-title {
+    color: var(--text-color);
+}
+
+.settings-modal-toggle-desc {
+    color: hsl(var(--foreground) / 0.35);
+}
+
+.settings-modal-toggle-off {
+    background: hsl(var(--foreground) / 0.1);
+}
+
+.settings-modal-footer {
+    border-top: 1px solid hsl(var(--foreground) / 0.06);
+    background: hsl(var(--foreground) / 0.02);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* LOGIN PAGE — Theme-aware Styling                                            */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+.login-card {
+    color: var(--text-color);
+}
+
+.login-back-link {
+    color: hsl(var(--foreground) / 0.4);
+}
+.login-back-link:hover {
+    color: var(--text-color);
+}
+
+.login-om-symbol {
+    color: var(--text-color);
+}
+
+.login-title {
+    color: var(--text-color);
+}
+
+.login-subtitle {
+    color: hsl(var(--foreground) / 0.45);
+}
+
+.login-label {
+    color: hsl(var(--foreground) / 0.4);
+}
+
+.login-input {
+    background: hsl(var(--foreground) / 0.05);
+    backdrop-filter: blur(8px);
+    border: 1px solid hsl(var(--foreground) / 0.1);
+    color: var(--text-color);
+}
+.login-input:focus {
+    border-color: hsl(var(--primary) / 0.5);
+    background: hsl(var(--foreground) / 0.08);
+    box-shadow: 0 0 0 4px hsl(var(--primary) / 0.1);
+}
+.login-input::placeholder {
+    color: hsl(var(--foreground) / 0.2);
+}
+
+.login-input-icon {
+    color: hsl(var(--foreground) / 0.2);
+}
+.group:focus-within .login-input-icon {
+    color: hsl(var(--primary) / 0.6);
+}
+
+.login-divider-line {
+    background: hsl(var(--foreground) / 0.08);
+}
+
+.login-divider-text {
+    color: hsl(var(--foreground) / 0.3);
+}
+
+.login-google-btn {
+    background: hsl(var(--foreground) / 0.05);
+    backdrop-filter: blur(8px);
+    border: 1px solid hsl(var(--foreground) / 0.1);
+    color: var(--text-color);
+}
+.login-google-btn:hover {
+    background: hsl(var(--foreground) / 0.1);
+    border-color: hsl(var(--foreground) / 0.2);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.login-google-icon {
+    color: hsl(var(--foreground) / 0.6);
+}
+
+.login-footer {
+    border-top: 1px solid hsl(var(--foreground) / 0.06);
+    color: hsl(var(--foreground) / 0.35);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* CONTENT DETAIL — Theme-aware section headings & labels                     */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+.content-section-heading {
+    color: hsl(var(--foreground) / 0.35);
+}
+
+.content-section-heading--hindi {
+    color: hsl(38 92% 50% / 0.55);
+}
+
+.content-section-heading--english {
+    color: hsl(217 91% 60% / 0.45);
+}
+
+.content-section-label {
+    color: hsl(var(--foreground) / 0.35);
+}
+
+.content-section-line {
+    background: linear-gradient(to right, transparent, hsl(var(--foreground) / 0.12));
+}
+.content-section-line:last-child {
+    background: linear-gradient(to left, transparent, hsl(var(--foreground) / 0.12));
+}
+
+.content-section-line--hindi {
+    background: linear-gradient(to right, transparent, hsl(38 92% 50% / 0.15)) !important;
+}
+.content-section-line--hindi:last-child {
+    background: linear-gradient(to left, transparent, hsl(38 92% 50% / 0.15)) !important;
+}
+
+.content-section-line--english {
+    background: hsl(217 91% 60% / 0.12);
+}
+
+.content-body-text {
+    color: hsl(var(--foreground) / 0.65);
+}
+
+.content-verse-text {
+    color: hsl(var(--foreground) / 0.92);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* HEADER & NAVIGATION COMPONENT STYLES                                        */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+.header-nav-link {
+    color: hsl(var(--foreground) / 0.7);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+}
+.header-nav-link:hover {
+    color: var(--primary-color);
+    background-color: hsl(var(--foreground) / 0.04);
+}
+.header-nav-link.active {
+    color: var(--primary-color);
+    background-color: hsl(var(--foreground) / 0.08);
+    font-weight: 600;
+}
+
+.header-control-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: hsl(var(--foreground) / 0.8);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.header-control-btn:hover {
+    background: hsl(var(--foreground) / 0.08);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(var(--primary-rgb), 0.15);
+}
+.header-control-btn:active {
+    transform: translateY(1px);
+}
+
+.header-profile-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 9999px;
+    padding: 0.375rem 0.5rem 0.375rem 0.375rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.header-profile-pill:hover {
+    border-color: hsl(var(--foreground) / 0.15);
+}
+
+.header-profile-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color) 0%, #d97706 100%);
+    color: #ffffff;
+    font-weight: 700;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(var(--primary-rgb), 0.25);
+}
+
+.header-profile-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: hsl(var(--foreground) / 0.4);
+    font-weight: 600;
+    line-height: 1;
+}
+.header-profile-name {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: hsl(var(--foreground) / 0.85);
+    line-height: 1.2;
+    max-width: 90px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.header-profile-divider {
+    width: 1px;
+    height: 20px;
+    background-color: var(--glass-border);
+}
+
+.header-profile-logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: hsl(var(--foreground) / 0.5);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0.25rem;
+    border-radius: 50%;
+}
+.header-profile-logout:hover {
+    color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+.mobile-bottom-nav {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 1.5rem;
+        left: 1.5rem;
+        right: 1.5rem;
+        height: 4.25rem;
+        background: var(--glass-bg);
+        backdrop-filter: var(--blur-effect);
+        -webkit-backdrop-filter: var(--blur-effect);
+        border: 1px solid var(--glass-border);
+        border-radius: 9999px;
+        align-items: center;
+        justify-content: space-around;
+        padding: 0 1rem;
+        z-index: 1000;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        animation: fade-in-up 0.5s ease-out;
+    }
+}
+
+.mobile-nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 50%;
+    color: hsl(var(--foreground) / 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mobile-nav-item:hover {
+    color: hsl(var(--foreground) / 0.75);
+    background-color: hsl(var(--foreground) / 0.04);
+}
+.mobile-nav-item.active {
+    color: var(--primary-color);
+    background-color: hsl(var(--foreground) / 0.08);
+    transform: scale(1.15);
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.05);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
 /* ROBUST LIGHT MODE CONTRAST & LEGIBILITY OVERRIDES                         */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -1498,16 +1891,16 @@ html.light-mode p span {
 }
 
 /* Header & Sidebar Navigation Link Contrast Fixes */
-html.light-mode .nav-link {
+html.light-mode .header-nav-link {
     color: hsl(var(--foreground) / 0.7) !important;
 }
 
-html.light-mode .nav-link:hover {
-    color: hsl(var(--foreground)) !important;
+html.light-mode .header-nav-link:hover {
+    color: var(--primary-color) !important;
     background-color: hsl(var(--foreground) / 0.05) !important;
 }
 
-html.light-mode .nav-link.active {
+html.light-mode .header-nav-link.active {
     color: var(--primary-color) !important;
     background-color: hsl(var(--foreground) / 0.08) !important;
 }
@@ -1528,31 +1921,101 @@ html.light-mode .side-item.active {
 }
 
 /* Settings button and other header controls */
-html.light-mode .app-header button {
-    color: hsl(var(--foreground) / 0.7) !important;
+html.light-mode .header-control-btn {
+    color: hsl(var(--foreground) / 0.75) !important;
     background-color: hsl(var(--foreground) / 0.04) !important;
     border-color: hsl(var(--foreground) / 0.12) !important;
 }
 
-html.light-mode .app-header button:hover {
+html.light-mode .header-control-btn:hover {
     color: var(--primary-color) !important;
     background-color: hsl(var(--foreground) / 0.08) !important;
     border-color: var(--primary-color) !important;
 }
 
 /* Profile pill display in header */
-html.light-mode .app-header .flex.items-center.rounded-full {
+html.light-mode .header-profile-pill {
     background-color: hsl(var(--foreground) / 0.04) !important;
     border-color: hsl(var(--foreground) / 0.12) !important;
-    color: var(--text-color) !important;
 }
 
-html.light-mode .app-header .flex.items-center.rounded-full span {
-    color: var(--text-color) !important;
+html.light-mode .header-profile-name {
+    color: hsl(var(--foreground) / 0.9) !important;
 }
 
-html.light-mode .app-header .flex.items-center.rounded-full span[class~="text-white/30"] {
+html.light-mode .header-profile-label {
     color: hsl(var(--foreground) / 0.5) !important;
+}
+
+html.light-mode .header-profile-logout {
+    color: hsl(var(--foreground) / 0.4) !important;
+}
+
+html.light-mode .header-profile-logout:hover {
+    color: #ef4444 !important;
+    background-color: rgba(239, 68, 68, 0.08) !important;
+}
+
+/* Mobile bottom nav contrast and styling */
+html.light-mode .mobile-bottom-nav {
+    background-color: hsl(var(--background) / 0.8) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-color: hsl(var(--foreground) / 0.1) !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1) !important;
+}
+
+html.light-mode .mobile-nav-item {
+    color: hsl(var(--foreground) / 0.4) !important;
+}
+
+html.light-mode .mobile-nav-item:hover {
+    color: hsl(var(--foreground) / 0.7) !important;
+    background-color: hsl(var(--foreground) / 0.04) !important;
+}
+
+html.light-mode .mobile-nav-item.active {
+    color: var(--primary-color) !important;
+    background-color: hsl(var(--foreground) / 0.06) !important;
+}
+
+/* Reading portion legibility overrides in light mode */
+html.light-mode .content-section-heading {
+    color: hsl(var(--foreground) / 0.6) !important;
+}
+
+html.light-mode .content-section-heading--hindi {
+    color: hsl(38 92% 35%) !important; /* Beautiful deep amber/orange */
+}
+
+html.light-mode .content-section-heading--english {
+    color: hsl(217 91% 35%) !important; /* Beautiful deep blue */
+}
+
+html.light-mode .content-verse-text {
+    color: #431407 !important; /* Deep rich terracotta brown */
+}
+
+html.light-mode .content-body-text {
+    color: hsl(var(--foreground) / 0.8) !important;
+}
+
+html.light-mode .content-section-line {
+    background: linear-gradient(to right, transparent, hsl(var(--foreground) / 0.25)) !important;
+}
+html.light-mode .content-section-line:last-child {
+    background: linear-gradient(to left, transparent, hsl(var(--foreground) / 0.25)) !important;
+}
+
+html.light-mode .content-section-line--hindi {
+    background: linear-gradient(to right, transparent, hsl(38 92% 35% / 0.3)) !important;
+}
+html.light-mode .content-section-line--hindi:last-child {
+    background: linear-gradient(to left, transparent, hsl(38 92% 35% / 0.3)) !important;
+}
+
+html.light-mode .content-section-line--english {
+    background: hsl(217 91% 35% / 0.25) !important;
 }
 
 /* Homepage Category and Braj Dham Cards in Light Mode */
