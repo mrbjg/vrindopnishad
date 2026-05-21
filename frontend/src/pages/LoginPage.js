@@ -185,13 +185,10 @@ const LoginPage = () => {
           </button>
         </form>
 
-        <div className="relative my-8">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-white/5"></span>
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-[#0a0015] px-4 text-white/30 tracking-[0.3em] font-bold">OR</span>
-          </div>
+        <div className="relative my-8 flex items-center gap-4">
+          <div className="h-[1px] flex-1 bg-white/5"></div>
+          <div className="text-xs uppercase text-white/30 tracking-[0.3em] font-bold">OR</div>
+          <div className="h-[1px] flex-1 bg-white/5"></div>
         </div>
 
         <button 

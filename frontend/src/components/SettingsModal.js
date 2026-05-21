@@ -3,6 +3,7 @@ import { X, Type, Layout, AlignLeft, User, Check, AlertCircle, Palette } from 'l
 import { useSettings, THEMES } from '../contexts/SettingsContext';
 import { AuthContext } from '../App';
 import { updateProfile } from 'firebase/auth';
+import ThemeIcon from './ThemeIcon';
 
 const themeGradients = {
   dark: 'radial-gradient(circle, #0F0025 0%, #050010 100%)',
@@ -143,7 +144,10 @@ const SettingsModal = ({ isOpen, onClose }) => {
                         className="w-5 h-5 rounded-full flex-shrink-0 border border-white/20 shadow-sm"
                         style={{ background: themeGradients[t.id] }}
                       ></div>
-                      <span>{t.emoji} {t.label}</span>
+                      <span className="flex items-center gap-2">
+                        <ThemeIcon name={t.icon} size={14} className="opacity-85" />
+                        {t.label}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -167,7 +171,10 @@ const SettingsModal = ({ isOpen, onClose }) => {
                         className="w-5 h-5 rounded-full flex-shrink-0 border border-white/20 shadow-sm"
                         style={{ background: themeGradients[t.id] }}
                       ></div>
-                      <span>{t.emoji} {t.label}</span>
+                      <span className="flex items-center gap-2">
+                        <ThemeIcon name={t.icon} size={14} className="opacity-85" />
+                        {t.label}
+                      </span>
                     </button>
                   ))}
                 </div>

@@ -135,7 +135,7 @@ const Layout = ({ children }) => {
 
       {/* Floating Vertical Sidebar */}
       {!isAuthPage && (
-        <aside className="sidebar animate-fade-in-left">
+        <aside className="sidebar">
           <Link to="/" className={`side-item ${isActive('/') ? 'active' : ''}`} title="Home">
             <Home size={22} />
           </Link>

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Compass, Scroll, Music, FileText, ArrowRight, BookOpen, Heart, Star, Globe, Users, MapPin, Book } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { useSettings, THEMES } from '../contexts/SettingsContext';
+import ThemeIcon from '../components/ThemeIcon';
 
 const HomePage = () => {
   const { settings, updateSetting } = useSettings();
@@ -107,13 +108,13 @@ const HomePage = () => {
               <button
                 key={theme.id}
                 onClick={() => updateSetting('theme', theme.id)}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[11px] font-semibold tracking-wide border transition-all duration-300 ${
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-semibold tracking-wide border transition-all duration-300 ${
                   isActive
                     ? 'bg-primary border-primary text-white scale-105 shadow-md shadow-primary/20'
                     : 'bg-white/5 border-white/10 text-white/50 hover:text-white hover:bg-white/10 hover:border-white/20'
                 }`}
               >
-                <span>{theme.emoji}</span>
+                <ThemeIcon name={theme.icon} size={12} className="opacity-80" />
                 <span>{theme.label}</span>
               </button>
             );

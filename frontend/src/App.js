@@ -163,7 +163,7 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-[#0a0015]">
+      <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-transparent">
         <div className="celestial-bg">
           <div className="stars"></div>
           <div className="nebula"></div>
