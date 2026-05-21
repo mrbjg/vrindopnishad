@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../App';
+import { useTheme } from '../contexts/ThemeContext';
 import { 
   Home, 
   BookOpen, 
@@ -15,6 +16,7 @@ import GlobalAudioPlayer from './GlobalAudioPlayer';
 import SettingsModal from './SettingsModal';
 
 const Layout = ({ children }) => {
+  const { isDark } = useTheme();
   const { isAdmin, user, logout } = useContext(AuthContext);
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
   const location = useLocation();
@@ -25,7 +27,7 @@ const Layout = ({ children }) => {
   const isAuthPage = location.pathname === '/login' || location.pathname === '/admin-old/login';
 
   return (
-    <div className="min-h-screen relative text-white">
+    <div className="min-h-screen relative text-foreground">
       {/* Celestial Background */}
       <div className="celestial-bg">
         <div className="stars"></div>
@@ -39,7 +41,7 @@ const Layout = ({ children }) => {
           <div className="logo-container">
             <Link to="/">
               <img 
-                src="https://vrindopnishad.in/Vrindopnishad%20Web/class/v-logo-rounded/android-chrome-192x192.png" 
+                src={isDark ? `${process.env.PUBLIC_URL}/official-logo-dark.svg` : `${process.env.PUBLIC_URL}/official-logo.svg`} 
                 alt="Vrindopnishad Logo" 
                 className="app-logo hover:scale-110 transition-transform duration-500" 
               />
@@ -49,15 +51,24 @@ const Layout = ({ children }) => {
 
           <div className="flex items-center gap-6">
             <nav className="hidden lg:flex items-center gap-6">
-              <Link to="/" className={`nav-link text-sm font-semibold tracking-wide transition-all ${isActive('/') ? 'text-amber-400' : 'text-white/50 hover:text-white'}`}>
+              <Link to="/" className={`nav-link text-sm font-semibold tracking-wide transition-all ${isActive('/') ? 'active text-amber-400' : 'text-white/50 hover:text-white'}`}>
                 Home
               </Link>
-              <Link to="/content" className={`nav-link text-sm font-semibold tracking-wide transition-all ${isActive('/content') ? 'text-amber-400' : 'text-white/50 hover:text-white'}`}>
+              <Link to="/content" className={`nav-link text-sm font-semibold tracking-wide transition-all ${isActive('/content') ? 'active text-amber-400' : 'text-white/50 hover:text-white'}`}>
                 Sanctuary Library
               </Link>
             </nav>
 
             <div className="flex items-center gap-4">
+              {/* Standalone Settings Button */}
+              <button 
+                onClick={() => setIsSettingsOpen(true)}
+                className="p-2 sm:p-2.5 bg-white/5 border border-white/10 rounded-full hover:bg-amber-500/20 hover:border-amber-400/40 text-white/60 hover:text-amber-400 hover:scale-110 active:scale-95 transition-all flex items-center justify-center shadow-lg"
+                title="Settings"
+              >
+                <Settings size={20} className="w-[18px] h-[18px] sm:w-[20px] sm:h-[20px]" />
+              </button>
+
               {user ? (
                 <div className="flex items-center gap-2 sm:gap-3 bg-white/5 backdrop-blur-xl border border-white/10 p-1 sm:p-1.5 sm:pr-4 rounded-full hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer group shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
                   {/* Avatar Section */}
@@ -90,21 +101,6 @@ const Layout = ({ children }) => {
                       {user.displayName || (user.email?.split('@')[0].match(/^[a-zA-Z]/) ? user.email?.split('@')[0] : 'Member')}
                     </span>
                   </div>
-
-                  {/* Divider - Hidden on Mobile */}
-                  <div className="hidden sm:block w-[1px] h-4 bg-white/10 mx-1"></div>
-                  
-                  {/* Settings Button */}
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsSettingsOpen(true);
-                    }}
-                    className="text-white/40 hover:text-amber-400 hover:scale-110 active:scale-95 transition-all p-1.5 sm:p-1"
-                    title="Settings"
-                  >
-                    <Settings size={18} className="sm:w-[16px] sm:h-[16px]" />
-                  </button>
 
                   {/* Divider */}
                   <div className="w-[1px] h-4 bg-white/10 mx-0.5"></div>

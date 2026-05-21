@@ -2,14 +2,18 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Compass, Scroll, Music, FileText, ArrowRight, BookOpen, Heart, Star, Globe, Users, MapPin, Book } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
+import { useSettings, THEMES } from '../contexts/SettingsContext';
 
 const HomePage = () => {
+  const { settings, updateSetting } = useSettings();
+  const currentTheme = settings.theme || 'dark';
+
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in font-sans">
       <Helmet>
         <title>Vrindopnishad Paath — वृंदोपनिषद् पाठ | Sacred Shlokas, Strotras & Devotional Poetry</title>
         <meta name="description" content="Vrindopnishad Paath (वृंदोपनिषद् पाठ) — Read and listen to authentic sacred Sanskrit shlokas, devotional strotras, spiritual poetry & Vedic wisdom from Vrindavan saints. Free online paath of Bhagavad Gita, mantras & hymns in Hindi, Sanskrit & English." />
-        <meta name="keywords" content="vrindopnishad, vrindopnishad paath, वृंदोपनिषद्, वृंदोपनिषद् पाठ, vrindopnishad path, vrindopnishad app, vrindopnishad.in, sant vaani, sacred shlokas, sanskrit shlokas, strotras, devotional poetry, bhagavad gita, vedic wisdom, vrindavan, भक्ति, श्लोक, स्तोत्र, कविता, वेद, उपनिषद, मंत्र, हिंदी भजन, radha krishna, premanand ji maharaj, barsana, nandgaav, govardhan, braj rasik, brajrasik, rasik sant" />
+        <meta name="keywords" content="vrindopnishad, vrindopnishad paath, वृंदोपनिषद्, वृंदोपनिषद् पाठ, vrindopnishad path, vrindopnishad app, vrindopnishad.in, sant vaani, sacred shlokas, sanskrit shlokas, strotras, devotional poetry, bhagavad gita, vedic wisdom, vrindavan, bhakti, श्लोक, स्तोत्र, कविता, वेद, उपनिषद, मंत्र, हिंदी भजन, radha krishna, premanand ji maharaj, barsana, nandgaav, govardhan, braj rasik, brajrasik, rasik sant" />
         <link rel="canonical" href="https://path.vrindopnishad.in/" />
 
         {/* Hindi-specific meta for Google India */}
@@ -68,273 +72,307 @@ const HomePage = () => {
         })}</script>
       </Helmet>
 
-      {/* Hero Section */}
-      <div className="text-center py-12 md:py-24 max-w-4xl mx-auto">
-        <div className="om-symbol text-[#fbbf24] text-4xl mb-6 opacity-80 animate-pulse">ॐ</div>
-        <h1 className="text-5xl md:text-7xl font-bold mb-4 tracking-tight text-white drop-shadow-2xl">
+      {/* Minimal Hero Section */}
+      <div className="text-center pt-8 pb-12 md:pt-16 md:pb-20 max-w-3xl mx-auto px-4">
+        <div className="text-amber-500 text-2xl mb-4 opacity-80 select-none">ॐ</div>
+        <h1 className="text-4xl md:text-6xl font-bold mb-3 tracking-tight text-white font-headings">
           वृंदोपनिषद्
         </h1>
-        <p className="text-xl md:text-2xl text-primary/80 font-medium mb-2">Vrindopnishad Paath</p>
-        <p className="text-lg md:text-xl text-white/70 font-light max-w-2xl mx-auto leading-relaxed mb-12">
+        <p className="text-lg md:text-xl text-primary font-medium tracking-wide mb-3">Vrindopnishad Paath</p>
+        <p className="text-sm md:text-base text-white/60 font-light max-w-xl mx-auto leading-relaxed mb-8">
           पवित्र डिजिटल संग्रह — Sacred Digital Sanctuary for Shlokas, Strotras & Devotional Poetry from Vrindavan
         </p>
 
-        <div className="flex flex-wrap justify-center gap-4">
-          <Link to="/content" className="btn-premium">
-            <Compass size={20} />
+        <div className="flex flex-wrap justify-center gap-3">
+          <Link to="/content" className="btn-premium px-8 py-3 text-sm shadow-lg hover:shadow-primary/20">
+            <Compass size={18} />
             Explore Paath
           </Link>
-          <Link to="/category/shloka" className="px-8 py-3 rounded-full border border-white/20 hover:bg-white/5 transition-all flex items-center gap-2 font-medium">
-            <Scroll size={20} className="text-primary" />
+          <Link to="/category/shloka" className="px-8 py-3 rounded-full border border-white/10 hover:bg-white/5 hover:border-white/20 text-sm text-white/80 transition-all flex items-center gap-2 font-medium">
+            <Scroll size={18} className="text-primary" />
             Browse Shlokas
           </Link>
         </div>
       </div>
 
-      {/* SEO Content Section — What is Vrindopnishad */}
-      <div className="py-12 max-w-4xl mx-auto">
-        <div className="glass-card p-8 md:p-12">
-          <h2 className="text-2xl md:text-3xl font-bold mb-6 text-white/90">
+      {/* Inline Atmosphere Switcher */}
+      <div className="flex flex-col items-center mb-16 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+        <span className="text-[10px] uppercase tracking-[0.25em] text-white/30 font-bold mb-3">
+          Atmospheric Presence
+        </span>
+        <div className="flex flex-wrap justify-center gap-2 max-w-3xl px-4">
+          {THEMES.map((theme) => {
+            const isActive = currentTheme === theme.id;
+            return (
+              <button
+                key={theme.id}
+                onClick={() => updateSetting('theme', theme.id)}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[11px] font-semibold tracking-wide border transition-all duration-300 ${
+                  isActive
+                    ? 'bg-primary border-primary text-white scale-105 shadow-md shadow-primary/20'
+                    : 'bg-white/5 border-white/10 text-white/50 hover:text-white hover:bg-white/10 hover:border-white/20'
+                }`}
+              >
+                <span>{theme.emoji}</span>
+                <span>{theme.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Minimal Intro Section */}
+      <div className="py-10 max-w-3xl mx-auto border-b border-white/5 px-4">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-5 text-white/90 font-headings">
             Vrindopnishad Paath — वृंदोपनिषद् पाठ क्या है?
           </h2>
-          <p className="text-white/70 leading-relaxed mb-4">
-            <strong className="text-white/85">Vrindopnishad</strong> (वृंदोपनिषद्) is the premier sacred digital sanctuary dedicated to preserving and sharing authentic spiritual and Vedic knowledge from the heart of Vrindavan. The word "Vrindopnishad" combines <em>Vrinda</em> (the sacred groves of Vrindavan, वृंदावन) and <em>Upanishad</em> (sacred knowledge, उपनिषद्), meaning "the sacred knowledge flowing from Vrindavan."
+          <p className="text-white/50 text-sm leading-relaxed mb-4">
+            <strong className="text-white/80">Vrindopnishad</strong> (वृंदोपनिषद्) is the premier sacred digital sanctuary dedicated to preserving and sharing authentic spiritual and Vedic knowledge from the heart of Vrindavan. The word "Vrindopnishad" combines <em>Vrinda</em> (the sacred groves of Vrindavan, वृंदावन) and <em>Upanishad</em> (sacred knowledge, उपनिषद्), meaning "the sacred knowledge flowing from Vrindavan."
           </p>
-          <p className="text-white/70 leading-relaxed mb-4">
-            <strong className="text-white/85">Vrindopnishad Paath</strong> (वृंदोपनिषद् पाठ) refers to the practice of reading, reciting, and contemplating the sacred verses, shlokas (श्लोक), strotras (स्तोत्र), and devotional poetry (भक्ति कविता) curated on this platform. Whether you seek Bhagavad Gita verses, Vedic mantras, or devotional hymns from saints like Surdas, Meera Bai, and Premanand Ji Maharaj — Vrindopnishad provides the most authentic and comprehensive collection online.
+          <p className="text-white/50 text-sm leading-relaxed mb-6">
+            <strong className="text-white/80">Vrindopnishad Paath</strong> (वृंदोपनिषद् पाठ) refers to the practice of reading, reciting, and contemplating the sacred verses, shlokas (श्लोक), strotras (स्तोत्र), and devotional poetry (भक्ति कविता) curated on this platform.
           </p>
-          <p className="text-white/70 leading-relaxed mb-6">
-            हमारा उद्देश्य वेदों, उपनिषदों, भगवद्गीता, और वृंदावन की भक्ति परंपरा के पवित्र ज्ञान को डिजिटल रूप में संरक्षित करना है। यहाँ आप संस्कृत श्लोक, स्तोत्र, और आध्यात्मिक कविताएँ हिंदी, संस्कृत, और अंग्रेजी में पढ़ और सुन सकते हैं।
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <Link to="/what-is-vrindopnishad" className="text-primary hover:underline text-sm flex items-center gap-1">
-              <BookOpen size={14} /> What is Vrindopnishad? →
+          <div className="flex flex-wrap justify-center gap-6">
+            <Link to="/what-is-vrindopnishad" className="text-primary hover:underline text-xs flex items-center gap-1.5">
+              <BookOpen size={12} /> What is Vrindopnishad? →
             </Link>
-            <Link to="/meaning" className="text-primary hover:underline text-sm flex items-center gap-1">
-              <Star size={14} /> Meaning & Etymology →
+            <Link to="/meaning" className="text-primary hover:underline text-xs flex items-center gap-1.5">
+              <Star size={12} /> Meaning & Etymology →
             </Link>
-            <Link to="/origin" className="text-primary hover:underline text-sm flex items-center gap-1">
-              <Globe size={14} /> Historical Origins →
+            <Link to="/origin" className="text-primary hover:underline text-xs flex items-center gap-1.5">
+              <Globe size={12} /> Historical Origins →
             </Link>
           </div>
         </div>
       </div>
 
-      {/* Categories Grid */}
-      <div className="py-12">
-        <div className="flex items-center gap-4 mb-12">
-          <div className="h-[1px] flex-1 bg-white/10"></div>
-          <h2 className="text-2xl font-semibold opacity-60 uppercase tracking-widest">पाठ श्रेणियाँ — Categories</h2>
-          <div className="h-[1px] flex-1 bg-white/10"></div>
+      {/* Categories Grid - Minimalist & Borderless */}
+      <div className="py-12 px-4">
+        <div className="flex items-center gap-4 mb-10">
+          <div className="h-[1px] flex-1 bg-white/5"></div>
+          <h2 className="text-sm font-semibold opacity-40 uppercase tracking-[0.2em] font-headings">पाठ श्रेणियाँ — Categories</h2>
+          <div className="h-[1px] flex-1 bg-white/5"></div>
         </div>
 
-        <div className="content-grid font-sans">
-          <Link to="/category/shloka" className="glass-card flex flex-col items-center text-center hover:border-amber-400/30 hover:shadow-2xl hover:shadow-amber-400/10 transition-all duration-500 group">
-             <div className="w-16 h-16 rounded-full bg-amber-400/10 flex items-center justify-center text-amber-400 mb-6 shadow-inner ring-1 ring-amber-400/20 group-hover:scale-110 transition-transform duration-500">
-               <Scroll size={32} />
+        <div className="grid md:grid-cols-3 gap-6 font-sans">
+          <Link to="/category/shloka" className="p-6 rounded-2xl border border-white/5 hover:border-amber-500/20 bg-white/[0.01] hover:bg-white/[0.03] transition-all duration-300 group">
+             <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 mb-5 group-hover:scale-105 transition-transform duration-300">
+               <Scroll size={20} />
              </div>
-             <div className="badge border-amber-400/30 text-amber-400/80 bg-amber-400/5">वेद और उपनिषद</div>
-             <h3 className="text-xl font-bold mb-4">Sacred Verses — श्लोक</h3>
-             <p className="text-white/60 text-sm leading-relaxed">
+             <span className="text-[10px] uppercase tracking-widest text-amber-500/80 font-bold block mb-1">वेद और उपनिषद</span>
+             <h3 className="text-base font-bold mb-2 text-white/90 group-hover:text-primary transition-colors">Sacred Verses — श्लोक</h3>
+             <p className="text-white/40 text-xs leading-relaxed">
                Dive into timeless Sanskrit shlokas from the Vedas, Upanishads, and Bhagavad Gita. Read Vrindopnishad paath of sacred verses with Hindi meaning.
              </p>
           </Link>
 
-          <Link to="/category/strotra" className="glass-card flex flex-col items-center text-center hover:border-sky-400/30 hover:shadow-2xl hover:shadow-sky-400/10 transition-all duration-500 group">
-             <div className="w-16 h-16 rounded-full bg-sky-400/10 flex items-center justify-center text-sky-400 mb-6 shadow-inner ring-1 ring-sky-400/20 group-hover:scale-110 transition-transform duration-500">
-               <Music size={32} />
+          <Link to="/category/strotra" className="p-6 rounded-2xl border border-white/5 hover:border-sky-500/20 bg-white/[0.01] hover:bg-white/[0.03] transition-all duration-300 group">
+             <div className="w-10 h-10 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-500 mb-5 group-hover:scale-105 transition-transform duration-300">
+               <Music size={20} />
              </div>
-             <div className="badge border-sky-400/30 text-sky-400/80 bg-sky-400/5">भक्ति स्तोत्र</div>
-             <h3 className="text-xl font-bold mb-4">Strotras — स्तोत्र</h3>
-             <p className="text-white/60 text-sm leading-relaxed">
+             <span className="text-[10px] uppercase tracking-widest text-sky-500/80 font-bold block mb-1">भक्ति स्तोत्र</span>
+             <h3 className="text-base font-bold mb-2 text-white/90 group-hover:text-primary transition-colors">Strotras — स्तोत्र</h3>
+             <p className="text-white/40 text-xs leading-relaxed">
                Experience the power of traditional devotional hymns and prayers. Listen and read strotras dedicated to Radha Krishna, Shiva, and Hanuman.
              </p>
           </Link>
 
-          <Link to="/category/poem" className="glass-card flex flex-col items-center text-center hover:border-emerald-400/30 hover:shadow-2xl hover:shadow-emerald-400/10 transition-all duration-500 group">
-             <div className="w-16 h-16 rounded-full bg-emerald-400/10 flex items-center justify-center text-emerald-400 mb-6 shadow-inner ring-1 ring-emerald-400/20 group-hover:scale-110 transition-transform duration-500">
-               <FileText size={32} />
+          <Link to="/category/poem" className="p-6 rounded-2xl border border-white/5 hover:border-emerald-500/20 bg-white/[0.01] hover:bg-white/[0.03] transition-all duration-300 group">
+             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 mb-5 group-hover:scale-105 transition-transform duration-300">
+               <FileText size={20} />
              </div>
-             <div className="badge border-emerald-400/30 text-emerald-400/80 bg-emerald-400/5">आध्यात्मिक कविता</div>
-             <h3 className="text-xl font-bold mb-4">Poems — कविताएँ</h3>
-             <p className="text-white/60 text-sm leading-relaxed">
-               Contemporary and classic spiritual poetry from Vrindavan saints — Surdas, Meera Bai, Kabir, and modern devotional poets.
+             <span className="text-[10px] uppercase tracking-widest text-emerald-500/80 font-bold block mb-1">आध्यात्मिक कविता</span>
+             <h3 className="text-base font-bold mb-2 text-white/90 group-hover:text-primary transition-colors">Poems — कविताएँ</h3>
+             <p className="text-white/40 text-xs leading-relaxed">
+               Explore classical and contemporary devotional poems, bhajans, and couplets from saints like Surdas, Meera Bai, and Kabir.
              </p>
           </Link>
         </div>
       </div>
 
-      {/* Braj Heritage Section */}
-      <div className="py-12">
-        <div className="flex items-center gap-4 mb-12">
-          <div className="h-[1px] flex-1 bg-white/10"></div>
-          <h2 className="text-2xl font-semibold opacity-60 uppercase tracking-widest text-primary">ब्रज रसिक विरासत — Braj Heritage</h2>
-          <div className="h-[1px] flex-1 bg-white/10"></div>
+      {/* Braj Heritage Section - Minimal Horizontal Grid */}
+      <div className="py-12 px-4">
+        <div className="flex items-center gap-4 mb-10">
+          <div className="h-[1px] flex-1 bg-white/5"></div>
+          <h2 className="text-sm font-semibold opacity-40 uppercase tracking-[0.2em] font-headings">ब्रज रसिक विरासत — Braj Dham</h2>
+          <div className="h-[1px] flex-1 bg-white/5"></div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Link to="/category/sankirtan" className="glass-card flex flex-col items-center text-center hover:border-rose-400/30 hover:shadow-2xl hover:shadow-rose-400/10 transition-all duration-500 group">
-             <div className="w-14 h-14 rounded-full bg-rose-400/10 flex items-center justify-center text-rose-400 mb-4 group-hover:scale-110 transition-transform">
-               <Heart size={28} />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 font-sans">
+          <Link to="/category/sankirtan" className="p-4 rounded-xl border border-white/5 hover:border-rose-500/20 bg-white/[0.01] hover:bg-white/[0.03] flex items-center gap-3 transition-all duration-300 group">
+             <div className="w-9 h-9 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-500 shrink-0">
+               <Heart size={18} />
              </div>
-             <h3 className="font-bold mb-1">Sankirtan</h3>
-             <p className="text-white/50 text-xs px-2">Divine lyrics & bhajans</p>
+             <div className="min-w-0">
+               <h3 className="font-bold text-xs text-white/90 truncate group-hover:text-primary transition-colors">Sankirtan</h3>
+               <p className="text-white/40 text-[10px] truncate">Lyrics & Bhajans</p>
+             </div>
           </Link>
 
-          <Link to="/category/saint" className="glass-card flex flex-col items-center text-center hover:border-indigo-400/30 hover:shadow-2xl hover:shadow-indigo-400/10 transition-all duration-500 group">
-             <div className="w-14 h-14 rounded-full bg-indigo-400/10 flex items-center justify-center text-indigo-400 mb-4 group-hover:scale-110 transition-transform">
-               <Users size={28} />
+          <Link to="/category/saint" className="p-4 rounded-xl border border-white/5 hover:border-indigo-500/20 bg-white/[0.01] hover:bg-white/[0.03] flex items-center gap-3 transition-all duration-300 group">
+             <div className="w-9 h-9 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-500 shrink-0">
+               <Users size={18} />
              </div>
-             <h3 className="font-bold mb-1">Rasik Saints</h3>
-             <p className="text-white/50 text-xs px-2">Biographies of masters</p>
+             <div className="min-w-0">
+               <h3 className="font-bold text-xs text-white/90 truncate group-hover:text-primary transition-colors">Rasik Saints</h3>
+               <p className="text-white/40 text-[10px] truncate">Holy Biographies</p>
+             </div>
           </Link>
 
-          <Link to="/category/dham" className="glass-card flex flex-col items-center text-center hover:border-orange-400/30 hover:shadow-2xl hover:shadow-orange-400/10 transition-all duration-500 group">
-             <div className="w-14 h-14 rounded-full bg-orange-400/10 flex items-center justify-center text-orange-400 mb-4 group-hover:scale-110 transition-transform">
-               <MapPin size={28} />
+          <Link to="/category/dham" className="p-4 rounded-xl border border-white/5 hover:border-orange-500/20 bg-white/[0.01] hover:bg-white/[0.03] flex items-center gap-3 transition-all duration-300 group">
+             <div className="w-9 h-9 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 shrink-0">
+               <MapPin size={18} />
              </div>
-             <h3 className="font-bold mb-1">Braj Dham</h3>
-             <p className="text-white/50 text-xs px-2">Sacred places of Braj</p>
+             <div className="min-w-0">
+               <h3 className="font-bold text-xs text-white/90 truncate group-hover:text-primary transition-colors">Braj Dham</h3>
+               <p className="text-white/40 text-[10px] truncate">Sacred Places</p>
+             </div>
           </Link>
 
-          <Link to="/category/literature" className="glass-card flex flex-col items-center text-center hover:border-violet-400/30 hover:shadow-2xl hover:shadow-violet-400/10 transition-all duration-500 group">
-             <div className="w-14 h-14 rounded-full bg-violet-400/10 flex items-center justify-center text-violet-400 mb-4 group-hover:scale-110 transition-transform">
-               <Book size={28} />
+          <Link to="/category/literature" className="p-4 rounded-xl border border-white/5 hover:border-violet-500/20 bg-white/[0.01] hover:bg-white/[0.03] flex items-center gap-3 transition-all duration-300 group">
+             <div className="w-9 h-9 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-500 shrink-0">
+               <Book size={18} />
              </div>
-             <h3 className="font-bold mb-1">Literature</h3>
-             <p className="text-white/50 text-xs px-2">Authentic Rasik texts</p>
-          </Link>
-        </div>
-        <div className="text-center mt-8">
-          <Link to="/braj-rasik-heritage" className="text-primary hover:underline text-sm font-medium flex items-center justify-center gap-2">
-            Learn more about Braj Rasik Heritage <ArrowRight size={14} />
+             <div className="min-w-0">
+               <h3 className="font-bold text-xs text-white/90 truncate group-hover:text-primary transition-colors">Literature</h3>
+               <p className="text-white/40 text-[10px] truncate">Rasik Scriptures</p>
+             </div>
           </Link>
         </div>
       </div>
 
-      {/* Why Vrindopnishad Section */}
-      <div className="py-12 max-w-4xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center text-white/90">
+      {/* Why Vrindopnishad Section - Clean Typography */}
+      <div className="py-12 max-w-3xl mx-auto px-4">
+        <h2 className="text-2xl font-bold mb-8 text-center text-white/95 font-headings">
           Why Read Vrindopnishad Paath Online?
         </h2>
         <div className="grid md:grid-cols-2 gap-6">
-          <div className="glass-card p-6 flex gap-4">
-            <div className="w-10 h-10 rounded-full bg-amber-400/10 flex items-center justify-center text-amber-400 shrink-0 mt-1">
+          <div className="flex gap-4 p-2">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/5 text-amber-500 flex items-center justify-center shrink-0 mt-1">
               <BookOpen size={20} />
             </div>
             <div>
-              <h3 className="font-bold text-white/90 mb-2">645+ Sacred Texts</h3>
-              <p className="text-white/60 text-sm leading-relaxed">The largest curated collection of authentic Sanskrit shlokas, strotras, and devotional poetry from Vrindavan — all verified by Sanskrit scholars.</p>
+              <h3 className="font-bold text-sm text-white/90 mb-1">645+ Curated Verses</h3>
+              <p className="text-white/45 text-xs leading-relaxed">Authentic Sanskrit shlokas, strotras, and devotional poetry verified by traditional Vrindavan scholars.</p>
             </div>
           </div>
-          <div className="glass-card p-6 flex gap-4">
-            <div className="w-10 h-10 rounded-full bg-sky-400/10 flex items-center justify-center text-sky-400 shrink-0 mt-1">
+
+          <div className="flex gap-4 p-2">
+            <div className="w-10 h-10 rounded-xl bg-sky-500/5 text-sky-500 flex items-center justify-center shrink-0 mt-1">
               <Globe size={20} />
             </div>
             <div>
-              <h3 className="font-bold text-white/90 mb-2">Hindi, Sanskrit & English</h3>
-              <p className="text-white/60 text-sm leading-relaxed">Every verse is available in original Sanskrit with Hindi transliteration and English translation — making Vedic wisdom accessible to everyone.</p>
+              <h3 className="font-bold text-sm text-white/90 mb-1">Tri-lingual Translation</h3>
+              <p className="text-white/45 text-xs leading-relaxed">Every verse features original Sanskrit/Hindi text accompanied by fluid English translations.</p>
             </div>
           </div>
-          <div className="glass-card p-6 flex gap-4">
-            <div className="w-10 h-10 rounded-full bg-emerald-400/10 flex items-center justify-center text-emerald-400 shrink-0 mt-1">
+
+          <div className="flex gap-4 p-2">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/5 text-emerald-500 flex items-center justify-center shrink-0 mt-1">
               <Music size={20} />
             </div>
             <div>
-              <h3 className="font-bold text-white/90 mb-2">Audio Paath — सुनिए</h3>
-              <p className="text-white/60 text-sm leading-relaxed">Listen to sacred verses with traditional chanting. Audio narrations bring the authentic sound of Vedic recitation to your device.</p>
+              <h3 className="font-bold text-sm text-white/90 mb-1">Traditional Chanting</h3>
+              <p className="text-white/45 text-xs leading-relaxed">Listen to high-quality audio narrations and traditional recitation styles to improve pronunciation.</p>
             </div>
           </div>
-          <div className="glass-card p-6 flex gap-4">
-            <div className="w-10 h-10 rounded-full bg-rose-400/10 flex items-center justify-center text-rose-400 shrink-0 mt-1">
+
+          <div className="flex gap-4 p-2">
+            <div className="w-10 h-10 rounded-xl bg-rose-500/5 text-rose-500 flex items-center justify-center shrink-0 mt-1">
               <Heart size={20} />
             </div>
             <div>
-              <h3 className="font-bold text-white/90 mb-2">100% Free — निःशुल्क</h3>
-              <p className="text-white/60 text-sm leading-relaxed">Sacred knowledge belongs to everyone. Vrindopnishad is completely free — no subscriptions, no paywalls, no hidden costs.</p>
+              <h3 className="font-bold text-sm text-white/90 mb-1">A Free Spiritual Hub</h3>
+              <p className="text-white/45 text-xs leading-relaxed">No subscriptions or hidden fees. We believe sacred wisdom should be open and accessible to all.</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Knowledge Hub — internal links for crawlers */}
-      <div className="py-12 max-w-4xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center text-white/90">
+      {/* Knowledge Hub - Minimalist Horizontal Links */}
+      <div className="py-12 max-w-3xl mx-auto px-4">
+        <h2 className="text-2xl font-bold mb-8 text-center text-white/95 font-headings">
           वृंदोपनिषद् ज्ञान केंद्र — Knowledge Hub
         </h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Link to="/what-is-vrindopnishad" className="glass-card p-5 hover:border-primary/30 transition-colors group">
-            <h3 className="font-bold text-white/90 mb-1 group-hover:text-primary transition-colors">What is Vrindopnishad?</h3>
-            <p className="text-white/50 text-sm">Complete introduction to the sacred digital sanctuary</p>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
+          <Link to="/what-is-vrindopnishad" className="flex items-center justify-between py-3.5 border-b border-white/5 group hover:border-primary/20 transition-all">
+            <div className="min-w-0 pr-4">
+              <h3 className="font-bold text-xs text-white/90 truncate group-hover:text-primary transition-colors">What is Vrindopnishad?</h3>
+              <p className="text-white/40 text-[10px] truncate">Introduction to the digital sanctuary</p>
+            </div>
+            <ArrowRight size={14} className="text-white/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
           </Link>
-          <Link to="/meaning" className="glass-card p-5 hover:border-primary/30 transition-colors group">
-            <h3 className="font-bold text-white/90 mb-1 group-hover:text-primary transition-colors">Meaning — अर्थ</h3>
-            <p className="text-white/50 text-sm">Etymology and significance of Vrindopnishad</p>
+
+          <Link to="/meaning" className="flex items-center justify-between py-3.5 border-b border-white/5 group hover:border-primary/20 transition-all">
+            <div className="min-w-0 pr-4">
+              <h3 className="font-bold text-xs text-white/90 truncate group-hover:text-primary transition-colors">Meaning — अर्थ</h3>
+              <p className="text-white/40 text-[10px] truncate">Significance and spiritual definitions</p>
+            </div>
+            <ArrowRight size={14} className="text-white/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
           </Link>
-          <Link to="/origin" className="glass-card p-5 hover:border-primary/30 transition-colors group">
-            <h3 className="font-bold text-white/90 mb-1 group-hover:text-primary transition-colors">Origin — उत्पत्ति</h3>
-            <p className="text-white/50 text-sm">Historical roots from Vrindavan to digital age</p>
+
+          <Link to="/origin" className="flex items-center justify-between py-3.5 border-b border-white/5 group hover:border-primary/20 transition-all">
+            <div className="min-w-0 pr-4">
+              <h3 className="font-bold text-xs text-white/90 truncate group-hover:text-primary transition-colors">Origin — उत्पत्ति</h3>
+              <p className="text-white/40 text-[10px] truncate">Vrindavan roots and history</p>
+            </div>
+            <ArrowRight size={14} className="text-white/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
           </Link>
-          <Link to="/philosophy" className="glass-card p-5 hover:border-primary/30 transition-colors group">
-            <h3 className="font-bold text-white/90 mb-1 group-hover:text-primary transition-colors">Philosophy — दर्शन</h3>
-            <p className="text-white/50 text-sm">Vedantic wisdom and Bhakti principles</p>
+
+          <Link to="/philosophy" className="flex items-center justify-between py-3.5 border-b border-white/5 group hover:border-primary/20 transition-all">
+            <div className="min-w-0 pr-4">
+              <h3 className="font-bold text-xs text-white/90 truncate group-hover:text-primary transition-colors">Philosophy — दर्शन</h3>
+              <p className="text-white/40 text-[10px] truncate">Bhakti principles and Vedic path</p>
+            </div>
+            <ArrowRight size={14} className="text-white/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
           </Link>
-          <Link to="/teachings" className="glass-card p-5 hover:border-primary/30 transition-colors group">
-            <h3 className="font-bold text-white/90 mb-1 group-hover:text-primary transition-colors">Teachings — शिक्षाएँ</h3>
-            <p className="text-white/50 text-sm">Core spiritual lessons and sacred wisdom</p>
+
+          <Link to="/teachings" className="flex items-center justify-between py-3.5 border-b border-white/5 group hover:border-primary/20 transition-all">
+            <div className="min-w-0 pr-4">
+              <h3 className="font-bold text-xs text-white/90 truncate group-hover:text-primary transition-colors">Teachings — शिक्षाएँ</h3>
+              <p className="text-white/40 text-[10px] truncate">Key spiritual messages & insights</p>
+            </div>
+            <ArrowRight size={14} className="text-white/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
           </Link>
-          <Link to="/importance" className="glass-card p-5 hover:border-primary/30 transition-colors group">
-            <h3 className="font-bold text-white/90 mb-1 group-hover:text-primary transition-colors">Importance — महत्व</h3>
-            <p className="text-white/50 text-sm">Why Vedic wisdom matters today</p>
-          </Link>
-          <Link to="/devotion" className="glass-card p-5 hover:border-primary/30 transition-colors group">
-            <h3 className="font-bold text-white/90 mb-1 group-hover:text-primary transition-colors">Devotion — भक्ति</h3>
-            <p className="text-white/50 text-sm">Understanding Bhakti through Vrindopnishad</p>
-          </Link>
-          <Link to="/guide" className="glass-card p-5 hover:border-primary/30 transition-colors group">
-            <h3 className="font-bold text-white/90 mb-1 group-hover:text-primary transition-colors">Guide — मार्गदर्शिका</h3>
-            <p className="text-white/50 text-sm">Complete beginner's guide to the platform</p>
-          </Link>
-          <Link to="/faq" className="glass-card p-5 hover:border-primary/30 transition-colors group">
-            <h3 className="font-bold text-white/90 mb-1 group-hover:text-primary transition-colors">FAQ — प्रश्नोत्तर</h3>
-            <p className="text-white/50 text-sm">Frequently asked questions answered</p>
+
+          <Link to="/importance" className="flex items-center justify-between py-3.5 border-b border-white/5 group hover:border-primary/20 transition-all">
+            <div className="min-w-0 pr-4">
+              <h3 className="font-bold text-xs text-white/90 truncate group-hover:text-primary transition-colors">Importance — महत्व</h3>
+              <p className="text-white/40 text-[10px] truncate">Why these texts matter today</p>
+            </div>
+            <ArrowRight size={14} className="text-white/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
           </Link>
         </div>
       </div>
 
-      {/* SEO Bottom Content */}
-      <div className="py-12 max-w-4xl mx-auto">
-        <div className="glass-card p-8 md:p-12">
-          <h2 className="text-2xl font-bold mb-4 text-white/90">वृंदोपनिषद् पाठ — Vrindopnishad Paath Online</h2>
-          <p className="text-white/70 leading-relaxed mb-4">
-            Vrindopnishad Paath is the daily spiritual practice of reading sacred verses from the Vedas, Upanishads, Bhagavad Gita, and the devotional literature of Vrindavan. Our platform brings this ancient practice into the digital age, allowing seekers worldwide to engage with authentic spiritual texts anytime, anywhere.
-          </p>
-          <p className="text-white/70 leading-relaxed mb-4">
-            वृंदोपनिषद् पाठ एक पवित्र आध्यात्मिक अभ्यास है जो वेदों, उपनिषदों, भगवद्गीता, और वृंदावन की भक्ति साहित्य के पवित्र श्लोकों को पढ़ने और सुनने की परंपरा है। हमारा मंच इस प्राचीन परंपरा को डिजिटल युग में लाता है, जिससे दुनिया भर के साधक कभी भी, कहीं भी प्रामाणिक आध्यात्मिक ग्रंथों से जुड़ सकें।
-          </p>
-          <p className="text-white/70 leading-relaxed mb-6">
-            The collection includes sacred works from the great Vrindavan saints — Rupa Goswami, Sanatana Goswami, Surdas, Meera Bai, and contemporary spiritual masters like Premanand Ji Maharaj. From the sacred groves of Barsana and Nandgaon to the ghats of Govardhan, these texts carry the living spiritual energy of Vrindavan to your screen.
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {['vrindopnishad', 'vrindopnishad paath', 'वृंदोपनिषद्', 'श्लोक', 'स्तोत्र', 'भक्ति कविता', 'भगवद्गीता', 'वैदिक मंत्र', 'radha krishna', 'vrindavan', 'sanskrit shlokas'].map(tag => (
-              <span key={tag} className="px-3 py-1 rounded-full border border-white/10 text-white/40 text-xs">{tag}</span>
-            ))}
-          </div>
+      {/* SEO Bottom Content - Clean Description */}
+      <div className="py-12 max-w-3xl mx-auto px-4 border-t border-white/5">
+        <h2 className="text-xl font-bold mb-4 text-white/90 font-headings">वृंदोपनिषद् पाठ — Vrindopnishad Paath Online</h2>
+        <p className="text-white/45 text-xs leading-relaxed mb-4">
+          Vrindopnishad Paath is the daily spiritual practice of reading sacred verses from the Vedas, Upanishads, Bhagavad Gita, and the devotional literature of Vrindavan. Our platform brings this ancient practice into the digital age, allowing seekers worldwide to engage with authentic spiritual texts.
+        </p>
+        <p className="text-white/45 text-xs leading-relaxed mb-4">
+          वृंदोपनिषद् पाठ एक पवित्र आध्यात्मिक अभ्यास है जो वेदों, उपनिषदों, भगवद्गीता, और वृंदावन की भक्ति साहित्य के पवित्र श्लोकों को पढ़ने और सुनने की परंपरा है। हमारा मंच इस प्राचीन परंपरा को डिजिटल युग में लाता है।
+        </p>
+        <div className="flex flex-wrap gap-1.5 mt-6">
+          {['vrindopnishad', 'vrindopnishad paath', 'वृंदोपनिषद्', 'श्लोक', 'स्तोत्र', 'भक्ति कविता', 'भगवद्गीता', 'radha krishna', 'vrindavan', 'sanskrit shlokas'].map(tag => (
+            <span key={tag} className="px-2.5 py-0.5 rounded-full border border-white/5 text-white/30 text-[10px]">{tag}</span>
+          ))}
         </div>
       </div>
 
-      {/* Call to action */}
-      <div className="mt-12 mb-8 p-8 md:p-16 glass-card text-center relative overflow-hidden group">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-50"></div>
-        <div className="relative z-10">
-          <h2 className="text-3xl font-bold mb-6">अपनी आध्यात्मिक यात्रा शुरू करें</h2>
-          <p className="text-xl text-white/80 mb-2">Start Your Spiritual Journey</p>
-          <p className="text-white/70 max-w-xl mx-auto mb-10 leading-relaxed">
+      {/* Minimal Call to Action */}
+      <div className="my-16 py-16 border-t border-b border-white/5 text-center relative overflow-hidden">
+        <div className="relative z-10 max-w-2xl mx-auto px-4">
+          <h2 className="text-2xl font-bold mb-2 text-white/95 font-headings">अपनी आध्यात्मिक यात्रा शुरू करें</h2>
+          <p className="text-base text-white/60 mb-6 font-headings">Start Your Spiritual Journey</p>
+          <p className="text-white/40 text-xs max-w-md mx-auto mb-8 leading-relaxed">
              Immerse yourself in sacred texts with audio narrations, beautiful imagery, and deep spiritual insights. Read Vrindopnishad Paath daily for inner peace and divine wisdom.
           </p>
-          <Link to="/content" className="btn-premium px-12 py-4">
+          <Link to="/content" className="btn-premium px-10 py-3.5 text-sm shadow-xl hover:shadow-primary/20">
              Enter Presence — पाठ पढ़ें
-             <ArrowRight size={20} />
+             <ArrowRight size={16} />
           </Link>
         </div>
       </div>

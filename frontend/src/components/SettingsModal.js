@@ -1,8 +1,23 @@
 import React, { useState, useContext } from 'react';
-import { X, Type, Layout, AlignLeft, User, Check, AlertCircle } from 'lucide-react';
-import { useSettings } from '../contexts/SettingsContext';
+import { X, Type, Layout, AlignLeft, User, Check, AlertCircle, Palette } from 'lucide-react';
+import { useSettings, THEMES } from '../contexts/SettingsContext';
 import { AuthContext } from '../App';
 import { updateProfile } from 'firebase/auth';
+
+const themeGradients = {
+  dark: 'radial-gradient(circle, #0F0025 0%, #050010 100%)',
+  light: 'linear-gradient(135deg, #fdfbf7 0%, #eae5d9 100%)',
+  night: 'linear-gradient(180deg, #020617 0%, #0f172a 100%)',
+  space: 'radial-gradient(circle, #1e1b4b 0%, #090514 100%)',
+  void: '#010101',
+  winter: 'linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%)',
+  snow: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+  rainy: 'linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%)',
+  mountains: 'linear-gradient(135deg, #fafaf9 0%, #e7e5e4 100%)',
+  sunset: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)',
+  forest: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+  ocean: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)',
+};
 
 const SettingsModal = ({ isOpen, onClose }) => {
   const { settings, updateSetting } = useSettings();
@@ -61,45 +76,105 @@ const SettingsModal = ({ isOpen, onClose }) => {
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto p-8 pt-6 space-y-10 custom-scrollbar">
           {/* Personal Profile Section */}
+          {user && (
+            <div className="space-y-4">
+              <h3 className="text-xs uppercase tracking-[0.2em] text-white/30 font-bold flex items-center gap-2">
+                <User size={14} /> Personal Profile
+              </h3>
+              <form onSubmit={handleUpdateProfile} className="space-y-3">
+                <div className="relative group">
+                  <input
+                    type="text"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 outline-none focus:border-primary/60 focus:bg-white/10 transition-all text-sm"
+                    placeholder="Your Full Name"
+                  />
+                  <button
+                    type="submit"
+                    disabled={isUpdating || displayName === user?.displayName}
+                    className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-all ${
+                      displayName !== user?.displayName && !isUpdating
+                        ? 'bg-primary text-white shadow-lg'
+                        : 'bg-white/5 text-white/20'
+                    }`}
+                  >
+                    {isUpdating ? (
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    ) : (
+                      <Check size={16} />
+                    )}
+                  </button>
+                </div>
+                {updateStatus.message && (
+                  <div className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider animate-in fade-in slide-in-from-top-1 ${
+                    updateStatus.type === 'success' ? 'text-green-400' : 'text-red-400'
+                  }`}>
+                    {updateStatus.type === 'success' ? <Check size={12} /> : <AlertCircle size={12} />}
+                    {updateStatus.message}
+                  </div>
+                )}
+              </form>
+            </div>
+          )}
+
+          {/* Sanctuary Themes & Celestial Moods */}
           <div className="space-y-4">
             <h3 className="text-xs uppercase tracking-[0.2em] text-white/30 font-bold flex items-center gap-2">
-              <User size={14} /> Personal Profile
+              <Palette size={14} /> Sanctuary Theme
             </h3>
-            <form onSubmit={handleUpdateProfile} className="space-y-3">
-              <div className="relative group">
-                <input
-                  type="text"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 outline-none focus:border-primary/60 focus:bg-white/10 transition-all text-sm"
-                  placeholder="Your Full Name"
-                />
-                <button
-                  type="submit"
-                  disabled={isUpdating || displayName === user?.displayName}
-                  className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-all ${
-                    displayName !== user?.displayName && !isUpdating
-                      ? 'bg-primary text-white shadow-lg'
-                      : 'bg-white/5 text-white/20'
-                  }`}
-                >
-                  {isUpdating ? (
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  ) : (
-                    <Check size={16} />
-                  )}
-                </button>
-              </div>
-              {updateStatus.message && (
-                <div className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider animate-in fade-in slide-in-from-top-1 ${
-                  updateStatus.type === 'success' ? 'text-green-400' : 'text-red-400'
-                }`}>
-                  {updateStatus.type === 'success' ? <Check size={12} /> : <AlertCircle size={12} />}
-                  {updateStatus.message}
+            
+            <div className="space-y-4">
+              {/* Base Themes */}
+              <div>
+                <span className="text-[10px] uppercase tracking-widest text-white/40 block mb-2 font-semibold">Core Modes</span>
+                <div className="grid grid-cols-2 gap-2">
+                  {THEMES.filter(t => t.group === 'base').map((t) => (
+                    <button
+                      key={t.id}
+                      onClick={() => updateSetting('theme', t.id)}
+                      className={`flex items-center gap-3 p-3 rounded-xl text-sm font-semibold transition-all border ${
+                        settings.theme === t.id 
+                          ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20' 
+                          : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10'
+                      }`}
+                    >
+                      <div 
+                        className="w-5 h-5 rounded-full flex-shrink-0 border border-white/20 shadow-sm"
+                        style={{ background: themeGradients[t.id] }}
+                      ></div>
+                      <span>{t.emoji} {t.label}</span>
+                    </button>
+                  ))}
                 </div>
-              )}
-            </form>
+              </div>
+
+              {/* Moods */}
+              <div>
+                <span className="text-[10px] uppercase tracking-widest text-white/40 block mb-2 font-semibold">Celestial Moods</span>
+                <div className="grid grid-cols-2 gap-2">
+                  {THEMES.filter(t => t.group === 'mood').map((t) => (
+                    <button
+                      key={t.id}
+                      onClick={() => updateSetting('theme', t.id)}
+                      className={`flex items-center gap-3 p-3 rounded-xl text-xs font-semibold transition-all border ${
+                        settings.theme === t.id 
+                          ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20' 
+                          : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10'
+                      }`}
+                    >
+                      <div 
+                        className="w-5 h-5 rounded-full flex-shrink-0 border border-white/20 shadow-sm"
+                        style={{ background: themeGradients[t.id] }}
+                      ></div>
+                      <span>{t.emoji} {t.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
+
           {/* Font Size */}
           <div className="space-y-4">
             <h3 className="text-xs uppercase tracking-[0.2em] text-white/30 font-bold flex items-center gap-2">

@@ -27,11 +27,19 @@
 
     <!-- Favicon Configuration - Full local icon set matching main vrindopnishad.in -->
     <link rel="icon" type="image/x-icon" href="%PUBLIC_URL%/favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="%PUBLIC_URL%/icon-192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="%PUBLIC_URL%/icon-512.png">
+    
+    <!-- Light Theme Favicon (Dark Pixels) -->
+    <link rel="icon" href="%PUBLIC_URL%/favicon-light-theme.ico" sizes="48x48" media="(prefers-color-scheme: light)">
+    <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon-32x32-light-theme.png" media="(prefers-color-scheme: light)">
+    <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon-16x16-light-theme.png" media="(prefers-color-scheme: light)">
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/apple-touch-icon-light-theme.png" media="(prefers-color-scheme: light)">
+    
+    <!-- Dark Theme Favicon (Light Pixels) -->
+    <link rel="icon" href="%PUBLIC_URL%/favicon-dark-theme.ico" sizes="48x48" media="(prefers-color-scheme: dark)">
+    <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon-32x32-dark-theme.png" media="(prefers-color-scheme: dark)">
+    <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon-16x16-dark-theme.png" media="(prefers-color-scheme: dark)">
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/apple-touch-icon-dark-theme.png" media="(prefers-color-scheme: dark)">
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
 
     <!-- Open Graph / Facebook -->
@@ -104,15 +112,29 @@
     <!-- Prevent flash of wrong theme -->
     <script>
         (function () {
-            const stored = localStorage.getItem('theme');
-            let theme = stored;
-            if (!stored || stored === 'system') {
-                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            }
-            if (theme === 'dark') {
+            let theme = 'dark';
+            try {
+                const saved = localStorage.getItem('user_settings');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed && parsed.theme) {
+                        theme = parsed.theme;
+                    }
+                }
+            } catch (e) {}
+
+            document.documentElement.setAttribute('data-theme', theme);
+
+            // Dark themes list:
+            const darkThemes = ['dark', 'night', 'space', 'void'];
+            const isDark = darkThemes.indexOf(theme) !== -1;
+
+            if (isDark) {
                 document.documentElement.classList.add('dark');
+                document.documentElement.classList.remove('light-mode');
             } else {
                 document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('light-mode');
             }
         })();
     </script>

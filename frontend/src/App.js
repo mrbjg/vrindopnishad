@@ -110,25 +110,10 @@ function App() {
       requestAnimationFrame(raf);
     }
 
-    // Performance optimization: toggling class during scroll to disable heavy CSS
-    let scrollTimeout;
-    const handleScroll = () => {
-      if (!document.body.classList.contains('is-scrolling')) {
-        document.body.classList.add('is-scrolling');
-      }
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        document.body.classList.remove('is-scrolling');
-      }, 100);
-    };
-
-    lenis.on('scroll', handleScroll);
     requestAnimationFrame(raf);
 
     return () => {
       lenis.destroy();
-      clearTimeout(scrollTimeout);
-      document.body.classList.remove('is-scrolling');
     };
   }, [settings.smoothScroll]);
 

@@ -31,6 +31,13 @@
     --nebula-color-2: rgba(32, 84, 174, 0.1);  /* Deep Blue */
     --nebula-color-3: rgba(251, 191, 36, 0.05); /* Gold Ghosting */
 
+    /* Glass and Celestial theme defaults */
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --header-bg: rgba(10, 0, 21, 0.2);
+    --stars-opacity: 0.6;
+    --celestial-bg: radial-gradient(circle at center, #0F0025 0%, #050010 100%);
+
     /* shadcn/ui required CSS variables — dark glassmorphism palette */
     --card: 240 15% 7%;
     --card-foreground: 40 10% 95%;
@@ -76,7 +83,7 @@ textarea {
 html {
     scroll-behavior: smooth;
     overflow-x: hidden;
-    background: #080808; /* Neutral Deep Black */
+    background: hsl(var(--background));
     font-size: clamp(14px, 1.2vw, 18px);
 }
 
@@ -85,28 +92,15 @@ body {
     line-height: var(--line-height);
     color: var(--text-color);
     min-height: 100vh;
-    background: #080808;
+    background: hsl(var(--background));
     overflow-x: hidden;
 }
 
-/* HIGH-SPEED SCROLL OPTIMIZATIONS */
-body.is-scrolling * {
-    pointer-events: none !important;
-    /* Disable hover effects during scroll */
+.text-foreground {
+    color: var(--text-color);
 }
 
-body.is-scrolling .glass,
-body.is-scrolling .glass-card,
-body.is-scrolling .sidebar,
-body.is-scrolling header.app-header {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-}
-
-body.is-scrolling .glass-card {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
-    transition: none !important;
-}
+/* Scroll optimizations disabled for smoother rendering */
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /* LIGHTWEIGHT CELESTIAL BACKGROUND                                            */
@@ -120,13 +114,14 @@ body.is-scrolling .glass-card {
     height: 100%;
     z-index: -10;
     pointer-events: none;
-    background: radial-gradient(circle at center, #0F0025 0%, #050010 100%);
+    background: var(--celestial-bg);
     overflow: hidden;
     transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
     will-change: transform;
     /* Extra stability for mobile */
     -webkit-transform: translate3d(0, 0, 0);
+    transition: background 0.8s ease-in-out;
 }
 
 /* Static, high-performance stars */
@@ -142,8 +137,9 @@ body.is-scrolling .glass-card {
         radial-gradient(1px 1px at 75% 15%, rgba(255, 255, 255, 0.4) 50%, transparent 50%),
         radial-gradient(1.5px 1.5px at 50% 50%, rgba(255, 255, 255, 0.5) 50%, transparent 50%);
     background-size: 350px 350px;
-    opacity: 0.6;
+    opacity: var(--stars-opacity);
     z-index: 1;
+    transition: opacity 0.8s ease-in-out;
 }
 
 /* Static, low-filter nebula */
@@ -163,33 +159,34 @@ body.is-scrolling .glass-card {
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 .glass {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--glass-bg);
     backdrop-filter: var(--blur-effect);
     -webkit-backdrop-filter: var(--blur-effect);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-border);
+    transition: background 0.4s ease, border-color 0.4s ease;
 }
 
 .glass-card {
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--glass-bg);
     backdrop-filter: var(--blur-effect);
     -webkit-backdrop-filter: var(--blur-effect);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--glass-border);
     border-radius: 24px;
     padding: 2rem;
     position: relative;
     overflow: hidden;
-    /* Performance Optimizations */
-    content-visibility: auto;
-    contain-intrinsic-size: 1px 400px;
+    /* Scroll performance optimizations */
     will-change: transform, border-color, box-shadow;
     transform: translateZ(0); /* Force GPU */
+    transition: background 0.4s ease, border-color 0.4s ease;
 }
 
 /* Glass Header Polish */
 .app-header {
     backdrop-filter: blur(20px) saturate(180%);
-    background: rgba(10, 0, 21, 0.7);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--glass-border);
+    transition: background 0.4s ease, border-color 0.4s ease;
 }
 
 /* Improved Glassmorphism for profile pill on mobile */
@@ -520,12 +517,12 @@ body.is-scrolling .glass-card {
 
 .glass-card {
     position: relative;
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(40px);
-    /* Enhanced blur */
-    -webkit-backdrop-filter: blur(40px);
-    /* Enhanced blur */
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    /* Optimized blur */
+    -webkit-backdrop-filter: blur(16px);
+    /* Optimized blur */
+    border: 1px solid var(--glass-border);
     /* Adjusted border */
     border-radius: 2rem;
     /* Adjusted border-radius */
@@ -541,24 +538,12 @@ body.is-scrolling .glass-card {
     overflow: hidden;
     transform-style: preserve-3d;
     perspective: 1000px;
-    will-change: transform, box-shadow, background;
     backface-visibility: hidden;
     transform: translateZ(0);
     /* Force GPU */
 }
 
-/* Global Performance Guard during Scroll */
-.is-scrolling * {
-    pointer-events: none !important;
-}
-
-.is-scrolling .glass-card,
-.is-scrolling .hindi-text,
-.is-scrolling .sanskrit-text {
-    text-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-}
+/* Scroll guards disabled */
 
 /* Glassmorphism Shine Effect */
 .glass-card::before,
@@ -714,15 +699,16 @@ body.is-scrolling .glass-card {
     transform: translateY(-50%);
     width: 70px;
     height: auto;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--glass-bg);
     backdrop-filter: var(--blur-effect);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-border);
     border-radius: 40px;
     flex-direction: column;
     padding: 1.5rem 0;
     gap: 1rem;
     align-items: center;
     z-index: 100;
+    transition: background 0.4s ease, border-color 0.4s ease;
 }
 
 @media (min-width: 768px) {
@@ -782,9 +768,530 @@ header.app-header {
     justify-content: space-between;
     align-items: center;
     z-index: 1000;
-    background: rgba(10, 0, 21, 0.2);
+    background: var(--header-bg);
     backdrop-filter: var(--blur-effect);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--glass-border);
+    transition: background 0.4s ease, border-color 0.4s ease;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* SANCTUARY THEMES & MOODS                                                    */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+/* 1. Base Dark (uses default root values) */
+html[data-theme='dark'] {
+    /* Uses root values */
+}
+
+/* 2. Base Light */
+html[data-theme='light'] {
+    --background: 36 20% 95%;
+    --foreground: 20 15% 15%;
+    --text-color: #1c1917;
+    --primary: 38 92% 50%;
+    --primary-color: #f59e0b;
+    --primary-rgb: 245, 158, 11;
+    --accent-gold: #d97706;
+    
+    --card: 36 15% 98%;
+    --card-foreground: 20 15% 15%;
+    --popover: 36 15% 98%;
+    --popover-foreground: 20 15% 15%;
+    --secondary: 36 10% 90%;
+    --secondary-foreground: 20 15% 15%;
+    --muted: 36 10% 90%;
+    --muted-foreground: 20 10% 45%;
+    --accent: 36 10% 90%;
+    --accent-foreground: 20 15% 15%;
+    --border: 36 10% 85%;
+    --input: 36 10% 85%;
+    
+    --celestial-bg: linear-gradient(135deg, #fdfbf7 0%, #eae5d9 100%);
+    --stars-opacity: 0;
+    --nebula-color-1: rgba(245, 158, 11, 0.03);
+    --nebula-color-2: rgba(32, 84, 174, 0.03);
+    --nebula-color-3: rgba(251, 191, 36, 0.02);
+    
+    --glass-bg: rgba(255, 255, 255, 0.55);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --header-bg: rgba(255, 255, 255, 0.65);
+}
+
+/* 3. Night Sky */
+html[data-theme='night'] {
+    --background: 224 40% 6%;
+    --foreground: 210 20% 98%;
+    --text-color: #f8fafc;
+    --primary: 217 91% 60%;
+    --primary-color: #3b82f6;
+    --primary-rgb: 59, 130, 246;
+    --accent-gold: #60a5fa;
+
+    --card: 224 35% 8%;
+    --card-foreground: 210 20% 98%;
+    --popover: 224 35% 8%;
+    --popover-foreground: 210 20% 98%;
+    --secondary: 224 20% 12%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 224 20% 12%;
+    --muted-foreground: 215 15% 65%;
+    --accent: 224 20% 12%;
+    --accent-foreground: 210 20% 98%;
+    --border: 224 25% 12%;
+    --input: 224 25% 12%;
+
+    --celestial-bg: linear-gradient(180deg, #020617 0%, #0f172a 100%);
+    --stars-opacity: 0.95;
+    --nebula-color-1: rgba(59, 130, 246, 0.08);
+    --nebula-color-2: rgba(147, 51, 234, 0.08);
+    --nebula-color-3: rgba(59, 130, 246, 0.04);
+    
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --header-bg: rgba(2, 6, 23, 0.65);
+}
+
+/* 4. Cosmic Space */
+html[data-theme='space'] {
+    --background: 260 40% 5%;
+    --foreground: 260 10% 95%;
+    --text-color: #f5f3ff;
+    --primary: 271 91% 65%;
+    --primary-color: #a855f7;
+    --primary-rgb: 168, 85, 247;
+    --accent-gold: #c084fc;
+
+    --card: 260 35% 7%;
+    --card-foreground: 260 10% 95%;
+    --popover: 260 35% 7%;
+    --popover-foreground: 260 10% 95%;
+    --secondary: 260 20% 12%;
+    --secondary-foreground: 260 10% 95%;
+    --muted: 260 20% 12%;
+    --muted-foreground: 260 10% 65%;
+    --accent: 260 20% 12%;
+    --accent-foreground: 260 10% 95%;
+    --border: 260 25% 12%;
+    --input: 260 25% 12%;
+
+    --celestial-bg: radial-gradient(circle at 80% 20%, #1e1b4b 0%, #090514 100%);
+    --stars-opacity: 0.85;
+    --nebula-color-1: rgba(168, 85, 247, 0.12);
+    --nebula-color-2: rgba(236, 72, 153, 0.1);
+    --nebula-color-3: rgba(168, 85, 247, 0.05);
+
+    --glass-bg: rgba(255, 255, 255, 0.025);
+    --glass-border: rgba(255, 255, 255, 0.06);
+    --header-bg: rgba(9, 5, 20, 0.65);
+}
+
+/* 5. Deep Void */
+html[data-theme='void'] {
+    --background: 0 0% 1%;
+    --foreground: 0 0% 92%;
+    --text-color: #e5e5e5;
+    --primary: 0 0% 60%;
+    --primary-color: #888888;
+    --primary-rgb: 136, 136, 136;
+    --accent-gold: #cccccc;
+
+    --card: 0 0% 3%;
+    --card-foreground: 0 0% 92%;
+    --popover: 0 0% 3%;
+    --popover-foreground: 0 0% 92%;
+    --secondary: 0 0% 8%;
+    --secondary-foreground: 0 0% 92%;
+    --muted: 0 0% 8%;
+    --muted-foreground: 0 0% 50%;
+    --accent: 0 0% 8%;
+    --accent-foreground: 0 0% 92%;
+    --border: 0 0% 7%;
+    --input: 0 0% 7%;
+
+    --celestial-bg: #010101;
+    --stars-opacity: 0.05;
+    --nebula-color-1: rgba(0, 0, 0, 0);
+    --nebula-color-2: rgba(0, 0, 0, 0);
+    --nebula-color-3: rgba(0, 0, 0, 0);
+
+    --glass-bg: rgba(255, 255, 255, 0.01);
+    --glass-border: rgba(255, 255, 255, 0.03);
+    --header-bg: rgba(1, 1, 1, 0.85);
+}
+
+/* 6. Winter */
+html[data-theme='winter'] {
+    --background: 210 40% 96%;
+    --foreground: 210 30% 15%;
+    --text-color: #0f172a;
+    --primary: 199 89% 48%;
+    --primary-color: #0284c7;
+    --primary-rgb: 2, 132, 199;
+    --accent-gold: #0369a1;
+
+    --card: 210 30% 98%;
+    --card-foreground: 210 30% 15%;
+    --popover: 210 30% 98%;
+    --popover-foreground: 210 30% 15%;
+    --secondary: 210 20% 90%;
+    --secondary-foreground: 210 30% 15%;
+    --muted: 210 20% 90%;
+    --muted-foreground: 210 15% 45%;
+    --accent: 210 20% 90%;
+    --accent-foreground: 210 30% 15%;
+    --border: 210 20% 86%;
+    --input: 210 20% 86%;
+
+    --celestial-bg: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+    --stars-opacity: 0;
+    --nebula-color-1: rgba(56, 189, 248, 0.04);
+    --nebula-color-2: rgba(14, 165, 233, 0.03);
+    --nebula-color-3: rgba(56, 189, 248, 0.02);
+
+    --glass-bg: rgba(255, 255, 255, 0.65);
+    --glass-border: rgba(56, 189, 248, 0.15);
+    --header-bg: rgba(224, 242, 254, 0.7);
+}
+
+/* 7. Snowfall (Light silver-white) */
+html[data-theme='snow'] {
+    --background: 210 20% 97%;
+    --foreground: 210 25% 12%;
+    --text-color: #0f172a;
+    --primary: 199 89% 48%;
+    --primary-color: #0284c7;
+    --primary-rgb: 2, 132, 199;
+    --accent-gold: #0369a1;
+
+    --card: 210 20% 99%;
+    --card-foreground: 210 25% 12%;
+    --popover: 210 20% 99%;
+    --popover-foreground: 210 25% 12%;
+    --secondary: 210 10% 92%;
+    --secondary-foreground: 210 25% 12%;
+    --muted: 210 10% 92%;
+    --muted-foreground: 210 15% 45%;
+    --accent: 210 10% 92%;
+    --accent-foreground: 210 25% 12%;
+    --border: 210 15% 90%;
+    --input: 210 15% 90%;
+
+    --celestial-bg: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    --stars-opacity: 0;
+    --nebula-color-1: rgba(255, 255, 255, 0.05);
+    --nebula-color-2: rgba(56, 189, 248, 0.03);
+    --nebula-color-3: rgba(255, 255, 255, 0.02);
+
+    --glass-bg: rgba(255, 255, 255, 0.65);
+    --glass-border: rgba(56, 189, 248, 0.15);
+    --header-bg: rgba(248, 250, 252, 0.75);
+}
+
+/* 8. Rainy (Light misty gray-blue) */
+html[data-theme='rainy'] {
+    --background: 210 15% 95%;
+    --foreground: 210 25% 15%;
+    --text-color: #1e293b;
+    --primary: 195 80% 40%;
+    --primary-color: #0284c7;
+    --primary-rgb: 2, 132, 199;
+    --accent-gold: #0369a1;
+
+    --card: 210 15% 98%;
+    --card-foreground: 210 25% 15%;
+    --popover: 210 15% 98%;
+    --popover-foreground: 210 25% 15%;
+    --secondary: 210 10% 90%;
+    --secondary-foreground: 210 25% 15%;
+    --muted: 210 10% 90%;
+    --muted-foreground: 210 15% 45%;
+    --accent: 210 10% 90%;
+    --accent-foreground: 210 25% 15%;
+    --border: 210 10% 86%;
+    --input: 210 10% 86%;
+
+    --celestial-bg: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
+    --stars-opacity: 0;
+    --nebula-color-1: rgba(2, 132, 199, 0.04);
+    --nebula-color-2: rgba(30, 41, 59, 0.02);
+    --nebula-color-3: rgba(2, 132, 199, 0.02);
+
+    --glass-bg: rgba(255, 255, 255, 0.65);
+    --glass-border: rgba(2, 132, 199, 0.12);
+    --header-bg: rgba(241, 245, 249, 0.75);
+}
+
+/* 9. Silent Mountains (Light stone-sage) */
+html[data-theme='mountains'] {
+    --background: 45 10% 95%;
+    --foreground: 45 20% 12%;
+    --text-color: #1c1917;
+    --primary: 142 60% 35%;
+    --primary-color: #15803d;
+    --primary-rgb: 21, 128, 61;
+    --accent-gold: #166534;
+
+    --card: 45 10% 98%;
+    --card-foreground: 45 20% 12%;
+    --popover: 45 10% 98%;
+    --popover-foreground: 45 20% 12%;
+    --secondary: 45 5% 88%;
+    --secondary-foreground: 45 20% 12%;
+    --muted: 45 5% 88%;
+    --muted-foreground: 45 10% 45%;
+    --accent: 45 5% 88%;
+    --accent-foreground: 45 20% 12%;
+    --border: 45 5% 85%;
+    --input: 45 5% 85%;
+
+    --celestial-bg: linear-gradient(135deg, #fafaf9 0%, #e7e5e4 100%);
+    --stars-opacity: 0;
+    --nebula-color-1: rgba(21, 128, 61, 0.03);
+    --nebula-color-2: rgba(120, 113, 108, 0.02);
+    --nebula-color-3: rgba(21, 128, 61, 0.02);
+
+    --glass-bg: rgba(255, 255, 255, 0.65);
+    --glass-border: rgba(21, 128, 61, 0.12);
+    --header-bg: rgba(250, 250, 249, 0.75);
+}
+
+/* 10. Sacred Sunset (Light peach-rose) */
+html[data-theme='sunset'] {
+    --background: 20 30% 96%;
+    --foreground: 20 35% 15%;
+    --text-color: #431407;
+    --primary: 24 90% 50%;
+    --primary-color: #f97316;
+    --primary-rgb: 249, 115, 22;
+    --accent-gold: #c2410c;
+
+    --card: 20 25% 98%;
+    --card-foreground: 20 35% 15%;
+    --popover: 20 25% 98%;
+    --popover-foreground: 20 35% 15%;
+    --secondary: 20 20% 90%;
+    --secondary-foreground: 20 35% 15%;
+    --muted: 20 20% 90%;
+    --muted-foreground: 20 15% 45%;
+    --accent: 20 20% 90%;
+    --accent-foreground: 20 35% 15%;
+    --border: 20 20% 86%;
+    --input: 20 20% 86%;
+
+    --celestial-bg: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+    --stars-opacity: 0;
+    --nebula-color-1: rgba(249, 115, 22, 0.05);
+    --nebula-color-2: rgba(239, 68, 68, 0.03);
+    --nebula-color-3: rgba(249, 115, 22, 0.02);
+
+    --glass-bg: rgba(255, 255, 255, 0.65);
+    --glass-border: rgba(249, 115, 22, 0.12);
+    --header-bg: rgba(255, 247, 237, 0.75);
+}
+
+/* 11. Forest (Light sage-green) */
+html[data-theme='forest'] {
+    --background: 120 15% 96%;
+    --foreground: 120 30% 12%;
+    --text-color: #064e3b;
+    --primary: 142 70% 35%;
+    --primary-color: #047857;
+    --primary-rgb: 4, 120, 87;
+    --accent-gold: #065f46;
+
+    --card: 120 15% 98%;
+    --card-foreground: 120 30% 12%;
+    --popover: 120 15% 98%;
+    --popover-foreground: 120 30% 12%;
+    --secondary: 120 10% 90%;
+    --secondary-foreground: 120 30% 12%;
+    --muted: 120 10% 90%;
+    --muted-foreground: 120 15% 45%;
+    --accent: 120 10% 90%;
+    --accent-foreground: 120 30% 12%;
+    --border: 120 10% 86%;
+    --input: 120 10% 86%;
+
+    --celestial-bg: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    --stars-opacity: 0;
+    --nebula-color-1: rgba(4, 120, 87, 0.05);
+    --nebula-color-2: rgba(22, 163, 74, 0.03);
+    --nebula-color-3: rgba(4, 120, 87, 0.02);
+
+    --glass-bg: rgba(255, 255, 255, 0.65);
+    --glass-border: rgba(4, 120, 87, 0.12);
+    --header-bg: rgba(240, 253, 244, 0.75);
+}
+
+/* 12. Ocean (Light turquoise/azure) */
+html[data-theme='ocean'] {
+    --background: 190 20% 96%;
+    --foreground: 190 35% 15%;
+    --text-color: #083344;
+    --primary: 190 80% 45%;
+    --primary-color: #0891b2;
+    --primary-rgb: 8, 145, 178;
+    --accent-gold: #0e7490;
+
+    --card: 190 20% 98%;
+    --card-foreground: 190 35% 15%;
+    --popover: 190 20% 98%;
+    --popover-foreground: 190 35% 15%;
+    --secondary: 190 15% 90%;
+    --secondary-foreground: 190 35% 15%;
+    --muted: 190 15% 90%;
+    --muted-foreground: 190 15% 45%;
+    --accent: 190 15% 90%;
+    --accent-foreground: 190 35% 15%;
+    --border: 190 15% 86%;
+    --input: 190 15% 86%;
+
+    --celestial-bg: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%);
+    --stars-opacity: 0;
+    --nebula-color-1: rgba(8, 145, 178, 0.05);
+    --nebula-color-2: rgba(6, 182, 212, 0.03);
+    --nebula-color-3: rgba(8, 145, 178, 0.02);
+
+    --glass-bg: rgba(255, 255, 255, 0.65);
+    --glass-border: rgba(8, 145, 178, 0.12);
+    --header-bg: rgba(236, 254, 255, 0.75);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* TAILWIND UTILITY COLOR OVERRIDES FOR LIGHT THEME COMPATIBILITY             */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+html.light-mode .text-white {
+    color: var(--text-color) !important;
+}
+html.light-mode [class~="text-white/95"] {
+    color: hsl(var(--foreground) / 0.95) !important;
+}
+html.light-mode [class~="text-white/90"] {
+    color: hsl(var(--foreground) / 0.9) !important;
+}
+html.light-mode [class~="text-white/85"] {
+    color: hsl(var(--foreground) / 0.85) !important;
+}
+html.light-mode [class~="text-white/80"] {
+    color: hsl(var(--foreground) / 0.8) !important;
+}
+html.light-mode [class~="text-white/75"] {
+    color: hsl(var(--foreground) / 0.75) !important;
+}
+html.light-mode [class~="text-white/70"] {
+    color: hsl(var(--foreground) / 0.7) !important;
+}
+html.light-mode [class~="text-white/65"] {
+    color: hsl(var(--foreground) / 0.65) !important;
+}
+html.light-mode [class~="text-white/60"] {
+    color: hsl(var(--foreground) / 0.6) !important;
+}
+html.light-mode [class~="text-white/55"] {
+    color: hsl(var(--foreground) / 0.55) !important;
+}
+html.light-mode [class~="text-white/50"] {
+    color: hsl(var(--foreground) / 0.5) !important;
+}
+html.light-mode [class~="text-white/45"] {
+    color: hsl(var(--foreground) / 0.45) !important;
+}
+html.light-mode [class~="text-white/40"] {
+    color: hsl(var(--foreground) / 0.4) !important;
+}
+html.light-mode [class~="text-white/35"] {
+    color: hsl(var(--foreground) / 0.35) !important;
+}
+html.light-mode [class~="text-white/30"] {
+    color: hsl(var(--foreground) / 0.3) !important;
+}
+html.light-mode [class~="text-white/25"] {
+    color: hsl(var(--foreground) / 0.25) !important;
+}
+html.light-mode [class~="text-white/20"] {
+    color: hsl(var(--foreground) / 0.2) !important;
+}
+html.light-mode [class~="text-white/15"] {
+    color: hsl(var(--foreground) / 0.15) !important;
+}
+html.light-mode [class~="text-white/10"] {
+    color: hsl(var(--foreground) / 0.1) !important;
+}
+html.light-mode [class~="text-white/5"] {
+    color: hsl(var(--foreground) / 0.05) !important;
+}
+
+/* Hover State Overrides for Light Theme */
+html.light-mode [class~="hover:text-white"]:hover {
+    color: hsl(var(--foreground)) !important;
+}
+html.light-mode [class~="hover:text-white/90"]:hover {
+    color: hsl(var(--foreground) / 0.9) !important;
+}
+html.light-mode [class~="hover:text-white/80"]:hover {
+    color: hsl(var(--foreground) / 0.8) !important;
+}
+html.light-mode [class~="hover:text-white/70"]:hover {
+    color: hsl(var(--foreground) / 0.7) !important;
+}
+html.light-mode [class~="hover:text-white/60"]:hover {
+    color: hsl(var(--foreground) / 0.6) !important;
+}
+html.light-mode [class~="hover:text-white/50"]:hover {
+    color: hsl(var(--foreground) / 0.5) !important;
+}
+
+/* App Title and Logo */
+html.light-mode .app-title {
+    color: var(--text-color) !important;
+}
+
+/* Reading View Legibility Fix */
+html.light-mode .reading-card .hindi-text,
+html.light-mode .reading-card .sanskrit-text {
+    color: var(--text-color) !important;
+    text-shadow: none !important;
+}
+
+/* Borders and Backgrounds */
+html.light-mode [class~="border-white/5"] { border-color: hsl(var(--foreground) / 0.05) !important; }
+html.light-mode [class~="border-white/10"] { border-color: hsl(var(--foreground) / 0.08) !important; }
+html.light-mode [class~="border-white/15"] { border-color: hsl(var(--foreground) / 0.12) !important; }
+html.light-mode [class~="border-white/20"] { border-color: hsl(var(--foreground) / 0.16) !important; }
+html.light-mode [class~="border-white/30"] { border-color: hsl(var(--foreground) / 0.25) !important; }
+html.light-mode [class~="border-white/40"] { border-color: hsl(var(--foreground) / 0.35) !important; }
+html.light-mode [class~="border-white/50"] { border-color: hsl(var(--foreground) / 0.45) !important; }
+
+html.light-mode [class~="bg-white/5"] { background-color: hsl(var(--foreground) / 0.03) !important; }
+html.light-mode [class~="bg-white/10"] { background-color: hsl(var(--foreground) / 0.06) !important; }
+html.light-mode [class~="bg-white/20"] { background-color: hsl(var(--foreground) / 0.12) !important; }
+html.light-mode [class~="bg-white/30"] { background-color: hsl(var(--foreground) / 0.2) !important; }
+html.light-mode [class~="bg-white/40"] { background-color: hsl(var(--foreground) / 0.3) !important; }
+
+/* Arbitrary Opacities (e.g. bg-white/[0.01]) */
+html.light-mode [class~="bg-white/[0.01]"] {
+    background-color: hsl(var(--foreground) / 0.01) !important;
+}
+html.light-mode [class~="hover:bg-white/[0.03]"]:hover {
+    background-color: hsl(var(--foreground) / 0.03) !important;
+}
+
+html.light-mode .bg-\[\#0a0015\] {
+    background-color: hsl(var(--background)) !important;
+}
+html.light-mode .side-item {
+    color: hsl(var(--foreground) / 0.5) !important;
+}
+html.light-mode .side-item:hover {
+    background: hsl(var(--foreground) / 0.03) !important;
+    color: var(--primary-color) !important;
+}
+html.light-mode .app-logo {
+    filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.1));
+}
+html.light-mode .shooting-star {
+    display: none !important;
 }
 
 .logo-container {
@@ -955,4 +1462,106 @@ h6 {
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* PERFORMANCE OPTIMIZATIONS FOR ACTIVE SCROLLING                            */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Active scroll styling overrides removed to preserve visual rendering, layout, and GPU layers stability */
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* ROBUST LIGHT MODE CONTRAST & LEGIBILITY OVERRIDES                         */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Force all headings to have high-contrast dark coloring in light mode */
+html.light-mode h1,
+html.light-mode h2,
+html.light-mode h3,
+html.light-mode h4,
+html.light-mode h5,
+html.light-mode h6,
+html.light-mode .font-headings {
+    color: var(--text-color) !important;
+}
+
+/* Ensure paragraph and general text descriptions are highly readable in light mode */
+html.light-mode p,
+html.light-mode p span {
+    color: hsl(var(--foreground) / 0.75) !important;
+}
+
+/* Header & Sidebar Navigation Link Contrast Fixes */
+html.light-mode .nav-link {
+    color: hsl(var(--foreground) / 0.7) !important;
+}
+
+html.light-mode .nav-link:hover {
+    color: hsl(var(--foreground)) !important;
+    background-color: hsl(var(--foreground) / 0.05) !important;
+}
+
+html.light-mode .nav-link.active {
+    color: var(--primary-color) !important;
+    background-color: hsl(var(--foreground) / 0.08) !important;
+}
+
+/* Sidebar navigation links */
+html.light-mode .side-item {
+    color: hsl(var(--foreground) / 0.6) !important;
+}
+
+html.light-mode .side-item:hover {
+    background: hsl(var(--foreground) / 0.05) !important;
+    color: var(--primary-color) !important;
+}
+
+html.light-mode .side-item.active {
+    color: var(--primary-color) !important;
+    background: hsl(var(--foreground) / 0.08) !important;
+}
+
+/* Settings button and other header controls */
+html.light-mode .app-header button {
+    color: hsl(var(--foreground) / 0.7) !important;
+    background-color: hsl(var(--foreground) / 0.04) !important;
+    border-color: hsl(var(--foreground) / 0.12) !important;
+}
+
+html.light-mode .app-header button:hover {
+    color: var(--primary-color) !important;
+    background-color: hsl(var(--foreground) / 0.08) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Profile pill display in header */
+html.light-mode .app-header .flex.items-center.rounded-full {
+    background-color: hsl(var(--foreground) / 0.04) !important;
+    border-color: hsl(var(--foreground) / 0.12) !important;
+    color: var(--text-color) !important;
+}
+
+html.light-mode .app-header .flex.items-center.rounded-full span {
+    color: var(--text-color) !important;
+}
+
+html.light-mode .app-header .flex.items-center.rounded-full span[class~="text-white/30"] {
+    color: hsl(var(--foreground) / 0.5) !important;
+}
+
+/* Homepage Category and Braj Dham Cards in Light Mode */
+html.light-mode .grid a[class*="border-white/5"] {
+    background-color: hsl(var(--card)) !important;
+    border-color: hsl(var(--foreground) / 0.08) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+}
+
+html.light-mode .grid a[class*="border-white/5"]:hover {
+    background-color: hsl(var(--foreground) / 0.02) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* General button secondary state contrast fix */
+html.light-mode .btn-secondary {
+    color: #431407 !important;
 }
