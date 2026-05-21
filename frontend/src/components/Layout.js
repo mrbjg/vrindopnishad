@@ -41,7 +41,7 @@ const Layout = ({ children }) => {
           <div className="logo-container">
             <Link to="/">
               <img 
-                src={isDark ? `${process.env.PUBLIC_URL}/official-logo-dark.svg` : `${process.env.PUBLIC_URL}/official-logo.svg`} 
+                src={isDark ? '/official-logo-dark.svg' : '/official-logo.svg'} 
                 alt="Vrindopnishad Logo" 
                 className="app-logo hover:scale-110 transition-transform duration-500" 
               />

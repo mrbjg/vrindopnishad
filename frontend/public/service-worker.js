@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vrindopnishad-fast-v2';
+const CACHE_NAME = 'vrindopnishad-fast-v4';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
@@ -27,6 +27,12 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
     const url = new URL(event.request.url);
+    
+    // Ignore unsupported URL schemes (like chrome-extension://, data:, etc.)
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+        return;
+    }
+
     
     // CRITICAL SEO FIX: Never intercept these paths — let them go to the server directly
     // This prevents the service worker from serving cached HTML for sitemap, robots, etc.
