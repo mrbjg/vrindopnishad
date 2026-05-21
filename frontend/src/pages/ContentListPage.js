@@ -17,6 +17,7 @@ const ContentListPage = () => {
   });
   const [categories, setCategories] = useState(() => apiService.getCachedData('categories') || []);
   const [loading, setLoading] = useState(!content.length);
+  const [isSlowLoading, setIsSlowLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -60,24 +61,79 @@ const ContentListPage = () => {
   }, [debouncedSearch]);
 
   useEffect(() => {
+    let active = true;
+    let slowTimer = null;
+
     const fetchContent = async () => {
-      setLoading(true);
+      // 1. Get cached content (if any) first to avoid skeleton flickering.
+      // Cache key matches what api.js uses internally: `all_${category || 'none'}_50`
+      const cacheKey = `all_${selectedCategory || 'none'}_50`;
+      let cachedData = apiService.getCachedData(cacheKey);
+
+      if (!cachedData) {
+        // Fallback: try to filter from the full content cache in localStorage
+        try {
+          const fullCache = localStorage.getItem('sanctuary_content_cache');
+          if (fullCache) {
+            const parsed = JSON.parse(fullCache);
+            if (selectedCategory) {
+              cachedData = parsed.filter(item => item.category === selectedCategory);
+            } else {
+              cachedData = parsed;
+            }
+          }
+        } catch (e) {
+          console.warn('Failed to read from localStorage fallback', e);
+        }
+      }
+
+      if (cachedData && cachedData.length > 0) {
+        if (active) {
+          setContent(cachedData);
+          setLoading(false); // Render cache instantly
+        }
+      } else {
+        if (active) {
+          setLoading(true);
+        }
+      }
+
+      // Start slow loading timer to show skeleton loader if backend takes time
+      if (active) {
+        setIsSlowLoading(false);
+        slowTimer = setTimeout(() => {
+          if (active) {
+            setIsSlowLoading(true);
+          }
+        }, 300); // 300ms threshold
+      }
+
       try {
         const data = await apiService.getAllContent(selectedCategory);
         const cats = await apiService.getCategories();
-        setContent(data);
-        setCategories(cats);
-        // Cache all content if no category is selected
-        if (!selectedCategory) {
-          localStorage.setItem('sanctuary_content_cache', JSON.stringify(data));
+        if (active) {
+          setContent(data);
+          setCategories(cats);
+          // Cache all content if no category is selected
+          if (!selectedCategory) {
+            localStorage.setItem('sanctuary_content_cache', JSON.stringify(data));
+          }
         }
       } catch (error) {
         console.error('Error fetching content:', error);
       } finally {
-        setLoading(false);
+        if (active) {
+          setLoading(false);
+          setIsSlowLoading(false);
+          if (slowTimer) clearTimeout(slowTimer);
+        }
       }
     };
     fetchContent();
+    return () => {
+      active = false;
+      if (slowTimer) clearTimeout(slowTimer);
+    };
   }, [selectedCategory, apiService]);
 
   const filteredContent = content.filter(item => hinglishMatch(item, debouncedSearch));
@@ -127,6 +183,8 @@ const ContentListPage = () => {
       default: return 'badge-slate';
     }
   };
+
+  const showSkeleton = content.length === 0 && isSlowLoading;
 
   return (
     <div className="animate-fade-in">
@@ -214,7 +272,7 @@ const ContentListPage = () => {
         })}
       </div>
 
-      {loading ? (
+      {showSkeleton ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[1,2,3,4,5,6].map(i => (
             <div key={i} className="glass-card flex flex-col justify-between h-72">

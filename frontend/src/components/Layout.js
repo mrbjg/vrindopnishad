@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import GlobalAudioPlayer from './GlobalAudioPlayer';
 import SettingsModal from './SettingsModal';
+import ThemeOnboardingModal from './ThemeOnboardingModal';
+import CelestialParticles from './CelestialParticles';
 
 const Layout = ({ children }) => {
   const { isDark } = useTheme();
@@ -31,8 +33,8 @@ const Layout = ({ children }) => {
       {/* Celestial Background */}
       <div className="celestial-bg">
         <div className="stars"></div>
-        <div className="shooting-star" style={{ top: '30%', left: '40%' }}></div>
         <div className="nebula"></div>
+        <CelestialParticles />
       </div>
 
       {/* App Header */}
@@ -46,7 +48,7 @@ const Layout = ({ children }) => {
                 className="app-logo hover:scale-110 transition-transform duration-500" 
               />
             </Link>
-            <span className="app-title hidden md:block">वृंदोपनिषद्</span>
+            <span className="app-title hidden md:block text-minimal-gold font-headings">वृंदोपनिषद्</span>
           </div>
 
           <div className="flex items-center gap-6">
@@ -133,30 +135,35 @@ const Layout = ({ children }) => {
         </header>
       )}
 
-      {/* Floating Vertical Sidebar */}
+      {/* Floating Vertical Sidebar Dock */}
       {!isAuthPage && (
-        <aside className="sidebar">
-          <Link to="/" className={`side-item ${isActive('/') ? 'active' : ''}`} title="Home">
+        <aside className="sidebar-dock-minimal animate-fade-in-left">
+          <Link to="/" className={`dock-item-minimal ${isActive('/') ? 'active' : ''}`} title="Home">
             <Home size={22} />
+            <span className="dock-tooltip-minimal">Home Sanctuary</span>
           </Link>
-          <Link to="/content" className={`side-item ${isActive('/content') ? 'active' : ''}`} title="All Content">
+          <Link to="/content" className={`dock-item-minimal ${isActive('/content') ? 'active' : ''}`} title="All Content">
             <BookOpen size={22} />
+            <span className="dock-tooltip-minimal">Sanctuary Library</span>
           </Link>
-          <div className="w-8 h-[1px] bg-white/10 my-2"></div>
-          <Link to="/category/shloka" className={`side-item ${isCategoryActive('shloka') ? 'active' : ''}`} title="Shlokas">
+          <div className="w-8 h-[1px] bg-white/10 my-1"></div>
+          <Link to="/category/shloka" className={`dock-item-minimal ${isCategoryActive('shloka') ? 'active' : ''}`} title="Shlokas">
             <Scroll size={22} />
+            <span className="dock-tooltip-minimal">Sacred Shlokas</span>
           </Link>
-          <Link to="/category/strotra" className={`side-item ${isCategoryActive('strotra') ? 'active' : ''}`} title="Strotras">
+          <Link to="/category/strotra" className={`dock-item-minimal ${isCategoryActive('strotra') ? 'active' : ''}`} title="Strotras">
             <Music size={22} />
+            <span className="dock-tooltip-minimal">Devotional Strotras</span>
           </Link>
-          <Link to="/category/poem" className={`side-item ${isCategoryActive('poem') ? 'active' : ''}`} title="Poems">
+          <Link to="/category/poem" className={`dock-item-minimal ${isCategoryActive('poem') ? 'active' : ''}`} title="Poems">
             <FileText size={22} />
+            <span className="dock-tooltip-minimal">Spiritual Poetry</span>
           </Link>
         </aside>
       )}
 
       {/* Main Content Area */}
-      <main className={`${isAuthPage ? 'pt-0 pl-0' : 'pl-0 md:pl-28 pt-24 pb-12'}`}>
+      <main className={`${isAuthPage ? 'pt-0 pl-0' : 'pl-0 md:pl-32 pt-24 pb-12'}`}>
         <div className={`${isAuthPage ? 'w-full min-h-screen flex items-center justify-center' : 'max-w-7xl mx-auto px-6'}`}>
           {children}
         </div>
@@ -187,6 +194,9 @@ const Layout = ({ children }) => {
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
       />
+
+      {/* Theme Onboarding Modal */}
+      <ThemeOnboardingModal />
     </div>
   );
 };

@@ -6,18 +6,20 @@ import { updateProfile } from 'firebase/auth';
 import ThemeIcon from './ThemeIcon';
 
 const themeGradients = {
-  dark: 'radial-gradient(circle, #0F0025 0%, #050010 100%)',
+  dark: '#09090b',
   light: 'linear-gradient(135deg, #fdfbf7 0%, #eae5d9 100%)',
-  night: 'linear-gradient(180deg, #020617 0%, #0f172a 100%)',
-  space: 'radial-gradient(circle, #1e1b4b 0%, #090514 100%)',
-  void: '#010101',
+  night: '#030712',
+  space: '#08070d',
+  void: '#000000',
   winter: 'linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%)',
   snow: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
   rainy: 'linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%)',
   mountains: 'linear-gradient(135deg, #fafaf9 0%, #e7e5e4 100%)',
+  mountain_morning: 'linear-gradient(135deg, #ffedd5 0%, #fee2e2 100%)',
   sunset: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)',
   forest: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
   ocean: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)',
+  waterfall: '#061217',
 };
 
 const SettingsModal = ({ isOpen, onClose }) => {

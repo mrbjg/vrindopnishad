@@ -181,7 +181,7 @@ function App() {
       <LoadingProvider>
         <AuthContext.Provider value={{ isAdmin, user, token, login, logout, refreshUser }}>
           <ApiContext.Provider value={{ apiService: apiService, isDemoMode: USE_MOCK_DATA }}>
-            <BrowserRouter>
+            <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
               <Layout>
                 <React.Suspense fallback={
                   <div className="min-h-[60vh] flex items-center justify-center">

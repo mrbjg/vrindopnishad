@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ApiContext } from '../App';
 import { Scroll, Music, FileText, BookOpen, Music as MusicIcon, Image as ImageIcon, Video, ArrowLeft, ArrowRight, MapPin, Users, Book } from 'lucide-react';
@@ -7,8 +7,24 @@ const CategoryPage = () => {
   const { category } = useParams();
   const { apiService } = useContext(ApiContext);
   const cacheKey = `all_${category}_50`;
-  const [content, setContent] = useState(() => apiService.getCachedData(cacheKey) || []);
-  const [loading, setLoading] = useState(!apiService.getCachedData(cacheKey));
+  
+  const getInitialData = () => {
+    const cached = apiService.getCachedData(cacheKey);
+    if (cached) return cached;
+    try {
+      const fullCache = localStorage.getItem('sanctuary_content_cache');
+      if (fullCache) {
+        const parsed = JSON.parse(fullCache);
+        const filtered = parsed.filter(item => item.category === category);
+        if (filtered.length > 0) return filtered;
+      }
+    } catch (e) {}
+    return [];
+  };
+
+  const [content, setContent] = useState(() => getInitialData());
+  const [loading, setLoading] = useState(() => getInitialData().length === 0);
+  const [isSlowLoading, setIsSlowLoading] = useState(false);
 
   const categoryInfo = {
     shloka: {
@@ -89,24 +105,76 @@ const CategoryPage = () => {
     }
   };
 
-  const fetchContent = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await apiService.getAllContent(category);
-      setContent(data || []);
-    } catch (error) {
-      console.error('Error fetching content:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [category, apiService]);
-
   useEffect(() => {
-    fetchContent();
-  }, [fetchContent]);
+    let active = true;
+    let slowTimer = null;
+
+    const load = async () => {
+      const cacheKey = `all_${category}_50`;
+      let cachedData = apiService.getCachedData(cacheKey);
+
+      if (!cachedData) {
+        try {
+          const fullCache = localStorage.getItem('sanctuary_content_cache');
+          if (fullCache) {
+            const parsed = JSON.parse(fullCache);
+            const filtered = parsed.filter(item => item.category === category);
+            if (filtered.length > 0) {
+              cachedData = filtered;
+            }
+          }
+        } catch (e) {}
+      }
+
+      if (cachedData && cachedData.length > 0) {
+        if (active) {
+          setContent(cachedData);
+          setLoading(false);
+        }
+      } else {
+        if (active) {
+          setLoading(true);
+        }
+      }
+
+      // Start slow loading timer to show skeleton loader if backend takes time
+      if (active) {
+        setIsSlowLoading(false);
+        slowTimer = setTimeout(() => {
+          if (active) {
+            setIsSlowLoading(true);
+          }
+        }, 300); // 300ms threshold
+      }
+
+      try {
+        const data = await apiService.getAllContent(category);
+        if (active) {
+          setContent(data || []);
+        }
+      } catch (error) {
+        console.error('Error fetching content:', error);
+      } finally {
+        if (active) {
+          setLoading(false);
+          setIsSlowLoading(false);
+          if (slowTimer) clearTimeout(slowTimer);
+        }
+      }
+    };
+    
+    load();
+    
+    return () => {
+      active = false;
+      if (slowTimer) clearTimeout(slowTimer);
+    };
+  }, [category, apiService]);
 
   const info = categoryInfo[category] || { name: category, description: '', icon: BookOpen, color: 'text-white' };
   const IconComponent = info.icon;
+
+  const showSkeleton = content.length === 0 && isSlowLoading;
 
   return (
     <div className="animate-fade-in">
@@ -125,13 +193,30 @@ const CategoryPage = () => {
         </div>
       </div>
 
-      {loading ? (
+      {showSkeleton ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[1,2,3].map(i => (
-            <div key={i} className="glass-card h-64 animate-pulse"></div>
+          {[1,2,3,4,5,6].map(i => (
+            <div key={i} className="glass-card flex flex-col justify-between h-72">
+              <div>
+                <div className="flex justify-between items-start mb-4">
+                  <div className="skeleton w-20 h-6 rounded-full"></div>
+                  <div className="skeleton w-6 h-6 rounded-full"></div>
+                </div>
+                <div className="skeleton skeleton-title w-3/4 mb-4"></div>
+                <div className="space-y-2">
+                  <div className="skeleton skeleton-text w-full"></div>
+                  <div className="skeleton skeleton-text w-full"></div>
+                  <div className="skeleton skeleton-text w-2/3"></div>
+                </div>
+              </div>
+              <div className="pt-4 border-t border-white/5 flex gap-2">
+                 <div className="skeleton w-12 h-4 rounded opacity-10"></div>
+                 <div className="skeleton w-12 h-4 rounded opacity-10"></div>
+              </div>
+            </div>
           ))}
         </div>
-      ) : content.length === 0 ? (
+      ) : (!loading && content.length === 0) ? (
         <div className="glass-card text-center py-24">
           <div className="text-white/20 mb-6 flex justify-center">
              <IconComponent size={64} />
@@ -142,6 +227,8 @@ const CategoryPage = () => {
              Back to Home
           </Link>
         </div>
+      ) : content.length === 0 ? (
+        <div className="py-12"></div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {content.map((item) => {

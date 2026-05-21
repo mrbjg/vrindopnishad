@@ -9,9 +9,11 @@ import {
   CloudSnow, 
   CloudRain, 
   Mountain, 
+  Sunrise,
   Sunset, 
   Leaf, 
   Waves,
+  Droplets,
   HelpCircle
 } from 'lucide-react';
 
@@ -25,9 +27,11 @@ const iconMap = {
   CloudSnow,
   CloudRain,
   Mountain,
+  Sunrise,
   Sunset,
   Leaf,
-  Waves
+  Waves,
+  Droplets
 };
 
 const ThemeIcon = ({ name, size = 16, className = "" }) => {

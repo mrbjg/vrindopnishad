@@ -18,49 +18,44 @@ const ContentDetailPage = () => {
   const { settings, updateSetting } = useSettings();
   const [content, setContent] = useState(() => apiService.getCachedData(`id_${id}`));
   const [loading, setLoading] = useState(!apiService.getCachedData(`id_${id}`));
+  const [isSlowLoading, setIsSlowLoading] = useState(false);
 
   useEffect(() => {
+    let active = true;
+    let slowTimer = null;
+
+    // Start slow loading timer
+    setIsSlowLoading(false);
+    slowTimer = setTimeout(() => {
+      if (active) {
+        setIsSlowLoading(true);
+      }
+    }, 300); // 300ms threshold
+
     const fetchContentData = async () => {
       try {
         const decodedId = decodeURIComponent(id);
         const data = await apiService.getContentById(decodedId);
-        setContent(data);
+        if (active) {
+          setContent(data);
+        }
       } catch (error) {
         console.error('Error fetching content:', error);
       } finally {
-        setLoading(false);
+        if (active) {
+          setLoading(false);
+          setIsSlowLoading(false);
+          if (slowTimer) clearTimeout(slowTimer);
+        }
       }
     };
     fetchContentData();
+
+    return () => {
+      active = false;
+      if (slowTimer) clearTimeout(slowTimer);
+    };
   }, [id, apiService]);
-
-  if (loading) {
-    return (
-      <div className="animate-fade-in max-w-4xl mx-auto py-12">
-        <div className="skeleton w-32 h-6 mb-12 rounded"></div>
-
-        <div className="space-y-12">
-          {/* Title skeleton */}
-          <div className="skeleton h-16 w-3/4 mb-10 rounded-xl"></div>
-
-          {/* Description skeleton */}
-          <div className="skeleton h-24 w-full mb-12 rounded-xl"></div>
-
-          {/* Content sections skeletons */}
-          <div className="space-y-16">
-            <div className="py-12 border-b border-white/5">
-              <div className="skeleton h-8 w-40 mb-8 rounded"></div>
-              <div className="skeleton h-32 w-full rounded-2xl"></div>
-            </div>
-            <div className="py-12">
-              <div className="skeleton h-8 w-40 mb-8 rounded"></div>
-              <div className="skeleton h-48 w-full rounded-2xl"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const formatVerseText = (text) => {
     if (!text) return null;
@@ -118,7 +113,37 @@ const ContentDetailPage = () => {
     }
   };
 
-  if (!content) {
+  const showSkeleton = !content && isSlowLoading;
+
+  if (showSkeleton) {
+    return (
+      <div className="animate-fade-in max-w-4xl mx-auto py-12">
+        <div className="skeleton w-32 h-6 mb-12 rounded"></div>
+
+        <div className="space-y-12">
+          {/* Title skeleton */}
+          <div className="skeleton h-16 w-3/4 mb-10 rounded-xl"></div>
+
+          {/* Description skeleton */}
+          <div className="skeleton h-24 w-full mb-12 rounded-xl"></div>
+
+          {/* Content sections skeletons */}
+          <div className="space-y-16">
+            <div className="py-12 border-b border-white/5">
+              <div className="skeleton h-8 w-40 mb-8 rounded"></div>
+              <div className="skeleton h-32 w-full rounded-2xl"></div>
+            </div>
+            <div className="py-12">
+              <div className="skeleton h-8 w-40 mb-8 rounded"></div>
+              <div className="skeleton h-48 w-full rounded-2xl"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!loading && !content) {
     return (
       <div className="animate-fade-in">
         <Link to="/content" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-8 transition-colors">
@@ -132,6 +157,14 @@ const ContentDetailPage = () => {
             Explore All Content
           </Link>
         </div>
+      </div>
+    );
+  }
+
+  if (!content) {
+    return (
+      <div className="max-w-4xl mx-auto py-12">
+        {/* Placeholder to keep layout clean during fast loads */}
       </div>
     );
   }

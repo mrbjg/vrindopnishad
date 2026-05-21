@@ -6,20 +6,22 @@ const SettingsContext = createContext();
 export const THEMES = [
   { id: 'dark',      label: 'Dark',        icon: 'Moon',      group: 'base' },
   { id: 'light',     label: 'Light',       icon: 'Sun',       group: 'base' },
-  { id: 'night',     label: 'Night Sky',   icon: 'Sparkles',  group: 'mood' },
+  { id: 'night',     label: 'Moon Night',  icon: 'Sparkles',  group: 'mood' },
   { id: 'space',     label: 'Space',       icon: 'Orbit',     group: 'mood' },
   { id: 'void',      label: 'Deep Void',   icon: 'Compass',   group: 'mood' },
   { id: 'winter',    label: 'Winter',      icon: 'Snowflake', group: 'mood' },
   { id: 'snow',      label: 'Snowfall',    icon: 'CloudSnow', group: 'mood' },
   { id: 'rainy',     label: 'Rainy',       icon: 'CloudRain', group: 'mood' },
   { id: 'mountains', label: 'Mountains',   icon: 'Mountain',  group: 'mood' },
+  { id: 'mountain_morning', label: 'Mountain Morning', icon: 'Sunrise', group: 'mood' },
   { id: 'sunset',    label: 'Sunset',      icon: 'Sunset',    group: 'mood' },
   { id: 'forest',    label: 'Forest',      icon: 'Leaf',      group: 'mood' },
   { id: 'ocean',     label: 'Ocean',       icon: 'Waves',     group: 'mood' },
+  { id: 'waterfall', label: 'Waterfall',   icon: 'Droplets',  group: 'mood' },
 ];
 
 // Themes that use light text (dark backgrounds)
-const DARK_THEMES = ['dark', 'night', 'space', 'void'];
+const DARK_THEMES = ['dark', 'night', 'space', 'void', 'waterfall'];
 
 export const isLightTheme = (themeId) => !DARK_THEMES.includes(themeId);
 
