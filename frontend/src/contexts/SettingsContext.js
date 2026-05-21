@@ -4,18 +4,18 @@ const SettingsContext = createContext();
 
 // All available themes with metadata for the picker UI
 export const THEMES = [
-  { id: 'dark',      label: 'Dark',        emoji: '🌙', group: 'base' },
-  { id: 'light',     label: 'Light',       emoji: '☀️', group: 'base' },
-  { id: 'night',     label: 'Night Sky',   emoji: '🌃', group: 'mood' },
-  { id: 'space',     label: 'Space',       emoji: '🚀', group: 'mood' },
-  { id: 'void',      label: 'Deep Void',   emoji: '🕳️', group: 'mood' },
-  { id: 'winter',    label: 'Winter',      emoji: '❄️', group: 'mood' },
-  { id: 'snow',      label: 'Snowfall',    emoji: '🏔️', group: 'mood' },
-  { id: 'rainy',     label: 'Rainy',       emoji: '🌧️', group: 'mood' },
-  { id: 'mountains', label: 'Mountains',   emoji: '⛰️', group: 'mood' },
-  { id: 'sunset',    label: 'Sunset',      emoji: '🌅', group: 'mood' },
-  { id: 'forest',    label: 'Forest',      emoji: '🌿', group: 'mood' },
-  { id: 'ocean',     label: 'Ocean',       emoji: '🌊', group: 'mood' },
+  { id: 'dark',      label: 'Dark',        icon: 'Moon',      group: 'base' },
+  { id: 'light',     label: 'Light',       icon: 'Sun',       group: 'base' },
+  { id: 'night',     label: 'Night Sky',   icon: 'Sparkles',  group: 'mood' },
+  { id: 'space',     label: 'Space',       icon: 'Orbit',     group: 'mood' },
+  { id: 'void',      label: 'Deep Void',   icon: 'Compass',   group: 'mood' },
+  { id: 'winter',    label: 'Winter',      icon: 'Snowflake', group: 'mood' },
+  { id: 'snow',      label: 'Snowfall',    icon: 'CloudSnow', group: 'mood' },
+  { id: 'rainy',     label: 'Rainy',       icon: 'CloudRain', group: 'mood' },
+  { id: 'mountains', label: 'Mountains',   icon: 'Mountain',  group: 'mood' },
+  { id: 'sunset',    label: 'Sunset',      icon: 'Sunset',    group: 'mood' },
+  { id: 'forest',    label: 'Forest',      icon: 'Leaf',      group: 'mood' },
+  { id: 'ocean',     label: 'Ocean',       icon: 'Waves',     group: 'mood' },
 ];
 
 // Themes that use light text (dark backgrounds)

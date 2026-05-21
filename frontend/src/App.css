@@ -1091,7 +1091,7 @@ html {
 /* Base body dark mode */
 .dark body,
 html.dark body {
-  background: linear-gradient(135deg, #0D0D12 0%, #1A1A24 100%);
+  background: transparent;
   color: #E8E8EC;
 }
 
