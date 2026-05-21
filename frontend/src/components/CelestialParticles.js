@@ -325,20 +325,22 @@ const CelestialParticles = () => {
       ctx.arc(sunX, sunY, 110, 0, Math.PI * 2);
       ctx.fill();
 
-      // Background Mountains
+      // Background Mountains (Sharp Green Peaks)
       ctx.beginPath();
       ctx.moveTo(0, cHeight);
       ctx.lineTo(0, cHeight * 0.76);
-      ctx.quadraticCurveTo(cWidth * 0.22, cHeight * 0.62, cWidth * 0.45, cHeight * 0.81);
-      ctx.quadraticCurveTo(cWidth * 0.68, cHeight * 0.58, cWidth * 0.88, cHeight * 0.83);
-      ctx.lineTo(cWidth, cHeight * 0.74);
+      ctx.lineTo(cWidth * 0.25, cHeight * 0.52);
+      ctx.lineTo(cWidth * 0.45, cHeight * 0.68);
+      ctx.lineTo(cWidth * 0.7, cHeight * 0.42);
+      ctx.lineTo(cWidth * 0.85, cHeight * 0.60);
+      ctx.lineTo(cWidth, cHeight * 0.35);
       ctx.lineTo(cWidth, cHeight);
       ctx.closePath();
 
-      const mtGrad1 = ctx.createLinearGradient(0, cHeight * 0.55, 0, cHeight);
+      const mtGrad1 = ctx.createLinearGradient(0, cHeight * 0.35, 0, cHeight);
       if (theme === 'mountains' || theme === 'mountains morning' || theme === 'mountain_morning') {
-        mtGrad1.addColorStop(0, 'rgba(120, 113, 108, 0.08)');
-        mtGrad1.addColorStop(1, 'rgba(120, 113, 108, 0.25)');
+        mtGrad1.addColorStop(0, 'rgba(34, 197, 94, 0.08)');  // Very soft emerald/sage green
+        mtGrad1.addColorStop(1, 'rgba(21, 128, 61, 0.22)');   // Soft forest green
       } else {
         mtGrad1.addColorStop(0, 'rgba(255, 255, 255, 0.04)');
         mtGrad1.addColorStop(1, 'rgba(255, 255, 255, 0.12)');
@@ -346,19 +348,23 @@ const CelestialParticles = () => {
       ctx.fillStyle = mtGrad1;
       ctx.fill();
 
-      // Foreground Peaks
+      // Foreground Peaks (Sharp Green Peaks)
       ctx.beginPath();
       ctx.moveTo(0, cHeight);
       ctx.lineTo(0, cHeight * 0.86);
-      ctx.quadraticCurveTo(cWidth * 0.25, cHeight * 0.76, cWidth * 0.52, cHeight * 0.89);
-      ctx.quadraticCurveTo(cWidth * 0.78, cHeight * 0.70, cWidth, cHeight * 0.84);
+      ctx.lineTo(cWidth * 0.15, cHeight * 0.68);
+      ctx.lineTo(cWidth * 0.38, cHeight * 0.78);
+      ctx.lineTo(cWidth * 0.55, cHeight * 0.54);
+      ctx.lineTo(cWidth * 0.75, cHeight * 0.74);
+      ctx.lineTo(cWidth * 0.9, cHeight * 0.64);
+      ctx.lineTo(cWidth, cHeight * 0.82);
       ctx.lineTo(cWidth, cHeight);
       ctx.closePath();
 
-      const mtGrad2 = ctx.createLinearGradient(0, cHeight * 0.68, 0, cHeight);
+      const mtGrad2 = ctx.createLinearGradient(0, cHeight * 0.50, 0, cHeight);
       if (theme === 'mountains' || theme === 'mountains morning' || theme === 'mountain_morning') {
-        mtGrad2.addColorStop(0, 'rgba(28, 25, 23, 0.15)');
-        mtGrad2.addColorStop(1, 'rgba(28, 25, 23, 0.32)');
+        mtGrad2.addColorStop(0, 'rgba(21, 128, 61, 0.18)');   // Vibrant sage green
+        mtGrad2.addColorStop(1, 'rgba(20, 83, 45, 0.38)');    // Deep dark forest green
       } else {
         mtGrad2.addColorStop(0, 'rgba(255, 255, 255, 0.07)');
         mtGrad2.addColorStop(1, 'rgba(255, 255, 255, 0.18)');
