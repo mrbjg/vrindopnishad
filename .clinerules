@@ -1,0 +1,24 @@
+# VrindaVaani Custom Project Rules
+
+This file documents the strict guidelines, constraints, and professional standards for the VrindaVaani codebase. All AI coding assistants MUST strictly adhere to these rules.
+
+---
+
+## 1. Visual & Graphic Standards
+- **Canvas Static Backdrop Fallbacks**: Every theme registered in the settings context must map to a corresponding static/vector drawing routine inside `CelestialParticles.js` to ensure there are no empty/blank backdrops.
+- **CPU-Friendly Dynamic Waves**: Any fluid, wave, or particle movement animation drawn in real-time loops must limit canvas recalculations by using coarse step widths (e.g., `x += 15` intervals) instead of pixel-by-pixel increments to maintain high framerates on low-end mobile devices.
+- **Rich & Modern Aesthetics**: UIs must feel premium, modern, and trendy. Avoid raw browser defaults or generic colors. Use HSL-tailored palettes, smooth transitions, glassmorphic textures, and subtle micro-animations.
+
+---
+
+## 2. Performance & App Development
+- **Multi-Device Compatibility**: Apps must be fully optimized to run flawlessly from low-end to high-end mobile devices. There must be zero runtime lag, flicker, or visual stuttering.
+- **Cache-First (SWR) Architectures**: Implement local caching systems (e.g., synchronous local/context reads combined with asynchronous background revalidation) to ensure instant page navigation and prevent layout shifts/skeleton loader flickers.
+
+---
+
+## 3. Engineering & Clean Builds
+- **Zero Warnings Compiler Guarantee**: At the end of every update, verify that the project builds completely clean. There must be **zero** compilation errors, warnings, or ESLint issues.
+- **UI/UX Prototyping**: When creating new user interfaces, utilize Stitch tool integrations to design and verify templates before custom styling.
+- **Token Efficiency**: Work efficiently and minimize token overhead by avoiding redundant operations or overly verbose subagents.
+- **No Unused Variables**: Do not leave unused imports, variables, or timers in React hooks/useEffect cleanups.
