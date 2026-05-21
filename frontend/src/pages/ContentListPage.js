@@ -17,7 +17,6 @@ const ContentListPage = () => {
   });
   const [categories, setCategories] = useState(() => apiService.getCachedData('categories') || []);
   const [loading, setLoading] = useState(!content.length);
-  const [isSlowLoading, setIsSlowLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -62,7 +61,6 @@ const ContentListPage = () => {
 
   useEffect(() => {
     let active = true;
-    let slowTimer = null;
 
     const fetchContent = async () => {
       // 1. Get cached content (if any) first to avoid skeleton flickering.
@@ -98,16 +96,6 @@ const ContentListPage = () => {
         }
       }
 
-      // Start slow loading timer to show skeleton loader if backend takes time
-      if (active) {
-        setIsSlowLoading(false);
-        slowTimer = setTimeout(() => {
-          if (active) {
-            setIsSlowLoading(true);
-          }
-        }, 300); // 300ms threshold
-      }
-
       try {
         const data = await apiService.getAllContent(selectedCategory);
         const cats = await apiService.getCategories();
@@ -124,15 +112,12 @@ const ContentListPage = () => {
       } finally {
         if (active) {
           setLoading(false);
-          setIsSlowLoading(false);
-          if (slowTimer) clearTimeout(slowTimer);
         }
       }
     };
     fetchContent();
     return () => {
       active = false;
-      if (slowTimer) clearTimeout(slowTimer);
     };
   }, [selectedCategory, apiService]);
 
@@ -184,7 +169,7 @@ const ContentListPage = () => {
     }
   };
 
-  const showSkeleton = content.length === 0 && isSlowLoading;
+  const showSkeleton = loading && content.length === 0;
 
   return (
     <div className="animate-fade-in">

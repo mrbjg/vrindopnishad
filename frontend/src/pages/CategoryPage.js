@@ -24,7 +24,6 @@ const CategoryPage = () => {
 
   const [content, setContent] = useState(() => getInitialData());
   const [loading, setLoading] = useState(() => getInitialData().length === 0);
-  const [isSlowLoading, setIsSlowLoading] = useState(false);
 
   const categoryInfo = {
     shloka: {
@@ -107,7 +106,6 @@ const CategoryPage = () => {
 
   useEffect(() => {
     let active = true;
-    let slowTimer = null;
 
     const load = async () => {
       const cacheKey = `all_${category}_50`;
@@ -137,16 +135,6 @@ const CategoryPage = () => {
         }
       }
 
-      // Start slow loading timer to show skeleton loader if backend takes time
-      if (active) {
-        setIsSlowLoading(false);
-        slowTimer = setTimeout(() => {
-          if (active) {
-            setIsSlowLoading(true);
-          }
-        }, 300); // 300ms threshold
-      }
-
       try {
         const data = await apiService.getAllContent(category);
         if (active) {
@@ -157,8 +145,6 @@ const CategoryPage = () => {
       } finally {
         if (active) {
           setLoading(false);
-          setIsSlowLoading(false);
-          if (slowTimer) clearTimeout(slowTimer);
         }
       }
     };
@@ -167,14 +153,13 @@ const CategoryPage = () => {
     
     return () => {
       active = false;
-      if (slowTimer) clearTimeout(slowTimer);
     };
   }, [category, apiService]);
 
   const info = categoryInfo[category] || { name: category, description: '', icon: BookOpen, color: 'text-white' };
   const IconComponent = info.icon;
 
-  const showSkeleton = content.length === 0 && isSlowLoading;
+  const showSkeleton = loading && content.length === 0;
 
   return (
     <div className="animate-fade-in">

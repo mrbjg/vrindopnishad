@@ -339,8 +339,8 @@ const CelestialParticles = () => {
 
       const mtGrad1 = ctx.createLinearGradient(0, cHeight * 0.35, 0, cHeight);
       if (theme === 'mountains' || theme === 'mountains morning' || theme === 'mountain_morning') {
-        mtGrad1.addColorStop(0, 'rgba(34, 197, 94, 0.08)');  // Very soft emerald/sage green
-        mtGrad1.addColorStop(1, 'rgba(21, 128, 61, 0.22)');   // Soft forest green
+        mtGrad1.addColorStop(0, 'rgba(34, 197, 94, 0.18)');  // Richer emerald/sage green
+        mtGrad1.addColorStop(1, 'rgba(21, 128, 61, 0.38)');   // Richer forest green
       } else {
         mtGrad1.addColorStop(0, 'rgba(255, 255, 255, 0.04)');
         mtGrad1.addColorStop(1, 'rgba(255, 255, 255, 0.12)');
@@ -363,8 +363,8 @@ const CelestialParticles = () => {
 
       const mtGrad2 = ctx.createLinearGradient(0, cHeight * 0.50, 0, cHeight);
       if (theme === 'mountains' || theme === 'mountains morning' || theme === 'mountain_morning') {
-        mtGrad2.addColorStop(0, 'rgba(21, 128, 61, 0.18)');   // Vibrant sage green
-        mtGrad2.addColorStop(1, 'rgba(20, 83, 45, 0.38)');    // Deep dark forest green
+        mtGrad2.addColorStop(0, 'rgba(21, 128, 61, 0.32)');   // More vibrant sage green
+        mtGrad2.addColorStop(1, 'rgba(20, 83, 45, 0.58)');    // Richer dark forest green
       } else {
         mtGrad2.addColorStop(0, 'rgba(255, 255, 255, 0.07)');
         mtGrad2.addColorStop(1, 'rgba(255, 255, 255, 0.18)');
@@ -528,6 +528,161 @@ const CelestialParticles = () => {
       ctx.restore();
     };
 
+    const drawRainyBackdrop = (cWidth, cHeight) => {
+      ctx.save();
+      const cloudGrad = ctx.createLinearGradient(0, 0, 0, cHeight * 0.35);
+      cloudGrad.addColorStop(0, 'rgba(71, 85, 105, 0.28)');
+      cloudGrad.addColorStop(0.5, 'rgba(100, 116, 139, 0.12)');
+      cloudGrad.addColorStop(1, 'rgba(100, 116, 139, 0)');
+      ctx.fillStyle = cloudGrad;
+      
+      ctx.beginPath();
+      ctx.arc(cWidth * 0.1, 0, cWidth * 0.22, 0, Math.PI * 2);
+      ctx.arc(cWidth * 0.35, 0, cWidth * 0.28, 0, Math.PI * 2);
+      ctx.arc(cWidth * 0.65, 0, cWidth * 0.32, 0, Math.PI * 2);
+      ctx.arc(cWidth * 0.9, 0, cWidth * 0.25, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.fill();
+
+      const cloudGrad2 = ctx.createLinearGradient(0, 0, 0, cHeight * 0.25);
+      cloudGrad2.addColorStop(0, 'rgba(148, 163, 184, 0.2)');
+      cloudGrad2.addColorStop(1, 'rgba(148, 163, 184, 0)');
+      ctx.fillStyle = cloudGrad2;
+      ctx.beginPath();
+      ctx.arc(cWidth * 0.2, 0, cWidth * 0.18, 0, Math.PI * 2);
+      ctx.arc(cWidth * 0.5, 0, cWidth * 0.24, 0, Math.PI * 2);
+      ctx.arc(cWidth * 0.8, 0, cWidth * 0.2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.fill();
+      
+      ctx.restore();
+    };
+
+    const drawForestBackdrop = (cWidth, cHeight) => {
+      ctx.save();
+      ctx.fillStyle = isLightTheme(theme) ? 'rgba(16, 185, 129, 0.08)' : 'rgba(16, 185, 129, 0.04)';
+      const bgTreeCount = isMobile ? 8 : 16;
+      const bgStep = cWidth / bgTreeCount;
+      for (let i = 0; i <= bgTreeCount; i++) {
+        const x = i * bgStep + (Math.sin(i) * 10);
+        const treeHeight = (isMobile ? 120 : 200) + (Math.cos(i * 1.5) * 40);
+        const y = cHeight - treeHeight;
+        const width = isMobile ? 35 : 60;
+        
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x - width * 0.5, y + treeHeight * 0.4);
+        ctx.lineTo(x - width * 0.3, y + treeHeight * 0.4);
+        ctx.lineTo(x - width * 0.7, y + treeHeight * 0.7);
+        ctx.lineTo(x - width * 0.4, y + treeHeight * 0.7);
+        ctx.lineTo(x - width * 0.9, cHeight);
+        ctx.lineTo(x + width * 0.9, cHeight);
+        ctx.lineTo(x + width * 0.4, y + treeHeight * 0.7);
+        ctx.lineTo(x + width * 0.7, y + treeHeight * 0.7);
+        ctx.lineTo(x + width * 0.3, y + treeHeight * 0.4);
+        ctx.lineTo(x + width * 0.5, y + treeHeight * 0.4);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      ctx.fillStyle = isLightTheme(theme) ? 'rgba(21, 128, 61, 0.16)' : 'rgba(21, 128, 61, 0.09)';
+      const fgTreeCount = isMobile ? 10 : 20;
+      const fgStep = cWidth / fgTreeCount;
+      for (let i = 0; i <= fgTreeCount; i++) {
+        const x = i * fgStep + (Math.sin(i * 2) * 8);
+        const treeHeight = (isMobile ? 80 : 140) + (Math.sin(i * 2.3) * 25);
+        const y = cHeight - treeHeight;
+        const width = isMobile ? 25 : 45;
+        
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x - width * 0.5, y + treeHeight * 0.4);
+        ctx.lineTo(x - width * 0.3, y + treeHeight * 0.4);
+        ctx.lineTo(x - width * 0.7, y + treeHeight * 0.7);
+        ctx.lineTo(x - width * 0.4, y + treeHeight * 0.7);
+        ctx.lineTo(x - width * 0.9, cHeight);
+        ctx.lineTo(x + width * 0.9, cHeight);
+        ctx.lineTo(x + width * 0.4, y + treeHeight * 0.7);
+        ctx.lineTo(x + width * 0.7, y + treeHeight * 0.7);
+        ctx.lineTo(x + width * 0.3, y + treeHeight * 0.4);
+        ctx.lineTo(x + width * 0.5, y + treeHeight * 0.4);
+        ctx.closePath();
+        ctx.fill();
+      }
+      
+      ctx.restore();
+    };
+
+    const drawOceanBackdrop = (cWidth, cHeight) => {
+      ctx.save();
+      const time = Date.now() * 0.0006;
+      
+      ctx.fillStyle = isLightTheme(theme) ? 'rgba(14, 165, 233, 0.08)' : 'rgba(14, 165, 233, 0.04)';
+      ctx.beginPath();
+      ctx.moveTo(0, cHeight);
+      for (let x = 0; x <= cWidth; x += 15) {
+        const y = cHeight - (isMobile ? 60 : 100) + Math.sin(x * 0.003 + time) * 15;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(cWidth, cHeight);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = isLightTheme(theme) ? 'rgba(2, 132, 199, 0.12)' : 'rgba(2, 132, 199, 0.07)';
+      ctx.beginPath();
+      ctx.moveTo(0, cHeight);
+      for (let x = 0; x <= cWidth; x += 15) {
+        const y = cHeight - (isMobile ? 45 : 75) + Math.cos(x * 0.004 - time * 0.8) * 12;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(cWidth, cHeight);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = isLightTheme(theme) ? 'rgba(3, 105, 161, 0.16)' : 'rgba(3, 105, 161, 0.10)';
+      ctx.beginPath();
+      ctx.moveTo(0, cHeight);
+      for (let x = 0; x <= cWidth; x += 15) {
+        const y = cHeight - (isMobile ? 30 : 50) + Math.sin(x * 0.005 + time * 1.2) * 8;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(cWidth, cHeight);
+      ctx.closePath();
+      ctx.fill();
+      
+      ctx.restore();
+    };
+
+    const drawVoidBackdrop = (cWidth, cHeight) => {
+      ctx.save();
+      const cX = cWidth * 0.5;
+      const cY = cHeight * 0.45;
+      const radius = isMobile ? 90 : 150;
+      
+      ctx.beginPath();
+      const glowGrad = ctx.createRadialGradient(cX, cY, radius * 0.8, cX, cY, radius * 2.2);
+      glowGrad.addColorStop(0, 'rgba(255, 255, 255, 0.03)');
+      glowGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.01)');
+      glowGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = glowGrad;
+      ctx.arc(cX, cY, radius * 2.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+      ctx.lineWidth = 1;
+      ctx.arc(cX, cY, radius, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
+      ctx.lineWidth = 0.8;
+      ctx.ellipse(cX, cY, radius * 1.5, radius * 0.15, -Math.PI / 12, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.restore();
+    };
+
     const drawLeaf = (pCtx, x, y, size, angle, color) => {
       pCtx.save();
       pCtx.translate(x, y);
@@ -558,6 +713,14 @@ const CelestialParticles = () => {
         drawMountainMorning(canvas.width, canvas.height);
       } else if (theme === 'waterfall') {
         drawWaterfallBackdrop(canvas.width, canvas.height);
+      } else if (theme === 'rainy') {
+        drawRainyBackdrop(canvas.width, canvas.height);
+      } else if (theme === 'forest') {
+        drawForestBackdrop(canvas.width, canvas.height);
+      } else if (theme === 'ocean') {
+        drawOceanBackdrop(canvas.width, canvas.height);
+      } else if (theme === 'void') {
+        drawVoidBackdrop(canvas.width, canvas.height);
       }
 
       // 2. Render and update particles

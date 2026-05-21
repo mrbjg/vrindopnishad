@@ -18,19 +18,9 @@ const ContentDetailPage = () => {
   const { settings, updateSetting } = useSettings();
   const [content, setContent] = useState(() => apiService.getCachedData(`id_${id}`));
   const [loading, setLoading] = useState(!apiService.getCachedData(`id_${id}`));
-  const [isSlowLoading, setIsSlowLoading] = useState(false);
 
   useEffect(() => {
     let active = true;
-    let slowTimer = null;
-
-    // Start slow loading timer
-    setIsSlowLoading(false);
-    slowTimer = setTimeout(() => {
-      if (active) {
-        setIsSlowLoading(true);
-      }
-    }, 300); // 300ms threshold
 
     const fetchContentData = async () => {
       try {
@@ -44,8 +34,6 @@ const ContentDetailPage = () => {
       } finally {
         if (active) {
           setLoading(false);
-          setIsSlowLoading(false);
-          if (slowTimer) clearTimeout(slowTimer);
         }
       }
     };
@@ -53,7 +41,6 @@ const ContentDetailPage = () => {
 
     return () => {
       active = false;
-      if (slowTimer) clearTimeout(slowTimer);
     };
   }, [id, apiService]);
 
@@ -113,7 +100,7 @@ const ContentDetailPage = () => {
     }
   };
 
-  const showSkeleton = !content && isSlowLoading;
+  const showSkeleton = loading && !content;
 
   if (showSkeleton) {
     return (
