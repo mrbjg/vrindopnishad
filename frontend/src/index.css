@@ -14,6 +14,7 @@
 
     --primary-color: #f59e0b;
     --primary: 38 92% 50%;
+    --primary-foreground: 0 0% 100%;
     /* HSL for Tailwind */
     --primary-rgb: 245, 158, 11;
     --accent-gold: #fbbf24;
@@ -29,6 +30,24 @@
     --nebula-color-1: rgba(245, 158, 11, 0.08); /* Amber Ghosting */
     --nebula-color-2: rgba(32, 84, 174, 0.1);  /* Deep Blue */
     --nebula-color-3: rgba(251, 191, 36, 0.05); /* Gold Ghosting */
+
+    /* shadcn/ui required CSS variables — dark glassmorphism palette */
+    --card: 240 15% 7%;
+    --card-foreground: 40 10% 95%;
+    --popover: 240 15% 7%;
+    --popover-foreground: 40 10% 95%;
+    --secondary: 240 10% 15%;
+    --secondary-foreground: 40 10% 95%;
+    --muted: 240 10% 15%;
+    --muted-foreground: 240 5% 55%;
+    --accent: 240 10% 15%;
+    --accent-foreground: 40 10% 95%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 10% 15%;
+    --input: 240 10% 15%;
+    --ring: 38 92% 50%;
+    --radius: 0.75rem;
 }
 
 /* Premium Toggle State */
@@ -852,4 +871,88 @@ h6 {
     border: 1px solid rgba(255, 255, 255, 0.2);
     margin-bottom: 1rem;
     display: inline-block;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* ANIMATION KEYFRAMES & UTILITIES                                             */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in-down {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in-left {
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.6s ease-out both;
+}
+
+.animate-fade-in-down {
+    animation: fade-in-down 0.5s ease-out both;
+}
+
+.animate-fade-in-left {
+    animation: fade-in-left 0.5s ease-out both;
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.5s ease-out both;
+}
+
+/* Scrollbar Hide Utility */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* Selection Style */
+::selection {
+    background: rgba(245, 158, 11, 0.3);
+    color: #fff;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Reduced Motion Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }

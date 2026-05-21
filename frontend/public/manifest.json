@@ -1,29 +1,31 @@
 {
     "short_name": "Vrindopnishad",
-    "name": "Vrindopnishad — Authentic Spiritual & Vedic Knowledge",
-    "description": "Vrindopnishad Paath (वृंदोपनिषद् पाठ) — Read and listen to sacred Sanskrit shlokas and devotional poetry.",
+    "name": "Vrindopnishad Paath — वृंदोपनिषद् पाठ",
+    "description": "Read and listen to sacred Sanskrit shlokas, strotras, devotional poetry & Vedic wisdom from Vrindavan saints.",
     "icons": [
         {
-            "src": "https://vrindopnishad.in/android-chrome-192x192.png",
+            "src": "./favicon-32x32.png",
+            "type": "image/png",
+            "sizes": "32x32"
+        },
+        {
+            "src": "./icon-192.png",
             "type": "image/png",
             "sizes": "192x192",
             "purpose": "any maskable"
         },
         {
-            "src": "https://vrindopnishad.in/android-chrome-512x512.png",
+            "src": "./icon-512.png",
             "type": "image/png",
             "sizes": "512x512",
             "purpose": "any maskable"
-        },
-        {
-            "src": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png",
-            "type": "image/png",
-            "sizes": "512x512"
         }
     ],
     "start_url": ".",
     "display": "standalone",
-    "theme_color": "#8E7F7F",
+    "theme_color": "#0D0D12",
     "background_color": "#0D0D12",
-    "orientation": "portrait"
+    "orientation": "portrait",
+    "lang": "hi",
+    "categories": ["education", "books", "lifestyle"]
 }
