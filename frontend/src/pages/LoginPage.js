@@ -10,7 +10,7 @@ import {
   signInWithPopup,
   updateProfile
 } from 'firebase/auth';
-import { Mail, Lock, LogIn, ArrowLeft, Chrome, UserPlus, Info } from 'lucide-react';
+import { Mail, Lock, LogIn, ArrowLeft, Chrome, UserPlus, Info, User } from 'lucide-react';
 
 const LoginPage = () => {
   const { user } = useContext(AuthContext);
@@ -83,8 +83,15 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="animate-fade-in flex items-center justify-center py-12 px-4">
-      <div className="login-card glass-card w-full max-w-md p-8 md:p-12 relative overflow-hidden">
+    <div className="animate-fade-in flex items-center justify-center py-12 px-4 relative min-h-[85vh] overflow-hidden">
+      {/* Premium Shifting Background Blobs */}
+      <div className="glow-blob-1"></div>
+      <div className="glow-blob-2"></div>
+      
+      {/* Ambient Backlighting Halo */}
+      <div className="login-ambient-halo"></div>
+
+      <div className="login-card w-full max-w-md p-8 md:p-12 relative z-10 overflow-hidden">
         {/* Decorative Background Elements */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-[60px] rounded-full -mr-16 -mt-16 pointer-events-none"></div>
         
@@ -93,11 +100,18 @@ const LoginPage = () => {
              <ArrowLeft size={16} />
              Back to Home
            </Link>
-           <div className="text-5xl mb-4 animate-bounce-slow login-om-symbol">ॐ</div>
+           
+           {/* Pulsing OM Symbol in Geometric frame */}
+           <div className="om-badge-container">
+             <div className="om-geometric-ring"></div>
+             <div className="om-geometric-ring-inner"></div>
+             <div className="om-symbol-glowing">ॐ</div>
+           </div>
+
            <h1 className="login-title text-3xl font-bold mb-2 tracking-tight">
              {isSignUp ? 'Begin Journey' : 'Devotee Login'}
            </h1>
-           <p className="login-subtitle font-medium">
+           <p className="login-subtitle font-medium text-sm">
              {isSignUp ? 'Create your spiritual profile' : 'Access your sacred digital library'}
            </p>
         </div>
@@ -117,13 +131,17 @@ const LoginPage = () => {
           {isSignUp && (
             <div className="space-y-2 animate-in fade-in slide-in-from-left-4 duration-500">
               <label className="login-label text-xs uppercase tracking-[0.2em] ml-1 font-semibold">Full Name</label>
-              <div className="relative group">
+              <div className="premium-input-container flex items-center px-4 gap-3 group relative">
+                <User className="premium-input-icon flex-shrink-0" size={18} />
                 <input 
                   type="text" 
+                  id="name"
+                  name="name"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="login-input w-full h-14 rounded-2xl pl-6 pr-6 outline-none transition-all duration-300"
+                  className="premium-input-field text-sm"
                   placeholder="Your Name"
+                  autocomplete="name"
                   required={isSignUp}
                 />
               </div>
@@ -132,14 +150,17 @@ const LoginPage = () => {
 
           <div className="space-y-2">
             <label className="login-label text-xs uppercase tracking-[0.2em] ml-1 font-semibold">Email Address</label>
-            <div className="relative group">
-              <Mail className="login-input-icon absolute left-4 top-1/2 -translate-y-1/2 transition-colors" size={18} />
+            <div className="premium-input-container flex items-center px-4 gap-3 group relative">
+              <Mail className="premium-input-icon flex-shrink-0" size={18} />
               <input 
                 type="email" 
+                id="email"
+                name="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="login-input w-full h-14 rounded-2xl pl-12 pr-6 outline-none transition-all duration-300"
+                className="premium-input-field text-sm"
                 placeholder="name@example.com"
+                autocomplete="username"
                 required
               />
             </div>
@@ -152,20 +173,23 @@ const LoginPage = () => {
                 <button 
                   type="button" 
                   onClick={handleForgotPassword}
-                  className="text-[10px] uppercase tracking-wider text-primary/60 hover:text-primary transition-colors font-bold"
+                  className="text-[10px] uppercase tracking-wider text-primary/60 hover:text-primary transition-colors font-bold cursor-pointer"
                 >
                   Forgot?
                 </button>
               )}
             </div>
-            <div className="relative group">
-              <Lock className="login-input-icon absolute left-4 top-1/2 -translate-y-1/2 transition-colors" size={18} />
+            <div className="premium-input-container flex items-center px-4 gap-3 group relative">
+              <Lock className="premium-input-icon flex-shrink-0" size={18} />
               <input 
                 type="password" 
+                id={isSignUp ? "new-password" : "current-password"}
+                name="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="login-input w-full h-14 rounded-2xl pl-12 pr-6 outline-none transition-all duration-300"
+                className="premium-input-field text-sm"
                 placeholder="••••••••"
+                autocomplete={isSignUp ? "new-password" : "current-password"}
                 required
               />
             </div>
@@ -174,11 +198,16 @@ const LoginPage = () => {
           <button 
             type="submit" 
             disabled={loading}
-            className="btn-sacred-gold w-full h-14 justify-center text-base shadow-2xl"
+            className="shimmer-btn w-full h-14 flex items-center justify-center gap-3 text-base shadow-2xl cursor-pointer"
           >
-            {loading ? 'Processing...' : (
+            {loading ? (
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <span>Processing...</span>
+              </div>
+            ) : (
               <>
-                {isSignUp ? 'Join Sanctuary' : 'Sign In'}
+                <span>{isSignUp ? 'Join Sanctuary' : 'Sign In'}</span>
                 {isSignUp ? <UserPlus size={20} /> : <LogIn size={20} />}
               </>
             )}
@@ -194,18 +223,18 @@ const LoginPage = () => {
         <button 
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="login-google-btn w-full h-14 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 active:scale-[0.98] mb-10 group"
+          className="login-google-btn w-full h-14 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 active:scale-[0.98] mb-10 group cursor-pointer"
         >
-          <Chrome size={20} className="login-google-icon group-hover:opacity-100 transition-colors" />
+          <Chrome size={20} className="login-google-icon group-hover:scale-110 group-hover:rotate-12 transition-all duration-300" />
           <span className="text-sm font-bold tracking-wider">Continue with Google</span>
         </button>
 
         <div className="login-footer pt-6 text-center relative z-10">
-            <p className="text-sm font-medium">
+            <p className="text-sm font-medium text-foreground/55">
                 {isSignUp ? 'Already have an account?' : "Don't have an account?"}
                 <button 
                   onClick={() => setIsSignUp(!isSignUp)}
-                  className="ml-2 text-primary hover:text-primary-light transition-colors font-bold"
+                  className="ml-2 text-primary hover:text-primary-light transition-colors font-bold cursor-pointer"
                 >
                   {isSignUp ? 'Sign In' : 'Create One'}
                 </button>

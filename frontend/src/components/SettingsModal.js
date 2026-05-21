@@ -58,13 +58,13 @@ const SettingsModal = ({ isOpen, onClose }) => {
 
       {/* Modal Card */}
       <div 
-        className="settings-modal-card w-full max-w-md relative z-10 animate-scale-in flex flex-col max-h-[90vh] shadow-2xl p-0 overflow-hidden"
+        className="settings-modal-card-v2 w-full max-w-md relative z-10 animate-scale-in flex flex-col max-h-[90vh] shadow-2xl p-0 overflow-hidden"
       >
         {/* Fixed Header */}
         <div className="settings-modal-header flex justify-between items-center p-8 pb-4">
           <div className="flex items-center gap-3">
-            <div className="settings-modal-icon-wrap p-2 rounded-lg">
-              <Type size={20} />
+            <div className="settings-modal-header-badge">
+              <Palette size={20} />
             </div>
             <h2 className="settings-modal-title text-2xl font-bold font-headings">Sanctuary Settings</h2>
           </div>
@@ -85,20 +85,21 @@ const SettingsModal = ({ isOpen, onClose }) => {
                 <User size={14} /> Personal Profile
               </h3>
               <form onSubmit={handleUpdateProfile} className="space-y-3">
-                <div className="relative group">
+                <div className="premium-input-container flex items-center px-4 gap-3 group relative">
+                  <User className="premium-input-icon flex-shrink-0" size={18} />
                   <input
                     type="text"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
-                    className="settings-modal-input w-full h-12 rounded-xl px-4 outline-none transition-all text-sm"
+                    className="premium-input-field pr-12 text-sm"
                     placeholder="Your Full Name"
                   />
                   <button
                     type="submit"
                     disabled={isUpdating || displayName === user?.displayName}
-                    className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-all ${
+                    className={`absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-all ${
                       displayName !== user?.displayName && !isUpdating
-                        ? 'bg-primary text-white shadow-lg'
+                        ? 'bg-primary text-white shadow-lg hover:scale-105 active:scale-95'
                         : 'settings-modal-btn-disabled'
                     }`}
                   >
@@ -127,29 +128,29 @@ const SettingsModal = ({ isOpen, onClose }) => {
               <Palette size={14} /> Sanctuary Theme
             </h3>
             
-            <div className="space-y-4">
+            <div className="space-y-5">
               {/* Base Themes */}
               <div>
-                <span className="settings-modal-subsection text-[10px] uppercase tracking-widest block mb-2 font-semibold">Core Modes</span>
-                <div className="grid grid-cols-2 gap-2">
+                <span className="settings-modal-subsection text-[10px] uppercase tracking-widest block mb-2 font-bold">Core Modes</span>
+                <div className="grid grid-cols-2 gap-3">
                   {THEMES.filter(t => t.group === 'base').map((t) => (
                     <button
                       key={t.id}
                       onClick={() => updateSetting('theme', t.id)}
-                      className={`flex items-center gap-3 p-3 rounded-xl text-sm font-semibold transition-all border ${
-                        settings.theme === t.id 
-                          ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20' 
-                          : 'settings-modal-option'
-                      }`}
+                      className={`theme-picker-card-v2 ${settings.theme === t.id ? 'active' : ''}`}
                     >
-                      <div 
-                        className="w-5 h-5 rounded-full flex-shrink-0 border settings-modal-swatch"
-                        style={{ background: themeGradients[t.id] }}
-                      ></div>
-                      <span className="flex items-center gap-2">
-                        <ThemeIcon name={t.icon} size={14} className="opacity-85" />
-                        {t.label}
-                      </span>
+                      <div className="theme-picker-inner">
+                        <div className="flex items-center gap-2.5">
+                          <div className="theme-icon-wrap-v2 p-1.5 rounded-lg">
+                            <ThemeIcon name={t.icon} size={14} />
+                          </div>
+                          <span className="font-bold text-sm tracking-wide">{t.label}</span>
+                        </div>
+                        <div 
+                          className="theme-swatch-v2 flex-shrink-0"
+                          style={{ background: themeGradients[t.id] }}
+                        ></div>
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -157,26 +158,26 @@ const SettingsModal = ({ isOpen, onClose }) => {
 
               {/* Moods */}
               <div>
-                <span className="settings-modal-subsection text-[10px] uppercase tracking-widest block mb-2 font-semibold">Celestial Moods</span>
-                <div className="grid grid-cols-2 gap-2">
+                <span className="settings-modal-subsection text-[10px] uppercase tracking-widest block mb-2 font-bold">Celestial Moods</span>
+                <div className="grid grid-cols-2 gap-3">
                   {THEMES.filter(t => t.group === 'mood').map((t) => (
                     <button
                       key={t.id}
                       onClick={() => updateSetting('theme', t.id)}
-                      className={`flex items-center gap-3 p-3 rounded-xl text-xs font-semibold transition-all border ${
-                        settings.theme === t.id 
-                          ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20' 
-                          : 'settings-modal-option'
-                      }`}
+                      className={`theme-picker-card-v2 ${settings.theme === t.id ? 'active' : ''}`}
                     >
-                      <div 
-                        className="w-5 h-5 rounded-full flex-shrink-0 border settings-modal-swatch"
-                        style={{ background: themeGradients[t.id] }}
-                      ></div>
-                      <span className="flex items-center gap-2">
-                        <ThemeIcon name={t.icon} size={14} className="opacity-85" />
-                        {t.label}
-                      </span>
+                      <div className="theme-picker-inner">
+                        <div className="flex items-center gap-2.5">
+                          <div className="theme-icon-wrap-v2 p-1.5 rounded-lg">
+                            <ThemeIcon name={t.icon} size={14} />
+                          </div>
+                          <span className="font-bold text-sm tracking-wide">{t.label}</span>
+                        </div>
+                        <div 
+                          className="theme-swatch-v2 flex-shrink-0"
+                          style={{ background: themeGradients[t.id] }}
+                        ></div>
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -189,16 +190,12 @@ const SettingsModal = ({ isOpen, onClose }) => {
             <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">
               <Type size={14} /> Font Size
             </h3>
-            <div className="grid grid-cols-5 gap-2">
+            <div className="premium-segmented-control grid-cols-5">
               {[1, 2, 3, 4, 5].map((size) => (
                 <button
                   key={size}
                   onClick={() => updateSetting('fontSize', size)}
-                  className={`py-3 rounded-xl text-xs font-bold transition-all border ${
-                    settings.fontSize === size 
-                      ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20' 
-                      : 'settings-modal-option'
-                  }`}
+                  className={`segmented-control-btn ${settings.fontSize === size ? 'active' : ''}`}
                 >
                   {size === 1 ? 'XS' : size === 2 ? 'SM' : size === 3 ? 'MD' : size === 4 ? 'LG' : 'XL'}
                 </button>
@@ -211,16 +208,16 @@ const SettingsModal = ({ isOpen, onClose }) => {
             <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">
               <AlignLeft size={14} /> Typography
             </h3>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="premium-segmented-control grid-cols-3">
               {['Serif', 'Sans', 'Inter'].map((style) => (
                 <button
                   key={style}
                   onClick={() => updateSetting('fontStyle', style)}
-                  className={`py-3 rounded-xl text-sm font-semibold transition-all border ${
-                    settings.fontStyle === style 
-                      ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20' 
-                      : 'settings-modal-option'
-                  }`}
+                  className={`segmented-control-btn ${settings.fontStyle === style ? 'active' : ''}`}
+                  style={{
+                    fontFamily: style === 'Serif' ? 'Georgia, serif' : style === 'Sans' ? 'system-ui, sans-serif' : '"Inter", sans-serif',
+                    textTransform: 'none'
+                  }}
                 >
                   {style}
                 </button>
@@ -235,37 +232,31 @@ const SettingsModal = ({ isOpen, onClose }) => {
             </h3>
             
             <div className="space-y-3">
-              <div className="settings-modal-toggle-row flex items-center justify-between p-4 rounded-2xl transition-all group">
+              <div className="premium-toggle-row flex items-center justify-between transition-all group">
                 <div className="flex flex-col">
                   <span className="settings-modal-toggle-title font-bold text-sm transition-all duration-300">Line-by-Line Reading</span>
                   <span className="settings-modal-toggle-desc text-xs">Auto-split Hindi/Sanskrit verses</span>
                 </div>
                 <button
                   onClick={() => updateSetting('lineByLine', !settings.lineByLine)}
-                  className={`w-14 h-8 rounded-full transition-all relative ${
-                    settings.lineByLine ? 'sacred-toggle-active' : 'settings-modal-toggle-off'
-                  }`}
+                  className={`premium-toggle-switch ${settings.lineByLine ? 'active' : ''}`}
+                  aria-label="Toggle line-by-line reading"
                 >
-                  <div className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-all shadow-md ${
-                    settings.lineByLine ? 'left-7' : 'left-1'
-                  }`}></div>
+                  <div className="premium-toggle-knob"></div>
                 </button>
               </div>
 
-              <div className="settings-modal-toggle-row flex items-center justify-between p-4 rounded-2xl transition-all group">
+              <div className="premium-toggle-row flex items-center justify-between transition-all group">
                 <div className="flex flex-col">
                   <span className="settings-modal-toggle-title font-bold text-sm transition-all duration-300">Fluid Motion</span>
                   <span className="settings-modal-toggle-desc text-xs">Premium smooth scrolling experience</span>
                 </div>
                 <button
                   onClick={() => updateSetting('smoothScroll', !settings.smoothScroll)}
-                  className={`w-14 h-8 rounded-full transition-all relative ${
-                    settings.smoothScroll ? 'sacred-toggle-active' : 'settings-modal-toggle-off'
-                  }`}
+                  className={`premium-toggle-switch ${settings.smoothScroll ? 'active' : ''}`}
+                  aria-label="Toggle fluid motion"
                 >
-                  <div className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-all shadow-md ${
-                    settings.smoothScroll ? 'left-7' : 'left-1'
-                  }`}></div>
+                  <div className="premium-toggle-knob"></div>
                 </button>
               </div>
             </div>
@@ -276,7 +267,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
         <div className="settings-modal-footer p-8 pt-4">
           <button 
             onClick={onClose}
-            className="w-full btn-sacred-gold py-4 font-bold text-sm tracking-widest uppercase shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"
+            className="w-full h-14 shimmer-btn font-bold text-sm tracking-widest uppercase shadow-2xl transition-all cursor-pointer"
           >
             Save Preferences
           </button>
