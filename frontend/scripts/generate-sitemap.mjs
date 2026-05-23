@@ -119,8 +119,18 @@ async function generateSitemap() {
     }
   }
 
-  // 3. Extract unique categories dynamically
-  const uniqueCategories = [...new Set(allContentItems.map(item => item.category).filter(Boolean))];
+  // 3. Extract unique categories dynamically case-insensitively and handle spaces/hyphens
+  const categoriesSet = new Set();
+  const uniqueCategories = [];
+  allContentItems.forEach(item => {
+    if (item.category) {
+      const formatted = item.category.toString().toLowerCase().trim().replace(/\s+/g, '-');
+      if (formatted && !categoriesSet.has(formatted)) {
+        categoriesSet.add(formatted);
+        uniqueCategories.push(formatted);
+      }
+    }
+  });
   console.log(`📂 Found ${uniqueCategories.length} unique categories.`);
 
   // 4. Sanitize slug for XML-safe URLs
@@ -143,11 +153,15 @@ async function generateSitemap() {
       const rawSlug = item.slug || generateSlug(item.title);
       const slug = sanitizeSlug(rawSlug);
       if (!slug) return null;
+      
+      const normalizedSlug = slug.toLowerCase();
       // Skip duplicates
-      if (seenSlugs.has(slug)) return null;
-      seenSlugs.add(slug);
-      // Use slug directly — avoid encodeURIComponent which creates redirect chains
-      return `  <url><loc>${DOMAIN}/content/${slug}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`;
+      if (seenSlugs.has(normalizedSlug)) return null;
+      seenSlugs.add(normalizedSlug);
+      
+      // Percent-encode non-ASCII slugs using encodeURIComponent(decodeURIComponent(slug))
+      const encodedSlug = encodeURIComponent(decodeURIComponent(slug));
+      return `  <url><loc>${DOMAIN}/content/${encodedSlug}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`;
     })
     .filter(Boolean)
     .join('\n');
@@ -158,7 +172,7 @@ async function generateSitemap() {
   ).join('\n');
 
   const catUrls = uniqueCategories.map(cat =>
-    `  <url><loc>${DOMAIN}/category/${cat.toLowerCase().replace(/\s+/g, '-')}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
+    `  <url><loc>${DOMAIN}/category/${cat}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
   ).join('\n');
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

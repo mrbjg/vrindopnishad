@@ -101,8 +101,18 @@ export default async function handler(req, res) {
     console.error('Supabase fetch failed:', e.message);
   }
 
-  // Extract unique categories
-  const categories = [...new Set(contentItems.map(i => i.category).filter(Boolean))];
+  // Extract unique categories case-insensitively and handle spaces/hyphens
+  const categoriesSet = new Set();
+  const categories = [];
+  contentItems.forEach(i => {
+    if (i.category) {
+      const formatted = i.category.toString().toLowerCase().trim().replace(/\s+/g, '-');
+      if (formatted && !categoriesSet.has(formatted)) {
+        categoriesSet.add(formatted);
+        categories.push(formatted);
+      }
+    }
+  });
 
   // Build XML — each <url> block must be on ONE line to prevent whitespace corruption
   const staticUrls = SEO_PAGES.map(p =>
@@ -110,7 +120,7 @@ export default async function handler(req, res) {
   ).join('\n');
 
   const catUrls = categories.map(cat =>
-    `  <url><loc>${DOMAIN}/category/${cat.toLowerCase()}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
+    `  <url><loc>${DOMAIN}/category/${cat}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
   ).join('\n');
 
   const seenSlugs = new Set();
@@ -119,12 +129,15 @@ export default async function handler(req, res) {
       const rawSlug = item.slug || generateSlug(item.title);
       const slug = sanitizeSlug(rawSlug);
       if (!slug) return null; // Skip items with empty slugs
+      
+      const normalizedSlug = slug.toLowerCase();
       // Skip duplicates
-      if (seenSlugs.has(slug)) return null;
-      seenSlugs.add(slug);
-      // Use slug directly — avoid double-encoding which causes redirect errors
-      // encodeURIComponent creates %XX URLs that 308-redirect to decoded versions
-      const url = escapeXmlUrl(`${DOMAIN}/content/${slug}`);
+      if (seenSlugs.has(normalizedSlug)) return null;
+      seenSlugs.add(normalizedSlug);
+      
+      // Percent-encode non-ASCII slugs using encodeURIComponent(decodeURIComponent(slug))
+      const encodedSlug = encodeURIComponent(decodeURIComponent(slug));
+      const url = escapeXmlUrl(`${DOMAIN}/content/${encodedSlug}`);
       return `  <url><loc>${url}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`;
     })
     .filter(Boolean)

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ApiContext } from '../App';
 import { Scroll, Music, FileText, BookOpen, Music as MusicIcon, Image as ImageIcon, Video, ArrowLeft, ArrowRight, MapPin, Users, Book } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 
 const CategoryPage = () => {
   const { category } = useParams();
@@ -163,6 +164,11 @@ const CategoryPage = () => {
 
   return (
     <div className="animate-fade-in">
+      <Helmet>
+        <title>{`${info.name} | Vrindopnishad Sant-Vaani`}</title>
+        <meta name="description" content={`Read and listen to sacred ${info.name.toLowerCase()} in our spiritual library. ${info.description || ''}`} />
+        <link rel="canonical" href={`https://path.vrindopnishad.in/category/${(category || "").toLowerCase()}`} />
+      </Helmet>
       <div className="mb-12">
         <Link to="/" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-8 transition-colors">
           <ArrowLeft size={18} />

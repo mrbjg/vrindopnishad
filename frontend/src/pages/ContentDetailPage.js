@@ -11,6 +11,7 @@ import { useSettings } from '../contexts/SettingsContext';
 import FontWheel from '../components/FontWheel';
 import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { Helmet } from 'react-helmet-async';
+import { transliterate } from '../utils/transliterate';
 
 const ContentDetailPage = () => {
   const { id } = useParams();
@@ -148,20 +149,31 @@ const ContentDetailPage = () => {
     );
   }
 
-  if (!content) {
-    return (
-      <div className="max-w-4xl mx-auto py-12">
-        {/* Placeholder to keep layout clean during fast loads */}
-      </div>
-    );
-  }
+  const titleDeva = content.title || "";
+  const titleHing = transliterate(titleDeva);
+  const displayTitle = titleHing && titleHing !== titleDeva ? `${titleDeva} (${titleHing})` : titleDeva;
+
+  const authorDeva = content.author || "";
+  const authorHing = transliterate(authorDeva);
+  const displayAuthor = authorHing && authorHing !== authorDeva ? `${authorDeva} (${authorHing})` : authorDeva;
+
+  const transliteratedSanskrit = content.sanskrit_text ? transliterate(content.sanskrit_text) : "";
+  const transliteratedHindi = content.hindi_text ? transliterate(content.hindi_text) : "";
+
+  const fullArticleBody = [
+    content.sanskrit_text,
+    transliteratedSanskrit,
+    content.hindi_text,
+    transliteratedHindi,
+    content.english_translation
+  ].filter(Boolean).join(" \n");
 
   return (
     <div className="animate-fade-in max-w-4xl mx-auto">
       <Helmet>
-        <title>{`${content.title} — ${content.category} | ${content.author || 'Sant Vaani'} | Vrindopnishad`}</title>
-        <meta name="description" content={`${content.title} — ${content.category} by ${content.author || 'Sant Vaani'}. ${content.sanskrit_text ? content.sanskrit_text.substring(0, 155) + '...' : content.hindi_text ? content.hindi_text.substring(0, 155) + '...' : content.description?.substring(0, 155) + '...'}`} />
-        <meta name="keywords" content={`${content.title}, ${content.author || 'Sant Vaani'}, ${content.category}, Sanskrit Shloka, Hindi meaning, English translation, Vrindopnishad, Sant Vaani, sacred verse, devotional, spiritual wisdom`} />
+        <title>{`${displayTitle} — ${content.category} | ${displayAuthor || 'Sant Vaani'} | Vrindopnishad`}</title>
+        <meta name="description" content={`${displayTitle} — ${content.category} by ${displayAuthor || 'Sant Vaani'}. ${transliteratedHindi ? transliteratedHindi.substring(0, 150) + '...' : content.sanskrit_text ? content.sanskrit_text.substring(0, 150) + '...' : content.description?.substring(0, 150) + '...'}`} />
+        <meta name="keywords" content={`${content.title}, ${titleHing}, ${content.author || 'Sant Vaani'}, ${authorHing}, ${content.category}, Sanskrit Shloka, Hindi meaning, English translation, Vrindopnishad, Sant Vaani, sacred verse, devotional, spiritual wisdom, Hinglish transliteration, roman hindi lyrics, ${titleHing} bhajan lyrics`} />
 
         {/* Canonical Link */}
         <link rel="canonical" href={`https://path.vrindopnishad.in/content/${content.slug || id}`} />
@@ -169,14 +181,14 @@ const ContentDetailPage = () => {
         {/* Open Graph / social media tags */}
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Sant-Vaani | Sacred Digital Sanctuary" />
-        <meta property="og:title" content={`${content.title} - ${content.category}`} />
-        <meta property="og:description" content={content.description?.substring(0, 160) || `Experience the divine ${content.category}: ${content.title} in the Sant-Vaani Sanctuary.`} />
+        <meta property="og:title" content={`${displayTitle} - ${content.category}`} />
+        <meta property="og:description" content={content.description?.substring(0, 160) || `Experience the divine ${content.category}: ${displayTitle} in the Sant-Vaani Sanctuary.`} />
         {content.image_url && <meta property="og:image" content={content.image_url} />}
         <meta property="article:section" content={content.category} />
         {content.author && <meta property="article:author" content={content.author} />}
 
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={content.title} />
+        <meta name="twitter:title" content={displayTitle} />
         <meta name="twitter:description" content={content.description?.substring(0, 160)} />
 
         {/* JSON-LD Structured Data for Search Ranking */}
@@ -200,7 +212,7 @@ const ContentDetailPage = () => {
               {
                 "@type": "ListItem",
                 "position": 3,
-                "name": content.title || "Verse",
+                "name": displayTitle,
                 "item": `https://path.vrindopnishad.in/content/${content.slug || id}`
               }
             ]
@@ -211,16 +223,17 @@ const ContentDetailPage = () => {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "ScholarlyArticle",
-            "headline": content.title || "Sacred Verse",
+            "headline": displayTitle,
+            "alternativeHeadline": titleHing !== titleDeva ? titleHing : undefined,
             "description": content.description || `A sacred ${content.category || 'text'} from the Vrindopnishad Sant-Vaani repository.`,
             "author": {
               "@type": "Person",
-              "name": content.author || "Sant Vaani"
+              "name": displayAuthor
             },
             "genre": content.category || "Sacred Literature",
             "inLanguage": ["hi", "sa", "en"],
-            "keywords": `${content.title || ''}, ${content.category || ''}, ${content.author || ''}, Spiritual, Sanskrit, Divine Verses, Vrindopnishad`,
-            "articleBody": `${content.sanskrit_text ? content.sanskrit_text + ' ' : ''}${content.hindi_text ? content.hindi_text + ' ' : ''}${content.english_translation || ''}`,
+            "keywords": `${content.title || ''}, ${titleHing}, ${content.category || ''}, ${content.author || ''}, ${authorHing}, Spiritual, Sanskrit, Divine Verses, Vrindopnishad`,
+            "articleBody": fullArticleBody,
             "datePublished": content.created_at || new Date().toISOString(),
             "dateModified": content.updated_at || content.created_at || new Date().toISOString(),
             "publisher": {
@@ -339,6 +352,28 @@ const ContentDetailPage = () => {
                             settings.fontSize === 4 ? '3.8rem' : '5rem'
                 }}>
                   {formatVerseText(content.hindi_text)}
+                </div>
+              </div>
+            )}
+
+            {(transliteratedSanskrit || transliteratedHindi) && (
+              <div className="py-8 sm:py-12 border-b border-white/5">
+                <h3 className="content-section-heading content-section-heading--hinglish text-[10px] sm:text-xs uppercase tracking-[0.4em] mb-6 sm:mb-8 flex items-center justify-center sm:justify-start gap-4 py-2">
+                  <span className="content-section-line content-section-line--hinglish h-[1px] w-12 hidden sm:block"></span>
+                  Hinglish Transliteration (रोमन पाठ)
+                  <span className="content-section-line content-section-line--hinglish h-[1px] w-12 hidden sm:block"></span>
+                </h3>
+                <div className={`content-verse-text font-inter tracking-wide leading-relaxed text-white/80 ${
+                  settings.fontStyle === 'Sans' ? 'font-sans' :
+                  settings.fontStyle === 'Inter' ? 'font-inter' :
+                  'font-headings'
+                }`} style={{
+                  fontSize: settings.fontSize === 1 ? '1.1rem' :
+                            settings.fontSize === 2 ? '1.6rem' :
+                            settings.fontSize === 3 ? '2.2rem' :
+                            settings.fontSize === 4 ? '3.4rem' : '4.5rem'
+                }}>
+                  {transliteratedSanskrit ? formatVerseText(transliteratedSanskrit) : formatVerseText(transliteratedHindi)}
                 </div>
               </div>
             )}

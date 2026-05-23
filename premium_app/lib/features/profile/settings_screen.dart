@@ -1454,7 +1454,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         final double screenWidth = MediaQuery.of(context).size.width;
                         final int crossAxisCount = screenWidth < 480 ? 1 : 2;
                         final double childAspectRatio = screenWidth < 480 
-                            ? (screenWidth - 48) / 84
+                            ? (screenWidth - 48) / 92
                             : 1.3;
 
                         return GridView.builder(
@@ -1501,7 +1501,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                       : null,
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(14),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                                   child: crossAxisCount == 1
                                       ? Row(
                                           children: [
