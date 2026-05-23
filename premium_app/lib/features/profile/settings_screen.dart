@@ -1449,109 +1449,177 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                   const SizedBox(height: 20),
                   Expanded(
-                    child: GridView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 12,
-                        childAspectRatio: 1.3,
-                      ),
-                      itemCount: AppMoodTheme.values.length,
-                      itemBuilder: (context, index) {
-                        final mood = AppMoodTheme.values[index];
-                        final palette = AppMoodThemes.getPalette(mood);
-                        final isSelected = mood == selected;
+                    child: Builder(
+                      builder: (context) {
+                        final double screenWidth = MediaQuery.of(context).size.width;
+                        final int crossAxisCount = screenWidth < 480 ? 1 : 2;
+                        final double childAspectRatio = screenWidth < 480 
+                            ? (screenWidth - 48) / 84
+                            : 1.3;
 
-                        return GestureDetector(
-                          onTap: () {
-                            HapticFeedback.mediumImpact();
-                            ref.read(moodThemeProvider.notifier).setMood(mood);
-                            ref.read(colorThemeProvider.notifier).setTheme(palette.defaultAccent);
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 250),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? PremiumTokens.activeAccent.withValues(alpha: 0.1)
-                                  : PremiumTokens.borderSubtle,
-                              borderRadius: BorderRadius.circular(18),
-                              border: Border.all(
-                                color: isSelected
-                                    ? PremiumTokens.activeAccent.withValues(alpha: 0.5)
-                                    : Colors.transparent,
-                                width: 2,
-                              ),
-                              boxShadow: isSelected
-                                  ? [
-                                      BoxShadow(
-                                        color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
-                                        blurRadius: 20,
-                                        spreadRadius: -4,
-                                      ),
-                                    ]
-                                  : null,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(14),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(palette.emoji, style: const TextStyle(fontSize: 22)),
-                                      if (isSelected)
-                                        Container(
-                                          padding: const EdgeInsets.all(4),
-                                          decoration: BoxDecoration(
-                                            color: PremiumTokens.activeAccent,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: const Icon(
-                                            Iconsax.tick_circle,
-                                            color: Colors.white,
-                                            size: 12,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                  const Spacer(),
-                                  Text(
-                                    palette.name,
-                                    style: GoogleFonts.outfit(
-                                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                                      fontSize: 14,
-                                      color: isSelected
-                                          ? PremiumTokens.activeAccent
-                                          : PremiumTokens.textPrimary,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    palette.nameHi,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 11,
-                                      color: PremiumTokens.textMuted,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  // Gradient preview
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(4),
-                                    child: SizedBox(
-                                      height: 6,
-                                      child: Row(
-                                        children: palette.backgroundGradient.map((c) {
-                                          return Expanded(child: Container(color: c));
-                                        }).toList(),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                        return GridView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: crossAxisCount,
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
+                            childAspectRatio: childAspectRatio,
                           ),
+                          itemCount: AppMoodTheme.values.length,
+                          itemBuilder: (context, index) {
+                            final mood = AppMoodTheme.values[index];
+                            final palette = AppMoodThemes.getPalette(mood);
+                            final isSelected = mood == selected;
+
+                            return GestureDetector(
+                              onTap: () {
+                                HapticFeedback.mediumImpact();
+                                ref.read(moodThemeProvider.notifier).setMood(mood);
+                                ref.read(colorThemeProvider.notifier).setTheme(palette.defaultAccent);
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 250),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? PremiumTokens.activeAccent.withValues(alpha: 0.1)
+                                      : PremiumTokens.borderSubtle,
+                                  borderRadius: BorderRadius.circular(18),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? PremiumTokens.activeAccent.withValues(alpha: 0.5)
+                                        : Colors.transparent,
+                                    width: 2,
+                                  ),
+                                  boxShadow: isSelected
+                                      ? [
+                                          BoxShadow(
+                                            color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
+                                            blurRadius: 20,
+                                            spreadRadius: -4,
+                                          ),
+                                        ]
+                                      : null,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(14),
+                                  child: crossAxisCount == 1
+                                      ? Row(
+                                          children: [
+                                            Text(palette.emoji, style: const TextStyle(fontSize: 24)),
+                                            const SizedBox(width: 16),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    palette.name,
+                                                    style: GoogleFonts.outfit(
+                                                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                                      fontSize: 15,
+                                                      color: isSelected
+                                                          ? PremiumTokens.activeAccent
+                                                          : PremiumTokens.textPrimary,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 1),
+                                                  Text(
+                                                    palette.nameHi,
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 12,
+                                                      color: PremiumTokens.textMuted,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 6),
+                                                  ClipRRect(
+                                                    borderRadius: BorderRadius.circular(3),
+                                                    child: SizedBox(
+                                                      height: 4,
+                                                      child: Row(
+                                                        children: palette.backgroundGradient.map((c) {
+                                                          return Expanded(child: Container(color: c));
+                                                        }).toList(),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(width: 16),
+                                            if (isSelected)
+                                              Container(
+                                                padding: const EdgeInsets.all(6),
+                                                decoration: BoxDecoration(
+                                                  color: PremiumTokens.activeAccent,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: const Icon(
+                                                  Iconsax.tick_circle,
+                                                  color: Colors.white,
+                                                  size: 14,
+                                                ),
+                                              ),
+                                          ],
+                                        )
+                                      : Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text(palette.emoji, style: const TextStyle(fontSize: 22)),
+                                                if (isSelected)
+                                                  Container(
+                                                    padding: const EdgeInsets.all(4),
+                                                    decoration: BoxDecoration(
+                                                      color: PremiumTokens.activeAccent,
+                                                      shape: BoxShape.circle,
+                                                    ),
+                                                    child: const Icon(
+                                                      Iconsax.tick_circle,
+                                                      color: Colors.white,
+                                                      size: 12,
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                            const Spacer(),
+                                            Text(
+                                              palette.name,
+                                              style: GoogleFonts.outfit(
+                                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                                fontSize: 14,
+                                                color: isSelected
+                                                    ? PremiumTokens.activeAccent
+                                                    : PremiumTokens.textPrimary,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              palette.nameHi,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 11,
+                                                color: PremiumTokens.textMuted,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            ClipRRect(
+                                              borderRadius: BorderRadius.circular(4),
+                                              child: SizedBox(
+                                                height: 6,
+                                                child: Row(
+                                                  children: palette.backgroundGradient.map((c) {
+                                                    return Expanded(child: Container(color: c));
+                                                  }).toList(),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                ),
+                              ),
+                            );
+                          },
                         );
                       },
                     ),
