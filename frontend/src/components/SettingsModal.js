@@ -63,7 +63,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
         className="settings-modal-card-v2 w-full max-w-md relative z-10 animate-scale-in flex flex-col max-h-[90vh] shadow-2xl p-0 overflow-hidden"
       >
         {/* Fixed Header */}
-        <div className="settings-modal-header flex justify-between items-center p-8 pb-4">
+        <div className="settings-modal-header flex justify-between items-center p-6 sm:p-8 pb-3 sm:pb-4">
           <div className="flex items-center gap-3">
             <div className="settings-modal-header-badge">
               <Palette size={20} />
@@ -79,7 +79,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-8 pt-6 space-y-10 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-6 sm:p-8 pt-4 sm:pt-6 space-y-8 sm:space-y-10 custom-scrollbar">
           {/* Personal Profile Section */}
           {user && (
             <div className="space-y-4">
@@ -134,7 +134,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
               {/* Base Themes */}
               <div>
                 <span className="settings-modal-subsection text-[10px] uppercase tracking-widest block mb-2 font-bold">Core Modes</span>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {THEMES.filter(t => t.group === 'base').map((t) => (
                     <button
                       key={t.id}
@@ -161,7 +161,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
               {/* Moods */}
               <div>
                 <span className="settings-modal-subsection text-[10px] uppercase tracking-widest block mb-2 font-bold">Celestial Moods</span>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {THEMES.filter(t => t.group === 'mood').map((t) => (
                     <button
                       key={t.id}
@@ -266,7 +266,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
         </div>
 
         {/* Fixed Footer */}
-        <div className="settings-modal-footer p-8 pt-4">
+        <div className="settings-modal-footer p-6 sm:p-8 pt-3 sm:pt-4">
           <button 
             onClick={onClose}
             className="w-full h-14 shimmer-btn font-bold text-sm tracking-widest uppercase shadow-2xl transition-all cursor-pointer"

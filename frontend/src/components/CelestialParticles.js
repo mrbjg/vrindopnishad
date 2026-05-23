@@ -66,13 +66,7 @@ const CelestialParticles = () => {
       particleCount = isMobile ? 100 : 220;
     }
 
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
 
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
 
     // Particle constructor helper
     const createParticle = (initY = false) => {
@@ -206,6 +200,35 @@ const CelestialParticles = () => {
 
       return p;
     };
+
+    let lastWidth = window.innerWidth;
+    let lastHeight = window.innerHeight;
+
+    const resizeCanvas = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      const widthChanged = Math.abs(width - lastWidth) > 8;
+      // Height changes <= 120px are typical of browser chrome (address bar) showing/hiding on mobile.
+      const heightChanged = Math.abs(height - lastHeight) > 120;
+
+      if (widthChanged || heightChanged) {
+        canvas.width = width + 8;
+        canvas.height = height + 8;
+        lastWidth = width;
+        lastHeight = height;
+
+        particles.length = 0;
+        for (let i = 0; i < particleCount; i++) {
+          particles.push(createParticle(true));
+        }
+      }
+    };
+
+    // Initial canvas dimensions setup
+    canvas.width = window.innerWidth + 8;
+    canvas.height = window.innerHeight + 8;
+    window.addEventListener('resize', resizeCanvas);
 
     // Initialize particles across the canvas
     for (let i = 0; i < particleCount; i++) {
@@ -937,10 +960,15 @@ const CelestialParticles = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-[1]"
+      className="fixed pointer-events-none z-[1]"
       style={{
+        top: '-4px',
+        left: '-4px',
+        right: '-4px',
+        bottom: '-4px',
         mixBlendMode: isLight ? 'normal' : 'screen',
         opacity: isLight ? 0.75 : 0.85,
+        display: 'block',
       }}
     />
   );
