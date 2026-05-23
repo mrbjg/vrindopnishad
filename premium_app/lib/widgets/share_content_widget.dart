@@ -10,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 import '../core/design_system.dart';
 import '../core/mood_theme_provider.dart';
 import 'package:iconsax/iconsax.dart';
+
 /// Widget and utilities for sharing content as beautiful quote images
 class ShareContentWidget extends StatelessWidget {
   final SacredContent content;
@@ -23,6 +24,9 @@ class ShareContentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Sync the active theme with current BuildContext to make colors adaptive
+    PremiumTokens.of(context);
+
     // Dynamic size scaling based on content length to prevent image clipping/overflows
     final int totalLength = content.sanskritText.length + content.translation.length;
     double sanskritFontSize = 22;
@@ -51,7 +55,7 @@ class ShareContentWidget extends StatelessWidget {
       controller: screenshotController,
       child: Container(
         width: 400,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -79,103 +83,127 @@ class ShareContentWidget extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Scrollable text content area to dynamically manage overflows
-            Flexible(
-              child: SingleChildScrollView(
-                physics: const NeverScrollableScrollPhysics(), // Pure static rendering
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Top decoration
-                    Container(
-                      width: 50,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: PremiumTokens.activeAccent,
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                    ),
-                    SizedBox(height: verticalSpacing),
+            // Top decoration
+            Container(
+              width: 50,
+              height: 4,
+              decoration: BoxDecoration(
+                color: PremiumTokens.activeAccent,
+                borderRadius: BorderRadius.circular(100),
+              ),
+            ),
+            SizedBox(height: verticalSpacing),
 
-                    // Category badge
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: PremiumTokens.activeAccent.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(
-                          color: PremiumTokens.activeAccent.withValues(alpha: 0.25),
-                          width: 1,
-                        ),
-                      ),
-                      child: Text(
-                        content.category.toUpperCase(),
-                        style: GoogleFonts.outfit(
-                          color: PremiumTokens.activeAccent,
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: verticalSpacing),
-
-                    // Sanskrit Text
-                    if (content.sanskritText.isNotEmpty)
-                      Text(
-                        content.sanskritText,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.notoSansDevanagari(
-                          color: PremiumTokens.textPrimary,
-                          fontSize: sanskritFontSize,
-                          fontWeight: FontWeight.w500,
-                          height: 1.6,
-                        ),
-                      ),
-
-                    SizedBox(height: dividerSpacing),
-
-                    // Divider
-                    Container(
-                      width: 80,
-                      height: 1,
-                      color: PremiumTokens.borderSubtle,
-                    ),
-
-                    SizedBox(height: dividerSpacing),
-
-                    // Translation
-                    if (content.translation.isNotEmpty)
-                      Text(
-                        content.translation,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.inter(
-                          color: PremiumTokens.textSecondary,
-                          fontSize: translationFontSize,
-                          fontStyle: FontStyle.italic,
-                          height: 1.6,
-                        ),
-                      ),
-
-                    SizedBox(height: verticalSpacing),
-
-                    // Title
-                    Text(
-                      '— ${content.title}',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.outfit(
-                        color: PremiumTokens.activeAccent,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
+            // Category badge
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              decoration: BoxDecoration(
+                color: PremiumTokens.activeAccent.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(100),
+                border: Border.all(
+                  color: PremiumTokens.activeAccent.withValues(alpha: 0.25),
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                content.category.toUpperCase(),
+                style: GoogleFonts.outfit(
+                  color: PremiumTokens.activeAccent,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
                 ),
               ),
             ),
+            SizedBox(height: verticalSpacing),
 
-            const SizedBox(height: 16),
+            // Sanskrit Text
+            if (content.sanskritText.isNotEmpty)
+              Text(
+                content.sanskritText,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.laila(
+                  color: PremiumTokens.textPrimary,
+                  fontSize: sanskritFontSize,
+                  fontWeight: FontWeight.w600,
+                  height: 1.6,
+                ),
+              ),
+
+            SizedBox(height: dividerSpacing),
+
+            // Ornament Divider
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 50,
+                  height: 1,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        PremiumTokens.activeAccent.withValues(alpha: 0.5),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    'ॐ',
+                    style: GoogleFonts.spectral(
+                      color: PremiumTokens.activeAccent,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Container(
+                  width: 50,
+                  height: 1,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        PremiumTokens.activeAccent.withValues(alpha: 0.5),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(height: dividerSpacing),
+
+            // Translation
+            if (content.translation.isNotEmpty)
+              Text(
+                content.translation,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  color: PremiumTokens.textSecondary,
+                  fontSize: translationFontSize,
+                  fontStyle: FontStyle.italic,
+                  height: 1.6,
+                ),
+              ),
+
+            SizedBox(height: verticalSpacing),
+
+            // Title
+            Text(
+              '— ${content.title}',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.outfit(
+                color: PremiumTokens.activeAccent,
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
+            ),
+
+            const SizedBox(height: 24),
 
             // Divider
             Container(
@@ -185,102 +213,154 @@ class ShareContentWidget extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Watermark & Social Advertisement Section
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // App/Site Branding
-                Row(
-                  children: [
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        gradient: PremiumTokens.activeGradient,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'ॐ',
-                          style: GoogleFonts.spectral(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Vrindopnishad',
-                          style: GoogleFonts.outfit(
-                            color: PremiumTokens.textPrimary,
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          'Vaidik Sanskriti',
-                          style: GoogleFonts.manrope(
-                            color: PremiumTokens.textMuted,
-                            fontSize: 9,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+            // Watermark & Social Advertisement Section (Encapsulated modern card footer)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: PremiumTokens.isDark
+                    ? Colors.white.withValues(alpha: 0.03)
+                    : Colors.black.withValues(alpha: 0.02),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(
+                  color: PremiumTokens.borderSubtle,
+                  width: 1,
                 ),
-                // Modern Advertising Handles
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Iconsax.video_play5,
-                          size: 13,
-                          color: PremiumTokens.activeAccent,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // App/Site Branding
+                  Row(
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          gradient: PremiumTokens.activeGradient,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: PremiumTokens.activeAccent.withValues(alpha: 0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 5),
-                        Text(
-                          'vrindopnishad',
-                          style: GoogleFonts.manrope(
-                            color: PremiumTokens.textSecondary,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                        child: Center(
+                          child: Text(
+                            'ॐ',
+                            style: GoogleFonts.spectral(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Iconsax.instagram5,
-                          size: 13,
-                          color: PremiumTokens.activeAccent,
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          '@vrindopnishad',
-                          style: GoogleFonts.manrope(
-                            color: PremiumTokens.textSecondary,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                      ),
+                      const SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Vrindopnishad',
+                            style: GoogleFonts.outfit(
+                              color: PremiumTokens.textPrimary,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          Text(
+                            'Vaidik Sanskriti',
+                            style: GoogleFonts.manrope(
+                              color: PremiumTokens.textMuted,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  
+                  // Modern Advertising Handles
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      // YouTube Handle Pill
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: PremiumTokens.isDark
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.black.withValues(alpha: 0.03),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: PremiumTokens.borderSubtle,
+                            width: 0.5,
                           ),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Iconsax.video_play5,
+                              size: 11,
+                              color: Color(0xFFFF0000), // Brand color for YouTube
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'vrindopnishad',
+                              style: GoogleFonts.manrope(
+                                color: PremiumTokens.textSecondary,
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.2,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      // Instagram Handle Pill
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: PremiumTokens.isDark
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.black.withValues(alpha: 0.03),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: PremiumTokens.borderSubtle,
+                            width: 0.5,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Iconsax.instagram5,
+                              size: 11,
+                              color: Color(0xFFE1306C), // Brand color for Instagram
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '@vrindopnishad',
+                              style: GoogleFonts.manrope(
+                                color: PremiumTokens.textSecondary,
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.2,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -299,16 +379,20 @@ class ShareContentHelper {
     BuildContext context,
     SacredContent content,
   ) async {
+    BuildContext? dialogContext;
     try {
       // Show loading indicator
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => const Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFEDA638)),
-          ),
-        ),
+        builder: (innerContext) {
+          dialogContext = innerContext;
+          return const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFEDA638)),
+            ),
+          );
+        },
       );
 
       // Create the widget to capture
@@ -317,22 +401,20 @@ class ShareContentHelper {
         screenshotController: _screenshotController,
       );
 
-      // Capture the widget
+      // Capture the widget, passing the parent context to inherit the active theme and View tree root
       final Uint8List imageBytes = await _screenshotController
           .captureFromWidget(
             widget,
+            context: context,
             delay: const Duration(milliseconds: 100),
             pixelRatio: 3.0,
           );
 
       // Close loading indicator
-      if (context.mounted) {
-        Navigator.of(context).pop();
+      if (dialogContext != null && dialogContext!.mounted) {
+        Navigator.of(dialogContext!).pop();
+        dialogContext = null;
       }
-
-      // if (imageBytes == null) {
-      //   throw Exception('Failed to capture image');
-      // }
 
       // Share logic
       if (kIsWeb) {
@@ -357,8 +439,11 @@ class ShareContentHelper {
       }
     } catch (e) {
       // Close loading indicator if still showing
+      if (dialogContext != null && dialogContext!.mounted) {
+        Navigator.of(dialogContext!).pop();
+        dialogContext = null;
+      }
       if (context.mounted) {
-        Navigator.of(context, rootNavigator: true).pop();
         PremiumUI.showNotification(
           context, 
           'Error sharing: $e',
