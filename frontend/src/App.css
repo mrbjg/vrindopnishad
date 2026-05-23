@@ -372,12 +372,11 @@ input[type="range"]::-webkit-slider-runnable-track {
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+  box-shadow: none;
 }
 
 .btn-primary:active {
-  transform: translateY(0) scale(0.98);
+  transform: scale(0.98);
 }
 
 .btn-secondary {
@@ -387,12 +386,11 @@ input[type="range"]::-webkit-slider-runnable-track {
 }
 
 .btn-secondary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+  box-shadow: none;
 }
 
 .btn-secondary:active {
-  transform: translateY(0) scale(0.98);
+  transform: scale(0.98);
 }
 
 .btn-outline {
@@ -432,8 +430,7 @@ input[type="range"]::-webkit-slider-runnable-track {
 /* Disable hover lift on touch devices for better UX */
 @media (hover: hover) {
   .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 40px rgba(139, 37, 0, 0.15);
+    box-shadow: none;
   }
 }
 

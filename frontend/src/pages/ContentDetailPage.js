@@ -178,6 +178,8 @@ const ContentDetailPage = () => {
     ? `https://path.vrindopnishad.in/hi/content/${content.slug || id}`
     : `https://path.vrindopnishad.in/content/${content.slug || id}`;
 
+  const sizeLevel = parseInt(settings.fontSize, 10) || 3;
+
   return (
     <div className="animate-fade-in max-w-4xl mx-auto">
       <Helmet>
@@ -313,7 +315,7 @@ const ContentDetailPage = () => {
             <p 
               className="content-body-text font-light leading-relaxed mb-8 italic pl-6 break-words"
               style={{ 
-                fontSize: `${Math.max(14, settings.fontSize * 1.2)}px`,
+                fontSize: `${14 + (sizeLevel - 1) * 2}px`,
                 wordBreak: 'break-word',
                 paddingBottom: '0.1em',
                 borderLeft: '4px solid hsl(var(--foreground) / 0.1)'
@@ -337,10 +339,10 @@ const ContentDetailPage = () => {
                   settings.fontStyle === 'Inter' ? 'font-inter' :
                   'font-headings'
                 }`} style={{
-                  fontSize: settings.fontSize === 1 ? '1.5rem' :
-                            settings.fontSize === 2 ? '2.2rem' :
-                            settings.fontSize === 3 ? '3rem' :
-                            settings.fontSize === 4 ? '4.5rem' : '6rem'
+                  fontSize: sizeLevel === 1 ? '1.25rem' :
+                            sizeLevel === 2 ? '1.6rem' :
+                            sizeLevel === 3 ? '2.0rem' :
+                            sizeLevel === 4 ? '2.5rem' : '3.0rem'
                 }}>
                   {formatVerseText(content.sanskrit_text)}
                 </div>
@@ -359,10 +361,10 @@ const ContentDetailPage = () => {
                   settings.fontStyle === 'Inter' ? 'font-inter' :
                   'font-headings'
                 }`} style={{
-                  fontSize: settings.fontSize === 1 ? '1.2rem' :
-                            settings.fontSize === 2 ? '1.8rem' :
-                            settings.fontSize === 3 ? '2.5rem' :
-                            settings.fontSize === 4 ? '3.8rem' : '5rem'
+                  fontSize: sizeLevel === 1 ? '1.1rem' :
+                            sizeLevel === 2 ? '1.4rem' :
+                            sizeLevel === 3 ? '1.8rem' :
+                            sizeLevel === 4 ? '2.2rem' : '2.5rem'
                 }}>
                   {formatVerseText(content.hindi_text)}
                 </div>
@@ -381,10 +383,10 @@ const ContentDetailPage = () => {
                   settings.fontStyle === 'Inter' ? 'font-inter' :
                   'font-headings'
                 }`} style={{
-                  fontSize: settings.fontSize === 1 ? '1.1rem' :
-                            settings.fontSize === 2 ? '1.6rem' :
-                            settings.fontSize === 3 ? '2.2rem' :
-                            settings.fontSize === 4 ? '3.4rem' : '4.5rem'
+                  fontSize: sizeLevel === 1 ? '1.0rem' :
+                            sizeLevel === 2 ? '1.3rem' :
+                            sizeLevel === 3 ? '1.6rem' :
+                            sizeLevel === 4 ? '2.0rem' : '2.4rem'
                 }}>
                   {transliteratedSanskrit ? formatVerseText(transliteratedSanskrit) : formatVerseText(transliteratedHindi)}
                 </div>
@@ -395,10 +397,10 @@ const ContentDetailPage = () => {
               <div>
                 <h3 className="content-section-heading text-xs uppercase tracking-[0.3em] mb-6 font-semibold">Transliteration</h3>
                 <div className="content-body-text leading-relaxed font-inter" style={{
-                  fontSize: settings.fontSize === 1 ? '0.9rem' :
-                            settings.fontSize === 2 ? '1.1rem' :
-                            settings.fontSize === 3 ? '1.4rem' :
-                            settings.fontSize === 4 ? '1.8rem' : '2.4rem'
+                  fontSize: sizeLevel === 1 ? '0.9rem' :
+                            sizeLevel === 2 ? '1.1rem' :
+                            sizeLevel === 3 ? '1.3rem' :
+                            sizeLevel === 4 ? '1.5rem' : '1.8rem'
                 }}>
                   {content.english_text}
                 </div>
@@ -412,10 +414,10 @@ const ContentDetailPage = () => {
                   English Translation
                 </h3>
                 <div className="content-body-text leading-relaxed font-light" style={{
-                  fontSize: settings.fontSize === 1 ? '1.2rem' :
-                            settings.fontSize === 2 ? '1.8rem' :
-                            settings.fontSize === 3 ? '2.5rem' :
-                            settings.fontSize === 4 ? '3.8rem' : '5rem'
+                  fontSize: sizeLevel === 1 ? '1.1rem' :
+                            sizeLevel === 2 ? '1.4rem' :
+                            sizeLevel === 3 ? '1.8rem' :
+                            sizeLevel === 4 ? '2.2rem' : '2.5rem'
                 }}>
                   {content.english_translation}
                 </div>

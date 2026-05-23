@@ -328,12 +328,12 @@ const HomePage = () => {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
               {saints.slice(0, 6).map(sant => (
                 <div key={sant.cleanName} onClick={() => openPreview(sant, 'saint')}
-                  className="glass-card p-4 rounded-2xl border border-white/5 hover:border-amber-500/20 text-center cursor-pointer group transition-all flex flex-col items-center justify-between space-y-3">
+                  className="glass-card !p-3 rounded-2xl border border-white/5 hover:border-amber-500/20 text-center cursor-pointer group transition-all flex flex-col items-center justify-between space-y-3">
                   <div className="w-14 h-14 rounded-full bg-amber-500/5 border border-amber-500/10 group-hover:border-amber-500/40 flex items-center justify-center text-amber-500 font-bold text-lg shadow-inner group-hover:scale-105 transition-all duration-300">
                     {getInitials(isHi ? sant.name : sant.hinglishName)}
                   </div>
-                  <div className="min-w-0">
-                    <h3 className="font-bold text-xs text-white/90 group-hover:text-primary transition-colors truncate w-full leading-tight">
+                  <div className="min-w-0 w-full px-1">
+                    <h3 className="font-bold text-[11px] text-white/90 group-hover:text-primary transition-colors line-clamp-2 w-full leading-tight py-0.5 saint-card-title">
                       {isHi ? sant.name : sant.hinglishName}
                     </h3>
                     <span className="text-[9px] text-white/35 font-light block mt-0.5">{sant.verses.length} verses</span>
