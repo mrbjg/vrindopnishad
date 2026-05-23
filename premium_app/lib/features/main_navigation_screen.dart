@@ -58,6 +58,9 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
     final colorPalette = ref.watch(colorPaletteProvider);
     // Activate Dynamic Icon Service
     ref.watch(dynamicIconServiceProvider);
+    
+    // Sync system status and navigation bar overlay style
+    PremiumUI.setSacredStatus();
 
     // Screens are built fresh on each rebuild so they pick up the new theme.
     // IndexedStack keeps them alive between tab switches within the same theme.

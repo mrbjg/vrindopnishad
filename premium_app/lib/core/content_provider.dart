@@ -430,11 +430,14 @@ final sacredCategoriesProvider = Provider<List<CategoryInfo>>((ref) {
 
   // Fallback images for common categories if not found in content
   final fallbackImages = {
-    'Mantras': 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=400&q=80',
+    'Mantras': 'https://images.unsplash.com/photo-1520262454112-9fe481d36ec3?auto=format&fit=crop&w=400&q=80',
     'Shlokas': 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80',
     'Bhajans': 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?auto=format&fit=crop&w=400&q=80',
     'Satsang': 'https://images.unsplash.com/photo-1545127398-14699f92334b?auto=format&fit=crop&w=400&q=80',
     'Stories': 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=400&q=80',
+    'General': 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=400&q=80',
+    'Saint': 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80',
+    'Dham': 'https://images.unsplash.com/photo-1590050752117-238cb0612b1b?auto=format&fit=crop&w=400&q=80',
   };
 
   return categoriesMap.entries.map((e) {

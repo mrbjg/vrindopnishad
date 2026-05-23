@@ -1,10 +1,12 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../core/design_system.dart';
 import '../core/content_provider.dart';
 import '../core/providers.dart';
+import '../widgets/animated_effects.dart';
 
 class CategoryListScreen extends ConsumerStatefulWidget {
   const CategoryListScreen({super.key});
@@ -25,29 +27,21 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Sync system status and navigation bar overlay style
+    PremiumUI.setSacredStatus();
+
     final allCategories = ref.watch(sacredCategoriesProvider);
     final filteredCategories = allCategories.where((cat) {
       return cat.name.toLowerCase().contains(_searchQuery.toLowerCase());
     }).toList();
 
     return Scaffold(
-      backgroundColor: PremiumTokens.scaffoldBg,
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
           // Background Gradient
           Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    PremiumTokens.surfaceMain,
-                    PremiumTokens.scaffoldBg,
-                  ],
-                ),
-              ),
-            ),
+            child: PremiumUI.masterBackground(index: 1, context: context),
           ),
 
           CustomScrollView(
@@ -82,20 +76,57 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
                   padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: PremiumTokens.borderSubtle,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: PremiumTokens.borderMedium),
+                      color: PremiumTokens.surfaceCard.withValues(alpha: 0.6),
+                      borderRadius: BorderRadius.circular(22),
+                      border: Border.all(
+                        color: PremiumTokens.borderSubtle,
+                        width: 1.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: PremiumTokens.textPrimary.withValues(alpha: 0.03),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                    child: TextField(
-                      controller: _searchController,
-                      onChanged: (value) => setState(() => _searchQuery = value),
-                      style: PremiumTokens.sansStyle(color: PremiumTokens.textPrimary),
-                      decoration: InputDecoration(
-                        hintText: 'Search categories...',
-                        hintStyle: PremiumTokens.sansStyle(color: PremiumTokens.textHint),
-                        prefixIcon: Icon(Iconsax.search_normal, color: PremiumTokens.textHint, size: 20),
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(22),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                        child: TextField(
+                          controller: _searchController,
+                          onChanged: (value) => setState(() => _searchQuery = value),
+                          style: GoogleFonts.manrope(
+                            color: PremiumTokens.textPrimary,
+                            fontSize: 15,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Search categories...',
+                            hintStyle: GoogleFonts.manrope(
+                              color: PremiumTokens.textMuted,
+                              fontSize: 15,
+                            ),
+                            prefixIcon: Icon(
+                              Iconsax.search_normal,
+                              color: PremiumTokens.activeAccent,
+                              size: 20,
+                            ),
+                            suffixIcon: _searchController.text.isNotEmpty
+                                ? IconButton(
+                                    icon: Icon(Icons.close, color: PremiumTokens.textMuted, size: 18),
+                                    onPressed: () {
+                                      setState(() {
+                                        _searchController.clear();
+                                        _searchQuery = '';
+                                      });
+                                    },
+                                  )
+                                : null,
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -129,42 +160,52 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
   }
 
   Widget _buildCategoryCard(BuildContext context, WidgetRef ref, CategoryInfo cat) {
-    return GestureDetector(
+    return PressableScale(
       onTap: () {
-        HapticFeedback.mediumImpact();
         // Set category filter and switch to Library tab
         ref.read(libraryCategoryProvider.notifier).state = cat.name;
         ref.read(navigationIndexProvider.notifier).state = 1;
         // Pop back to main navigation (which will now show Library)
         Navigator.pop(context);
       },
-      child: PremiumUI.relicStaticCard(
-        borderRadius: 24,
-        padding: EdgeInsets.zero,
-        child: ClipRRect(
+      child: Container(
+        decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: PremiumTokens.borderSubtle,
+            width: 1.2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: PremiumTokens.textPrimary.withValues(alpha: 0.04),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(22),
           child: Stack(
             fit: StackFit.expand,
             children: [
-              // Image with parallax-like feel
+              // Premium Network Image
               PremiumUI.networkImage(
                 url: cat.imageUrl,
-                width: 200,
-                height: 250,
+                fit: BoxFit.cover,
               ),
               
-              // Gradient Overlay
+              // Gradient Overlay (blending text with dynamic background)
               DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
                     colors: [
-                      PremiumTokens.scaffoldBg.withValues(alpha: 0.87),
-                      PremiumTokens.scaffoldBg.withValues(alpha: 0.26),
+                      PremiumTokens.scaffoldBg.withValues(alpha: 0.95),
+                      PremiumTokens.scaffoldBg.withValues(alpha: 0.35),
                       Colors.transparent,
                     ],
-                    stops: const [0.0, 0.4, 1.0],
+                    stops: const [0.0, 0.45, 1.0],
                   ),
                 ),
               ),
@@ -177,28 +218,32 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      cat.name.toUpperCase(),
-                      style: PremiumTokens.sansStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 1.5,
+                      cat.name,
+                      style: GoogleFonts.outfit(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
                         color: PremiumTokens.textPrimary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
-                        color: PremiumTokens.activeAccent.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(8),
+                        color: PremiumTokens.textPrimary.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(
+                          color: PremiumTokens.textPrimary.withValues(alpha: 0.08),
+                          width: 1,
+                        ),
                       ),
                       child: Text(
-                        '${cat.count} ITEMS',
-                        style: PremiumTokens.sansStyle(
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
+                        '${cat.count} ${cat.count == 1 ? "Item" : "Items"}',
+                        style: GoogleFonts.manrope(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
                           color: PremiumTokens.textSecondary,
                         ),
                       ),

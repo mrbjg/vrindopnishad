@@ -1400,20 +1400,29 @@ class PremiumUI {
                 _buildMoon(top: 60, left: 40, size: 65),
             ] else if (mood == AppMoodTheme.rainyPeace || mood == AppMoodTheme.monsoonGreen) ...[
               // Rainy storm/monsoon cloud outlines at the top
+              // Rainy storm/monsoon cloud outlines at the top (positioned individually to prevent overflow)
               Positioned(
-                top: -40,
-                left: -20,
-                right: -20,
+                top: -50,
+                left: -60,
                 child: Opacity(
                   opacity: 0.15,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: const [
-                      Icon(Icons.cloud, size: 160, color: Colors.white),
-                      Icon(Icons.cloud, size: 210, color: Colors.white),
-                      Icon(Icons.cloud, size: 150, color: Colors.white),
-                    ],
-                  ),
+                  child: const Icon(Icons.cloud, size: 160, color: Colors.white),
+                ),
+              ),
+              Positioned(
+                top: -80,
+                left: 80,
+                child: Opacity(
+                  opacity: 0.15,
+                  child: const Icon(Icons.cloud, size: 210, color: Colors.white),
+                ),
+              ),
+              Positioned(
+                top: -40,
+                right: -50,
+                child: Opacity(
+                  opacity: 0.15,
+                  child: const Icon(Icons.cloud, size: 150, color: Colors.white),
                 ),
               ),
               if (mood == AppMoodTheme.monsoonGreen) ...[
@@ -2275,7 +2284,7 @@ class PremiumUI {
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
         statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
-        systemNavigationBarColor: isDark ? PremiumTokens.voidBlack : const Color(0xFFFFFDF5),
+        systemNavigationBarColor: PremiumTokens.scaffoldBg,
         systemNavigationBarDividerColor: Colors.transparent,
         systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
       ),

@@ -705,7 +705,7 @@ class _CompactProfileButton extends ConsumerWidget {
         HapticFeedback.lightImpact();
         Navigator.push(
           context, 
-          MaterialPageRoute(builder: (_) => const ProfileScreen())
+          MaterialPageRoute(builder: (_) => const ProfileScreen(isPushed: true))
         );
       },
       child: Container(

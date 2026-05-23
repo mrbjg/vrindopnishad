@@ -149,31 +149,36 @@ async function generateSitemap() {
   // CRITICAL: Deduplicate by slug to prevent Google from seeing duplicate URLs
   const seenSlugs = new Set();
   const contentUrls = allContentItems
-    .map(item => {
+    .flatMap(item => {
       const rawSlug = item.slug || generateSlug(item.title);
       const slug = sanitizeSlug(rawSlug);
-      if (!slug) return null;
+      if (!slug) return [];
       
       const normalizedSlug = slug.toLowerCase();
       // Skip duplicates
-      if (seenSlugs.has(normalizedSlug)) return null;
+      if (seenSlugs.has(normalizedSlug)) return [];
       seenSlugs.add(normalizedSlug);
       
       // Percent-encode non-ASCII slugs using encodeURIComponent(decodeURIComponent(slug))
       const encodedSlug = encodeURIComponent(decodeURIComponent(slug));
-      return `  <url><loc>${DOMAIN}/content/${encodedSlug}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`;
+      return [
+        `  <url><loc>${DOMAIN}/content/${encodedSlug}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`,
+        `  <url><loc>${DOMAIN}/hi/content/${encodedSlug}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`
+      ];
     })
     .filter(Boolean)
     .join('\n');
   console.log(`📊 Deduplicated: ${allContentItems.length} items → ${seenSlugs.size} unique URLs`);
 
-  const staticUrls = SEO_PAGES.map(page =>
-    `  <url><loc>${DOMAIN}${page.path}</loc><lastmod>${today}</lastmod><changefreq>${page.changefreq}</changefreq><priority>${page.priority}</priority></url>`
-  ).join('\n');
+  const staticUrls = SEO_PAGES.flatMap(page => [
+    `  <url><loc>${DOMAIN}${page.path}</loc><lastmod>${today}</lastmod><changefreq>${page.changefreq}</changefreq><priority>${page.priority}</priority></url>`,
+    `  <url><loc>${DOMAIN}/hi${page.path === '/' ? '' : page.path}</loc><lastmod>${today}</lastmod><changefreq>${page.changefreq}</changefreq><priority>${page.priority}</priority></url>`
+  ]).join('\n');
 
-  const catUrls = uniqueCategories.map(cat =>
-    `  <url><loc>${DOMAIN}/category/${cat}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
-  ).join('\n');
+  const catUrls = uniqueCategories.flatMap(cat => [
+    `  <url><loc>${DOMAIN}/category/${cat}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`,
+    `  <url><loc>${DOMAIN}/hi/category/${cat}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
+  ]).join('\n');
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

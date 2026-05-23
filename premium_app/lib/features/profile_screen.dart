@@ -19,7 +19,8 @@ import '../core/providers.dart';
 import '../core/color_theme_provider.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
-  const ProfileScreen({super.key});
+  final bool isPushed;
+  const ProfileScreen({super.key, this.isPushed = false});
 
   @override
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
@@ -38,12 +39,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     // Watch colorPaletteProvider to trigger a rebuild when custom theme changes
     ref.watch(colorPaletteProvider);
 
+    // Sync system status and navigation bar overlay style
+    PremiumUI.setSacredStatus();
+
+    final showBg = widget.isPushed || Navigator.canPop(context);
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // Background handled by MainNavigationScreen
-          
+          if (showBg)
+            Positioned.fill(
+              child: PremiumUI.masterBackground(index: 4, context: context),
+            ),
           CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
@@ -241,24 +249,44 @@ class _PremiumProfileHeader extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          // Theme Toggle
-          Align(
-            alignment: Alignment.topRight,
-            child: PremiumUI.glassCard(
-              padding: const EdgeInsets.all(4),
-              borderRadius: 100,
-              child: IconButton(
-                icon: Icon(
-                  AppTheme.isDark(context) ? Iconsax.sun_1 : Iconsax.moon,
-                  color: PremiumTokens.textPrimary,
-                  size: 20,
+          // Header Row with Back Button (if pushed) and Theme Toggle
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (Navigator.canPop(context))
+                PremiumUI.glassCard(
+                  padding: const EdgeInsets.all(4),
+                  borderRadius: 100,
+                  child: IconButton(
+                    icon: Icon(
+                      Iconsax.arrow_left,
+                      color: PremiumTokens.textPrimary,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.pop(context);
+                    },
+                  ),
+                )
+              else
+                const SizedBox.shrink(),
+              PremiumUI.glassCard(
+                padding: const EdgeInsets.all(4),
+                borderRadius: 100,
+                child: IconButton(
+                  icon: Icon(
+                    AppTheme.isDark(context) ? Iconsax.sun_1 : Iconsax.moon,
+                    color: PremiumTokens.textPrimary,
+                    size: 20,
+                  ),
+                  onPressed: () {
+                    HapticFeedback.mediumImpact();
+                    ref.read(themeProvider.notifier).toggleTheme(!AppTheme.isDark(context));
+                  },
                 ),
-                onPressed: () {
-                  HapticFeedback.mediumImpact();
-                  ref.read(themeProvider.notifier).toggleTheme(!AppTheme.isDark(context));
-                },
               ),
-            ),
+            ],
           ),
           
           const SizedBox(height: 8),

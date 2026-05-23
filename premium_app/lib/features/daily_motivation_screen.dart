@@ -19,6 +19,9 @@ class DailyMotivationScreen extends ConsumerWidget {
     final contextMotivation = ref.watch(contextualMotivationProvider);
     final levelTier = ref.watch(spiritualityLevelProvider);
 
+    // Sync system status and navigation bar overlay style
+    PremiumUI.setSacredStatus();
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(

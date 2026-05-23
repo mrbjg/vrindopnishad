@@ -190,22 +190,53 @@ function App() {
                 }>
                   <Routes>
                     <Route path="/" element={<HomePage />} />
+                    <Route path="/hi" element={<HomePage />} />
+                    
                     <Route path="/content" element={<ContentListPage />} />
+                    <Route path="/hi/content" element={<ContentListPage />} />
+                    
                     <Route path="/content/:id" element={<ContentDetailPage />} />
+                    <Route path="/hi/content/:id" element={<ContentDetailPage />} />
+                    
                     <Route path="/category/:category" element={<CategoryPage />} />
+                    <Route path="/hi/category/:category" element={<CategoryPage />} />
+                    
                     <Route path="/loader-demo" element={<LoaderDemo />} />
+                    
                     {/* SEO Content Pages */}
                     <Route path="/what-is-vrindopnishad" element={<WhatIsVrindopnishad />} />
+                    <Route path="/hi/what-is-vrindopnishad" element={<WhatIsVrindopnishad />} />
+                    
                     <Route path="/meaning" element={<MeaningPage />} />
+                    <Route path="/hi/meaning" element={<MeaningPage />} />
+                    
                     <Route path="/origin" element={<OriginPage />} />
+                    <Route path="/hi/origin" element={<OriginPage />} />
+                    
                     <Route path="/philosophy" element={<PhilosophyPage />} />
+                    <Route path="/hi/philosophy" element={<PhilosophyPage />} />
+                    
                     <Route path="/teachings" element={<TeachingsPage />} />
+                    <Route path="/hi/teachings" element={<TeachingsPage />} />
+                    
                     <Route path="/importance" element={<ImportancePage />} />
+                    <Route path="/hi/importance" element={<ImportancePage />} />
+                    
                     <Route path="/devotion" element={<DevotionalPage />} />
+                    <Route path="/hi/devotion" element={<DevotionalPage />} />
+                    
                     <Route path="/faq" element={<FAQPage />} />
+                    <Route path="/hi/faq" element={<FAQPage />} />
+                    
                     <Route path="/comparison-with-upanishads" element={<ComparisonPage />} />
+                    <Route path="/hi/comparison-with-upanishads" element={<ComparisonPage />} />
+                    
                     <Route path="/guide" element={<GuidePage />} />
+                    <Route path="/hi/guide" element={<GuidePage />} />
+                    
                     <Route path="/braj-rasik-heritage" element={<BrajRasikHeritage />} />
+                    <Route path="/hi/braj-rasik-heritage" element={<BrajRasikHeritage />} />
+                    
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/admin-old/login" element={<AdminLoginPage />} />
                     <Route

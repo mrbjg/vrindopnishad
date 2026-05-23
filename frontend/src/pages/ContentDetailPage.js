@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { ApiContext } from '../App';
 import {
   ArrowLeft,
@@ -15,6 +15,8 @@ import { transliterate } from '../utils/transliterate';
 
 const ContentDetailPage = () => {
   const { id } = useParams();
+  const location = useLocation();
+  const isHindiRoute = location.pathname.startsWith('/hi');
   const { apiService } = useContext(ApiContext);
   const { settings, updateSetting } = useSettings();
   const [content, setContent] = useState(() => apiService.getCachedData(`id_${id}`));
@@ -151,11 +153,15 @@ const ContentDetailPage = () => {
 
   const titleDeva = content.title || "";
   const titleHing = transliterate(titleDeva);
-  const displayTitle = titleHing && titleHing !== titleDeva ? `${titleDeva} (${titleHing})` : titleDeva;
+  const displayTitle = isHindiRoute
+    ? (titleHing && titleHing !== titleDeva ? `${titleDeva} (${titleHing})` : titleDeva)
+    : (titleHing && titleHing !== titleDeva ? `${titleHing} (${titleDeva})` : titleDeva);
 
   const authorDeva = content.author || "";
   const authorHing = transliterate(authorDeva);
-  const displayAuthor = authorHing && authorHing !== authorDeva ? `${authorDeva} (${authorHing})` : authorDeva;
+  const displayAuthor = isHindiRoute
+    ? (authorHing && authorHing !== authorDeva ? `${authorDeva} (${authorHing})` : authorDeva)
+    : (authorHing && authorHing !== authorDeva ? `${authorHing} (${authorDeva})` : authorDeva);
 
   const transliteratedSanskrit = content.sanskrit_text ? transliterate(content.sanskrit_text) : "";
   const transliteratedHindi = content.hindi_text ? transliterate(content.hindi_text) : "";
@@ -168,15 +174,20 @@ const ContentDetailPage = () => {
     content.english_translation
   ].filter(Boolean).join(" \n");
 
+  const canonicalUrl = isHindiRoute
+    ? `https://path.vrindopnishad.in/hi/content/${content.slug || id}`
+    : `https://path.vrindopnishad.in/content/${content.slug || id}`;
+
   return (
     <div className="animate-fade-in max-w-4xl mx-auto">
       <Helmet>
+        <html lang={isHindiRoute ? "hi" : "en"} />
         <title>{`${displayTitle} — ${content.category} | ${displayAuthor || 'Sant Vaani'} | Vrindopnishad`}</title>
-        <meta name="description" content={`${displayTitle} — ${content.category} by ${displayAuthor || 'Sant Vaani'}. ${transliteratedHindi ? transliteratedHindi.substring(0, 150) + '...' : content.sanskrit_text ? content.sanskrit_text.substring(0, 150) + '...' : content.description?.substring(0, 150) + '...'}`} />
+        <meta name="description" content={`${displayTitle} — ${content.category} by ${displayAuthor || 'Sant Vaani'}. ${isHindiRoute && content.hindi_text ? content.hindi_text.substring(0, 150) + '...' : transliteratedHindi ? transliteratedHindi.substring(0, 150) + '...' : content.sanskrit_text ? content.sanskrit_text.substring(0, 150) + '...' : content.description?.substring(0, 150) + '...'}`} />
         <meta name="keywords" content={`${content.title}, ${titleHing}, ${content.author || 'Sant Vaani'}, ${authorHing}, ${content.category}, Sanskrit Shloka, Hindi meaning, English translation, Vrindopnishad, Sant Vaani, sacred verse, devotional, spiritual wisdom, Hinglish transliteration, roman hindi lyrics, ${titleHing} bhajan lyrics`} />
 
         {/* Canonical Link */}
-        <link rel="canonical" href={`https://path.vrindopnishad.in/content/${content.slug || id}`} />
+        <link rel="canonical" href={canonicalUrl} />
 
         {/* Open Graph / social media tags */}
         <meta property="og:type" content="article" />
@@ -200,20 +211,22 @@ const ContentDetailPage = () => {
               {
                 "@type": "ListItem",
                 "position": 1,
-                "name": "Collection",
-                "item": "https://path.vrindopnishad.in/content"
+                "name": isHindiRoute ? "संग्रह" : "Collection",
+                "item": isHindiRoute ? "https://path.vrindopnishad.in/hi/content" : "https://path.vrindopnishad.in/content"
               },
               {
                 "@type": "ListItem",
                 "position": 2,
                 "name": content.category || "Category",
-                "item": `https://path.vrindopnishad.in/category/${(content.category || "").toLowerCase()}`
+                "item": isHindiRoute 
+                  ? `https://path.vrindopnishad.in/hi/category/${(content.category || "").toLowerCase()}`
+                  : `https://path.vrindopnishad.in/category/${(content.category || "").toLowerCase()}`
               },
               {
                 "@type": "ListItem",
                 "position": 3,
                 "name": displayTitle,
-                "item": `https://path.vrindopnishad.in/content/${content.slug || id}`
+                "item": canonicalUrl
               }
             ]
           })}
@@ -224,14 +237,14 @@ const ContentDetailPage = () => {
             "@context": "https://schema.org",
             "@type": "ScholarlyArticle",
             "headline": displayTitle,
-            "alternativeHeadline": titleHing !== titleDeva ? titleHing : undefined,
+            "alternativeHeadline": titleHing !== titleDeva ? (isHindiRoute ? titleHing : titleDeva) : undefined,
             "description": content.description || `A sacred ${content.category || 'text'} from the Vrindopnishad Sant-Vaani repository.`,
             "author": {
               "@type": "Person",
               "name": displayAuthor
             },
             "genre": content.category || "Sacred Literature",
-            "inLanguage": ["hi", "sa", "en"],
+            "inLanguage": isHindiRoute ? ["hi", "sa"] : ["en", "hi-Latn", "sa"],
             "keywords": `${content.title || ''}, ${titleHing}, ${content.category || ''}, ${content.author || ''}, ${authorHing}, Spiritual, Sanskrit, Divine Verses, Vrindopnishad`,
             "articleBody": fullArticleBody,
             "datePublished": content.created_at || new Date().toISOString(),

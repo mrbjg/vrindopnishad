@@ -115,30 +115,36 @@ export default async function handler(req, res) {
   });
 
   // Build XML — each <url> block must be on ONE line to prevent whitespace corruption
-  const staticUrls = SEO_PAGES.map(p =>
-    `  <url><loc>${DOMAIN}${p.path}</loc><lastmod>${today}</lastmod><changefreq>${p.changefreq}</changefreq><priority>${p.priority}</priority></url>`
-  ).join('\n');
+  const staticUrls = SEO_PAGES.flatMap(p => [
+    `  <url><loc>${DOMAIN}${p.path}</loc><lastmod>${today}</lastmod><changefreq>${p.changefreq}</changefreq><priority>${p.priority}</priority></url>`,
+    `  <url><loc>${DOMAIN}/hi${p.path === '/' ? '' : p.path}</loc><lastmod>${today}</lastmod><changefreq>${p.changefreq}</changefreq><priority>${p.priority}</priority></url>`
+  ]).join('\n');
 
-  const catUrls = categories.map(cat =>
-    `  <url><loc>${DOMAIN}/category/${cat}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
-  ).join('\n');
+  const catUrls = categories.flatMap(cat => [
+    `  <url><loc>${DOMAIN}/category/${cat}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`,
+    `  <url><loc>${DOMAIN}/hi/category/${cat}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
+  ]).join('\n');
 
   const seenSlugs = new Set();
   const contentUrls = contentItems
-    .map(item => {
+    .flatMap(item => {
       const rawSlug = item.slug || generateSlug(item.title);
       const slug = sanitizeSlug(rawSlug);
-      if (!slug) return null; // Skip items with empty slugs
+      if (!slug) return []; // Skip items with empty slugs
       
       const normalizedSlug = slug.toLowerCase();
       // Skip duplicates
-      if (seenSlugs.has(normalizedSlug)) return null;
+      if (seenSlugs.has(normalizedSlug)) return [];
       seenSlugs.add(normalizedSlug);
       
       // Percent-encode non-ASCII slugs using encodeURIComponent(decodeURIComponent(slug))
       const encodedSlug = encodeURIComponent(decodeURIComponent(slug));
-      const url = escapeXmlUrl(`${DOMAIN}/content/${encodedSlug}`);
-      return `  <url><loc>${url}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`;
+      const defaultUrl = escapeXmlUrl(`${DOMAIN}/content/${encodedSlug}`);
+      const hiUrl = escapeXmlUrl(`${DOMAIN}/hi/content/${encodedSlug}`);
+      return [
+        `  <url><loc>${defaultUrl}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`,
+        `  <url><loc>${hiUrl}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`
+      ];
     })
     .filter(Boolean)
     .join('\n');
