@@ -4,7 +4,9 @@ import { useSettings, isLightTheme } from '../contexts/SettingsContext';
 const CelestialParticles = () => {
   const canvasRef = useRef(null);
   const { settings } = useSettings();
-  const theme = settings.theme || 'light';
+  const settingsTheme = settings.theme || 'light';
+  const isAuthPage = window.location.pathname.includes('/login');
+  const theme = isAuthPage ? 'space' : settingsTheme;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -178,29 +180,29 @@ const CelestialParticles = () => {
         } else {
           const waterfallWidth = Math.min(220, w * 0.22);
           const rand = Math.random();
-          if (rand < 0.40) {
-            // Waterfall water droplet cascade
+          if (rand < 0.42) {
+            // Waterfall water droplet cascade (faster fall speed, slightly thicker droplets)
             p.extra.type = 'droplet';
             p.x = Math.random() * (waterfallWidth * 0.8) + (waterfallWidth * 0.1);
             p.y = initY ? Math.random() * h : h * 0.15; // Start from top ledge (15% height)
-            p.radius = Math.random() * 0.4 + 0.25;
-            p.vy = Math.random() * 4 + 4.5;
-            p.vx = (Math.random() * 0.2) - 0.1; // Splash outwards slightly
-            p.color = 'rgba(165, 243, 252, 0.7)';
-          } else if (rand < 0.60) {
-            // Bottom rising mist/foam
+            p.radius = Math.random() * 0.55 + 0.3;
+            p.vy = Math.random() * 6.0 + 5.5; // Rapid rush
+            p.vx = (Math.random() * 0.25) - 0.125; // Splash outwards slightly
+            p.color = 'rgba(165, 243, 252, 0.85)';
+          } else if (rand < 0.65) {
+            // Bottom rising mist/foam (much fluffier, larger radius, slow rise)
             p.extra.type = 'mist';
-            p.x = Math.random() * (waterfallWidth * 1.1);
-            p.y = initY ? (h - Math.random() * 120) : h + 10;
-            p.radius = Math.random() * (isMobile ? 1.5 : 2.5) + 0.8;
-            p.vy = -(Math.random() * 0.5 + 0.2);
-            p.vx = (Math.random() - 0.5) * 0.3;
-            p.color = 'rgba(207, 250, 254, 0.35)';
-            p.alpha = Math.random() * 0.2 + 0.1;
+            p.x = Math.random() * (waterfallWidth * 1.25);
+            p.y = initY ? (h - Math.random() * 140) : h + 10;
+            p.radius = Math.random() * 12.0 + 6.0; // Larger puff size for premium mist volume
+            p.vy = -(Math.random() * 0.55 + 0.25);
+            p.vx = (Math.random() - 0.5) * 0.4;
+            p.color = 'rgba(207, 250, 254, 0.4)';
+            p.alpha = Math.random() * 0.18 + 0.08;
           } else {
             // Tiny background star dots in the right sky
             p.extra.type = 'star';
-            p.x = (waterfallWidth * 1.2) + Math.random() * (w - waterfallWidth * 1.2);
+            p.x = (waterfallWidth * 1.25) + Math.random() * (w - waterfallWidth * 1.25);
             p.y = Math.random() * (h * 0.7);
             p.radius = Math.random() * (isMobile ? 0.45 : 0.65) + 0.15;
             p.vx = (Math.random() - 0.5) * 0.015;
@@ -502,6 +504,7 @@ const CelestialParticles = () => {
       ctx.save();
       
       const waterfallWidth = Math.min(220, cWidth * 0.22);
+      const time = Date.now() * 0.0035;
       
       // Sky/ambience background gradient on the right side
       const skyGrad = ctx.createLinearGradient(waterfallWidth, 0, cWidth, cHeight);
@@ -545,32 +548,117 @@ const CelestialParticles = () => {
       );
       ctx.stroke();
 
-      // 2. Cascade streams rushing down from the ledge
-      const time = Date.now() * 0.0035;
-      const streamCount = 6;
+      // 2. Main flowing background body of the waterfall (cylindrical fluid mass)
+      const wStart = waterfallWidth * 0.16;
+      const wEnd = waterfallWidth * 0.80;
+      const wBodyGrad = ctx.createLinearGradient(wStart, 0, wEnd, 0);
+      wBodyGrad.addColorStop(0, 'rgba(6, 182, 212, 0.05)');
+      wBodyGrad.addColorStop(0.25, 'rgba(165, 243, 252, 0.16)');
+      wBodyGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.28)');
+      wBodyGrad.addColorStop(0.75, 'rgba(165, 243, 252, 0.16)');
+      wBodyGrad.addColorStop(1, 'rgba(6, 182, 212, 0.04)');
+      
+      ctx.fillStyle = wBodyGrad;
+      ctx.beginPath();
+      // Draw organic waving borders down to cHeight
+      ctx.moveTo(wStart, cHeight * 0.15);
+      for (let y = cHeight * 0.15; y <= cHeight; y += 30) {
+        const leftSway = Math.sin(y * 0.045 - time * 7.5) * 1.8;
+        ctx.lineTo(wStart + leftSway, y);
+      }
+      for (let y = cHeight; y >= cHeight * 0.15; y -= 30) {
+        const rightSway = Math.sin(y * 0.035 - time * 8.5 + 2.0) * 1.8;
+        ctx.lineTo(wEnd + rightSway, y);
+      }
+      ctx.closePath();
+      ctx.fill();
+
+      // 3. Layered Shimmer Streams (Veins of rushing water)
+      const streamCount = 20;
       for (let i = 0; i < streamCount; i++) {
-        // Distribute starting points on the ledge
-        const startX = waterfallWidth * 0.2 + (i * (waterfallWidth * 0.11));
+        // Distribute starting points evenly across the ledge width
+        const startPct = 0.18 + (i / (streamCount - 1)) * 0.60;
+        const startX = waterfallWidth * startPct;
+        
         ctx.beginPath();
-        ctx.strokeStyle = i % 2 === 0 ? 'rgba(34, 211, 238, 0.18)' : 'rgba(255, 255, 255, 0.22)';
-        ctx.lineWidth = Math.random() * 1.5 + 1.0;
+        // Vary colors and opacities for multi-layer depth
+        if (i % 4 === 0) {
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.42)'; // Bright foaming stream
+          ctx.lineWidth = Math.random() * 2.2 + 1.2;
+        } else if (i % 3 === 0) {
+          ctx.strokeStyle = 'rgba(165, 243, 252, 0.32)'; // Cyan highlight
+          ctx.lineWidth = Math.random() * 2.8 + 1.0;
+        } else if (i % 2 === 0) {
+          ctx.strokeStyle = 'rgba(34, 211, 238, 0.22)'; // Deep cyan stream
+          ctx.lineWidth = Math.random() * 2.0 + 0.8;
+        } else {
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)'; // Translucent background strand
+          ctx.lineWidth = Math.random() * 1.2 + 0.5;
+        }
         
         ctx.moveTo(startX, cHeight * 0.15);
         
-        // Track cascade path downward - straight fall with tiny rapid micro-shiver
+        const freq = 0.06 + (i % 3) * 0.025;
+        const speed = 16.0 + (i % 4) * 2.5;
+        const amp = 0.6 + Math.random() * 0.8;
+        
         for (let y = cHeight * 0.15; y <= cHeight; y += 40) {
-          const sway = Math.sin(y * 0.08 + time * 12 + i) * 0.6;
+          const sway = Math.sin(y * freq + time * speed + i) * amp;
           ctx.lineTo(startX + sway, y);
         }
         ctx.stroke();
       }
 
-      // 3. Bottom mist/foam glow to seamlessly blend waterfall bottom
-      const mistOverlayGrad = ctx.createLinearGradient(0, cHeight - 120, waterfallWidth * 1.2, cHeight);
+      // 4. Ledge Overflow foam crest (glowing overflow)
+      const crestAlpha = 0.5 + Math.sin(time * 4.5) * 0.12;
+      const ledgeGrad = ctx.createLinearGradient(waterfallWidth * 0.15, 0, waterfallWidth * 0.85, 0);
+      ledgeGrad.addColorStop(0, 'rgba(165, 243, 252, 0)');
+      ledgeGrad.addColorStop(0.3, `rgba(255, 255, 255, ${crestAlpha * 0.75})`);
+      ledgeGrad.addColorStop(0.5, `rgba(207, 250, 254, ${crestAlpha * 0.95})`);
+      ledgeGrad.addColorStop(0.7, `rgba(255, 255, 255, ${crestAlpha * 0.75})`);
+      ledgeGrad.addColorStop(1, 'rgba(165, 243, 252, 0)');
+      
+      ctx.fillStyle = ledgeGrad;
+      ctx.beginPath();
+      ctx.ellipse(
+        waterfallWidth * 0.48,
+        cHeight * 0.15,
+        waterfallWidth * 0.34,
+        4.0 + Math.sin(time * 3.5) * 1.0,
+        0,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      // 5. Dynamic bottom waves churning foam layers
+      const waveLayers = [
+        { fill: 'rgba(207, 250, 254, 0.22)', amp: 4.0, freq: 0.045, speed: 6.0, offset: 0, height: 26 },
+        { fill: 'rgba(165, 243, 252, 0.30)', amp: 2.8, freq: 0.065, speed: -7.5, offset: Math.PI / 2, height: 18 },
+        { fill: 'rgba(255, 255, 255, 0.40)', amp: 1.8, freq: 0.085, speed: 10.0, offset: Math.PI, height: 12 }
+      ];
+      
+      waveLayers.forEach((wave) => {
+        ctx.fillStyle = wave.fill;
+        ctx.beginPath();
+        ctx.moveTo(0, cHeight);
+        for (let x = 0; x <= waterfallWidth * 1.15; x += 12) {
+          const waveSway = Math.sin(x * wave.freq + time * wave.speed + wave.offset) * wave.amp
+                         + Math.cos(x * (wave.freq * 0.35) - time * (wave.speed * 0.25)) * (wave.amp * 0.4);
+          ctx.lineTo(x, cHeight - wave.height + waveSway);
+        }
+        ctx.lineTo(waterfallWidth * 1.15, cHeight);
+        ctx.closePath();
+        ctx.fill();
+      });
+
+      // 6. Soft blending mist gradient overlay
+      const mistOverlayGrad = ctx.createLinearGradient(0, cHeight - 140, waterfallWidth * 1.25, cHeight);
       mistOverlayGrad.addColorStop(0, 'rgba(6, 182, 212, 0)');
-      mistOverlayGrad.addColorStop(1, 'rgba(6, 182, 212, 0.15)');
+      mistOverlayGrad.addColorStop(0.5, 'rgba(165, 243, 252, 0.06)');
+      mistOverlayGrad.addColorStop(1, 'rgba(255, 255, 255, 0.16)');
       ctx.fillStyle = mistOverlayGrad;
-      ctx.fillRect(0, cHeight - 120, waterfallWidth * 1.2, 120);
+      ctx.fillRect(0, cHeight - 140, waterfallWidth * 1.25, 140);
 
       ctx.restore();
     };
@@ -746,6 +834,7 @@ const CelestialParticles = () => {
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const time = Date.now() * 0.0035;
 
       // 1. Draw static backdrops based on active theme
       if (theme === 'night') {
@@ -794,10 +883,11 @@ const CelestialParticles = () => {
             p.x += p.vx;
             p.y += p.vy;
           } else if (p.extra.type === 'mist') {
-            p.x += p.vx;
+            // Mist drifts and sways gently as it floats upward
+            p.x += p.vx + Math.sin(p.y * 0.025 + time) * 0.22;
             p.y += p.vy;
             // Mist fades out faster as it climbs
-            p.alpha = Math.max(0, p.alpha - 0.002);
+            p.alpha = Math.max(0, p.alpha - 0.0025);
           } else {
             // Stars in the sky
             p.x += p.vx;
@@ -839,18 +929,21 @@ const CelestialParticles = () => {
           ctx.fill();
         } else if (theme === 'waterfall') {
           if (p.extra.type === 'droplet') {
-            // Falling water droplets drawn as tiny quick vertical streaks
+            // Falling water droplets drawn as rapid streaks (motion blur matching fall velocity)
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(165, 243, 252, ${currentAlpha * 0.7})`;
+            ctx.strokeStyle = Math.random() < 0.5 
+              ? `rgba(255, 255, 255, ${currentAlpha * 0.8})` 
+              : `rgba(165, 243, 252, ${currentAlpha * 0.75})`;
             ctx.lineWidth = p.radius;
             ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p.x + p.vx * 0.4, p.y + 3);
+            // Draw a streak from (p.x, p.y) down to look like high-speed falling water droplets
+            ctx.lineTo(p.x + p.vx * 0.6, p.y + p.vy * 1.6);
             ctx.stroke();
           } else if (p.extra.type === 'mist') {
             // Rising water mist at pool bottom
             ctx.beginPath();
             const mistGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
-            mistGrad.addColorStop(0, `rgba(207, 250, 254, ${currentAlpha * 0.4})`);
+            mistGrad.addColorStop(0, `rgba(207, 250, 254, ${currentAlpha * 0.35})`);
             mistGrad.addColorStop(1, 'rgba(207, 250, 254, 0)');
             ctx.fillStyle = mistGrad;
             ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);

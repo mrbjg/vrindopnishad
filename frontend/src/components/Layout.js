@@ -5,10 +5,10 @@ import { useTheme } from '../contexts/ThemeContext';
 import { extractRelations } from '../utils/relations';
 import { 
   Home, 
-  BookOpen, 
-  Scroll, 
-  Music, 
-  FileText, 
+  Compass, 
+  Sparkle, 
+  Waves, 
+  Feather, 
   LayoutDashboard, 
   LogOut,
   Settings,
@@ -523,20 +523,20 @@ const Layout = ({ children }) => {
             <span className="dock-tooltip-minimal">Home Sanctuary</span>
           </Link>
           <Link to="/content" className={`dock-item-minimal ${isActive('/content') ? 'active' : ''}`} title="All Content">
-            <BookOpen size={22} />
+            <Compass size={22} />
             <span className="dock-tooltip-minimal">Sanctuary Library</span>
           </Link>
           <div className="w-8 h-[1px] bg-white/10 my-1"></div>
           <Link to="/category/shloka" className={`dock-item-minimal ${isCategoryActive('shloka') ? 'active' : ''}`} title="Shlokas">
-            <Scroll size={22} />
+            <Sparkle size={22} />
             <span className="dock-tooltip-minimal">Sacred Shlokas</span>
           </Link>
           <Link to="/category/strotra" className={`dock-item-minimal ${isCategoryActive('strotra') ? 'active' : ''}`} title="Strotras">
-            <Music size={22} />
+            <Waves size={22} />
             <span className="dock-tooltip-minimal">Devotional Strotras</span>
           </Link>
           <Link to="/category/poem" className={`dock-item-minimal ${isCategoryActive('poem') ? 'active' : ''}`} title="Poems">
-            <FileText size={22} />
+            <Feather size={22} />
             <span className="dock-tooltip-minimal">Spiritual Poetry</span>
           </Link>
         </aside>
@@ -580,13 +580,13 @@ const Layout = ({ children }) => {
             <Home size={24} />
           </Link>
           <Link to="/content" className={`mobile-nav-item ${isActive('/content') ? 'active' : ''}`} title="All Content">
-            <BookOpen size={24} />
+            <Compass size={24} />
           </Link>
           <Link to="/category/shloka" className={`mobile-nav-item ${isCategoryActive('shloka') ? 'active' : ''}`} title="Shlokas">
-            <Scroll size={24} />
+            <Sparkle size={24} />
           </Link>
           <Link to="/category/strotra" className={`mobile-nav-item ${isCategoryActive('strotra') ? 'active' : ''}`} title="Strotras">
-            <Music size={24} />
+            <Waves size={24} />
           </Link>
         </div>
       )}

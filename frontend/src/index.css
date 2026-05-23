@@ -1910,15 +1910,26 @@ html.light-mode ::-webkit-scrollbar-thumb:hover {
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 .login-card {
-    background: rgba(255, 255, 255, 0.02) !important;
-    backdrop-filter: blur(32px) !important;
-    -webkit-backdrop-filter: blur(32px) !important;
-    border: 1px solid rgba(var(--primary-rgb), 0.15) !important;
+    background: rgba(15, 23, 42, 0.35) !important;
+    backdrop-filter: blur(40px) !important;
+    -webkit-backdrop-filter: blur(40px) !important;
+    border: 1px solid rgba(var(--primary-rgb), 0.22) !important;
     border-radius: 32px !important;
-    box-shadow: none !important;
+    box-shadow: 
+        0 25px 60px -15px rgba(0, 0, 0, 0.75),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.05) !important;
     position: relative;
     overflow: hidden;
     color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+html.light-mode .login-card {
+    background: rgba(255, 255, 255, 0.6) !important;
+    border-color: rgba(var(--primary-rgb), 0.25) !important;
+    box-shadow: 
+        0 20px 45px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.4) !important;
 }
 
 /* Ambient Backlighting Halo */
@@ -2027,24 +2038,16 @@ html.light-mode ::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.02) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     color: var(--text-color) !important;
-    border-radius: 16px !important;
+    border-radius: 20px !important;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 }
 .login-google-btn:hover {
-    background: rgba(255, 255, 255, 0.06) !important;
-    border-color: rgba(255, 255, 255, 0.2) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(var(--primary-rgb), 0.35) !important;
     box-shadow: 
-        0 10px 25px rgba(0, 0, 0, 0.25),
-        0 0 15px rgba(255, 255, 255, 0.05) !important;
-}
-
-.login-google-icon {
-    color: rgba(255, 255, 255, 0.45) !important;
-    transition: all 0.3s ease !important;
-}
-.login-google-btn:hover .login-google-icon {
-    color: #fff !important;
-    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+        0 15px 30px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(var(--primary-rgb), 0.15) !important;
+    transform: translateY(-2px);
 }
 
 .login-footer {
@@ -2538,24 +2541,28 @@ html.light-mode .btn-secondary {
 
 .glow-blob-1 {
     position: absolute;
+    top: -100px;
+    left: -100px;
     width: 600px;
     height: 600px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(var(--primary-rgb), 0.14) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(var(--primary-rgb), 0.16) 0%, transparent 70%);
     filter: blur(90px);
-    animation: drifting-glow-1 15s infinite ease-in-out;
+    animation: drifting-glow-1 18s infinite ease-in-out;
     pointer-events: none;
     z-index: 0;
 }
 
 .glow-blob-2 {
     position: absolute;
+    bottom: -100px;
+    right: -100px;
     width: 500px;
     height: 500px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(var(--primary-rgb), 0.1) 0%, transparent 70%);
     filter: blur(90px);
-    animation: drifting-glow-2 18s infinite ease-in-out;
+    animation: drifting-glow-2 22s infinite ease-in-out;
     pointer-events: none;
     z-index: 0;
 }
@@ -2604,17 +2611,17 @@ html.light-mode .btn-secondary {
 .premium-input-container {
     position: relative;
     width: 100%;
-    background: rgba(255, 255, 255, 0.02) !important;
-    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    background: rgba(255, 255, 255, 0.015) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 16px !important;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+    box-shadow: none !important;
 }
 
 .premium-input-container:focus-within {
-    border-color: var(--primary-color) !important;
-    background: rgba(255, 255, 255, 0.05) !important;
-    box-shadow: none !important;
+    border-color: rgba(var(--primary-rgb), 0.45) !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.12) !important;
 }
 
 .premium-input-field {
@@ -2629,7 +2636,7 @@ html.light-mode .btn-secondary {
 }
 
 .premium-input-icon {
-    color: rgba(255, 255, 255, 0.35) !important;
+    color: rgba(255, 255, 255, 0.3) !important;
     transition: all 0.3s ease !important;
 }
 
@@ -2642,14 +2649,14 @@ html.light-mode .btn-secondary {
 /* Light mode adjustments for inputs */
 html.light-mode .premium-input-container {
     background: rgba(0, 0, 0, 0.015) !important;
-    border-color: rgba(0, 0, 0, 0.08) !important;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+    border-color: rgba(0, 0, 0, 0.09) !important;
+    box-shadow: none !important;
 }
 
 html.light-mode .premium-input-container:focus-within {
-    background: rgba(255, 255, 255, 0.9) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
     border-color: var(--primary-color) !important;
-    box-shadow: none !important;
+    box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.08) !important;
 }
 
 html.light-mode .premium-input-icon {
@@ -2834,7 +2841,8 @@ html.light-mode .theme-swatch-v2 {
 }
 
 .shimmer-btn:hover {
-    box-shadow: none !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 25px -5px rgba(var(--primary-rgb), 0.5) !important;
 }
 
 .shimmer-btn:active {

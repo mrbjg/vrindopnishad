@@ -2,6 +2,7 @@ import React from 'react';
 import { 
   Moon, 
   Sun, 
+  Sparkle,
   Sparkles, 
   Orbit, 
   Compass, 
@@ -14,12 +15,14 @@ import {
   Leaf, 
   Waves,
   Droplets,
-  HelpCircle
+  HelpCircle,
+  Flower2
 } from 'lucide-react';
 
 const iconMap = {
   Moon,
   Sun,
+  Sparkle,
   Sparkles,
   Orbit,
   Compass,
@@ -31,7 +34,8 @@ const iconMap = {
   Sunset,
   Leaf,
   Waves,
-  Droplets
+  Droplets,
+  Flower2
 };
 
 const ThemeIcon = ({ name, size = 16, className = "" }) => {
