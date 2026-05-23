@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/design_system.dart';
-import '../core/theme.dart';
 import '../core/auth_provider.dart';
 import 'profile/saved_items_screen.dart';
 import 'profile/reading_history_screen.dart';
@@ -15,7 +14,6 @@ import '../widgets/sacred_logout_dialog.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/services.dart';
 import '../core/stats_provider.dart';
-import '../core/providers.dart';
 import '../core/color_theme_provider.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -249,45 +247,26 @@ class _PremiumProfileHeader extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          // Header Row with Back Button (if pushed) and Theme Toggle
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              if (Navigator.canPop(context))
-                PremiumUI.glassCard(
-                  padding: const EdgeInsets.all(4),
-                  borderRadius: 100,
-                  child: IconButton(
-                    icon: Icon(
-                      Iconsax.arrow_left,
-                      color: PremiumTokens.textPrimary,
-                      size: 20,
-                    ),
-                    onPressed: () {
-                      HapticFeedback.lightImpact();
-                      Navigator.pop(context);
-                    },
-                  ),
-                )
-              else
-                const SizedBox.shrink(),
-              PremiumUI.glassCard(
+          // Back Button (if pushed)
+          if (Navigator.canPop(context))
+            Align(
+              alignment: Alignment.topLeft,
+              child: PremiumUI.glassCard(
                 padding: const EdgeInsets.all(4),
                 borderRadius: 100,
                 child: IconButton(
                   icon: Icon(
-                    AppTheme.isDark(context) ? Iconsax.sun_1 : Iconsax.moon,
+                    Iconsax.arrow_left,
                     color: PremiumTokens.textPrimary,
                     size: 20,
                   ),
                   onPressed: () {
-                    HapticFeedback.mediumImpact();
-                    ref.read(themeProvider.notifier).toggleTheme(!AppTheme.isDark(context));
+                    HapticFeedback.lightImpact();
+                    Navigator.pop(context);
                   },
                 ),
               ),
-            ],
-          ),
+            ),
           
           const SizedBox(height: 8),
 

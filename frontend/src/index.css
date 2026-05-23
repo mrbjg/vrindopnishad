@@ -83,7 +83,8 @@ textarea {
 html {
     scroll-behavior: smooth;
     overflow-x: hidden;
-    overscroll-behavior: none;
+    overscroll-behavior-x: none;
+    overscroll-behavior-y: auto;
     background: var(--celestial-bg);
     background-color: hsl(var(--background));
     font-size: clamp(14px, 1.2vw, 18px);
@@ -99,7 +100,8 @@ body {
     min-height: 100vh;
     background: transparent;
     overflow-x: hidden;
-    overscroll-behavior: none;
+    overscroll-behavior-x: none;
+    overscroll-behavior-y: auto;
 }
 
 .text-foreground {

@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import '../core/design_system.dart';
+import '../core/mood_theme_provider.dart';
 import 'package:iconsax/iconsax.dart';
 /// Widget and utilities for sharing content as beautiful quote images
 class ShareContentWidget extends StatelessWidget {
@@ -22,134 +23,262 @@ class ShareContentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Dynamic size scaling based on content length to prevent image clipping/overflows
+    final int totalLength = content.sanskritText.length + content.translation.length;
+    double sanskritFontSize = 22;
+    double translationFontSize = 14;
+    double verticalSpacing = 24;
+    double dividerSpacing = 20;
+
+    if (totalLength > 450) {
+      sanskritFontSize = 14;
+      translationFontSize = 10;
+      verticalSpacing = 8;
+      dividerSpacing = 10;
+    } else if (totalLength > 280) {
+      sanskritFontSize = 16;
+      translationFontSize = 11;
+      verticalSpacing = 12;
+      dividerSpacing = 12;
+    } else if (totalLength > 160) {
+      sanskritFontSize = 18;
+      translationFontSize = 12;
+      verticalSpacing = 16;
+      dividerSpacing = 16;
+    }
+
     return Screenshot(
       controller: screenshotController,
       child: Container(
         width: 400,
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFF1A1A2E), Color(0xFF16213E), Color(0xFF0F0F1A)],
+            colors: PremiumTokens.isMoodActive
+                ? AppMoodThemes.getPalette(PremiumTokens.currentMood).backgroundGradient
+                : [
+                    PremiumTokens.surfaceMain,
+                    PremiumTokens.scaffoldBg,
+                  ],
           ),
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(
+            color: PremiumTokens.borderSubtle,
+            width: 1.5,
+          ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFEDA638).withValues(alpha: 0.2),
+              color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
               blurRadius: 30,
-              spreadRadius: 5,
+              spreadRadius: 2,
             ),
           ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Top decoration
-            Container(
-              width: 60,
-              height: 4,
-              decoration: BoxDecoration(
-                color: const Color(0xFFEDA638),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 24),
+            // Scrollable text content area to dynamically manage overflows
+            Flexible(
+              child: SingleChildScrollView(
+                physics: const NeverScrollableScrollPhysics(), // Pure static rendering
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Top decoration
+                    Container(
+                      width: 50,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: PremiumTokens.activeAccent,
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                    ),
+                    SizedBox(height: verticalSpacing),
 
-            // Category badge
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              decoration: BoxDecoration(
-                color: const Color(0xFFEDA638).withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                content.category.toUpperCase(),
-                style: GoogleFonts.inter(
-                  color: const Color(0xFFEDA638),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.5,
+                    // Category badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: PremiumTokens.activeAccent.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(
+                          color: PremiumTokens.activeAccent.withValues(alpha: 0.25),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        content.category.toUpperCase(),
+                        style: GoogleFonts.outfit(
+                          color: PremiumTokens.activeAccent,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: verticalSpacing),
+
+                    // Sanskrit Text
+                    if (content.sanskritText.isNotEmpty)
+                      Text(
+                        content.sanskritText,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.notoSansDevanagari(
+                          color: PremiumTokens.textPrimary,
+                          fontSize: sanskritFontSize,
+                          fontWeight: FontWeight.w500,
+                          height: 1.6,
+                        ),
+                      ),
+
+                    SizedBox(height: dividerSpacing),
+
+                    // Divider
+                    Container(
+                      width: 80,
+                      height: 1,
+                      color: PremiumTokens.borderSubtle,
+                    ),
+
+                    SizedBox(height: dividerSpacing),
+
+                    // Translation
+                    if (content.translation.isNotEmpty)
+                      Text(
+                        content.translation,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(
+                          color: PremiumTokens.textSecondary,
+                          fontSize: translationFontSize,
+                          fontStyle: FontStyle.italic,
+                          height: 1.6,
+                        ),
+                      ),
+
+                    SizedBox(height: verticalSpacing),
+
+                    // Title
+                    Text(
+                      '— ${content.title}',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.outfit(
+                        color: PremiumTokens.activeAccent,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-            const SizedBox(height: 20),
 
-            // Sanskrit Text
-            if (content.sanskritText.isNotEmpty)
-              Text(
-                content.sanskritText,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.notoSansDevanagari(
-                  color: PremiumTokens.textPrimary,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w500,
-                  height: 1.6,
-                ),
-              ),
-
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
             // Divider
             Container(
-              width: 80,
+              width: double.infinity,
               height: 1,
-              color: PremiumTokens.glassBase.withValues(alpha: 0.2),
+              color: PremiumTokens.borderSubtle,
             ),
+            const SizedBox(height: 16),
 
-            const SizedBox(height: 20),
-
-            // Translation
-            if (content.translation.isNotEmpty)
-              Text(
-                content.translation,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
-                  color: PremiumTokens.textPrimary.withValues(alpha: 0.75),
-                  fontSize: 14,
-                  fontStyle: FontStyle.italic,
-                  height: 1.6,
-                ),
-              ),
-
-            const SizedBox(height: 24),
-
-            // Title
-            Text(
-              '— ${content.title}',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                color: const Color(0xFFEDA638),
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            // Watermark
+            // Watermark & Social Advertisement Section
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  width: 28,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFEDA638),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Center(
-                    child: PremiumUI.logo(height: 16, color: PremiumTokens.voidPure),
-                  ),
+                // App/Site Branding
+                Row(
+                  children: [
+                    Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        gradient: PremiumTokens.activeGradient,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'ॐ',
+                          style: GoogleFonts.spectral(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Vrindopnishad',
+                          style: GoogleFonts.outfit(
+                            color: PremiumTokens.textPrimary,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Vaidik Sanskriti',
+                          style: GoogleFonts.manrope(
+                            color: PremiumTokens.textMuted,
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 10),
-                Text(
-                  'Vrindopnishad',
-                  style: GoogleFonts.inter(
-                    color: PremiumTokens.textPrimary.withValues(alpha: 0.6),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
+                // Modern Advertising Handles
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Iconsax.video_play5,
+                          size: 13,
+                          color: PremiumTokens.activeAccent,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          'vrindopnishad',
+                          style: GoogleFonts.manrope(
+                            color: PremiumTokens.textSecondary,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Iconsax.instagram5,
+                          size: 13,
+                          color: PremiumTokens.activeAccent,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          '@vrindopnishad',
+                          style: GoogleFonts.manrope(
+                            color: PremiumTokens.textSecondary,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ],
             ),

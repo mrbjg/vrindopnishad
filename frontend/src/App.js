@@ -84,10 +84,15 @@ function App() {
 
   // Dedicated useEffect for Smooth Scrolling (Lenis)
   useEffect(() => {
-    if (!settings.smoothScroll) {
-      // Restore native scrolling immediately if disabled
-      document.documentElement.style.overflow = 'auto';
-      document.body.style.overflow = 'auto';
+    // Detect mobile touch devices or small viewports
+    const isMobile = window.matchMedia('(max-width: 1023px)').matches || 
+                     ('ontouchstart' in window) || 
+                     (navigator.maxTouchPoints > 0);
+
+    if (!settings.smoothScroll || isMobile) {
+      // Restore native scrolling immediately by clearing inline styles
+      document.documentElement.style.removeProperty('overflow');
+      document.body.style.removeProperty('overflow');
       document.documentElement.classList.remove('lenis');
       return;
     }
@@ -100,8 +105,7 @@ function App() {
       gestureOrientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 1,
-      smoothTouch: true, // Enabled for mobile fluidity
-      touchMultiplier: 1.5,
+      smoothTouch: false, // Disable touch handling on mobile to prevent conflicts
       infinite: false,
     });
 
@@ -114,6 +118,8 @@ function App() {
 
     return () => {
       lenis.destroy();
+      document.documentElement.style.removeProperty('overflow');
+      document.body.style.removeProperty('overflow');
     };
   }, [settings.smoothScroll]);
 

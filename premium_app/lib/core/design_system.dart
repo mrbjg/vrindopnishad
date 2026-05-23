@@ -1399,30 +1399,29 @@ class PremiumUI {
               else
                 _buildMoon(top: 60, left: 40, size: 65),
             ] else if (mood == AppMoodTheme.rainyPeace || mood == AppMoodTheme.monsoonGreen) ...[
-              // Rainy storm/monsoon cloud outlines at the top
               // Rainy storm/monsoon cloud outlines at the top (positioned individually to prevent overflow)
-              Positioned(
+              const Positioned(
                 top: -50,
                 left: -60,
                 child: Opacity(
                   opacity: 0.15,
-                  child: const Icon(Icons.cloud, size: 160, color: Colors.white),
+                  child: Icon(Icons.cloud, size: 160, color: Colors.white),
                 ),
               ),
-              Positioned(
+              const Positioned(
                 top: -80,
                 left: 80,
                 child: Opacity(
                   opacity: 0.15,
-                  child: const Icon(Icons.cloud, size: 210, color: Colors.white),
+                  child: Icon(Icons.cloud, size: 210, color: Colors.white),
                 ),
               ),
-              Positioned(
+              const Positioned(
                 top: -40,
                 right: -50,
                 child: Opacity(
                   opacity: 0.15,
-                  child: const Icon(Icons.cloud, size: 150, color: Colors.white),
+                  child: Icon(Icons.cloud, size: 150, color: Colors.white),
                 ),
               ),
               if (mood == AppMoodTheme.monsoonGreen) ...[
