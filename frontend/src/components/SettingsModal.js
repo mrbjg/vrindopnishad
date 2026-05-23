@@ -79,7 +79,10 @@ const SettingsModal = ({ isOpen, onClose }) => {
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-6 sm:p-8 pt-4 sm:pt-6 space-y-8 sm:space-y-10 custom-scrollbar">
+        <div 
+          data-lenis-prevent 
+          className="flex-1 overflow-y-auto p-6 sm:p-8 pt-4 sm:pt-6 space-y-8 sm:space-y-10 custom-scrollbar"
+        >
           {/* Personal Profile Section */}
           {user && (
             <div className="space-y-4">

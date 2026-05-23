@@ -12,19 +12,46 @@ const DAILY_SHLOKAS = [
     source: "श्रीमद्भगवद्गीता २.४७",
     sanskrit: "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन ।\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि ॥",
     hindi: "तुम्हारा अधिकार केवल कर्म करने पर है, उसके फलों पर कभी नहीं। इसलिए कर्म के फलों की चिंता मत करो।",
-    english: "You have a right to perform your prescribed duties, but you are not entitled to the fruits of your actions."
+    english: "You have a right to perform your prescribed duties, but you are not entitled to the fruits of your actions.",
+    breakdown: [
+      { sanskrit: "कर्मणि", meaning: "in duty" },
+      { sanskrit: "एव", meaning: "only" },
+      { sanskrit: "अधिकारः", meaning: "right" },
+      { sanskrit: "ते", meaning: "your" },
+      { sanskrit: "मा", meaning: "not" },
+      { sanskrit: "फलेषु", meaning: "in results" },
+      { sanskrit: "कदाचन", meaning: "ever" }
+    ],
+    takeaway: "Focus completely on your actions and efforts, rather than worrying about the outcome. Keep a calm and steady mind."
   },
   {
     source: "श्रीमद्भगवद्गीता १८.६६",
-    sanskrit: "सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज ।\nअहं तं सर्वपापेभ्यो मोक्षयिष्यामि मा शुचः ॥",
+    sanskrit: "सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज ।\nअहं त्वां सर्वपापेभ्यो मोक्षयिष्यामि मा शुचः ॥",
     hindi: "सभी धर्मों का त्याग करके केवल मेरी शरण में आओ। मैं तुम्हें सभी पापों से मुक्त कर दूंगा, शोक मत करो।",
-    english: "Abandon all varieties of religion and just surrender unto Me. I shall deliver you from all sinful reactions. Do not fear."
+    english: "Abandon all varieties of religion and just surrender unto Me. I shall deliver you from all sinful reactions. Do not fear.",
+    breakdown: [
+      { sanskrit: "सर्वधर्मान्", meaning: "all duties" },
+      { sanskrit: "परित्यज्य", meaning: "abandoning" },
+      { sanskrit: "माम्", meaning: "Me" },
+      { sanskrit: "एकम्", meaning: "alone" },
+      { sanskrit: "शरणम्", meaning: "refuge" },
+      { sanskrit: "व्रज", meaning: "surrender" }
+    ],
+    takeaway: "Surrender your fears and worries to the divine. When you let go of your anxiety, you find absolute peace and guidance."
   },
   {
     source: "श्रीमद्भगवद्गीता ४.७",
     sanskrit: "यदा यदा हि धर्मस्य ग्लानिर्भवति भारत ।\nअभ्युत्थानमधर्मस्य तदात्मानं सृजाम्यहम् ॥",
     hindi: "हे भारत! जब-जब धर्म की हानि होती है और अधर्म बढ़ता है, तब-तब मैं अवतार लेता हूँ।",
-    english: "Whenever there is a decline in righteousness and an increase in unrighteousness, I manifest Myself on earth."
+    english: "Whenever there is a decline in righteousness and an increase in unrighteousness, I manifest Myself on earth.",
+    breakdown: [
+      { sanskrit: "यदा यदा", meaning: "whenever" },
+      { sanskrit: "हि", meaning: "surely" },
+      { sanskrit: "धर्मस्य", meaning: "righteousness" },
+      { sanskrit: "ग्लानिः", meaning: "decline" },
+      { sanskrit: "भारत", meaning: "O Bharat" }
+    ],
+    takeaway: "Trust that goodness and truth will always prevail in the end. Look inward to find the strength to stand for truth."
   }
 ];
 
@@ -64,7 +91,12 @@ const HomePage = () => {
   const [books, setBooks] = useState([]);
   const [ragas, setRagas] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showTranslation, setShowTranslation] = useState(false);
+  // Interactive Swadhyaya States
+  const [activeTab, setActiveTab] = useState('verse'); // 'verse' | 'translation' | 'breakdown'
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [streak, setStreak] = useState(0);
+  const [particles, setParticles] = useState([]);
 
   // Drawer state
   const [selectedItem, setSelectedItem] = useState(null);
@@ -73,6 +105,112 @@ const HomePage = () => {
 
   const openPreview = (item, type) => { setSelectedItem(item); setPreviewType(type); setDrawerTab('bio'); };
   const closePreview = () => { setSelectedItem(null); setPreviewType(null); };
+
+  const handleChantAudio = () => {
+    if (isPlaying) {
+      window.speechSynthesis.cancel();
+      setIsPlaying(false);
+    } else {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(dailyShloka.sanskrit);
+      
+      const voices = window.speechSynthesis.getVoices();
+      const hiVoice = voices.find(v => v.lang.startsWith('hi') || v.lang.startsWith('sa'));
+      if (hiVoice) {
+        utterance.voice = hiVoice;
+      }
+      utterance.rate = 0.75;
+      utterance.pitch = 0.9;
+
+      utterance.onend = () => {
+        setIsPlaying(false);
+      };
+      utterance.onerror = () => {
+        setIsPlaying(false);
+      };
+
+      window.speechSynthesis.speak(utterance);
+      setIsPlaying(true);
+    }
+  };
+
+  useEffect(() => {
+    const todayStr = new Date().toDateString();
+    const lastCompleted = localStorage.getItem('last_swadhyaya_date');
+    const currentStreak = parseInt(localStorage.getItem('swadhyaya_streak') || '0', 10);
+    
+    if (lastCompleted === todayStr) {
+      setIsCompleted(true);
+    }
+    setStreak(currentStreak);
+
+    return () => {
+      window.speechSynthesis.cancel();
+    };
+  }, []);
+
+  const handleComplete = () => {
+    if (isCompleted) return;
+    
+    const todayStr = new Date().toDateString();
+    const yesterdayStr = new Date(Date.now() - 86400000).toDateString();
+    const lastCompleted = localStorage.getItem('last_swadhyaya_date');
+    let newStreak = streak;
+
+    if (lastCompleted === yesterdayStr) {
+      newStreak += 1;
+    } else if (lastCompleted !== todayStr) {
+      newStreak = 1;
+    }
+
+    localStorage.setItem('last_swadhyaya_date', todayStr);
+    localStorage.setItem('swadhyaya_streak', newStreak.toString());
+    setIsCompleted(true);
+    setStreak(newStreak);
+
+    // Trigger local particle explosion
+    const newParticles = Array.from({ length: 24 }).map((_, i) => ({
+      id: i,
+      x: (Math.random() - 0.5) * 140,
+      y: (Math.random() - 0.5) * 80,
+      color: ['var(--primary-color)', '#a78bfa', '#fb923c', '#047857', '#cbd5e1'][Math.floor(Math.random() * 5)],
+      scale: Math.random() * 0.7 + 0.3
+    }));
+    setParticles(newParticles);
+    setTimeout(() => setParticles([]), 1000);
+  };
+
+  const [japaCount, setJapaCount] = useState(0);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('vrindopnishad_japa_count');
+      if (saved) setJapaCount(parseInt(saved, 10));
+    } catch (e) {
+      console.warn(e);
+    }
+
+    const handleStorageChange = () => {
+      try {
+        const updated = localStorage.getItem('vrindopnishad_japa_count');
+        if (updated) setJapaCount(parseInt(updated, 10));
+      } catch (e) {
+        console.warn(e);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    const interval = setInterval(handleStorageChange, 1000);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
+
+  const dailyGoal = 432; // 4 Mala
+  const percentComplete = Math.min(100, Math.round((japaCount / dailyGoal) * 100));
+  const rounds = Math.floor(japaCount / 108);
 
   useEffect(() => {
     let active = true;
@@ -202,48 +340,242 @@ const HomePage = () => {
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-4 animate-fade-in space-y-12 pt-6">
 
-        {/* ═══ DAILY SWADHYAYA BANNER (HERO CAROUSEL CARD) ═══ */}
-        <div className="glass-card p-6 md:p-8 rounded-3xl border border-amber-500/10 shadow-2xl relative overflow-hidden max-w-4xl mx-auto group">
-          <div className="absolute top-0 right-0 p-6 opacity-[0.02] pointer-events-none">
-            <ChevronRight size={180} className="text-amber-500" />
-          </div>
-          <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-3">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-primary animate-ping" />
-              <span className="text-[10px] uppercase tracking-[0.2em] text-white/50 font-bold">
-                {isHi ? "दैनिक स्वाध्याय" : "Daily Swadhyaya"}
-              </span>
-            </div>
-            <span className="text-[10px] font-bold text-amber-500 bg-amber-500/5 border border-amber-500/10 px-2 py-0.5 rounded-md uppercase tracking-wider">
-              {dailyShloka.source.split(' ')[0]}
-            </span>
-          </div>
-
-          <blockquote className="my-6 text-center">
-            <p className="text-lg md:text-2xl font-bold text-minimal-gold leading-loose font-headings whitespace-pre-line select-all">
-              {dailyShloka.sanskrit}
-            </p>
-          </blockquote>
-
-          <div className="flex justify-center mb-2">
-            <button onClick={() => setShowTranslation(!showTranslation)}
-              className="text-[9px] uppercase tracking-widest text-white/55 hover:text-primary border border-white/10 hover:border-primary/30 px-3.5 py-1.5 rounded-full bg-white/[0.01] transition-all font-semibold">
-              {showTranslation ? (isHi ? "भावार्थ छिपाएं" : "Hide Translation") : (isHi ? "भावार्थ देखें" : "Reveal Translation")}
-            </button>
-          </div>
-
-          <div className={`overflow-hidden transition-all duration-500 ease-in-out ${showTranslation ? 'max-h-[300px] opacity-100 mt-6 border-t border-white/5 pt-5' : 'max-h-0 opacity-0'}`}>
-            <div className="grid md:grid-cols-2 gap-6 text-xs font-light leading-relaxed text-left">
+        {/* ═══ THREE COLUMN HERO SANCTUARY ═══ */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 max-w-6xl mx-auto items-stretch">
+          
+          {/* Column 1: Braj Calendar (col-span-1) */}
+          <div className="lg:col-span-1 h-full">
+            <div className="glass-card p-5 rounded-3xl border border-primary/10 flex flex-col justify-between h-full select-none text-left">
               <div>
-                <span className="text-[9px] uppercase tracking-wider text-amber-500/60 font-bold block mb-1.5">भावार्थ (Hindi)</span>
-                <p className="text-white/70">{dailyShloka.hindi}</p>
+                <div className="flex items-center gap-2 mb-4 pb-2 border-b border-white/5">
+                  <Clock size={16} className="text-primary" />
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-white/60 font-bold">
+                    {isHi ? "ब्रज पंचांग" : "Braj Calendar"}
+                  </span>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <span className="text-[9px] uppercase tracking-wider text-white/35 block">{isHi ? "तिथि / Lunar Day" : "Lunar Tithi"}</span>
+                    <span className="text-xs font-bold text-white/80 block mt-0.5">{isHi ? "एकादशी (शुक्ल पक्ष)" : "Ekadashi (Shukla)"}</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] uppercase tracking-wider text-white/35 block">{isHi ? "ऋतु / Season" : "Current Season"}</span>
+                    <span className="text-xs font-bold text-white/80 block mt-0.5">{isHi ? "ग्रीष्म ऋतु (Summer)" : "Grishma Ritu (Summer)"}</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] uppercase tracking-wider text-white/35 block">{isHi ? "अष्टयाम लीला / Pastime" : "Aṣṭayāma Līlā"}</span>
+                    <span className="text-xs font-bold text-white/80 block mt-0.5 truncate">{isHi ? "मध्याह्न लीला (राधा कुण्ड)" : "Madhyāhna (Radha Kund)"}</span>
+                  </div>
+                </div>
               </div>
-              <div className="border-t md:border-t-0 md:border-l border-white/5 pt-4 md:pt-0 md:pl-6">
-                <span className="text-[9px] uppercase tracking-wider text-sky-400/60 font-bold block mb-1.5">English</span>
-                <p className="text-white/60 italic">{dailyShloka.english}</p>
+              
+              <div className="mt-4 pt-3 border-t border-white/5">
+                <span className="text-[9px] uppercase tracking-wider text-primary font-bold block mb-1">
+                  🎉 {isHi ? "आगामी उत्सव" : "Next Festival"}
+                </span>
+                <span className="text-[11px] font-semibold text-minimal-gold block">
+                  {isHi ? "निर्जला एकादशी (3 दिन में)" : "Nirjala Ekadashi (in 3 Days)"}
+                </span>
               </div>
             </div>
           </div>
+          
+          {/* Column 2 & 3: Daily Swadhyaya (col-span-2) */}
+          <div className="lg:col-span-2 h-full flex flex-col">
+            <div className="glass-card p-6 md:p-8 rounded-3xl border border-primary/10 shadow-2xl relative overflow-hidden h-full flex flex-col justify-between group">
+              <div className="absolute top-0 right-0 p-6 opacity-[0.02] pointer-events-none">
+                <ChevronRight size={180} className="text-primary" />
+              </div>
+              
+              <div>
+                <div className="flex items-center justify-between mb-6 border-b border-white/5 pb-4">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-primary animate-ping" />
+                    <span className="text-xs uppercase tracking-[0.2em] text-white/60 font-bold">
+                      {isHi ? "दैनिक स्वाध्याय" : "Daily Swadhyaya"}
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-bold text-primary bg-primary/5 border border-primary/10 px-2.5 py-0.5 rounded-md uppercase tracking-wider">
+                    {dailyShloka.source}
+                  </span>
+                </div>
+
+                {/* Sliding Tabs */}
+                <div className="flex bg-white/5 p-1 rounded-xl gap-1 mb-6 relative">
+                  {['verse', 'translation', 'breakdown'].map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => {
+                        setActiveTab(tab);
+                        if (isPlaying) {
+                          window.speechSynthesis.cancel();
+                          setIsPlaying(false);
+                        }
+                      }}
+                      className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all z-10 ${
+                        activeTab === tab ? 'text-primary' : 'text-white/45 hover:text-white/70'
+                      }`}
+                    >
+                      {tab === 'verse' ? (isHi ? "श्लोक" : "Verse") : tab === 'translation' ? (isHi ? "भावार्थ" : "Translation") : (isHi ? "शब्दार्थ" : "Breakdown")}
+                    </button>
+                  ))}
+                  {/* Sliding indicator */}
+                  <div 
+                    className="absolute top-1 bottom-1 bg-white/[0.04] border border-white/10 rounded-lg transition-all duration-300 ease-out z-0"
+                    style={{
+                      width: 'calc(33.33% - 4px)',
+                      left: activeTab === 'verse' ? '2px' : activeTab === 'translation' ? '33.33%' : '66.66%'
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Tab Content */}
+              <div className="min-h-[12rem] flex flex-col justify-center transition-all duration-300 flex-1">
+                {activeTab === 'verse' && (
+                  <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200 text-center">
+                    <blockquote className="text-center">
+                      <p className="text-base md:text-lg font-bold text-minimal-gold leading-loose font-headings whitespace-pre-line select-all">
+                        {dailyShloka.sanskrit}
+                      </p>
+                    </blockquote>
+                    
+                    <div className="flex justify-center gap-3">
+                      <button 
+                        onClick={handleChantAudio}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all text-xs font-bold ${
+                          isPlaying 
+                            ? 'border-primary bg-primary/10 text-primary' 
+                            : 'border-white/10 hover:border-primary/30 text-white/70'
+                        }`}
+                      >
+                        <span>{isPlaying ? '⏸' : '▶'}</span>
+                        <span>{isHi ? "सुनिए" : "Listen"}</span>
+                        {isPlaying && (
+                          <div className="flex items-center gap-0.5 h-3 ml-1.5 shrink-0">
+                            <span className="w-0.5 bg-primary rounded-full animate-bar-pulse-1" style={{ height: '4px' }} />
+                            <span className="w-0.5 bg-primary rounded-full animate-bar-pulse-2" style={{ height: '8px' }} />
+                            <span className="w-0.5 bg-primary rounded-full animate-bar-pulse-3" style={{ height: '12px' }} />
+                            <span className="w-0.5 bg-primary rounded-full animate-bar-pulse-4" style={{ height: '6px' }} />
+                          </div>
+                        )}
+                      </button>
+
+                      <button 
+                        onClick={handleComplete}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all text-xs font-bold relative ${
+                          isCompleted 
+                            ? 'border-green-500 bg-green-500/10 text-green-500 cursor-default' 
+                            : 'border-white/10 hover:border-green-500/30 text-white/70'
+                        }`}
+                      >
+                        <span>{isCompleted ? '✓' : '📿'}</span>
+                        <span>{isCompleted ? (isHi ? "पूर्ण" : "Completed") : (isHi ? "Mark Read" : "Mark Read")}</span>
+                        
+                        {particles.map(p => (
+                          <span 
+                            key={p.id}
+                            className="absolute w-1.5 h-1.5 rounded-full pointer-events-none animate-particle"
+                            style={{
+                              background: p.color,
+                              '--particle-x': `${p.x}px`,
+                              '--particle-y': `${p.y}px`,
+                              transform: `scale(${p.scale})`
+                            }}
+                          />
+                        ))}
+                      </button>
+                    </div>
+
+                    {streak > 0 && (
+                      <div className="text-[10px] text-primary/70 font-bold uppercase tracking-widest text-center animate-in fade-in slide-in-from-bottom-2">
+                        🔥 {streak} {isHi ? "दिवसीय सिलसिला" : "Day Streak"}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === 'translation' && (
+                  <div className="space-y-4 text-left animate-in fade-in zoom-in-95 duration-200">
+                    <div className="grid md:grid-cols-2 gap-4 text-xs font-light leading-relaxed">
+                      <div className="space-y-1">
+                        <span className="text-[9px] uppercase tracking-wider text-primary font-bold block">भावार्थ (Hindi)</span>
+                        <p className="text-white/80 font-medium leading-relaxed whitespace-pre-line">{dailyShloka.hindi}</p>
+                      </div>
+                      <div className="border-t md:border-t-0 md:border-l border-white/5 pt-3 md:pt-0 md:pl-4 space-y-1">
+                        <span className="text-[9px] uppercase tracking-wider text-sky-400/80 font-bold block">English</span>
+                        <p className="text-white/70 italic leading-relaxed whitespace-pre-line">{dailyShloka.english}</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 border-t border-white/5 pt-3">
+                      <span className="text-[9px] uppercase tracking-wider text-primary font-bold block mb-1">
+                        💡 {isHi ? "व्यावहारिक सूत्र" : "Practical Takeaway"}
+                      </span>
+                      <p className="text-white/75 text-xs italic font-medium leading-relaxed">{dailyShloka.takeaway}</p>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'breakdown' && (
+                  <div className="grid grid-cols-2 gap-2 text-left animate-in fade-in zoom-in-95 duration-200">
+                    {dailyShloka.breakdown.map((item, idx) => (
+                      <div key={idx} className="bg-white/[0.015] border border-white/5 rounded-xl p-2.5 flex flex-col gap-0.5 hover:border-primary/20 transition-all">
+                        <span className="text-xs font-bold text-minimal-gold">{item.sanskrit}</span>
+                        <span className="text-[10px] text-white/50">{item.meaning}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Column 4: Chant Tracker (col-span-1) */}
+          <div className="lg:col-span-1 h-full">
+            <div className="glass-card p-5 rounded-3xl border border-primary/10 flex flex-col justify-between h-full select-none text-left">
+              <div>
+                <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/5">
+                  <div className="flex items-center gap-2">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-white/60 font-bold">
+                      {isHi ? "जाप साधना" : "Chant Sanctuary"}
+                    </span>
+                  </div>
+                  <span className="text-[9px] font-bold text-white/40 uppercase">Goal: 4 Mala</span>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <span className="text-[9px] uppercase tracking-wider text-white/35 block">{isHi ? "कुल जाप / Total Chants" : "Total Chants"}</span>
+                    <span className="text-xl font-extrabold text-minimal-gold block mt-0.5 font-mono">{japaCount}</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] uppercase tracking-wider text-white/35 block">{isHi ? "माला पूर्ण / Completed Mala" : "Completed Mala"}</span>
+                    <span className="text-xs font-bold text-white/80 block mt-0.5">{rounds} {isHi ? "माला" : "Rounds"} <span className="text-white/40 font-normal font-mono">({japaCount % 108}/108)</span></span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2 mt-4 pt-3 border-t border-white/5">
+                <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-wider">
+                  <span className="text-white/50">{isHi ? "दैनिक लक्ष्य" : "Daily Goal"}</span>
+                  <span className="text-primary">{percentComplete}%</span>
+                </div>
+                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                  <div 
+                    className="h-full bg-primary rounded-full transition-all duration-500 ease-out" 
+                    style={{ width: `${percentComplete}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         {/* ═══ CATEGORIES INHERITED GRID BLOCKS ═══ */}

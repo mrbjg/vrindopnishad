@@ -110,14 +110,22 @@ const Layout = ({ children }) => {
     const floatText = document.createElement('span');
     const divineNames = ['🌸 Radhe!', '✨ Radhe Radhe!', '🌸 Radhe Shyam!', '✨ Radhe!'];
     floatText.innerText = divineNames[newCount % divineNames.length];
-    floatText.className = 'fixed pointer-events-none text-xs font-bold text-amber-300 font-headings z-[5000] animate-float-fade-up';
+    
+    // Organic dynamic drift calculations for physics-based modern feel
+    const randomX = (Math.random() - 0.5) * 60; // -30px to +30px
+    const randomRot = (Math.random() - 0.5) * 30; // -15deg to +15deg
+    
+    floatText.className = 'fixed pointer-events-none text-xs font-bold font-headings z-[5000] floating-chant-text';
     floatText.style.left = `${x - 20}px`;
     floatText.style.top = `${y - 20}px`;
+    floatText.style.setProperty('--float-x', `${randomX}px`);
+    floatText.style.setProperty('--float-rot', `${randomRot}deg`);
+    
     document.body.appendChild(floatText);
     
     setTimeout(() => {
       floatText.remove();
-    }, 900);
+    }, 1000);
   };
 
   const searchRef = useRef(null);
@@ -234,11 +242,11 @@ const Layout = ({ children }) => {
               {/* Mobile Japa Chant Button */}
               <button 
                 onClick={handleChant}
-                className="relative flex items-center gap-1 bg-gradient-to-r from-amber-500/20 to-orange-500/20 active:from-amber-500/35 active:to-orange-500/35 border border-amber-500/30 rounded-full py-1 px-2.5 text-[9px] font-semibold text-amber-300 transition-all select-none cursor-pointer"
+                className="header-chant-btn py-1 px-2.5 text-[9px] leading-none shrink-0"
                 title={isHiRoute ? "राधे राधे जाप करें" : "Chant Radhe Radhe"}
               >
-                <span className="text-xs">📿</span>
-                <span>{isHiRoute ? "जाप" : "Chant"}: <span className="font-bold text-white font-mono">{chantCount}</span></span>
+                <span className="text-xs mr-0.5">📿</span>
+                <span>{isHiRoute ? "जाप" : "Chant"}: <span className="chant-number">{chantCount}</span></span>
               </button>
 
               {/* Standalone Settings Button */}
@@ -428,11 +436,11 @@ const Layout = ({ children }) => {
               {/* Desktop Japa Chant Button */}
               <button 
                 onClick={handleChant}
-                className="relative flex items-center gap-1 bg-gradient-to-r from-amber-500/20 to-orange-500/20 hover:from-amber-500/35 hover:to-orange-500/35 border border-amber-500/30 rounded-full py-1.5 px-3 sm:px-4 text-[10px] sm:text-xs font-semibold text-amber-300 transition-all duration-300 hover:scale-[1.05] active:scale-[0.97] hover:shadow-lg hover:shadow-amber-500/5 cursor-pointer select-none"
+                className="header-chant-btn py-1.5 px-3.5 text-[10px] sm:text-xs leading-none shrink-0"
                 title={isHiRoute ? "राधे राधे जाप करें" : "Chant Radhe Radhe"}
               >
-                <span className="text-[11px] sm:text-sm leading-none">📿</span>
-                <span>{isHiRoute ? "जाप" : "Chants"}: <span className="font-bold text-white font-mono">{chantCount}</span></span>
+                <span className="text-[11px] sm:text-sm leading-none mr-0.5">📿</span>
+                <span>{isHiRoute ? "जाप" : "Chants"}: <span className="chant-number">{chantCount}</span></span>
               </button>
 
               {/* Standalone Settings Button */}
