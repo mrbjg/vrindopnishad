@@ -2142,7 +2142,7 @@ html.light-mode .login-card {
     background: rgba(255, 255, 255, 0.02) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     color: var(--text-color) !important;
-    border-radius: 20px !important;
+    border-radius: 12px !important;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 }
 .login-google-btn:hover {
@@ -2717,7 +2717,7 @@ html.light-mode .btn-secondary {
     width: 100%;
     background: rgba(255, 255, 255, 0.015) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 16px !important;
+    border-radius: 12px !important;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
     box-shadow: none !important;
 }
@@ -2730,7 +2730,7 @@ html.light-mode .btn-secondary {
 
 .premium-input-field {
     width: 100%;
-    height: 56px;
+    height: 48px;
     background: transparent !important;
     border: none !important;
     outline: none !important;
@@ -2936,7 +2936,7 @@ html.light-mode .theme-swatch-v2 {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-gold) 100%) !important;
     color: var(--primary-btn-text) !important;
     border: none !important;
-    border-radius: 16px !important;
+    border-radius: 12px !important;
     font-weight: 700 !important;
     letter-spacing: 0.05em;
     text-transform: uppercase;
