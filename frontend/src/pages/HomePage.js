@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronRight, Music, FileText, ArrowRight, Volume2, Clock, X } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { ApiContext } from '../App';
@@ -83,6 +83,7 @@ const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes cache
    ═══════════════════════════════════════════════════ */
 const HomePage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isHi = location.pathname.startsWith('/hi');
   const { apiService } = useContext(ApiContext);
 
@@ -103,6 +104,7 @@ const HomePage = () => {
   const [previewType, setPreviewType] = useState(null);
   const [drawerTab, setDrawerTab] = useState('bio');
 
+  // eslint-disable-next-line no-unused-vars
   const openPreview = (item, type) => { setSelectedItem(item); setPreviewType(type); setDrawerTab('bio'); };
   const closePreview = () => { setSelectedItem(null); setPreviewType(null); };
 
@@ -612,7 +614,7 @@ const HomePage = () => {
 
             <div className="flex gap-4 overflow-x-auto pb-4 pt-1 snap-x book-shelf-row">
               {books.slice(0, 8).map(book => (
-                <div key={book.name} onClick={() => openPreview(book, 'book')}
+                <div key={book.name} onClick={() => navigate(isHi ? `/hi/book/${book.slug}` : `/book/${book.slug}`)}
                   className="w-80 flex-none glass-card p-4 rounded-2xl hover:border-amber-500/25 transition-all snap-start flex gap-4 border border-white/5 cursor-pointer group shadow-lg">
                   {/* CSS Designed Premium Book Cover */}
                   <div className="book-cover-premium shrink-0 text-white select-none shadow-xl"
@@ -659,7 +661,7 @@ const HomePage = () => {
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
               {saints.slice(0, 6).map(sant => (
-                <div key={sant.cleanName} onClick={() => openPreview(sant, 'saint')}
+                <div key={sant.cleanName} onClick={() => navigate(isHi ? `/hi/saint/${sant.slug}` : `/saint/${sant.slug}`)}
                   className="glass-card !p-3 rounded-2xl border border-white/5 hover:border-amber-500/20 text-center cursor-pointer group transition-all flex flex-col items-center justify-between space-y-3">
                   <div className="w-14 h-14 rounded-full bg-amber-500/5 border border-amber-500/10 group-hover:border-amber-500/40 flex items-center justify-center text-amber-500 font-bold text-lg shadow-inner group-hover:scale-105 transition-all duration-300">
                     {getInitials(isHi ? sant.name : sant.hinglishName)}
@@ -697,7 +699,7 @@ const HomePage = () => {
                 const excerpt = verse.hindi_text || verse.sanskrit_text || verse.english_translation || verse.description || "";
                 const readingTime = Math.max(1, Math.ceil(excerpt.length / 120)) + " min read";
                 return (
-                  <div key={verse.id} onClick={() => openPreview(verse, 'verse')}
+                  <div key={verse.id} onClick={() => navigate(isHi ? `/hi/content/${verse.slug || verse.id}` : `/content/${verse.slug || verse.id}`)}
                     className="premium-content-card p-5 cursor-pointer flex flex-col justify-between space-y-4 group">
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
@@ -753,7 +755,7 @@ const HomePage = () => {
             </div>
             <div className="flex flex-wrap gap-2">
               {ragas.slice(0, 10).map(raga => (
-                <button key={raga.name} onClick={() => openPreview(raga, 'raga')}
+                <button key={raga.name} onClick={() => navigate(isHi ? `/hi/raga/${raga.slug}` : `/raga/${raga.slug}`)}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 text-xs text-left transition-all group">
                   <span className="font-semibold text-white/90 group-hover:text-primary transition-colors text-[11px]">{raga.name}</span>
                   <span className="text-[9px] text-white/35 font-light bg-white/5 px-1.5 py-0.5 rounded-md flex items-center gap-0.5 shrink-0">
