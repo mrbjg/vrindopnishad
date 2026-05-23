@@ -1,45 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Compass, Scroll, Music, FileText, ArrowRight, BookOpen, Heart, Star, Globe, Users, MapPin, Book, ChevronRight, X, Search } from 'lucide-react';
+import { Music, FileText, ArrowRight, Heart, Users, MapPin, Book, ChevronRight, X, Search } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
-import { useSettings, THEMES } from '../contexts/SettingsContext';
-import ThemeIcon from '../components/ThemeIcon';
 import { ApiContext } from '../App';
 import { extractRelations } from '../utils/relations';
 import AudioPlayButton from '../components/ui/AudioPlayButton';
-
-const themeGroups = [
-  {
-    id: 'core',
-    label: 'Core Energies',
-    themes: ['dark', 'light']
-  },
-  {
-    id: 'celestial',
-    label: 'Celestial Realms',
-    themes: ['night', 'space', 'void']
-  },
-  {
-    id: 'seasonal',
-    label: 'Seasonal Moods',
-    themes: ['winter', 'snow', 'rainy', 'mountains', 'sunset', 'forest', 'ocean']
-  }
-];
-
-const themeGradients = {
-  dark: '#09090b',
-  light: 'linear-gradient(135deg, #fdfbf7 0%, #eae5d9 100%)',
-  night: '#030712',
-  space: '#08070d',
-  void: '#000000',
-  winter: 'linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%)',
-  snow: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-  rainy: 'linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%)',
-  mountains: 'linear-gradient(135deg, #fafaf9 0%, #e7e5e4 100%)',
-  sunset: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)',
-  forest: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
-  ocean: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)'
-};
 
 const DAILY_SHLOKAS = [
   {
@@ -50,7 +15,7 @@ const DAILY_SHLOKAS = [
   },
   {
     source: "श्रीमद्भगवद्गीता १८.६६ (Bhagavad Gita 18.66)",
-    sanskrit: "सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज ।\nअहं त्वां सर्वपापेभ्यो मोक्षयिष्यामि मा शुचः ॥",
+    sanskrit: "सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज ।\nअहं तं सर्वपापेभ्यो मोक्षयिष्यामि मा शुचः ॥",
     hindi: "सभी धर्मों का त्याग करके केवल मेरी शरण में आओ। मैं तुम्हें सभी पापों से मुक्त कर दूंगा, शोक मत करो।",
     english: "Abandon all varieties of religion and just surrender unto Me. I shall deliver you from all sinful reactions. Do not fear."
   },
@@ -89,7 +54,7 @@ const VerseListItem = ({ verse, isHindiRoute }) => {
 
       <div className={`verse-expansion-panel ${isExpanded ? 'open border-t border-white/5 p-4 bg-black/20' : ''}`}>
         {isExpanded && (
-          <div className="space-y-4 text-xs md:text-sm">
+          <div className="space-y-4 text-xs md:text-sm text-left">
             {verse.sanskrit_text && (
               <div>
                 <h5 className="text-[10px] uppercase tracking-wider text-amber-500/60 font-bold mb-1.5">मूल पाठ (Original Text)</h5>
@@ -143,10 +108,6 @@ const VerseListItem = ({ verse, isHindiRoute }) => {
 };
 
 const HomePage = () => {
-  const { settings, updateSetting } = useSettings();
-  const currentTheme = settings.theme || 'dark';
-  const [activeTab, setActiveTab] = useState('core');
-  
   const location = useLocation();
   const isHindiRoute = location.pathname.startsWith('/hi');
   const { apiService } = useContext(ApiContext);
@@ -195,6 +156,16 @@ const HomePage = () => {
     return () => { active = false; };
   }, [apiService]);
 
+  const getBookCoverGradient = (bookName) => {
+    let hash = 0;
+    for (let i = 0; i < bookName.length; i++) {
+      hash = bookName.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const h1 = Math.abs(hash % 360);
+    const h2 = (h1 + 60) % 360;
+    return `linear-gradient(135deg, hsl(${h1}, 65%, 32%) 0%, hsl(${h2}, 55%, 12%) 100%)`;
+  };
+
   const filteredResults = React.useMemo(() => {
     if (!searchQuery.trim() || searchQuery.trim().length < 2) {
       return { sants: [], books: [], ragas: [], verses: [] };
@@ -208,8 +179,7 @@ const HomePage = () => {
 
     const matchedBooks = books.filter(b => 
       b.name?.toLowerCase().includes(q) || 
-      b.hinglishName?.toLowerCase().includes(q) ||
-      b.author?.toLowerCase().includes(q)
+      (b.author && b.author.toLowerCase().includes(q))
     );
 
     const matchedRagas = ragas.filter(r => 
@@ -217,27 +187,53 @@ const HomePage = () => {
       r.hinglishName?.toLowerCase().includes(q)
     );
 
-    const matchedVerses = allItems.filter(item => {
-      if (item.category?.toLowerCase() === 'saint') return false;
-      return (
-        item.title?.toLowerCase().includes(q) ||
-        item.hindi_text?.toLowerCase().includes(q) ||
-        item.sanskrit_text?.toLowerCase().includes(q) ||
-        item.english_translation?.toLowerCase().includes(q) ||
-        item.description?.toLowerCase().includes(q)
-      );
-    });
+    const matchedVerses = allItems.filter(v => 
+      v.category?.toLowerCase() !== 'saint' && (
+        v.title?.toLowerCase().includes(q) ||
+        v.sanskrit_text?.toLowerCase().includes(q) ||
+        v.hindi_text?.toLowerCase().includes(q) ||
+        v.english_translation?.toLowerCase().includes(q) ||
+        v.description?.toLowerCase().includes(q)
+      )
+    ).slice(0, 10);
 
-    return {
-      sants: matchedSants.slice(0, 5),
-      books: matchedBooks.slice(0, 5),
-      ragas: matchedRagas.slice(0, 5),
-      verses: matchedVerses.slice(0, 10)
-    };
+    return { sants: matchedSants, books: matchedBooks, ragas: matchedRagas, verses: matchedVerses };
   }, [searchQuery, saints, books, ragas, allItems]);
+
+  const latestVerses = React.useMemo(() => {
+    return allItems
+      .filter(item => item.category?.toLowerCase() !== 'saint')
+      .slice(0, 5);
+  }, [allItems]);
 
   const shlokaIndex = new Date().getDate() % DAILY_SHLOKAS.length;
   const dailyShloka = DAILY_SHLOKAS[shlokaIndex];
+
+  if (loading) {
+    return (
+      <div className="relative max-w-6xl mx-auto px-4 py-8 animate-pulse text-left min-h-screen">
+        <div className="text-center pt-8 pb-12 max-w-2xl mx-auto space-y-4">
+          <div className="h-12 bg-white/5 rounded-2xl w-48 mx-auto" />
+          <div className="h-4 bg-white/5 rounded w-36 mx-auto" />
+          <div className="h-14 bg-white/5 rounded-2xl w-full" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-10">
+            <div className="h-64 bg-white/5 rounded-2xl" />
+            <div className="space-y-4">
+              <div className="h-6 bg-white/5 rounded w-48" />
+              <div className="h-20 bg-white/5 rounded-2xl" />
+              <div className="h-20 bg-white/5 rounded-2xl" />
+            </div>
+          </div>
+          <div className="space-y-8">
+            <div className="h-48 bg-white/5 rounded-2xl" />
+            <div className="h-64 bg-white/5 rounded-2xl" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative overflow-hidden animate-fade-in font-sans min-h-screen">
@@ -246,13 +242,9 @@ const HomePage = () => {
         <meta name="description" content="Vrindopnishad Paath (वृंदोपनिषद् पाठ) — Read and listen to authentic sacred Sanskrit shlokas, devotional strotras, spiritual poetry & Vedic wisdom from Vrindavan saints. Free online paath of Bhagavad Gita, mantras & hymns in Hindi, Sanskrit & English." />
         <meta name="keywords" content="vrindopnishad, vrindopnishad paath, वृंदोपनिषद्, वृंदोपनिषद् पाठ, vrindopnishad path, vrindopnishad app, vrindopnishad.in, sant vaani, sacred shlokas, sanskrit shlokas, strotras, devotional poetry, bhagavad gita, vedic wisdom, vrindavan, bhakti, श्लोक, स्तोत्र, कविता, वेद, उपनिषद, मंत्र, हिंदी भजन, radha krishna, premanand ji maharaj, barsana, nandgaav, govardhan, braj rasik, brajrasik, rasik sant" />
         <link rel="canonical" href="https://path.vrindopnishad.in/" />
-
-        {/* Hindi-specific meta for Google India */}
         <meta name="geo.region" content="IN" />
         <meta name="geo.placename" content="Vrindavan, India" />
         <meta name="content-language" content="hi, en, sa" />
-
-        {/* Open Graph */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://path.vrindopnishad.in/" />
         <meta property="og:site_name" content="Vrindopnishad — वृंदोपनिषद्" />
@@ -261,14 +253,10 @@ const HomePage = () => {
         <meta property="og:image" content="https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png" />
         <meta property="og:locale" content="hi_IN" />
         <meta property="og:locale:alternate" content="en_IN" />
-
-        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Vrindopnishad Paath — वृंदोपनिषद् पाठ" />
         <meta name="twitter:description" content="Read Vrindopnishad Paath online — sacred Sanskrit shlokas, strotras, devotional poetry & Vedic wisdom." />
         <meta name="twitter:image" content="https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png" />
-
-        {/* JSON-LD: CollectionPage */}
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "CollectionPage",
@@ -317,47 +305,22 @@ const HomePage = () => {
         }}
       />
 
-      <div className="relative z-10">
-        {/* Overhauled Hero Section with Mandala */}
-        <div className="text-center pt-8 pb-12 md:pt-16 md:pb-20 max-w-4xl mx-auto px-4">
-          <div className="premium-hero-card">
-            {/* Minimalist Sacred Symbol */}
-            <div className="sacred-symbol-minimal animate-fade-in">
-              <div className="sacred-symbol-ring" />
-              <div className="sacred-symbol-text">
-                ॐ
-              </div>
-            </div>
-
-            <h1 className="text-5xl md:text-7xl font-bold mb-4 tracking-tight text-minimal-gold font-headings">
-              वृंदोपनिषद्
-            </h1>
-            <p className="text-xl md:text-2xl text-minimal-gold font-semibold tracking-widest mb-4">Vrindopnishad Paath</p>
-            <p className="text-sm md:text-base text-white/60 font-light max-w-xl mx-auto leading-relaxed mb-8">
-              पवित्र डिजिटल संग्रह — Sacred Digital Sanctuary for Shlokas, Strotras & Devotional Poetry from Vrindavan
-            </p>
-
-            <div className="flex flex-wrap justify-center gap-4">
-              <Link to="/content" className="btn-premium px-8 py-3.5 text-sm shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:scale-105">
-                <Compass size={18} />
-                Explore Paath
-              </Link>
-              <Link to="/category/shloka" className="px-8 py-3.5 rounded-full border border-white/15 hover:bg-white/5 hover:border-white/30 text-sm text-white/80 transition-all flex items-center gap-2 font-medium hover:scale-105">
-                <Scroll size={18} className="text-primary" />
-                Browse Shlokas
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Unified Instant Search Bar */}
-        <div className="max-w-4xl mx-auto px-4 mb-16 relative">
-          <div className="relative w-full">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-white/35 group-focus-within:text-primary transition-colors" size={20} />
+      <div className="relative z-10 max-w-6xl mx-auto px-4 py-8">
+        
+        {/* Editorial Minimalist Hero block */}
+        <div className="text-center pt-8 pb-12 max-w-2xl mx-auto">
+          <h1 className="text-5xl md:text-6xl font-bold mb-2 tracking-tight text-minimal-gold font-headings">
+            वृंदोपनिषद्
+          </h1>
+          <p className="text-xs uppercase tracking-[0.25em] text-white/40 block mb-6">Vrindopnishad Paath • Bliss of Vrindavan</p>
+          
+          {/* Sleek Search Input inside Hero */}
+          <div className="relative w-full shadow-2xl rounded-2xl overflow-hidden border border-white/5 focus-within:border-primary/50 transition-colors">
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-white/35" size={20} />
             <input 
               type="text" 
               placeholder={isHindiRoute ? "सन्त, ग्रन्थ, राग या वाणी खोजें..." : "Search Saints, Books, Ragas or Verses..."} 
-              className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl pl-14 pr-12 outline-none focus:border-amber-500/50 transition-all text-sm md:text-base font-medium shadow-inner"
+              className="w-full h-14 bg-white/5 pl-14 pr-12 outline-none text-sm md:text-base font-medium"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -371,7 +334,7 @@ const HomePage = () => {
             )}
           </div>
 
-          {/* Search Results Dashboard */}
+          {/* Search Results Overlay */}
           {searchQuery.trim().length >= 2 && (
             <div className="glass-card mt-4 p-6 text-left w-full border border-amber-500/20 shadow-2xl relative z-50 rounded-2xl max-h-[60vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-6 pb-2 border-b border-white/5">
@@ -395,7 +358,6 @@ const HomePage = () => {
                  </div>
               ) : (
                 <div className="space-y-6">
-                  {/* Saints Match */}
                   {filteredResults.sants.length > 0 && (
                     <div>
                       <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Saints / रसिक सन्त</h4>
@@ -421,7 +383,6 @@ const HomePage = () => {
                     </div>
                   )}
 
-                  {/* Books Match */}
                   {filteredResults.books.length > 0 && (
                     <div>
                       <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Books / ग्रन्थ</h4>
@@ -447,7 +408,6 @@ const HomePage = () => {
                     </div>
                   )}
 
-                  {/* Ragas Match */}
                   {filteredResults.ragas.length > 0 && (
                     <div>
                       <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Ragas / शास्त्रीय राग</h4>
@@ -473,7 +433,6 @@ const HomePage = () => {
                     </div>
                   )}
 
-                  {/* Verses Match */}
                   {filteredResults.verses.length > 0 && (
                     <div>
                       <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Verses / वाणी-पद</h4>
@@ -504,254 +463,103 @@ const HomePage = () => {
           )}
         </div>
 
-        {/* Premium Atmosphere Portal Selector */}
-        <div className="max-w-4xl mx-auto px-4 mb-16">
-          <div className="text-center mb-6">
-            <span className="text-[10px] uppercase tracking-[0.3em] text-white/30 font-bold block mb-1">
-              Atmospheric Presence
-            </span>
-            <h2 className="text-xl md:text-2xl font-bold text-minimal-gold font-headings">
-              Choose Sanctuary Atmosphere
-            </h2>
-          </div>
-
-          {/* Category Tabs */}
-          <div className="flex justify-center mb-6">
-            <div className="inline-flex rounded-full bg-white/5 p-1 border border-white/10 backdrop-blur-md">
-              {themeGroups.map((group) => (
-                <button
-                  key={group.id}
-                  onClick={() => setActiveTab(group.id)}
-                  className={`px-4 py-2 rounded-full text-xs font-semibold tracking-wider transition-all duration-300 ${
-                    activeTab === group.id
-                      ? 'bg-primary text-white shadow-md'
-                      : 'text-white/50 hover:text-white/85'
-                  }`}
-                >
-                  {group.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Mini-grid with Swatches */}
-          <div className="flex flex-wrap justify-center gap-3">
-            {THEMES.filter(t => {
-              const currentGroup = themeGroups.find(g => g.id === activeTab);
-              return currentGroup ? currentGroup.themes.includes(t.id) : false;
-            }).map((theme) => {
-              const isActive = currentTheme === theme.id;
-              return (
-                <div
-                  key={theme.id}
-                  onClick={() => updateSetting('theme', theme.id)}
-                  className={`theme-card-premium w-[130px] ${isActive ? 'active' : ''}`}
-                >
-                  <div className="theme-card-premium-inner">
-                    <div className="theme-card-icon-wrap">
-                      <ThemeIcon name={theme.icon} size={16} />
-                    </div>
-                    
-                    {/* Miniature Swatch */}
-                    <div 
-                      className="w-4 h-4 rounded-full border border-white/20 shadow-inner mt-0.5"
-                      style={{ background: themeGradients[theme.id] }}
-                    />
-                    
-                    <span className="text-[11px] font-semibold tracking-wide text-center">
-                      {theme.label}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Minimal Intro Section */}
-        <div className="py-10 max-w-3xl mx-auto border-b border-white/5 px-4">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-5 text-minimal-gold font-headings">
-              Vrindopnishad Paath — वृंदोपनिषद् पाठ क्या है?
-            </h2>
-            <p className="text-white/50 text-sm leading-relaxed mb-4">
-              <strong className="text-white/80">Vrindopnishad</strong> (वृंदोपनिषद्) is the premier sacred digital sanctuary dedicated to preserving and sharing authentic spiritual and Vedic knowledge from the heart of Vrindavan. The word "Vrindopnishad" combines <em>Vrinda</em> (the sacred groves of Vrindavan, वृंदावन) and <em>Upanishad</em> (sacred knowledge, उपनिषद्), meaning "the sacred knowledge flowing from Vrindavan."
-            </p>
-            <p className="text-white/50 text-sm leading-relaxed mb-6">
-              <strong className="text-white/80">Vrindopnishad Paath</strong> (वृंदोपनिषद् पाठ) refers to the practice of reading, reciting, and contemplating the sacred verses, shlokas (श्लोक), strotras (स्तोत्र), and devotional poetry (भक्ति कविता) curated on this platform.
-            </p>
-            <div className="flex flex-wrap justify-center gap-6">
-              <Link to="/what-is-vrindopnishad" className="text-primary hover:underline text-xs flex items-center gap-1.5">
-                <BookOpen size={12} /> What is Vrindopnishad? →
-              </Link>
-              <Link to="/meaning" className="text-primary hover:underline text-xs flex items-center gap-1.5">
-                <Star size={12} /> Meaning & Etymology →
-              </Link>
-              <Link to="/origin" className="text-primary hover:underline text-xs flex items-center gap-1.5">
-                <Globe size={12} /> Historical Origins →
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Categories Grid - Overhauled with Neon Glow Accents */}
-        <div className="py-16 px-4 max-w-6xl mx-auto">
-          <div className="flex items-center gap-4 mb-10">
-            <div className="h-[1px] flex-1 bg-white/5"></div>
-            <h2 className="text-sm font-semibold opacity-40 uppercase tracking-[0.2em] font-headings">पाठ श्रेणियाँ — Categories</h2>
-            <div className="h-[1px] flex-1 bg-white/5"></div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 font-sans">
-            <Link 
-              to="/category/shloka" 
-              className="minimal-card group"
-            >
-               <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 mb-5 group-hover:scale-110 transition-transform duration-300">
-                 <Scroll size={20} />
-               </div>
-               <span className="text-[10px] uppercase tracking-widest text-amber-500/80 font-bold block mb-1">वेद और उपनिषद</span>
-               <h3 className="text-base font-bold mb-2 text-white/90 group-hover:text-primary transition-colors">Sacred Verses — श्लोक</h3>
-               <p className="text-white/40 text-xs leading-relaxed">
-                 Dive into timeless Sanskrit shlokas from the Vedas, Upanishads, and Bhagavad Gita. Read Vrindopnishad paath of sacred verses with Hindi meaning.
-               </p>
-            </Link>
-
-            <Link 
-              to="/category/strotra" 
-              className="minimal-card group"
-            >
-               <div className="w-10 h-10 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-500 mb-5 group-hover:scale-110 transition-transform duration-300">
-                 <Music size={20} />
-               </div>
-               <span className="text-[10px] uppercase tracking-widest text-sky-500/80 font-bold block mb-1">भक्ति स्तोत्र</span>
-               <h3 className="text-base font-bold mb-2 text-white/90 group-hover:text-primary transition-colors">Strotras — स्तोत्र</h3>
-               <p className="text-white/40 text-xs leading-relaxed">
-                 Experience the power of traditional devotional hymns and prayers. Listen and read strotras dedicated to Radha Krishna, Shiva, and Hanuman.
-               </p>
-            </Link>
-
-            <Link 
-              to="/category/poem" 
-              className="minimal-card group"
-            >
-               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 mb-5 group-hover:scale-110 transition-transform duration-300">
-                 <FileText size={20} />
-               </div>
-               <span className="text-[10px] uppercase tracking-widest text-emerald-500/80 font-bold block mb-1">आध्यात्मिक कविता</span>
-               <h3 className="text-base font-bold mb-2 text-white/90 group-hover:text-primary transition-colors">Poems — कविताएँ</h3>
-               <p className="text-white/40 text-xs leading-relaxed">
-                 Explore classical and contemporary devotional poems, bhajans, and couplets from saints like Surdas, Meera Bai, and Kabir.
-               </p>
-            </Link>
-          </div>
-        </div>
-
-        {/* Daily Meditative Shloka Widget */}
-        <div className="py-12 max-w-3xl mx-auto px-4">
-          <div className="minimal-card relative overflow-hidden group">
-            <div className="flex items-center gap-2 mb-6">
-              <span className="w-2 h-2 rounded-full bg-primary animate-ping" />
-              <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-bold">
-                Daily Meditation • दैनिक स्वाध्याय
-              </span>
-            </div>
-
-            <blockquote className="text-center my-8">
-              <p className="text-xl md:text-2xl font-bold text-minimal-gold leading-loose whitespace-pre-line font-headings select-all">
-                {dailyShloka.sanskrit}
-              </p>
-            </blockquote>
-
-            <div className="border-t border-white/10 pt-6 mt-6">
-              <div className="text-center mb-4">
-                <span className="text-xs font-bold text-amber-500/80 uppercase tracking-widest">
-                  {dailyShloka.source}
+        {/* 2-Column Responsive Layout Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 text-left mt-4">
+          
+          {/* Left Column: Feed (2/3 width) */}
+          <div className="lg:col-span-2 space-y-10">
+            
+            {/* Daily Meditation Quote Block */}
+            <div className="minimal-card relative overflow-hidden group">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="w-2 h-2 rounded-full bg-primary animate-ping" />
+                <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-bold">
+                  Daily Meditation • दैनिक स्वाध्याय
                 </span>
               </div>
-              
-              <div className="grid md:grid-cols-2 gap-6 mt-4 text-left">
-                <div>
-                  <h4 className="text-[10px] uppercase tracking-wider text-white/40 font-bold mb-1.5">Hindi Meaning</h4>
-                  <p className="text-xs text-white/70 leading-relaxed font-light">
-                    {dailyShloka.hindi}
-                  </p>
+
+              <blockquote className="my-6">
+                <p className="text-lg md:text-xl font-bold text-minimal-gold leading-loose whitespace-pre-line font-headings select-all text-center">
+                  {dailyShloka.sanskrit}
+                </p>
+              </blockquote>
+
+              <div className="border-t border-white/10 pt-4 mt-4">
+                <div className="text-center mb-3">
+                  <span className="text-[10px] font-bold text-amber-500/80 uppercase tracking-widest">
+                    {dailyShloka.source}
+                  </span>
                 </div>
-                <div className="border-t md:border-t-0 md:border-l border-white/5 pt-4 md:pt-0 md:pl-6">
-                  <h4 className="text-[10px] uppercase tracking-wider text-white/40 font-bold mb-1.5">English Translation</h4>
-                  <p className="text-xs text-white/65 leading-relaxed font-light italic">
-                    {dailyShloka.english}
-                  </p>
+                
+                <div className="grid md:grid-cols-2 gap-4 text-xs font-light leading-relaxed">
+                  <div>
+                    <h4 className="text-[9px] uppercase tracking-wider text-white/40 font-bold mb-1">Hindi Meaning</h4>
+                    <p className="text-white/70">{dailyShloka.hindi}</p>
+                  </div>
+                  <div className="border-t md:border-t-0 md:border-l border-white/5 pt-3 md:pt-0 md:pl-4">
+                    <h4 className="text-[9px] uppercase tracking-wider text-white/40 font-bold mb-1">English Translation</h4>
+                    <p className="text-white/60 italic">{dailyShloka.english}</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Dynamic Relations Section: Saints, Books, Ragas */}
-        {!loading && (
-          <div className="py-12 max-w-6xl mx-auto px-4 space-y-16">
-            
-            {/* 1. Rasik Saints Carousel */}
-            {saints.length > 0 && (
+            {/* Dynamic Latest Verses Block */}
+            {latestVerses.length > 0 && (
               <div>
-                <div className="flex justify-between items-end mb-6">
-                  <div>
-                    <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-bold block mb-1">Holy Biographies & Vaanis</span>
-                    <h2 className="text-2xl font-bold font-headings text-minimal-gold">
-                      {isHindiRoute ? "रसिक सन्त" : "Rasik Saints"}
-                    </h2>
-                  </div>
-                  <Link to={isHindiRoute ? "/hi/saints" : "/saints"} className="text-xs text-primary hover:underline flex items-center gap-1 font-semibold">
-                    {isHindiRoute ? "सभी देखें" : "View All"}
-                    <ChevronRight size={14} />
-                  </Link>
-                </div>
-                
-                <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
-                  {saints.slice(0, 10).map(sant => (
-                    <Link 
-                      key={sant.cleanName} 
-                      to={isHindiRoute ? `/hi/saint/${sant.slug}` : `/saint/${sant.slug}`}
+                <h2 className="text-lg font-bold text-minimal-gold uppercase tracking-wider font-headings mb-5 pb-2 border-b border-white/5">
+                  {isHindiRoute ? "नवीनतम वाणी एवं श्लोक" : "Latest Dynamic Verses"}
+                </h2>
+                <div className="space-y-4">
+                  {latestVerses.map(verse => (
+                    <Link
+                      key={verse.id}
+                      to={isHindiRoute ? `/hi/content/${verse.slug || verse.id}` : `/content/${verse.slug || verse.id}`}
                       onClick={(e) => {
                         e.preventDefault();
-                        openPreview(sant, 'saint');
+                        openPreview(verse, 'verse');
                       }}
-                      className="w-40 flex-none glass-card p-4 rounded-2xl flex flex-col items-center text-center group hover:border-amber-500/20 transition-all snap-start"
+                      className="glass-card p-5 block group hover:border-amber-500/25 transition-all shadow-md hover:shadow-xl"
                     >
-                      <div className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 font-bold text-2xl mb-3 group-hover:scale-105 transition-transform duration-300">
-                        {sant.cleanName.charAt(0) === 'श' && sant.cleanName.charAt(4) ? sant.cleanName.charAt(4) : sant.cleanName.charAt(0)}
+                      <div className="flex justify-between items-start gap-4 mb-2">
+                        <span className="text-[9px] uppercase tracking-wider text-amber-500/80 bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/10">
+                          {verse.category}
+                        </span>
+                        {verse.audio_url && (
+                          <AudioPlayButton 
+                            track={verse} 
+                            className="text-sky-400 bg-sky-500/5 border border-sky-500/10 p-1.5 rounded-full" 
+                            size={12} 
+                          />
+                        )}
                       </div>
-                      <h3 className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors line-clamp-1 w-full leading-tight">
-                        {isHindiRoute ? sant.name : sant.hinglishName}
+                      <h3 className="font-bold text-base text-white/90 group-hover:text-primary transition-colors leading-snug truncate">
+                        {verse.cleanTitle || verse.title}
                       </h3>
-                      <span className="text-[9px] uppercase tracking-wider text-white/30 block mt-1">
-                        {sant.verses.length} {sant.verses.length === 1 ? 'Verse' : 'Verses'}
-                      </span>
+                      <p className="text-white/45 text-xs line-clamp-2 mt-1.5 leading-relaxed font-light">
+                        {verse.hindi_text || verse.english_translation || verse.description}
+                      </p>
                     </Link>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* 2. Books & Granthas Carousel */}
+            {/* Dynamic Books/Granthas Block */}
             {books.length > 0 && (
               <div>
-                <div className="flex justify-between items-end mb-6">
-                  <div>
-                    <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-bold block mb-1">Sacred Scriptures</span>
-                    <h2 className="text-2xl font-bold font-headings text-minimal-gold">
-                      {isHindiRoute ? "ग्रन्थ - रसिक वाणी" : "Books - Rasik Vanis"}
-                    </h2>
-                  </div>
-                  <Link to={isHindiRoute ? "/hi/books" : "/books"} className="text-xs text-primary hover:underline flex items-center gap-1 font-semibold">
+                <div className="flex justify-between items-end mb-5">
+                  <h2 className="text-lg font-bold text-minimal-gold uppercase tracking-wider font-headings pb-2">
+                    {isHindiRoute ? "रसिक ग्रन्थ एवं वाणी संग्रह" : "Scriptures & Granthas"}
+                  </h2>
+                  <Link to={isHindiRoute ? "/hi/books" : "/books"} className="text-xs text-primary hover:underline font-semibold flex items-center gap-0.5">
                     {isHindiRoute ? "सभी देखें" : "View All"}
                     <ChevronRight size={14} />
                   </Link>
                 </div>
                 
-                <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-hide snap-x">
-                  {books.slice(0, 10).map(book => (
+                <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
+                  {books.slice(0, 8).map(book => (
                     <Link 
                       key={book.name} 
                       to={isHindiRoute ? `/hi/book/${book.slug}` : `/book/${book.slug}`}
@@ -759,279 +567,184 @@ const HomePage = () => {
                         e.preventDefault();
                         openPreview(book, 'book');
                       }}
-                      className="w-52 flex-none glass-card p-5 rounded-2xl group hover:border-amber-500/20 transition-all snap-start flex flex-col justify-between h-44 border border-white/10 hover:shadow-2xl"
+                      className="w-72 flex-none glass-card p-4 rounded-2xl hover:border-amber-500/20 transition-all snap-start flex gap-4 border border-white/5 shadow-lg"
                     >
-                      <div>
-                        <span className="text-[9px] uppercase tracking-widest text-amber-500 font-bold block mb-2">Grantha</span>
-                        <h3 className="font-bold text-base text-white/90 group-hover:text-primary transition-colors leading-tight line-clamp-2">
-                          {book.name}
-                        </h3>
-                        <span className="text-xs text-white/40 block mt-1 line-clamp-1">
-                          By {book.author}
+                      {/* Dynamic Gradient Cover */}
+                      <div 
+                        className="dynamic-book-cover shrink-0 text-white select-none text-[8px] font-bold flex flex-col justify-between"
+                        style={{ background: getBookCoverGradient(book.name) }}
+                      >
+                        <div className="w-4 h-4 rounded-full border border-white/25 flex items-center justify-center mx-auto opacity-40">
+                          ॐ
+                        </div>
+                        <span className="text-[9px] font-bold line-clamp-3 text-center leading-tight tracking-wide uppercase px-0.5">
+                          {book.name.replace(/जी की वाणी/g, '').replace(/वाणी/g, '')}
+                        </span>
+                        <span className="text-[7px] text-amber-300 text-center uppercase tracking-widest font-headings opacity-75">
+                          SANT VAANI
                         </span>
                       </div>
-                      <span className="text-[10px] text-white/30 flex items-center gap-1 mt-4">
-                        <FileText size={12} />
-                        {book.verses.length} {book.verses.length === 1 ? 'Verse' : 'Verses'}
-                      </span>
+
+                      {/* Book Metadata */}
+                      <div className="flex flex-col justify-between py-1 min-w-0">
+                        <div>
+                          <h3 className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors leading-snug line-clamp-2">
+                            {book.name}
+                          </h3>
+                          <span className="text-[10px] text-white/40 block mt-1 truncate">
+                            By {book.author}
+                          </span>
+                        </div>
+                        <span className="text-[9px] text-white/30 flex items-center gap-1 mt-2">
+                          <FileText size={10} />
+                          {book.verses.length} verses
+                        </span>
+                      </div>
                     </Link>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* 3. Ragas Carousel */}
-            {ragas.length > 0 && (
-              <div>
-                <div className="flex justify-between items-end mb-6">
-                  <div>
-                    <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-bold block mb-1">Sankirtan Tunes</span>
-                    <h2 className="text-2xl font-bold font-headings text-minimal-gold">
-                      {isHindiRoute ? "शास्त्रीय राग" : "Classical Ragas"}
-                    </h2>
-                  </div>
-                  <Link to={isHindiRoute ? "/hi/ragas" : "/ragas"} className="text-xs text-primary hover:underline flex items-center gap-1 font-semibold">
-                    {isHindiRoute ? "सभी देखें" : "View All"}
-                    <ChevronRight size={14} />
+          </div>
+
+          {/* Right Column: Sidebar (1/3 width) */}
+          <div className="space-y-8">
+            
+            {/* Sidebar Block 1: Rasik Saints Circular Avatars Grid */}
+            {saints.length > 0 && (
+              <div className="sidebar-section-card">
+                <div className="flex justify-between items-center mb-4 pb-2 border-b border-white/5">
+                  <h3 className="text-xs font-bold text-minimal-gold uppercase tracking-wider">
+                    {isHindiRoute ? "रसिक सन्त" : "Rasik Saints"}
+                  </h3>
+                  <Link to={isHindiRoute ? "/hi/saints" : "/saints"} className="text-[10px] text-primary hover:underline font-semibold">
+                    {isHindiRoute ? "सभी" : "View All"}
                   </Link>
                 </div>
                 
-                <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
-                  {ragas.slice(0, 10).map(raga => (
-                    <Link 
-                      key={raga.name} 
-                      to={isHindiRoute ? `/hi/raga/${raga.slug}` : `/raga/${raga.slug}`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        openPreview(raga, 'raga');
-                      }}
-                      className="w-48 flex-none glass-card p-4 rounded-xl group hover:border-amber-500/20 transition-all snap-start flex items-center justify-between"
+                <div className="grid grid-cols-4 gap-3.5">
+                  {saints.slice(0, 12).map(sant => (
+                    <button
+                      key={sant.cleanName}
+                      onClick={() => openPreview(sant, 'saint')}
+                      title={isHindiRoute ? sant.name : sant.hinglishName}
+                      className="flex flex-col items-center group outline-none"
                     >
-                      <div className="min-w-0 pr-2">
-                        <h3 className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors truncate">
-                          {raga.name}
-                        </h3>
-                        <span className="text-[10px] text-white/30 truncate block mt-0.5">{raga.hinglishName}</span>
+                      <div className="w-11 h-11 rounded-full bg-amber-500/10 border border-amber-500/20 group-hover:border-amber-500/50 flex items-center justify-center text-amber-500 font-bold text-base shadow-md group-hover:scale-105 transition-all duration-300">
+                        {sant.cleanName.charAt(0) === 'श' && sant.cleanName.charAt(4) ? sant.cleanName.charAt(4) : sant.cleanName.charAt(0)}
                       </div>
-                      <div className="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center shrink-0">
-                        <Music size={16} />
-                      </div>
-                    </Link>
+                      <span className="text-[9px] text-white/50 group-hover:text-primary transition-colors block mt-1 truncate w-12 text-center">
+                        {sant.cleanName.split(/\s+/)[0]}
+                      </span>
+                    </button>
                   ))}
                 </div>
               </div>
             )}
-            
+
+            {/* Sidebar Block 2: Classical Ragas Melody Index */}
+            {ragas.length > 0 && (
+              <div className="sidebar-section-card">
+                <div className="flex justify-between items-center mb-4 pb-2 border-b border-white/5">
+                  <h3 className="text-xs font-bold text-minimal-gold uppercase tracking-wider">
+                    {isHindiRoute ? "शास्त्रीय राग" : "Classical Ragas"}
+                  </h3>
+                  <Link to={isHindiRoute ? "/hi/ragas" : "/ragas"} className="text-[10px] text-primary hover:underline font-semibold">
+                    {isHindiRoute ? "सभी" : "View All"}
+                  </Link>
+                </div>
+                
+                <div className="space-y-2">
+                  {ragas.slice(0, 6).map(raga => (
+                    <button
+                      key={raga.name}
+                      onClick={() => openPreview(raga, 'raga')}
+                      className="w-full flex items-center justify-between p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5 text-left text-xs group"
+                    >
+                      <div className="min-w-0 pr-2">
+                        <span className="font-semibold text-white/90 group-hover:text-primary transition-colors block truncate">
+                          {raga.name}
+                        </span>
+                        <span className="text-[9px] text-white/35 block truncate">{raga.hinglishName}</span>
+                      </div>
+                      <span className="text-[10px] text-white/40 bg-white/5 border border-white/15 px-2 py-0.5 rounded-md shrink-0 flex items-center gap-1">
+                        <Music size={8} />
+                        {raga.verses.length}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Sidebar Block 3: Dham & Categories Grid */}
+            <div className="sidebar-section-card">
+              <h3 className="text-xs font-bold text-minimal-gold uppercase tracking-wider mb-4 pb-2 border-b border-white/5">
+                {isHindiRoute ? "श्रेणियां" : "Sanctuary Categories"}
+              </h3>
+              
+              <div className="grid grid-cols-2 gap-3.5">
+                <Link 
+                  to="/category/sankirtan" 
+                  className="p-3 rounded-xl bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/10 flex flex-col justify-between h-20 text-xs transition-colors group"
+                >
+                  <Heart size={16} className="text-rose-500" />
+                  <div>
+                    <span className="font-bold text-white/90 group-hover:text-primary transition-colors block">Sankirtan</span>
+                    <span className="text-[9px] text-white/45">Lyrics</span>
+                  </div>
+                </Link>
+
+                <Link 
+                  to="/category/saint" 
+                  className="p-3 rounded-xl bg-indigo-500/5 hover:bg-indigo-500/10 border border-indigo-500/10 flex flex-col justify-between h-20 text-xs transition-colors group"
+                >
+                  <Users size={16} className="text-indigo-500" />
+                  <div>
+                    <span className="font-bold text-white/90 group-hover:text-primary transition-colors block">Saints Bio</span>
+                    <span className="text-[9px] text-white/45">Biographies</span>
+                  </div>
+                </Link>
+
+                <Link 
+                  to="/category/dham" 
+                  className="p-3 rounded-xl bg-orange-500/5 hover:bg-orange-500/10 border border-orange-500/10 flex flex-col justify-between h-20 text-xs transition-colors group"
+                >
+                  <MapPin size={16} className="text-orange-500" />
+                  <div>
+                    <span className="font-bold text-white/90 group-hover:text-primary transition-colors block">Braj Dham</span>
+                    <span className="text-[9px] text-white/45">Sacred Places</span>
+                  </div>
+                </Link>
+
+                <Link 
+                  to="/category/literature" 
+                  className="p-3 rounded-xl bg-violet-500/5 hover:bg-violet-500/10 border border-violet-500/10 flex flex-col justify-between h-20 text-xs transition-colors group"
+                >
+                  <Book size={16} className="text-violet-500" />
+                  <div>
+                    <span className="font-bold text-white/90 group-hover:text-primary transition-colors block">Literature</span>
+                    <span className="text-[9px] text-white/45">Vanis</span>
+                  </div>
+                </Link>
+              </div>
+            </div>
+
           </div>
-        )}
 
-        {/* Braj Heritage Section - Overhauled Grid */}
-        <div className="py-12 px-4 max-w-6xl mx-auto">
-          <div className="flex items-center gap-4 mb-10">
-            <div className="h-[1px] flex-1 bg-white/5"></div>
-            <h2 className="text-sm font-semibold opacity-40 uppercase tracking-[0.2em] font-headings">ब्रज रसिक विरासत — Braj Dham</h2>
-            <div className="h-[1px] flex-1 bg-white/5"></div>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 font-sans">
-            <Link 
-              to="/category/sankirtan" 
-              className="minimal-card flex items-center gap-3 group"
-              style={{ padding: '1rem 1.25rem' }}
-            >
-               <div className="w-9 h-9 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
-                 <Heart size={18} />
-               </div>
-               <div className="min-w-0">
-                 <h3 className="font-bold text-sm text-white/90 truncate group-hover:text-primary transition-colors">Sankirtan</h3>
-                 <p className="text-white/40 text-[10px] truncate">Lyrics & Bhajans</p>
-               </div>
-            </Link>
-
-            <Link 
-              to="/category/saint" 
-              className="minimal-card flex items-center gap-3 group"
-              style={{ padding: '1rem 1.25rem' }}
-            >
-               <div className="w-9 h-9 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
-                 <Users size={18} />
-               </div>
-               <div className="min-w-0">
-                 <h3 className="font-bold text-sm text-white/90 truncate group-hover:text-primary transition-colors">Rasik Saints</h3>
-                 <p className="text-white/40 text-[10px] truncate">Holy Biographies</p>
-               </div>
-            </Link>
-
-            <Link 
-              to="/category/dham" 
-              className="minimal-card flex items-center gap-3 group"
-              style={{ padding: '1rem 1.25rem' }}
-            >
-               <div className="w-9 h-9 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
-                 <MapPin size={18} />
-               </div>
-               <div className="min-w-0">
-                 <h3 className="font-bold text-sm text-white/90 truncate group-hover:text-primary transition-colors">Braj Dham</h3>
-                 <p className="text-white/40 text-[10px] truncate">Sacred Places</p>
-               </div>
-            </Link>
-
-            <Link 
-              to="/category/literature" 
-              className="minimal-card flex items-center gap-3 group"
-              style={{ padding: '1rem 1.25rem' }}
-            >
-               <div className="w-9 h-9 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
-                 <Book size={18} />
-               </div>
-               <div className="min-w-0">
-                 <h3 className="font-bold text-sm text-white/90 truncate group-hover:text-primary transition-colors">Literature</h3>
-                 <p className="text-white/40 text-[10px] truncate">Rasik Scriptures</p>
-               </div>
-            </Link>
-          </div>
         </div>
 
-        {/* Why Vrindopnishad Section - Clean Typography */}
-        <div className="py-12 max-w-3xl mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-8 text-center text-minimal-gold font-headings">
-            Why Read Vrindopnishad Paath Online?
-          </h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="flex gap-4 p-2">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/5 text-amber-500 flex items-center justify-center shrink-0 mt-1">
-                <BookOpen size={20} />
-              </div>
-              <div>
-                <h3 className="font-bold text-sm text-white/90 mb-1">645+ Curated Verses</h3>
-                <p className="text-white/45 text-xs leading-relaxed">Authentic Sanskrit shlokas, strotras, and devotional poetry verified by traditional Vrindavan scholars.</p>
-              </div>
-            </div>
-
-            <div className="flex gap-4 p-2">
-              <div className="w-10 h-10 rounded-xl bg-sky-500/5 text-sky-500 flex items-center justify-center shrink-0 mt-1">
-                <Globe size={20} />
-              </div>
-              <div>
-                <h3 className="font-bold text-sm text-white/90 mb-1">Tri-lingual Translation</h3>
-                <p className="text-white/45 text-xs leading-relaxed">Every verse features original Sanskrit/Hindi text accompanied by fluid English translations.</p>
-              </div>
-            </div>
-
-            <div className="flex gap-4 p-2">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/5 text-emerald-500 flex items-center justify-center shrink-0 mt-1">
-                <Music size={20} />
-              </div>
-              <div>
-                <h3 className="font-bold text-sm text-white/90 mb-1">Traditional Chanting</h3>
-                <p className="text-white/45 text-xs leading-relaxed">Listen to high-quality audio narrations and traditional recitation styles to improve pronunciation.</p>
-              </div>
-            </div>
-
-            <div className="flex gap-4 p-2">
-              <div className="w-10 h-10 rounded-xl bg-rose-500/5 text-rose-500 flex items-center justify-center shrink-0 mt-1">
-                <Heart size={20} />
-              </div>
-              <div>
-                <h3 className="font-bold text-sm text-white/90 mb-1">A Free Spiritual Hub</h3>
-                <p className="text-white/45 text-xs leading-relaxed">No subscriptions or hidden fees. We believe sacred wisdom should be open and accessible to all.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Knowledge Hub - Premium Accordion Panel Grid */}
-        <div className="py-12 max-w-3xl mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-8 text-center text-minimal-gold font-headings">
-            वृंदोपनिषद् ज्ञान केंद्र — Knowledge Hub
-          </h2>
-          <div className="grid md:grid-cols-2 gap-4 font-sans">
-            <Link to="/what-is-vrindopnishad" className="premium-hub-panel flex items-center justify-between group">
-              <div className="min-w-0 pr-4">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block mr-2 align-middle opacity-60 group-hover:opacity-100 group-hover:scale-125 transition-all" />
-                <h3 className="inline-block font-bold text-sm text-white/90 group-hover:text-primary transition-colors align-middle">What is Vrindopnishad?</h3>
-                <p className="text-white/40 text-[11px] mt-1 pl-3.5 truncate">Introduction to the digital sanctuary</p>
-              </div>
-              <ArrowRight size={16} className="text-white/20 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
-            </Link>
-
-            <Link to="/meaning" className="premium-hub-panel flex items-center justify-between group">
-              <div className="min-w-0 pr-4">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block mr-2 align-middle opacity-60 group-hover:opacity-100 group-hover:scale-125 transition-all" />
-                <h3 className="inline-block font-bold text-sm text-white/90 group-hover:text-primary transition-colors align-middle">Meaning — अर्थ</h3>
-                <p className="text-white/40 text-[11px] mt-1 pl-3.5 truncate">Significance and spiritual definitions</p>
-              </div>
-              <ArrowRight size={16} className="text-white/20 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
-            </Link>
-
-            <Link to="/origin" className="premium-hub-panel flex items-center justify-between group">
-              <div className="min-w-0 pr-4">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block mr-2 align-middle opacity-60 group-hover:opacity-100 group-hover:scale-125 transition-all" />
-                <h3 className="inline-block font-bold text-sm text-white/90 group-hover:text-primary transition-colors align-middle">Origin — उत्पत्ति</h3>
-                <p className="text-white/40 text-[11px] mt-1 pl-3.5 truncate">Vrindavan roots and history</p>
-              </div>
-              <ArrowRight size={16} className="text-white/20 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
-            </Link>
-
-            <Link to="/philosophy" className="premium-hub-panel flex items-center justify-between group">
-              <div className="min-w-0 pr-4">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block mr-2 align-middle opacity-60 group-hover:opacity-100 group-hover:scale-125 transition-all" />
-                <h3 className="inline-block font-bold text-sm text-white/90 group-hover:text-primary transition-colors align-middle">Philosophy — दर्शन</h3>
-                <p className="text-white/40 text-[11px] mt-1 pl-3.5 truncate">Bhakti principles and Vedic path</p>
-              </div>
-              <ArrowRight size={16} className="text-white/20 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
-            </Link>
-
-            <Link to="/teachings" className="premium-hub-panel flex items-center justify-between group">
-              <div className="min-w-0 pr-4">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block mr-2 align-middle opacity-60 group-hover:opacity-100 group-hover:scale-125 transition-all" />
-                <h3 className="inline-block font-bold text-sm text-white/90 group-hover:text-primary transition-colors align-middle">Teachings — शिक्षाएँ</h3>
-                <p className="text-white/40 text-[11px] mt-1 pl-3.5 truncate">Key spiritual messages & insights</p>
-              </div>
-              <ArrowRight size={16} className="text-white/20 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
-            </Link>
-
-            <Link to="/importance" className="premium-hub-panel flex items-center justify-between group">
-              <div className="min-w-0 pr-4">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block mr-2 align-middle opacity-60 group-hover:opacity-100 group-hover:scale-125 transition-all" />
-                <h3 className="inline-block font-bold text-sm text-white/90 group-hover:text-primary transition-colors align-middle">Importance — महत्व</h3>
-                <p className="text-white/40 text-[11px] mt-1 pl-3.5 truncate">Why these texts matter today</p>
-              </div>
-              <ArrowRight size={16} className="text-white/20 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
-            </Link>
-          </div>
-        </div>
-
-        {/* SEO Bottom Content - Clean Description */}
-        <div className="py-12 max-w-3xl mx-auto px-4 border-t border-white/5">
-          <h2 className="text-xl font-bold mb-4 text-white/90 font-headings">वृंदोपनिषद् पाठ — Vrindopnishad Paath Online</h2>
-          <p className="text-white/45 text-xs leading-relaxed mb-4">
-            Vrindopnishad Paath is the daily spiritual practice of reading sacred verses from the Vedas, Upanishads, Bhagavad Gita, and the devotional literature of Vrindavan. Our platform brings this ancient practice into the digital age, allowing seekers worldwide to engage with authentic spiritual texts.
+        {/* Minimalized Dynamic SEO Footer Content */}
+        <div className="py-10 max-w-4xl mx-auto border-t border-white/5 mt-16 text-center text-xs text-white/35 leading-relaxed font-light">
+          <p className="mb-2">
+            Vrindopnishad Paath: Sacred dynamic portal curated for reading authentic Sanskrit shlokas, devotional strotras, and spiritual couplets.
           </p>
-          <p className="text-white/45 text-xs leading-relaxed mb-4">
-            वृंदोपनिषद् पाठ एक पवित्र आध्यात्मिक अभ्यास है जो वेदों, उपनिषदों, भगवद्गीता, और वृंदावन की भक्ति साहित्य के पवित्र श्लोकों को पढ़ने और सुनने की परंपरा है। हमारा मंच इस प्राचीन परंपरा को डिजिटल युग में लाता है।
+          <p>
+            वृंदोपनिषद् पाठ: रसिक संतों की वाणी, स्तोत्र और वैदिक श्लोकों का एक अत्यंत सुंदर और सुगम डिजिटल संग्रह।
           </p>
-          <div className="flex flex-wrap gap-1.5 mt-6">
-            {['vrindopnishad', 'vrindopnishad paath', 'वृंदोपनिषद्', 'श्लोक', 'स्तोत्र', 'भक्ति कविता', 'भगवद्गीता', 'radha krishna', 'vrindavan', 'sanskrit shlokas'].map(tag => (
-              <span key={tag} className="px-2.5 py-0.5 rounded-full border border-white/5 text-white/30 text-[10px]">{tag}</span>
-            ))}
-          </div>
         </div>
 
-        {/* Minimal Call to Action */}
-        <div className="my-16 py-16 border-t border-b border-white/5 text-center relative overflow-hidden">
-          <div className="relative z-10 max-w-2xl mx-auto px-4">
-            <h2 className="text-2xl font-bold mb-2 text-white/95 font-headings">अपनी आध्यात्मिक यात्रा शुरू करें</h2>
-            <p className="text-base text-white/60 mb-6 font-headings">Start Your Spiritual Journey</p>
-            <p className="text-white/40 text-xs max-w-md mx-auto mb-8 leading-relaxed">
-               Immerse yourself in sacred texts with audio narrations, beautiful imagery, and deep spiritual insights. Read Vrindopnishad Paath daily for inner peace and divine wisdom.
-            </p>
-            <Link to="/content" className="btn-premium px-10 py-3.5 text-sm shadow-xl hover:shadow-primary/20">
-               Enter Presence — पाठ पढ़ें
-               <ArrowRight size={16} />
-            </Link>
-          </div>
-        </div>
       </div>
 
       {/* Drawer Backdrop Overlay */}
@@ -1095,13 +808,13 @@ const HomePage = () => {
                       onClick={() => setDrawerTab('books')}
                       className={`drawer-tab ${drawerTab === 'books' ? 'active' : ''}`}
                     >
-                      Books ({selectedItem.books.length})
+                      Books ({selectedItem.books ? selectedItem.books.length : 0})
                     </button>
                     <button 
                       onClick={() => setDrawerTab('verses')}
                       className={`drawer-tab ${drawerTab === 'verses' ? 'active' : ''}`}
                     >
-                      Verses ({selectedItem.verses.length})
+                      Verses ({selectedItem.verses ? selectedItem.verses.length : 0})
                     </button>
                   </div>
 
@@ -1119,7 +832,7 @@ const HomePage = () => {
 
                   {drawerTab === 'books' && (
                     <div className="grid grid-cols-1 gap-2">
-                      {selectedItem.books.length > 0 ? (
+                      {selectedItem.books && selectedItem.books.length > 0 ? (
                         selectedItem.books.map(bName => {
                           const matchedBookObj = books.find(b => b.name === bName);
                           return (
@@ -1146,7 +859,7 @@ const HomePage = () => {
 
                   {drawerTab === 'verses' && (
                     <div className="space-y-3">
-                      {selectedItem.verses.map(v => (
+                      {selectedItem.verses && selectedItem.verses.map(v => (
                         <VerseListItem key={v.id} verse={v} isHindiRoute={isHindiRoute} />
                       ))}
                     </div>
@@ -1157,7 +870,7 @@ const HomePage = () => {
               {/* Render for Book */}
               {previewType === 'book' && (
                 <div className="space-y-3">
-                  {selectedItem.verses.map(v => (
+                  {selectedItem.verses && selectedItem.verses.map(v => (
                     <VerseListItem key={v.id} verse={v} isHindiRoute={isHindiRoute} />
                   ))}
                 </div>
@@ -1166,7 +879,7 @@ const HomePage = () => {
               {/* Render for Raga */}
               {previewType === 'raga' && (
                 <div className="space-y-3">
-                  {selectedItem.verses.map(v => (
+                  {selectedItem.verses && selectedItem.verses.map(v => (
                     <VerseListItem key={v.id} verse={v} isHindiRoute={isHindiRoute} />
                   ))}
                 </div>

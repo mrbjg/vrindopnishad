@@ -3258,3 +3258,53 @@ html.light-mode .drawer-tab {
 .verse-expansion-panel.open {
     max-height: 1000px;
 }
+
+/* Dynamic Book Cover simulated style */
+.dynamic-book-cover {
+    height: 120px;
+    width: 90px;
+    border-radius: 6px 12px 12px 6px;
+    box-shadow: 
+        5px 5px 15px rgba(0, 0, 0, 0.4),
+        inset 3px 0 3px rgba(255, 255, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+    border-left: 3px solid rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dynamic-book-cover:hover {
+    transform: translateY(-4px) rotate(1deg);
+    box-shadow: 
+        8px 12px 25px rgba(0, 0, 0, 0.5),
+        inset 3px 0 3px rgba(255, 255, 255, 0.2);
+}
+
+html.light-mode .dynamic-book-cover {
+    box-shadow: 
+        3px 4px 10px rgba(0, 0, 0, 0.15),
+        inset 2px 0 2px rgba(255, 255, 255, 0.4);
+    border-left-color: rgba(0, 0, 0, 0.15);
+}
+
+/* Sidebar panel standard formatting */
+.sidebar-section-card {
+    background: rgba(255, 255, 255, 0.015);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+html.light-mode .sidebar-section-card {
+    background: rgba(255, 255, 255, 0.65);
+    border-color: rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+}
