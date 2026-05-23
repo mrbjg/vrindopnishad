@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ApiContext } from '../App';
 import { Search, ArrowRight, Tag, Sparkles, Brain } from 'lucide-react';
 import AudioPlayButton from '../components/ui/AudioPlayButton';
@@ -9,6 +9,10 @@ import { semanticSearch } from '../utils/semanticSearch';
 
 const ContentListPage = () => {
   const { apiService } = useContext(ApiContext);
+  const [searchParams] = useSearchParams();
+  const urlQuery = searchParams.get('q') || '';
+  const urlCategory = searchParams.get('category') || null;
+
   const [content, setContent] = useState(() => {
     try {
       const cached = localStorage.getItem('sanctuary_content_cache');
@@ -17,14 +21,22 @@ const ContentListPage = () => {
   });
   const [categories, setCategories] = useState(() => apiService.getCachedData('categories') || []);
   const [loading, setLoading] = useState(!content.length);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(urlCategory);
+  const [searchQuery, setSearchQuery] = useState(urlQuery);
+  const [debouncedSearch, setDebouncedSearch] = useState(urlQuery);
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [aiResults, setAiResults] = useState([]);
   const [aiLoading, setAiLoading] = useState(false);
   const searchRef = useRef(null);
+
+  // Sync state with URL search params changes
+  useEffect(() => {
+    const q = searchParams.get('q') || '';
+    const cat = searchParams.get('category') || null;
+    setSearchQuery(q);
+    setSelectedCategory(cat);
+  }, [searchParams]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

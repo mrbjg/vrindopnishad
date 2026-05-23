@@ -4,7 +4,7 @@ import { useSettings, isLightTheme } from '../contexts/SettingsContext';
 const CelestialParticles = () => {
   const canvasRef = useRef(null);
   const { settings } = useSettings();
-  const theme = settings.theme || 'dark';
+  const theme = settings.theme || 'light';
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -165,36 +165,48 @@ const CelestialParticles = () => {
         p.color = ['rgba(253, 186, 116, 0.75)', 'rgba(251, 146, 60, 0.65)', 'rgba(254, 243, 199, 0.8)'][Math.floor(Math.random() * 3)];
         p.vy = -(Math.random() * 0.12 + 0.03);
       } else if (theme === 'waterfall') {
-        // We partition particles for waterfall into droplets, mist, and sky stars
-        const rand = Math.random();
-        if (rand < 0.40) {
-          // Waterfall water droplet cascade
-          p.extra.type = 'droplet';
-          p.x = Math.random() * (w * 0.28) + (w * 0.02);
-          p.y = initY ? Math.random() * h : h * 0.2; // Start from top ledge (20% height)
-          p.radius = Math.random() * 0.4 + 0.25;
-          p.vy = Math.random() * 4 + 4.5;
-          p.vx = (Math.random() * 0.3) + 0.1; // Splash outwards slightly
-          p.color = 'rgba(165, 243, 252, 0.7)';
-        } else if (rand < 0.60) {
-          // Bottom rising mist/foam
-          p.extra.type = 'mist';
-          p.x = Math.random() * (w * 0.36);
-          p.y = initY ? (h - Math.random() * 120) : h + 10;
-          p.radius = Math.random() * (isMobile ? 1.5 : 2.5) + 0.8;
-          p.vy = -(Math.random() * 0.5 + 0.2);
-          p.vx = (Math.random() - 0.5) * 0.3;
-          p.color = 'rgba(207, 250, 254, 0.35)';
-          p.alpha = Math.random() * 0.2 + 0.1;
-        } else {
-          // Tiny background star dots in the right sky
+        const isMobileOrTablet = w < 1024;
+        if (isMobileOrTablet) {
+          // On mobile/tablet, show only sky stars to keep it clean and fast!
           p.extra.type = 'star';
-          p.x = (w * 0.35) + Math.random() * (w * 0.65);
-          p.y = Math.random() * (h * 0.7);
+          p.x = Math.random() * w;
+          p.y = Math.random() * h;
           p.radius = Math.random() * (isMobile ? 0.45 : 0.65) + 0.15;
           p.vx = (Math.random() - 0.5) * 0.015;
           p.vy = -(Math.random() * 0.015 + 0.003);
           p.color = 'rgba(254, 243, 199, 0.8)';
+        } else {
+          const waterfallWidth = Math.min(220, w * 0.22);
+          const rand = Math.random();
+          if (rand < 0.40) {
+            // Waterfall water droplet cascade
+            p.extra.type = 'droplet';
+            p.x = Math.random() * (waterfallWidth * 0.8) + (waterfallWidth * 0.1);
+            p.y = initY ? Math.random() * h : h * 0.15; // Start from top ledge (15% height)
+            p.radius = Math.random() * 0.4 + 0.25;
+            p.vy = Math.random() * 4 + 4.5;
+            p.vx = (Math.random() * 0.2) - 0.1; // Splash outwards slightly
+            p.color = 'rgba(165, 243, 252, 0.7)';
+          } else if (rand < 0.60) {
+            // Bottom rising mist/foam
+            p.extra.type = 'mist';
+            p.x = Math.random() * (waterfallWidth * 1.1);
+            p.y = initY ? (h - Math.random() * 120) : h + 10;
+            p.radius = Math.random() * (isMobile ? 1.5 : 2.5) + 0.8;
+            p.vy = -(Math.random() * 0.5 + 0.2);
+            p.vx = (Math.random() - 0.5) * 0.3;
+            p.color = 'rgba(207, 250, 254, 0.35)';
+            p.alpha = Math.random() * 0.2 + 0.1;
+          } else {
+            // Tiny background star dots in the right sky
+            p.extra.type = 'star';
+            p.x = (waterfallWidth * 1.2) + Math.random() * (w - waterfallWidth * 1.2);
+            p.y = Math.random() * (h * 0.7);
+            p.radius = Math.random() * (isMobile ? 0.45 : 0.65) + 0.15;
+            p.vx = (Math.random() - 0.5) * 0.015;
+            p.vy = -(Math.random() * 0.015 + 0.003);
+            p.color = 'rgba(254, 243, 199, 0.8)';
+          }
         }
       }
 
@@ -238,9 +250,10 @@ const CelestialParticles = () => {
     // Static Backdrop drawing functions
     const drawMoon = (cWidth, cHeight) => {
       if (!moonCanvas) return;
+      if (cWidth < 1024) return; // Hide moon on mobile/tablet to avoid container cut-off!
       ctx.save();
       const moonX = cWidth - 120;
-      const moonY = 120;
+      const moonY = 180; // Shifted down to render fully behind content cards
       const radius = 35;
 
       // Outer glow aura (drawn on main canvas, so it's smooth and has NO sharp edges!)
@@ -260,9 +273,10 @@ const CelestialParticles = () => {
     };
 
     const drawSpacePlanet = (cWidth, cHeight) => {
+      if (cWidth < 1024) return; // Hide on mobile/tablet to avoid container cut-off!
       ctx.save();
       const pX = 140;
-      const pY = 140;
+      const pY = 180; // Shifted down to render fully behind content cards
       const radius = isMobile ? 22 : 30;
 
       // Planet glow aura
@@ -484,35 +498,38 @@ const CelestialParticles = () => {
     };
 
     const drawWaterfallBackdrop = (cWidth, cHeight) => {
+      if (cWidth < 1024) return; // Hide on mobile/tablet to keep it clean and fast!
       ctx.save();
       
+      const waterfallWidth = Math.min(220, cWidth * 0.22);
+      
       // Sky/ambience background gradient on the right side
-      const skyGrad = ctx.createLinearGradient(cWidth * 0.35, 0, cWidth, cHeight);
+      const skyGrad = ctx.createLinearGradient(waterfallWidth, 0, cWidth, cHeight);
       skyGrad.addColorStop(0, 'rgba(6, 18, 23, 0.2)');
       skyGrad.addColorStop(1, 'rgba(2, 6, 8, 0.45)');
       ctx.fillStyle = skyGrad;
-      ctx.fillRect(cWidth * 0.3, 0, cWidth * 0.7, cHeight);
+      ctx.fillRect(waterfallWidth, 0, cWidth - waterfallWidth, cHeight);
 
-      // 1. Rocky Cliff silhouette on the left
+      // 1. Rocky Cliff silhouette on the left (semi-transparent for celestial blending)
       ctx.beginPath();
       ctx.moveTo(0, 0);
-      ctx.lineTo(cWidth * 0.34, 0);
-      ctx.lineTo(cWidth * 0.32, cHeight * 0.20); // Waterfall starting ledge
-      ctx.lineTo(cWidth * 0.28, cHeight * 0.20);
+      ctx.lineTo(waterfallWidth * 1.1, 0);
+      ctx.lineTo(waterfallWidth, cHeight * 0.15); // Waterfall starting ledge (15% height)
+      ctx.lineTo(waterfallWidth * 0.85, cHeight * 0.15);
       
       // Left cliff face bezier curve
       ctx.bezierCurveTo(
-        cWidth * 0.25, cHeight * 0.45,
-        cWidth * 0.16, cHeight * 0.72,
-        cWidth * 0.22, cHeight
+        waterfallWidth * 0.75, cHeight * 0.4,
+        waterfallWidth * 0.5, cHeight * 0.7,
+        waterfallWidth * 0.65, cHeight
       );
       ctx.lineTo(0, cHeight);
       ctx.closePath();
 
-      const cliffGrad = ctx.createLinearGradient(0, 0, cWidth * 0.3, cHeight);
-      cliffGrad.addColorStop(0, '#0a1d26');
-      cliffGrad.addColorStop(0.5, '#07151c');
-      cliffGrad.addColorStop(1, '#030a0d');
+      const cliffGrad = ctx.createLinearGradient(0, 0, waterfallWidth, cHeight);
+      cliffGrad.addColorStop(0, 'rgba(10, 29, 38, 0.45)');
+      cliffGrad.addColorStop(0.5, 'rgba(7, 21, 28, 0.55)');
+      cliffGrad.addColorStop(1, 'rgba(3, 10, 13, 0.65)');
       ctx.fillStyle = cliffGrad;
       ctx.fill();
 
@@ -520,33 +537,40 @@ const CelestialParticles = () => {
       ctx.beginPath();
       ctx.strokeStyle = 'rgba(22, 78, 99, 0.18)';
       ctx.lineWidth = 1.6;
-      ctx.moveTo(cWidth * 0.28, cHeight * 0.20);
+      ctx.moveTo(waterfallWidth * 0.85, cHeight * 0.15);
       ctx.bezierCurveTo(
-        cWidth * 0.22, cHeight * 0.45,
-        cWidth * 0.14, cHeight * 0.72,
-        cWidth * 0.19, cHeight
+        waterfallWidth * 0.75, cHeight * 0.4,
+        waterfallWidth * 0.4, cHeight * 0.7,
+        waterfallWidth * 0.55, cHeight
       );
       ctx.stroke();
 
-      // 2. Cascade streams rushing down from the ledge (y = cHeight * 0.2)
+      // 2. Cascade streams rushing down from the ledge
       const time = Date.now() * 0.0035;
-      const streamCount = 5;
+      const streamCount = 6;
       for (let i = 0; i < streamCount; i++) {
         // Distribute starting points on the ledge
-        const startX = cWidth * 0.08 + (i * (cWidth * 0.045));
+        const startX = waterfallWidth * 0.2 + (i * (waterfallWidth * 0.11));
         ctx.beginPath();
-        ctx.strokeStyle = i % 2 === 0 ? 'rgba(34, 211, 238, 0.15)' : 'rgba(255, 255, 255, 0.18)';
-        ctx.lineWidth = Math.random() * 2 + 1.2;
+        ctx.strokeStyle = i % 2 === 0 ? 'rgba(34, 211, 238, 0.18)' : 'rgba(255, 255, 255, 0.22)';
+        ctx.lineWidth = Math.random() * 1.5 + 1.0;
         
-        ctx.moveTo(startX, cHeight * 0.20);
+        ctx.moveTo(startX, cHeight * 0.15);
         
-        // Track cascade path downward with sinusoidal wiggle
-        for (let y = cHeight * 0.20; y <= cHeight; y += 30) {
-          const sway = Math.sin(y * 0.025 + time * 7 + i) * 1.5;
+        // Track cascade path downward - straight fall with tiny rapid micro-shiver
+        for (let y = cHeight * 0.15; y <= cHeight; y += 40) {
+          const sway = Math.sin(y * 0.08 + time * 12 + i) * 0.6;
           ctx.lineTo(startX + sway, y);
         }
         ctx.stroke();
       }
+
+      // 3. Bottom mist/foam glow to seamlessly blend waterfall bottom
+      const mistOverlayGrad = ctx.createLinearGradient(0, cHeight - 120, waterfallWidth * 1.2, cHeight);
+      mistOverlayGrad.addColorStop(0, 'rgba(6, 182, 212, 0)');
+      mistOverlayGrad.addColorStop(1, 'rgba(6, 182, 212, 0.15)');
+      ctx.fillStyle = mistOverlayGrad;
+      ctx.fillRect(0, cHeight - 120, waterfallWidth * 1.2, 120);
 
       ctx.restore();
     };
@@ -851,12 +875,13 @@ const CelestialParticles = () => {
         if (theme === 'snow' || theme === 'winter' || theme === 'rainy' || theme === 'forest') {
           isOffScreen = p.y > canvas.height + 20 || p.x < -20 || p.x > canvas.width + 20;
         } else if (theme === 'waterfall') {
+          const waterfallWidth = Math.min(220, canvas.width * 0.22);
           if (p.extra.type === 'droplet') {
-            isOffScreen = p.y > canvas.height + 10 || p.x < -10 || p.x > canvas.width * 0.35;
+            isOffScreen = p.y > canvas.height + 10 || p.x < -10 || p.x > waterfallWidth * 1.1;
           } else if (p.extra.type === 'mist') {
             isOffScreen = p.y < canvas.height * 0.4 || p.alpha <= 0.01;
           } else {
-            isOffScreen = p.y < -10 || p.x < canvas.width * 0.28 || p.x > canvas.width + 10;
+            isOffScreen = p.y < -10 || p.x < waterfallWidth * 1.2 || p.x > canvas.width + 10;
           }
         } else {
           isOffScreen = p.y < -20 || p.x < -20 || p.x > canvas.width + 20;
@@ -868,7 +893,7 @@ const CelestialParticles = () => {
           if (theme === 'snow' || theme === 'winter' || theme === 'rainy' || theme === 'forest') {
             particles[index].y = -10;
           } else if (theme === 'waterfall' && particles[index].extra.type === 'droplet') {
-            particles[index].y = canvas.height * 0.20;
+            particles[index].y = canvas.height * 0.15;
           }
         }
       });
@@ -960,7 +985,7 @@ const CelestialParticles = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed pointer-events-none z-[1]"
+      className="fixed pointer-events-none z-[-1]"
       style={{
         top: '-4px',
         left: '-4px',

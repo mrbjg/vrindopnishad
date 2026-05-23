@@ -204,8 +204,17 @@ body {
     transition: background 0.4s ease, border-color 0.4s ease;
 }
 
+/* Sticky Sub-bar for mobile */
+.header-sub-bar {
+    background: var(--header-bg) !important;
+    backdrop-filter: var(--blur-effect);
+    -webkit-backdrop-filter: var(--blur-effect);
+    border-bottom: 1px solid var(--glass-border) !important;
+    transition: background 0.4s ease, border-color 0.4s ease;
+}
+
 /* Improved Glassmorphism for profile pill on mobile */
-.app-header .flex.items-center.rounded-full {
+.app-header .header-profile-pill {
     background: rgba(255, 255, 255, 0.03);
     box-shadow:
         inset 0 1px 1px rgba(255, 255, 255, 0.05),
@@ -2194,6 +2203,41 @@ html.light-mode ::-webkit-scrollbar-thumb:hover {
 /* ROBUST LIGHT MODE CONTRAST & LEGIBILITY OVERRIDES                         */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
+/* Remove shadows and enforce lite outline on light theme */
+html.light-mode .glass-card,
+html.light-mode .glass,
+html.light-mode .premium-content-card,
+html.light-mode .sidebar-section-card,
+html.light-mode .preview-drawer,
+html.light-mode .settings-modal-card,
+html.light-mode .mobile-bottom-nav,
+html.light-mode .side-item:hover,
+html.light-mode .shadow-sm,
+html.light-mode .shadow,
+html.light-mode .shadow-md,
+html.light-mode .shadow-lg,
+html.light-mode .shadow-xl,
+html.light-mode .shadow-2xl {
+    box-shadow: none !important;
+}
+
+html.light-mode .glass-card,
+html.light-mode .glass,
+html.light-mode .premium-content-card,
+html.light-mode .sidebar-section-card,
+html.light-mode .preview-drawer,
+html.light-mode .settings-modal-card,
+html.light-mode .mobile-bottom-nav {
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+html.light-mode .glass-card:hover,
+html.light-mode .glass:hover,
+html.light-mode .premium-content-card:hover {
+    box-shadow: none !important;
+    border-color: rgba(var(--primary-rgb), 0.25) !important;
+}
+
 /* Force all headings to have high-contrast dark coloring in light mode */
 html.light-mode h1,
 html.light-mode h2,
@@ -2258,6 +2302,7 @@ html.light-mode .header-control-btn:hover {
 html.light-mode .header-profile-pill {
     background-color: hsl(var(--foreground) / 0.04) !important;
     border-color: hsl(var(--foreground) / 0.12) !important;
+    box-shadow: none !important;
 }
 
 html.light-mode .header-profile-name {
@@ -2283,7 +2328,7 @@ html.light-mode .mobile-bottom-nav {
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
     border-color: hsl(var(--foreground) / 0.1) !important;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: none !important;
 }
 
 html.light-mode .mobile-nav-item {
@@ -3307,4 +3352,113 @@ html.light-mode .sidebar-section-card {
     background: rgba(255, 255, 255, 0.65);
     border-color: rgba(0, 0, 0, 0.05);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+}
+
+/* E-Commerce Book Shelf and Spine Effects */
+.book-cover-premium {
+    position: relative;
+    width: 130px;
+    height: 180px;
+    border-radius: 4px 10px 10px 4px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 3px 0 3px rgba(255, 255, 255, 0.2);
+    border-left: 5px solid rgba(0, 0, 0, 0.25);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 16px 12px;
+}
+.book-cover-premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 8px;
+    width: 1px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.12);
+    z-index: 10;
+}
+.book-cover-premium:hover {
+    transform: translateY(-6px) rotate(1deg);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55), inset 3px 0 3px rgba(255, 255, 255, 0.25);
+}
+html.light-mode .book-cover-premium {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), inset 2px 0 2px rgba(255, 255, 255, 0.45);
+    border-left-color: rgba(0, 0, 0, 0.12);
+}
+.book-cover-inner-gold {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    height: 100%;
+    width: 100%;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 6px;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.03) 0%, transparent 80%);
+}
+.book-shelf-row::-webkit-scrollbar {
+    display: none;
+}
+.book-shelf-row {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+/* Premium Card hover upward shift and soft glow */
+.premium-content-card {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+.premium-content-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(var(--primary-rgb), 0.25);
+    box-shadow: 0 12px 30px rgba(var(--primary-rgb), 0.08);
+}
+html.light-mode .premium-content-card {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.015);
+}
+html.light-mode .premium-content-card:hover {
+    border-color: rgba(var(--primary-rgb), 0.3);
+    box-shadow: 0 12px 30px rgba(var(--primary-rgb), 0.04);
+}
+
+/* Custom layout typography overrides */
+.font-laila-headings {
+    font-family: 'Laila', serif !important;
+}
+
+/* Responsive header styling and mobile overrides */
+@media (max-width: 767px) {
+    header.app-header {
+        height: 112px !important;
+        padding: 0.65rem 1rem !important;
+    }
+}
+
+/* Japa Chant floating animation */
+@keyframes float-fade-up {
+    0% {
+        transform: translateY(0) scale(0.85);
+        opacity: 0;
+    }
+    15% {
+        transform: translateY(-10px) scale(1.15);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-75px) scale(0.9);
+        opacity: 0;
+    }
+}
+.animate-float-fade-up {
+    animation: float-fade-up 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }

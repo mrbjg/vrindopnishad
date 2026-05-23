@@ -51,6 +51,59 @@ const getCache = (key) => {
     } catch (e) { return null; }
 };
 
+// Smart client-side categorizer to map generic DB categories into Shlokas, Strotras, and Poems
+const classifyItemCategory = (item) => {
+  if (!item) return 'poem';
+  const rawCat = (item.category || '').toLowerCase().trim();
+  
+  if (rawCat === 'saint' || rawCat === 'dham') {
+    return rawCat;
+  }
+  
+  if (rawCat === 'shloka' || rawCat === 'shlokas') {
+    return 'shloka';
+  }
+  if (rawCat === 'strotra' || rawCat === 'strotras' || rawCat === 'stotra' || rawCat === 'stotras') {
+    return 'strotra';
+  }
+  if (rawCat === 'poem' || rawCat === 'poems' || rawCat === 'poetry') {
+    return 'poem';
+  }
+
+  const title = (item.title || '').toLowerCase();
+  const sanskrit = (item.sanskrit_text || '').toLowerCase();
+  
+  // 1. Check if it's a Strotra (e.g. Strotram, Ashtakam, Shatakam, Mahimamritam)
+  if (
+    title.includes('स्तोत्र') || title.includes('strotra') || title.includes('stotra') ||
+    title.includes('शतक') || title.includes('shatak') ||
+    title.includes('अष्टक') || title.includes('ashtak') ||
+    title.includes('महिमामृत') || title.includes('mahimamrit') ||
+    title.includes('सुधानिधि') || title.includes('sudhanidhi') ||
+    title.includes('सहस्रनाम') || title.includes('sahasranam') ||
+    sanskrit.includes('स्तोत्र') || sanskrit.includes('strotra') || sanskrit.includes('stotra')
+  ) {
+    return 'strotra';
+  }
+  
+  // 2. Check if it's a Shloka (Sanskrit verses from scriptures like Gita, Upanishad, Samhitas)
+  const hasSanskritText = sanskrit.trim().length > 10 && 
+    (sanskrit.includes('॥') || sanskrit.includes('।') || sanskrit.includes('ॐ') || !/[a-z]{5,}/.test(sanskrit));
+  
+  const isScriptureBook = title.includes('gita') || title.includes('गीता') || 
+    title.includes('upnishad') || title.includes('उपनिषद') || 
+    title.includes('samhita') || title.includes('संहिता') || 
+    title.includes('purana') || title.includes('पुराण') ||
+    title.includes('shloka') || title.includes('श्लोक');
+
+  if (isScriptureBook || hasSanskritText) {
+    return 'shloka';
+  }
+  
+  // 3. Fallback to Poem (vaani pads, dohas, sakhis, savaiyas, etc.)
+  return 'poem';
+};
+
 export const apiService = {
   getCachedData: (key) => getCache(key),
 
@@ -65,43 +118,57 @@ export const apiService = {
       setCache(cacheKey, data);
       return data;
     }
+
+    let rawItems = [];
+
+    // 1. Try Firebase RTDB
     try {
       const snapshot = await get(ref(contentDb, 'public/content'));
       if (snapshot.exists()) {
         const rawData = snapshot.val();
-        let data = Array.isArray(rawData) ? rawData.filter(Boolean) : 
+        rawItems = Array.isArray(rawData) ? rawData.filter(Boolean) : 
                    Object.keys(rawData).map(key => ({ id: key, ...rawData[key] }));
-        
-        data = data.reverse();
-        if (category) data = data.filter(item => item.category === category);
-        
-        // Enhance data with slugs for SEO
-        data = data.map(item => ({
-          ...item,
-          slug: item.slug || generateSlug(item.title)
-        }));
-
-        if (limit) data = data.slice(0, limit);
-        
-        setCache(cacheKey, data);
-        return data;
+        rawItems = rawItems.reverse();
       }
-      return [];
     } catch (error) {
       console.warn('Firebase connection failed, falling back to Supabase...', error.message);
+      // 2. Fallback to Supabase
       try {
-        let query = supabase.from('content').select('*').order('created_at', { ascending: false });
-        if (category) query = query.eq('category', category);
-        if (limit) query = query.limit(limit);
-        const { data, error: supaError } = await query;
+        const { data, error: supaError } = await supabase
+          .from('content')
+          .select('*')
+          .order('created_at', { ascending: false });
         if (supaError) throw supaError;
-        setCache(cacheKey, data || []);
-        return data || [];
-      } catch (error) {
-        console.error('All database sources failed:', error);
-        throw error;
+        rawItems = data || [];
+      } catch (err) {
+        console.error('All database sources failed:', err);
+        throw err;
       }
     }
+
+    // 3. Dynamic client-side categorization & enhancement
+    let processedItems = rawItems.map(item => {
+      const cleanCategory = classifyItemCategory(item);
+      return {
+        ...item,
+        category: cleanCategory,
+        slug: item.slug || generateSlug(item.title)
+      };
+    });
+
+    // 4. Client-side category filtering
+    if (category) {
+      const targetCat = category.toLowerCase().trim();
+      processedItems = processedItems.filter(item => item.category?.toLowerCase() === targetCat);
+    }
+
+    // 5. Apply limit
+    if (limit) {
+      processedItems = processedItems.slice(0, limit);
+    }
+
+    setCache(cacheKey, processedItems);
+    return processedItems;
   },
 
   getContentById: async (id) => {
@@ -138,8 +205,10 @@ export const apiService = {
 
         if (contentItem) {
           console.log(`Found content: ${contentItem.title}`);
+          const cleanCategory = classifyItemCategory(contentItem);
           const data = { 
             ...contentItem, 
+            category: cleanCategory,
             slug: contentItem.slug || generateSlug(contentItem.title) 
           };
           setCache(cacheKey, data);
@@ -155,7 +224,7 @@ export const apiService = {
           const decodedId = decodeURIComponent(id);
           let data = null;
 
-          // 1. Try lookup by slug column first (most common case from card links)
+          // 1. Try lookup by slug column first
           const { data: slugData } = await supabase.from('content').select('*').eq('slug', id).maybeSingle();
           if (slugData) {
             data = slugData;
@@ -189,7 +258,12 @@ export const apiService = {
 
           if (!data) throw new Error("Content not found in Supabase");
 
-          const contentData = { ...data, slug: data.slug || generateSlug(data.title) };
+          const cleanCategory = classifyItemCategory(data);
+          const contentData = { 
+            ...data, 
+            category: cleanCategory,
+            slug: data.slug || generateSlug(data.title) 
+          };
           setCache(cacheKey, contentData);
           return contentData;
       } catch (supaErr) {
@@ -201,39 +275,8 @@ export const apiService = {
 
   // Categories API
   getCategories: async () => {
-    const cacheKey = 'categories';
-    const cached = getCache(cacheKey);
-    if (cached) return cached;
-
-    if (USE_MOCK) {
-      const data = await mockApiService.getCategories();
-      setCache(cacheKey, data);
-      return data;
-    }
-    try {
-      const snapshot = await get(ref(contentDb, 'public/content'));
-      if (snapshot.exists()) {
-        const rawData = snapshot.val();
-        let data = Array.isArray(rawData) ? rawData.filter(Boolean) : 
-                   Object.keys(rawData).map(key => rawData[key]);
-        const uniqueCategories = [...new Set(data.map(item => item.category).filter(Boolean))];
-        setCache(cacheKey, uniqueCategories);
-        return uniqueCategories;
-      }
-      return [];
-    } catch (error) {
-      console.warn('Firebase fetch failed, falling back to Supabase...', error.message);
-      try {
-          const { data, error: supaError } = await supabase.from('content').select('category').not('category', 'is', null);
-          if (supaError) throw supaError;
-          const uniqueCategories = [...new Set(data.map(item => item.category))];
-          setCache(cacheKey, uniqueCategories);
-          return uniqueCategories;
-      } catch (supaErr) {
-          console.error('Error fetching categories:', supaErr);
-          throw supaErr;
-      }
-    }
+    // Return standard client-side categories corresponding to filter pills and paths
+    return ['shloka', 'strotra', 'poem'];
   },
 
   // Admin APIs (In case frontend needs them)

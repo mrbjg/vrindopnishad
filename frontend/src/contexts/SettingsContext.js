@@ -33,7 +33,7 @@ export const SettingsProvider = ({ children }) => {
       fontStyle: 'Serif',
       lineByLine: true,
       smoothScroll: false,
-      theme: 'dark'
+      theme: 'light'
     };
     
     // Migration from old string-based font sizes
@@ -43,7 +43,7 @@ export const SettingsProvider = ({ children }) => {
     }
 
     // Migration: add theme if missing
-    if (!initial.theme) initial.theme = 'dark';
+    if (!initial.theme) initial.theme = 'light';
     
     return initial;
   });
@@ -55,7 +55,7 @@ export const SettingsProvider = ({ children }) => {
     document.documentElement.setAttribute('data-font-style', settings.fontStyle);
 
     // Apply theme
-    const theme = settings.theme || 'dark';
+    const theme = settings.theme || 'light';
     document.documentElement.setAttribute('data-theme', theme);
 
     // Toggle light/dark class for Tailwind dark: variants

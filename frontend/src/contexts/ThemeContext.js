@@ -13,7 +13,7 @@ export const useTheme = () => {
 
 export const ThemeProvider = ({ children }) => {
     const { settings } = useSettings();
-    const currentTheme = settings.theme || 'dark';
+    const currentTheme = settings.theme || 'light';
     const isDark = !isLightTheme(currentTheme);
 
     useEffect(() => {

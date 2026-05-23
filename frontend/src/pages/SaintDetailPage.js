@@ -5,6 +5,14 @@ import { extractRelations, slugify } from '../utils/relations';
 import { ArrowLeft, Book, Music, FileText, Tag, BookOpen } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 
+const getInitials = (name) => {
+  if (!name) return 'V';
+  let clean = name.replace(/^(Shri|Swami|Sri|Shree|श्री|स्वामी|श्रीमद्)\s+/i, '').trim();
+  if (!clean.length) clean = name;
+  const first = clean.charAt(0);
+  return first.match(/[a-zA-Z]/) ? first.toUpperCase() : first;
+};
+
 const SaintDetailPage = () => {
   const { slug } = useParams();
   const location = useLocation();
@@ -81,7 +89,7 @@ const SaintDetailPage = () => {
       {/* Header Profile Section */}
       <div className="flex flex-col sm:flex-row items-center gap-6 mb-10 pb-8 border-b border-white/5 text-center sm:text-left">
         <div className="w-24 h-24 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 font-bold text-4xl shadow-xl">
-          {sant.cleanName.charAt(0) === 'श' && sant.cleanName.charAt(4) ? sant.cleanName.charAt(4) : sant.cleanName.charAt(0)}
+          {getInitials(isHindiRoute ? sant.name : sant.hinglishName)}
         </div>
         <div className="flex-1">
           <h1 className="text-3xl md:text-4xl font-bold font-headings text-sacred-gradient mb-2">

@@ -5,6 +5,14 @@ import { extractRelations } from '../utils/relations';
 import { Users, ArrowLeft, Search, FileText } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 
+const getInitials = (name) => {
+  if (!name) return 'V';
+  let clean = name.replace(/^(Shri|Swami|Sri|Shree|श्री|स्वामी|श्रीमद्)\s+/i, '').trim();
+  if (!clean.length) clean = name;
+  const first = clean.charAt(0);
+  return first.match(/[a-zA-Z]/) ? first.toUpperCase() : first;
+};
+
 const SaintsListPage = () => {
   const location = useLocation();
   const isHindiRoute = location.pathname.startsWith('/hi');
@@ -109,7 +117,7 @@ const SaintsListPage = () => {
                 <div>
                   <div className="flex items-center gap-4 mb-4">
                     <div className="w-14 h-14 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 font-bold text-xl group-hover:scale-105 transition-transform duration-300">
-                      {sant.cleanName.charAt(0) === 'श' && sant.cleanName.charAt(4) ? sant.cleanName.charAt(4) : sant.cleanName.charAt(0)}
+                      {getInitials(isHindiRoute ? sant.name : sant.hinglishName)}
                     </div>
                     <div>
                       <h3 className="font-bold text-lg text-white/90 group-hover:text-primary transition-colors leading-tight">
