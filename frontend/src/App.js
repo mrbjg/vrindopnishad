@@ -9,6 +9,7 @@ import { LoadingProvider } from './contexts/LoadingContext';
 import { useSettings } from './contexts/SettingsContext';
 import { apiService } from './services/api';
 import Layout from './components/Layout';
+import ScrollToTop from './components/ScrollToTop';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 
@@ -196,6 +197,7 @@ function App() {
         <AuthContext.Provider value={{ isAdmin, user, token, login, logout, refreshUser }}>
           <ApiContext.Provider value={{ apiService: apiService, isDemoMode: USE_MOCK_DATA }}>
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+              <ScrollToTop />
               <Layout>
                 <React.Suspense fallback={
                   <div className="min-h-[60vh] flex items-center justify-center">

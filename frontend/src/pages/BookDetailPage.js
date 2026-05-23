@@ -108,27 +108,29 @@ const BookDetailPage = () => {
           </span>
         </div>
 
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {book.verses.map((verse) => (
             <Link
               key={verse.id}
               to={isHindiRoute ? `/hi/content/${verse.slug || verse.id}` : `/content/${verse.slug || verse.id}`}
-              className="glass-card p-5 block group hover:border-amber-500/20 transition-all"
+              className="glass-card p-4 flex flex-col justify-between group hover:border-amber-500/20 transition-all min-h-[140px]"
             >
-              <div className="flex justify-between items-start gap-4 mb-2">
-                <span className="text-[10px] uppercase tracking-wider text-amber-500/80 bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/10">
-                  {verse.category}
-                </span>
-                {verse.audio_url && (
-                  <span className="text-sky-400 bg-sky-500/5 border border-sky-500/10 p-1.5 rounded-full hover:scale-105 transition-transform">
-                    <Music size={12} />
+              <div>
+                <div className="flex justify-between items-start gap-4 mb-2">
+                  <span className="text-[10px] uppercase tracking-wider text-amber-500/80 bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/10">
+                    {verse.category}
                   </span>
-                )}
+                  {verse.audio_url && (
+                    <span className="text-sky-400 bg-sky-500/5 border border-sky-500/10 p-1.5 rounded-full hover:scale-105 transition-transform">
+                      <Music size={12} />
+                    </span>
+                  )}
+                </div>
+                <h3 className="font-bold text-base text-white/90 group-hover:text-primary transition-colors leading-snug line-clamp-1 py-1">
+                  {verse.cleanTitle}
+                </h3>
               </div>
-              <h3 className="font-bold text-base text-white/90 group-hover:text-primary transition-colors leading-snug line-clamp-1 py-1">
-                {verse.cleanTitle}
-              </h3>
-              <p className="text-white/40 text-xs line-clamp-2 leading-relaxed mt-1">
+              <p className="text-white/40 text-xs line-clamp-2 leading-relaxed mt-2">
                 {verse.hindi_text || verse.english_translation || verse.description}
               </p>
             </Link>

@@ -284,12 +284,113 @@ const HomePage = () => {
   /* ── Loading State ── */
   if (loading) {
     return (
-      <div className="relative max-w-6xl mx-auto px-4 py-12 animate-pulse text-left min-h-screen">
-        <div className="h-64 bg-white/5 rounded-3xl mb-8" />
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {[...Array(4)].map((_, i) => <div key={i} className="h-24 bg-white/5 rounded-2xl" />)}
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-left min-h-screen">
+        {/* Title/Header Skeleton */}
+        <div className="flex justify-between items-center mb-10">
+          <div className="skeleton w-48 h-8 rounded-lg" />
+          <div className="skeleton w-24 h-6 rounded-full" />
         </div>
-        <div className="h-48 bg-white/5 rounded-3xl" />
+
+        {/* 1. Dashboard Grid Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start mb-16">
+          {/* Calendar Panel Skeleton */}
+          <div className="skeleton-card p-6 h-[440px] flex flex-col justify-between">
+            <div>
+              <div className="skeleton w-32 h-5 mb-6" />
+              <div className="space-y-4">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="flex justify-between items-center py-2 border-b border-white/5">
+                    <div className="skeleton w-24 h-4" />
+                    <div className="skeleton w-16 h-4" />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="skeleton w-full h-10 rounded-xl" />
+          </div>
+
+          {/* Swadhyaya Panel Skeleton */}
+          <div className="skeleton-card lg:col-span-2 p-8 h-[440px] flex flex-col justify-between">
+            <div>
+              <div className="flex gap-3 mb-6">
+                <div className="skeleton w-20 h-8 rounded-full" />
+                <div className="skeleton w-20 h-8 rounded-full" />
+                <div className="skeleton w-20 h-8 rounded-full" />
+              </div>
+              <div className="space-y-4 my-8">
+                <div className="skeleton skeleton-title w-3/4" />
+                <div className="skeleton skeleton-text w-full" />
+                <div className="skeleton skeleton-text w-full" />
+                <div className="skeleton skeleton-text w-5/6" />
+              </div>
+            </div>
+            <div className="flex justify-between items-center pt-4 border-t border-white/5">
+              <div className="flex gap-4">
+                <div className="skeleton w-10 h-10 rounded-full" />
+                <div className="skeleton w-10 h-10 rounded-full" />
+              </div>
+              <div className="skeleton w-28 h-8 rounded-full" />
+            </div>
+          </div>
+
+          {/* Japa Chant Panel Skeleton */}
+          <div className="skeleton-card p-6 h-[440px] flex flex-col justify-between items-center text-center">
+            <div className="w-full">
+              <div className="skeleton w-36 h-5 mx-auto mb-8" />
+              <div className="skeleton w-32 h-32 rounded-full mx-auto mb-6 flex items-center justify-center">
+                <div className="w-24 h-24 rounded-full bg-black/10 dark:bg-white/5" />
+              </div>
+            </div>
+            <div className="w-full space-y-3">
+              <div className="skeleton w-3/4 h-4 mx-auto" />
+              <div className="skeleton w-full h-2.5 rounded-full" />
+              <div className="skeleton w-full h-12 rounded-xl mt-4" />
+            </div>
+          </div>
+        </div>
+
+        {/* 2. Categories Skeleton */}
+        <div className="py-8 border-t border-white/5 mb-16">
+          <div className="skeleton w-40 h-6 mb-8" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="skeleton-card p-4 h-24 flex items-center gap-4">
+                <div className="skeleton w-10 h-10 rounded-full shrink-0" />
+                <div className="space-y-2 w-full">
+                  <div className="skeleton w-16 h-4" />
+                  <div className="skeleton w-10 h-3" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 3. Latest Wisdom Feed Skeleton */}
+        <div className="py-8 border-t border-white/5">
+          <div className="skeleton w-44 h-6 mb-8" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="skeleton-card p-6 h-72 flex flex-col justify-between">
+                <div>
+                  <div className="flex justify-between items-center mb-4">
+                    <div className="skeleton w-20 h-5 rounded-full" />
+                    <div className="skeleton w-16 h-4" />
+                  </div>
+                  <div className="skeleton skeleton-title w-3/4 mb-4" />
+                  <div className="space-y-2">
+                    <div className="skeleton skeleton-text w-full" />
+                    <div className="skeleton skeleton-text w-full" />
+                    <div className="skeleton skeleton-text w-4/5" />
+                  </div>
+                </div>
+                <div className="pt-4 border-t border-white/5 flex gap-2">
+                  <div className="skeleton w-16 h-4 rounded" />
+                  <div className="skeleton w-20 h-4 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

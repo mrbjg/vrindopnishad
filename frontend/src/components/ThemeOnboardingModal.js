@@ -42,10 +42,10 @@ const ThemeOnboardingModal = () => {
           <h2 className="text-2xl font-bold font-headings text-minimal-gold">
             वृंदोपनिषद्
           </h2>
-          <p className="text-xs uppercase tracking-[0.25em] text-[#e2a850]/80 font-semibold">
+          <p className="text-xs uppercase tracking-[0.25em] text-[#e2a850] font-semibold">
             Choose Sanctuary Atmosphere
           </p>
-          <p className="text-xs text-white/50 font-light max-w-xs mx-auto leading-relaxed mt-2">
+          <p className="text-xs text-stone-500 dark:text-white/50 font-light max-w-xs mx-auto leading-relaxed mt-2">
             Select a theme to start. You can change this and explore all seasonal and celestial moods at any time in settings.
           </p>
         </div>
@@ -58,26 +58,26 @@ const ThemeOnboardingModal = () => {
             className={`p-6 rounded-[24px] border-2 cursor-pointer transition-all duration-300 flex flex-col items-center justify-between min-h-[160px] select-none ${
               settings.theme === 'dark'
                 ? 'border-[#e2a850] bg-[#e2a850]/5 shadow-[0_0_20px_rgba(226,168,80,0.12)]'
-                : 'border-white/5 bg-white/2 hover:border-white/10'
+                : 'border-black/5 dark:border-white/5 bg-black/[0.01] dark:bg-white/2 hover:border-stone-200 dark:hover:border-white/10'
             }`}
           >
             <div className={`w-12 h-12 rounded-full border flex items-center justify-center transition-colors ${
               settings.theme === 'dark' 
                 ? 'border-[#e2a850]/40 bg-[#e2a850]/10 text-[#e2a850]' 
-                : 'border-white/10 bg-white/3 text-white/40'
+                : 'border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/3 text-stone-500 dark:text-white/40'
             }`}>
               <Moon size={20} />
             </div>
             
             {/* Custom styled Radio Dot matching user screenshot */}
-            <div className="w-5 h-5 rounded-full border border-white/25 flex items-center justify-center bg-[#111115]">
-              <div className={`w-3 h-3 rounded-full transition-transform duration-300 ${
-                settings.theme === 'dark' ? 'scale-100 bg-[#09090b]' : 'scale-0'
+            <div className="w-5 h-5 rounded-full border border-stone-300 dark:border-white/25 flex items-center justify-center bg-stone-100 dark:bg-[#111115]">
+              <div className={`w-2.5 h-2.5 rounded-full transition-transform duration-300 bg-[#e2a850] ${
+                settings.theme === 'dark' ? 'scale-100' : 'scale-0'
               }`} />
             </div>
 
             <span className={`text-xs font-bold tracking-wider uppercase transition-colors ${
-              settings.theme === 'dark' ? 'text-white' : 'text-white/40'
+              settings.theme === 'dark' ? 'text-stone-800 dark:text-white' : 'text-stone-400 dark:text-white/40'
             }`}>
               Dark
             </span>
@@ -89,26 +89,26 @@ const ThemeOnboardingModal = () => {
             className={`p-6 rounded-[24px] border-2 cursor-pointer transition-all duration-300 flex flex-col items-center justify-between min-h-[160px] select-none ${
               settings.theme === 'light'
                 ? 'border-[#e2a850] bg-[#e2a850]/5 shadow-[0_0_20px_rgba(226,168,80,0.12)]'
-                : 'border-white/5 bg-white/2 hover:border-white/10'
+                : 'border-black/5 dark:border-white/5 bg-black/[0.01] dark:bg-white/2 hover:border-stone-200 dark:hover:border-white/10'
             }`}
           >
             <div className={`w-12 h-12 rounded-full border flex items-center justify-center transition-colors ${
               settings.theme === 'light' 
                 ? 'border-[#e2a850]/40 bg-[#e2a850]/10 text-[#e2a850]' 
-                : 'border-white/10 bg-white/3 text-white/40'
+                : 'border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/3 text-stone-500 dark:text-white/40'
             }`}>
               <Sun size={20} />
             </div>
             
             {/* Custom styled Radio Dot matching user screenshot */}
-            <div className="w-5 h-5 rounded-full border border-white/25 flex items-center justify-center bg-[#eae5d9]">
-              <div className={`w-3 h-3 rounded-full transition-transform duration-300 ${
-                settings.theme === 'light' ? 'scale-100 bg-[#fdfbf7]' : 'scale-0'
+            <div className="w-5 h-5 rounded-full border border-stone-300 dark:border-white/25 flex items-center justify-center bg-stone-100 dark:bg-[#111115]">
+              <div className={`w-2.5 h-2.5 rounded-full transition-transform duration-300 bg-[#e2a850] ${
+                settings.theme === 'light' ? 'scale-100' : 'scale-0'
               }`} />
             </div>
 
             <span className={`text-xs font-bold tracking-wider uppercase transition-colors ${
-              settings.theme === 'light' ? 'text-white' : 'text-white/40'
+              settings.theme === 'light' ? 'text-stone-800 dark:text-white' : 'text-stone-400 dark:text-white/40'
             }`}>
               Light
             </span>
@@ -118,7 +118,7 @@ const ThemeOnboardingModal = () => {
         {/* Dismiss Button */}
         <button
           onClick={handleConfirm}
-          className="w-full btn-premium py-3.5 text-xs uppercase tracking-widest font-bold shadow-lg hover:shadow-[#e2a850]/10 transition-all duration-300"
+          className="w-full btn-sacred-gold py-4 text-xs uppercase tracking-widest font-bold transition-all duration-300 flex items-center justify-center gap-2 rounded-xl"
         >
           <Compass size={14} className="animate-spin-slow" />
           Enter Sanctuary
