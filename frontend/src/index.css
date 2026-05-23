@@ -703,12 +703,10 @@ html.light-mode .font-wheel-item-segmented.active::after {
 
 @keyframes skeleton-pulse {
     0%, 100% {
-        opacity: 0.7;
-        transform: scale(0.99);
+        opacity: 0.65;
     }
     50% {
         opacity: 0.95;
-        transform: scale(1.005);
     }
 }
 
@@ -1335,6 +1333,112 @@ html[data-theme='waterfall'] {
     --glass-bg: rgba(6, 18, 23, 0.55);
     --glass-border: rgba(6, 182, 212, 0.08);
     --header-bg: rgba(6, 18, 23, 0.7);
+}
+
+/* 14. Cherry Blossom (Sakura Night - deep violet plum with pink highlights) */
+html[data-theme='cherryblossom'] {
+    --background: 300 40% 6%;
+    --foreground: 300 20% 96%;
+    --text-color: #fbcfe8;
+    --primary: 340 90% 65%;
+    --primary-color: #f472b6;
+    --primary-rgb: 244, 114, 182;
+    --accent-gold: #fbcfe8;
+    --primary-btn-text: #ffffff;
+
+    --card: 300 40% 8%;
+    --card-foreground: 300 20% 96%;
+    --popover: 300 40% 8%;
+    --popover-foreground: 300 20% 96%;
+    --secondary: 300 20% 12%;
+    --secondary-foreground: 300 20% 96%;
+    --muted: 300 20% 12%;
+    --muted-foreground: 300 15% 65%;
+    --accent: 300 20% 12%;
+    --accent-foreground: 300 20% 96%;
+    --border: 300 20% 14%;
+    --input: 300 20% 14%;
+
+    --celestial-bg: #140a15;
+    --stars-opacity: 0.12;
+    --nebula-color-1: rgba(244, 114, 182, 0.06);
+    --nebula-color-2: rgba(124, 58, 237, 0.04);
+    --nebula-color-3: rgba(244, 63, 94, 0.02);
+
+    --glass-bg: rgba(20, 10, 21, 0.55);
+    --glass-border: rgba(244, 114, 182, 0.08);
+    --header-bg: rgba(20, 10, 21, 0.7);
+}
+
+/* 14.5 Cherry Blossom Light (Sakura Day - soft pink with plum-rose text) */
+html[data-theme='cherryblossom_light'] {
+    --background: 343 50% 97%;
+    --foreground: 343 40% 15%;
+    --text-color: #5c1926;
+    --primary: 340 82% 52%;
+    --primary-color: #ec4899;
+    --primary-rgb: 236, 72, 153;
+    --accent-gold: #be185d;
+    --primary-btn-text: #ffffff;
+
+    --card: 343 40% 99%;
+    --card-foreground: 343 40% 15%;
+    --popover: 343 40% 99%;
+    --popover-foreground: 343 40% 15%;
+    --secondary: 343 25% 93%;
+    --secondary-foreground: 343 40% 15%;
+    --muted: 343 25% 93%;
+    --muted-foreground: 343 15% 45%;
+    --accent: 343 25% 93%;
+    --accent-foreground: 343 40% 15%;
+    --border: 343 20% 88%;
+    --input: 343 20% 88%;
+
+    --celestial-bg: linear-gradient(135deg, #fff0f3 0%, #ffe4e6 100%);
+    --stars-opacity: 0;
+    --nebula-color-1: rgba(236, 72, 153, 0.05);
+    --nebula-color-2: rgba(244, 63, 94, 0.03);
+    --nebula-color-3: rgba(236, 72, 153, 0.02);
+
+    --glass-bg: rgba(255, 255, 255, 0.75);
+    --glass-border: rgba(236, 72, 153, 0.12);
+    --header-bg: rgba(255, 240, 243, 0.8);
+}
+
+
+/* 15. Aurora Glow (Northern Lights - space teal-green matching waterfall accent) */
+html[data-theme='aurora'] {
+    --background: 210 45% 5%;
+    --foreground: 210 20% 96%;
+    --text-color: #e2fef4;
+    --primary: 150 80% 45%;
+    --primary-color: #10b981;
+    --primary-rgb: 16, 185, 129;
+    --accent-gold: #67e8f9;
+    --primary-btn-text: #ffffff;
+
+    --card: 210 45% 7%;
+    --card-foreground: 210 20% 96%;
+    --popover: 210 45% 7%;
+    --popover-foreground: 210 20% 96%;
+    --secondary: 210 20% 11%;
+    --secondary-foreground: 210 20% 96%;
+    --muted: 210 20% 11%;
+    --muted-foreground: 210 15% 65%;
+    --accent: 210 20% 11%;
+    --accent-foreground: 210 20% 96%;
+    --border: 210 20% 13%;
+    --input: 210 20% 13%;
+
+    --celestial-bg: #040d1a;
+    --stars-opacity: 0.10;
+    --nebula-color-1: rgba(16, 185, 129, 0.07);
+    --nebula-color-2: rgba(6, 182, 212, 0.05);
+    --nebula-color-3: rgba(34, 197, 94, 0.02);
+
+    --glass-bg: rgba(4, 13, 26, 0.55);
+    --glass-border: rgba(16, 185, 129, 0.08);
+    --header-bg: rgba(4, 13, 26, 0.7);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */

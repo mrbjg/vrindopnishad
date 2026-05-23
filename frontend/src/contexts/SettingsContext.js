@@ -18,7 +18,8 @@ export const THEMES = [
   { id: 'forest',    label: 'Forest',      icon: 'Leaf',      group: 'mood' },
   { id: 'ocean',     label: 'Ocean',       icon: 'Waves',     group: 'mood' },
   { id: 'waterfall', label: 'Waterfall',   icon: 'Droplets',  group: 'mood' },
-  { id: 'cherryblossom', label: 'Cherry Blossom', icon: 'Flower2', group: 'mood' },
+  { id: 'cherryblossom', label: 'Cherry Blossom (Dark)', icon: 'Flower2', group: 'mood' },
+  { id: 'cherryblossom_light', label: 'Cherry Blossom (Light)', icon: 'Flower2', group: 'mood' },
   { id: 'aurora',    label: 'Aurora Glow',   icon: 'Sparkles', group: 'mood' },
 ];
 

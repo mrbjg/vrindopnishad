@@ -60,6 +60,10 @@ const CelestialParticles = () => {
       particleCount = isMobile ? 20 : 45;
     } else if (theme === 'waterfall') {
       particleCount = isMobile ? 90 : 190;
+    } else if (theme === 'cherryblossom' || theme === 'cherryblossom_light') {
+      particleCount = isMobile ? 35 : 75;
+    } else if (theme === 'aurora') {
+      particleCount = isMobile ? 40 : 95;
     } else if (theme === 'mountain_morning') {
       particleCount = isMobile ? 45 : 100;
     } else if (theme === 'night') {
@@ -210,6 +214,26 @@ const CelestialParticles = () => {
             p.color = 'rgba(254, 243, 199, 0.8)';
           }
         }
+      } else if (theme === 'cherryblossom' || theme === 'cherryblossom_light') {
+        p.radius = Math.random() * (isMobile ? 2.2 : 3.8) + 1.6;
+        p.vy = Math.random() * 0.75 + 0.35; // Gentle falling speed
+        p.vx = (Math.random() - 0.25) * 0.28; // Drift slightly right for wind feeling
+        p.color = ['rgba(244, 114, 182, 0.45)', 'rgba(251, 207, 232, 0.5)', 'rgba(244, 63, 94, 0.4)'][Math.floor(Math.random() * 3)];
+        p.alpha = Math.random() * 0.4 + 0.3;
+        p.extra = {
+          angle: Math.random() * Math.PI * 2,
+          rotationSpeed: (Math.random() - 0.5) * 0.022,
+          swaySpeed: Math.random() * 0.012 + 0.005,
+          swayPhase: Math.random() * Math.PI * 2,
+          swayAmplitude: Math.random() * 0.8 + 0.4
+        };
+      } else if (theme === 'aurora') {
+        // Slow floating particles like cosmic solar sparks/wind
+        p.radius = Math.random() * 1.5 + 0.4;
+        p.vy = -(Math.random() * 0.35 + 0.1);
+        p.vx = (Math.random() - 0.5) * 0.15;
+        p.color = ['rgba(16, 185, 129, 0.7)', 'rgba(34, 211, 238, 0.65)', 'rgba(255, 255, 255, 0.75)'][Math.floor(Math.random() * 3)];
+        p.alpha = Math.random() * 0.5 + 0.3;
       }
 
       return p;
@@ -663,6 +687,99 @@ const CelestialParticles = () => {
       ctx.restore();
     };
 
+    const drawCherryBlossomBackdrop = (cWidth, cHeight) => {
+      ctx.save();
+      // Gentle full moon in the top right
+      const mX = cWidth * 0.82;
+      const mY = cHeight * 0.22;
+      const radius = Math.min(65, cWidth * 0.08);
+      
+      ctx.beginPath();
+      const moonGlow = ctx.createRadialGradient(mX, mY, 0, mX, mY, radius * 2.5);
+      moonGlow.addColorStop(0, 'rgba(255, 241, 242, 0.22)');
+      moonGlow.addColorStop(0.3, 'rgba(244, 114, 182, 0.08)');
+      moonGlow.addColorStop(1, 'rgba(20, 10, 21, 0)');
+      ctx.fillStyle = moonGlow;
+      ctx.arc(mX, mY, radius * 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.beginPath();
+      ctx.fillStyle = 'rgba(255, 241, 242, 0.88)';
+      ctx.shadowColor = 'rgba(244, 114, 182, 0.4)';
+      ctx.shadowBlur = 25;
+      ctx.arc(mX, mY, radius, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+    };
+
+    const drawCherryBlossomLightBackdrop = (cWidth, cHeight) => {
+      ctx.save();
+      // Soft daytime sun/halo in the top right
+      const mX = cWidth * 0.82;
+      const mY = cHeight * 0.22;
+      const radius = Math.min(65, cWidth * 0.08);
+      
+      ctx.beginPath();
+      const sunGlow = ctx.createRadialGradient(mX, mY, 0, mX, mY, radius * 3.5);
+      sunGlow.addColorStop(0, 'rgba(255, 255, 255, 0.45)');
+      sunGlow.addColorStop(0.3, 'rgba(253, 224, 71, 0.15)'); // yellow-gold warmth
+      sunGlow.addColorStop(0.6, 'rgba(251, 207, 232, 0.08)'); // soft rose-pink glow
+      sunGlow.addColorStop(1, 'rgba(255, 240, 243, 0)');
+      ctx.fillStyle = sunGlow;
+      ctx.arc(mX, mY, radius * 3.5, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.beginPath();
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+      ctx.shadowColor = 'rgba(251, 207, 232, 0.5)';
+      ctx.shadowBlur = 30;
+      ctx.arc(mX, mY, radius, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+    };
+
+    const drawAuroraBackdrop = (cWidth, cHeight) => {
+      ctx.save();
+      const time = Date.now() * 0.0006; // Slow shifting
+      
+      // Draw 3 overlapping aurora curtains splayed across the sky
+      const curtains = [
+        { color: 'rgba(16, 185, 129, 0.09)', offset: 0, speed: 1.0, heightPct: 0.65 },
+        { color: 'rgba(6, 182, 212, 0.07)', offset: Math.PI / 2, speed: 0.8, heightPct: 0.55 },
+        { color: 'rgba(52, 211, 153, 0.05)', offset: Math.PI, speed: 1.2, heightPct: 0.75 }
+      ];
+      
+      curtains.forEach((c) => {
+        ctx.beginPath();
+        // Create a vertical gradient that fades to transparent at the bottom
+        const grad = ctx.createLinearGradient(0, 0, 0, cHeight * c.heightPct);
+        grad.addColorStop(0, c.color);
+        grad.addColorStop(0.5, c.color.replace('0.0', '0.04'));
+        grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        
+        ctx.fillStyle = grad;
+        
+        // Build the wavy top edge of the aurora curtain
+        ctx.moveTo(0, cHeight * c.heightPct);
+        ctx.lineTo(0, cHeight * 0.15);
+        
+        for (let x = 0; x <= cWidth; x += 40) {
+          const waveY = cHeight * 0.25 
+            + Math.sin(x * 0.004 + time * c.speed + c.offset) * 45 
+            + Math.cos(x * 0.002 - time * c.speed * 0.6) * 20;
+          ctx.lineTo(x, waveY);
+        }
+        
+        ctx.lineTo(cWidth, cHeight * c.heightPct);
+        ctx.closePath();
+        ctx.fill();
+      });
+      
+      ctx.restore();
+    };
+
     const drawRainyBackdrop = (cWidth, cHeight) => {
       ctx.save();
       const cloudGrad = ctx.createLinearGradient(0, 0, 0, cHeight * 0.35);
@@ -857,6 +974,12 @@ const CelestialParticles = () => {
         drawOceanBackdrop(canvas.width, canvas.height);
       } else if (theme === 'void') {
         drawVoidBackdrop(canvas.width, canvas.height);
+      } else if (theme === 'cherryblossom') {
+        drawCherryBlossomBackdrop(canvas.width, canvas.height);
+      } else if (theme === 'cherryblossom_light') {
+        drawCherryBlossomLightBackdrop(canvas.width, canvas.height);
+      } else if (theme === 'aurora') {
+        drawAuroraBackdrop(canvas.width, canvas.height);
       }
 
       // 2. Render and update particles
@@ -893,6 +1016,15 @@ const CelestialParticles = () => {
             p.x += p.vx;
             p.y += p.vy;
           }
+        } else if (theme === 'cherryblossom' || theme === 'cherryblossom_light') {
+          p.extra.swayPhase += p.extra.swaySpeed;
+          p.extra.angle += p.extra.rotationSpeed;
+          p.x += p.vx + Math.sin(p.extra.swayPhase) * p.extra.swayAmplitude * 0.3;
+          p.y += p.vy;
+        } else if (theme === 'aurora') {
+          // Slow floating stars/solar sparks
+          p.x += p.vx;
+          p.y += p.vy;
         } else {
           // Standard float upwards
           p.x += p.vx;
@@ -955,6 +1087,14 @@ const CelestialParticles = () => {
             ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
             ctx.fill();
           }
+        } else if (theme === 'cherryblossom' || theme === 'cherryblossom_light') {
+          drawLeaf(ctx, p.x, p.y, p.radius, p.extra.angle, p.color.substring(0, p.color.lastIndexOf(',')) + `, ${currentAlpha})`);
+        } else if (theme === 'aurora') {
+          // Shimmering solar sparks (smooth glowing circles)
+          ctx.beginPath();
+          ctx.fillStyle = p.color.substring(0, p.color.lastIndexOf(',')) + `, ${currentAlpha})`;
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fill();
         } else {
           // Shimmering sky stars (sharp pinprick dots)
           ctx.beginPath();
@@ -965,7 +1105,7 @@ const CelestialParticles = () => {
 
         // Bounds check & recycle particle
         let isOffScreen = false;
-        if (theme === 'snow' || theme === 'winter' || theme === 'rainy' || theme === 'forest') {
+        if (theme === 'snow' || theme === 'winter' || theme === 'rainy' || theme === 'forest' || theme === 'cherryblossom' || theme === 'cherryblossom_light') {
           isOffScreen = p.y > canvas.height + 20 || p.x < -20 || p.x > canvas.width + 20;
         } else if (theme === 'waterfall') {
           const waterfallWidth = Math.min(220, canvas.width * 0.22);
@@ -983,7 +1123,7 @@ const CelestialParticles = () => {
         if (isOffScreen) {
           particles[index] = createParticle(false);
           // Set recycled falling particles/droplets at the top
-          if (theme === 'snow' || theme === 'winter' || theme === 'rainy' || theme === 'forest') {
+          if (theme === 'snow' || theme === 'winter' || theme === 'rainy' || theme === 'forest' || theme === 'cherryblossom' || theme === 'cherryblossom_light') {
             particles[index].y = -10;
           } else if (theme === 'waterfall' && particles[index].extra.type === 'droplet') {
             particles[index].y = canvas.height * 0.15;

@@ -20,6 +20,9 @@ const themeGradients = {
   forest: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
   ocean: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)',
   waterfall: '#061217',
+  cherryblossom: '#140a15',
+  cherryblossom_light: 'linear-gradient(135deg, #fff0f3 0%, #ffe4e6 100%)',
+  aurora: '#040d1a',
 };
 
 const SettingsModal = ({ isOpen, onClose }) => {
