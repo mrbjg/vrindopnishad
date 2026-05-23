@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Compass, Scroll, Music, FileText, ArrowRight, BookOpen, Heart, Star, Globe, Users, MapPin, Book, ChevronRight } from 'lucide-react';
+import { Compass, Scroll, Music, FileText, ArrowRight, BookOpen, Heart, Star, Globe, Users, MapPin, Book, ChevronRight, X, Search } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { useSettings, THEMES } from '../contexts/SettingsContext';
 import ThemeIcon from '../components/ThemeIcon';
 import { ApiContext } from '../App';
 import { extractRelations } from '../utils/relations';
+import AudioPlayButton from '../components/ui/AudioPlayButton';
 
 const themeGroups = [
   {
@@ -61,6 +62,86 @@ const DAILY_SHLOKAS = [
   }
 ];
 
+const VerseListItem = ({ verse, isHindiRoute }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div className="border border-white/5 rounded-xl bg-white/5 overflow-hidden transition-all duration-300">
+      <div 
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors"
+      >
+        <div className="min-w-0 pr-3">
+          <h4 className="font-bold text-sm text-white/90 line-clamp-1">{verse.cleanTitle || verse.title}</h4>
+          <span className="text-[9px] uppercase tracking-wider text-amber-500/80 mt-1 block">{verse.category}</span>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {verse.audio_url && (
+            <AudioPlayButton 
+              track={verse}
+              className="text-sky-400 bg-sky-500/10 border border-sky-500/20 p-2 rounded-full hover:scale-105 transition-transform" 
+              size={14}
+            />
+          )}
+          <ChevronRight size={16} className={`text-white/30 transition-transform duration-300 ${isExpanded ? 'rotate-90' : ''}`} />
+        </div>
+      </div>
+
+      <div className={`verse-expansion-panel ${isExpanded ? 'open border-t border-white/5 p-4 bg-black/20' : ''}`}>
+        {isExpanded && (
+          <div className="space-y-4 text-xs md:text-sm">
+            {verse.sanskrit_text && (
+              <div>
+                <h5 className="text-[10px] uppercase tracking-wider text-amber-500/60 font-bold mb-1.5">मूल पाठ (Original Text)</h5>
+                <p className="font-semibold text-minimal-gold leading-loose whitespace-pre-line text-center py-2 font-headings select-all text-sm">
+                  {verse.sanskrit_text}
+                </p>
+              </div>
+            )}
+
+            {verse.hindi_text && (
+              <div>
+                <h5 className="text-[10px] uppercase tracking-wider text-white/40 font-bold mb-1">भावार्थ (Hindi Translation)</h5>
+                <p className="text-white/70 leading-relaxed font-light">
+                  {verse.hindi_text}
+                </p>
+              </div>
+            )}
+
+            {verse.english_translation && (
+              <div>
+                <h5 className="text-[10px] uppercase tracking-wider text-white/40 font-bold mb-1">English Translation</h5>
+                <p className="text-white/60 leading-relaxed font-light italic">
+                  {verse.english_translation}
+                </p>
+              </div>
+            )}
+
+            {verse.description && !verse.hindi_text && !verse.english_translation && (
+              <div>
+                <h5 className="text-[10px] uppercase tracking-wider text-white/40 font-bold mb-1">Description</h5>
+                <p className="text-white/60 leading-relaxed font-light">
+                  {verse.description}
+                </p>
+              </div>
+            )}
+
+            <div className="pt-2 text-right">
+              <Link 
+                to={isHindiRoute ? `/hi/content/${verse.slug || verse.id}` : `/content/${verse.slug || verse.id}`}
+                className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider text-primary hover:underline font-bold"
+              >
+                Go to Dedicated Page
+                <ArrowRight size={10} />
+              </Link>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const HomePage = () => {
   const { settings, updateSetting } = useSettings();
   const currentTheme = settings.theme || 'dark';
@@ -70,18 +151,36 @@ const HomePage = () => {
   const isHindiRoute = location.pathname.startsWith('/hi');
   const { apiService } = useContext(ApiContext);
 
+  const [allItems, setAllItems] = useState([]);
   const [saints, setSaints] = useState([]);
   const [books, setBooks] = useState([]);
   const [ragas, setRagas] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [previewType, setPreviewType] = useState(null);
+  const [drawerTab, setDrawerTab] = useState('bio');
+
+  const openPreview = (item, type) => {
+    setSelectedItem(item);
+    setPreviewType(type);
+    setDrawerTab('bio');
+  };
+
+  const closePreview = () => {
+    setSelectedItem(null);
+    setPreviewType(null);
+  };
+
   useEffect(() => {
     let active = true;
     const load = async () => {
       try {
-        const allItems = await apiService.getAllContent(null, 10000);
-        const relations = extractRelations(allItems);
+        const fetchedItems = await apiService.getAllContent(null, 10000);
+        const relations = extractRelations(fetchedItems);
         if (active) {
+          setAllItems(fetchedItems);
           setSaints(relations.sants);
           setBooks(relations.books);
           setRagas(relations.ragas);
@@ -95,6 +194,47 @@ const HomePage = () => {
     load();
     return () => { active = false; };
   }, [apiService]);
+
+  const filteredResults = React.useMemo(() => {
+    if (!searchQuery.trim() || searchQuery.trim().length < 2) {
+      return { sants: [], books: [], ragas: [], verses: [] };
+    }
+    const q = searchQuery.toLowerCase().trim();
+
+    const matchedSants = saints.filter(s => 
+      s.name?.toLowerCase().includes(q) || 
+      s.hinglishName?.toLowerCase().includes(q)
+    );
+
+    const matchedBooks = books.filter(b => 
+      b.name?.toLowerCase().includes(q) || 
+      b.hinglishName?.toLowerCase().includes(q) ||
+      b.author?.toLowerCase().includes(q)
+    );
+
+    const matchedRagas = ragas.filter(r => 
+      r.name?.toLowerCase().includes(q) || 
+      r.hinglishName?.toLowerCase().includes(q)
+    );
+
+    const matchedVerses = allItems.filter(item => {
+      if (item.category?.toLowerCase() === 'saint') return false;
+      return (
+        item.title?.toLowerCase().includes(q) ||
+        item.hindi_text?.toLowerCase().includes(q) ||
+        item.sanskrit_text?.toLowerCase().includes(q) ||
+        item.english_translation?.toLowerCase().includes(q) ||
+        item.description?.toLowerCase().includes(q)
+      );
+    });
+
+    return {
+      sants: matchedSants.slice(0, 5),
+      books: matchedBooks.slice(0, 5),
+      ragas: matchedRagas.slice(0, 5),
+      verses: matchedVerses.slice(0, 10)
+    };
+  }, [searchQuery, saints, books, ragas, allItems]);
 
   const shlokaIndex = new Date().getDate() % DAILY_SHLOKAS.length;
   const dailyShloka = DAILY_SHLOKAS[shlokaIndex];
@@ -208,6 +348,160 @@ const HomePage = () => {
               </Link>
             </div>
           </div>
+        </div>
+
+        {/* Unified Instant Search Bar */}
+        <div className="max-w-4xl mx-auto px-4 mb-16 relative">
+          <div className="relative w-full">
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-white/35 group-focus-within:text-primary transition-colors" size={20} />
+            <input 
+              type="text" 
+              placeholder={isHindiRoute ? "सन्त, ग्रन्थ, राग या वाणी खोजें..." : "Search Saints, Books, Ragas or Verses..."} 
+              className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl pl-14 pr-12 outline-none focus:border-amber-500/50 transition-all text-sm md:text-base font-medium shadow-inner"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery('')}
+                className="absolute right-5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
+              >
+                <X size={18} />
+              </button>
+            )}
+          </div>
+
+          {/* Search Results Dashboard */}
+          {searchQuery.trim().length >= 2 && (
+            <div className="glass-card mt-4 p-6 text-left w-full border border-amber-500/20 shadow-2xl relative z-50 rounded-2xl max-h-[60vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-6 pb-2 border-b border-white/5">
+                <h3 className="text-xs font-bold text-primary uppercase tracking-wider">
+                  {isHindiRoute ? "खोज परिणाम" : "Search Results"}
+                </h3>
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  className="text-white/40 hover:text-white transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {filteredResults.sants.length === 0 && 
+               filteredResults.books.length === 0 && 
+               filteredResults.ragas.length === 0 && 
+               filteredResults.verses.length === 0 ? (
+                 <div className="py-8 text-center text-white/40 text-sm">
+                   {isHindiRoute ? "कोई परिणाम नहीं मिला" : "No results found. Try another query."}
+                 </div>
+              ) : (
+                <div className="space-y-6">
+                  {/* Saints Match */}
+                  {filteredResults.sants.length > 0 && (
+                    <div>
+                      <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Saints / रसिक सन्त</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {filteredResults.sants.map(sant => (
+                          <button
+                            key={sant.cleanName}
+                            onClick={() => openPreview(sant, 'saint')}
+                            className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-left w-full transition-colors group"
+                          >
+                            <div className="w-9 h-9 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold text-sm shrink-0">
+                              {sant.cleanName.charAt(0) === 'श' && sant.cleanName.charAt(4) ? sant.cleanName.charAt(4) : sant.cleanName.charAt(0)}
+                            </div>
+                            <div className="min-w-0">
+                              <span className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors block truncate">
+                                {isHindiRoute ? sant.name : sant.hinglishName}
+                              </span>
+                              <span className="text-[10px] text-white/30">{sant.verses.length} verses</span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Books Match */}
+                  {filteredResults.books.length > 0 && (
+                    <div>
+                      <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Books / ग्रन्थ</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {filteredResults.books.map(book => (
+                          <button
+                            key={book.name}
+                            onClick={() => openPreview(book, 'book')}
+                            className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-left w-full transition-colors group"
+                          >
+                            <div className="w-9 h-9 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center shrink-0">
+                              <Book size={16} />
+                            </div>
+                            <div className="min-w-0">
+                              <span className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors block truncate">
+                                {book.name}
+                              </span>
+                              <span className="text-[10px] text-white/30">By {book.author}</span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Ragas Match */}
+                  {filteredResults.ragas.length > 0 && (
+                    <div>
+                      <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Ragas / शास्त्रीय राग</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {filteredResults.ragas.map(raga => (
+                          <button
+                            key={raga.name}
+                            onClick={() => openPreview(raga, 'raga')}
+                            className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-left w-full transition-colors group"
+                          >
+                            <div className="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+                              <Music size={16} />
+                            </div>
+                            <div className="min-w-0">
+                              <span className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors block truncate">
+                                {raga.name}
+                              </span>
+                              <span className="text-[10px] text-white/30">{raga.hinglishName}</span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Verses Match */}
+                  {filteredResults.verses.length > 0 && (
+                    <div>
+                      <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Verses / वाणी-पद</h4>
+                      <div className="space-y-2">
+                        {filteredResults.verses.map(verse => (
+                          <button
+                            key={verse.id}
+                            onClick={() => openPreview(verse, 'verse')}
+                            className="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-left w-full transition-colors group"
+                          >
+                            <div className="min-w-0 pr-4">
+                              <span className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors block truncate">
+                                {verse.title}
+                              </span>
+                              <p className="text-[11px] text-white/45 line-clamp-1 mt-0.5">
+                                {verse.hindi_text || verse.english_translation || verse.description}
+                              </p>
+                            </div>
+                            <ChevronRight size={16} className="text-white/20 group-hover:text-primary transition-colors shrink-0" />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Premium Atmosphere Portal Selector */}
@@ -419,6 +713,10 @@ const HomePage = () => {
                     <Link 
                       key={sant.cleanName} 
                       to={isHindiRoute ? `/hi/saint/${sant.slug}` : `/saint/${sant.slug}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        openPreview(sant, 'saint');
+                      }}
                       className="w-40 flex-none glass-card p-4 rounded-2xl flex flex-col items-center text-center group hover:border-amber-500/20 transition-all snap-start"
                     >
                       <div className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 font-bold text-2xl mb-3 group-hover:scale-105 transition-transform duration-300">
@@ -457,6 +755,10 @@ const HomePage = () => {
                     <Link 
                       key={book.name} 
                       to={isHindiRoute ? `/hi/book/${book.slug}` : `/book/${book.slug}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        openPreview(book, 'book');
+                      }}
                       className="w-52 flex-none glass-card p-5 rounded-2xl group hover:border-amber-500/20 transition-all snap-start flex flex-col justify-between h-44 border border-white/10 hover:shadow-2xl"
                     >
                       <div>
@@ -499,6 +801,10 @@ const HomePage = () => {
                     <Link 
                       key={raga.name} 
                       to={isHindiRoute ? `/hi/raga/${raga.slug}` : `/raga/${raga.slug}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        openPreview(raga, 'raga');
+                      }}
                       className="w-48 flex-none glass-card p-4 rounded-xl group hover:border-amber-500/20 transition-all snap-start flex items-center justify-between"
                     >
                       <div className="min-w-0 pr-2">
@@ -726,6 +1032,241 @@ const HomePage = () => {
             </Link>
           </div>
         </div>
+      </div>
+
+      {/* Drawer Backdrop Overlay */}
+      <div 
+        className={`preview-drawer-backdrop ${selectedItem ? 'active' : ''}`}
+        onClick={closePreview}
+      />
+
+      {/* Sliding Preview Drawer */}
+      <div className={`preview-drawer ${selectedItem ? 'active' : ''}`}>
+        <div className="drawer-drag-handle" />
+        
+        {selectedItem && (
+          <div className="flex-1 flex flex-col overflow-hidden px-6 pt-4">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-4 mb-4 pb-4 border-b border-white/5">
+              <div className="min-w-0">
+                <span className="text-[9px] uppercase tracking-[0.2em] text-primary font-bold block mb-1">
+                  {previewType === 'saint' ? 'Holy Biography' : 
+                   previewType === 'book' ? 'Scripture' : 
+                   previewType === 'raga' ? 'Raga' : 'Verse'}
+                </span>
+                <h2 className="text-xl font-bold font-headings text-minimal-gold truncate">
+                  {previewType === 'saint' ? (isHindiRoute ? selectedItem.name : selectedItem.hinglishName) :
+                   previewType === 'book' ? selectedItem.name :
+                   previewType === 'raga' ? selectedItem.name : selectedItem.title}
+                </h2>
+                {previewType === 'book' && selectedItem.author && (
+                  <span className="text-xs text-white/40 block mt-1">
+                    By {selectedItem.author}
+                  </span>
+                )}
+                {previewType === 'raga' && (
+                  <span className="text-xs text-white/40 block mt-0.5">
+                    {selectedItem.hinglishName}
+                  </span>
+                )}
+              </div>
+              <button 
+                onClick={closePreview}
+                className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-white transition-colors hover:bg-white/10 shrink-0"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Scrollable Container */}
+            <div className="drawer-scroll-container">
+              
+              {/* Render for Saint */}
+              {previewType === 'saint' && (
+                <div>
+                  <div className="drawer-tabs">
+                    <button 
+                      onClick={() => setDrawerTab('bio')}
+                      className={`drawer-tab ${drawerTab === 'bio' ? 'active' : ''}`}
+                    >
+                      Biography
+                    </button>
+                    <button 
+                      onClick={() => setDrawerTab('books')}
+                      className={`drawer-tab ${drawerTab === 'books' ? 'active' : ''}`}
+                    >
+                      Books ({selectedItem.books.length})
+                    </button>
+                    <button 
+                      onClick={() => setDrawerTab('verses')}
+                      className={`drawer-tab ${drawerTab === 'verses' ? 'active' : ''}`}
+                    >
+                      Verses ({selectedItem.verses.length})
+                    </button>
+                  </div>
+
+                  {drawerTab === 'bio' && (
+                    <div className="space-y-4">
+                      {selectedItem.biography ? (
+                        <p className="text-white/70 text-xs md:text-sm leading-relaxed whitespace-pre-line bg-white/5 p-4 rounded-xl border border-white/5">
+                          {selectedItem.biography.text}
+                        </p>
+                      ) : (
+                        <p className="text-white/40 text-center py-8 text-xs">Biography text not available in digital registry.</p>
+                      )}
+                    </div>
+                  )}
+
+                  {drawerTab === 'books' && (
+                    <div className="grid grid-cols-1 gap-2">
+                      {selectedItem.books.length > 0 ? (
+                        selectedItem.books.map(bName => {
+                          const matchedBookObj = books.find(b => b.name === bName);
+                          return (
+                            <button
+                              key={bName}
+                              onClick={() => {
+                                if (matchedBookObj) {
+                                  setSelectedItem(matchedBookObj);
+                                  setPreviewType('book');
+                                }
+                              }}
+                              className="p-3 text-left rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 flex items-center justify-between text-xs font-bold w-full transition-colors group"
+                            >
+                              <span className="text-white/90 group-hover:text-primary transition-colors">{bName}</span>
+                              <ChevronRight size={14} className="text-white/20 group-hover:text-primary transition-colors" />
+                            </button>
+                          );
+                        })
+                      ) : (
+                        <p className="text-white/40 text-center py-8 text-xs">No books associated.</p>
+                      )}
+                    </div>
+                  )}
+
+                  {drawerTab === 'verses' && (
+                    <div className="space-y-3">
+                      {selectedItem.verses.map(v => (
+                        <VerseListItem key={v.id} verse={v} isHindiRoute={isHindiRoute} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Render for Book */}
+              {previewType === 'book' && (
+                <div className="space-y-3">
+                  {selectedItem.verses.map(v => (
+                    <VerseListItem key={v.id} verse={v} isHindiRoute={isHindiRoute} />
+                  ))}
+                </div>
+              )}
+
+              {/* Render for Raga */}
+              {previewType === 'raga' && (
+                <div className="space-y-3">
+                  {selectedItem.verses.map(v => (
+                    <VerseListItem key={v.id} verse={v} isHindiRoute={isHindiRoute} />
+                  ))}
+                </div>
+              )}
+
+              {/* Render for Verse */}
+              {previewType === 'verse' && (
+                <div className="space-y-5 text-xs md:text-sm">
+                  {selectedItem.audio_url && (
+                    <div className="glass-card p-4 flex items-center justify-between border border-white/5 mb-4">
+                      <span className="font-semibold text-white/80">Recitation Chanting:</span>
+                      <AudioPlayButton 
+                        track={selectedItem} 
+                        className="bg-primary text-white p-3 rounded-full hover:scale-105 shadow-lg shadow-primary/20"
+                        size={20}
+                      />
+                    </div>
+                  )}
+
+                  {selectedItem.sanskrit_text && (
+                    <div className="bg-white/5 p-5 rounded-2xl border border-white/5 text-center">
+                      <h5 className="text-[10px] uppercase tracking-wider text-amber-500/60 font-bold mb-3">Original Scripture Text</h5>
+                      <p className="font-bold text-minimal-gold leading-loose whitespace-pre-line font-headings select-all text-base text-center py-2">
+                        {selectedItem.sanskrit_text}
+                      </p>
+                    </div>
+                  )}
+
+                  {selectedItem.hindi_text && (
+                    <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                      <h5 className="text-[10px] uppercase tracking-wider text-white/40 font-bold mb-2">Translation / भावार्थ</h5>
+                      <p className="text-white/70 leading-relaxed font-light">
+                        {selectedItem.hindi_text}
+                      </p>
+                    </div>
+                  )}
+
+                  {selectedItem.english_translation && (
+                    <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                      <h5 className="text-[10px] uppercase tracking-wider text-white/40 font-bold mb-2">English Translation</h5>
+                      <p className="text-white/60 leading-relaxed font-light italic">
+                        {selectedItem.english_translation}
+                      </p>
+                    </div>
+                  )}
+
+                  {selectedItem.description && !selectedItem.hindi_text && !selectedItem.english_translation && (
+                    <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                      <h5 className="text-[10px] uppercase tracking-wider text-white/40 font-bold mb-2">Description</h5>
+                      <p className="text-white/65 leading-relaxed font-light">
+                        {selectedItem.description}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+            </div>
+
+            {/* Footer Navigation Link */}
+            <div className="py-4 border-t border-white/5 flex gap-3 shrink-0">
+              {previewType === 'saint' && (
+                <Link
+                  to={isHindiRoute ? `/hi/saint/${selectedItem.slug}` : `/saint/${selectedItem.slug}`}
+                  onClick={closePreview}
+                  className="btn-premium flex-1 text-center py-3 text-xs uppercase tracking-wider"
+                >
+                  Open Dedicated Page
+                </Link>
+              )}
+              {previewType === 'book' && (
+                <Link
+                  to={isHindiRoute ? `/hi/book/${selectedItem.slug}` : `/book/${selectedItem.slug}`}
+                  onClick={closePreview}
+                  className="btn-premium flex-1 text-center py-3 text-xs uppercase tracking-wider"
+                >
+                  Open Dedicated Page
+                </Link>
+              )}
+              {previewType === 'raga' && (
+                <Link
+                  to={isHindiRoute ? `/hi/raga/${selectedItem.slug}` : `/raga/${selectedItem.slug}`}
+                  onClick={closePreview}
+                  className="btn-premium flex-1 text-center py-3 text-xs uppercase tracking-wider"
+                >
+                  Open Dedicated Page
+                </Link>
+              )}
+              {previewType === 'verse' && (
+                <Link
+                  to={isHindiRoute ? `/hi/content/${selectedItem.slug || selectedItem.id}` : `/content/${selectedItem.slug || selectedItem.id}`}
+                  onClick={closePreview}
+                  className="btn-premium flex-1 text-center py-3 text-xs uppercase tracking-wider"
+                >
+                  Open Dedicated Page
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

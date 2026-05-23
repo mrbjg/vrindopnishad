@@ -3126,3 +3126,135 @@ html.light-mode .dock-tooltip-minimal {
     opacity: 1;
     transform: translateX(0);
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* INTERACTIVE PREVIEW DRAWER & EXPLORE OVERLAYS                              */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+.preview-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+}
+.preview-drawer-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.preview-drawer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 85vh;
+    background: rgba(15, 15, 25, 0.75);
+    backdrop-filter: blur(40px) saturate(160%);
+    -webkit-backdrop-filter: blur(40px) saturate(160%);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 1px solid rgba(255, 255, 255, 0.04);
+    border-right: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 32px 32px 0 0;
+    z-index: 2001;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.preview-drawer.active {
+    transform: translateY(0);
+}
+
+html.light-mode .preview-drawer {
+    background: rgba(255, 255, 255, 0.88);
+    border-top-color: rgba(0, 0, 0, 0.08);
+    border-left-color: rgba(0, 0, 0, 0.04);
+    border-right-color: rgba(0, 0, 0, 0.04);
+    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.08);
+}
+
+@media (min-width: 1024px) {
+    .preview-drawer {
+        left: auto;
+        top: 0;
+        bottom: 0;
+        width: 480px;
+        max-height: 100vh;
+        border-radius: 32px 0 0 32px;
+        border-top: none;
+        border-left: 1px solid rgba(255, 255, 255, 0.08);
+        transform: translateX(100%);
+    }
+    .preview-drawer.active {
+        transform: translateX(0);
+    }
+    html.light-mode .preview-drawer {
+        border-left-color: rgba(0, 0, 0, 0.08);
+    }
+}
+
+.drawer-drag-handle {
+    width: 40px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 99px;
+    margin: 12px auto 6px;
+    flex-shrink: 0;
+}
+html.light-mode .drawer-drag-handle {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.drawer-scroll-container {
+    overflow-y: auto;
+    flex: 1;
+    padding-bottom: 2rem;
+    scrollbar-width: thin;
+}
+
+/* Tab bar in drawer */
+.drawer-tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 1rem;
+}
+html.light-mode .drawer-tabs {
+    border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+.drawer-tab {
+    flex: 1;
+    padding: 12px 6px;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.4);
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+html.light-mode .drawer-tab {
+    color: rgba(0, 0, 0, 0.45);
+}
+.drawer-tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+/* Accordion expander transitions for verses */
+.verse-expansion-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), padding 0.35s ease;
+}
+.verse-expansion-panel.open {
+    max-height: 1000px;
+}
