@@ -211,7 +211,7 @@ const HomePage = () => {
 
   if (loading) {
     return (
-      <div className="relative max-w-6xl mx-auto px-4 py-8 animate-pulse text-left min-h-screen">
+      <div className="relative max-w-6xl mx-auto px-4 py-8 animate-pulse text-left min-h-screen bg-transparent">
         <div className="text-center pt-8 pb-12 max-w-2xl mx-auto space-y-4">
           <div className="h-12 bg-white/5 rounded-2xl w-48 mx-auto" />
           <div className="h-4 bg-white/5 rounded w-36 mx-auto" />
@@ -295,57 +295,57 @@ const HomePage = () => {
       <div 
         className="home-theme-glow-ambient top-[-250px] left-[-200px] md:w-[800px] md:h-[800px]" 
         style={{
-          background: `radial-gradient(circle, rgba(var(--primary-rgb), 0.04) 0%, rgba(var(--primary-rgb), 0.01) 50%, transparent 70%)`
+          background: `radial-gradient(circle, rgba(var(--primary-rgb), 0.03) 0%, rgba(var(--primary-rgb), 0.005) 50%, transparent 70%)`
         }}
       />
       <div 
         className="home-theme-glow-ambient bottom-[20%] right-[-200px] md:w-[700px] md:h-[700px]" 
         style={{
-          background: `radial-gradient(circle, rgba(var(--primary-rgb), 0.02) 0%, rgba(var(--primary-rgb), 0.005) 50%, transparent 70%)`
+          background: `radial-gradient(circle, rgba(var(--primary-rgb), 0.015) 0%, rgba(var(--primary-rgb), 0.002) 50%, transparent 70%)`
         }}
       />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 py-8">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 py-6 animate-fade-in">
         
-        {/* Editorial Minimalist Hero block */}
-        <div className="text-center pt-8 pb-12 max-w-2xl mx-auto">
-          <h1 className="text-5xl md:text-6xl font-bold mb-2 tracking-tight text-minimal-gold font-headings">
+        {/* Compact Editorial Hero block */}
+        <div className="text-center pt-4 pb-8 max-w-xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-bold mb-1 tracking-tight text-minimal-gold font-headings">
             वृंदोपनिषद्
           </h1>
-          <p className="text-xs uppercase tracking-[0.25em] text-white/40 block mb-6">Vrindopnishad Paath • Bliss of Vrindavan</p>
+          <p className="text-[10px] uppercase tracking-[0.25em] text-white/45 block mb-4">Vrindopnishad Paath • Bliss of Vrindavan</p>
           
           {/* Sleek Search Input inside Hero */}
-          <div className="relative w-full shadow-2xl rounded-2xl overflow-hidden border border-white/5 focus-within:border-primary/50 transition-colors">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-white/35" size={20} />
+          <div className="relative w-full shadow-lg rounded-xl overflow-hidden border border-white/5 focus-within:border-primary/50 transition-colors">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/35" size={16} />
             <input 
               type="text" 
               placeholder={isHindiRoute ? "सन्त, ग्रन्थ, राग या वाणी खोजें..." : "Search Saints, Books, Ragas or Verses..."} 
-              className="w-full h-14 bg-white/5 pl-14 pr-12 outline-none text-sm md:text-base font-medium"
+              className="w-full h-11 bg-white/5 pl-11 pr-10 outline-none text-xs md:text-sm font-medium"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             {searchQuery && (
               <button 
                 onClick={() => setSearchQuery('')}
-                className="absolute right-5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
               >
-                <X size={18} />
+                <X size={14} />
               </button>
             )}
           </div>
 
           {/* Search Results Overlay */}
           {searchQuery.trim().length >= 2 && (
-            <div className="glass-card mt-4 p-6 text-left w-full border border-amber-500/20 shadow-2xl relative z-50 rounded-2xl max-h-[60vh] overflow-y-auto">
-              <div className="flex justify-between items-center mb-6 pb-2 border-b border-white/5">
-                <h3 className="text-xs font-bold text-primary uppercase tracking-wider">
+            <div className="glass-card mt-3 p-5 text-left w-full border border-amber-500/20 shadow-2xl relative z-50 rounded-xl max-h-[60vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-4 pb-1.5 border-b border-white/5">
+                <h3 className="text-[10px] font-bold text-primary uppercase tracking-wider">
                   {isHindiRoute ? "खोज परिणाम" : "Search Results"}
                 </h3>
                 <button 
                   onClick={() => setSearchQuery('')}
                   className="text-white/40 hover:text-white transition-colors"
                 >
-                  <X size={16} />
+                  <X size={14} />
                 </button>
               </div>
 
@@ -353,29 +353,29 @@ const HomePage = () => {
                filteredResults.books.length === 0 && 
                filteredResults.ragas.length === 0 && 
                filteredResults.verses.length === 0 ? (
-                 <div className="py-8 text-center text-white/40 text-sm">
+                 <div className="py-6 text-center text-white/40 text-xs">
                    {isHindiRoute ? "कोई परिणाम नहीं मिला" : "No results found. Try another query."}
                  </div>
               ) : (
-                <div className="space-y-6">
+                <div className="space-y-5">
                   {filteredResults.sants.length > 0 && (
                     <div>
-                      <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Saints / रसिक सन्त</h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <h4 className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Saints / रसिक सन्त</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {filteredResults.sants.map(sant => (
                           <button
                             key={sant.cleanName}
                             onClick={() => openPreview(sant, 'saint')}
-                            className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-left w-full transition-colors group"
+                            className="flex items-center gap-2.5 p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 text-left w-full transition-colors group"
                           >
-                            <div className="w-9 h-9 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold text-sm shrink-0">
+                            <div className="w-8 h-8 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold text-xs shrink-0">
                               {sant.cleanName.charAt(0) === 'श' && sant.cleanName.charAt(4) ? sant.cleanName.charAt(4) : sant.cleanName.charAt(0)}
                             </div>
                             <div className="min-w-0">
-                              <span className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors block truncate">
+                              <span className="font-bold text-xs text-white/90 group-hover:text-primary transition-colors block truncate">
                                 {isHindiRoute ? sant.name : sant.hinglishName}
                               </span>
-                              <span className="text-[10px] text-white/30">{sant.verses.length} verses</span>
+                              <span className="text-[9px] text-white/30">{sant.verses.length} verses</span>
                             </div>
                           </button>
                         ))}
@@ -385,22 +385,22 @@ const HomePage = () => {
 
                   {filteredResults.books.length > 0 && (
                     <div>
-                      <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Books / ग्रन्थ</h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <h4 className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Books / ग्रन्थ</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {filteredResults.books.map(book => (
                           <button
                             key={book.name}
                             onClick={() => openPreview(book, 'book')}
-                            className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-left w-full transition-colors group"
+                            className="flex items-center gap-2.5 p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 text-left w-full transition-colors group"
                           >
-                            <div className="w-9 h-9 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center shrink-0">
-                              <Book size={16} />
+                            <div className="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center shrink-0">
+                              <Book size={14} />
                             </div>
                             <div className="min-w-0">
-                              <span className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors block truncate">
+                              <span className="font-bold text-xs text-white/90 group-hover:text-primary transition-colors block truncate">
                                 {book.name}
                               </span>
-                              <span className="text-[10px] text-white/30">By {book.author}</span>
+                              <span className="text-[9px] text-white/30">By {book.author}</span>
                             </div>
                           </button>
                         ))}
@@ -410,22 +410,22 @@ const HomePage = () => {
 
                   {filteredResults.ragas.length > 0 && (
                     <div>
-                      <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Ragas / शास्त्रीय राग</h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <h4 className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Ragas / शास्त्रीय राग</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {filteredResults.ragas.map(raga => (
                           <button
                             key={raga.name}
                             onClick={() => openPreview(raga, 'raga')}
-                            className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-left w-full transition-colors group"
+                            className="flex items-center gap-2.5 p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 text-left w-full transition-colors group"
                           >
-                            <div className="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
-                              <Music size={16} />
+                            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+                              <Music size={14} />
                             </div>
                             <div className="min-w-0">
-                              <span className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors block truncate">
+                              <span className="font-bold text-xs text-white/90 group-hover:text-primary transition-colors block truncate">
                                 {raga.name}
                               </span>
-                              <span className="text-[10px] text-white/30">{raga.hinglishName}</span>
+                              <span className="text-[9px] text-white/30">{raga.hinglishName}</span>
                             </div>
                           </button>
                         ))}
@@ -435,23 +435,23 @@ const HomePage = () => {
 
                   {filteredResults.verses.length > 0 && (
                     <div>
-                      <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Verses / वाणी-पद</h4>
-                      <div className="space-y-2">
+                      <h4 className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Verses / वाणी-पद</h4>
+                      <div className="space-y-1.5">
                         {filteredResults.verses.map(verse => (
                           <button
                             key={verse.id}
                             onClick={() => openPreview(verse, 'verse')}
-                            className="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-left w-full transition-colors group"
+                            className="flex items-center justify-between p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 text-left w-full transition-colors group"
                           >
-                            <div className="min-w-0 pr-4">
-                              <span className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors block truncate">
+                            <div className="min-w-0 pr-3">
+                              <span className="font-bold text-xs text-white/90 group-hover:text-primary transition-colors block truncate">
                                 {verse.title}
                               </span>
-                              <p className="text-[11px] text-white/45 line-clamp-1 mt-0.5">
+                              <p className="text-[10px] text-white/45 line-clamp-1 mt-0.5">
                                 {verse.hindi_text || verse.english_translation || verse.description}
                               </p>
                             </div>
-                            <ChevronRight size={16} className="text-white/20 group-hover:text-primary transition-colors shrink-0" />
+                            <ChevronRight size={14} className="text-white/20 group-hover:text-primary transition-colors shrink-0" />
                           </button>
                         ))}
                       </div>
@@ -463,144 +463,147 @@ const HomePage = () => {
           )}
         </div>
 
-        {/* 2-Column Responsive Layout Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 text-left mt-4">
+        {/* 2-Column Responsive Layout Grid (Compacted) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 text-left mt-2">
           
           {/* Left Column: Feed (2/3 width) */}
-          <div className="lg:col-span-2 space-y-10">
+          <div className="lg:col-span-2 space-y-6">
             
-            {/* Daily Meditation Quote Block */}
-            <div className="minimal-card relative overflow-hidden group">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="w-2 h-2 rounded-full bg-primary animate-ping" />
-                <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-bold">
-                  Daily Meditation • दैनिक स्वाध्याय
+            {/* Daily Meditation Quote Block (Compact and Minimal) */}
+            <div className="minimal-card relative overflow-hidden group p-4 rounded-xl">
+              <div className="flex items-center justify-between mb-3 border-b border-white/5 pb-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
+                  <span className="text-[9px] uppercase tracking-[0.2em] text-primary font-bold">
+                    Daily Meditation • स्वाध्याय
+                  </span>
+                </div>
+                <span className="text-[9px] font-bold text-amber-500/80 uppercase tracking-wider">
+                  {dailyShloka.source.split(' ')[0]}
                 </span>
               </div>
 
-              <blockquote className="my-6">
-                <p className="text-lg md:text-xl font-bold text-minimal-gold leading-loose whitespace-pre-line font-headings select-all text-center">
+              <blockquote className="my-4 text-center">
+                <p className="text-base md:text-lg font-bold text-minimal-gold leading-loose font-headings select-all">
                   {dailyShloka.sanskrit}
                 </p>
               </blockquote>
 
-              <div className="border-t border-white/10 pt-4 mt-4">
-                <div className="text-center mb-3">
-                  <span className="text-[10px] font-bold text-amber-500/80 uppercase tracking-widest">
-                    {dailyShloka.source}
-                  </span>
+              <div className="grid md:grid-cols-2 gap-3 text-[11px] font-light leading-relaxed border-t border-white/5 pt-3 mt-3">
+                <div>
+                  <span className="text-[8px] uppercase tracking-wider text-white/30 font-bold block mb-0.5">भावार्थ</span>
+                  <p className="text-white/60">{dailyShloka.hindi}</p>
                 </div>
-                
-                <div className="grid md:grid-cols-2 gap-4 text-xs font-light leading-relaxed">
-                  <div>
-                    <h4 className="text-[9px] uppercase tracking-wider text-white/40 font-bold mb-1">Hindi Meaning</h4>
-                    <p className="text-white/70">{dailyShloka.hindi}</p>
-                  </div>
-                  <div className="border-t md:border-t-0 md:border-l border-white/5 pt-3 md:pt-0 md:pl-4">
-                    <h4 className="text-[9px] uppercase tracking-wider text-white/40 font-bold mb-1">English Translation</h4>
-                    <p className="text-white/60 italic">{dailyShloka.english}</p>
-                  </div>
+                <div className="border-t md:border-t-0 md:border-l border-white/5 pt-2 md:pt-0 md:pl-3">
+                  <span className="text-[8px] uppercase tracking-wider text-white/30 font-bold block mb-0.5">Translation</span>
+                  <p className="text-white/50 italic">{dailyShloka.english}</p>
                 </div>
               </div>
             </div>
 
-            {/* Dynamic Latest Verses Block */}
+            {/* Dynamic Latest Verses Block (Compact Rows) */}
             {latestVerses.length > 0 && (
               <div>
-                <h2 className="text-lg font-bold text-minimal-gold uppercase tracking-wider font-headings mb-5 pb-2 border-b border-white/5">
+                <h2 className="text-xs font-bold text-minimal-gold uppercase tracking-widest font-headings mb-3 pb-1 border-b border-white/5">
                   {isHindiRoute ? "नवीनतम वाणी एवं श्लोक" : "Latest Dynamic Verses"}
                 </h2>
-                <div className="space-y-4">
+                <div className="divide-y divide-white/5 border border-white/5 rounded-xl bg-white/[0.01] overflow-hidden">
                   {latestVerses.map(verse => (
-                    <Link
+                    <div
                       key={verse.id}
-                      to={isHindiRoute ? `/hi/content/${verse.slug || verse.id}` : `/content/${verse.slug || verse.id}`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        openPreview(verse, 'verse');
-                      }}
-                      className="glass-card p-5 block group hover:border-amber-500/25 transition-all shadow-md hover:shadow-xl"
+                      onClick={() => openPreview(verse, 'verse')}
+                      className="p-3 flex items-center justify-between gap-4 cursor-pointer hover:bg-white/5 transition-colors group"
                     >
-                      <div className="flex justify-between items-start gap-4 mb-2">
-                        <span className="text-[9px] uppercase tracking-wider text-amber-500/80 bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/10">
-                          {verse.category}
-                        </span>
-                        {verse.audio_url && (
-                          <AudioPlayButton 
-                            track={verse} 
-                            className="text-sky-400 bg-sky-500/5 border border-sky-500/10 p-1.5 rounded-full" 
-                            size={12} 
-                          />
-                        )}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <span className="text-[8px] uppercase tracking-wider text-amber-500/80 bg-amber-500/5 px-1.5 py-0.5 rounded border border-amber-500/10 shrink-0 font-bold">
+                            {verse.category}
+                          </span>
+                          {verse.author && (
+                            <span className="text-[10px] text-white/30 truncate max-w-[120px] md:max-w-none">
+                              {verse.author.replace(/जी/g, '')}
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors leading-snug truncate">
+                          {verse.cleanTitle || verse.title}
+                        </h3>
                       </div>
-                      <h3 className="font-bold text-base text-white/90 group-hover:text-primary transition-colors leading-snug truncate">
-                        {verse.cleanTitle || verse.title}
-                      </h3>
-                      <p className="text-white/45 text-xs line-clamp-2 mt-1.5 leading-relaxed font-light">
-                        {verse.hindi_text || verse.english_translation || verse.description}
-                      </p>
-                    </Link>
+                      
+                      <div className="flex items-center gap-3 shrink-0">
+                        {verse.audio_url && (
+                          <div onClick={(e) => e.stopPropagation()}>
+                            <AudioPlayButton 
+                              track={verse} 
+                              className="text-sky-400 bg-sky-500/5 border border-sky-500/10 p-1.5 rounded-full hover:scale-105 transition-transform" 
+                              size={12} 
+                            />
+                          </div>
+                        )}
+                        <ChevronRight size={14} className="text-white/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Dynamic Books/Granthas Block */}
+            {/* Dynamic Books/Granthas Block (Compact Swipe list) */}
             {books.length > 0 && (
               <div>
-                <div className="flex justify-between items-end mb-5">
-                  <h2 className="text-lg font-bold text-minimal-gold uppercase tracking-wider font-headings pb-2">
-                    {isHindiRoute ? "रसिक ग्रन्थ एवं वाणी संग्रह" : "Scriptures & Granthas"}
+                <div className="flex justify-between items-end mb-3">
+                  <h2 className="text-xs font-bold text-minimal-gold uppercase tracking-widest font-headings">
+                    {isHindiRoute ? "रसिक ग्रन्थ एवं वाणी" : "Scriptures & Granthas"}
                   </h2>
-                  <Link to={isHindiRoute ? "/hi/books" : "/books"} className="text-xs text-primary hover:underline font-semibold flex items-center gap-0.5">
-                    {isHindiRoute ? "सभी देखें" : "View All"}
-                    <ChevronRight size={14} />
+                  <Link to={isHindiRoute ? "/hi/books" : "/books"} className="text-[10px] text-primary hover:underline font-semibold flex items-center gap-0.5">
+                    {isHindiRoute ? "सभी" : "View All"}
+                    <ChevronRight size={10} />
                   </Link>
                 </div>
                 
-                <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
+                <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x">
                   {books.slice(0, 8).map(book => (
-                    <Link 
+                    <div 
                       key={book.name} 
-                      to={isHindiRoute ? `/hi/book/${book.slug}` : `/book/${book.slug}`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        openPreview(book, 'book');
-                      }}
-                      className="w-72 flex-none glass-card p-4 rounded-2xl hover:border-amber-500/20 transition-all snap-start flex gap-4 border border-white/5 shadow-lg"
+                      onClick={() => openPreview(book, 'book')}
+                      className="w-60 flex-none glass-card p-3 rounded-xl hover:border-amber-500/20 transition-all snap-start flex gap-3 border border-white/5 shadow-md cursor-pointer group"
                     >
                       {/* Dynamic Gradient Cover */}
                       <div 
                         className="dynamic-book-cover shrink-0 text-white select-none text-[8px] font-bold flex flex-col justify-between"
-                        style={{ background: getBookCoverGradient(book.name) }}
+                        style={{ 
+                          background: getBookCoverGradient(book.name),
+                          height: '96px',
+                          width: '72px'
+                        }}
                       >
-                        <div className="w-4 h-4 rounded-full border border-white/25 flex items-center justify-center mx-auto opacity-40">
+                        <div className="w-3.5 h-3.5 rounded-full border border-white/25 flex items-center justify-center mx-auto opacity-30 text-[6px]">
                           ॐ
                         </div>
-                        <span className="text-[9px] font-bold line-clamp-3 text-center leading-tight tracking-wide uppercase px-0.5">
+                        <span className="text-[8px] font-bold line-clamp-3 text-center leading-tight tracking-wide uppercase px-0.5">
                           {book.name.replace(/जी की वाणी/g, '').replace(/वाणी/g, '')}
                         </span>
-                        <span className="text-[7px] text-amber-300 text-center uppercase tracking-widest font-headings opacity-75">
-                          SANT VAANI
+                        <span className="text-[6px] text-amber-300 text-center uppercase tracking-widest font-headings opacity-70">
+                          VAANI
                         </span>
                       </div>
 
                       {/* Book Metadata */}
-                      <div className="flex flex-col justify-between py-1 min-w-0">
+                      <div className="flex flex-col justify-between py-0.5 min-w-0 flex-1">
                         <div>
-                          <h3 className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors leading-snug line-clamp-2">
+                          <h3 className="font-bold text-xs text-white/90 group-hover:text-primary transition-colors leading-snug line-clamp-2">
                             {book.name}
                           </h3>
-                          <span className="text-[10px] text-white/40 block mt-1 truncate">
-                            By {book.author}
+                          <span className="text-[9px] text-white/40 block mt-0.5 truncate">
+                            By {book.author ? book.author.replace(/जी/g, '') : 'Unknown'}
                           </span>
                         </div>
-                        <span className="text-[9px] text-white/30 flex items-center gap-1 mt-2">
-                          <FileText size={10} />
+                        <span className="text-[8px] text-white/30 flex items-center gap-1 mt-1">
+                          <FileText size={8} />
                           {book.verses.length} verses
                         </span>
                       </div>
-                    </Link>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -609,32 +612,32 @@ const HomePage = () => {
           </div>
 
           {/* Right Column: Sidebar (1/3 width) */}
-          <div className="space-y-8">
+          <div className="space-y-6">
             
-            {/* Sidebar Block 1: Rasik Saints Circular Avatars Grid */}
+            {/* Sidebar Block 1: Rasik Saints Circular Avatars Grid (Compact) */}
             {saints.length > 0 && (
-              <div className="sidebar-section-card">
-                <div className="flex justify-between items-center mb-4 pb-2 border-b border-white/5">
-                  <h3 className="text-xs font-bold text-minimal-gold uppercase tracking-wider">
+              <div className="sidebar-section-card p-4 rounded-xl">
+                <div className="flex justify-between items-center mb-3 pb-1 border-b border-white/5">
+                  <h3 className="text-[10px] font-bold text-minimal-gold uppercase tracking-wider">
                     {isHindiRoute ? "रसिक सन्त" : "Rasik Saints"}
                   </h3>
-                  <Link to={isHindiRoute ? "/hi/saints" : "/saints"} className="text-[10px] text-primary hover:underline font-semibold">
+                  <Link to={isHindiRoute ? "/hi/saints" : "/saints"} className="text-[9px] text-primary hover:underline font-semibold">
                     {isHindiRoute ? "सभी" : "View All"}
                   </Link>
                 </div>
                 
-                <div className="grid grid-cols-4 gap-3.5">
+                <div className="grid grid-cols-4 gap-2">
                   {saints.slice(0, 12).map(sant => (
                     <button
                       key={sant.cleanName}
                       onClick={() => openPreview(sant, 'saint')}
                       title={isHindiRoute ? sant.name : sant.hinglishName}
-                      className="flex flex-col items-center group outline-none"
+                      className="flex flex-col items-center group outline-none animate-none"
                     >
-                      <div className="w-11 h-11 rounded-full bg-amber-500/10 border border-amber-500/20 group-hover:border-amber-500/50 flex items-center justify-center text-amber-500 font-bold text-base shadow-md group-hover:scale-105 transition-all duration-300">
+                      <div className="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/20 group-hover:border-amber-500/50 flex items-center justify-center text-amber-500 font-bold text-xs shadow-sm group-hover:scale-105 transition-all duration-300">
                         {sant.cleanName.charAt(0) === 'श' && sant.cleanName.charAt(4) ? sant.cleanName.charAt(4) : sant.cleanName.charAt(0)}
                       </div>
-                      <span className="text-[9px] text-white/50 group-hover:text-primary transition-colors block mt-1 truncate w-12 text-center">
+                      <span className="text-[8px] text-white/50 group-hover:text-primary transition-colors block mt-1 truncate w-10 text-center">
                         {sant.cleanName.split(/\s+/)[0]}
                       </span>
                     </button>
@@ -643,33 +646,33 @@ const HomePage = () => {
               </div>
             )}
 
-            {/* Sidebar Block 2: Classical Ragas Melody Index */}
+            {/* Sidebar Block 2: Classical Ragas Melody Index (Compact) */}
             {ragas.length > 0 && (
-              <div className="sidebar-section-card">
-                <div className="flex justify-between items-center mb-4 pb-2 border-b border-white/5">
-                  <h3 className="text-xs font-bold text-minimal-gold uppercase tracking-wider">
+              <div className="sidebar-section-card p-4 rounded-xl">
+                <div className="flex justify-between items-center mb-3 pb-1 border-b border-white/5">
+                  <h3 className="text-[10px] font-bold text-minimal-gold uppercase tracking-wider">
                     {isHindiRoute ? "शास्त्रीय राग" : "Classical Ragas"}
                   </h3>
-                  <Link to={isHindiRoute ? "/hi/ragas" : "/ragas"} className="text-[10px] text-primary hover:underline font-semibold">
+                  <Link to={isHindiRoute ? "/hi/ragas" : "/ragas"} className="text-[9px] text-primary hover:underline font-semibold">
                     {isHindiRoute ? "सभी" : "View All"}
                   </Link>
                 </div>
                 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   {ragas.slice(0, 6).map(raga => (
                     <button
                       key={raga.name}
                       onClick={() => openPreview(raga, 'raga')}
-                      className="w-full flex items-center justify-between p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5 text-left text-xs group"
+                      className="w-full flex items-center justify-between p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/5 text-left text-xs group"
                     >
                       <div className="min-w-0 pr-2">
-                        <span className="font-semibold text-white/90 group-hover:text-primary transition-colors block truncate">
+                        <span className="font-semibold text-white/90 group-hover:text-primary transition-colors block truncate text-[11px]">
                           {raga.name}
                         </span>
-                        <span className="text-[9px] text-white/35 block truncate">{raga.hinglishName}</span>
+                        <span className="text-[8px] text-white/35 block truncate">{raga.hinglishName}</span>
                       </div>
-                      <span className="text-[10px] text-white/40 bg-white/5 border border-white/15 px-2 py-0.5 rounded-md shrink-0 flex items-center gap-1">
-                        <Music size={8} />
+                      <span className="text-[8px] text-white/40 bg-white/5 border border-white/15 px-1.5 py-0.5 rounded shrink-0 flex items-center gap-0.5">
+                        <Music size={6} />
                         {raga.verses.length}
                       </span>
                     </button>
@@ -678,54 +681,54 @@ const HomePage = () => {
               </div>
             )}
 
-            {/* Sidebar Block 3: Dham & Categories Grid */}
-            <div className="sidebar-section-card">
-              <h3 className="text-xs font-bold text-minimal-gold uppercase tracking-wider mb-4 pb-2 border-b border-white/5">
+            {/* Sidebar Block 3: Dham & Categories Grid (Compact) */}
+            <div className="sidebar-section-card p-4 rounded-xl">
+              <h3 className="text-[10px] font-bold text-minimal-gold uppercase tracking-wider mb-3 pb-1 border-b border-white/5">
                 {isHindiRoute ? "श्रेणियां" : "Sanctuary Categories"}
               </h3>
               
-              <div className="grid grid-cols-2 gap-3.5">
+              <div className="grid grid-cols-2 gap-2">
                 <Link 
                   to="/category/sankirtan" 
-                  className="p-3 rounded-xl bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/10 flex flex-col justify-between h-20 text-xs transition-colors group"
+                  className="p-2.5 rounded-lg bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/10 flex flex-col justify-between h-16 text-xs transition-colors group animate-none"
                 >
-                  <Heart size={16} className="text-rose-500" />
+                  <Heart size={12} className="text-rose-500" />
                   <div>
-                    <span className="font-bold text-white/90 group-hover:text-primary transition-colors block">Sankirtan</span>
-                    <span className="text-[9px] text-white/45">Lyrics</span>
+                    <span className="font-bold text-white/90 group-hover:text-primary transition-colors block text-[11px]">Sankirtan</span>
+                    <span className="text-[8px] text-white/45">Lyrics</span>
                   </div>
                 </Link>
 
                 <Link 
                   to="/category/saint" 
-                  className="p-3 rounded-xl bg-indigo-500/5 hover:bg-indigo-500/10 border border-indigo-500/10 flex flex-col justify-between h-20 text-xs transition-colors group"
+                  className="p-2.5 rounded-lg bg-indigo-500/5 hover:bg-indigo-500/10 border border-indigo-500/10 flex flex-col justify-between h-16 text-xs transition-colors group animate-none"
                 >
-                  <Users size={16} className="text-indigo-500" />
+                  <Users size={12} className="text-indigo-500" />
                   <div>
-                    <span className="font-bold text-white/90 group-hover:text-primary transition-colors block">Saints Bio</span>
-                    <span className="text-[9px] text-white/45">Biographies</span>
+                    <span className="font-bold text-white/90 group-hover:text-primary transition-colors block text-[11px]">Saints Bio</span>
+                    <span className="text-[8px] text-white/45">Biographies</span>
                   </div>
                 </Link>
 
                 <Link 
                   to="/category/dham" 
-                  className="p-3 rounded-xl bg-orange-500/5 hover:bg-orange-500/10 border border-orange-500/10 flex flex-col justify-between h-20 text-xs transition-colors group"
+                  className="p-2.5 rounded-lg bg-orange-500/5 hover:bg-orange-500/10 border border-orange-500/10 flex flex-col justify-between h-16 text-xs transition-colors group animate-none"
                 >
-                  <MapPin size={16} className="text-orange-500" />
+                  <MapPin size={12} className="text-orange-500" />
                   <div>
-                    <span className="font-bold text-white/90 group-hover:text-primary transition-colors block">Braj Dham</span>
-                    <span className="text-[9px] text-white/45">Sacred Places</span>
+                    <span className="font-bold text-white/90 group-hover:text-primary transition-colors block text-[11px]">Braj Dham</span>
+                    <span className="text-[8px] text-white/45">Sacred Places</span>
                   </div>
                 </Link>
 
                 <Link 
                   to="/category/literature" 
-                  className="p-3 rounded-xl bg-violet-500/5 hover:bg-violet-500/10 border border-violet-500/10 flex flex-col justify-between h-20 text-xs transition-colors group"
+                  className="p-2.5 rounded-lg bg-violet-500/5 hover:bg-violet-500/10 border border-violet-500/10 flex flex-col justify-between h-16 text-xs transition-colors group animate-none"
                 >
-                  <Book size={16} className="text-violet-500" />
+                  <Book size={12} className="text-violet-500" />
                   <div>
-                    <span className="font-bold text-white/90 group-hover:text-primary transition-colors block">Literature</span>
-                    <span className="text-[9px] text-white/45">Vanis</span>
+                    <span className="font-bold text-white/90 group-hover:text-primary transition-colors block text-[11px]">Literature</span>
+                    <span className="text-[8px] text-white/45">Vanis</span>
                   </div>
                 </Link>
               </div>
@@ -736,15 +739,14 @@ const HomePage = () => {
         </div>
 
         {/* Minimalized Dynamic SEO Footer Content */}
-        <div className="py-10 max-w-4xl mx-auto border-t border-white/5 mt-16 text-center text-xs text-white/35 leading-relaxed font-light">
-          <p className="mb-2">
+        <div className="py-8 max-w-4xl mx-auto border-t border-white/5 mt-12 text-center text-xs text-white/35 leading-relaxed font-light">
+          <p className="mb-1.5">
             Vrindopnishad Paath: Sacred dynamic portal curated for reading authentic Sanskrit shlokas, devotional strotras, and spiritual couplets.
           </p>
           <p>
             वृंदोपनिषद् पाठ: रसिक संतों की वाणी, स्तोत्र और वैदिक श्लोकों का एक अत्यंत सुंदर और सुगम डिजिटल संग्रह।
           </p>
         </div>
-
       </div>
 
       {/* Drawer Backdrop Overlay */}
