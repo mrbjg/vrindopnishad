@@ -55,44 +55,49 @@ const SaintsListPage = () => {
         <link rel="canonical" href={isHindiRoute ? "https://path.vrindopnishad.in/hi/saints" : "https://path.vrindopnishad.in/saints"} />
       </Helmet>
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+      <div className="flex flex-col md:flex-row md:items-start md:items-center justify-between gap-4 mb-6 md:mb-8">
         <div>
-          <Link to="/" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-4 transition-colors text-xs uppercase tracking-wider">
+          <Link to="/" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-2 md:mb-3 transition-colors text-xs uppercase tracking-wider">
             <ArrowLeft size={14} />
             Back to Home
           </Link>
-          <h1 className="text-4xl font-bold font-headings text-sacred-gradient">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold font-headings text-sacred-gradient">
             {isHindiRoute ? "ब्रज के रसिक सन्त" : "Rasik Saints & Authors"}
           </h1>
-          <p className="text-white/50 text-sm mt-1">
+          <p className="text-white/50 text-xs md:text-sm mt-1">
             {isHindiRoute ? "परम पावन रसिक संतों की वाणी एवं जीवन चरित्र" : "Sacred digital repository of devotional masters"}
           </p>
         </div>
 
-        <div className="relative w-full md:w-80">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
-          <input 
-            type="text" 
-            placeholder={isHindiRoute ? "संत खोजें..." : "Search Sants..."} 
-            className="w-full h-11 bg-white/5 border border-white/10 rounded-full pl-11 pr-6 outline-none focus:border-amber-500/50 transition-colors text-sm"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+        <div className="relative w-full md:w-80 max-w-xs">
+          <div className="premium-search-container flex items-center pl-4 pr-6 h-11">
+            <Search className="text-white/30 shrink-0 mr-3" size={16} />
+            <input 
+              type="text" 
+              placeholder={isHindiRoute ? "संत खोजें..." : "Search Sants..."} 
+              className="w-full bg-transparent outline-none text-white/90 placeholder:text-white/35 h-full text-sm font-light"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
         </div>
       </div>
 
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 6].map(i => (
-            <div key={i} className="glass-card h-44 animate-pulse flex flex-col justify-between">
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className="skeleton-card h-44 flex flex-col justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-white/5" />
-                <div className="flex-1 space-y-2">
-                  <div className="h-5 bg-white/10 rounded w-3/4" />
-                  <div className="h-3 bg-white/5 rounded w-1/2" />
+                <div className="skeleton w-14 h-14 rounded-full shrink-0"></div>
+                <div className="flex-1 space-y-2.5">
+                  <div className="skeleton skeleton-title w-3/4 mb-0"></div>
+                  <div className="skeleton skeleton-text w-1/2 mb-0"></div>
                 </div>
               </div>
-              <div className="h-8 bg-white/5 rounded w-full" />
+              <div className="pt-3 border-t border-white/5 flex justify-between items-center mt-4 w-full">
+                <div className="skeleton w-20 h-4 rounded"></div>
+                <div className="skeleton w-16 h-4 rounded"></div>
+              </div>
             </div>
           ))}
         </div>

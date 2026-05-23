@@ -200,8 +200,13 @@ const Layout = ({ children }) => {
     }
   };
 
+  const hideHeaderSearch = [
+    '/content', '/saints', '/books', '/ragas',
+    '/hi/content', '/hi/saints', '/hi/books', '/hi/ragas'
+  ].includes(location.pathname);
+
   return (
-    <div className="min-h-screen relative text-foreground">
+    <div className={`min-h-screen relative text-foreground ${hideHeaderSearch ? 'layout-no-header-search' : ''}`}>
       {/* Celestial Background */}
       <div className="celestial-bg">
         <div className="stars"></div>
@@ -287,109 +292,111 @@ const Layout = ({ children }) => {
           </div>
 
           {/* Global Search & Filter bar */}
-          <div className="relative w-full md:flex-1 md:max-w-sm md:max-w-md md:mx-6" ref={searchRef}>
-            <div className="flex items-center bg-white/[0.04] border border-white/10 rounded-full pl-3 pr-2 h-9 text-xs md:text-sm focus-within:border-primary/50 focus-within:bg-white/[0.07] transition-all">
-              <Search className="text-white/30 mr-1.5 shrink-0" size={14} />
-              <input 
-                type="text"
-                placeholder={isHiRoute ? "खोजें..." : "Search..."}
-                className="w-full bg-transparent outline-none pr-2 text-white/95 placeholder:text-white/35 h-full text-xs font-light"
-                value={searchQuery}
-                onFocus={handleSearchFocus}
-                onKeyDown={handleKeyDown}
-                onChange={(e) => setSearchQuery(e.target.value)} 
-              />
-              
-              {/* Category Filter Select */}
-              <select 
-                value={searchFilter} 
-                onChange={(e) => setSearchFilter(e.target.value)}
-                className="bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 rounded-full text-[9px] md:text-[10px] text-white/70 py-0.5 px-2 outline-none cursor-pointer shrink-0 transition-colors mr-1"
-              >
-                <option value="all" className="bg-[#121215] text-white/80">{isHiRoute ? "सभी" : "All"}</option>
-                <option value="saint" className="bg-[#121215] text-white/80">{isHiRoute ? "सन्त" : "Saints"}</option>
-                <option value="book" className="bg-[#121215] text-white/80">{isHiRoute ? "ग्रन्थ" : "Granthas"}</option>
-                <option value="raga" className="bg-[#121215] text-white/80">{isHiRoute ? "राग" : "Ragas"}</option>
-                <option value="verse" className="bg-[#121215] text-white/80">{isHiRoute ? "वाणी" : "Verses"}</option>
-              </select>
+          {!hideHeaderSearch && (
+            <div className="relative w-full md:flex-1 md:max-w-sm md:max-w-md md:mx-6" ref={searchRef}>
+              <div className="flex items-center bg-white/[0.04] border border-white/10 rounded-full pl-3 pr-2 h-9 text-xs md:text-sm focus-within:border-primary/50 focus-within:bg-white/[0.07] transition-all">
+                <Search className="text-white/30 mr-1.5 shrink-0" size={14} />
+                <input 
+                  type="text"
+                  placeholder={isHiRoute ? "खोजें..." : "Search..."}
+                  className="w-full bg-transparent outline-none pr-2 text-white/95 placeholder:text-white/35 h-full text-xs font-light"
+                  value={searchQuery}
+                  onFocus={handleSearchFocus}
+                  onKeyDown={handleKeyDown}
+                  onChange={(e) => setSearchQuery(e.target.value)} 
+                />
+                
+                {/* Category Filter Select */}
+                <select 
+                  value={searchFilter} 
+                  onChange={(e) => setSearchFilter(e.target.value)}
+                  className="bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 rounded-full text-[9px] md:text-[10px] text-white/70 py-0.5 px-2 outline-none cursor-pointer shrink-0 transition-colors mr-1"
+                >
+                  <option value="all" className="bg-[#121215] text-white/80">{isHiRoute ? "सभी" : "All"}</option>
+                  <option value="saint" className="bg-[#121215] text-white/80">{isHiRoute ? "सन्त" : "Saints"}</option>
+                  <option value="book" className="bg-[#121215] text-white/80">{isHiRoute ? "ग्रन्थ" : "Granthas"}</option>
+                  <option value="raga" className="bg-[#121215] text-white/80">{isHiRoute ? "राग" : "Ragas"}</option>
+                  <option value="verse" className="bg-[#121215] text-white/80">{isHiRoute ? "वाणी" : "Verses"}</option>
+                </select>
 
-              {searchQuery && (
-                <button onClick={() => setSearchQuery('')} className="text-white/40 hover:text-white p-0.5 shrink-0">
-                  <X size={12} />
-                </button>
-              )}
-            </div>
-
-            {/* Suggestions Overlay Dropdown */}
-            {searchFocused && searchQuery.trim().length >= 2 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-[#121216]/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-md z-[3000] overflow-y-auto max-h-[50vh] p-3 text-left">
-                {loadingSearchData ? (
-                  <p className="text-[10px] text-white/30 py-4 text-center animate-pulse">Loading search realm...</p>
-                ) : !filteredResults.sants.length && !filteredResults.books.length && !filteredResults.ragas.length && !filteredResults.verses.length ? (
-                  <p className="text-[10px] text-white/30 py-4 text-center">No matches found.</p>
-                ) : (
-                  <div className="space-y-4">
-                    {filteredResults.sants.length > 0 && (
-                      <div>
-                        <h4 className="text-[9px] uppercase tracking-widest text-primary font-bold mb-1.5">Saints / रसिक सन्त</h4>
-                        <div className="grid grid-cols-1 gap-1">
-                          {filteredResults.sants.map(s => (
-                            <Link key={s.cleanName} to={isHiRoute ? `/hi/saint/${s.slug}` : `/saint/${s.slug}`} onClick={() => setSearchFocused(false)}
-                              className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 transition-colors text-[11px] font-medium text-white/90">
-                              <span className="w-5 h-5 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 text-[9px] font-bold">{s.cleanName.charAt(0)}</span>
-                              <span className="truncate">{s.name}</span>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {filteredResults.books.length > 0 && (
-                      <div>
-                        <h4 className="text-[9px] uppercase tracking-widest text-primary font-bold mb-1.5">Granthas / ग्रन्थ</h4>
-                        <div className="grid grid-cols-1 gap-1">
-                          {filteredResults.books.map(b => (
-                            <Link key={b.name} to={isHiRoute ? `/hi/book/${b.slug}` : `/book/${b.slug}`} onClick={() => setSearchFocused(false)}
-                              className="flex items-center justify-between p-1.5 rounded-lg hover:bg-white/5 transition-colors text-[11px] font-medium text-white/90">
-                              <span className="truncate">{b.name}</span>
-                              <span className="text-[9px] text-white/30 font-light">{b.author}</span>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {filteredResults.ragas.length > 0 && (
-                      <div>
-                        <h4 className="text-[9px] uppercase tracking-widest text-primary font-bold mb-1.5">Ragas / राग</h4>
-                        <div className="grid grid-cols-1 gap-1">
-                          {filteredResults.ragas.map(r => (
-                            <Link key={r.name} to={isHiRoute ? `/hi/raga/${r.slug}` : `/raga/${r.slug}`} onClick={() => setSearchFocused(false)}
-                              className="flex items-center justify-between p-1.5 rounded-lg hover:bg-white/5 transition-colors text-[11px] font-medium text-white/90">
-                              <span className="truncate">{r.name}</span>
-                              <span className="text-[9px] text-white/30 font-light">{r.hinglishName}</span>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {filteredResults.verses.length > 0 && (
-                      <div>
-                        <h4 className="text-[9px] uppercase tracking-widest text-primary font-bold mb-1.5">Verses / वाणी-पद</h4>
-                        <div className="grid grid-cols-1 gap-1">
-                          {filteredResults.verses.map(v => (
-                            <Link key={v.id} to={isHiRoute ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`} onClick={() => setSearchFocused(false)}
-                              className="block p-1.5 rounded-lg hover:bg-white/5 transition-colors text-[11px] text-white/85 truncate">
-                              <span className="font-semibold block">{v.title}</span>
-                              <p className="text-[9px] text-white/30 truncate mt-0.5">{v.hindi_text || v.english_translation || v.description}</p>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                {searchQuery && (
+                  <button onClick={() => setSearchQuery('')} className="text-white/40 hover:text-white p-0.5 shrink-0">
+                    <X size={12} />
+                  </button>
                 )}
               </div>
-            )}
-          </div>
+
+              {/* Suggestions Overlay Dropdown */}
+              {searchFocused && searchQuery.trim().length >= 2 && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-[#121216]/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-md z-[3000] overflow-y-auto max-h-[50vh] p-3 text-left">
+                  {loadingSearchData ? (
+                    <p className="text-[10px] text-white/30 py-4 text-center animate-pulse">Loading search realm...</p>
+                  ) : !filteredResults.sants.length && !filteredResults.books.length && !filteredResults.ragas.length && !filteredResults.verses.length ? (
+                    <p className="text-[10px] text-white/30 py-4 text-center">No matches found.</p>
+                  ) : (
+                    <div className="space-y-4">
+                      {filteredResults.sants.length > 0 && (
+                        <div>
+                          <h4 className="text-[9px] uppercase tracking-widest text-primary font-bold mb-1.5">Saints / रसिक सन्त</h4>
+                          <div className="grid grid-cols-1 gap-1">
+                            {filteredResults.sants.map(s => (
+                              <Link key={s.cleanName} to={isHiRoute ? `/hi/saint/${s.slug}` : `/saint/${s.slug}`} onClick={() => setSearchFocused(false)}
+                                className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 transition-colors text-[11px] font-medium text-white/90">
+                                <span className="w-5 h-5 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 text-[9px] font-bold">{s.cleanName.charAt(0)}</span>
+                                <span className="truncate">{s.name}</span>
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {filteredResults.books.length > 0 && (
+                        <div>
+                          <h4 className="text-[9px] uppercase tracking-widest text-primary font-bold mb-1.5">Granthas / ग्रन्थ</h4>
+                          <div className="grid grid-cols-1 gap-1">
+                            {filteredResults.books.map(b => (
+                              <Link key={b.name} to={isHiRoute ? `/hi/book/${b.slug}` : `/book/${b.slug}`} onClick={() => setSearchFocused(false)}
+                                className="flex items-center justify-between p-1.5 rounded-lg hover:bg-white/5 transition-colors text-[11px] font-medium text-white/90">
+                                <span className="truncate">{b.name}</span>
+                                <span className="text-[9px] text-white/30 font-light">{b.author}</span>
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {filteredResults.ragas.length > 0 && (
+                        <div>
+                          <h4 className="text-[9px] uppercase tracking-widest text-primary font-bold mb-1.5">Ragas / राग</h4>
+                          <div className="grid grid-cols-1 gap-1">
+                            {filteredResults.ragas.map(r => (
+                              <Link key={r.name} to={isHiRoute ? `/hi/raga/${r.slug}` : `/raga/${r.slug}`} onClick={() => setSearchFocused(false)}
+                                className="flex items-center justify-between p-1.5 rounded-lg hover:bg-white/5 transition-colors text-[11px] font-medium text-white/90">
+                                <span className="truncate">{r.name}</span>
+                                <span className="text-[9px] text-white/30 font-light">{r.hinglishName}</span>
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {filteredResults.verses.length > 0 && (
+                        <div>
+                          <h4 className="text-[9px] uppercase tracking-widest text-primary font-bold mb-1.5">Verses / वाणी-पद</h4>
+                          <div className="grid grid-cols-1 gap-1">
+                            {filteredResults.verses.map(v => (
+                              <Link key={v.id} to={isHiRoute ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`} onClick={() => setSearchFocused(false)}
+                                className="block p-1.5 rounded-lg hover:bg-white/5 transition-colors text-[11px] text-white/85 truncate">
+                                <span className="font-semibold block">{v.title}</span>
+                                <p className="text-[9px] text-white/30 truncate mt-0.5">{v.hindi_text || v.english_translation || v.description}</p>
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Desktop Navigation & Actions (hidden on mobile viewports) */}
           <div className="hidden md:flex items-center gap-4">

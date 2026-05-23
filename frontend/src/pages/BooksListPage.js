@@ -47,38 +47,47 @@ const BooksListPage = () => {
         <link rel="canonical" href={isHindiRoute ? "https://path.vrindopnishad.in/hi/books" : "https://path.vrindopnishad.in/books"} />
       </Helmet>
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+      <div className="flex flex-col md:flex-row md:items-start md:items-center justify-between gap-4 mb-6 md:mb-8">
         <div>
-          <Link to="/" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-4 transition-colors text-xs uppercase tracking-wider">
+          <Link to="/" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-2 md:mb-3 transition-colors text-xs uppercase tracking-wider">
             <ArrowLeft size={14} />
             Back to Home
           </Link>
-          <h1 className="text-4xl font-bold font-headings text-sacred-gradient">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold font-headings text-sacred-gradient">
             {isHindiRoute ? "प्रमुख ग्रन्थ एवं वाणियाँ" : "Sacred Granthas & Vaanis"}
           </h1>
-          <p className="text-white/50 text-sm mt-1">
+          <p className="text-white/50 text-xs md:text-sm mt-1">
             {isHindiRoute ? "रसिक संतों द्वारा रचित दिव्य ग्रन्थ और वाणी संग्रह" : "Treasury of classical devotional scriptures"}
           </p>
         </div>
 
-        <div className="relative w-full md:w-80">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
-          <input 
-            type="text" 
-            placeholder={isHindiRoute ? "ग्रन्थ खोजें..." : "Search Books..."} 
-            className="w-full h-11 bg-white/5 border border-white/10 rounded-full pl-11 pr-6 outline-none focus:border-amber-500/50 transition-colors text-sm"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+        <div className="relative w-full md:w-80 max-w-xs">
+          <div className="premium-search-container flex items-center pl-4 pr-6 h-11">
+            <Search className="text-white/30 shrink-0 mr-3" size={16} />
+            <input 
+              type="text" 
+              placeholder={isHindiRoute ? "ग्रन्थ खोजें..." : "Search Books..."} 
+              className="w-full bg-transparent outline-none text-white/90 placeholder:text-white/35 h-full text-sm font-light"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
         </div>
       </div>
 
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="glass-card h-32 animate-pulse space-y-4">
-              <div className="h-5 bg-white/10 rounded w-2/3" />
-              <div className="h-3 bg-white/5 rounded w-1/2" />
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className="skeleton-card h-40">
+              <div>
+                <div className="skeleton w-24 h-4 rounded-full mb-3"></div>
+                <div className="skeleton skeleton-title w-3/4 mb-3"></div>
+                <div className="skeleton skeleton-text w-1/2 mb-0"></div>
+              </div>
+              <div className="pt-3 border-t border-white/5 flex justify-between items-center mt-4 w-full">
+                <div className="skeleton w-16 h-4 rounded"></div>
+                <div className="skeleton w-20 h-4 rounded"></div>
+              </div>
             </div>
           ))}
         </div>

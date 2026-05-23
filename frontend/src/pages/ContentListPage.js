@@ -207,22 +207,24 @@ const ContentListPage = () => {
           })}
         </script>
       </Helmet>
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+      <div className="flex flex-col md:flex-row md:items-start md:items-center justify-between gap-4 mb-6 md:mb-8">
         <div>
-          <h1 className="text-4xl font-bold mb-2 tracking-tight">Spiritual Repository</h1>
-          <p className="text-white/50">Explore the vast collection of sacred content</p>
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2 tracking-tight">Spiritual Repository</h1>
+          <p className="text-white/50 text-xs md:text-sm">Explore the vast collection of sacred content</p>
         </div>
 
-        <div className="relative w-full md:w-96" ref={searchRef}>
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={20} />
-          <input 
-            type="text" 
-            placeholder="Search in Hindi, English or Hinglish..." 
-            className="w-full h-12 bg-white/5 border border-white/10 rounded-full pl-12 pr-6 outline-none focus:border-amber-500/50 transition-colors"
-            value={searchQuery}
-            onChange={(e) => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
-            onFocus={() => setShowSuggestions(true)}
-          />
+        <div className="relative w-full md:w-96 max-w-md" ref={searchRef}>
+          <div className="premium-search-container flex items-center pl-4 pr-6 h-12">
+            <Search className="text-white/30 shrink-0 mr-3" size={18} />
+            <input 
+              type="text" 
+              placeholder="Search in Hindi, English or Hinglish..." 
+              className="w-full bg-transparent outline-none text-white/90 placeholder:text-white/35 h-full text-sm font-light"
+              value={searchQuery}
+              onChange={(e) => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
+              onFocus={() => setShowSuggestions(true)}
+            />
+          </div>
           {/* Hinglish Suggestions Dropdown */}
           {showSuggestions && suggestions.length > 0 && (
             <div className="absolute top-full left-0 right-0 mt-2 bg-[#1a1a24] border border-white/10 rounded-2xl shadow-2xl shadow-black/50 z-50 overflow-hidden">
@@ -272,7 +274,7 @@ const ContentListPage = () => {
       {showSkeleton ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[1,2,3,4,5,6].map(i => (
-            <div key={i} className="glass-card flex flex-col justify-between h-72">
+            <div key={i} className="skeleton-card flex flex-col justify-between h-72">
               <div>
                 <div className="flex justify-between items-start mb-4">
                   <div className="skeleton w-20 h-6 rounded-full"></div>
@@ -286,8 +288,8 @@ const ContentListPage = () => {
                 </div>
               </div>
               <div className="pt-4 border-t border-white/5 flex gap-2">
-                 <div className="skeleton w-12 h-4 rounded opacity-10"></div>
-                 <div className="skeleton w-12 h-4 rounded opacity-10"></div>
+                 <div className="skeleton w-16 h-5 rounded-md"></div>
+                 <div className="skeleton w-16 h-5 rounded-md"></div>
               </div>
             </div>
           ))}
