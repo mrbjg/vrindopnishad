@@ -22,6 +22,14 @@ const AdminLoginPage = React.lazy(() => import('./pages/AdminLoginPage'));
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const LoaderDemo = React.lazy(() => import('./pages/LoaderDemo'));
 
+// Dynamic Relations Pages
+const SaintsListPage = React.lazy(() => import('./pages/SaintsListPage'));
+const SaintDetailPage = React.lazy(() => import('./pages/SaintDetailPage'));
+const BooksListPage = React.lazy(() => import('./pages/BooksListPage'));
+const BookDetailPage = React.lazy(() => import('./pages/BookDetailPage'));
+const RagasListPage = React.lazy(() => import('./pages/RagasListPage'));
+const RagaDetailPage = React.lazy(() => import('./pages/RagaDetailPage'));
+
 // SEO Content Pages
 const WhatIsVrindopnishad = React.lazy(() => import('./pages/seo/WhatIsVrindopnishad'));
 const MeaningPage = React.lazy(() => import('./pages/seo/MeaningPage'));
@@ -208,6 +216,22 @@ function App() {
                     <Route path="/hi/category/:category" element={<CategoryPage />} />
                     
                     <Route path="/loader-demo" element={<LoaderDemo />} />
+                    
+                    {/* Dynamic Relations Routes */}
+                    <Route path="/saints" element={<SaintsListPage />} />
+                    <Route path="/hi/saints" element={<SaintsListPage />} />
+                    <Route path="/saint/:slug" element={<SaintDetailPage />} />
+                    <Route path="/hi/saint/:slug" element={<SaintDetailPage />} />
+                    
+                    <Route path="/books" element={<BooksListPage />} />
+                    <Route path="/hi/books" element={<BooksListPage />} />
+                    <Route path="/book/:slug" element={<BookDetailPage />} />
+                    <Route path="/hi/book/:slug" element={<BookDetailPage />} />
+                    
+                    <Route path="/ragas" element={<RagasListPage />} />
+                    <Route path="/hi/ragas" element={<RagasListPage />} />
+                    <Route path="/raga/:slug" element={<RagaDetailPage />} />
+                    <Route path="/hi/raga/:slug" element={<RagaDetailPage />} />
                     
                     {/* SEO Content Pages */}
                     <Route path="/what-is-vrindopnishad" element={<WhatIsVrindopnishad />} />

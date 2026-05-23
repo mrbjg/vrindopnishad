@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Compass, Scroll, Music, FileText, ArrowRight, BookOpen, Heart, Star, Globe, Users, MapPin, Book } from 'lucide-react';
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Compass, Scroll, Music, FileText, ArrowRight, BookOpen, Heart, Star, Globe, Users, MapPin, Book, ChevronRight } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { useSettings, THEMES } from '../contexts/SettingsContext';
 import ThemeIcon from '../components/ThemeIcon';
+import { ApiContext } from '../App';
+import { extractRelations } from '../utils/relations';
 
 const themeGroups = [
   {
@@ -63,6 +65,36 @@ const HomePage = () => {
   const { settings, updateSetting } = useSettings();
   const currentTheme = settings.theme || 'dark';
   const [activeTab, setActiveTab] = useState('core');
+  
+  const location = useLocation();
+  const isHindiRoute = location.pathname.startsWith('/hi');
+  const { apiService } = useContext(ApiContext);
+
+  const [saints, setSaints] = useState([]);
+  const [books, setBooks] = useState([]);
+  const [ragas, setRagas] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      try {
+        const allItems = await apiService.getAllContent(null, 10000);
+        const relations = extractRelations(allItems);
+        if (active) {
+          setSaints(relations.sants);
+          setBooks(relations.books);
+          setRagas(relations.ragas);
+        }
+      } catch (error) {
+        console.error('Error loading homepage relations:', error);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    load();
+    return () => { active = false; };
+  }, [apiService]);
 
   const shlokaIndex = new Date().getDate() % DAILY_SHLOKAS.length;
   const dailyShloka = DAILY_SHLOKAS[shlokaIndex];
@@ -361,6 +393,131 @@ const HomePage = () => {
             </div>
           </div>
         </div>
+
+        {/* Dynamic Relations Section: Saints, Books, Ragas */}
+        {!loading && (
+          <div className="py-12 max-w-6xl mx-auto px-4 space-y-16">
+            
+            {/* 1. Rasik Saints Carousel */}
+            {saints.length > 0 && (
+              <div>
+                <div className="flex justify-between items-end mb-6">
+                  <div>
+                    <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-bold block mb-1">Holy Biographies & Vaanis</span>
+                    <h2 className="text-2xl font-bold font-headings text-minimal-gold">
+                      {isHindiRoute ? "रसिक सन्त" : "Rasik Saints"}
+                    </h2>
+                  </div>
+                  <Link to={isHindiRoute ? "/hi/saints" : "/saints"} className="text-xs text-primary hover:underline flex items-center gap-1 font-semibold">
+                    {isHindiRoute ? "सभी देखें" : "View All"}
+                    <ChevronRight size={14} />
+                  </Link>
+                </div>
+                
+                <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
+                  {saints.slice(0, 10).map(sant => (
+                    <Link 
+                      key={sant.cleanName} 
+                      to={isHindiRoute ? `/hi/saint/${sant.slug}` : `/saint/${sant.slug}`}
+                      className="w-40 flex-none glass-card p-4 rounded-2xl flex flex-col items-center text-center group hover:border-amber-500/20 transition-all snap-start"
+                    >
+                      <div className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 font-bold text-2xl mb-3 group-hover:scale-105 transition-transform duration-300">
+                        {sant.cleanName.charAt(0) === 'श' && sant.cleanName.charAt(4) ? sant.cleanName.charAt(4) : sant.cleanName.charAt(0)}
+                      </div>
+                      <h3 className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors line-clamp-1 w-full leading-tight">
+                        {isHindiRoute ? sant.name : sant.hinglishName}
+                      </h3>
+                      <span className="text-[9px] uppercase tracking-wider text-white/30 block mt-1">
+                        {sant.verses.length} {sant.verses.length === 1 ? 'Verse' : 'Verses'}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 2. Books & Granthas Carousel */}
+            {books.length > 0 && (
+              <div>
+                <div className="flex justify-between items-end mb-6">
+                  <div>
+                    <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-bold block mb-1">Sacred Scriptures</span>
+                    <h2 className="text-2xl font-bold font-headings text-minimal-gold">
+                      {isHindiRoute ? "ग्रन्थ - रसिक वाणी" : "Books - Rasik Vanis"}
+                    </h2>
+                  </div>
+                  <Link to={isHindiRoute ? "/hi/books" : "/books"} className="text-xs text-primary hover:underline flex items-center gap-1 font-semibold">
+                    {isHindiRoute ? "सभी देखें" : "View All"}
+                    <ChevronRight size={14} />
+                  </Link>
+                </div>
+                
+                <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-hide snap-x">
+                  {books.slice(0, 10).map(book => (
+                    <Link 
+                      key={book.name} 
+                      to={isHindiRoute ? `/hi/book/${book.slug}` : `/book/${book.slug}`}
+                      className="w-52 flex-none glass-card p-5 rounded-2xl group hover:border-amber-500/20 transition-all snap-start flex flex-col justify-between h-44 border border-white/10 hover:shadow-2xl"
+                    >
+                      <div>
+                        <span className="text-[9px] uppercase tracking-widest text-amber-500 font-bold block mb-2">Grantha</span>
+                        <h3 className="font-bold text-base text-white/90 group-hover:text-primary transition-colors leading-tight line-clamp-2">
+                          {book.name}
+                        </h3>
+                        <span className="text-xs text-white/40 block mt-1 line-clamp-1">
+                          By {book.author}
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-white/30 flex items-center gap-1 mt-4">
+                        <FileText size={12} />
+                        {book.verses.length} {book.verses.length === 1 ? 'Verse' : 'Verses'}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 3. Ragas Carousel */}
+            {ragas.length > 0 && (
+              <div>
+                <div className="flex justify-between items-end mb-6">
+                  <div>
+                    <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-bold block mb-1">Sankirtan Tunes</span>
+                    <h2 className="text-2xl font-bold font-headings text-minimal-gold">
+                      {isHindiRoute ? "शास्त्रीय राग" : "Classical Ragas"}
+                    </h2>
+                  </div>
+                  <Link to={isHindiRoute ? "/hi/ragas" : "/ragas"} className="text-xs text-primary hover:underline flex items-center gap-1 font-semibold">
+                    {isHindiRoute ? "सभी देखें" : "View All"}
+                    <ChevronRight size={14} />
+                  </Link>
+                </div>
+                
+                <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
+                  {ragas.slice(0, 10).map(raga => (
+                    <Link 
+                      key={raga.name} 
+                      to={isHindiRoute ? `/hi/raga/${raga.slug}` : `/raga/${raga.slug}`}
+                      className="w-48 flex-none glass-card p-4 rounded-xl group hover:border-amber-500/20 transition-all snap-start flex items-center justify-between"
+                    >
+                      <div className="min-w-0 pr-2">
+                        <h3 className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors truncate">
+                          {raga.name}
+                        </h3>
+                        <span className="text-[10px] text-white/30 truncate block mt-0.5">{raga.hinglishName}</span>
+                      </div>
+                      <div className="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center shrink-0">
+                        <Music size={16} />
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+          </div>
+        )}
 
         {/* Braj Heritage Section - Overhauled Grid */}
         <div className="py-12 px-4 max-w-6xl mx-auto">

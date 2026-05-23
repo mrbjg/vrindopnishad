@@ -8,24 +8,25 @@ import {
   signInWithPopup, 
   GoogleAuthProvider 
 } from 'firebase/auth';
+import { transliterate } from '../utils/transliterate';
 
 const USE_MOCK = process.env.REACT_APP_DEMO_MODE === 'true';
 const CACHE_PREFIX = 'sv_cache_';
 const CACHE_EXPIRY = 30 * 60 * 1000;
 
-// Helper to generate a URL-friendly slug from a title
+// Helper to generate a URL-friendly Hinglish slug from a title (matches brajrasik.org SEO)
 const generateSlug = (text) => {
   if (!text) return '';
-  // Support Hindi characters in slugs for better SEO and readability
-  return text
+  const transliterated = transliterate(text);
+  return transliterated
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, '-')     // Replace spaces with -
-    .replace(/[^\u0900-\u097F\w-]+/g, '')  // Remove non-word and non-Hindi chars
-    .replace(/--+/g, '-')     // Replace multiple - with single -
-    .replace(/^-+/, '')        // Trim - from start of text
-    .replace(/-+$/, '');       // Trim - from end of text
+    .replace(/[^a-z0-9\s-]/g, '') // Keep letters, numbers, spaces, hyphens only
+    .replace(/\s+/g, '-')         // Spaces to hyphens
+    .replace(/--+/g, '-')         // Collapse multiple hyphens
+    .replace(/^-+/, '')            // Trim leading
+    .replace(/-+$/, '');           // Trim trailing
 };
 
 const setCache = (key, data) => {

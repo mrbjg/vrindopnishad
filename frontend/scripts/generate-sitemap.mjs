@@ -14,23 +14,242 @@ const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || '';
 const FIREBASE_DB_URL = 'https://santvaanig-default-rtdb.asia-southeast1.firebasedatabase.app';
 const DOMAIN = 'https://path.vrindopnishad.in';
 
-// Consistent slug generation logic matching frontend/src/services/api.js
-const generateSlug = (text) => {
+// Devanagari to Hinglish Phonetic Map for SEO Slugs
+const DevanagariToHinglishMap = {
+  'अ': 'a', 'आ': 'aa', 'इ': 'i', 'ई': 'ee', 'उ': 'u', 'ऊ': 'oo', 'ऋ': 'ri',
+  'ए': 'e', 'ऐ': 'ai', 'ओ': 'o', 'औ': 'au', 'अं': 'an', 'अः': 'ah',
+  'क': 'ka', 'ख': 'kha', 'ग': 'ga', 'घ': 'gha', 'ङ': 'nga',
+  'च': 'cha', 'छ': 'chha', 'ज': 'ja', 'झ': 'jha', 'ञ': 'nya',
+  'ट': 'ta', 'ठ': 'tha', 'ड': 'da', 'ढ': 'dha', 'ण': 'na',
+  'त': 'ta', 'थ': 'tha', 'द': 'da', 'ध': 'dha', 'न': 'na',
+  'प': 'pa', 'फ': 'fa', 'ब': 'ba', 'भ': 'bha', 'म': 'ma',
+  'य': 'ya', 'र': 'ra', 'ल': 'la', 'व': 'va', 'श': 'sha', 'ष': 'sha',
+  'स': 'sa', 'ह': 'ha', 'ळ': 'la', 'क्ष': 'ksha', 'त्र': 'tra', 'ज्ञ': 'gya',
+  'ा': 'a', 'ि': 'i', 'ी': 'ee', 'ु': 'u', 'ू': 'oo', 'ृ': 'ri',
+  'े': 'e', 'ै': 'ai', 'ो': 'o', 'ौ': 'au', 'ं': 'n', 'ः': 'h', 'ँ': 'n',
+  'ॅ': 'e', 'ॉ': 'o',
+  'क़': 'qa', 'ख़': 'kha', 'ग़': 'gha', 'ज़': 'za', 'फ़': 'fa', 'ड़': 'da', 'ढ़': 'dha',
+  '०': '0', '१': '1', '२': '2', '३': '3', '४': '4', '५': '5', '६': '6', '७': '7', '८': '8', '९': '9',
+  '।': '.', '॥': '..'
+};
+
+const Consonants = new Set([
+  'क', 'ख', 'ग', 'घ', 'ङ', 'च', 'छ', 'ज', 'झ', 'ञ',
+  'ट', 'ठ', 'ड', 'ढ', 'ण', 'त', 'थ', 'द', 'ध', 'न',
+  'प', 'फ', 'ब', 'भ', 'म', 'य', 'र', 'ल', 'व', 'श',
+  'ष', 'स', 'ह', 'ळ', 'क्ष', 'त्र', 'ज्ञ',
+  'क़', 'ख़', 'ग़', 'ज़', 'फ़', 'ड़', 'ढ़'
+]);
+
+const Matras = new Set([
+  'ा', 'ि', 'ी', 'ु', 'ू', 'ृ', 'े', 'ै', 'ो', 'ौ', 'ं', 'ः', 'ँ', 'ॅ', 'ॉ'
+]);
+
+function transliterate(text) {
+  if (!text) return "";
+  let result = "";
+  const chars = Array.from(text);
+  
+  for (let i = 0; i < chars.length; i++) {
+    const char = chars[i];
+    const nextChar = chars[i + 1] || "";
+    
+    const nuqtaCombo = char + nextChar;
+    if (DevanagariToHinglishMap[nuqtaCombo] !== undefined) {
+      result += DevanagariToHinglishMap[nuqtaCombo];
+      i++;
+      continue;
+    }
+    
+    if (char === '्') {
+      if (result.endsWith('a')) {
+        result = result.substring(0, result.length - 1);
+      }
+      continue;
+    }
+
+    const mapped = DevanagariToHinglishMap[char];
+    if (mapped !== undefined) {
+      result += mapped;
+      
+      if (Consonants.has(char)) {
+        const nextHasMatra = Matras.has(nextChar);
+        const nextIsHalant = nextChar === '्';
+        const nextIsWordBoundary = nextChar === ' ' || nextChar === '\n' || nextChar === '\t' || 
+                                   nextChar === '।' || nextChar === '॥' || nextChar === ',' || 
+                                   nextChar === '.' || nextChar === '?' || nextChar === '!' || 
+                                   nextChar === '"' || nextChar === '\'' || nextChar === "";
+        
+        if (nextHasMatra || nextIsHalant || nextIsWordBoundary) {
+          if (result.endsWith('a')) {
+            result = result.substring(0, result.length - 1);
+          }
+        }
+      }
+    } else {
+      result += char;
+    }
+  }
+
+  return result
+    .replace(/aa/g, 'a')
+    .replace(/ee/g, 'i')
+    .replace(/oo/g, 'u')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+const slugify = (text) => {
   if (!text) return '';
   return text
     .toString()
     .toLowerCase()
     .trim()
     .replace(/\s+/g, '-')
-    .replace(/[^\u0900-\u097F\w-]+/g, '')
+    .replace(/[^a-z0-9-]/g, '')
     .replace(/--+/g, '-')
     .replace(/^-+/, '')
     .replace(/-+$/, '');
 };
 
+const generateSlug = (text) => {
+  if (!text) return '';
+  const transliterated = transliterate(text);
+  return slugify(transliterated);
+};
+
+const sanitizeSlug = (slug) => {
+  if (!slug) return '';
+  return slug
+    .toString()
+    .replace(/[\r\n\t]+/g, '')
+    .replace(/["'<>&,;:!?()[\]{}]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/--+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '')
+    .trim();
+};
+
+const escapeXmlUrl = (url) => {
+  return url
+    .replace(/&/g, '&amp;')
+    .replace(/'/g, '&apos;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+};
+
+// Dynamic relations extractor
+function extractRelations(items) {
+  if (!items || !items.length) {
+    return { sants: [], books: [], ragas: [] };
+  }
+
+  const santsMap = {};
+  const booksMap = {};
+  const ragasMap = {};
+  const biographies = [];
+
+  // Pass 1: Gather biographies
+  items.forEach(item => {
+    if (item.category?.toLowerCase() === 'saint') {
+      const title = item.title || '';
+      const cleanName = title.replace(/\([^)]+\)/g, '').replace(/महाप्रभु/g, '').trim();
+      const transliteratedName = transliterate(cleanName);
+      biographies.push({
+        name: cleanName,
+        slug: item.slug || slugify(transliteratedName)
+      });
+    }
+  });
+
+  // Pass 2: Extract relations from verses
+  items.forEach(item => {
+    if (item.category?.toLowerCase() === 'saint') return;
+
+    const title = item.title || '';
+    let saintName = null;
+    let bookName = null;
+
+    const parts = title.split(/\s+-\s+/);
+    if (parts.length >= 2) {
+      const relationText = parts[1].trim();
+      const verseMatch = relationText.match(/\(([^)]+)\)$/);
+      const textWithoutVerse = verseMatch ? relationText.replace(/\(([^)]+)\)$/, '').trim() : relationText;
+      const relParts = textWithoutVerse.split(/\s*,\s*/);
+      
+      if (relParts.length >= 2) {
+        saintName = relParts[0].trim();
+        bookName = relParts[1].trim();
+      } else if (relParts.length === 1) {
+        const val = relParts[0].trim();
+        if (val.includes('वाणी') || val.includes('सागर') || val.includes('शतक') || val.includes('महिमामृत') || val.includes('दोहे') || val.includes('ग्रंथावली') || val.includes('पदावली') || val.includes('शत')) {
+          bookName = val;
+        } else {
+          saintName = val;
+        }
+      }
+    }
+
+    if (!saintName && item.author && item.author !== 'Braj Rasik Heritage') {
+      saintName = item.author;
+    }
+
+    // Extract Raga
+    let ragaName = null;
+    const ragaRegex = /(राग\s+[^\s,;()\-]+)/;
+    const matchTitle = title.match(ragaRegex);
+    const matchSanskrit = item.sanskrit_text?.match(ragaRegex);
+    const matchHindi = item.hindi_text?.match(ragaRegex);
+    
+    if (matchTitle) ragaName = matchTitle[1];
+    else if (matchSanskrit) ragaName = matchSanskrit[1];
+    else if (matchHindi) ragaName = matchHindi[1];
+
+    if (ragaName) {
+      ragaName = ragaName.split(/[,]/)[0].trim();
+    }
+
+    if (saintName) {
+      const cleanSantKey = saintName.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim();
+      const santSlug = slugify(transliterate(cleanSantKey));
+      if (!santsMap[cleanSantKey]) {
+        const matchedBio = biographies.find(bio => bio.name.includes(cleanSantKey) || cleanSantKey.includes(bio.name));
+        santsMap[cleanSantKey] = {
+          slug: matchedBio ? matchedBio.slug : santSlug
+        };
+      }
+    }
+
+    if (bookName) {
+      const bookSlug = slugify(transliterate(bookName));
+      if (!booksMap[bookName]) {
+        booksMap[bookName] = { slug: bookSlug };
+      }
+    }
+
+    if (ragaName) {
+      const ragaSlug = slugify(transliterate(ragaName));
+      if (!ragasMap[ragaName]) {
+        ragasMap[ragaName] = { slug: ragaSlug };
+      }
+    }
+  });
+
+  return {
+    sants: Object.values(santsMap),
+    books: Object.values(booksMap),
+    ragas: Object.values(ragasMap)
+  };
+}
+
 const SEO_PAGES = [
   { path: '/', priority: '1.0', changefreq: 'daily' },
   { path: '/content', priority: '0.9', changefreq: 'daily' },
+  { path: '/saints', priority: '0.9', changefreq: 'weekly' },
+  { path: '/books', priority: '0.9', changefreq: 'weekly' },
+  { path: '/ragas', priority: '0.9', changefreq: 'weekly' },
   { path: '/what-is-vrindopnishad', priority: '0.9', changefreq: 'weekly' },
   { path: '/meaning', priority: '0.9', changefreq: 'weekly' },
   { path: '/origin', priority: '0.9', changefreq: 'weekly' },
@@ -41,19 +260,8 @@ const SEO_PAGES = [
   { path: '/faq', priority: '0.9', changefreq: 'weekly' },
   { path: '/comparison-with-upanishads', priority: '0.9', changefreq: 'weekly' },
   { path: '/guide', priority: '0.9', changefreq: 'weekly' },
-  { path: '/braj-rasik-heritage', priority: '0.9', changefreq: 'weekly' },
+  { path: '/braj-rasik-heritage', priority: '0.9', changefreq: 'weekly' }
 ];
-
-// Temperory removed as not required
-// const CATEGORY_PAGES = [
-//   { path: '/category/shloka', priority: '0.8', changefreq: 'weekly' },
-//   { path: '/category/strotra', priority: '0.8', changefreq: 'weekly' },
-//   { path: '/category/poem', priority: '0.8', changefreq: 'weekly' },
-//   { path: '/category/sankirtan', priority: '0.8', changefreq: 'weekly' },
-//   { path: '/category/saint', priority: '0.8', changefreq: 'weekly' },
-//   { path: '/category/dham', priority: '0.8', changefreq: 'weekly' },
-//   { path: '/category/literature', priority: '0.8', changefreq: 'weekly' },
-// ];
 
 async function generateSitemap() {
   console.log('--- 🚀 SEO Sitemap Generator ---');
@@ -88,7 +296,7 @@ async function generateSitemap() {
 
       while (hasMore) {
         const response = await axios.get(
-          `${SUPABASE_URL}/rest/v1/content?select=title,id,slug,category&order=id&offset=${offset}&limit=${PAGE_SIZE}`,
+          `${SUPABASE_URL}/rest/v1/content?select=id,title,slug,category,author,hindi_text,sanskrit_text&order=id&offset=${offset}&limit=${PAGE_SIZE}`,
           {
             headers: {
               'apikey': SUPABASE_KEY,
@@ -133,43 +341,11 @@ async function generateSitemap() {
   });
   console.log(`📂 Found ${uniqueCategories.length} unique categories.`);
 
-  // 4. Sanitize slug for XML-safe URLs
-  const sanitizeSlug = (slug) => {
-    if (!slug) return '';
-    return slug.toString()
-      .replace(/[\r\n\t]+/g, '')
-      .replace(/["'<>&,;:!?()[\]{}]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/--+/g, '-')
-      .replace(/^-+/, '').replace(/-+$/, '')
-      .trim();
-  };
+  // 4. Extract dynamic relations
+  const { sants, books, ragas } = extractRelations(allContentItems);
+  console.log(`👥 Extracted Relations: ${sants.length} Saints, ${books.length} Books, ${ragas.length} Ragas`);
 
   // 5. Generate XML — single-line <url> blocks to prevent whitespace corruption
-  // CRITICAL: Deduplicate by slug to prevent Google from seeing duplicate URLs
-  const seenSlugs = new Set();
-  const contentUrls = allContentItems
-    .flatMap(item => {
-      const rawSlug = item.slug || generateSlug(item.title);
-      const slug = sanitizeSlug(rawSlug);
-      if (!slug) return [];
-      
-      const normalizedSlug = slug.toLowerCase();
-      // Skip duplicates
-      if (seenSlugs.has(normalizedSlug)) return [];
-      seenSlugs.add(normalizedSlug);
-      
-      // Percent-encode non-ASCII slugs using encodeURIComponent(decodeURIComponent(slug))
-      const encodedSlug = encodeURIComponent(decodeURIComponent(slug));
-      return [
-        `  <url><loc>${DOMAIN}/content/${encodedSlug}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`,
-        `  <url><loc>${DOMAIN}/hi/content/${encodedSlug}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`
-      ];
-    })
-    .filter(Boolean)
-    .join('\n');
-  console.log(`📊 Deduplicated: ${allContentItems.length} items → ${seenSlugs.size} unique URLs`);
-
   const staticUrls = SEO_PAGES.flatMap(page => [
     `  <url><loc>${DOMAIN}${page.path}</loc><lastmod>${today}</lastmod><changefreq>${page.changefreq}</changefreq><priority>${page.priority}</priority></url>`,
     `  <url><loc>${DOMAIN}/hi${page.path === '/' ? '' : page.path}</loc><lastmod>${today}</lastmod><changefreq>${page.changefreq}</changefreq><priority>${page.priority}</priority></url>`
@@ -180,24 +356,72 @@ async function generateSitemap() {
     `  <url><loc>${DOMAIN}/hi/category/${cat}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
   ]).join('\n');
 
+  const santUrls = sants.flatMap(s => {
+    const escSlug = encodeURIComponent(decodeURIComponent(s.slug));
+    return [
+      `  <url><loc>${DOMAIN}/saint/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`,
+      `  <url><loc>${DOMAIN}/hi/saint/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
+    ];
+  }).join('\n');
+
+  const bookUrls = books.flatMap(b => {
+    const escSlug = encodeURIComponent(decodeURIComponent(b.slug));
+    return [
+      `  <url><loc>${DOMAIN}/book/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`,
+      `  <url><loc>${DOMAIN}/hi/book/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
+    ];
+  }).join('\n');
+
+  const ragaUrls = ragas.flatMap(r => {
+    const escSlug = encodeURIComponent(decodeURIComponent(r.slug));
+    return [
+      `  <url><loc>${DOMAIN}/raga/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`,
+      `  <url><loc>${DOMAIN}/hi/raga/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
+    ];
+  }).join('\n');
+
+  const seenSlugs = new Set();
+  const contentUrls = allContentItems
+    .flatMap(item => {
+      const rawSlug = item.slug || generateSlug(item.title);
+      const slug = sanitizeSlug(rawSlug);
+      if (!slug) return [];
+      
+      const normalizedSlug = slug.toLowerCase();
+      if (seenSlugs.has(normalizedSlug)) return [];
+      seenSlugs.add(normalizedSlug);
+      
+      const encodedSlug = encodeURIComponent(decodeURIComponent(slug));
+      const defaultUrl = escapeXmlUrl(`${DOMAIN}/content/${encodedSlug}`);
+      const hiUrl = escapeXmlUrl(`${DOMAIN}/hi/content/${encodedSlug}`);
+      return [
+        `  <url><loc>${defaultUrl}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`,
+        `  <url><loc>${hiUrl}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`
+      ];
+    })
+    .filter(Boolean)
+    .join('\n');
+
+  console.log(`📊 Deduplicated content: ${allContentItems.length} items → ${seenSlugs.size} unique URLs`);
+
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${staticUrls}
 ${catUrls}
+${santUrls}
+${bookUrls}
+${ragaUrls}
 ${contentUrls}
 </urlset>`;
 
   try {
-    // Write to public/ only (for local dev).
-    // DO NOT write to build/ — on Vercel, a static build/sitemap.xml 
-    // would take priority over the /api/sitemap serverless rewrite.
     if (!fs.existsSync('public')) {
       fs.mkdirSync('public');
     }
 
     fs.writeFileSync('public/sitemap.xml', sitemap);
-    const totalUrls = SEO_PAGES.length + uniqueCategories.length + allContentItems.length;
-    console.log(`✅ sitemap.xml generated in public/ with ${totalUrls} URLs`);
+    const totalUrls = SEO_PAGES.length * 2 + uniqueCategories.length * 2 + (sants.length + books.length + ragas.length) * 2 + seenSlugs.size * 2;
+    console.log(`✅ sitemap.xml generated in public/ with approx ${totalUrls} URLs`);
 
   } catch (err) {
     console.error('❌ Error writing sitemap file:', err.message);
