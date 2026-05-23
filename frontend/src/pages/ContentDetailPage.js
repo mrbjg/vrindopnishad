@@ -334,7 +334,7 @@ const ContentDetailPage = () => {
                   Sanskrit Text
                   <span className="content-section-line h-[1px] w-12 hidden sm:block"></span>
                 </h3>
-                <div className={`text-center font-medium content-verse-text drop-shadow-lg hindi-text ${
+                <div className={`text-center font-medium content-verse-text hindi-text ${
                   settings.fontStyle === 'Sans' ? 'font-sans' :
                   settings.fontStyle === 'Inter' ? 'font-inter' :
                   'font-headings'
