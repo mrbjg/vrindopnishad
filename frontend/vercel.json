@@ -14,6 +14,160 @@
       "destination": "/google27b1a7fc60901288.html"
     },
     {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(googlebot|bingbot|yandex|baidu|twitterbot|facebookexternalhit|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|applebot).*"
+        }
+      ],
+      "destination": "/api/seo-handler?type=static"
+    },
+    {
+      "source": "/hi",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(googlebot|bingbot|yandex|baidu|twitterbot|facebookexternalhit|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|applebot).*"
+        }
+      ],
+      "destination": "/api/seo-handler?type=static&lang=hi"
+    },
+    {
+      "source": "/:slug(what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|saints|books|ragas|content)",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(googlebot|bingbot|yandex|baidu|twitterbot|facebookexternalhit|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|applebot).*"
+        }
+      ],
+      "destination": "/api/seo-handler?type=static&slug=:slug"
+    },
+    {
+      "source": "/hi/:slug(what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|saints|books|ragas|content)",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(googlebot|bingbot|yandex|baidu|twitterbot|facebookexternalhit|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|applebot).*"
+        }
+      ],
+      "destination": "/api/seo-handler?type=static&slug=:slug&lang=hi"
+    },
+    {
+      "source": "/content/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(googlebot|bingbot|yandex|baidu|twitterbot|facebookexternalhit|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|applebot).*"
+        }
+      ],
+      "destination": "/api/seo-handler?type=content&slug=:slug"
+    },
+    {
+      "source": "/hi/content/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(googlebot|bingbot|yandex|baidu|twitterbot|facebookexternalhit|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|applebot).*"
+        }
+      ],
+      "destination": "/api/seo-handler?type=content&slug=:slug&lang=hi"
+    },
+    {
+      "source": "/saint/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(googlebot|bingbot|yandex|baidu|twitterbot|facebookexternalhit|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|applebot).*"
+        }
+      ],
+      "destination": "/api/seo-handler?type=saint&slug=:slug"
+    },
+    {
+      "source": "/hi/saint/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(googlebot|bingbot|yandex|baidu|twitterbot|facebookexternalhit|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|applebot).*"
+        }
+      ],
+      "destination": "/api/seo-handler?type=saint&slug=:slug&lang=hi"
+    },
+    {
+      "source": "/book/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(googlebot|bingbot|yandex|baidu|twitterbot|facebookexternalhit|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|applebot).*"
+        }
+      ],
+      "destination": "/api/seo-handler?type=book&slug=:slug"
+    },
+    {
+      "source": "/hi/book/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(googlebot|bingbot|yandex|baidu|twitterbot|facebookexternalhit|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|applebot).*"
+        }
+      ],
+      "destination": "/api/seo-handler?type=book&slug=:slug&lang=hi"
+    },
+    {
+      "source": "/raga/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(googlebot|bingbot|yandex|baidu|twitterbot|facebookexternalhit|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|applebot).*"
+        }
+      ],
+      "destination": "/api/seo-handler?type=raga&slug=:slug"
+    },
+    {
+      "source": "/hi/raga/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(googlebot|bingbot|yandex|baidu|twitterbot|facebookexternalhit|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|applebot).*"
+        }
+      ],
+      "destination": "/api/seo-handler?type=raga&slug=:slug&lang=hi"
+    },
+    {
+      "source": "/category/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(googlebot|bingbot|yandex|baidu|twitterbot|facebookexternalhit|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|applebot).*"
+        }
+      ],
+      "destination": "/api/seo-handler?type=category&slug=:slug"
+    },
+    {
+      "source": "/hi/category/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(googlebot|bingbot|yandex|baidu|twitterbot|facebookexternalhit|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|applebot).*"
+        }
+      ],
+      "destination": "/api/seo-handler?type=category&slug=:slug&lang=hi"
+    },
+    {
       "source": "/((?!api|sitemap\\.xml|robots\\.txt|google27b1a7fc60901288\\.html|static|manifest\\.json|favicon).*)",
       "destination": "/index.html"
     }
