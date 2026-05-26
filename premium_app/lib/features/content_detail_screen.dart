@@ -17,6 +17,7 @@ import '../core/theme.dart';
 import '../core/providers/reading_providers.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../core/personalized_feed_provider.dart';
 
 class ContentDetailScreen extends ConsumerStatefulWidget {
   final SacredContent? content;
@@ -48,10 +49,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   double _baseScale = 1.0;
   double _lastScrollOffset = 0.0;
   bool _isScrollingUp = true;
+  late final DateTime _startTime;
+  bool _hasLoggedDwellTime = false;
 
   @override
   void initState() {
     super.initState();
+    _startTime = DateTime.now();
     _scrollController.addListener(_onScroll);
     
     // Initialize theme from universal preference
@@ -126,6 +130,21 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   }
 
   // Audio is now managed globally via audioProvider
+
+  @override
+  void deactivate() {
+    if (!_hasLoggedDwellTime) {
+      _hasLoggedDwellTime = true;
+      final durationSeconds = DateTime.now().difference(_startTime).inSeconds;
+      final allContent = ref.read(sacredContentProvider);
+      final resolvedContent = widget.content ?? 
+        (widget.title != null ? allContent.where((c) => c.title == widget.title).firstOrNull : null);
+      if (resolvedContent != null) {
+        ref.read(dwellTimeProvider.notifier).logDwellTime(resolvedContent.id, durationSeconds);
+      }
+    }
+    super.deactivate();
+  }
 
   @override
   void dispose() {
@@ -457,6 +476,132 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           ],
                         ),
                       ),
+                      const SizedBox(height: 48),
+                      // "More Like This" Shelf
+                      Consumer(
+                        builder: (context, ref, child) {
+                          final similarList = ref.watch(similarContentProvider(content));
+                          if (similarList.isEmpty) return const SizedBox.shrink();
+                          
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(
+                                  "MORE LIKE THIS",
+                                  style: GoogleFonts.manrope(
+                                    color: themeData.textColor.withValues(alpha: 0.4),
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 2,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              SizedBox(
+                                height: 140,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  physics: const BouncingScrollPhysics(),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  itemCount: similarList.length,
+                                  itemBuilder: (context, index) {
+                                    final item = similarList[index];
+                                    final match = ref.watch(matchPercentageProvider(item));
+                                    return Padding(
+                                      padding: const EdgeInsets.only(right: 12),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          HapticFeedback.lightImpact();
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => ContentDetailScreen(content: item),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          width: 220,
+                                          padding: const EdgeInsets.all(16),
+                                          decoration: BoxDecoration(
+                                            color: themeData.cardColor,
+                                            borderRadius: BorderRadius.circular(16),
+                                            border: Border.all(
+                                              color: themeData.textColor.withValues(alpha: 0.05),
+                                              width: 0.5,
+                                            ),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    item.category.toUpperCase(),
+                                                    style: GoogleFonts.manrope(
+                                                      color: themeData.accentColor,
+                                                      fontSize: 8,
+                                                      fontWeight: FontWeight.w800,
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                                    decoration: BoxDecoration(
+                                                      color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
+                                                      borderRadius: BorderRadius.circular(4),
+                                                    ),
+                                                    child: Text(
+                                                      "$match% MATCH",
+                                                      style: GoogleFonts.manrope(
+                                                        color: PremiumTokens.activeAccent,
+                                                        fontSize: 7,
+                                                        fontWeight: FontWeight.w800,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 8),
+                                              Expanded(
+                                                child: Text(
+                                                  item.title,
+                                                  maxLines: 2,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: GoogleFonts.spectral(
+                                                    color: themeData.textColor,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 13,
+                                                    height: 1.3,
+                                                  ),
+                                                ),
+                                              ),
+                                              if (item.author != null && item.author!.isNotEmpty) ...[
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  item.author!,
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: GoogleFonts.manrope(
+                                                    color: themeData.textColor.withValues(alpha: 0.4),
+                                                    fontSize: 9,
+                                                  ),
+                                                ),
+                                              ],
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
                     ],
 
                     const SizedBox(height: 64),
@@ -555,6 +700,31 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               Container(width: 20, height: 1, decoration: BoxDecoration(gradient: LinearGradient(colors: [themeData.accentColor.withValues(alpha: 0.5), Colors.transparent]))),
             ],
           ),
+          if (content != null) ...[
+            const SizedBox(height: 8),
+            Consumer(
+              builder: (context, ref, child) {
+                final match = ref.watch(matchPercentageProvider(content));
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: PremiumTokens.activeAccent.withValues(alpha: 0.25), width: 0.5),
+                  ),
+                  child: Text(
+                    "$match% MATCH",
+                    style: GoogleFonts.manrope(
+                      color: PremiumTokens.activeAccent,
+                      fontSize: 8,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
           const SizedBox(height: 16),
           if (title.isNotEmpty)
             Text(

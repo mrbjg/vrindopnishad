@@ -21,6 +21,22 @@ class JournalService {
     }
   }
 
+  /// Fetch all public entries (feed & chat)
+  Future<List<JournalEntry>> fetchPublicEntries() async {
+    try {
+      final response = await _supabase
+          .from('journal_entries')
+          .select()
+          .order('created_at', ascending: false)
+          .limit(100);
+          
+      return (response as List).map((e) => JournalEntry.fromJson(e)).toList();
+    } catch (e) {
+      debugPrint('Error fetching public entries: $e');
+      return [];
+    }
+  }
+
   /// Create a new journal entry
   Future<JournalEntry?> createEntry(JournalEntry entry) async {
     try {

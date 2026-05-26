@@ -9,6 +9,7 @@ import '../features/content_detail_screen.dart';
 import 'package:flutter/services.dart';
 import '../core/favorites_provider.dart';
 import '../core/color_theme_provider.dart';
+import '../core/personalized_feed_provider.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -160,6 +161,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   }
 
   Widget _buildSacredListItem(BuildContext context, SacredContent item) {
+    final match = ref.watch(matchPercentageProvider(item));
     return GestureDetector(
       onTap: () {
         HapticFeedback.selectionClick();
@@ -205,14 +207,34 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    item.category.toUpperCase(),
-                    style: GoogleFonts.manrope(
-                      color: PremiumTokens.activeAccent,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        item.category.toUpperCase(),
+                        style: GoogleFonts.manrope(
+                          color: PremiumTokens.activeAccent,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          "$match% MATCH",
+                          style: GoogleFonts.manrope(
+                            color: PremiumTokens.activeAccent,
+                            fontSize: 7,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -239,6 +261,36 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   }
 
   Widget _buildInitialView(AsyncValue<List<String>> recentSearches) {
+    final affinity = ref.watch(userAffinityProvider);
+    final trending = ref.watch(trendingContentProvider);
+
+    // Dynamic suggested paths based on affinity & trending
+    final sortedCategories = affinity.categoryWeights.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    final sortedTags = affinity.tagWeights.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    final List<String> suggestions = [];
+    if (sortedCategories.isNotEmpty) {
+      suggestions.add(sortedCategories.first.key);
+    }
+    for (final tag in sortedTags) {
+      if (suggestions.length >= 4) break;
+      if (tag.key.isNotEmpty && !suggestions.contains(tag.key)) {
+        suggestions.add(tag.key);
+      }
+    }
+    for (final item in trending) {
+      if (suggestions.length >= 6) break;
+      if (item.title.isNotEmpty && !suggestions.contains(item.title)) {
+        suggestions.add(item.title);
+      }
+    }
+
+    if (suggestions.isEmpty) {
+      suggestions.addAll(["Hanuman Chalisa", "Meditation", "Mantra", "Spirituality", "Peace"]);
+    }
+
     return ListView(
       physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.all(24),
@@ -293,13 +345,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         Wrap(
           spacing: 12,
           runSpacing: 12,
-          children: [
-            _buildSearchTag("Hanuman Chalisa", isStatic: true),
-            _buildSearchTag("Meditation", isStatic: true),
-            _buildSearchTag("Mantra", isStatic: true),
-            _buildSearchTag("Spirituality", isStatic: true),
-            _buildSearchTag("Peace", isStatic: true),
-          ],
+          children: suggestions.map((s) => _buildSearchTag(s, isStatic: true)).toList(),
         ),
       ],
     );

@@ -1399,29 +1399,65 @@ class PremiumUI {
               else
                 _buildMoon(top: 60, left: 40, size: 65),
             ] else if (mood == AppMoodTheme.rainyPeace || mood == AppMoodTheme.monsoonGreen) ...[
-              // Rainy storm/monsoon cloud outlines at the top (positioned individually to prevent overflow)
+              // Overcast background gradient overlay at the top to simulate a dark, heavy sky
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                height: 180,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        const Color(0xFF181A20).withValues(alpha: 0.95),
+                        const Color(0xFF1A1C24).withValues(alpha: 0.6),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              // Layered, dense, overlapping storm clouds spanning the entire width uniformly
               const Positioned(
-                top: -50,
+                top: -45,
                 left: -60,
                 child: Opacity(
-                  opacity: 0.15,
-                  child: Icon(Icons.cloud, size: 160, color: Colors.white),
+                  opacity: 0.22,
+                  child: Icon(Icons.cloud, size: 180, color: Color(0xFF2E313D)),
                 ),
               ),
               const Positioned(
-                top: -80,
-                left: 80,
+                top: -65,
+                left: 50,
                 child: Opacity(
-                  opacity: 0.15,
-                  child: Icon(Icons.cloud, size: 210, color: Colors.white),
+                  opacity: 0.28,
+                  child: Icon(Icons.cloud, size: 220, color: Color(0xFF22242E)),
                 ),
               ),
               const Positioned(
-                top: -40,
-                right: -50,
+                top: -35,
+                left: 170,
                 child: Opacity(
-                  opacity: 0.15,
-                  child: Icon(Icons.cloud, size: 150, color: Colors.white),
+                  opacity: 0.20,
+                  child: Icon(Icons.cloud, size: 160, color: Color(0xFF383B47)),
+                ),
+              ),
+              const Positioned(
+                top: -55,
+                right: 50,
+                child: Opacity(
+                  opacity: 0.25,
+                  child: Icon(Icons.cloud, size: 190, color: Color(0xFF2B2D3A)),
+                ),
+              ),
+              const Positioned(
+                top: -45,
+                right: -60,
+                child: Opacity(
+                  opacity: 0.18,
+                  child: Icon(Icons.cloud, size: 170, color: Color(0xFF323544)),
                 ),
               ),
               if (mood == AppMoodTheme.monsoonGreen) ...[
@@ -4228,7 +4264,9 @@ class _AtmosphericParticlePainter extends CustomPainter {
       switch (mood) {
         case AppMoodTheme.rainyPeace:
         case AppMoodTheme.monsoonGreen:
-          paint.color = Colors.white.withValues(alpha: p.opacity * 0.5);
+          // Fade out rain particles near the top (under the clouds) so they emerge realistically
+          final double verticalFade = p.y < 0.15 ? (p.y / 0.15).clamp(0.0, 1.0) : 1.0;
+          paint.color = Colors.white.withValues(alpha: p.opacity * 0.5 * verticalFade);
           paint.strokeWidth = p.size;
           canvas.drawLine(
             Offset(dx, dy),

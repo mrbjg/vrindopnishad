@@ -10,6 +10,7 @@ import 'profile/reading_history_screen.dart';
 import 'profile/settings_screen.dart';
 import 'profile/about_screen.dart';
 import 'journal_screen.dart';
+import 'admin_dashboard.dart';
 import '../widgets/sacred_logout_dialog.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/services.dart';
@@ -40,7 +41,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     // Sync system status and navigation bar overlay style
     PremiumUI.setSacredStatus();
 
-    final showBg = widget.isPushed || Navigator.canPop(context);
+    final showBg = widget.isPushed;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -55,7 +56,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
             slivers: [
               // Premium Header
               SliverToBoxAdapter(
-                child: _PremiumProfileHeader(user: user),
+                child: _PremiumProfileHeader(user: user, isPushed: widget.isPushed),
               ),
 
               // Menu Sections
@@ -122,6 +123,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const AboutScreen()),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildPremiumMenuItem(
+                      icon: Iconsax.shield_tick,
+                      title: "Admin Dashboard",
+                      subtitle: "Content & User Management",
+                      color: PremiumTokens.activeAccent,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const AdminDashboard()),
                       ),
                     ),
                     const SizedBox(height: 48),
@@ -226,8 +238,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
 
 class _PremiumProfileHeader extends ConsumerWidget {
   final User? user;
+  final bool isPushed;
 
-  const _PremiumProfileHeader({required this.user});
+  const _PremiumProfileHeader({required this.user, required this.isPushed});
 
   String _formatCount(int count) {
     if (count < 1000) return count.toString();
@@ -248,7 +261,7 @@ class _PremiumProfileHeader extends ConsumerWidget {
       child: Column(
         children: [
           // Back Button (if pushed)
-          if (Navigator.canPop(context))
+          if (isPushed && Navigator.canPop(context))
             Align(
               alignment: Alignment.topLeft,
               child: PremiumUI.glassCard(

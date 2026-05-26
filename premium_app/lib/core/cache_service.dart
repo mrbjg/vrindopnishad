@@ -111,6 +111,9 @@ class CacheService {
     return DateTime.now().difference(_lastCacheTime!) < _cacheExpiry;
   }
 
+  /// Public accessor for cache validity
+  bool isCacheValid() => _isCacheValid();
+
   /// Clear all caches
   Future<void> clearCache() async {
     _contentCache = null;

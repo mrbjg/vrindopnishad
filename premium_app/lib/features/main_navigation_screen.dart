@@ -73,8 +73,12 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
       const RitualsScreen(),
     ];
 
+    final viewInsets = MediaQuery.of(context).viewInsets;
+    final isKeyboardOpen = viewInsets.bottom > 0;
+
     return Scaffold(
       backgroundColor: PremiumTokens.surfaceMain,
+      resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
           Positioned.fill(
@@ -103,19 +107,21 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
           ),
           
           // Persistent Mini Player (Restored & Improved)
-          const Positioned(
-            left: 0,
-            right: 0,
-            bottom: 102,
-            child: MiniPlayer(),
-          ),
+          if (!isKeyboardOpen)
+            const Positioned(
+              left: 0,
+              right: 0,
+              bottom: 102,
+              child: MiniPlayer(),
+            ),
 
           // Liquid Glass NavBar with Backdrop Blur
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Consumer(
+          if (!isKeyboardOpen)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Consumer(
               builder: (context, ref, child) {
                 final currentIndex = ref.watch(navigationIndexProvider);
                 return Stack(
@@ -157,7 +163,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                       ),
                     ),
                     PremiumUI.floatingNavBar(
-                      selectedIndex: currentIndex,
+                      selectedIndex: currentIndex == 5 ? 2 : currentIndex,
                       onTap: (index) => ref.read(navigationIndexProvider.notifier).state = index,
                       items: const [
                         (iconSvg: 'iconsax-ai-housing-jbqdn4s3-.svg', activeIconSvg: 'iconsax-ai-housing-1etziexn-.svg', label: "Home"),
@@ -173,7 +179,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                         builder: (context, ref, child) {
                           final count = ref.watch(naamJapStateProvider);
                           return PremiumUI.sacredVoidButton(
-                            isActive: currentIndex == 2,
+                            isActive: currentIndex == 2 || currentIndex == 5,
                             count: count.total,
                             onTap: () {
                               HapticFeedback.heavyImpact();

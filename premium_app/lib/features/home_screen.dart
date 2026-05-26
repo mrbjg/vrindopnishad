@@ -10,7 +10,6 @@ import '../core/color_theme_provider.dart';
 import '../core/spirituality_provider.dart';
 import '../core/stats_provider.dart';
 import '../core/auth_provider.dart';
-import '../core/audio_provider.dart';
 import '../core/content_provider.dart';
 import 'search_screen.dart';
 import 'daily_motivation_screen.dart';
@@ -18,20 +17,187 @@ import 'daily_gyaan_screen.dart';
 import 'sacred_calendar_screen.dart';
 import 'category_list_screen.dart';
 import 'rituals_screen.dart';
-import 'profile_screen.dart';
 
-class HomeScreen extends ConsumerWidget {
+import '../core/personalized_feed_provider.dart';
+import 'content_detail_screen.dart';
+
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 250) {
+      ref.read(personalizedDiscoveryProvider.notifier).loadMore();
+    }
+  }
+
+  Widget _buildHorizontalShelf({
+    required String title,
+    required List<SacredContent> items,
+    required WidgetRef ref,
+    required BuildContext context,
+  }) {
+    if (items.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: Text(
+            title.toUpperCase(),
+            style: PremiumTokens.sansStyle(
+              color: PremiumTokens.textMuted,
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 2,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 132,
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index];
+              return Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: GestureDetector(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ContentDetailScreen(content: item),
+                      ),
+                    );
+                  },
+                  child: SizedBox(
+                    width: 220,
+                    child: PremiumUI.relicStaticCard(
+                      padding: const EdgeInsets.all(16),
+                      borderRadius: 16,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                item.category.toUpperCase(),
+                                style: PremiumTokens.sansStyle(
+                                  color: PremiumTokens.activeAccent,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                              Consumer(
+                                builder: (context, ref, child) {
+                                  final match = ref.watch(matchPercentageProvider(item));
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                                    decoration: BoxDecoration(
+                                      color: PremiumTokens.activeAccent.withValues(alpha: 0.12),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Text(
+                                      "$match% MATCH",
+                                      style: PremiumTokens.sansStyle(
+                                        color: PremiumTokens.activeAccent,
+                                        fontSize: 7,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            item.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.spectral(
+                              color: PremiumTokens.textPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                              height: 1.3,
+                            ),
+                          ),
+                          if (item.author != null && item.author!.isNotEmpty) ...[
+                            const SizedBox(height: 4),
+                            Text(
+                              item.author!,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: PremiumTokens.sansStyle(
+                                color: PremiumTokens.textMuted,
+                                fontSize: 10,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 12),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Watch themes to rebuild
+    ref.watch(themeProvider);
+    ref.watch(colorPaletteProvider);
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
+          RefreshIndicator(
+            onRefresh: () async {
+              HapticFeedback.mediumImpact();
+              await ref.read(sacredContentProvider.notifier).refresh();
+              ref.read(personalizedDiscoveryProvider.notifier).refresh();
+            },
+            color: PremiumTokens.activeAccent,
+            backgroundColor: PremiumTokens.surfaceMain,
+            child: CustomScrollView(
+              controller: _scrollController,
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
+              ),
+              slivers: [
               // Sticky Header
               SliverAppBar(
                 expandedHeight: 0,
@@ -86,27 +252,90 @@ class HomeScreen extends ConsumerWidget {
                 ),
               ),
 
-
-
-
               // 7-9. Consolidated Legacy Content (Performance Optimization)
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _CategoriesHeader(),
-                    Padding(
+                    const _CategoriesHeader(),
+                    const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       child: _CategoriesGridLite(),
                     ),
-                    _RecentReflectionPreviewLite(),
+                    const SizedBox(height: 20),
+                    
+                    // Netflix-style Continue Journey
+                    Consumer(
+                      builder: (context, ref, child) {
+                        final list = ref.watch(continueReadingProvider);
+                        return _buildHorizontalShelf(
+                          title: 'Continue Your Journey',
+                          items: list,
+                          ref: ref,
+                          context: context,
+                        );
+                      },
+                    ),
+
+                    // Netflix-style Category affinity
+                    Consumer(
+                      builder: (context, ref, child) {
+                        final list = ref.watch(categoryRecommendationsProvider);
+                        final affinity = ref.watch(userAffinityProvider);
+                        String favCat = 'Bhajans';
+                        double maxWeight = -1.0;
+                        affinity.categoryWeights.forEach((cat, weight) {
+                          if (weight > maxWeight) {
+                            maxWeight = weight;
+                            favCat = cat;
+                          }
+                        });
+                        return _buildHorizontalShelf(
+                          title: 'More in $favCat',
+                          items: list,
+                          ref: ref,
+                          context: context,
+                        );
+                      },
+                    ),
+
+                    // YouTube-style Trending
+                    Consumer(
+                      builder: (context, ref, child) {
+                        final list = ref.watch(trendingContentProvider);
+                        return _buildHorizontalShelf(
+                          title: 'Trending Wisdom',
+                          items: list,
+                          ref: ref,
+                          context: context,
+                        );
+                      },
+                    ),
+
+                    const _RecentReflectionPreviewLite(),
+                    
                     Padding(
-                      padding: EdgeInsets.fromLTRB(20, 32, 20, 180),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      child: Text(
+                        'RECOMMENDED FOR YOU',
+                        style: PremiumTokens.sansStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 2,
+                          color: PremiumTokens.textMuted,
+                        ),
+                      ),
+                    ),
+
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(20, 12, 20, 180),
                       child: _PremiumContentListLite(),
                     ),
                   ],
                 ),
               ),
             ],
+          ),
           ),
         ],
       ),
@@ -130,41 +359,73 @@ class _DailyMotivationSection extends ConsumerWidget {
             MaterialPageRoute(builder: (_) => const DailyMotivationScreen()));
       },
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 24, 20, 10),
-        child: PremiumUI.voidCard(
-          padding: const EdgeInsets.all(28),
-          borderRadius: 24,
-          accentColor: PremiumTokens.etherealBlue,
-          child: Center(
-            child: Column(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: PremiumTokens.surfaceMain.withValues(alpha: 0.6),
+            border: Border.all(color: PremiumTokens.borderSubtle),
+          ),
+          child: IntrinsicHeight(
+            child: Row(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    EmojiToIcon.getIconWidget('🌅',
-                        size: 14, color: PremiumTokens.textMuted),
-                    const SizedBox(width: 8),
-                    Text(
-                      'CELESTIAL INSIGHT',
-                      style: PremiumTokens.sansStyle(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 3,
-                        color: PremiumTokens.textMuted,
-                      ),
+                // Accent gradient strip
+                Container(
+                  width: 4,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      bottomLeft: Radius.circular(20),
                     ),
-                  ],
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        PremiumTokens.activeAccent.withValues(alpha: 0.8),
+                        PremiumTokens.activeAccent.withValues(alpha: 0.15),
+                      ],
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  contextMotivation,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.spectral(
-                    fontSize: 18,
-                    color: PremiumTokens.textPrimary,
-                    fontWeight: FontWeight.w300,
-                    height: 1.6,
-                    fontStyle: FontStyle.italic,
+                // Content
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 22, 20, 22),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Iconsax.sun_15, size: 13, color: PremiumTokens.activeAccent),
+                            const SizedBox(width: 8),
+                            Text(
+                              'DAILY INSIGHT',
+                              style: PremiumTokens.sansStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 2.5,
+                                color: PremiumTokens.activeAccent,
+                              ),
+                            ),
+                            const Spacer(),
+                            Icon(Iconsax.arrow_right_3, size: 14, color: PremiumTokens.textMuted),
+                          ],
+                        ),
+                        const SizedBox(height: 14),
+                        Text(
+                          contextMotivation,
+                          style: GoogleFonts.spectral(
+                            fontSize: 17,
+                            color: PremiumTokens.textPrimary,
+                            fontWeight: FontWeight.w300,
+                            height: 1.55,
+                            fontStyle: FontStyle.italic,
+                          ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -199,17 +460,19 @@ class _QuickActionsGrid extends StatelessWidget {
       child: Row(
         children: [
           _QuickActionTile(
-            emoji: '📚',
+            icon: Iconsax.teacher,
             label: 'Gyaan',
-            color: PremiumTokens.textPrimary,
+            subtitle: 'Daily Wisdom',
+            accentColor: PremiumTokens.saffronGlow,
             onTap: () => Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const DailyGyaanScreen())),
           ),
           const SizedBox(width: 12),
           _QuickActionTile(
-            emoji: '📅',
+            icon: Iconsax.calendar,
             label: 'Calendar',
-            color: PremiumTokens.textPrimary,
+            subtitle: 'Sacred Days',
+            accentColor: PremiumTokens.etherealBlue,
             onTap: () => Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const SacredCalendarScreen())),
           ),
@@ -219,18 +482,18 @@ class _QuickActionsGrid extends StatelessWidget {
   }
 }
 
-
-
 class _QuickActionTile extends StatelessWidget {
-  final String emoji;
+  final IconData icon;
   final String label;
-  final Color color;
+  final String subtitle;
+  final Color accentColor;
   final VoidCallback onTap;
 
   const _QuickActionTile({
-    required this.emoji,
+    required this.icon,
     required this.label,
-    required this.color,
+    required this.subtitle,
+    required this.accentColor,
     required this.onTap,
   });
 
@@ -242,30 +505,56 @@ class _QuickActionTile extends StatelessWidget {
           HapticFeedback.lightImpact();
           onTap();
         },
-        child: PremiumUI.relicCard(
-          padding: const EdgeInsets.symmetric(vertical: 24),
-          borderRadius: 4, // Subtle rounding for a "watchmaker" feel
-          child: Column(
+        child: Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: PremiumTokens.surfaceMain.withValues(alpha: 0.5),
+            border: Border.all(color: PremiumTokens.borderSubtle),
+          ),
+          child: Row(
             children: [
-              Icon(
-                label == 'Gyaan' ? Iconsax.teacher : Iconsax.calendar,
-                size: 24,
-                color: PremiumTokens.textMuted,
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: accentColor.withValues(alpha: 0.1),
+                  border: Border.all(
+                    color: accentColor.withValues(alpha: 0.15),
+                  ),
+                ),
+                child: Icon(icon, size: 18, color: accentColor),
               ),
-              const SizedBox(height: 12),
-              Text(
-                label.toUpperCase(),
-                style: PremiumTokens.sansStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 2,
-                  color: PremiumTokens.textSecondary,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: PremiumTokens.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w600,
+                        color: PremiumTokens.textMuted,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         ),
-
       ),
     );
   }
@@ -605,50 +894,129 @@ class _PremiumContentListLite extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final content = ref.watch(sacredContentProvider);
-    final visibleCount = ref.watch(visibleItemCountProvider);
-    final items = content.take(visibleCount).toList();
+    final discoveryState = ref.watch(personalizedDiscoveryProvider);
+    final items = discoveryState.items;
+    final isLoading = discoveryState.isLoading;
+
+    if (items.isEmpty) {
+      if (isLoading) {
+        return Center(
+          child: CircularProgressIndicator(color: PremiumTokens.activeAccent),
+        );
+      }
+      return Center(
+        child: Text(
+          "No recommendations available yet.",
+          style: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontSize: 12),
+        ),
+      );
+    }
 
     return Column(
-      children: items.map((item) => Padding(
-        padding: const EdgeInsets.only(bottom: 16),
-        child: GestureDetector(
-          onTap: () {
-            HapticFeedback.heavyImpact();
-            // Pass the featured items as the playlist
-            ref.read(audioProvider.notifier).playWithPlaylist(item, items);
-          },
-          child: PremiumUI.relicStaticCard(
-            padding: const EdgeInsets.all(20),
-            borderColor: PremiumTokens.borderSubtle,
-            child: Row(
-              children: [
-                Container(
-                  width: 44, height: 44,
-                  decoration: BoxDecoration(
-                    color: PremiumTokens.borderSubtle,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: PremiumTokens.borderSubtle),
-                  ),
-                  child: Center(child: Text('ॐ', style: TextStyle(color: PremiumTokens.textPrimary, fontSize: 20))),
+      children: [
+        ...items.map((item) => Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: GestureDetector(
+            onTap: () {
+              HapticFeedback.lightImpact();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ContentDetailScreen(content: item),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(item.title, style: PremiumTokens.sansStyle(color: PremiumTokens.textPrimary, fontWeight: FontWeight.bold, fontSize: 14)),
-                      const SizedBox(height: 4),
-                      Text(item.category.toUpperCase(), style: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1)),
-                    ],
+              );
+            },
+            child: PremiumUI.relicStaticCard(
+              padding: const EdgeInsets.all(20),
+              borderColor: PremiumTokens.borderSubtle,
+              child: Row(
+                children: [
+                  Container(
+                    width: 44, height: 44,
+                    decoration: BoxDecoration(
+                      color: PremiumTokens.borderSubtle,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: PremiumTokens.borderSubtle),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'ॐ',
+                        style: TextStyle(color: PremiumTokens.textPrimary, fontSize: 20),
+                      ),
+                    ),
                   ),
-                ),
-                Icon(Iconsax.arrow_right_3, color: PremiumTokens.textMuted, size: 14),
-              ],
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.title,
+                          style: PremiumTokens.sansStyle(
+                            color: PremiumTokens.textPrimary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Text(
+                              item.category.toUpperCase(),
+                              style: PremiumTokens.sansStyle(
+                                color: PremiumTokens.textMuted,
+                                fontSize: 9,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Consumer(
+                              builder: (context, ref, child) {
+                                final match = ref.watch(matchPercentageProvider(item));
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                                  decoration: BoxDecoration(
+                                    color: PremiumTokens.activeAccent.withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    "$match% MATCH",
+                                    style: PremiumTokens.sansStyle(
+                                      color: PremiumTokens.activeAccent,
+                                      fontSize: 7,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Iconsax.arrow_right_3, color: PremiumTokens.textMuted, size: 14),
+                ],
+              ),
             ),
           ),
-        ),
-      )).toList(),
+        )),
+        if (isLoading)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Center(
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: PremiumTokens.activeAccent,
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
@@ -703,10 +1071,7 @@ class _CompactProfileButton extends ConsumerWidget {
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
-        Navigator.push(
-          context, 
-          MaterialPageRoute(builder: (_) => const ProfileScreen(isPushed: true))
-        );
+        ref.read(navigationIndexProvider.notifier).state = 4;
       },
       child: Container(
         width: 32,

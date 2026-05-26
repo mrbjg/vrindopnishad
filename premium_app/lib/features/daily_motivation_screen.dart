@@ -27,14 +27,17 @@ class DailyMotivationScreen extends ConsumerWidget {
       body: Stack(
         children: [
           Positioned.fill(child: PremiumUI.masterBackground(index: 0, context: context)),
-          SafeArea(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 16),
+          SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(
+              20,
+              MediaQuery.of(context).padding.top + 16,
+              20,
+              MediaQuery.of(context).padding.bottom + 32,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                   // Header
                   Row(
                     children: [
@@ -237,7 +240,6 @@ class DailyMotivationScreen extends ConsumerWidget {
                 ],
               ),
             ),
-          ),
         ],
       ),
     );

@@ -101,6 +101,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - google_fonts/
     - assets/vaani.svg
     - assets/logo.svg
     - assets/shriJiMukut.svg
@@ -123,22 +124,63 @@ flutter:
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/to/asset-from-package
 
-  # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
-  # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/to/font-from-package
+  # Register downloaded Google Fonts to load synchronously at startup
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: google_fonts/Poppins-Regular.ttf
+        - asset: google_fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: google_fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: google_fonts/Poppins-Bold.ttf
+          weight: 700
+    - family: Spectral
+      fonts:
+        - asset: google_fonts/Spectral-Regular.ttf
+        - asset: google_fonts/Spectral-Italic.ttf
+          style: italic
+        - asset: google_fonts/Spectral-Medium.ttf
+          weight: 500
+        - asset: google_fonts/Spectral-SemiBold.ttf
+          weight: 600
+        - asset: google_fonts/Spectral-Bold.ttf
+          weight: 700
+    - family: Laila
+      fonts:
+        - asset: google_fonts/Laila-Regular.ttf
+        - asset: google_fonts/Laila-Medium.ttf
+          weight: 500
+        - asset: google_fonts/Laila-SemiBold.ttf
+          weight: 600
+        - asset: google_fonts/Laila-Bold.ttf
+          weight: 700
+    - family: Newsreader
+      fonts:
+        - asset: google_fonts/Newsreader-Regular.ttf
+        - asset: google_fonts/Newsreader-Italic.ttf
+          style: italic
+        - asset: google_fonts/Newsreader-Medium.ttf
+          weight: 500
+        - asset: google_fonts/Newsreader-SemiBold.ttf
+          weight: 600
+        - asset: google_fonts/Newsreader-Bold.ttf
+          weight: 700
+    - family: Manrope
+      fonts:
+        - asset: google_fonts/Manrope-Regular.ttf
+        - asset: google_fonts/Manrope-Medium.ttf
+          weight: 500
+        - asset: google_fonts/Manrope-SemiBold.ttf
+          weight: 600
+        - asset: google_fonts/Manrope-Bold.ttf
+          weight: 700
+    - family: Outfit
+      fonts:
+        - asset: google_fonts/Outfit-Regular.ttf
+        - asset: google_fonts/Outfit-Medium.ttf
+          weight: 500
+        - asset: google_fonts/Outfit-SemiBold.ttf
+          weight: 600
+        - asset: google_fonts/Outfit-Bold.ttf
+          weight: 700

@@ -209,8 +209,10 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
       state = [..._featuredSamples, ...cachedContent];
       _isLoading = false;
 
-      // Background refresh from API for freshness
-      _backgroundRefresh();
+      // Background refresh from API only if cache is expired/invalid
+      if (!_cache.isCacheValid()) {
+        _backgroundRefresh();
+      }
       return;
     }
 
@@ -221,7 +223,10 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
       await _cache.cacheContent(dbContent);
       _isLoading = false;
 
-      _backgroundRefresh();
+      // SQLite loaded, but sync if cache is invalid
+      if (!_cache.isCacheValid()) {
+        _backgroundRefresh();
+      }
       return;
     }
 

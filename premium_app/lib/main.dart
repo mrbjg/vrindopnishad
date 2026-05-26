@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'core/theme.dart';
 import 'core/design_system.dart';
 import 'core/color_theme_provider.dart';
@@ -24,6 +25,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  GoogleFonts.config.allowRuntimeFetching = false;
 
   // Initialize Cache & Storage first (Fast & Synchronous-ish)
   final prefs = await SharedPreferences.getInstance();

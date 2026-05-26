@@ -1132,6 +1132,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         builder: (context, ref, _) {
           final selected = ref.watch(colorThemeProvider);
           return Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.75,
+            ),
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: PremiumTokens.sheetBgTop,
@@ -1140,6 +1143,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
             child: SafeArea(
               child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
