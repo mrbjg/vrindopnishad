@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef, useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext, ApiContext } from '../App';
 import { useTheme } from '../contexts/ThemeContext';
+import { useSettings } from '../contexts/SettingsContext';
 import { extractRelations } from '../utils/relations';
 import { 
   Home, 
@@ -23,6 +24,7 @@ import CelestialParticles from './CelestialParticles';
 
 const Layout = ({ children }) => {
   const { isDark } = useTheme();
+  const { settings } = useSettings();
   const { isAdmin, user, logout } = useContext(AuthContext);
   const { apiService } = useContext(ApiContext);
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
@@ -277,7 +279,7 @@ const Layout = ({ children }) => {
                     <span 
                       className={`text-[9px] font-bold uppercase flex items-center justify-center w-full h-full ${user.photoURL ? 'hidden' : 'flex'}`}
                     >
-                      {(user.displayName || user.email || 'V')[0]}
+                      {(settings.devoteeName || user.displayName || user.email || 'V')[0]}
                     </span>
                   </div>
                   <button 
@@ -290,6 +292,13 @@ const Layout = ({ children }) => {
                   >
                     <LogOut size={12} />
                   </button>
+                </div>
+              ) : settings.devoteeName ? (
+                <div 
+                  onClick={() => setIsSettingsOpen(true)}
+                  className="header-control-btn shrink-0 w-8 h-8 flex items-center justify-center bg-primary/10 border border-primary/20 text-primary"
+                >
+                  <span className="text-[10px] font-bold uppercase">{(settings.devoteeName || 'G')[0]}</span>
                 </div>
               ) : (
                 <Link to="/login" className="header-control-btn shrink-0 w-8 h-8" title="Devotee Sign In">
@@ -472,7 +481,7 @@ const Layout = ({ children }) => {
                     <span 
                       className={`text-xs font-bold uppercase tracking-wider flex items-center justify-center w-full h-full ${user.photoURL ? 'hidden' : 'flex'}`}
                     >
-                      {(user.displayName || user.email || 'V')[0]}
+                      {(settings.devoteeName || user.displayName || user.email || 'V')[0]}
                     </span>
                   </div>
                   
@@ -480,7 +489,7 @@ const Layout = ({ children }) => {
                   <div className="hidden sm:flex flex-col">
                     <span className="header-profile-label">Devotee</span>
                     <span className="header-profile-name">
-                      {user.displayName || (user.email?.split('@')[0].match(/^[a-zA-Z]/) ? user.email?.split('@')[0] : 'Member')}
+                      {settings.devoteeName || user.displayName || (user.email?.split('@')[0].match(/^[a-zA-Z]/) ? user.email?.split('@')[0] : 'Member')}
                     </span>
                   </div>
 
@@ -498,6 +507,19 @@ const Layout = ({ children }) => {
                   >
                     <LogOut size={18} className="sm:w-[16px] sm:h-[16px]" />
                   </button>
+                </div>
+              ) : settings.devoteeName ? (
+                <div 
+                  onClick={() => setIsSettingsOpen(true)}
+                  className="header-profile-pill cursor-pointer"
+                >
+                  <div className="header-profile-avatar bg-primary/10 border border-primary/20 text-primary flex items-center justify-center font-bold text-xs uppercase">
+                    {(settings.devoteeName || 'V')[0]}
+                  </div>
+                  <div className="hidden sm:flex flex-col text-left">
+                    <span className="header-profile-label">Guest Sadhaka</span>
+                    <span className="header-profile-name">{settings.devoteeName}</span>
+                  </div>
                 </div>
               ) : (
                 <Link to="/login" className="header-control-btn shrink-0" title="Devotee Sign In">

@@ -36,7 +36,9 @@ export const SettingsProvider = ({ children }) => {
       fontStyle: 'Serif',
       lineByLine: true,
       smoothScroll: false,
-      theme: 'light'
+      theme: 'light',
+      devoteeName: '',
+      dailyGoal: 432
     };
     
     // Migration from old string-based font sizes
@@ -47,6 +49,10 @@ export const SettingsProvider = ({ children }) => {
 
     // Migration: add theme if missing
     if (!initial.theme) initial.theme = 'light';
+    
+    // Ensure new settings fields exist
+    if (initial.devoteeName === undefined) initial.devoteeName = '';
+    if (initial.dailyGoal === undefined) initial.dailyGoal = 432;
     
     return initial;
   });

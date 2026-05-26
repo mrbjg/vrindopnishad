@@ -333,7 +333,7 @@ export default async function handler(req, res) {
 
     while (hasMore) {
       const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/content?select=id,title,slug,category,author,hindi_text,sanskrit_text&order=id&offset=${offset}&limit=${PAGE_SIZE}`,
+        `${SUPABASE_URL}/rest/v1/content?select=id,title,slug,category,author,hindi_text,sanskrit_text,english_text,english_translation,content_text,commentary,description,created_at&order=id&offset=${offset}&limit=${PAGE_SIZE}`,
         {
           headers: {
             'apikey': SUPABASE_KEY,
@@ -365,14 +365,26 @@ export default async function handler(req, res) {
 
   // 2. Render route content based on requested type
   if (type === 'content' && slug) {
-    // Dynamic Verse Detail page
+    // Dynamic Verse Detail page — fuzzy slug matching for Devanagari/transliterated slugs
     const decodedSlug = decodeURIComponent(slug);
-    const content = allContentItems.find(item => item.slug === decodedSlug || item.id?.toString() === decodedSlug);
+    const transliteratedSlug = slugify(transliterate(decodedSlug));
+    const lowerSlug = decodedSlug.toLowerCase();
+    const content = allContentItems.find(item => {
+      const s = item.slug || '';
+      if (s === decodedSlug) return true;
+      if (s === lowerSlug) return true;
+      if (s.toLowerCase() === lowerSlug) return true;
+      if (transliteratedSlug && s === transliteratedSlug) return true;
+      if (transliteratedSlug && s.toLowerCase() === transliteratedSlug) return true;
+      if (item.id?.toString() === decodedSlug) return true;
+      return false;
+    });
     
     if (content) {
+      const canonicalSlug = encodeURIComponent(content.slug || content.id);
       title = `${content.title} — ${content.category || 'Sacred Verse'} | ${content.author || 'Vrindopnishad'}`;
       description = (content.sanskrit_text || content.hindi_text || content.description || '').substring(0, 160).replace(/[\r\n]+/g, ' ') + '...';
-      pageUrl = getRouteLink(`/content/${encodeURIComponent(slug)}`);
+      pageUrl = getRouteLink(`/content/${canonicalSlug}`);
 
       jsonLd = JSON.stringify({
         "@context": "https://schema.org",
@@ -398,11 +410,16 @@ export default async function handler(req, res) {
           <p><strong>Author/Saint:</strong> ${escapeHtml(content.author || 'Vaishnava Saint')}</p>
           ${content.sanskrit_text ? `<div lang="sa" style="font-size: 1.25rem; margin: 20px 0; font-family: serif;"><h2>Sanskrit Verse</h2><p style="white-space: pre-wrap; line-height: 1.8;">${escapeHtml(content.sanskrit_text)}</p></div>` : ''}
           ${content.hindi_text ? `<div lang="hi" style="margin: 20px 0;"><h2>Hindi Translation</h2><p style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(content.hindi_text)}</p></div>` : ''}
-          ${content.description ? `<div lang="en" style="margin: 20px 0;"><h2>Explanation / Commentary</h2><p>${escapeHtml(content.description)}</p></div>` : ''}
+          ${content.english_text ? `<div lang="en" style="margin: 20px 0;"><h2>English Text</h2><p style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(content.english_text)}</p></div>` : ''}
+          ${content.english_translation ? `<div lang="en" style="margin: 20px 0;"><h2>English Translation</h2><p style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(content.english_translation)}</p></div>` : ''}
+          ${content.commentary ? `<div lang="en" style="margin: 20px 0;"><h2>Commentary</h2><p style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(content.commentary)}</p></div>` : ''}
+          ${content.description ? `<div lang="en" style="margin: 20px 0;"><h2>Explanation</h2><p>${escapeHtml(content.description)}</p></div>` : ''}
         </article>
       `;
     } else {
-      res.status(404).send('Content not found');
+      // Proper 404 HTML response — prevents GSC soft-404/redirect misclassification
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.status(404).send(`<!doctype html><html lang="hi"><head><meta charset="utf-8"/><title>Content Not Found — Vrindopnishad</title><meta name="robots" content="noindex"/></head><body style="font-family:sans-serif;text-align:center;padding:60px 20px;"><h1>404 — Content Not Found</h1><p>The requested verse could not be located.</p><p><a href="${DOMAIN}/content">Browse All Sacred Content →</a></p></body></html>`);
       return;
     }
 
@@ -434,7 +451,8 @@ export default async function handler(req, res) {
         </ul>
       `;
     } else {
-      res.status(404).send('Saint not found');
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.status(404).send(`<!doctype html><html lang="hi"><head><meta charset="utf-8"/><title>Saint Not Found — Vrindopnishad</title><meta name="robots" content="noindex"/></head><body style="font-family:sans-serif;text-align:center;padding:60px 20px;"><h1>404 — Saint Not Found</h1><p><a href="${DOMAIN}/saints">Browse All Saints →</a></p></body></html>`);
       return;
     }
 
@@ -457,7 +475,8 @@ export default async function handler(req, res) {
         </ul>
       `;
     } else {
-      res.status(404).send('Book not found');
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.status(404).send(`<!doctype html><html lang="hi"><head><meta charset="utf-8"/><title>Book Not Found — Vrindopnishad</title><meta name="robots" content="noindex"/></head><body style="font-family:sans-serif;text-align:center;padding:60px 20px;"><h1>404 — Book Not Found</h1><p><a href="${DOMAIN}/books">Browse All Books →</a></p></body></html>`);
       return;
     }
 
@@ -480,7 +499,8 @@ export default async function handler(req, res) {
         </ul>
       `;
     } else {
-      res.status(404).send('Raga not found');
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.status(404).send(`<!doctype html><html lang="hi"><head><meta charset="utf-8"/><title>Raga Not Found — Vrindopnishad</title><meta name="robots" content="noindex"/></head><body style="font-family:sans-serif;text-align:center;padding:60px 20px;"><h1>404 — Raga Not Found</h1><p><a href="${DOMAIN}/ragas">Browse All Ragas →</a></p></body></html>`);
       return;
     }
 
@@ -564,7 +584,8 @@ export default async function handler(req, res) {
           </ul>
         `;
       } else {
-        res.status(404).send('Page not found');
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.status(404).send(`<!doctype html><html lang="hi"><head><meta charset="utf-8"/><title>Page Not Found — Vrindopnishad</title><meta name="robots" content="noindex"/></head><body style="font-family:sans-serif;text-align:center;padding:60px 20px;"><h1>404 — Page Not Found</h1><p><a href="${DOMAIN}/">Go Home →</a></p></body></html>`);
         return;
       }
     }
@@ -604,6 +625,13 @@ export default async function handler(req, res) {
     `;
   }
 
+  // Build hreflang alternate URLs
+  const currentPath = pageUrl.replace(DOMAIN, '');
+  const isHi = currentPath.startsWith('/hi');
+  const cleanPath = isHi ? (currentPath.replace(/^\/hi/, '') || '/') : currentPath;
+  const enUrl = DOMAIN + cleanPath;
+  const hiUrl = DOMAIN + '/hi' + (cleanPath === '/' ? '' : cleanPath);
+
   // Build the final complete pre-rendered HTML payload
   const html = `<!doctype html>
 <html lang="hi" dir="ltr">
@@ -613,6 +641,9 @@ export default async function handler(req, res) {
   <title>${title}</title>
   <meta name="description" content="${description}"/>
   <link rel="canonical" href="${pageUrl}"/>
+  <link rel="alternate" hreflang="en" href="${enUrl}"/>
+  <link rel="alternate" hreflang="hi" href="${hiUrl}"/>
+  <link rel="alternate" hreflang="x-default" href="${enUrl}"/>
   <meta property="og:type" content="article"/>
   <meta property="og:title" content="${title}"/>
   <meta property="og:description" content="${description}"/>

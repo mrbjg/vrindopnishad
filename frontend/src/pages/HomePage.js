@@ -1,10 +1,31 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronRight, Music, FileText, ArrowRight, Volume2, Clock, X } from 'lucide-react';
+import { ChevronRight, Music, FileText, ArrowRight, Volume2, Clock, X, Edit2, VolumeX, Sun, Sunrise, Sunset } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { ApiContext } from '../App';
 import { extractRelations } from '../utils/relations';
 import AudioPlayButton from '../components/ui/AudioPlayButton';
+import { useSettings } from '../contexts/SettingsContext';
+
+const THEME_SWATCHES = {
+  dark: '#09090b',
+  light: 'linear-gradient(135deg, #fdfbf7 0%, #eae5d9 100%)',
+  night: '#030712',
+  space: '#08070d',
+  void: '#000000',
+  winter: 'linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%)',
+  snow: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+  rainy: 'linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%)',
+  mountains: 'linear-gradient(135deg, #fafaf9 0%, #e7e5e4 100%)',
+  mountain_morning: 'linear-gradient(135deg, #ffedd5 0%, #fee2e2 100%)',
+  sunset: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)',
+  forest: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+  ocean: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)',
+  waterfall: '#061217',
+  cherryblossom: '#140a15',
+  cherryblossom_light: 'linear-gradient(135deg, #fff0f3 0%, #ffe4e6 100%)',
+  aurora: '#040d1a',
+};
 
 /* ─── Daily Shloka Rotation ─── */
 const DAILY_SHLOKAS = [
@@ -108,6 +129,143 @@ const HomePage = () => {
   const openPreview = (item, type) => { setSelectedItem(item); setPreviewType(type); setDrawerTab('bio'); };
   const closePreview = () => { setSelectedItem(null); setPreviewType(null); };
 
+  const { settings, updateSetting } = useSettings();
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [tempName, setTempName] = useState(settings.devoteeName || '');
+
+  // Keep temp name updated if changed externally
+  useEffect(() => {
+    setTempName(settings.devoteeName || '');
+  }, [settings.devoteeName]);
+
+  // Tanpura Synthesizer State
+  const [isTanpuraPlaying, setIsTanpuraPlaying] = useState(false);
+  const [audioCtx, setAudioCtx] = useState(null);
+  const [tanpuraTimer, setTanpuraTimer] = useState(null);
+
+  const pluckString = (ctx, frequency, pluckTime) => {
+    const fundamental = frequency;
+    const harmonics = [1, 2, 3, 4, 5, 6, 7];
+    const amplitudes = [1.0, 0.5, 0.35, 0.25, 0.15, 0.1, 0.05];
+
+    const masterGain = ctx.createGain();
+    masterGain.gain.setValueAtTime(0, pluckTime);
+    masterGain.gain.linearRampToValueAtTime(0.18, pluckTime + 0.03);
+    masterGain.gain.exponentialRampToValueAtTime(0.001, pluckTime + 4.2);
+    masterGain.connect(ctx.destination);
+
+    harmonics.forEach((h, idx) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(fundamental * h, pluckTime);
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(fundamental * h * 1.5, pluckTime);
+      filter.frequency.exponentialRampToValueAtTime(fundamental * h * 0.5 + 80, pluckTime + 2.8);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(amplitudes[idx] * 0.1, pluckTime);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(masterGain);
+
+      osc.start(pluckTime);
+      osc.stop(pluckTime + 4.5);
+    });
+  };
+
+  const toggleTanpura = () => {
+    if (isTanpuraPlaying) {
+      if (tanpuraTimer) clearInterval(tanpuraTimer);
+      if (audioCtx) {
+        try {
+          audioCtx.close();
+        } catch (e) {
+          console.warn(e);
+        }
+      }
+      setIsTanpuraPlaying(false);
+      setAudioCtx(null);
+      setTanpuraTimer(null);
+    } else {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      setAudioCtx(ctx);
+      setIsTanpuraPlaying(true);
+
+      const baseFreq = 130.81; // C3
+      const freqs = [
+        baseFreq * 1.5, // Pa (G3)
+        baseFreq * 2.0, // Sa (C4)
+        baseFreq * 2.0, // Sa (C4)
+        baseFreq        // Sa (C3)
+      ];
+      
+      let pluckIdx = 0;
+      pluckString(ctx, freqs[pluckIdx], ctx.currentTime);
+      pluckIdx = (pluckIdx + 1) % 4;
+
+      const timer = setInterval(() => {
+        pluckString(ctx, freqs[pluckIdx], ctx.currentTime + 0.05);
+        pluckIdx = (pluckIdx + 1) % 4;
+      }, 1200);
+
+      setTanpuraTimer(timer);
+    }
+  };
+
+  // Clean up audio on unmount
+  useEffect(() => {
+    return () => {
+      if (tanpuraTimer) clearInterval(tanpuraTimer);
+      if (audioCtx) {
+        try {
+          audioCtx.close();
+        } catch (e) {
+          console.warn(e);
+        }
+      }
+    };
+  }, [tanpuraTimer, audioCtx]);
+
+  const handleUpdateJapaCount = (val) => {
+    setJapaCount(val);
+    localStorage.setItem('vrindopnishad_japa_count', val.toString());
+    window.dispatchEvent(new Event('storage'));
+  };
+
+  const getGreeting = () => {
+    const hrs = new Date().getHours();
+    if (hrs >= 4 && hrs < 12) {
+      return {
+        en: "Have a blessed morning swadhyaya and japa session.",
+        hi: "आपका आज का सुबह का स्वाध्याय और जाप मंगलमय हो।",
+        greetingEn: "Good Morning",
+        greetingHi: "सुप्रभात",
+        icon: <Sunrise size={16} className="text-amber-400 shrink-0" />
+      };
+    } else if (hrs >= 12 && hrs < 17) {
+      return {
+        en: "Take a peaceful moment in the sanctuary.",
+        hi: "इस शांत क्षण में प्रभु स्मरण करें।",
+        greetingEn: "Good Afternoon",
+        greetingHi: "शुभ दोपहर",
+        icon: <Sun size={16} className="text-amber-500 shrink-0" />
+      };
+    } else {
+      return {
+        en: "End your day with holy chanting and wisdom.",
+        hi: "भगवान नाम और ज्ञान के साथ दिन पूर्ण करें।",
+        greetingEn: "Good Evening",
+        greetingHi: "शुभ संध्या",
+        icon: <Sunset size={16} className="text-orange-400 shrink-0" />
+      };
+    }
+  };
+
+  const currentGreeting = useMemo(() => getGreeting(), []);
+
   const handleChantAudio = () => {
     if (isPlaying) {
       window.speechSynthesis.cancel();
@@ -210,7 +368,7 @@ const HomePage = () => {
     };
   }, []);
 
-  const dailyGoal = 432; // 4 Mala
+  const dailyGoal = settings.dailyGoal || 432;
   const percentComplete = Math.min(100, Math.round((japaCount / dailyGoal) * 100));
   const rounds = Math.floor(japaCount / 108);
 
@@ -443,6 +601,138 @@ const HomePage = () => {
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-4 animate-fade-in space-y-12 pt-6">
 
+        {/* Sadhana Personalization Hub */}
+        <div className="space-y-6">
+          {/* Welcome Banner */}
+          <div className="glass-card !p-5 rounded-3xl border border-primary/10 flex flex-col md:flex-row justify-between items-center gap-4 text-left shadow-lg select-none">
+            <div className="flex items-center gap-4 w-full md:w-auto">
+              <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-xl uppercase shrink-0">
+                {getInitials(settings.devoteeName || 'Seeker')}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="flex items-center gap-1">
+                    {currentGreeting.icon}
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-white/50 font-bold">
+                      {isHi ? currentGreeting.greetingHi : currentGreeting.greetingEn}
+                    </span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  {isEditingName ? (
+                    <div className="flex items-center gap-2 w-full max-w-sm">
+                      <input
+                        type="text"
+                        value={tempName}
+                        onChange={(e) => setTempName(e.target.value)}
+                        placeholder={isHi ? "अपना नाम लिखें..." : "Spiritual Name..."}
+                        className="bg-white/5 border border-white/10 rounded-xl px-3 py-1 text-xs text-white outline-none focus:border-primary/50 w-full"
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            updateSetting('devoteeName', tempName);
+                            setIsEditingName(false);
+                          } else if (e.key === 'Escape') {
+                            setTempName(settings.devoteeName || '');
+                            setIsEditingName(false);
+                          }
+                        }}
+                      />
+                      <button
+                        onClick={() => {
+                          updateSetting('devoteeName', tempName);
+                          setIsEditingName(false);
+                        }}
+                        className="bg-primary/20 hover:bg-primary/40 text-primary border border-primary/30 rounded-xl px-3 py-1 text-[10px] font-bold transition-all shrink-0"
+                      >
+                        {isHi ? "सहेजें" : "Save"}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setTempName(settings.devoteeName || '');
+                          setIsEditingName(false);
+                        }}
+                        className="text-white/40 hover:text-white text-[10px] shrink-0"
+                      >
+                        {isHi ? "रद्द करें" : "Cancel"}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <h1 className="text-base md:text-lg font-bold font-headings text-minimal-gold leading-tight">
+                        {isHi 
+                          ? `राधे राधे, ${settings.devoteeName || 'साधक'}` 
+                          : `Radhe Radhe, ${settings.devoteeName || 'Sadhaka'}`}
+                      </h1>
+                      <button 
+                        onClick={() => setIsEditingName(true)}
+                        className="text-white/35 hover:text-primary transition-colors p-1"
+                        title={isHi ? "नाम बदलें" : "Edit Name"}
+                      >
+                        <Edit2 size={12} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <p className="text-xs text-white/50 mt-1 font-light leading-relaxed animate-fade-in">
+                  {isHi ? currentGreeting.hi : currentGreeting.en}
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3 shrink-0 self-stretch justify-between md:justify-end border-t md:border-t-0 border-white/5 pt-3 md:pt-0">
+              <div className="text-left md:text-right">
+                <span className="text-[9px] uppercase tracking-wider text-white/35 block">Atmosphere</span>
+                <span className="text-xs font-bold text-primary block mt-0.5 capitalize">{settings.theme} Preset</span>
+              </div>
+              <div className="h-8 w-[1px] bg-white/5 hidden md:block" />
+              <div className="text-left md:text-right">
+                <span className="text-[9px] uppercase tracking-wider text-white/35 block">Daily Goal</span>
+                <span className="text-xs font-bold text-white/80 block mt-0.5">{settings.dailyGoal / 108} Malas</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Home Atmosphere Portal Selector Row */}
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-[9px] uppercase tracking-[0.25em] text-primary font-bold block">Atmosphere Customizer</span>
+              <span className="text-[9px] text-white/40 block font-light">Customize your sanctuary environment</span>
+            </div>
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide book-shelf-row select-none">
+              {[
+                { id: 'dark', label: isHi ? 'मूल डार्क' : 'Base Dark', desc: 'Serene charcoal' },
+                { id: 'light', label: isHi ? 'मूल लाइट' : 'Base Light', desc: 'Minimalist cream' },
+                { id: 'night', label: isHi ? 'चन्द्र रात्रि' : 'Moon Night', desc: 'Twinkling stars & moon' },
+                { id: 'space', label: isHi ? 'दिव्य ब्रह्मांड' : 'Cosmic Space', desc: 'Saturn overlay' },
+                { id: 'void', label: isHi ? 'परम शून्य' : 'Deep Void', desc: 'Event horizon halo' },
+                { id: 'sunset', label: isHi ? 'स्वर्ण संध्या' : 'Sunset Glow', desc: 'Warm peach sky' },
+                { id: 'waterfall', label: isHi ? 'प्रपात संगीत' : 'Waterfall', desc: 'Cliff & rushing stream' },
+                { id: 'mountains', label: isHi ? 'मौन पर्वत' : 'Mountains', desc: 'Sage-stone peaks' }
+              ].map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => updateSetting('theme', t.id)}
+                  className={`flex-none px-4 py-3 rounded-2xl border text-left transition-all duration-300 w-44 hover:scale-[1.02] ${
+                    settings.theme === t.id
+                      ? 'border-primary bg-primary/10 text-primary shadow-lg shadow-primary/5'
+                      : 'border-white/5 bg-white/2 text-white/60 hover:border-white/10'
+                  }`}
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-bold truncate block">{t.label}</span>
+                    <div 
+                      className="w-3 h-3 rounded-full border border-white/10 shrink-0"
+                      style={{ background: THEME_SWATCHES[t.id] }}
+                    />
+                  </div>
+                  <span className="text-[9px] text-white/35 mt-1 block font-light leading-none truncate">{t.desc}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* ═══ THREE COLUMN HERO SANCTUARY ═══ */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 max-w-6xl mx-auto items-stretch">
           
@@ -649,18 +939,58 @@ const HomePage = () => {
                       {isHi ? "जाप साधना" : "Chant Sanctuary"}
                     </span>
                   </div>
-                  <span className="text-[9px] font-bold text-white/40 uppercase">Goal: 4 Mala</span>
+                  <span className="text-[9px] font-bold text-white/40 uppercase">
+                    Goal: {dailyGoal / 108} {dailyGoal === 108 ? 'Mala' : 'Malas'}
+                  </span>
                 </div>
 
                 <div className="space-y-4">
                   <div>
                     <span className="text-[9px] uppercase tracking-wider text-white/35 block">{isHi ? "कुल जाप / Total Chants" : "Total Chants"}</span>
-                    <span className="text-xl font-extrabold text-minimal-gold block mt-0.5 font-mono">{japaCount}</span>
+                    <div className="flex items-baseline justify-between">
+                      <span className="text-xl font-extrabold text-minimal-gold block mt-0.5 font-mono">{japaCount}</span>
+                      <button
+                        onClick={toggleTanpura}
+                        className={`p-1.5 rounded-full border transition-all ${
+                          isTanpuraPlaying 
+                            ? 'bg-sky-500/10 border-sky-500/40 text-sky-400 animate-pulse' 
+                            : 'bg-white/5 border-white/10 text-white/40 hover:text-white'
+                        }`}
+                        title={isTanpuraPlaying ? "Stop Tanpura Drone" : "Start Tanpura Drone"}
+                      >
+                        {isTanpuraPlaying ? <Volume2 size={12} /> : <VolumeX size={12} />}
+                      </button>
+                    </div>
                   </div>
                   <div>
                     <span className="text-[9px] uppercase tracking-wider text-white/35 block">{isHi ? "माला पूर्ण / Completed Mala" : "Completed Mala"}</span>
                     <span className="text-xs font-bold text-white/80 block mt-0.5">{rounds} {isHi ? "माला" : "Rounds"} <span className="text-white/40 font-normal font-mono">({japaCount % 108}/108)</span></span>
                   </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-white/5">
+                  <button
+                    onClick={() => handleUpdateJapaCount(japaCount + 1)}
+                    className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl py-2 text-center text-xs font-bold text-white/80 transition-colors"
+                  >
+                    +1
+                  </button>
+                  <button
+                    onClick={() => handleUpdateJapaCount(japaCount + 108)}
+                    className="bg-primary/10 hover:bg-primary/20 border border-primary/25 rounded-xl py-2 text-center text-xs font-bold text-primary transition-colors"
+                  >
+                    +108
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (window.confirm(isHi ? "क्या आप जाप संख्या रीसेट करना चाहते हैं?" : "Reset chant count?")) {
+                        handleUpdateJapaCount(0);
+                      }
+                    }}
+                    className="bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 hover:border-red-500/20 rounded-xl py-2 text-center text-xs font-bold text-red-400 transition-colors"
+                  >
+                    Reset
+                  </button>
                 </div>
               </div>
 

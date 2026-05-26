@@ -41,6 +41,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
     try {
       await updateProfile(user, { displayName });
       if (refreshUser) refreshUser();
+      updateSetting('devoteeName', displayName);
       setUpdateStatus({ type: 'success', message: 'Profile updated successfully!' });
       setTimeout(() => setUpdateStatus({ type: '', message: '' }), 3000);
     } catch (error) {
@@ -87,7 +88,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
           className="flex-1 overflow-y-auto p-6 sm:p-8 pt-4 sm:pt-6 space-y-8 sm:space-y-10 custom-scrollbar"
         >
           {/* Personal Profile Section */}
-          {user && (
+          {user ? (
             <div className="space-y-4">
               <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">
                 <User size={14} /> Personal Profile
@@ -127,6 +128,22 @@ const SettingsModal = ({ isOpen, onClose }) => {
                   </div>
                 )}
               </form>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">
+                <User size={14} /> Devotee Identity
+              </h3>
+              <div className="premium-input-container flex items-center px-4 gap-3 group relative">
+                <User className="premium-input-icon flex-shrink-0" size={18} />
+                <input
+                  type="text"
+                  value={settings.devoteeName || ''}
+                  onChange={(e) => updateSetting('devoteeName', e.target.value)}
+                  className="premium-input-field text-sm"
+                  placeholder="Enter Spiritual/Devotee Name"
+                />
+              </div>
             </div>
           )}
 
@@ -228,6 +245,24 @@ const SettingsModal = ({ isOpen, onClose }) => {
                   }}
                 >
                   {style}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Sadhana Daily Goal */}
+          <div className="space-y-4">
+            <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">
+              <Check size={14} /> Sadhana Daily Goal
+            </h3>
+            <div className="premium-segmented-control grid-cols-4">
+              {[108, 432, 864, 1728].map((goal) => (
+                <button
+                  key={goal}
+                  onClick={() => updateSetting('dailyGoal', goal)}
+                  className={`segmented-control-btn ${settings.dailyGoal === goal ? 'active' : ''}`}
+                >
+                  {goal === 108 ? '1 Mala' : goal === 432 ? '4 Malas' : goal === 864 ? '8 Malas' : '16 Malas'}
                 </button>
               ))}
             </div>

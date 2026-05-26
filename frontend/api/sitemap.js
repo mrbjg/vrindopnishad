@@ -308,10 +308,14 @@ export default async function handler(req, res) {
   const { sants, books, ragas } = extractRelations(contentItems);
 
   // Build XML blocks
-  const staticUrls = SEO_PAGES.flatMap(p => [
-    `  <url><loc>${DOMAIN}${p.path}</loc><lastmod>${today}</lastmod><changefreq>${p.changefreq}</changefreq><priority>${p.priority}</priority></url>`,
-    `  <url><loc>${DOMAIN}/hi${p.path === '/' ? '' : p.path}</loc><lastmod>${today}</lastmod><changefreq>${p.changefreq}</changefreq><priority>${p.priority}</priority></url>`
-  ]).join('\n');
+  const staticUrls = SEO_PAGES.flatMap(p => {
+    const enPath = p.path;
+    const hiPath = '/hi' + (p.path === '/' ? '' : p.path);
+    return [
+      `  <url>\n    <loc>${DOMAIN}${enPath}</loc>\n    <xhtml:link rel="alternate" hreflang="en" href="${DOMAIN}${enPath}"/>\n    <xhtml:link rel="alternate" hreflang="hi" href="${DOMAIN}${hiPath}"/>\n    <xhtml:link rel="alternate" hreflang="x-default" href="${DOMAIN}${enPath}"/>\n    <lastmod>${today}</lastmod><changefreq>${p.changefreq}</changefreq><priority>${p.priority}</priority>\n  </url>`,
+      `  <url>\n    <loc>${DOMAIN}${hiPath}</loc>\n    <xhtml:link rel="alternate" hreflang="en" href="${DOMAIN}${enPath}"/>\n    <xhtml:link rel="alternate" hreflang="hi" href="${DOMAIN}${hiPath}"/>\n    <xhtml:link rel="alternate" hreflang="x-default" href="${DOMAIN}${enPath}"/>\n    <lastmod>${today}</lastmod><changefreq>${p.changefreq}</changefreq><priority>${p.priority}</priority>\n  </url>`
+    ];
+  }).join('\n');
 
   const catUrls = categories.flatMap(cat => [
     `  <url><loc>${DOMAIN}/category/${cat}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`,
@@ -354,18 +358,19 @@ export default async function handler(req, res) {
       seenSlugs.add(normalizedSlug);
       
       const encodedSlug = encodeURIComponent(decodeURIComponent(slug));
-      const defaultUrl = escapeXmlUrl(`${DOMAIN}/content/${encodedSlug}`);
+      const enUrl = escapeXmlUrl(`${DOMAIN}/content/${encodedSlug}`);
       const hiUrl = escapeXmlUrl(`${DOMAIN}/hi/content/${encodedSlug}`);
       return [
-        `  <url><loc>${defaultUrl}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`,
-        `  <url><loc>${hiUrl}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`
+        `  <url>\n    <loc>${enUrl}</loc>\n    <xhtml:link rel="alternate" hreflang="en" href="${enUrl}"/>\n    <xhtml:link rel="alternate" hreflang="hi" href="${hiUrl}"/>\n    <xhtml:link rel="alternate" hreflang="x-default" href="${enUrl}"/>\n    <lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority>\n  </url>`,
+        `  <url>\n    <loc>${hiUrl}</loc>\n    <xhtml:link rel="alternate" hreflang="en" href="${enUrl}"/>\n    <xhtml:link rel="alternate" hreflang="hi" href="${hiUrl}"/>\n    <xhtml:link rel="alternate" hreflang="x-default" href="${enUrl}"/>\n    <lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority>\n  </url>`
       ];
     })
     .filter(Boolean)
     .join('\n');
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${staticUrls}
 ${catUrls}
 ${santUrls}

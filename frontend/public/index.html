@@ -142,6 +142,37 @@
         })();
     </script>
 
+    <!-- SEO: Dynamic Canonical & Hreflang for SPA pages -->
+    <script>
+        (function () {
+            var p = window.location.pathname;
+            var isHi = p.indexOf('/hi') === 0;
+            var cleanPath = isHi ? (p.replace(/^\/hi/, '') || '/') : p;
+            var base = 'https://path.vrindopnishad.in';
+            var hiPath = '/hi' + (cleanPath === '/' ? '' : cleanPath);
+
+            // Set canonical to current exact URL
+            var c = document.createElement('link');
+            c.rel = 'canonical';
+            c.href = base + p;
+            document.head.appendChild(c);
+
+            // Hreflang alternates
+            var tags = [
+                { hl: 'en', hr: base + cleanPath },
+                { hl: 'hi', hr: base + hiPath },
+                { hl: 'x-default', hr: base + cleanPath }
+            ];
+            for (var i = 0; i < tags.length; i++) {
+                var a = document.createElement('link');
+                a.rel = 'alternate';
+                a.hreflang = tags[i].hl;
+                a.href = tags[i].hr;
+                document.head.appendChild(a);
+            }
+        })();
+    </script>
+
     <!-- PERFORMANCE OPTIMIZATION: Preconnect Hints -->
     <link rel="preconnect" href="https://tilimltxgeucefxzerqi.supabase.co" crossorigin>
     <link rel="preconnect" href="https://vrindopnishad.in" crossorigin>
