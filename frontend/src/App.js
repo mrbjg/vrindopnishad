@@ -125,6 +125,28 @@ function App() {
     };
   }, []);
 
+  // Preload major route chunks in the background to guarantee 0ms chunk-load latency on navigation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const preloadList = [
+        () => import('./pages/HomePage'),
+        () => import('./pages/ContentListPage'),
+        () => import('./pages/ContentDetailPage'),
+        () => import('./pages/SaintsListPage'),
+        () => import('./pages/SaintDetailPage'),
+        () => import('./pages/BooksListPage'),
+        () => import('./pages/BookDetailPage'),
+        () => import('./pages/RagasListPage'),
+        () => import('./pages/RagaDetailPage'),
+        () => import('./pages/KnowledgeBasePage')
+      ];
+      preloadList.forEach(importFn => {
+        try { importFn(); } catch (e) {}
+      });
+    }, 1500); // 1.5 seconds delay to prioritize critical initial render path
+    return () => clearTimeout(timer);
+  }, []);
+
   // Dedicated useEffect for Smooth Scrolling (Lenis)
   useEffect(() => {
     // Detect mobile touch devices or small viewports
