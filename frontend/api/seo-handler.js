@@ -606,6 +606,62 @@ export default async function handler(req, res) {
           ${fullContent.commentary ? `<div lang="en" style="margin: 20px 0;"><h2>${isHindiRoute ? 'टीका / व्याख्या' : 'Commentary'}</h2><p style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(fullContent.commentary)}</p></div>` : ''}
           ${fullContent.description ? `<div lang="en" style="margin: 20px 0;"><h2>${isHindiRoute ? 'विवरण' : 'Explanation'}</h2><p>${escapeHtml(fullContent.description)}</p></div>` : ''}
         </article>
+        ${(() => {
+          // Build dynamic semantic cross-links
+          const links = [];
+          const authorName = fullContent.author && fullContent.author !== 'Braj Rasik Heritage' ? fullContent.author : null;
+          
+          // Link to the saint who composed this verse
+          if (authorName) {
+            const cleanAuthor = authorName.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim();
+            const authorSlug = slugify(transliterate(cleanAuthor));
+            const matchedSant = sants.find(s => s.slug === authorSlug || (s.name && s.name.includes(cleanAuthor)));
+            if (matchedSant) {
+              links.push(`<li><a href="${getRouteLink(`/saint/${matchedSant.slug}`)}">${isHindiRoute ? `${escapeHtml(cleanAuthor)} — जीवनी एवं वाणी संग्रह` : `${escapeHtml(cleanAuthor)} — Biography & Complete Works`}</a></li>`);
+            }
+          }
+          
+          // Link to the book/grantha this verse belongs to
+          const titleParts = (fullContent.title || '').split(/\s+-\s+/);
+          if (titleParts.length >= 2) {
+            const relText = titleParts[1].replace(/\([^)]+\)$/, '').trim();
+            const relParts = relText.split(/\s*,\s*/);
+            const bookCandidate = relParts.length >= 2 ? relParts[1].trim() : null;
+            if (bookCandidate) {
+              const bookSlug = slugify(transliterate(bookCandidate));
+              const matchedBook = books.find(b => b.slug === bookSlug);
+              if (matchedBook) {
+                links.push(`<li><a href="${getRouteLink(`/book/${matchedBook.slug}`)}">${isHindiRoute ? `ग्रन्थ: ${escapeHtml(bookCandidate)}` : `Grantha: ${escapeHtml(bookCandidate)}`}</a></li>`);
+              }
+            }
+          }
+          
+          // Link to the category page
+          if (fullContent.category) {
+            const catSlug = fullContent.category.toLowerCase().trim().replace(/\s+/g, '-');
+            links.push(`<li><a href="${getRouteLink(`/category/${catSlug}`)}">${isHindiRoute ? `श्रेणी: ${escapeHtml(fullContent.category)}` : `Category: ${escapeHtml(fullContent.category)}`}</a></li>`);
+          }
+          
+          // Link to 3 related verses from the same author
+          if (authorName) {
+            const relatedVerses = allContentItems
+              .filter(item => item.author === authorName && item.id !== fullContent.id && item.category?.toLowerCase() !== 'saint')
+              .slice(0, 3);
+            if (relatedVerses.length > 0) {
+              relatedVerses.forEach(v => {
+                links.push(`<li><a href="${getRouteLink(`/content/${v.slug || v.id}`)}">${escapeHtml(v.title)}</a></li>`);
+              });
+            }
+          }
+          
+          if (links.length > 0) {
+            return `<nav aria-label="Related" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eae6df;">
+              <h2>${isHindiRoute ? 'संबंधित पाठ' : 'Related'}</h2>
+              <ul>${links.join('')}</ul>
+            </nav>`;
+          }
+          return '';
+        })()}
       `;
     } else {
       // Proper 404 HTML response — prevents GSC soft-404/redirect misclassification
@@ -702,6 +758,16 @@ export default async function handler(req, res) {
         <ul>
           ${sant.verses.map(v => `<li><a href="${getRouteLink(`/content/${v.slug || v.id}`)}">${escapeHtml(v.title)}</a></li>`).join('')}
         </ul>
+        ${(() => {
+          const otherSants = sants.filter(s => s.slug !== sant.slug && s.name !== sant.name).slice(0, 4);
+          if (otherSants.length > 0) {
+            return `<nav aria-label="Related Saints" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eae6df;">
+              <h2>${isHindiRoute ? 'अन्य रसिक संत' : 'Other Rasik Saints'}</h2>
+              <ul>${otherSants.map(s => `<li><a href="${getRouteLink(`/saint/${s.slug}`)}">${escapeHtml(s.name)}</a></li>`).join('')}</ul>
+            </nav>`;
+          }
+          return '';
+        })()}
       `;
     } else {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -790,6 +856,16 @@ export default async function handler(req, res) {
         <ul>
           ${book.verses.map(v => `<li><a href="${getRouteLink(`/content/${v.slug || v.id}`)}">${escapeHtml(v.title)}</a></li>`).join('')}
         </ul>
+        ${(() => {
+          const otherBooks = books.filter(b => b.slug !== book.slug && b.name !== book.name).slice(0, 4);
+          if (otherBooks.length > 0) {
+            return `<nav aria-label="Related Books" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eae6df;">
+              <h2>${isHindiRoute ? 'अन्य पवित्र ग्रन्थ' : 'Other Sacred Granthas'}</h2>
+              <ul>${otherBooks.map(b => `<li><a href="${getRouteLink(`/book/${b.slug}`)}">${escapeHtml(b.name)} — ${escapeHtml(b.author)}</a></li>`).join('')}</ul>
+            </nav>`;
+          }
+          return '';
+        })()}
       `;
     } else {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
