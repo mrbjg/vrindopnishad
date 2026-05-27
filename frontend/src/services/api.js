@@ -31,7 +31,7 @@ const generateSlug = (text) => {
 
 const setCache = (key, data) => {
     try {
-        sessionStorage.setItem(CACHE_PREFIX + key, JSON.stringify({
+        localStorage.setItem(CACHE_PREFIX + key, JSON.stringify({
             timestamp: Date.now(),
             data: data
         }));
@@ -40,11 +40,11 @@ const setCache = (key, data) => {
 
 const getCache = (key) => {
     try {
-        const cached = sessionStorage.getItem(CACHE_PREFIX + key);
+        const cached = localStorage.getItem(CACHE_PREFIX + key);
         if (!cached) return null;
         const { timestamp, data } = JSON.parse(cached);
         if (Date.now() - timestamp > CACHE_EXPIRY) {
-            sessionStorage.removeItem(CACHE_PREFIX + key);
+            localStorage.removeItem(CACHE_PREFIX + key);
             return null;
         }
         return data;
@@ -110,7 +110,31 @@ export const apiService = {
   // Content APIs
   getAllContent: async (category = null, limit = 50) => {
     const cacheKey = `all_${category || 'none'}_${limit}`;
-    const cached = getCache(cacheKey);
+    let cached = getCache(cacheKey);
+
+    // Fallback: Prioritize global pre-fetched localStorage cache
+    if (!cached) {
+      try {
+        const localCached = localStorage.getItem('vrindopnishad_all_content_cache');
+        if (localCached) {
+          const allItems = JSON.parse(localCached);
+          let filtered = allItems;
+          if (category) {
+            const targetCat = category.toLowerCase().trim();
+            filtered = filtered.filter(item => item.category?.toLowerCase() === targetCat);
+          }
+          if (limit) {
+            filtered = filtered.slice(0, limit);
+          }
+          console.log(`[Cache-Hit] getAllContent loaded from global localStorage cache for category: ${category}`);
+          setCache(cacheKey, filtered);
+          return filtered;
+        }
+      } catch (e) {
+        console.warn('Failed to parse global localStorage content cache:', e);
+      }
+    }
+
     if (cached) return cached;
 
     if (USE_MOCK) {
@@ -173,8 +197,38 @@ export const apiService = {
 
   getContentById: async (id) => {
     const cacheKey = `id_${id}`;
-    const cached = getCache(cacheKey);
+    let cached = getCache(cacheKey);
     if (cached) return cached;
+
+    // Fallback: Check global pre-fetched localStorage cache first
+    try {
+      const localCached = localStorage.getItem('vrindopnishad_all_content_cache');
+      if (localCached) {
+        const items = JSON.parse(localCached);
+        const decodedId = decodeURIComponent(id);
+        const matched = items.find(item => 
+          item.id?.toString() === id.toString() ||
+          item.id?.toString() === decodedId.toString() ||
+          item.slug === id ||
+          item.slug === decodedId ||
+          generateSlug(item.title) === id || 
+          generateSlug(item.title) === decodedId
+        );
+        if (matched) {
+          console.log(`[Cache-Hit] getContentById matched item ${id} in global localStorage cache.`);
+          const cleanCategory = classifyItemCategory(matched);
+          const data = { 
+            ...matched, 
+            category: cleanCategory,
+            slug: matched.slug || generateSlug(matched.title) 
+          };
+          setCache(cacheKey, data);
+          return data;
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to check global localStorage content cache:', e);
+    }
 
     if (USE_MOCK) {
       const data = await mockApiService.getContentById(id);

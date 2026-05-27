@@ -434,8 +434,13 @@ const PookizLayout = ({ children }) => {
         </header>
 
         {/* Scrollable Content Container */}
-        <main className="flex-1 p-3 md:p-4 w-full pb-16 overflow-y-auto custom-scrollbar">
-          {children}
+        <main 
+          id="pookiz-main-scroll-container"
+          className="flex-1 p-3 md:p-4 w-full pb-16 overflow-y-auto custom-scrollbar"
+        >
+          <div>
+            {children}
+          </div>
         </main>
       </div>
 

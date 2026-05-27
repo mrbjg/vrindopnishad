@@ -137,11 +137,16 @@ function App() {
       document.documentElement.style.removeProperty('overflow');
       document.body.style.removeProperty('overflow');
       document.documentElement.classList.remove('lenis');
+      
+      const pookizContainer = document.getElementById('pookiz-main-scroll-container');
+      if (pookizContainer) {
+        pookizContainer.style.removeProperty('overflow');
+      }
       return;
     }
 
-    // Initialize Lenis Smooth Scroll
-    const lenis = new Lenis({
+    // Configure wrapper and content for Lenis based on layout mode
+    const lenisOptions = {
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
@@ -150,21 +155,38 @@ function App() {
       wheelMultiplier: 1,
       smoothTouch: false, // Disable touch handling on mobile to prevent conflicts
       infinite: false,
-    });
+    };
+
+    if (settings.layoutMode === 'pookiz') {
+      const pookizContainer = document.getElementById('pookiz-main-scroll-container');
+      if (pookizContainer) {
+        lenisOptions.wrapper = pookizContainer;
+        lenisOptions.content = pookizContainer.firstElementChild || pookizContainer;
+      }
+    }
+
+    // Initialize Lenis Smooth Scroll
+    const lenis = new Lenis(lenisOptions);
 
     function raf(time) {
       lenis.raf(time);
       requestAnimationFrame(raf);
     }
 
-    requestAnimationFrame(raf);
+    const rafId = requestAnimationFrame(raf);
 
     return () => {
+      cancelAnimationFrame(rafId);
       lenis.destroy();
       document.documentElement.style.removeProperty('overflow');
       document.body.style.removeProperty('overflow');
+      
+      const pookizContainer = document.getElementById('pookiz-main-scroll-container');
+      if (pookizContainer) {
+        pookizContainer.style.removeProperty('overflow');
+      }
     };
-  }, [settings.smoothScroll]);
+  }, [settings.smoothScroll, settings.layoutMode]);
 
   const verifyToken = async (tk) => {
     try {
