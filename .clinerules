@@ -22,3 +22,10 @@ This file documents the strict guidelines, constraints, and professional standar
 - **UI/UX Prototyping**: When creating new user interfaces, utilize Stitch tool integrations to design and verify templates before custom styling.
 - **Token Efficiency**: Work efficiently and minimize token overhead by avoiding redundant operations or overly verbose subagents.
 - **No Unused Variables**: Do not leave unused imports, variables, or timers in React hooks/useEffect cleanups.
+- **Zero-Warning Code Quality Enforcement**: Ensure that no unused imports or variables remain in modified files before running build commands, as all ESLint warnings must be pre-resolved in the code rather than ignored.
+- **Node/CommonJS Path Isolation**: When executing build-time Node.js helper scripts, always resolve database metadata modules from `/api` or CommonJS targets, to avoid typeless package ES-Module re-parsing overhead.
+
+---
+
+## 4. SEO & Crawlability
+- **NoScript Warning Policy**: Never include functional warning phrases (e.g., 'JavaScript required' or 'Please enable JavaScript') in the `<noscript>` tags or pre-rendered headers, to prevent search engines from extracting technical fallbacks as search snippets.
