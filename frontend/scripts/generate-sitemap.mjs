@@ -327,6 +327,46 @@ async function generateSitemap() {
     }
   }
 
+  // 3. Fallback: If both database fetches failed (e.g. sandboxed/offline), load from local backups
+  if (allContentItems.length === 0) {
+    console.log('⚠️ Both database fetches failed (offline/sandboxed). Loading from local backups...');
+    try {
+      const localFilePath = join(__dirname, '../../admin/data/brajrasik_hi_full.json');
+      const localSaintsPath = join(__dirname, '../../admin/data/saints_formatted.json');
+      
+      if (fs.existsSync(localFilePath)) {
+        console.log(`📡 Reading backup from ${localFilePath}...`);
+        const fileContent = fs.readFileSync(localFilePath, 'utf8');
+        const localData = JSON.parse(fileContent);
+        console.log(`✅ Loaded ${localData.length} items from local backup.`);
+        
+        // Add id field if missing to keep database consistency
+        const sanitizedData = localData.map((item, index) => ({
+          id: item.id || `local-${index}`,
+          ...item
+        }));
+        allContentItems = [...allContentItems, ...sanitizedData];
+      }
+      
+      if (fs.existsSync(localSaintsPath)) {
+        console.log(`📡 Reading saints backup from ${localSaintsPath}...`);
+        const saintsContent = fs.readFileSync(localSaintsPath, 'utf8');
+        const localSaints = JSON.parse(saintsContent);
+        console.log(`✅ Loaded ${localSaints.length} saints from local backup.`);
+        
+        // Map category to 'saint' for relations extraction to identify them correctly
+        const formattedSaints = localSaints.map((s, index) => ({
+          id: s.id || `local-saint-${index}`,
+          ...s,
+          category: 'saint'
+        }));
+        allContentItems = [...allContentItems, ...formattedSaints];
+      }
+    } catch (fallbackError) {
+      console.error('❌ Failed to load local backups:', fallbackError.message);
+    }
+  }
+
   // 3. Extract unique categories dynamically case-insensitively and handle spaces/hyphens
   const categoriesSet = new Set();
   const uniqueCategories = [];

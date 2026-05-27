@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+
 
 const ALL_SEO_PAGES = [
   { path: '/what-is-vrindopnishad', title: 'What is Vrindopnishad?', desc: 'Discover the vision and mission of Vrindopnishad' },
@@ -15,39 +15,29 @@ const ALL_SEO_PAGES = [
   { path: '/guide', title: 'Complete Guide', desc: 'A beginner-friendly summary of Vrindopnishad' },
 ];
 
-/**
- * Renders "Related Topics" section with internal links
- * @param {string[]} exclude - paths to exclude (e.g., the current page)
- * @param {number} count - number of links to show (default 4)
- */
 const InternalLinks = ({ exclude = [], count = 4 }) => {
   const links = ALL_SEO_PAGES
     .filter(page => !exclude.includes(page.path))
     .slice(0, count);
 
   return (
-    <nav className="mt-16 pt-12 border-t border-white/10" aria-label="Related Topics">
-      <h2 className="text-2xl font-bold mb-8 text-white/90">Related Topics</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <nav className="mt-16 pt-8 border-t border-white/10" aria-label="Related Topics">
+      <h2 className="text-xs font-bold uppercase tracking-widest mb-4 text-white/40">Related Topics</h2>
+      <div className="flex flex-wrap gap-3">
         {links.map(link => (
           <Link
             key={link.path}
             to={link.path}
-            className="glass-card p-6 flex items-start gap-4 group hover:border-primary/30 transition-all duration-300"
+            className="px-4 py-2.5 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-primary/30 text-xs text-white/70 hover:text-primary hover:bg-primary/5 transition-all duration-300 font-medium"
           >
-            <div className="flex-1">
-              <h3 className="font-semibold text-white/90 group-hover:text-primary transition-colors">
-                {link.title}
-              </h3>
-              <p className="text-sm text-white/50 mt-1">{link.desc}</p>
-            </div>
-            <ArrowRight size={18} className="text-white/30 group-hover:text-primary mt-1 transition-colors" />
+            {link.title}
           </Link>
         ))}
       </div>
     </nav>
   );
 };
+
 
 export { ALL_SEO_PAGES };
 export default InternalLinks;

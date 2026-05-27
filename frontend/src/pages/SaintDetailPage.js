@@ -76,6 +76,49 @@ const SaintDetailPage = () => {
         <title>{isHindiRoute ? `${sant.name} जीवनी एवं वाणी संग्रह | Vrindopnishad` : `${sant.hinglishName} Biography & Vaanis | Vrindopnishad`}</title>
         <meta name="description" content={sant.biography?.text ? sant.biography.text.substring(0, 160) : `Complete collection of spiritual poetry and hymns written by ${sant.hinglishName}.`} />
         <link rel="canonical" href={isHindiRoute ? `https://path.vrindopnishad.in/hi/saint/${slug}` : `https://path.vrindopnishad.in/saint/${slug}`} />
+        
+        {/* Structured Data: Person & Breadcrumb */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Person",
+                "@id": `https://path.vrindopnishad.in/saint/${slug}#person`,
+                "name": sant.name,
+                "alternateName": sant.hinglishName,
+                "description": sant.biography?.text || `Vaishnava Saint and spiritual master of Braj.`,
+                "url": `https://path.vrindopnishad.in/saint/${slug}`,
+                "image": sant.image || "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png",
+                "knowsAbout": ["Vaishnavism", "Bhakti Yoga", "Braj Rasik Heritage", "Vrindavan"]
+              },
+              {
+                "@type": "BreadcrumbList",
+                "@id": `https://path.vrindopnishad.in/saint/${slug}#breadcrumb`,
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": isHindiRoute ? "होम" : "Home",
+                    "item": isHindiRoute ? "https://path.vrindopnishad.in/hi" : "https://path.vrindopnishad.in/"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": isHindiRoute ? "संत" : "Saints",
+                    "item": isHindiRoute ? "https://path.vrindopnishad.in/hi/saints" : "https://path.vrindopnishad.in/saints"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": isHindiRoute ? sant.name : sant.hinglishName,
+                    "item": isHindiRoute ? `https://path.vrindopnishad.in/hi/saint/${slug}` : `https://path.vrindopnishad.in/saint/${slug}`
+                  }
+                ]
+              }
+            ]
+          })}
+        </script>
       </Helmet>
 
       <Link 

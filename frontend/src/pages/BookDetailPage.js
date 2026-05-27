@@ -67,6 +67,53 @@ const BookDetailPage = () => {
         <title>{isHindiRoute ? `${book.name} ग्रन्थ पाठ एवं अनुवाद | Vrindopnishad` : `${book.hinglishName} Texts & Translation | Vrindopnishad`}</title>
         <meta name="description" content={`Read the sacred verses from ${book.hinglishName} with Hindi explanation, translation and audio chanting.`} />
         <link rel="canonical" href={isHindiRoute ? `https://path.vrindopnishad.in/hi/book/${slug}` : `https://path.vrindopnishad.in/book/${slug}`} />
+        
+        {/* Structured Data: Book & Breadcrumb */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Book",
+                "@id": `https://path.vrindopnishad.in/book/${slug}#book`,
+                "name": book.name,
+                "alternateName": book.hinglishName,
+                "author": book.author ? {
+                  "@type": "Person",
+                  "name": book.author,
+                  "url": book.authorSlug ? `https://path.vrindopnishad.in/saint/${book.authorSlug}` : undefined
+                } : undefined,
+                "url": `https://path.vrindopnishad.in/book/${slug}`,
+                "inLanguage": isHindiRoute ? ["hi", "sa"] : ["en", "hi-Latn", "sa"],
+                "description": `Read the sacred verses from ${book.hinglishName} with translations, commentaries and audio chanting.`
+              },
+              {
+                "@type": "BreadcrumbList",
+                "@id": `https://path.vrindopnishad.in/book/${slug}#breadcrumb`,
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": isHindiRoute ? "होम" : "Home",
+                    "item": isHindiRoute ? "https://path.vrindopnishad.in/hi" : "https://path.vrindopnishad.in/"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": isHindiRoute ? "ग्रन्थ" : "Books",
+                    "item": isHindiRoute ? "https://path.vrindopnishad.in/hi/books" : "https://path.vrindopnishad.in/books"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": isHindiRoute ? book.name : book.hinglishName,
+                    "item": isHindiRoute ? `https://path.vrindopnishad.in/hi/book/${slug}` : `https://path.vrindopnishad.in/book/${slug}`
+                  }
+                ]
+              }
+            ]
+          })}
+        </script>
       </Helmet>
 
       <Link 
