@@ -269,6 +269,47 @@ function App() {
     );
   }
 
+  // Dynamic arrays to render both standard and Hindi (/hi) localized routes, simplifying the codebase
+  const mainRoutes = [
+    { path: '/', element: <HomePage /> },
+    { path: '/content', element: <ContentListPage /> },
+    { path: '/content/:id', element: <ContentDetailPage /> },
+    { path: '/category/:category', element: <CategoryPage /> },
+    { path: '/loader-demo', element: <LoaderDemo /> },
+    { path: '/saints', element: <SaintsListPage /> },
+    { path: '/saint/:slug', element: <SaintDetailPage /> },
+    { path: '/books', element: <BooksListPage /> },
+    { path: '/book/:slug', element: <BookDetailPage /> },
+    { path: '/ragas', element: <RagasListPage /> },
+    { path: '/raga/:slug', element: <RagaDetailPage /> }
+  ];
+
+  const kbRoutes = [
+    { path: 'knowledge-base', element: <KnowledgeBasePage /> },
+    { path: 'what-is-vrindopnishad', element: <WhatIsVrindopnishad /> },
+    { path: 'meaning', element: <MeaningPage /> },
+    { path: 'origin', element: <OriginPage /> },
+    { path: 'philosophy', element: <PhilosophyPage /> },
+    { path: 'teachings', element: <TeachingsPage /> },
+    { path: 'importance', element: <ImportancePage /> },
+    { path: 'devotion', element: <DevotionalPage /> },
+    { path: 'faq', element: <FAQPage /> },
+    { path: 'comparison-with-upanishads', element: <ComparisonPage /> },
+    { path: 'guide', element: <GuidePage /> },
+    { path: 'braj-rasik-heritage', element: <BrajRasikHeritage /> },
+    { path: 'what-is-radha-snata', element: <RadhaSnataPage /> },
+    { path: 'nitya-vihar-vs-nikunj-vihar', element: <NityaViharPage /> },
+    { path: 'glossary', element: <GlossaryPage /> },
+    { path: 'glossary/:slug', element: <GlossaryDetailPage /> },
+    { path: 'history-of-radhavallabh-sampradaya', element: <HistoryOfRadhavallabh /> },
+    { path: 'major-rasik-saints-of-braj', element: <MajorRasikSaints /> },
+    { path: 'places', element: <PlacesPage /> },
+    { path: 'who-is-harirae-ji', element: <HariraeJiPage /> },
+    { path: 'what-is-madhurya-and-sakhi-bhava', element: <MadhuryaBhavaPage /> },
+    { path: 'radhavallabh-vs-gaudiya-sampradaya', element: <RadhavallabhVsGaudiya /> },
+    { path: 'vrindavan-parikrama-guide', element: <ParikramaGuide /> }
+  ];
+
   return (
     <AudioProvider>
       <LoadingProvider>
@@ -279,114 +320,28 @@ function App() {
               <Layout>
                 <React.Suspense fallback={<PageSkeleton variant="grid" count={6} />}>
                   <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/hi" element={<HomePage />} />
+                    {/* Main localized routes */}
+                    {mainRoutes.flatMap(({ path, element }) => [
+                      <Route key={path} path={path} element={element} />,
+                      <Route key={`hi-${path}`} path={path === '/' ? '/hi' : `/hi${path}`} element={element} />
+                    ])}
                     
-                    <Route path="/content" element={<ContentListPage />} />
-                    <Route path="/hi/content" element={<ContentListPage />} />
-                    
-                    <Route path="/content/:id" element={<ContentDetailPage />} />
-                    <Route path="/hi/content/:id" element={<ContentDetailPage />} />
-                    
-                    <Route path="/category/:category" element={<CategoryPage />} />
-                    <Route path="/hi/category/:category" element={<CategoryPage />} />
-                    
-                    <Route path="/loader-demo" element={<LoaderDemo />} />
-                    
-                    {/* Dynamic Relations Routes */}
-                    <Route path="/saints" element={<SaintsListPage />} />
-                    <Route path="/hi/saints" element={<SaintsListPage />} />
-                    <Route path="/saint/:slug" element={<SaintDetailPage />} />
-                    <Route path="/hi/saint/:slug" element={<SaintDetailPage />} />
-                    
-                    <Route path="/books" element={<BooksListPage />} />
-                    <Route path="/hi/books" element={<BooksListPage />} />
-                    <Route path="/book/:slug" element={<BookDetailPage />} />
-                    <Route path="/hi/book/:slug" element={<BookDetailPage />} />
-                    
-                    <Route path="/ragas" element={<RagasListPage />} />
-                    <Route path="/hi/ragas" element={<RagasListPage />} />
-                    <Route path="/raga/:slug" element={<RagaDetailPage />} />
-                    <Route path="/hi/raga/:slug" element={<RagaDetailPage />} />
-                    
-                    {/* Knowledge Base Hub Layout Route */}
+                    {/* Knowledge Base Hub Layout Routes */}
                     <Route element={<KnowledgeBaseLayout />}>
-                      {/* Knowledge Base Hub */}
-                      <Route path="/knowledge-base" element={<KnowledgeBasePage />} />
-                      <Route path="/hi/knowledge-base" element={<KnowledgeBasePage />} />
-
-                      {/* SEO Content Pages */}
-                      <Route path="/what-is-vrindopnishad" element={<WhatIsVrindopnishad />} />
-                      <Route path="/hi/what-is-vrindopnishad" element={<WhatIsVrindopnishad />} />
-                      
-                      <Route path="/meaning" element={<MeaningPage />} />
-                      <Route path="/hi/meaning" element={<MeaningPage />} />
-                      
-                      <Route path="/origin" element={<OriginPage />} />
-                      <Route path="/hi/origin" element={<OriginPage />} />
-                      
-                      <Route path="/philosophy" element={<PhilosophyPage />} />
-                      <Route path="/hi/philosophy" element={<PhilosophyPage />} />
-                      
-                      <Route path="/teachings" element={<TeachingsPage />} />
-                      <Route path="/hi/teachings" element={<TeachingsPage />} />
-                      
-                      <Route path="/importance" element={<ImportancePage />} />
-                      <Route path="/hi/importance" element={<ImportancePage />} />
-                      
-                      <Route path="/devotion" element={<DevotionalPage />} />
-                      <Route path="/hi/devotion" element={<DevotionalPage />} />
-                      
-                      <Route path="/faq" element={<FAQPage />} />
-                      <Route path="/hi/faq" element={<FAQPage />} />
-                      
-                      <Route path="/comparison-with-upanishads" element={<ComparisonPage />} />
-                      <Route path="/hi/comparison-with-upanishads" element={<ComparisonPage />} />
-                      
-                      <Route path="/guide" element={<GuidePage />} />
-                      <Route path="/hi/guide" element={<GuidePage />} />
-                      
-                      <Route path="/braj-rasik-heritage" element={<BrajRasikHeritage />} />
-                      <Route path="/hi/braj-rasik-heritage" element={<BrajRasikHeritage />} />
-                      
-                      <Route path="/what-is-radha-snata" element={<RadhaSnataPage />} />
-                      <Route path="/hi/what-is-radha-snata" element={<RadhaSnataPage />} />
-                      
-                      <Route path="/nitya-vihar-vs-nikunj-vihar" element={<NityaViharPage />} />
-                      <Route path="/hi/nitya-vihar-vs-nikunj-vihar" element={<NityaViharPage />} />
-                      
-                      <Route path="/glossary" element={<GlossaryPage />} />
-                      <Route path="/hi/glossary" element={<GlossaryPage />} />
-                      <Route path="/glossary/:slug" element={<GlossaryDetailPage />} />
-                      <Route path="/hi/glossary/:slug" element={<GlossaryDetailPage />} />
-                      <Route path="/history-of-radhavallabh-sampradaya" element={<HistoryOfRadhavallabh />} />
-                      <Route path="/hi/history-of-radhavallabh-sampradaya" element={<HistoryOfRadhavallabh />} />
-                      <Route path="/major-rasik-saints-of-braj" element={<MajorRasikSaints />} />
-                      <Route path="/hi/major-rasik-saints-of-braj" element={<MajorRasikSaints />} />
-                      
-                      <Route path="/places" element={<PlacesPage />} />
-                      <Route path="/hi/places" element={<PlacesPage />} />
-
-                      <Route path="/who-is-harirae-ji" element={<HariraeJiPage />} />
-                      <Route path="/hi/who-is-harirae-ji" element={<HariraeJiPage />} />
-
-                      <Route path="/what-is-madhurya-and-sakhi-bhava" element={<MadhuryaBhavaPage />} />
-                      <Route path="/hi/what-is-madhurya-and-sakhi-bhava" element={<MadhuryaBhavaPage />} />
-
-                      <Route path="/radhavallabh-vs-gaudiya-sampradaya" element={<RadhavallabhVsGaudiya />} />
-                      <Route path="/hi/radhavallabh-vs-gaudiya-sampradaya" element={<RadhavallabhVsGaudiya />} />
-
-                      <Route path="/vrindavan-parikrama-guide" element={<ParikramaGuide />} />
-                      <Route path="/hi/vrindavan-parikrama-guide" element={<ParikramaGuide />} />
+                      {kbRoutes.flatMap(({ path, element }) => [
+                        <Route key={path} path={`/${path}`} element={element} />,
+                        <Route key={`hi-${path}`} path={`/hi/${path}`} element={element} />
+                      ])}
                     </Route>
-
                     
+                    {/* Auth & Admin Routes */}
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/admin-old/login" element={<AdminLoginPage />} />
                     <Route
                       path="/admin-old/dashboard"
                       element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin-old/login" />}
                     />
+                    
                     {/* Catch-all: redirect unknown routes to home */}
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
