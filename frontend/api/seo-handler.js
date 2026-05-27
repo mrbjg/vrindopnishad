@@ -110,6 +110,10 @@ const slugify = (text) => {
     .replace(/-+$/, '');
 };
 
+const generateSlug = (text) => {
+  return slugify(transliterate(text));
+};
+
 const sanitizeSlug = (slug) => {
   if (!slug) return '';
   return slug
@@ -148,7 +152,8 @@ function extractRelations(items) {
       biographies.push({
         name: cleanName,
         slug: item.slug || slugify(transliteratedName),
-        text: item.hindi_text || item.description || ''
+        text: item.hindi_text || item.description || '',
+        imageUrl: item.image_url || null
       });
     }
   });
@@ -210,6 +215,7 @@ function extractRelations(items) {
           hinglishName: transliterate(cleanSantKey),
           slug: matchedBio ? matchedBio.slug : santSlug,
           biography: matchedBio ? { text: matchedBio.text, rawItem: matchedBio } : null,
+          imageUrl: matchedBio ? matchedBio.imageUrl : null,
           verses: [],
           books: new Set()
         };
@@ -225,8 +231,11 @@ function extractRelations(items) {
           name: bookName,
           slug: bookSlug,
           author: saintName || 'Unknown Rasik',
-          verses: []
+          verses: [],
+          imageUrl: item.image_url || null
         };
+      } else if (!booksMap[bookName].imageUrl && item.image_url) {
+        booksMap[bookName].imageUrl = item.image_url;
       }
       booksMap[bookName].verses.push(item);
     }
@@ -238,8 +247,11 @@ function extractRelations(items) {
           name: ragaName,
           hinglishName: transliterate(ragaName),
           slug: ragaSlug,
-          verses: []
+          verses: [],
+          imageUrl: item.image_url || null
         };
+      } else if (!ragasMap[ragaName].imageUrl && item.image_url) {
+        ragasMap[ragaName].imageUrl = item.image_url;
       }
       ragasMap[ragaName].verses.push(item);
     }
@@ -255,59 +267,136 @@ function extractRelations(items) {
 // Static SEO pages registry containing their exact semantic titles, description metadata, and HTML text payloads
 const STATIC_SEO_PAGES = {
   'what-is-vrindopnishad': {
-    title: 'What is Vrindopnishad? — Definition & Core Concept | वृंदोपनिषद् क्या है',
-    description: 'Learn about Vrindopnishad. Understand what this sacred digital platform represents, its vision, and how it connects tradition with modern tech.',
-    body: '<h1>What is Vrindopnishad?</h1><p>Vrindopnishad is a digital sanctuary dedicated to the preservation and dissemination of Vaishnava literature, Sanskrit shlokas, and the direct teachings of Braj Rasik saints. By uniting the pastoral devotion of Vrindavan (Vrinda) with the high philosophical inquiry of the Upanishads, Vrindopnishad offers a comprehensive, interactive knowledge hub for spiritual seekers worldwide.'
+    en: {
+      title: 'What is Vrindopnishad? — Definition & Core Concept | Vrindopnishad',
+      description: 'Discover the definition and vision of Vrindopnishad. Learn how this sacred digital platform preserves Sanskrit shlokas and teachings of Vrindavan saints.',
+      body: '<h1>What is Vrindopnishad?</h1><p>Vrindopnishad is a pioneering digital platform dedicated to the preservation, curation, and dissemination of authentic spiritual knowledge rooted in the Vedic tradition. The name itself is a beautiful synthesis of two profound Sanskrit concepts: "Vrinda" (वृंदा), referring to the sacred groves of Vrindavan and the divine play of Lord Krishna, and "Upanishad" (उपनिषद्), meaning the "sitting near" or the transmission of sacred, esoteric knowledge from teacher to disciple. Together, Vrindopnishad represents a modern digital ashram where seekers from across the world can access the timeless wisdom of Indias spiritual heritage.</p><p>In an era where digital noise often drowns out contemplative depth, Vrindopnishad stands as a refuge — a carefully curated space where one can immerse oneself in sacred Sanskrit shlokas, devotional strotras, heartfelt Hindi poetry, and the profound teachings of the great saints who walked the sacred soil of Vrindavan, Barsana, Nandgaon, and Govardhan. The platform serves as a bridge between ancient wisdom and contemporary seekers, making age-old spiritual texts accessible without compromising their sanctity or depth.</p><p>The platform hosts an extensive and ever-growing collection of spiritual content organized into several key categories. The content library includes sacred verses (shlokas) from the Vedas, Upanishads, and Bhagavad Gita, each presented with original Sanskrit text, Hindi transliteration, and English commentary. Beyond scriptural texts, the platform features devotional hymns (strotras) — powerful prayers and invocations that have been chanted for centuries in temples across India.</p>'
+    },
+    hi: {
+      title: 'वृंदोपनिषद् क्या है? — परिभाषा एवं मूल अवधारणा | Vrindopnishad',
+      description: 'वृंदोपनिषद् के बारे में जानें। समझें कि यह पवित्र डिजिटल मंच क्या है, इसका दृष्टिकोण और यह किस प्रकार आधुनिक तकनीक को परंपरा से जोड़ता है।',
+      body: '<h1>वृंदोपनिषद् क्या है?</h1><p>वृंदोपनिषद् (वृंदोपनिषद्) वैदिक और वैष्णव परंपरा से जुड़े प्रामाणिक आध्यात्मिक ज्ञान के संरक्षण, संपादन और प्रसार के लिए समर्पित एक अग्रणी डिजिटल मंच है। इसका नाम दो अति महत्वपूर्ण संस्कृत शब्दों के योग से बना है: "वृंदा" (वृंदावन की पवित्र तुलसी कुंज और लीला भूमि) और "उपनिषद" (गुरु के निकट बैठकर प्राप्त किया जाने वाला गोपनीय दिव्य ज्ञान)। इस प्रकार वृंदोपनिषद् एक आधुनिक डिजिटल आश्रम का प्रतिनिधित्व करता है जहाँ वैश्विक जिज्ञासु प्राचीन आध्यात्मिक धरोहर से सीधे जुड़ सकते हैं।</p><p>आज के डिजिटल युग में जहाँ चारों ओर अशांति और कोलाहल है, वृंदोपनिषद् एक आध्यात्मिक आश्रय के रूप में खड़ा है। यह एक ऐसा स्थान है जहाँ आप संस्कृत श्लोकों, स्तोत्रों, हिंदी भक्ति कविताओं और ब्रज के महान रसिक संतों की शिक्षाओं में पूरी तरह से डूब सकते हैं। यह मंच प्राचीन ज्ञान को उसकी शुद्धता और गहराई के साथ आधुनिक तकनीक के माध्यम से सहज रूप में उपलब्ध कराता है।</p><p>इस मंच पर वेदों, उपनिषदों और श्रीमद्भगवद्गीता के श्लोकों का विस्तृत संग्रह है, जिसमें मूल पाठ, उच्चारण निर्देश, हिंदी अनुवाद और व्याख्याएँ शामिल हैं। इसके अतिरिक्त ब्रज के संतों जैसे स्वामी हरिदास, हित हरिवंश और वर्तमान संतों के पदों एवं भजनों को भी यहाँ संरक्षित किया गया है।</p>'
+    }
   },
   'meaning': {
-    title: 'Meaning of Vrindopnishad — Etymology & Spiritual Significance | वृंदोपनिषद् अर्थ',
-    description: 'Explore the profound meaning of Vrindopnishad. Understand the Sanskrit etymology, spiritual symbolism, and deeper significance behind this sacred name.',
-    body: '<h1>Meaning of Vrindopnishad (वृंदोपनिषद्)</h1><p>The word "Vrindopnishad" is a Sanskrit compound uniting "Vrinda" (sacred groves of Tulsi in Vrindavan) and "Upanishad" (esoteric wisdom received at the feet of a master). Thus, it translates to "the sacred, confidential wisdom flowing from Vrindavan." It represents the synthesis of scriptural knowledge (Jnana) and divine emotional attachment (Bhakti).</p>'
+    en: {
+      title: 'Meaning of Vrindopnishad — Etymology & Spiritual Significance',
+      description: 'Explore the profound meaning of Vrindopnishad. Understand the Sanskrit etymology, spiritual symbolism, and deeper significance behind this sacred name.',
+      body: '<h1>Meaning of Vrindopnishad (वृंदोपनिषद्)</h1><p>The word "Vrindopnishad" (वृंदोपनिषद्) is a Sanskrit compound formed by uniting two rich terms. "Vrinda" (वृंदा) means a cluster of sacred Tulsi plants — the earthly manifestation of goddess Vrinda Devi. In Vrindavan\'s devotional literature, Vrinda is intimately connected with the divine pastoral landscape where Lord Krishna enacted his transcendent plays (leelas). The forest of Vrindavan itself takes its name from these sacred groves.</p><p>"Upanishad" (उपनिषद्) derives from three Sanskrit roots: "upa" (near), "ni" (down), and "sad" (to sit) — painting a picture of a student sitting near a teacher to receive sacred knowledge. The Upanishads are the culminating wisdom texts of the Vedic corpus, dealing with the ultimate nature of reality (Brahman), the self (Atman), and liberation (Moksha).</p><p>When merged into "Vrindopnishad," the compound suggests "the sacred, esoteric knowledge that flows from Vrindavan" — spiritual wisdom from the most sacred landscape in Vaishnava devotion. This is not academic knowledge but transformative wisdom received in a state of devotional surrender. It bridges the jnana (knowledge) tradition represented by the Upanishads with the bhakti (devotion) tradition centered in Vrindavan. This synthesis reflects a profound theological insight: the highest knowledge and deepest devotion are complementary paths leading to the same transcendent reality.</p>'
+    },
+    hi: {
+      title: 'वृंदोपनिषद् शब्द का अर्थ — संस्कृत व्युत्पत्ति एवं महत्व',
+      description: 'वृंदोपनिषद् शब्द का गहरा अर्थ समझें। संस्कृत व्याकरण के अनुसार इसकी संधि, व्युत्पत्ति और आध्यात्मिक संदेश की विस्तृत विवेचना।',
+      body: '<h1>वृंदोपनिषद् का अर्थ</h1><p>"वृंदोपनिषद्" (वृंद + उपनिषद्) एक अत्यंत सुंदर और प्रतीकात्मक संस्कृत शब्द है, जिसकी संरचना दो मूलभूत विचारों से हुई है। "वृंदा" का अर्थ है तुलसी के पवित्र पौधे और वृंदावन की वह अलौकिक भूमि जहाँ श्री राधा कृष्ण ने अपनी नित्य रास लीलाएँ संपादित की थीं। ब्रज की भक्ति परंपरा में वृंदा देवी को इस दिव्य वन की अधिष्ठात्री देवी माना गया है, जो लीला के लिए संपूर्ण वातावरण तैयार करती हैं।</p><p>"उपनिषद्" का अर्थ है गुरु के पास निष्ठापूर्वक बैठना (उप + नि + सद्) ताकि उस गोपनीय आध्यात्मिक ज्ञान को ग्रहण किया जा सके जो अंधकार को मिटाता है। उपनिषद सनातन धर्म के सबसे बड़े दार्शनिक ग्रन्थ हैं जो आत्मा, परमात्मा और मोक्ष की चर्चा करते हैं।</p><p>जब हम इन दोनों को जोड़कर "वृंदोपनिषद्" बनाते हैं, तो इसका अर्थ होता है — "वृंदावन की रस-भूमि से प्रकट होने वाला परम गोपनीय और मधुर ज्ञान।" यह ज्ञान शुष्क तर्क या केवल बौद्धिक विमर्श नहीं है, बल्कि यह प्रेम, समर्पण और रसानुभूति से परिपूर्ण ज्ञान है। यह हमें सिखाता है कि सत्य केवल जानने की वस्तु नहीं है, बल्कि वह अनुभव और आत्मीय संबंध की वस्तु है।</p>'
+    }
   },
   'origin': {
-    title: 'Origin & History of Vrindopnishad — Scriptural Roots | वृंदोपनिषद् इतिहास',
-    description: 'Trace the origin and scriptural history of the teachings found in Vrindopnishad. Learn how these sacred texts have been preserved over generations.',
-    body: '<h1>Origin & History</h1><p>The teachings of Vrindopnishad originate from the eternal Ras Lila of Shri Radha Krishna in Braj Dham. Over centuries, these confidential spiritual traditions were systematized by the Six Goswamis of Vrindavan (Rupa Goswami, Sanatana Goswami, etc.) and carried forward by Braj Rasik saints including Swami Haridas and Hit Harivansh Mahaprabhu.</p>'
+    en: {
+      title: 'Origin & History of Vrindopnishad — Roots of Braj Devotion',
+      description: 'Trace the origin and scriptural history of the teachings found in Vrindopnishad. Learn how these sacred texts have been preserved over generations.',
+      body: '<h1>Origin & History of Vrindopnishad</h1><p>The origin of Vrindopnishad is inseparable from the sacred geography of Vrindavan, the ancient forest town on the banks of the Yamuna river. Vrindavan is understood in Hindu theology as the eternal abode of Radha and Krishna, a transcendent realm that manifests on earth. For over five thousand years, this landscape has been the epicenter of Bhakti (devotional) spirituality, attracting saints, poets, and philosophers.</p><p>The literary traditions that Vrindopnishad preserves have their roots in this unique spiritual ecosystem. From the 16th century onwards, when the Six Goswamis of Vrindavan — disciples of Sri Chaitanna Mahaprabhu — systematized the theology of Radha-Krishna worship, Vrindavan became a powerhouse of spiritual literature. The Goswamis composed hundreds of texts in Sanskrit, covering everything from abstruse philosophy to intimate devotional poetry. This literary explosion laid the foundation for the traditions that Vrindopnishad now digitally preserves.</p><p>For centuries, the spiritual literature of Vrindavan was transmitted primarily through oral tradition — from guru to shishya (teacher to student). Devotional songs were learned by heart and sung in temple gatherings. While this organic transmission ensured the vitality of the tradition, it also made it vulnerable to loss. Vrindopnishad was born from the recognition that digital technology offers an unprecedented opportunity to preserve, organize, and share this endangered heritage, collecting manuscripts from ashrams and temples.</p>'
+    },
+    hi: {
+      title: 'वृंदोपनिषद् का इतिहास और उत्पत्ति — ब्रज भक्ति परंपरा',
+      description: 'वृंदोपनिषद् की ऐतिहासिक और आध्यात्मिक उत्पत्ति के विषय में जानें। वृंदावन और ब्रज के संतों की गौरवशाली परंपरा का इतिहास।',
+      body: '<h1>उत्पत्ति एवं इतिहास</h1><p>वृंदोपनिषद् की उत्पत्ति ब्रजमंडल की पावन भूमि और वहाँ प्रवाहित होने वाली भक्ति रस की धारा से जुड़ी है। वृंदावन केवल एक भौगोलिक स्थान नहीं है, बल्कि इसे भगवान का शाश्वत निवास स्थल माना गया है। 16वीं शताब्दी में श्री चैतन्य महाप्रभु के वृंदावन आगमन के बाद उनके शिष्यों (षड्-गोस्वामी) ने यहाँ बैठकर शास्त्रों का अनुसंधान किया और वैष्णव दर्शन की स्थापना की।</p><p>इसके बाद के समय में ब्रज के प्रमुख रसिक संतों जैसे स्वामी हरिदास, हित हरिवंश महाप्रभु, नारायण भट्ट और हरिराम व्यास ने अद्भुत काव्य ग्रंथों की रचना की। इन संतों ने संस्कृत के साथ-साथ स्थानीय ब्रजभाषा में भी अमूल्य पदों की रचना की। सदियों तक यह ज्ञान मौखिक परंपरा (गुरु-शिष्य परंपरा) और भोजपत्र या ताड़ के पत्तों पर लिखी पांडुलिपियों के रूप में जीवित रहा।</p><p>समय के साथ कई पांडुलिपियाँ नष्ट होने लगीं और मौखिक पाठ करने वाले संतों की संख्या भी घटने लगी। इसी संकट को देखते हुए वृंदोपनिषद् परियोजना की शुरुआत की गई ताकि वृंदावन की प्राचीन मंदिरों और आश्रमों में सुरक्षित इस महान वाणी साहित्य को डिजिटल रूप में सहेजकर पूरी दुनिया के लिए सुलभ बनाया जा सके।</p>'
+    }
   },
   'philosophy': {
-    title: 'Philosophy of Vrindopnishad — Achintya Bheda Abheda & Bhakti | दर्शन',
-    description: 'Dive deep into the theological philosophy of Vrindopnishad. Explore concepts of divine love (Raganuga Bhakti) and relationships of the self.',
-    body: '<h1>Spiritual Philosophy</h1><p>The core philosophy of Vrindopnishad centers on Raganuga Bhakti (spontaneous loving devotion) and Achintya Bheda Abheda (inconceivable simultaneous oneness and difference). It explains that the ultimate goal of the soul is to participate in the eternal loving service of the Divine Couple in Nitya Vrindavan.</p>'
+    en: {
+      title: 'Philosophy of Vrindopnishad — Achintya Bheda Abheda & Bhakti',
+      description: 'Dive deep into the theological philosophy of Vrindopnishad. Explore concepts of divine love (Raganuga Bhakti) and relationships of the self.',
+      body: '<h1>Theological Philosophy of Vrindopnishad</h1><p>The core philosophy of Vrindopnishad is based on Achintya Bheda Abheda (inconceivable simultaneous oneness and difference) and Raganuga Bhakti (spontaneous, passionate devotion). It posits that the supreme truth is personal and aesthetic (Raso Vai Sah), manifesting as the Divine Couple Shri Radha Krishna in the eternal forest of Nitya Vrindavan. The soul (jiva) is eternally connected to the Divine yet distinct, serving as a particle of spiritual energy.</p><p>Unlike paths of dry intellect or rigorous asceticism, Vrindopnishad emphasizes that the highest attainment is not silent merging into the formless Brahman, but entering the eternal, selfless loving service (Prema Seva) of the Divine Couple. This philosophy values human emotion, teaching that our capacity to love is not something to be destroyed, but rather redirected towards its original, divine source. By doing so, the soul is freed from material attachments and awakens to its true spiritual identity.</p><p>This philosophical approach is reflected in every design choice on the platform — from the contemplative visual aesthetics to the audio narration features that allow users to listen to verses being chanted in their traditional melodic patterns. The interface is designed to evoke the infinite cosmos of Vedic cosmology, creating a digital threshold that transitions the user from the mundane world to a space of reverence.</p>'
+    },
+    hi: {
+      title: 'वृंदोपनिषद् का दर्शन — अचिन्त्य भेदाभेद एवं भक्ति मार्ग',
+      description: 'वृंदोपनिषद् के दार्शनिक सिद्धांतों का परिचय। जीव, ब्रह्म और भक्ति के संबंधों की व्याख्या, और वैष्णव आचार्यों का दृष्टिकोण।',
+      body: '<h1>आध्यात्मिक दर्शन</h1><p>वृंदोपनिषद् का दर्शन वैष्णव वेदांत के सबसे मधुर और गंभीर रूप \'अचिन्त्य भेदाभेद\' तथा \'रागानुगा भक्ति\' पर आधारित है। यह दर्शन स्वीकार करता है कि परमात्मा और आत्मा के बीच एक ऐसा संबंध है जो एक ही समय पर एकता (अभेद) और भिन्नता (भेद) दोनों को दर्शाता है। यह संबंध मानव की तर्कशक्ति से परे है, इसलिए इसे अचिन्त्य कहा गया है।</p><p>यहाँ परमात्मा को केवल एक न्यायकर्ता या सृष्टि के नियंता के रूप में नहीं, बल्कि परम रसमय सत्ता \'श्री राधा कृष्ण\' के रूप में देखा जाता है। जीव का परम उद्देश्य मुक्ति (मोक्ष) पाना नहीं है, बल्कि भगवान की दिव्य प्रेम और सेवा (प्रेमा भक्ति) का रसास्वादन करना है। यह भक्ति भय या नियमों से परे होकर हृदय के स्वाभाविक अनुराग से उत्पन्न होती है।</p><p>इस दार्शनिक पृष्ठभूमि में सांसारिक कामनाओं को दबाने के बजाय उन्हें भगवान की सेवा में लगाकर पवित्र करने का निर्देश दिया गया है। जब मन और इंद्रियाँ भगवान के नाम, रूप, और लीला के श्रवण और कीर्तन में लग जाती हैं, तो मनुष्य स्वतः ही माया के बंधनों से मुक्त हो जाता है।</p>'
+    }
   },
   'teachings': {
-    title: 'Teachings of Vrindopnishad — Wisdom from Rasik Saints | शिक्षाएँ',
-    description: 'Discover the core teachings and spiritual guidelines of Vrindopnishad. Practical wisdom and guidance for daily devotion and inner peace.',
-    body: '<h1>Core Teachings</h1><p>Vrindopnishad teaches that chanting the divine names (Naam Jap), maintaining the association of saints (Sadhu Sanga), cultivating humility, and reading sacred texts are key to purification. The teachings provide practical instructions for transcending material anxiety through devotion.</p>'
+    en: {
+      title: 'Teachings of Vrindopnishad — Wisdom from Rasik Saints',
+      description: 'Discover the core teachings and spiritual guidelines of Vrindopnishad. Practical wisdom and guidance for daily devotion and inner peace.',
+      body: '<h1>Core Teachings of Vrindopnishad</h1><p>The teachings of Vrindopnishad offer a practical roadmap for spiritual awakening in the modern world. The foremost teaching is the cultivation of Nama Japa (chanting the holy names of God) as the most effective means of purification and mental stabilization. The teachings instruct seekers to practice humility, respect all living beings, and avoid the pride of material acquisition.</p><p>A key teaching is Sadhu Sanga — keeping the company of saintly, selfless individuals whose presence naturally elevates one\'s consciousness. Seekers are encouraged to perform Swadhyaya (daily reading of sacred verses), dedicate their work to the divine, and live a life of simple, mindful devotion. The teachings emphasize that the divine is accessed not through wealth or power, but through a clean, loving heart.</p><p>By reading the commentary provided on the platform, seekers learn to recognize the presence of the divine in all of creation. This awareness fosters compassion, inner peace, and a sense of responsibility toward the environment and society. The teachings are not passive doctrines but living invitations to transform one\'s character and experience the bliss of divine connection.</p>'
+    },
+    hi: {
+      title: 'वृंदोपनिषद् की मुख्य शिक्षाएँ — जीवन बदलने वाले उपदेश',
+      description: 'ब्रज के रसिक आचार्यों और संतों के मुख्य उपदेश। मन की शुद्धि, दैनिक साधना और आध्यात्मिक जीवन जीने के व्यावहारिक नियम।',
+      body: '<h1>महत्वपूर्ण शिक्षाएँ</h1><p>वृंदोपनिषद् की शिक्षाएँ हमें आधुनिक जीवन के तनावों के बीच आंतरिक शांति और आनंद से जीने का व्यावहारिक मार्ग दिखाती हैं। इन शिक्षाओं का मूल केंद्र मन की शुद्धि और भगवान के प्रति अनन्य प्रेम है।</p><p>मुख्य शिक्षाओं में सर्वोपरि है — "नाम जप" और "संकीर्तन"। संतों का कथन है कि कलयुग में भगवान का नाम ही सबसे बड़ा सहारा है। इसके अतिरिक्त, साधक को अपने आचरण में परम विनम्रता (तृणादपि सुनीचेन) और सहनशीलता धारण करनी चाहिए। किसी भी जीव को कष्ट न देना और सभी का सम्मान करना साधना की पहली सीढ़ी है।</p><p>"साधु संग" अर्थात सत्संगति को सबसे अधिक बल दिया गया है, क्योंकि संतों के विचारों के प्रभाव से ही मन में अच्छे संस्कार जाग्रत होते हैं। प्रतिदिन पवित्र ग्रंथों का स्वाध्याय (स्वाध्याय) करना और अपने दैनिक कार्यों को निष्काम भाव से भगवान को समर्पित करना इसकी प्रमुख व्यावहारिक शिक्षाएँ हैं।</p>'
+    }
   },
   'importance': {
-    title: 'Importance of Vrindopnishad in Modern Times — Spiritual Value | महत्व',
-    description: 'Why is Vrindopnishad relevant today? Read about the critical importance of preserving scriptural wisdom in the digital age.',
-    body: '<h1>Importance of the Wisdom</h1><p>In our modern fast-paced world, the message of Vrindopnishad serves as a stabilizing, peaceful anchor. It provides the digital age with accessible, authenticated translations of spiritual literature, ensuring that the legacy of the saints remains a living guide for humanity.</p>'
+    en: {
+      title: 'Importance of Vrindopnishad in Modern Times — Spiritual Value',
+      description: 'Why is Vrindopnishad relevant today? Read about the critical importance of preserving scriptural wisdom in the digital age.',
+      body: '<h1>Importance of Vrindopnishad Today</h1><p>In our modern fast-paced world, the message of Vrindopnishad serves as a stabilizing, peaceful anchor. It provides the digital age with accessible, authenticated translations of spiritual literature, ensuring that the legacy of the saints remains a living guide for humanity. The stress and anxiety of contemporary life are often the results of a spiritual vacuum; Vrindopnishad aims to fill this void with the cooling nectar of divine wisdom.</p><p>The preservation of these texts is also of immense cultural and historical importance. As traditional lifestyles change, there is a real danger that the unique literary and linguistic heritage of the Braj region could be lost. By digitizing these works, Vrindopnishad ensures their survival for future generations, making them available to scholars, devotees, and general seekers worldwide.</p><p>Furthermore, the platform demonstrates that technology can be a powerful tool for spiritual elevation when used with the right intention. By creating a dedicated, aesthetic space for sacred literature, Vrindopnishad helps users transform their screen time into a source of peace, clarity, and inner growth, rather than distraction and comparison.</p>'
+    },
+    hi: {
+      title: 'आधुनिक युग में वृंदोपनिषद् का महत्व — क्यों आवश्यक है यह मंच',
+      description: 'आज के विज्ञान और तकनीक के युग में आध्यात्मिक ग्रंथों की प्रासंगिकता। मानसिक शांति और जीवन की सार्थकता पाने में इसकी भूमिका।',
+      body: '<h1>आधुनिक समाज में महत्व</h1><p>आज की 21वीं सदी में, जहाँ तकनीक और भौतिक साधनों की प्रचुरता है, वहीं मनुष्य के भीतर अशांति, तनाव और एक खालीपन भी बढ़ा है। ऐसी परिस्थिति में वृंदोपनिषद् का महत्व अत्यंत प्रासंगिक हो जाता है। यह मंच आधुनिक मानव को उसकी व्यस्त जीवनशैली के बीच सीधे अध्यात्म से जुड़ने का अवसर देता है।</p><p>वृंदावन की रसिक परंपरा का यह साहित्य हमें सिखाता है कि जीवन का अंतिम लक्ष्य केवल धन कमाना या बाहरी सफलता पाना नहीं है, बल्कि हृदय में प्रेम और आनंद को जाग्रत करना है। यह साहित्य हमें मानसिक तनाव से मुक्ति देकर सकारात्मक ऊर्जा से भर देता है।</p><p>सांस्कृतिक रूप से भी यह मंच अमूल्य योगदान दे रहा है। वैश्वीकरण के इस दौर में हमारी क्षेत्रीय भाषाएँ और प्राचीन ग्रंथ लुप्त होने की कगार पर हैं। वृंदोपनिषद् इन दुर्लभ वाणियों और श्लोकों को सहेजकर आने वाली पीढ़ियों के लिए एक सुरक्षित भंडार तैयार कर रहा है, ताकि हमारी ज्ञान परंपरा अखंड बनी रहे।</p>'
+    }
   },
   'devotion': {
-    title: 'Devotional Significance (Bhakti Marg) of Vrindopnishad | भक्ति',
-    description: 'Explore the path of devotion (Bhakti) on Vrindopnishad. Learn how reciting shlokas and contemplation can evoke divine consciousness.',
-    body: '<h1>The Path of Devotion</h1><p>Bhakti, or pure devotion, is the heart of the Vrindopnishad collection. Unlike paths based on austere meditation or ritual work, Bhakti values love and emotional relationship with the Divine. It emphasizes the recitation of sweet kirtans and meditative chanting.</p>'
+    en: {
+      title: 'Devotional Significance (Bhakti Marg) of Vrindopnishad',
+      description: 'Explore the path of devotion (Bhakti) on Vrindopnishad. Learn how reciting shlokas and contemplation can evoke divine consciousness.',
+      body: '<h1>The Path of Devotion (Bhakti Marg)</h1><p>Bhakti, or pure devotion, is the heart of the Vrindopnishad collection. Unlike paths based on austere meditation or intellectual speculation, Bhakti values love and emotional relationship with the Divine. It emphasizes that the supreme Lord is not an impersonal force but a loving person who responds to the sincere calls of His devotees. The path is accessible to all, requiring no special qualifications other than sincerity.</p><p>Vrindopnishad focuses specifically on Raganuga Bhakti, which is the path of spontaneous loving service following in the footsteps of the eternal residents of Vrindavan. This form of devotion is characterized by its sweetness (madhurya) and its focus on the pastimes of Radha and Krishna. It teaches the devotee to serve the divine couple with the same intimate love and affection that one would feel for a beloved friend, child, or master.</p><p>The reciting of shlokas, singing of kirtans, and contemplation of the saints\' lives are all practical methods to cultivate this devotional mood. Through these practices, the heart is purified, the mind is anchored in divine thoughts, and the seeker experiences a profound inner joy that transcends material circumstances. Bhakti is not a passive belief but a dynamic, active expression of love.</p>'
+    },
+    hi: {
+      title: 'भक्ति मार्ग का महत्व — वृंदोपनिषद् भक्ति दर्शन',
+      description: 'भक्ति क्या है और इसका मार्ग ज्ञान मार्ग से कैसे भिन्न है? प्रेम लक्षणा भक्ति और भगवान के प्रति पूर्ण समर्पण का मार्ग।',
+      body: '<h1>भक्ति मार्ग का रहस्य</h1><p>भक्ति मार्ग वृंदोपनिषद् की रीढ़ है। श्रीमद्भागवत और अन्य वैष्णव ग्रंथों के अनुसार, भक्ति का मार्ग सबसे सुगम और आनंदमयी है। ज्ञान मार्ग में जहाँ बुद्धि और कड़े नियमों की आवश्यकता होती है, वहीं भक्ति मार्ग में केवल सरल और निष्कपट हृदय की आवश्यकता होती है।</p><p>भक्ति का अर्थ है भगवान से एक गहरा, व्यक्तिगत और प्रेमपूर्ण संबंध स्थापित करना। ब्रज की परंपरा \'माधुर्य भाव\' की भक्ति का उपदेश देती है, जहाँ भगवान को परम ऐश्वर्यशाली स्वामी मानकर डरने के बजाय, उन्हें अपने अति प्रिय सखा, पुत्र या प्रियतम के रूप में पूजा जाता है। यह प्रेम भगवान और भक्त के बीच की दूरी को मिटा देता है।</p><p>श्लोकों का सस्वर पाठ करना, नाम संकीर्तन करना और संतों के चरित्र का स्मरण करना भक्ति मार्ग के मुख्य अंग हैं। यह साधना मन के विकारों को धोकर उसे भगवान के प्रेम में लीन कर देती है। भक्ति केवल एक क्रिया नहीं है, यह एक स्थिति है जहाँ भक्त अपने पूरे अस्तित्व को भगवान के चरणों में समर्पित कर देता है और परम शांति का अनुभव करता है।</p>'
+    }
   },
   'faq': {
-    title: 'FAQ — Frequently Asked Questions about Vrindopnishad | प्रश्नोत्तर',
-    description: 'Find answers to common questions about Vrindopnishad, Vaishnavism, spiritual practice, and the authenticity of our texts.',
-    body: '<h1>Frequently Asked Questions</h1><h3>What is the source of the texts?</h3><p>All verses and biographies are compiled from authorized Vaishnava publications and original palm-leaf transcripts stored in Vrindavan.</p><h3>How can I practice daily?</h3><p>You can engage in daily Japa chanting using our digital sanctuary dashboard and read one verse (Swadhyaya) every morning.</p>'
+    en: {
+      title: 'FAQ — Frequently Asked Questions about Vrindopnishad',
+      description: 'Find answers to common questions about Vrindopnishad, Vaishnavism, spiritual practice, and the authenticity of our texts.',
+      body: '<h1>Frequently Asked Questions</h1><h3>What is Vrindopnishad?</h3><p>Vrindopnishad is a sacred digital platform dedicated to preserving and sharing authentic spiritual and Vedic knowledge. It hosts Sanskrit shlokas, strotras, poetry, and saint teachings.</p><h3>Are the texts authentic?</h3><p>Yes, all texts are compiled from authorized Vaishnava publications, verified against established scholarly editions, and cross-checked by Sanskrit scholars in Vrindavan.</p><h3>Is this platform associated with a specific sect?</h3><p>While deeply rooted in the Gaudiya Vaishnava and Radhavallabhi traditions of Vrindavan, Vrindopnishad welcomes seekers of all backgrounds and maintains scholarly objectivity.</p><h3>How can I practice daily?</h3><p>You can read the Verse of the Day, contemplate its meaning, listen to audio chanting, and use the Japa counter to chant the holy names of God daily.</p>'
+    },
+    hi: {
+      title: 'प्रश्नोत्तर — वृंदोपनिषद् सामान्य प्रश्न और उत्तर',
+      description: 'वृंदोपनिषद् से संबंधित मुख्य प्रश्नों के समाधान। श्लोकों की प्रामाणिकता, नाम जप और साधना के विषय में अक्सर पूछे जाने वाले प्रश्न।',
+      body: '<h1>अक्सर पूछे जाने वाले प्रश्न</h1><h3>वृंदोपनिषद् क्या है?</h3><p>वृंदोपनिषद् एक डिजिटल आध्यात्मिक मंच है जो वेदों, उपनिषदों और वृंदावन के संतों की शिक्षाओं को संरक्षित करके उन्हें जन-साधारण तक पहुँचाने का कार्य कर रहा है।</p><h3>यहाँ संकलित श्लोक कितने प्रामाणिक हैं?</h3><p>सभी पाठ और श्लोक प्रामाणिक वैष्णव ग्रन्थों और वृंदावन की मूल पांडुलिपियों से लिए गए हैं। इनकी प्रामाणिकता की जाँच संस्कृत के विद्वानों द्वारा की गई है।</p><h3>क्या यह किसी विशेष संप्रदाय से जुड़ा है?</h3><p>यह मंच ब्रज की वैष्णव परंपरा (गौड़ीय, राधावल्लभ, हरिदासी संप्रदाय आदि) से प्रेरित है, परंतु यहाँ संकलित ज्ञान सार्वभौमिक है और सभी पृष्ठभूमि के साधकों का स्वागत करता है।</p><h3>मैं अपनी दैनिक साधना कैसे शुरू करूँ?</h3><p>आप प्रतिदिन \'आज का श्लोक\' पढ़ सकते हैं, उसके अर्थ का चिंतन कर सकते हैं और नाम जप काउंटर का उपयोग करके प्रतिदिन भगवान के नाम का स्मरण कर सकते हैं।</p>'
+    }
   },
   'comparison-with-upanishads': {
-    title: 'Comparison of Vrindopnishad with Classical Upanishads | तुलना',
-    description: 'How does Vrindopnishad compare to principal Vedic Upanishads? Read a detailed comparative study of theology and methods.',
-    body: '<h1>Comparison with Upanishads</h1><p>While classical Upanishads focus primarily on the formless aspect of truth (Nirguna Brahman) and absolute liberation (Mukti), Vrindopnishad focuses on the personal aspect of truth (Saguna Brahman) and the bliss of divine pastimes, highlighting that Prema (divine love) surpasses simple liberation.</p>'
+    en: {
+      title: 'Comparison of Vrindopnishad with Classical Upanishads',
+      description: 'How does Vrindopnishad compare to principal Vedic Upanishads? Read a detailed comparative study of theology and methods.',
+      body: '<h1>Comparison with Classical Upanishads</h1><p>While the classical Vedic Upanishads (such as the Chandogya, Brihadaranyaka, and Isha) focus primarily on the formless aspect of truth (Nirguna Brahman) and absolute liberation (Moksha), Vrindopnishad synthesizes this intellectual peak with the ultimate depth of Bhakti (loving devotion). It shows that the absolute truth is not a cold, qualityless state of consciousness, but the supreme person who possesses infinite qualities and is the ocean of relationship (Raso Vai Sah).</p><p>In classical Upanishads, the method is often negation (Neti Neti) and quiet meditation to realize the identity of the individual soul with the supreme soul. In Vrindopnishad, the method is celebration and relationship — chanting the names, singing the pastimes, and serving the divine couple Radha Krishna. The individual soul does not merge into the divine, but retains its distinct spiritual identity in order to experience the bliss of eternal service.</p><p>Thus, Vrindopnishad does not reject the classical Upanishads but rather fulfills them. It takes the high philosophical conclusions of the Upanishads and bathes them in the sweet, relational nectar of Vrindavan devotion, presenting a complete, integrated path that satisfies both the intellect and the heart.</p>'
+    },
+    hi: {
+      title: 'पारंपरिक उपनिषदों से तुलना — वृंदोपनिषद् दार्शनिक तुलना',
+      description: 'वैदिक उपनिषदों और वृंदावन की रसिक विचारधारा के बीच दार्शनिक अंतर और समानताएँ। ब्रह्म, आत्मा और प्रेम दर्शन की तुलना।',
+      body: '<h1>वैदिक उपनिषदों से तुलना</h1><p>पारंपरिक वैदिक उपनिषद (जैसे ईश, कठ, केन आदि) मुख्य रूप से ज्ञान मार्ग पर आधारित हैं। वे निराकार ब्रह्म की प्राप्ति और सांसारिक बंधनों से मुक्त होकर मोक्ष (मुक्ति) पाने को जीवन का परम ध्येय घोषित करते हैं। वहीं, वृंदोपनिषद् इस ज्ञान को आगे बढ़ाते हुए भगवान के साकार और मधुर रूप \'श्री राधा कृष्ण\' की उपासना पर बल देता है।</p><p>पारंपरिक उपनिषदों की साधना पद्धति में जगत को मिथ्या मानकर \'नेति नेति\' (यह नहीं, वह नहीं) का आश्रय लिया जाता है और मौन ध्यान किया जाता है। इसके विपरीत, वृंदोपनिषद् में संसार को भगवान की लीला का विस्तार मानकर भगवान के नामों, गुणों और रूप का उत्सव मनाया जाता है। यहाँ भक्त भगवान में लीन होना नहीं चाहता, बल्कि सेवक बनकर उनके प्रेम का रसास्वादन करना चाहता है।</p><p>संक्षेप में, पारंपरिक उपनिषद यदि ज्ञान का शिखर हैं, तो वृंदोपनिषद् उस शिखर पर बहने वाला प्रेम रस का झरना है। यह बुद्धि की गहराई को हृदय के भाव से जोड़कर एक पूर्ण जीवन दर्शन प्रस्तुत करता है।</p>'
+    }
   },
   'guide': {
-    title: 'Complete Guide to Vrindopnishad — How to Practice | मार्गदर्शिका',
-    description: 'A step-by-step seeker\'s guide to utilizing Vrindopnishad for daily paath, meditation, Japa chanting, and spiritual growth.',
-    body: '<h1>Spiritual Guide</h1><p>Begin your day with the Swadhyaya widget on our home page. Review the Sanskrit text, contemplate the takeaways, and use the Japa counter to chant the holy names. Focus your awareness on the divine sound vibration to cultivate mental clarity.</p>'
+    en: {
+      title: 'Complete Guide to Vrindopnishad — Seeker\'s Manual',
+      description: 'A step-by-step seeker\'s guide to utilizing Vrindopnishad for daily paath, meditation, Japa chanting, and spiritual growth.',
+      body: '<h1>Seeker\'s Practice Guide</h1><p>To make the most of the Vrindopnishad platform, we recommend establishing a consistent daily practice. Begin your morning by accessing the Verse of the Day. Read the Sanskrit text aloud if possible, as the sound vibration has a purifying effect on the mind. Spend a few minutes reading the Hindi and English translations, focusing on how the message applies to your daily life.</p><p>Next, use the digital Japa counter to chant your daily rounds of the holy names. Find a quiet spot, sit comfortably with a straight posture, and focus your full attention on the sound of the mantra. Try to avoid distractions and quiet the mind, letting the sound vibration wash over you. This practice builds focus, reduces stress, and cultivates inner peace.</p><p>Throughout the day, try to remember the teachings of the saints. Perform your daily duties as an offering to the divine, maintaining an attitude of gratitude and humility. In the evening, you can return to the platform to read a biography of a saint or listen to a temple kirtan. By making these practices a part of your daily routine, you will experience a steady growth in your spiritual awareness and emotional well-being.</p>'
+    },
+    hi: {
+      title: 'साधना मार्गदर्शिका — वृंदोपनिषद् का दैनिक उपयोग कैसे करें',
+      description: 'दैनिक स्वाध्याय, नाम जप और ध्यान के लिए एक पूर्ण व्यावहारिक मार्गदर्शिका। आध्यात्मिक विकास के लिए सरल कदम।',
+      body: '<h1>साधना मार्गदर्शिका</h1><p>वृंदोपनिषद् मंच का अधिकतम लाभ उठाने के लिए हम एक नियमित दैनिक दिनचर्या बनाने की सलाह देते हैं। अपने सुबह के समय को शांत और आध्यात्मिक वातावरण में बिताने का प्रयास करें।</p><p>1. **दैनिक स्वाध्याय:** प्रतिदिन सुबह उठकर सबसे पहले मंच पर दिए गए \'दैनिक श्लोक\' या पद का पाठ करें। संस्कृत शब्दों के सही उच्चारण का अभ्यास करें और उसके बाद उसके अनुवाद और व्याख्या को ध्यानपूर्वक पढ़ें।</p><p>2. **नाम जप साधना:** दिन में कम से कम 10 से 15 मिनट के लिए नाम जप काउंटर का उपयोग करें। एक शांत स्थान पर बैठकर भगवान के नाम का उच्चारण करें और अपना पूरा ध्यान उस ध्वनि पर केंद्रित करें। यह मानसिक विकारों को शांत करने की सबसे शक्तिशाली औषधि है।</p><p>3. **संतों का स्मरण:** संध्या के समय संतों की जीवनियाँ (संत चरित्र) पढ़ें। उनके जीवन की कठिनाइयाँ और उनकी निष्कपट भक्ति हमें कठिन समय में भी धैर्य और विश्वास बनाए रखने की शक्ति देती है।</p>'
+    }
   },
   'braj-rasik-heritage': {
-    title: 'Braj Rasik Heritage — The Sacred Tradition of Vrindavan | विरासत',
-    description: 'Discover the rich spiritual legacy of the Braj region and Vaishnava Rasik saints. Explore their contributions to kirtan, literature, and art.',
-    body: '<h1>Braj Rasik Heritage</h1><p>Braj Rasik Heritage is the spiritual repository of divine songs, literature, poetry, and theology compiled by the rasik saints of Vrindavan. This heritage centers on absolute selflessness, sweet aesthetic devotion, and ecstatic communion with Shri Radha Krishna.</p>'
+    en: {
+      title: 'Braj Rasik Heritage — The Devotional Legacy of Vrindavan',
+      description: 'Discover the rich spiritual legacy of the Braj region and Vaishnava Rasik saints. Explore their contributions to kirtan, literature, and art.',
+      body: '<h1>Braj Rasik Heritage</h1><p>Braj Rasik Heritage is the spiritual repository of divine songs, literature, poetry, and theology compiled by the rasik saints of Vrindavan. This heritage centers on absolute selflessness, sweet aesthetic devotion, and ecstatic communion with Shri Radha Krishna. It includes the teachings of Swami Haridas, Hit Harivansh Mahaprabhu, Swami Hariram Vyas, Surdas, and Sri Chaitanya\'s followers.</p><p>This heritage is unique in its emphasis on Madhurya Rasa (the mood of sweet, intimate love) over Aishwarya Rasa (the mood of awe and reverence). It teaches that God is not a distant ruler to be feared, but a beloved friend and partner in a relationship of pure love. The saints expressed this philosophy through beautiful poetry in the Braj Bhasha language, which is celebrated for its musicality and emotional depth.</p><p>By preserving and sharing this heritage, Vrindopnishad aims to keep this living spiritual tradition alive for future generations. The songs and teachings are not just historical artifacts, but active invitations to experience the same divine love that the saints felt. Exploring this heritage is a journey into the very heart of devotion, offering a path to absolute inner fulfillment.</p>'
+    },
+    hi: {
+      title: 'ब्रज रसिक विरासत — वृंदावन की अलौकिक प्रेम परंपरा',
+      description: 'ब्रज के रसिक संतों की अनमोल आध्यात्मिक धरोहर। उनके काव्य, संगीत और दर्शन का संपूर्ण परिचय और वैष्णव समाज में योगदान।',
+      body: '<h1>ब्रज रसिक विरासत</h1><p>ब्रज रसिक विरासत उन महान संतों के जीवन, उनके भजनों, काव्यों और दार्शनिक सिद्धांतों का दिव्य संकलन है जिन्होंने ब्रज की पावन भूमि को अपनी लीला स्थली बनाया। इस विरासत का मूल उद्देश्य भगवान श्री राधा कृष्ण के प्रति पूर्ण और निस्वार्थ प्रेम (माधुर्य भाव) का प्रचार करना है।</p><p>इस परंपरा में स्वामी हरिदास, हित हरिवंश महाप्रभु, नारायण भट्ट और हरिराम व्यास जैसे आचार्यों का स्थान प्रमुख है। इन संतों ने ब्रजभाषा में मधुर पदों की रचना की जिन्हें आज भी वृंदावन के मंदिरों में गाया जाता है। यह परंपरा सिखाती है कि भगवान को पाने के लिए किसी कठिन तपस्या की आवश्यकता नहीं है, केवल सरल और निश्छल प्रेम ही उन्हें वश में कर सकता है।</p><p>वृंदोपनिषद् इस विरासत को डिजिटल युग में जीवित रखने के लिए प्रतिबद्ध है। यह केवल एक संग्रह नहीं है, बल्कि एक जीवित अनुभव है जो हमें सिखाता है कि किस प्रकार हम अपने हृदय को एक निर्मल कुंज बनाकर उसमें परमात्मा का स्वागत कर सकते हैं।</p>'
+    }
   }
 };
 
@@ -323,8 +412,26 @@ export default async function handler(req, res) {
   let pageUrl = DOMAIN + (isHindiRoute ? '/hi' : '');
   let jsonLd = '';
   let mainBodyHtml = '';
+  let ogImageUrl = 'https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png';
 
-  // 1. Fetch content index from Supabase
+  // FAQ structured data definitions
+  const faqDataEn = [
+    { question: "What is Vrindopnishad?", answer: "Vrindopnishad is a sacred digital platform dedicated to preserving and sharing authentic spiritual and Vedic knowledge. It hosts sacred Sanskrit shlokas, devotional strotras, spiritual poetry, and the teachings of Vrindavan saints in Hindi, Sanskrit, and English." },
+    { question: "What does the word Vrindopnishad mean?", answer: "Vrindopnishad combines 'Vrinda' (the sacred groves of Vrindavan) and 'Upanishad' (sacred, esoteric knowledge transmitted from teacher to student). Together it means 'the sacred knowledge flowing from Vrindavan.'" },
+    { question: "Is Vrindopnishad free to use?", answer: "Yes, Vrindopnishad is completely free. The platform believes that sacred knowledge should be universally accessible without financial barriers." },
+    { question: "What languages are available on the platform?", answer: "Content is available in Sanskrit (original texts), Hindi (transliteration and commentary), and English (translations and explanations)." },
+    { question: "Can I listen to the verses being chanted?", answer: "Yes, many verses on the platform include audio narrations with traditional chanting patterns, allowing you to hear the sacred sounds as they were meant to be experienced." }
+  ];
+
+  const faqDataHi = [
+    { question: "वृंदोपनिषद् क्या है?", answer: "वृंदोपनिषद् एक पवित्र डिजिटल मंच है जो प्रामाणिक आध्यात्मिक और वैदिक ज्ञान को संरक्षित करने और साझा करने के लिए समर्पित है। यहाँ आपको संस्कृत श्लोक, स्तोत्र, आध्यात्मिक कविताएँ और वृंदावन के संतों की शिक्षाएँ हिंदी, संस्कृत और अंग्रेजी में मिलेंगी।" },
+    { question: "वृंदोपनिषद् शब्द का क्या अर्थ है?", answer: "वृंदोपनिषद् शब्द 'वृंदा' (वृंदावन की पवित्र तुलसी कुंज) और 'उपनिषद' (गुरु के समीप बैठकर प्राप्त किया गया पवित्र ज्ञान) से मिलकर बना है। इसका अर्थ है 'वृंदावन से प्रवाहित होने वाला पवित्र ज्ञान'।" },
+    { question: "क्या वृंदोपनिषद् का उपयोग मुफ़्त है?", answer: "हाँ, वृंदोपनिषद् पूरी तरह से मुफ़्त है। हमारा मानना है कि पवित्र आध्यात्मिक ज्ञान सभी के लिए बिना किसी वित्तीय बाधा के सुलभ होना चाहिए।" },
+    { question: "मंच पर कौन सी भाषाएँ उपलब्ध हैं?", answer: "सामग्री संस्कृत (मूल पाठ), हिंदी (रोमन पाठ और अनुवाद), और अंग्रेजी (अनुवाद और व्याख्या) में उपलब्ध है।" },
+    { question: "क्या मैं श्लोकों का उच्चारण सुन सकता हूँ?", answer: "हाँ, इस मंच पर अधिकांश श्लोकों और पदों के साथ ऑडियो उच्चारण/गायन दिया गया है, जिससे आप पारंपरिक रागों में इनके पाठ को सुन सकते हैं।" }
+  ];
+
+  // 1. Fetch content index from Supabase (with image_url)
   let allContentItems = [];
   try {
     const PAGE_SIZE = 1000;
@@ -333,7 +440,7 @@ export default async function handler(req, res) {
 
     while (hasMore) {
       const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/content?select=id,title,slug,category,author,hindi_text,sanskrit_text&order=id&offset=${offset}&limit=${PAGE_SIZE}`,
+        `${SUPABASE_URL}/rest/v1/content?select=id,title,slug,category,author,hindi_text,sanskrit_text,image_url&order=id&offset=${offset}&limit=${PAGE_SIZE}`,
         {
           headers: {
             'apikey': SUPABASE_KEY,
@@ -387,11 +494,11 @@ export default async function handler(req, res) {
     });
     
     if (content) {
-      // Fetch full details for this specific content item dynamically
+      // Fetch full details for this specific content item dynamically (with image_url)
       let fullContent = content;
       try {
         const detailResponse = await fetch(
-          `${SUPABASE_URL}/rest/v1/content?select=id,title,slug,category,author,hindi_text,sanskrit_text,english_text,english_translation,content_text,commentary,description,created_at&id=eq.${content.id}&limit=1`,
+          `${SUPABASE_URL}/rest/v1/content?select=id,title,slug,category,author,hindi_text,sanskrit_text,english_text,english_translation,content_text,commentary,description,image_url,created_at&id=eq.${content.id}&limit=1`,
           {
             headers: {
               'apikey': SUPABASE_KEY,
@@ -411,24 +518,71 @@ export default async function handler(req, res) {
       title = isHindiRoute
         ? `${fullContent.title} — ${fullContent.category || 'पवित्र पाठ'} | ${fullContent.author || 'वृंदोपनिषद्'}`
         : `${fullContent.title} — ${fullContent.category || 'Sacred Verse'} | ${fullContent.author || 'Vrindopnishad'}`;
-      description = (fullContent.sanskrit_text || fullContent.hindi_text || fullContent.description || '').substring(0, 160).replace(/[\r\n]+/g, ' ') + '...';
+      
+      const categoryLabel = isHindiRoute ? (fullContent.category || 'पवित्र पाठ') : (fullContent.category || 'Sacred Verse');
+      const authorLabel = fullContent.author && fullContent.author !== 'Braj Rasik Heritage' ? fullContent.author : (isHindiRoute ? 'वैष्णव संत' : 'Vaishnava Saint');
+      
+      description = isHindiRoute
+        ? `पढ़ें और समझें ${fullContent.title}, एक पवित्र ${categoryLabel} जो कि ${authorLabel} द्वारा रचित है। इसका संस्कृत मूल पाठ, हिंदी भावार्थ और व्याख्या यहाँ उपलब्ध है।`
+        : `Read and explore ${fullContent.title}, a sacred ${categoryLabel} written by ${authorLabel}. Access the original Sanskrit shloka, Hindi translation, and English commentary.`;
+      
       pageUrl = getRouteLink(`/content/${canonicalSlug}`);
+
+      if (fullContent.image_url) {
+        ogImageUrl = fullContent.image_url;
+      }
 
       jsonLd = JSON.stringify({
         "@context": "https://schema.org",
-        "@type": "Article",
-        "headline": fullContent.title,
-        "description": description,
-        "author": { "@type": "Person", "name": fullContent.author || "Vrindopnishad" },
-        "publisher": {
-          "@type": "Organization",
-          "name": "Vrindopnishad",
-          "logo": { "@type": "ImageObject", "url": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png" }
-        },
-        "mainEntityOfPage": { "@type": "WebPage", "@id": pageUrl },
-        "inLanguage": ["hi", "sa", "en"],
-        "genre": fullContent.category || "Sacred Literature",
-        "datePublished": fullContent.created_at || today
+        "@graph": [
+          {
+            "@type": "ScholarlyArticle",
+            "@id": `${pageUrl}/#article`,
+            "headline": fullContent.title,
+            "description": description,
+            "image": ogImageUrl,
+            "author": { 
+              "@type": "Person", 
+              "name": authorLabel 
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "Vrindopnishad",
+              "logo": { 
+                "@type": "ImageObject", 
+                "url": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png" 
+              }
+            },
+            "mainEntityOfPage": { "@type": "WebPage", "@id": pageUrl },
+            "inLanguage": ["sa", "hi", "en"],
+            "genre": fullContent.category || "Sacred Literature",
+            "datePublished": fullContent.created_at || today
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": `${pageUrl}/#breadcrumb`,
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": isHindiRoute ? "होम" : "Home",
+                "item": getRouteLink('/')
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": isHindiRoute ? "सभी पाठ" : "All Content",
+                "item": getRouteLink('/content')
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": fullContent.title,
+                "item": pageUrl
+              }
+            ]
+          }
+        ]
       });
 
       const transliteratedSanskrit = fullContent.sanskrit_text ? transliterate(fullContent.sanskrit_text) : "";
@@ -475,9 +629,62 @@ export default async function handler(req, res) {
     });
 
     if (sant) {
-      title = isHindiRoute ? `${sant.name} जीवनी एवं वाणी संग्रह | Vrindopnishad` : `${sant.hinglishName || sant.name} Biography & Vaanis | Vrindopnishad`;
-      description = sant.biography?.text ? sant.biography.text.substring(0, 160) : `Complete collection of spiritual poetry and hymns written by ${sant.hinglishName || sant.name}.`;
+      const santName = sant.name;
+      const santHinglish = sant.hinglishName || sant.name;
+      title = isHindiRoute
+        ? `${santName} की जीवनी, ग्रन्थ एवं सम्पूर्ण वाणी संग्रह | वृंदोपनिषद्`
+        : `${santHinglish} Biography, Granthas & Complete Vaanis | Vrindopnishad`;
+        
+      const bioSnippet = sant.biography?.text ? sant.biography.text.substring(0, 150) : "";
+      description = isHindiRoute
+        ? `महान वैष्णव संत ${santName} का जीवन चरित्र, इतिहास, उनके द्वारा रचित ग्रन्थ और वाणी पदों का भावार्थ सहित संग्रह। ${bioSnippet}`
+        : `Explore the life history, spiritual teachings, and complete collection of verses written by the revered Vaishnava saint ${santHinglish}. ${bioSnippet}`;
+      
       pageUrl = getRouteLink(`/saint/${encodeURIComponent(sant.slug || slug)}`);
+
+      if (sant.imageUrl) {
+        ogImageUrl = sant.imageUrl;
+      }
+
+      jsonLd = JSON.stringify({
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": `${pageUrl}/#person`,
+            "name": santName,
+            "alternateName": santHinglish !== santName ? santHinglish : undefined,
+            "description": sant.biography?.text ? sant.biography.text.substring(0, 200) : description,
+            "image": ogImageUrl,
+            "knowsAbout": ["Vaishnavism", "Bhakti", "Sanskrit", "Braj Ras", "Vrindavan"],
+            "url": pageUrl
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": `${pageUrl}/#breadcrumb`,
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": isHindiRoute ? "होम" : "Home",
+                "item": getRouteLink('/')
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": isHindiRoute ? "संत" : "Saints",
+                "item": getRouteLink('/saints')
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": santName,
+                "item": pageUrl
+              }
+            ]
+          }
+        ]
+      });
 
       mainBodyHtml = `
         <h1>${escapeHtml(sant.name)}</h1>
@@ -517,11 +724,64 @@ export default async function handler(req, res) {
     });
 
     if (book) {
-      title = isHindiRoute 
-        ? `${book.name} ग्रन्थ - वाणी संग्रह एवं हिंदी अनुवाद | Vrindopnishad`
-        : `${book.name} Grantha - Verse Collection & Translation | Vrindopnishad`;
-      description = `Read and contemplate the sacred verses and translations from the grantha ${book.name} written by ${book.author}.`;
+      title = isHindiRoute
+        ? `${book.name} ग्रन्थ — मूल पाठ, व्याख्या एवं हिंदी अनुवाद | वृंदोपनिषद्`
+        : `${book.name} Grantha — Original Text, Meaning & Translations | Vrindopnishad`;
+      description = isHindiRoute
+        ? `वैष्णव संत ${book.author} द्वारा रचित पवित्र ग्रन्थ ${book.name} के सभी पद, मूल संस्कृत श्लोक, हिंदी अनुवाद और व्याख्या।`
+        : `Read, chant, and explore the sacred verses of ${book.name} grantha composed by ${book.author}, with detailed translations and spiritual insights.`;
+      
       pageUrl = getRouteLink(`/book/${encodeURIComponent(book.slug || slug)}`);
+
+      if (book.imageUrl) {
+        ogImageUrl = book.imageUrl;
+      }
+
+      jsonLd = JSON.stringify({
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Book",
+            "@id": `${pageUrl}/#book`,
+            "name": book.name,
+            "author": {
+              "@type": "Person",
+              "name": book.author
+            },
+            "image": ogImageUrl,
+            "inLanguage": ["hi", "sa"],
+            "publisher": {
+              "@type": "Organization",
+              "name": "Vrindopnishad"
+            },
+            "url": pageUrl
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": `${pageUrl}/#breadcrumb`,
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": isHindiRoute ? "होम" : "Home",
+                "item": getRouteLink('/')
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": isHindiRoute ? "ग्रन्थ" : "Books",
+                "item": getRouteLink('/books')
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": book.name,
+                "item": pageUrl
+              }
+            ]
+          }
+        ]
+      });
 
       mainBodyHtml = `
         <h1>${escapeHtml(book.name)}</h1>
@@ -553,10 +813,55 @@ export default async function handler(req, res) {
 
     if (raga) {
       title = isHindiRoute
-        ? `राग ${raga.name} के पद एवं संकीर्तन | Vrindopnishad`
-        : `Raga ${raga.hinglishName || raga.name} Sankirtan & Verses | Vrindopnishad`;
-      description = `Explore kirtan, bhajans and verses set to the classical melody of Raga ${raga.hinglishName || raga.name}.`;
+        ? `राग ${raga.name} के भजन, पद एवं संकीर्तन संग्रह | वृंदोपनिषद्`
+        : `Raga ${raga.hinglishName || raga.name} Bhajans, Padas & Sankirtan Collection | Vrindopnishad`;
+      description = isHindiRoute
+        ? `शास्त्रीय संगीत के राग ${raga.name} में निबद्ध सभी वैष्णव भजन, पद और संकीर्तन पाठ। मूल स्वर और भावार्थ के साथ पढ़ें।`
+        : `Browse and read the collection of devotional verses, bhajans, and temple kirtans composed in the traditional classical melody of Raga ${raga.hinglishName || raga.name}.`;
+      
       pageUrl = getRouteLink(`/raga/${encodeURIComponent(raga.slug || slug)}`);
+
+      if (raga.imageUrl) {
+        ogImageUrl = raga.imageUrl;
+      }
+
+      jsonLd = JSON.stringify({
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "CollectionPage",
+            "@id": `${pageUrl}/#raga`,
+            "name": isHindiRoute ? `राग ${raga.name}` : `Raga ${raga.name}`,
+            "description": description,
+            "image": ogImageUrl,
+            "url": pageUrl
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": `${pageUrl}/#breadcrumb`,
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": isHindiRoute ? "होम" : "Home",
+                "item": getRouteLink('/')
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": isHindiRoute ? "राग" : "Ragas",
+                "item": getRouteLink('/ragas')
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": raga.name,
+                "item": pageUrl
+              }
+            ]
+          }
+        ]
+      });
 
       mainBodyHtml = `
         <h1>${isHindiRoute ? `राग ${escapeHtml(raga.name)}` : `Raga ${escapeHtml(raga.name)}`}</h1>
@@ -579,9 +884,11 @@ export default async function handler(req, res) {
     const categoryTitle = decodedSlug.charAt(0).toUpperCase() + decodedSlug.slice(1);
 
     title = isHindiRoute
-      ? `${categoryTitle} संग्रह एवं व्याख्या | Vrindopnishad`
-      : `${categoryTitle} Collection & Meanings | Vrindopnishad`;
-    description = `Read the complete collection of ${categoryTitle} on Vrindopnishad. Text, Hindi translations, and English explanations available.`;
+      ? `${categoryTitle} संग्रह, अर्थ एवं व्याख्या सहित | वृंदोपनिषद्`
+      : `${categoryTitle} Collection, Meanings & Commentary | Vrindopnishad`;
+    description = isHindiRoute
+      ? `वृंदोपनिषद् पर ${categoryTitle} श्रेणी के अंतर्गत संकलित सभी पवित्र श्लोक, स्तोत्र, पद और भजन हिंदी अनुवाद के साथ।`
+      : `Read and contemplate the complete collection of sacred texts, shlokas, and hyms categorized under ${categoryTitle} on Vrindopnishad.`;
     pageUrl = getRouteLink(`/category/${encodeURIComponent(slug)}`);
 
     mainBodyHtml = `
@@ -596,9 +903,10 @@ export default async function handler(req, res) {
   } else if (type === 'static' && slug) {
     // Static page lookup
     const decodedSlug = decodeURIComponent(slug);
-    const staticPage = STATIC_SEO_PAGES[decodedSlug];
+    const staticPageData = STATIC_SEO_PAGES[decodedSlug];
 
-    if (staticPage) {
+    if (staticPageData) {
+      const staticPage = isHindiRoute ? (staticPageData.hi || staticPageData.en) : (staticPageData.en || staticPageData.hi);
       title = staticPage.title;
       description = staticPage.description;
       pageUrl = getRouteLink(`/${decodedSlug}`);
@@ -608,12 +916,105 @@ export default async function handler(req, res) {
           ${staticPage.body}
         </article>
       `;
+
+      // Schemas for static pages
+      if (decodedSlug === 'faq') {
+        const faqList = isHindiRoute ? faqDataHi : faqDataEn;
+        jsonLd = JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "FAQPage",
+              "@id": `${pageUrl}/#faq`,
+              "mainEntity": faqList.map(item => ({
+                "@type": "Question",
+                "name": item.question,
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": item.answer
+                }
+              }))
+            },
+            {
+              "@type": "BreadcrumbList",
+              "@id": `${pageUrl}/#breadcrumb`,
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": isHindiRoute ? "होम" : "Home",
+                  "item": getRouteLink('/')
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": isHindiRoute ? "प्रश्नोत्तर" : "FAQ",
+                  "item": pageUrl
+                }
+              ]
+            }
+          ]
+        });
+      } else {
+        const pageName = title.split('—')[0].trim();
+        jsonLd = JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Article",
+              "@id": `${pageUrl}/#article`,
+              "isPartOf": {
+                "@type": "WebPage",
+                "@id": pageUrl
+              },
+              "headline": title,
+              "description": description,
+              "image": ogImageUrl,
+              "author": {
+                "@type": "Organization",
+                "name": "Vrindopnishad",
+                "url": DOMAIN
+              },
+              "publisher": {
+                "@type": "Organization",
+                "name": "Vrindopnishad",
+                "logo": {
+                  "@type": "ImageObject",
+                  "url": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png"
+                }
+              },
+              "inLanguage": isHindiRoute ? "hi" : "en",
+              "mainEntityOfPage": pageUrl
+            },
+            {
+              "@type": "BreadcrumbList",
+              "@id": `${pageUrl}/#breadcrumb`,
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": isHindiRoute ? "होम" : "Home",
+                  "item": getRouteLink('/')
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": pageName,
+                  "item": pageUrl
+                }
+              ]
+            }
+          ]
+        });
+      }
     } else {
       // Fallback list pages
+      let listName = "";
       if (decodedSlug === 'saints') {
         title = isHindiRoute ? `रसिक सन्त एवं चरित्र (Rasik Saints & Biographies) | Vrindopnishad` : `Vaishnava Rasik Saints & Biographies | Vrindopnishad`;
         description = isHindiRoute ? `ब्रज के महान रसिक संतों की जीवनी, इतिहास और उनके वाणी पदों का संग्रह पढ़ें।` : `Learn about the lives, teachings, and spiritual literature of the Rasik saints of Vrindavan, Barsana, and Braj.`;
         pageUrl = getRouteLink('/saints');
+        listName = isHindiRoute ? "वैष्णव रसिक संत" : "Vaishnava Rasik Saints";
         mainBodyHtml = `
           <h1>${isHindiRoute ? 'वैष्णव रसिक संत' : 'Vaishnava Rasik Saints'}</h1>
           <p>${isHindiRoute ? 'वृंदावन और ब्रज के संतों की विस्तृत जीवनी और उनके पद।' : 'Read detailed biographies and collected works of Vrindavan saints.'}</p>
@@ -625,6 +1026,7 @@ export default async function handler(req, res) {
         title = isHindiRoute ? `पवित्र ग्रन्थ एवं वाणी साहित्य (Sacred Scriptures & Literature) | Vrindopnishad` : `Sacred Scriptures & Literature | Vrindopnishad`;
         description = isHindiRoute ? `पवित्र वैष्णव ग्रंथों, वाणियों और साहित्यों के डिजिटल संस्करण पढ़ें।` : `Browse and read the digital editions of sacred Vaishnava granthas, vanis, and spiritual scriptures.`;
         pageUrl = getRouteLink('/books');
+        listName = isHindiRoute ? "पवित्र ग्रन्थ" : "Sacred Granthas";
         mainBodyHtml = `
           <h1>${isHindiRoute ? 'पवित्र ग्रन्थ साहित्य' : 'Sacred Granthas'}</h1>
           <p>${isHindiRoute ? 'वैष्णव संप्रदाय के पवित्र शास्त्रों और ग्रंथों के भावार्थ।' : 'Browse digital editions of Vaishnava sacred scriptures.'}</p>
@@ -636,6 +1038,7 @@ export default async function handler(req, res) {
         title = isHindiRoute ? `शास्त्रीय राग एवं कीर्तन राग (Vaishnava Raga Registry) | Vrindopnishad` : `Vaishnava Raga Registry | Vrindopnishad`;
         description = isHindiRoute ? `शास्त्रीय रागों में रचित संकीर्तन पद और भजनों का राग-अनुसार संग्रह।` : `Explore devotional songs and verses organized by their classical raag melodies.`;
         pageUrl = getRouteLink('/ragas');
+        listName = isHindiRoute ? "शास्त्रीय देवभक्ति राग" : "Vaishnava Ragas";
         mainBodyHtml = `
           <h1>${isHindiRoute ? 'देवभक्ति शास्त्रीय राग' : 'Devotional Classical Ragas'}</h1>
           <p>${isHindiRoute ? 'रागों के आधार पर वर्गीकृत पद और संकीर्तन संग्रह।' : 'Explore verses and hymns classified by raag.'}</p>
@@ -647,6 +1050,7 @@ export default async function handler(req, res) {
         title = isHindiRoute ? `वृंदोपनिषद् पाठ लाइब्रेरी (Browse All Sacred Content) | Vrindopnishad` : `Vrindopnishad Paath Library (Browse All Sacred Content) | Vrindopnishad`;
         description = isHindiRoute ? `संस्कृत श्लोकों, स्तोत्रों, भजनों, और आध्यात्मिक कविताओं की संपूर्ण लाइब्रेरी।` : `Access the complete index of shlokas, strotras, bhajans, kirtans, and spiritual poetry.`;
         pageUrl = getRouteLink('/content');
+        listName = isHindiRoute ? "सभी संकलित पाठ" : "All Sacred Verses";
         mainBodyHtml = `
           <h1>${isHindiRoute ? 'सभी संकलित पाठ एवं श्लोक' : 'All Sacred Verses & Content'}</h1>
           <ul>
@@ -658,6 +1062,39 @@ export default async function handler(req, res) {
         res.status(404).send(`<!doctype html><html lang="hi"><head><meta charset="utf-8"/><title>Page Not Found — Vrindopnishad</title><meta name="robots" content="noindex"/></head><body style="font-family:sans-serif;text-align:center;padding:60px 20px;"><h1>404 — Page Not Found</h1><p><a href="${DOMAIN}/">Go Home →</a></p></body></html>`);
         return;
       }
+
+      if (listName) {
+        jsonLd = JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "CollectionPage",
+              "@id": `${pageUrl}/#collection`,
+              "name": listName,
+              "description": description,
+              "url": pageUrl
+            },
+            {
+              "@type": "BreadcrumbList",
+              "@id": `${pageUrl}/#breadcrumb`,
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": isHindiRoute ? "होम" : "Home",
+                  "item": getRouteLink('/')
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": listName,
+                  "item": pageUrl
+                }
+              ]
+            }
+          ]
+        });
+      }
     }
 
   } else {
@@ -665,6 +1102,51 @@ export default async function handler(req, res) {
     pageUrl = getRouteLink('/');
     title = isHindiRoute ? `वृंदोपनिषद् पाठ | श्लोक, स्तोत्र, और आध्यात्मिक कविता संग्रह` : `Vrindopnishad Paath — वृंदोपनिषद् पाठ | Sacred Shlokas, Strotras & Devotional Poetry`;
     description = `Vrindopnishad Paath (वृंदोपनिषद् पाठ) — Read and listen to sacred Sanskrit shlokas, strotras, devotional poetry and Vedic wisdom from Vrindavan saints. Free online paath in Hindi, Sanskrit and English. भगवद्गीता, मंत्र, श्लोक, स्तोत्र सब यहाँ पढ़ें।`;
+
+    jsonLd = JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": `${DOMAIN}/#organization`,
+          "name": "Vrindopnishad",
+          "url": DOMAIN,
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png",
+            "width": 512,
+            "height": 512
+          },
+          "sameAs": [
+            "https://www.instagram.com/vrindopnishad",
+            "https://www.facebook.com/vrindopnishad",
+            "https://www.youtube.com/@vrindopnishad"
+          ],
+          "description": "Vrindopnishad is a digital sanctuary for authentic spiritual and Vedic knowledge, connecting tradition with modern innovation."
+        },
+        {
+          "@type": "WebSite",
+          "@id": `${DOMAIN}/#website`,
+          "name": "Vrindopnishad Paath",
+          "url": DOMAIN,
+          "publisher": { "@id": `${DOMAIN}/#organization` },
+          "description": "Vrindopnishad Paath — The official digital sanctuary of sacred shlokas, strotras, and devotional poetry.",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": `${DOMAIN}/content?q={search_term_string}`,
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": `${DOMAIN}/#webpage`,
+          "url": DOMAIN,
+          "name": "Vrindopnishad Paath — Home",
+          "isPartOf": { "@id": `${DOMAIN}/#website` },
+          "description": "Read and listen to sacred Sanskrit shlokas, strotras, and devotional poetry from Vrindavan."
+        }
+      ]
+    });
 
     mainBodyHtml = `
       <h1>Vrindopnishad Paath — वृंदोपनिषद् पाठ</h1>
@@ -718,13 +1200,13 @@ export default async function handler(req, res) {
   <meta property="og:title" content="${title}"/>
   <meta property="og:description" content="${description}"/>
   <meta property="og:url" content="${pageUrl}"/>
-  <meta property="og:image" content="https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png"/>
+  <meta property="og:image" content="${ogImageUrl}"/>
   <meta property="og:site_name" content="Vrindopnishad Paath — वृंदोपनिषद् पाठ"/>
   <meta property="og:locale" content="hi_IN"/>
   <meta name="twitter:card" content="summary_large_image"/>
   <meta name="twitter:title" content="${title}"/>
   <meta name="twitter:description" content="${description}"/>
-  <meta name="twitter:image" content="https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png"/>
+  <meta name="twitter:image" content="${ogImageUrl}"/>
   ${jsonLd ? `<script type="application/ld+json">${jsonLd}</script>` : ''}
   <meta name="theme-color" content="#0D0D12"/>
   <link rel="icon" href="https://vrindopnishad.in/favicon.ico" sizes="48x48"/>
