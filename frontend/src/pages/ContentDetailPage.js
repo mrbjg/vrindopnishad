@@ -20,8 +20,50 @@ const ContentDetailPage = () => {
   const isHindiRoute = location.pathname.startsWith('/hi');
   const { apiService } = useContext(ApiContext);
   const { settings, updateSetting } = useSettings();
-  const [content, setContent] = useState(() => apiService.getCachedData(`id_${id}`));
-  const [loading, setLoading] = useState(!apiService.getCachedData(`id_${id}`));
+  const [content, setContent] = useState(() => {
+    const sessionCached = apiService.getCachedData(`id_${id}`);
+    if (sessionCached) return sessionCached;
+    try {
+      const decodedId = decodeURIComponent(id);
+      const cacheKeys = ['vrindopnishad_all_content_cache', 'sanctuary_content_cache'];
+      for (const key of cacheKeys) {
+        const cached = localStorage.getItem(key);
+        if (cached) {
+          const items = JSON.parse(cached);
+          const matched = items.find(item => 
+            item.id?.toString() === id.toString() ||
+            item.id?.toString() === decodedId.toString() ||
+            item.slug === id ||
+            item.slug === decodedId
+          );
+          if (matched) return matched;
+        }
+      }
+    } catch (e) {}
+    return null;
+  });
+  const [loading, setLoading] = useState(() => {
+    const sessionCached = apiService.getCachedData(`id_${id}`);
+    if (sessionCached) return false;
+    try {
+      const decodedId = decodeURIComponent(id);
+      const cacheKeys = ['vrindopnishad_all_content_cache', 'sanctuary_content_cache'];
+      for (const key of cacheKeys) {
+        const cached = localStorage.getItem(key);
+        if (cached) {
+          const items = JSON.parse(cached);
+          const matched = items.find(item => 
+            item.id?.toString() === id.toString() ||
+            item.id?.toString() === decodedId.toString() ||
+            item.slug === id ||
+            item.slug === decodedId
+          );
+          if (matched) return false;
+        }
+      }
+    } catch (e) {}
+    return true;
+  });
   const [relatedSaint, setRelatedSaint] = useState(null);
   const [relatedBook, setRelatedBook] = useState(null);
   const [relatedRaga, setRelatedRaga] = useState(null);

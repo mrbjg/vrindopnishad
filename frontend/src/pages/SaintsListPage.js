@@ -18,19 +18,27 @@ const SaintsListPage = () => {
   const isHindiRoute = location.pathname.startsWith('/hi');
   const { apiService } = useContext(ApiContext);
   
-  const [saints, setSaints] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [saints, setSaints] = useState(() => {
+    try {
+      const cached = localStorage.getItem('vrindopnishad_saints_cache');
+      return cached ? JSON.parse(cached) : [];
+    } catch { return []; }
+  });
+  const [loading, setLoading] = useState(() => {
+    try { return !localStorage.getItem('vrindopnishad_saints_cache'); }
+    catch { return true; }
+  });
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     let active = true;
     const load = async () => {
       try {
-        // Fetch all items to get complete relationships
         const allItems = await apiService.getAllContent(null, 10000);
         const relations = extractRelations(allItems);
         if (active) {
           setSaints(relations.sants);
+          localStorage.setItem('vrindopnishad_saints_cache', JSON.stringify(relations.sants));
         }
       } catch (error) {
         console.error('Error loading saints:', error);

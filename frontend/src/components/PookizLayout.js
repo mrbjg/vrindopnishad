@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useCallback } from 'react';
+import React, { useState, useContext, useEffect, useCallback, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../App';
 import { useSettings } from '../contexts/SettingsContext';
@@ -34,10 +34,17 @@ const PookizLayout = ({ children }) => {
     return localStorage.getItem('pookiz_sidebar_collapsed') === 'true';
   });
 
+  const [isCollapsing, setIsCollapsing] = useState(false);
+  const resizeRef = useRef({ startX: 0, startWidth: 0 });
+
   const toggleSidebar = () => {
+    setIsCollapsing(true);
     const nextState = !isSidebarCollapsed;
     setIsSidebarCollapsed(nextState);
     localStorage.setItem('pookiz_sidebar_collapsed', String(nextState));
+    setTimeout(() => {
+      setIsCollapsing(false);
+    }, 300);
   };
 
   const [sidebarWidth, setSidebarWidth] = useState(() => {
@@ -48,18 +55,36 @@ const PookizLayout = ({ children }) => {
 
   const startResizing = useCallback((e) => {
     setIsResizing(true);
+    resizeRef.current = {
+      startX: e.clientX,
+      startWidth: sidebarWidth
+    };
     e.preventDefault();
-  }, []);
+  }, [sidebarWidth]);
 
   const stopResizing = useCallback(() => {
     setIsResizing(false);
+    const sidebarEl = document.getElementById('pookiz-main-sidebar');
+    if (sidebarEl) {
+      const styleWidth = sidebarEl.style.width;
+      if (styleWidth) {
+        const finalWidth = parseInt(styleWidth, 10);
+        setSidebarWidth(finalWidth);
+        localStorage.setItem('pookiz_sidebar_width', String(finalWidth));
+      }
+    }
   }, []);
 
   const resize = useCallback((e) => {
     if (isResizing) {
-      const newWidth = Math.max(180, Math.min(380, e.clientX));
-      setSidebarWidth(newWidth);
-      localStorage.setItem('pookiz_sidebar_width', String(newWidth));
+      const { startX, startWidth } = resizeRef.current;
+      const deltaX = e.clientX - startX;
+      const newWidth = Math.max(180, Math.min(380, startWidth + deltaX));
+      
+      const sidebarEl = document.getElementById('pookiz-main-sidebar');
+      if (sidebarEl) {
+        sidebarEl.style.width = `${newWidth}px`;
+      }
     }
   }, [isResizing]);
 
@@ -129,20 +154,7 @@ const PookizLayout = ({ children }) => {
     }
   ];
 
-  // SVG Pookiz Mascot Logo
-  const PookizLogo = () => (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0 animate-pulse-slow">
-      <circle cx="12" cy="12" r="10" fill="#a78bfa" />
-      {/* Eyes */}
-      <ellipse cx="9" cy="11.5" rx="1.2" ry="1.8" fill="#1e1b4b" />
-      <ellipse cx="15" cy="11.5" rx="1.2" ry="1.8" fill="#1e1b4b" />
-      {/* Cheek blush */}
-      <circle cx="7" cy="13.5" r="1" fill="#f43f5e" opacity="0.6" />
-      <circle cx="17" cy="13.5" r="1" fill="#f43f5e" opacity="0.6" />
-      {/* Smile */}
-      <path d="M10.5 14.5C11 15.2 13 15.2 13.5 14.5" stroke="#1e1b4b" strokeWidth="1.2" strokeLinecap="round" />
-    </svg>
-  );
+
 
   const devoteeName = settings.devoteeName || (isHiRoute ? 'श्री राधा दास' : 'Radha Das');
   const devoteeLocation = isHiRoute ? 'श्री धाम वृन्दावन' : 'Sri Dham Vrindavan';
@@ -151,27 +163,57 @@ const PookizLayout = ({ children }) => {
     <div className="h-screen bg-black text-[#f4f4f5] flex font-sans antialiased overflow-hidden selection:bg-purple-500/30 selection:text-purple-200">
       
       <aside 
+        id="pookiz-main-sidebar"
         style={isSidebarCollapsed ? {} : { width: `${sidebarWidth}px` }}
-        className={`hidden lg:flex bg-black border-r border-white/5 flex-col h-full shrink-0 relative ${isSidebarCollapsed ? 'w-20' : ''} ${isResizing ? 'select-none' : 'transition-all duration-300 ease-in-out'}`}
+        className={`hidden lg:flex bg-black border-r border-white/5 flex-col h-full shrink-0 relative ${isSidebarCollapsed ? 'w-20' : ''} ${isResizing ? 'select-none transition-none' : isCollapsing ? 'transition-all duration-300 ease-in-out' : 'transition-none'}`}
       >
         <div className={`w-full h-full flex flex-col justify-between overflow-y-auto custom-scrollbar ${isSidebarCollapsed ? 'p-3' : 'p-4'}`}>
           <div className="space-y-6">
-            {/* Top Logo and settings */}
-            <div className={`flex items-center justify-between px-2 py-1.5 ${isSidebarCollapsed ? 'flex-col gap-4' : 'flex-row'}`}>
-              <Link to={isHiRoute ? "/hi" : "/"} className="flex items-center gap-3 group" title={isSidebarCollapsed ? "Pookiz Home" : undefined}>
-                <PookizLogo />
-                {!isSidebarCollapsed && (
-                  <span className="font-bold text-lg tracking-wide text-white group-hover:text-purple-300 transition-colors">Pookiz</span>
-                )}
-              </Link>
-              <button 
-                onClick={() => setIsSettingsOpen(true)}
-                className="text-zinc-400 hover:text-white p-1.5 rounded-lg hover:bg-white/5 transition-colors"
-                title="Sanctuary Settings"
-              >
-                <Settings size={18} />
-              </button>
-            </div>
+            {isSidebarCollapsed ? (
+              <div className="flex flex-col items-center gap-4 w-full">
+                <Link 
+                  to={isHiRoute ? "/hi" : "/"} 
+                  className="flex items-center justify-center w-12 h-12 rounded-xl hover:bg-white/5 transition-all" 
+                  title={isHiRoute ? 'मुख्यपृष्ठ' : 'Home'}
+                >
+                  <img 
+                    src="/official-logo-dark.svg" 
+                    alt="Vrindopnishad Logo" 
+                    className="w-7 h-7 object-contain hover:scale-110 transition-transform duration-500 shrink-0" 
+                  />
+                </Link>
+                <button 
+                  onClick={() => setIsSettingsOpen(true)}
+                  className="text-zinc-400 hover:text-white rounded-xl hover:bg-white/5 transition-colors flex items-center justify-center w-12 h-12"
+                  title={isHiRoute ? 'प्राथमिकताएं' : 'Preferences'}
+                >
+                  <Settings size={18} />
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-row items-center justify-between w-full px-2 py-1.5 gap-4">
+                <Link 
+                  to={isHiRoute ? "/hi" : "/"} 
+                  className="flex items-center gap-3 group transition-all"
+                >
+                  <img 
+                    src="/official-logo-dark.svg" 
+                    alt="Vrindopnishad Logo" 
+                    className="w-7 h-7 object-contain hover:scale-110 transition-transform duration-500 shrink-0" 
+                  />
+                  <span className="font-bold text-lg tracking-wide text-white group-hover:text-purple-300 transition-colors">
+                    {isHiRoute ? 'वृंदोपनिषद्' : 'Vrindopnishad'}
+                  </span>
+                </Link>
+                <button 
+                  onClick={() => setIsSettingsOpen(true)}
+                  className="text-zinc-400 hover:text-white rounded-xl hover:bg-white/5 transition-colors flex items-center justify-center p-1.5"
+                  title={isHiRoute ? 'प्राथमिकताएं' : 'Preferences'}
+                >
+                  <Settings size={18} />
+                </button>
+              </div>
+            )}
 
             {/* Navigation Links */}
             <nav className="space-y-1">
@@ -293,8 +335,14 @@ const PookizLayout = ({ children }) => {
             <div className="space-y-6">
               <div className="flex items-center justify-between px-2 py-1.5">
                 <div className="flex items-center gap-3">
-                  <PookizLogo />
-                  <span className="font-bold text-lg tracking-wide text-white">Pookiz</span>
+                  <img 
+                    src="/official-logo-dark.svg" 
+                    alt="Vrindopnishad Logo" 
+                    className="w-7 h-7 object-contain shrink-0" 
+                  />
+                  <span className="font-bold text-lg tracking-wide text-white">
+                    {isHiRoute ? 'वृंदोपनिषद्' : 'Vrindopnishad'}
+                  </span>
                 </div>
                 <button 
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -367,7 +415,9 @@ const PookizLayout = ({ children }) => {
             >
               <Menu size={20} />
             </button>
-            <span className="font-bold text-sm tracking-wide text-white">Pookiz</span>
+            <span className="font-bold text-sm tracking-wide text-white">
+              {isHiRoute ? 'वृंदोपनिषद्' : 'Vrindopnishad'}
+            </span>
           </div>
 
           <div className="flex items-center gap-2">

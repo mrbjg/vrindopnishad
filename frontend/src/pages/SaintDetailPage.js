@@ -20,8 +20,26 @@ const SaintDetailPage = () => {
   const isHindiRoute = location.pathname.startsWith('/hi');
   const { apiService } = useContext(ApiContext);
 
-  const [sant, setSant] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [sant, setSant] = useState(() => {
+    try {
+      const cached = localStorage.getItem('vrindopnishad_saints_cache');
+      if (cached) {
+        const santsList = JSON.parse(cached);
+        return santsList.find(s => s.slug === slug) || null;
+      }
+    } catch (e) {}
+    return null;
+  });
+  const [loading, setLoading] = useState(() => {
+    try {
+      const cached = localStorage.getItem('vrindopnishad_saints_cache');
+      if (cached) {
+        const santsList = JSON.parse(cached);
+        return !santsList.find(s => s.slug === slug);
+      }
+    } catch (e) {}
+    return true;
+  });
   const [activeDetailTab, setActiveDetailTab] = useState('bio');
 
   useEffect(() => {
@@ -33,6 +51,7 @@ const SaintDetailPage = () => {
         const foundSant = relations.sants.find(s => s.slug === slug);
         if (active) {
           setSant(foundSant || null);
+          localStorage.setItem('vrindopnishad_saints_cache', JSON.stringify(relations.sants));
         }
       } catch (error) {
         console.error('Error loading saint details:', error);

@@ -4106,3 +4106,10 @@ html[data-layout-mode="pookiz"] ::-webkit-scrollbar-thumb:hover {
 .kb-reader-container.text-md h1 { font-size: 2.125rem !important; }
 .kb-reader-container.text-lg h1 { font-size: 2.5rem !important; }
 .kb-reader-container.text-xl h1 { font-size: 3rem !important; }
+
+/* Responsive Category Sidebar width override on desktop to bypass Tailwind class resolution during drag */
+@media (min-width: 1024px) {
+    #kb-category-sidebar {
+        width: var(--kb-sidebar-width) !important;
+    }
+}

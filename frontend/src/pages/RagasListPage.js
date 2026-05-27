@@ -10,8 +10,16 @@ const RagasListPage = () => {
   const isHindiRoute = location.pathname.startsWith('/hi');
   const { apiService } = useContext(ApiContext);
   
-  const [ragas, setRagas] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [ragas, setRagas] = useState(() => {
+    try {
+      const cached = localStorage.getItem('vrindopnishad_ragas_cache');
+      return cached ? JSON.parse(cached) : [];
+    } catch { return []; }
+  });
+  const [loading, setLoading] = useState(() => {
+    try { return !localStorage.getItem('vrindopnishad_ragas_cache'); }
+    catch { return true; }
+  });
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -22,6 +30,7 @@ const RagasListPage = () => {
         const relations = extractRelations(allItems);
         if (active) {
           setRagas(relations.ragas);
+          localStorage.setItem('vrindopnishad_ragas_cache', JSON.stringify(relations.ragas));
         }
       } catch (error) {
         console.error('Error loading ragas:', error);

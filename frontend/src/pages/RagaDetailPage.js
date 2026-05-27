@@ -11,8 +11,26 @@ const RagaDetailPage = () => {
   const isHindiRoute = location.pathname.startsWith('/hi');
   const { apiService } = useContext(ApiContext);
 
-  const [raga, setRaga] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [raga, setRaga] = useState(() => {
+    try {
+      const cached = localStorage.getItem('vrindopnishad_ragas_cache');
+      if (cached) {
+        const ragasList = JSON.parse(cached);
+        return ragasList.find(r => r.slug === slug) || null;
+      }
+    } catch (e) {}
+    return null;
+  });
+  const [loading, setLoading] = useState(() => {
+    try {
+      const cached = localStorage.getItem('vrindopnishad_ragas_cache');
+      if (cached) {
+        const ragasList = JSON.parse(cached);
+        return !ragasList.find(r => r.slug === slug);
+      }
+    } catch (e) {}
+    return true;
+  });
 
   useEffect(() => {
     let active = true;
@@ -23,6 +41,7 @@ const RagaDetailPage = () => {
         const foundRaga = relations.ragas.find(r => r.slug === slug);
         if (active) {
           setRaga(foundRaga || null);
+          localStorage.setItem('vrindopnishad_ragas_cache', JSON.stringify(relations.ragas));
         }
       } catch (error) {
         console.error('Error loading raga details:', error);

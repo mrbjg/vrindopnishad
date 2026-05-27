@@ -48,6 +48,15 @@ const KnowledgeBaseLayout = () => {
 
   const stopKbResizing = useCallback(() => {
     setIsKbResizing(false);
+    const sidebarEl = document.getElementById('kb-category-sidebar');
+    if (sidebarEl) {
+      const styleWidth = sidebarEl.style.getPropertyValue('--kb-sidebar-width');
+      if (styleWidth) {
+        const finalWidth = parseInt(styleWidth, 10);
+        setKbSidebarWidth(finalWidth);
+        localStorage.setItem('pookiz_kb_sidebar_width', String(finalWidth));
+      }
+    }
   }, []);
 
   const resizeKb = useCallback((e) => {
@@ -55,8 +64,11 @@ const KnowledgeBaseLayout = () => {
       const { startX, startWidth } = resizeRef.current;
       const deltaX = e.clientX - startX;
       const newWidth = Math.max(180, Math.min(380, startWidth + deltaX));
-      setKbSidebarWidth(newWidth);
-      localStorage.setItem('pookiz_kb_sidebar_width', String(newWidth));
+      
+      const sidebarEl = document.getElementById('kb-category-sidebar');
+      if (sidebarEl) {
+        sidebarEl.style.setProperty('--kb-sidebar-width', `${newWidth}px`);
+      }
     }
   }, [isKbResizing]);
 
@@ -305,7 +317,7 @@ const KnowledgeBaseLayout = () => {
           isPookiz 
             ? `fixed inset-y-0 left-0 w-80 max-w-[85vw] ${sidebarBg} z-[500] lg:translate-x-0 lg:w-[var(--kb-sidebar-width)] lg:z-10 lg:bg-[#121215]/40 lg:border lg:border-white/5 lg:rounded-2xl lg:sticky lg:top-4 lg:h-[calc(100vh-100px)] flex flex-col relative`
             : `fixed inset-y-0 left-0 w-80 max-w-[85vw] ${sidebarBg} border-r z-[500] lg:sticky lg:top-24 lg:translate-x-0 lg:w-[var(--kb-sidebar-width)] lg:z-10 lg:bg-transparent lg:border-r-0 lg:border-none flex flex-col h-screen lg:h-[calc(100vh-140px)] relative`
-        } transform transition-transform ${isKbResizing ? '' : 'duration-300'} ${
+        } transform ${isKbResizing ? 'transition-none !transition-none' : 'transition-transform duration-300 lg:transition-none lg:!transition-none'} ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:block'
         }`}
       >
