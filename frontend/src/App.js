@@ -13,49 +13,68 @@ import ScrollToTop from './components/ScrollToTop';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 
+// Helper for resilient lazy loading that handles chunk failure (e.g. after code redeployments or server restarts)
+const lazyWithRetry = (componentImport) => React.lazy(() => 
+  componentImport().catch((error) => {
+    const errorMsg = error && error.message ? String(error.message).toLowerCase() : '';
+    const errorName = error && error.name ? String(error.name).toLowerCase() : '';
+    const isChunkError = 
+      errorMsg.includes('loading chunk') || 
+      errorMsg.includes('unexpected token') || 
+      errorMsg.includes('failed to fetch') ||
+      errorMsg.includes('dynamically imported') ||
+      errorName.includes('chunkloaderror');
+    if (isChunkError) {
+      window.location.reload();
+      return new Promise(() => {}); // prevent render crashes by returning unresolved promise
+    }
+    throw error;
+  })
+);
+
 // Performance: Route-based Code Splitting
-const HomePage = React.lazy(() => import('./pages/HomePage'));
-const ContentListPage = React.lazy(() => import('./pages/ContentListPage'));
-const ContentDetailPage = React.lazy(() => import('./pages/ContentDetailPage'));
-const CategoryPage = React.lazy(() => import('./pages/CategoryPage'));
-const LoginPage = React.lazy(() => import('./pages/LoginPage'));
-const AdminLoginPage = React.lazy(() => import('./pages/AdminLoginPage'));
-const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
-const LoaderDemo = React.lazy(() => import('./pages/LoaderDemo'));
+const HomePage = lazyWithRetry(() => import('./pages/HomePage'));
+const ContentListPage = lazyWithRetry(() => import('./pages/ContentListPage'));
+const ContentDetailPage = lazyWithRetry(() => import('./pages/ContentDetailPage'));
+const CategoryPage = lazyWithRetry(() => import('./pages/CategoryPage'));
+const LoginPage = lazyWithRetry(() => import('./pages/LoginPage'));
+const AdminLoginPage = lazyWithRetry(() => import('./pages/AdminLoginPage'));
+const AdminDashboard = lazyWithRetry(() => import('./pages/AdminDashboard'));
+const LoaderDemo = lazyWithRetry(() => import('./pages/LoaderDemo'));
 
 // Dynamic Relations Pages
-const SaintsListPage = React.lazy(() => import('./pages/SaintsListPage'));
-const SaintDetailPage = React.lazy(() => import('./pages/SaintDetailPage'));
-const BooksListPage = React.lazy(() => import('./pages/BooksListPage'));
-const BookDetailPage = React.lazy(() => import('./pages/BookDetailPage'));
-const RagasListPage = React.lazy(() => import('./pages/RagasListPage'));
-const RagaDetailPage = React.lazy(() => import('./pages/RagaDetailPage'));
+const SaintsListPage = lazyWithRetry(() => import('./pages/SaintsListPage'));
+const SaintDetailPage = lazyWithRetry(() => import('./pages/SaintDetailPage'));
+const BooksListPage = lazyWithRetry(() => import('./pages/BooksListPage'));
+const BookDetailPage = lazyWithRetry(() => import('./pages/BookDetailPage'));
+const RagasListPage = lazyWithRetry(() => import('./pages/RagasListPage'));
+const RagaDetailPage = lazyWithRetry(() => import('./pages/RagaDetailPage'));
 
 // SEO Content Pages
-const WhatIsVrindopnishad = React.lazy(() => import('./pages/seo/WhatIsVrindopnishad'));
-const MeaningPage = React.lazy(() => import('./pages/seo/MeaningPage'));
-const OriginPage = React.lazy(() => import('./pages/seo/OriginPage'));
-const PhilosophyPage = React.lazy(() => import('./pages/seo/PhilosophyPage'));
-const TeachingsPage = React.lazy(() => import('./pages/seo/TeachingsPage'));
-const ImportancePage = React.lazy(() => import('./pages/seo/ImportancePage'));
-const DevotionalPage = React.lazy(() => import('./pages/seo/DevotionalPage'));
-const FAQPage = React.lazy(() => import('./pages/seo/FAQPage'));
-const ComparisonPage = React.lazy(() => import('./pages/seo/ComparisonPage'));
-const GuidePage = React.lazy(() => import('./pages/seo/GuidePage'));
-const BrajRasikHeritage = React.lazy(() => import('./pages/seo/BrajRasikHeritage'));
-const RadhaSnataPage = React.lazy(() => import('./pages/seo/RadhaSnataPage'));
-const NityaViharPage = React.lazy(() => import('./pages/seo/NityaViharPage'));
-const GlossaryPage = React.lazy(() => import('./pages/seo/GlossaryPage'));
-const PlacesPage = React.lazy(() => import('./pages/seo/PlacesPage'));
-const HariraeJiPage = React.lazy(() => import('./pages/seo/HariraeJiPage'));
-const MadhuryaBhavaPage = React.lazy(() => import('./pages/seo/MadhuryaBhavaPage'));
-const RadhavallabhVsGaudiya = React.lazy(() => import('./pages/seo/RadhavallabhVsGaudiya'));
-const ParikramaGuide = React.lazy(() => import('./pages/seo/ParikramaGuide'));
-const GlossaryDetailPage = React.lazy(() => import('./pages/seo/GlossaryDetailPage'));
-const MajorRasikSaints = React.lazy(() => import('./pages/seo/MajorRasikSaints'));
-const KnowledgeBasePage = React.lazy(() => import('./pages/KnowledgeBasePage'));
-const HistoryOfRadhavallabh = React.lazy(() => import('./pages/seo/HistoryOfRadhavallabh'));
-const KnowledgeBaseLayout = React.lazy(() => import('./components/KnowledgeBaseLayout'));
+const WhatIsVrindopnishad = lazyWithRetry(() => import('./pages/seo/WhatIsVrindopnishad'));
+const MeaningPage = lazyWithRetry(() => import('./pages/seo/MeaningPage'));
+const OriginPage = lazyWithRetry(() => import('./pages/seo/OriginPage'));
+const PhilosophyPage = lazyWithRetry(() => import('./pages/seo/PhilosophyPage'));
+const TeachingsPage = lazyWithRetry(() => import('./pages/seo/TeachingsPage'));
+const ImportancePage = lazyWithRetry(() => import('./pages/seo/ImportancePage'));
+const DevotionalPage = lazyWithRetry(() => import('./pages/seo/DevotionalPage'));
+const FAQPage = lazyWithRetry(() => import('./pages/seo/FAQPage'));
+const ComparisonPage = lazyWithRetry(() => import('./pages/seo/ComparisonPage'));
+const GuidePage = lazyWithRetry(() => import('./pages/seo/GuidePage'));
+const BrajRasikHeritage = lazyWithRetry(() => import('./pages/seo/BrajRasikHeritage'));
+const RadhaSnataPage = lazyWithRetry(() => import('./pages/seo/RadhaSnataPage'));
+const NityaViharPage = lazyWithRetry(() => import('./pages/seo/NityaViharPage'));
+const GlossaryPage = lazyWithRetry(() => import('./pages/seo/GlossaryPage'));
+const PlacesPage = lazyWithRetry(() => import('./pages/seo/PlacesPage'));
+const HariraeJiPage = lazyWithRetry(() => import('./pages/seo/HariraeJiPage'));
+const MadhuryaBhavaPage = lazyWithRetry(() => import('./pages/seo/MadhuryaBhavaPage'));
+const RadhavallabhVsGaudiya = lazyWithRetry(() => import('./pages/seo/RadhavallabhVsGaudiya'));
+const ParikramaGuide = lazyWithRetry(() => import('./pages/seo/ParikramaGuide'));
+const GlossaryDetailPage = lazyWithRetry(() => import('./pages/seo/GlossaryDetailPage'));
+const MajorRasikSaints = lazyWithRetry(() => import('./pages/seo/MajorRasikSaints'));
+const KnowledgeBasePage = lazyWithRetry(() => import('./pages/KnowledgeBasePage'));
+const HistoryOfRadhavallabh = lazyWithRetry(() => import('./pages/seo/HistoryOfRadhavallabh'));
+const KnowledgeBaseLayout = lazyWithRetry(() => import('./components/KnowledgeBaseLayout'));
 
 
 // Backend URL with fallback for development

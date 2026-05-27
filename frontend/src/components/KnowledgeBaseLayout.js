@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useSettings } from '../contexts/SettingsContext';
 import { categories, articles } from '../utils/kbArticles';
@@ -30,6 +30,46 @@ const KnowledgeBaseLayout = () => {
   const [activeHeadingId, setActiveHeadingId] = useState('');
 
   // Reading settings state (persisted in localStorage)
+  const [kbSidebarWidth, setKbSidebarWidth] = useState(() => {
+    const saved = localStorage.getItem('pookiz_kb_sidebar_width');
+    return saved ? parseInt(saved, 10) : 256;
+  });
+  const [isKbResizing, setIsKbResizing] = useState(false);
+  const resizeRef = useRef({ startX: 0, startWidth: 0 });
+
+  const startKbResizing = useCallback((e) => {
+    setIsKbResizing(true);
+    resizeRef.current = {
+      startX: e.clientX,
+      startWidth: kbSidebarWidth
+    };
+    e.preventDefault();
+  }, [kbSidebarWidth]);
+
+  const stopKbResizing = useCallback(() => {
+    setIsKbResizing(false);
+  }, []);
+
+  const resizeKb = useCallback((e) => {
+    if (isKbResizing) {
+      const { startX, startWidth } = resizeRef.current;
+      const deltaX = e.clientX - startX;
+      const newWidth = Math.max(180, Math.min(380, startWidth + deltaX));
+      setKbSidebarWidth(newWidth);
+      localStorage.setItem('pookiz_kb_sidebar_width', String(newWidth));
+    }
+  }, [isKbResizing]);
+
+  useEffect(() => {
+    if (isKbResizing) {
+      window.addEventListener('mousemove', resizeKb);
+      window.addEventListener('mouseup', stopKbResizing);
+    }
+    return () => {
+      window.removeEventListener('mousemove', resizeKb);
+      window.removeEventListener('mouseup', stopKbResizing);
+    };
+  }, [isKbResizing, resizeKb, stopKbResizing]);
   const [fontSize, setFontSize] = useState(() => {
     return localStorage.getItem('vrindopnishad_read_font_size') || 'md'; // sm, md, lg, xl
   });
@@ -258,97 +298,110 @@ const KnowledgeBaseLayout = () => {
         </div>
       </div>
 
-      {/* Wiki Left Navigation Sidebar */}
       <aside 
+        id="kb-category-sidebar"
+        style={{ '--kb-sidebar-width': `${kbSidebarWidth}px` }}
         className={`${
           isPookiz 
-            ? `fixed inset-y-0 left-0 w-80 max-w-[85vw] ${sidebarBg} p-5 z-[500] lg:translate-x-0 lg:w-64 lg:p-3.5 lg:z-10 lg:bg-[#121215]/40 lg:border lg:border-white/5 lg:rounded-2xl lg:sticky lg:top-4 lg:h-[calc(100vh-100px)] lg:overflow-y-auto custom-scrollbar flex flex-col`
-            : `fixed inset-y-0 left-0 w-80 max-w-[85vw] ${sidebarBg} border-r p-5 z-[500] lg:sticky lg:top-24 lg:translate-x-0 lg:w-72 lg:p-0 lg:z-10 lg:bg-transparent lg:border-r-0 lg:border-none flex flex-col h-screen lg:h-[calc(100vh-140px)]`
-        } transform transition-transform duration-300 ${
+            ? `fixed inset-y-0 left-0 w-80 max-w-[85vw] ${sidebarBg} z-[500] lg:translate-x-0 lg:w-[var(--kb-sidebar-width)] lg:z-10 lg:bg-[#121215]/40 lg:border lg:border-white/5 lg:rounded-2xl lg:sticky lg:top-4 lg:h-[calc(100vh-100px)] flex flex-col relative`
+            : `fixed inset-y-0 left-0 w-80 max-w-[85vw] ${sidebarBg} border-r z-[500] lg:sticky lg:top-24 lg:translate-x-0 lg:w-[var(--kb-sidebar-width)] lg:z-10 lg:bg-transparent lg:border-r-0 lg:border-none flex flex-col h-screen lg:h-[calc(100vh-140px)] relative`
+        } transform transition-transform ${isKbResizing ? '' : 'duration-300'} ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:block'
         }`}
       >
-        <div className="flex items-center justify-between lg:hidden mb-6">
-          <span className="font-bold text-sm text-white uppercase tracking-wider flex items-center gap-2">
-            <BookOpen size={16} className="text-purple-400" />
-            {isHindiRoute ? 'ज्ञान कोष' : 'Wiki Directory'}
-          </span>
-          <button onClick={() => setSidebarOpen(false)} className="text-zinc-400 hover:text-white p-1 hover:bg-white/5 rounded-lg">
-            <X size={20} />
-          </button>
+        <div className={`w-full h-full flex flex-col ${isPookiz ? 'p-5 lg:p-3.5 overflow-y-auto custom-scrollbar' : 'p-5 lg:p-0'}`}>
+          <div className="flex items-center justify-between lg:hidden mb-6">
+            <span className="font-bold text-sm text-white uppercase tracking-wider flex items-center gap-2">
+              <BookOpen size={16} className="text-purple-400" />
+              {isHindiRoute ? 'ज्ञान कोष' : 'Wiki Directory'}
+            </span>
+            <button onClick={() => setSidebarOpen(false)} className="text-zinc-400 hover:text-white p-1 hover:bg-white/5 rounded-lg">
+              <X size={20} />
+            </button>
+          </div>
+
+          {/* Search Field */}
+          <div className="relative mb-5 shrink-0">
+            <Search size={14} className="absolute left-3 top-3 text-zinc-500" />
+            <input 
+              type="text"
+              placeholder={isHindiRoute ? "ज्ञान कोष में खोजें..." : "Filter articles..."}
+              className="w-full bg-white/[0.03] border border-white/5 rounded-xl py-2 pl-9 pr-4 text-xs placeholder:text-zinc-600 focus:outline-none focus:border-purple-500/50 text-white font-light"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+
+          {/* Tree List */}
+          <div className="flex-1 overflow-y-auto space-y-4 pr-1 scrollbar-thin">
+            {/* Main Link back to Hub */}
+            <Link 
+              to={isHindiRoute ? "/hi/knowledge-base" : "/knowledge-base"}
+              onClick={() => setSidebarOpen(false)}
+              className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all ${
+                !activeSlug 
+                  ? isPookiz ? 'bg-purple-500/10 text-purple-300 font-bold' : 'bg-amber-400/10 text-amber-300 font-bold'
+                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <BookOpen size={14} />
+              <span>{isHindiRoute ? 'ज्ञान कोष मुखपृष्ठ' : 'Knowledge Base Home'}</span>
+            </Link>
+
+            <div className="h-[1px] bg-white/5 my-2"></div>
+
+            {Object.keys(groupedArticles).map(catId => {
+              const catArticles = groupedArticles[catId];
+              if (catArticles.length === 0) return null;
+              const isExpanded = expandedCategories[catId];
+
+              return (
+                <div key={catId} className="space-y-1">
+                  <button 
+                    onClick={() => toggleCategory(catId)}
+                    className="w-full flex items-center justify-between py-1.5 px-2 hover:bg-white/[0.02] rounded-lg transition-colors text-left"
+                  >
+                    <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                      {getCategoryIcon(catId)}
+                      <span>{getCategoryLabel(catId)}</span>
+                    </span>
+                    {isExpanded ? <ChevronUp size={12} className="text-zinc-500" /> : <ChevronDown size={12} className="text-zinc-500" />}
+                  </button>
+
+                  {isExpanded && (
+                    <div className="pl-3.5 space-y-0.5">
+                      {catArticles.map(art => {
+                        const isActive = art.slug === activeSlug;
+                        const title = isHindiRoute ? art.titleHi : art.titleEn;
+                        return (
+                          <Link
+                            key={art.slug}
+                            to={isHindiRoute ? `/hi/${art.slug}` : `/${art.slug}`}
+                            onClick={() => setSidebarOpen(false)}
+                            className={`block py-1.5 pl-3 pr-2 text-xs transition-all ${
+                              isActive ? activeLinkStyle : normalLinkStyle
+                            }`}
+                          >
+                            <div className="truncate">{title}</div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Search Field */}
-        <div className="relative mb-5 shrink-0">
-          <Search size={14} className="absolute left-3 top-3 text-zinc-500" />
-          <input 
-            type="text"
-            placeholder={isHindiRoute ? "ज्ञान कोष में खोजें..." : "Filter articles..."}
-            className="w-full bg-white/[0.03] border border-white/5 rounded-xl py-2 pl-9 pr-4 text-xs placeholder:text-zinc-600 focus:outline-none focus:border-purple-500/50 text-white font-light"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-
-        {/* Tree List */}
-        <div className="flex-1 overflow-y-auto space-y-4 pr-1 scrollbar-thin">
-          {/* Main Link back to Hub */}
-          <Link 
-            to={isHindiRoute ? "/hi/knowledge-base" : "/knowledge-base"}
-            onClick={() => setSidebarOpen(false)}
-            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all ${
-              !activeSlug 
-                ? isPookiz ? 'bg-purple-500/10 text-purple-300 font-bold' : 'bg-amber-400/10 text-amber-300 font-bold'
-                : 'text-zinc-400 hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <BookOpen size={14} />
-            <span>{isHindiRoute ? 'ज्ञान कोष मुखपृष्ठ' : 'Knowledge Base Home'}</span>
-          </Link>
-
-          <div className="h-[1px] bg-white/5 my-2"></div>
-
-          {Object.keys(groupedArticles).map(catId => {
-            const catArticles = groupedArticles[catId];
-            if (catArticles.length === 0) return null;
-            const isExpanded = expandedCategories[catId];
-
-            return (
-              <div key={catId} className="space-y-1">
-                <button 
-                  onClick={() => toggleCategory(catId)}
-                  className="w-full flex items-center justify-between py-1.5 px-2 hover:bg-white/[0.02] rounded-lg transition-colors text-left"
-                >
-                  <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
-                    {getCategoryIcon(catId)}
-                    <span>{getCategoryLabel(catId)}</span>
-                  </span>
-                  {isExpanded ? <ChevronUp size={12} className="text-zinc-500" /> : <ChevronDown size={12} className="text-zinc-500" />}
-                </button>
-
-                {isExpanded && (
-                  <div className="pl-3.5 space-y-0.5">
-                    {catArticles.map(art => {
-                      const isActive = art.slug === activeSlug;
-                      const title = isHindiRoute ? art.titleHi : art.titleEn;
-                      return (
-                        <Link
-                          key={art.slug}
-                          to={isHindiRoute ? `/hi/${art.slug}` : `/${art.slug}`}
-                          onClick={() => setSidebarOpen(false)}
-                          className={`block py-1.5 pl-3 pr-2 text-xs transition-all ${
-                            isActive ? activeLinkStyle : normalLinkStyle
-                          }`}
-                        >
-                          <div className="truncate">{title}</div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+        {/* Resize handle */}
+        <div 
+          onMouseDown={startKbResizing}
+          className="hidden lg:block absolute top-0 -right-1 bottom-0 w-3 cursor-col-resize z-50 group"
+        >
+          <div className={`w-0.5 h-full mx-auto transition-colors duration-200 ${
+            isKbResizing ? 'bg-purple-500/80' : 'bg-transparent group-hover:bg-purple-500/40'
+          }`} />
         </div>
       </aside>
 

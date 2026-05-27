@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../App';
 import { useSettings } from '../contexts/SettingsContext';
@@ -30,6 +30,49 @@ const PookizLayout = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    return localStorage.getItem('pookiz_sidebar_collapsed') === 'true';
+  });
+
+  const toggleSidebar = () => {
+    const nextState = !isSidebarCollapsed;
+    setIsSidebarCollapsed(nextState);
+    localStorage.setItem('pookiz_sidebar_collapsed', String(nextState));
+  };
+
+  const [sidebarWidth, setSidebarWidth] = useState(() => {
+    const saved = localStorage.getItem('pookiz_sidebar_width');
+    return saved ? parseInt(saved, 10) : 240;
+  });
+  const [isResizing, setIsResizing] = useState(false);
+
+  const startResizing = useCallback((e) => {
+    setIsResizing(true);
+    e.preventDefault();
+  }, []);
+
+  const stopResizing = useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
+  const resize = useCallback((e) => {
+    if (isResizing) {
+      const newWidth = Math.max(180, Math.min(380, e.clientX));
+      setSidebarWidth(newWidth);
+      localStorage.setItem('pookiz_sidebar_width', String(newWidth));
+    }
+  }, [isResizing]);
+
+  useEffect(() => {
+    if (isResizing) {
+      window.addEventListener('mousemove', resize);
+      window.addEventListener('mouseup', stopResizing);
+    }
+    return () => {
+      window.removeEventListener('mousemove', resize);
+      window.removeEventListener('mouseup', stopResizing);
+    };
+  }, [isResizing, resize, stopResizing]);
 
   const isActive = (path) => {
     if (path === '/') {
@@ -107,91 +150,134 @@ const PookizLayout = ({ children }) => {
   return (
     <div className="h-screen bg-black text-[#f4f4f5] flex font-sans antialiased overflow-hidden selection:bg-purple-500/30 selection:text-purple-200">
       
-      {/* Sidebar - Desktop */}
-      <aside className="hidden lg:flex w-64 bg-black border-r border-white/5 flex-col justify-between h-full p-4 shrink-0 overflow-y-auto">
-        <div className="space-y-6">
-          {/* Top Logo and settings */}
-          <div className="flex items-center justify-between px-2 py-1.5">
-            <Link to={isHiRoute ? "/hi" : "/"} className="flex items-center gap-3 group">
-              <PookizLogo />
-              <span className="font-bold text-lg tracking-wide text-white group-hover:text-purple-300 transition-colors">Pookiz</span>
-            </Link>
-            <button 
-              onClick={() => setIsSettingsOpen(true)}
-              className="text-zinc-400 hover:text-white p-1.5 rounded-lg hover:bg-white/5 transition-colors"
-              title="Sanctuary Settings"
+      <aside 
+        style={isSidebarCollapsed ? {} : { width: `${sidebarWidth}px` }}
+        className={`hidden lg:flex bg-black border-r border-white/5 flex-col h-full shrink-0 relative ${isSidebarCollapsed ? 'w-20' : ''} ${isResizing ? 'select-none' : 'transition-all duration-300 ease-in-out'}`}
+      >
+        <div className={`w-full h-full flex flex-col justify-between overflow-y-auto custom-scrollbar ${isSidebarCollapsed ? 'p-3' : 'p-4'}`}>
+          <div className="space-y-6">
+            {/* Top Logo and settings */}
+            <div className={`flex items-center justify-between px-2 py-1.5 ${isSidebarCollapsed ? 'flex-col gap-4' : 'flex-row'}`}>
+              <Link to={isHiRoute ? "/hi" : "/"} className="flex items-center gap-3 group" title={isSidebarCollapsed ? "Pookiz Home" : undefined}>
+                <PookizLogo />
+                {!isSidebarCollapsed && (
+                  <span className="font-bold text-lg tracking-wide text-white group-hover:text-purple-300 transition-colors">Pookiz</span>
+                )}
+              </Link>
+              <button 
+                onClick={() => setIsSettingsOpen(true)}
+                className="text-zinc-400 hover:text-white p-1.5 rounded-lg hover:bg-white/5 transition-colors"
+                title="Sanctuary Settings"
+              >
+                <Settings size={18} />
+              </button>
+            </div>
+
+            {/* Navigation Links */}
+            <nav className="space-y-1">
+              {menuItems.map((item, idx) => {
+                if (item.adminOnly && !isAdmin) return null;
+                return (
+                  <Link
+                    key={idx}
+                    to={item.path}
+                    title={isSidebarCollapsed ? item.label : undefined}
+                    className={`flex items-center rounded-xl text-sm font-medium transition-all relative ${
+                      isSidebarCollapsed ? 'justify-center p-3' : 'gap-3 px-3 py-2.5'
+                    } ${
+                      item.isActive 
+                        ? 'bg-white/[0.04] text-white before:absolute before:left-0 before:top-2.5 before:bottom-2.5 before:w-0.5 before:bg-white before:rounded-r' 
+                        : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02]'
+                    }`}
+                  >
+                    <span className={item.isActive ? 'text-white' : 'text-zinc-400'}>{item.icon}</span>
+                    {!isSidebarCollapsed && <span>{item.label}</span>}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* Bottom Profile Section */}
+          <div className="relative border-t border-white/5 pt-4">
+            <div 
+              onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+              className={`flex items-center rounded-xl hover:bg-white/5 cursor-pointer transition-colors select-none ${
+                isSidebarCollapsed ? 'justify-center p-1.5' : 'justify-between p-2'
+              }`}
+              title={isSidebarCollapsed ? devoteeName : undefined}
             >
-              <Settings size={18} />
-            </button>
-          </div>
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-sm uppercase shrink-0">
+                  {devoteeName.charAt(0)}
+                </div>
+                {!isSidebarCollapsed && (
+                  <div className="min-w-0 text-left">
+                    <span className="text-xs font-semibold text-white block truncate leading-none mb-1">{devoteeName}</span>
+                    <span className="text-[10px] text-zinc-500 block truncate leading-none">{devoteeLocation}</span>
+                  </div>
+                )}
+              </div>
+              {!isSidebarCollapsed && (
+                <ChevronDown size={14} className={`text-zinc-500 transition-transform ${isProfileMenuOpen ? 'rotate-180' : ''}`} />
+              )}
+            </div>
 
-          {/* Navigation Links */}
-          <nav className="space-y-1">
-            {menuItems.map((item, idx) => {
-              if (item.adminOnly && !isAdmin) return null;
-              return (
-                <Link
-                  key={idx}
-                  to={item.path}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all relative ${
-                    item.isActive 
-                      ? 'bg-white/[0.04] text-white before:absolute before:left-0 before:top-2.5 before:bottom-2.5 before:w-0.5 before:bg-white before:rounded-r' 
-                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02]'
-                  }`}
+            {/* Mini Profile Dropdown Menu */}
+            {isProfileMenuOpen && (
+              <div className={`absolute bottom-full mb-2 bg-[#121215] border border-white/5 rounded-2xl shadow-xl p-1.5 z-[100] animate-fade-in text-left ${
+                isSidebarCollapsed ? 'w-44 left-0' : 'left-0 right-0'
+              }`}>
+                <button 
+                  onClick={() => {
+                    setIsProfileMenuOpen(false);
+                    setIsSettingsOpen(true);
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-zinc-300 hover:text-white hover:bg-white/5 transition-colors"
                 >
-                  <span className={item.isActive ? 'text-white' : 'text-zinc-400'}>{item.icon}</span>
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Bottom Profile Section */}
-        <div className="relative border-t border-white/5 pt-4">
-          <div 
-            onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-            className="flex items-center justify-between p-2 rounded-xl hover:bg-white/5 cursor-pointer transition-colors select-none"
-          >
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-9 h-9 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-sm uppercase shrink-0">
-                {devoteeName.charAt(0)}
+                  <Settings size={14} />
+                  <span>{isHiRoute ? 'प्राथमिकताएं' : 'Preferences'}</span>
+                </button>
+                <button 
+                  onClick={() => {
+                    setIsProfileMenuOpen(false);
+                    logout();
+                    navigate(isHiRoute ? '/hi' : '/');
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                >
+                  <LogOut size={14} />
+                  <span>{isHiRoute ? 'लॉग आउट' : 'Sign Out'}</span>
+                </button>
               </div>
-              <div className="min-w-0 text-left">
-                <span className="text-xs font-semibold text-white block truncate leading-none mb-1">{devoteeName}</span>
-                <span className="text-[10px] text-zinc-500 block truncate leading-none">{devoteeLocation}</span>
-              </div>
-            </div>
-            <ChevronDown size={14} className={`text-zinc-500 transition-transform ${isProfileMenuOpen ? 'rotate-180' : ''}`} />
+            )}
           </div>
-
-          {/* Mini Profile Dropdown Menu */}
-          {isProfileMenuOpen && (
-            <div className="absolute bottom-full left-0 right-0 mb-2 bg-[#121215] border border-white/5 rounded-2xl shadow-xl p-1.5 z-[100] animate-fade-in text-left">
-              <button 
-                onClick={() => {
-                  setIsProfileMenuOpen(false);
-                  setIsSettingsOpen(true);
-                }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-zinc-300 hover:text-white hover:bg-white/5 transition-colors"
-              >
-                <Settings size={14} />
-                <span>{isHiRoute ? 'प्राथमिकताएं' : 'Preferences'}</span>
-              </button>
-              <button 
-                onClick={() => {
-                  setIsProfileMenuOpen(false);
-                  logout();
-                  navigate(isHiRoute ? '/hi' : '/');
-                }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
-              >
-                <LogOut size={14} />
-                <span>{isHiRoute ? 'लॉग आउट' : 'Sign Out'}</span>
-              </button>
-            </div>
-          )}
         </div>
+
+        {/* Collapse toggle button on sideline */}
+        <button
+          onClick={toggleSidebar}
+          className="absolute top-20 -right-3 w-6 h-6 rounded-full bg-zinc-950 border border-white/10 hover:border-purple-500/40 hover:bg-zinc-900 flex items-center justify-center text-zinc-400 hover:text-white shadow-md z-[60] transition-all duration-200 group/collapse"
+          title={isSidebarCollapsed ? (isHiRoute ? 'विस्तार करें' : 'Expand Sidebar') : (isHiRoute ? 'संकुचित करें' : 'Collapse Sidebar')}
+        >
+          {isSidebarCollapsed ? (
+            <ChevronRight size={14} className="transition-transform group-hover/collapse:translate-x-[0.5px]" />
+          ) : (
+            <ChevronLeft size={14} className="transition-transform group-hover/collapse:-translate-x-[0.5px]" />
+          )}
+        </button>
+
+        {/* Resize handle */}
+        {!isSidebarCollapsed && (
+          <div 
+            onMouseDown={startResizing}
+            className="absolute top-0 -right-1 bottom-0 w-3 cursor-col-resize z-50 group"
+          >
+            <div className={`w-0.5 h-full mx-auto transition-colors duration-200 ${
+              isResizing ? 'bg-purple-500/80' : 'bg-transparent group-hover:bg-purple-500/40'
+            }`} />
+          </div>
+        )}
       </aside>
 
       {/* Sidebar - Mobile Slider Overlay */}
