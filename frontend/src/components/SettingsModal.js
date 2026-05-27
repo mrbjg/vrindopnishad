@@ -268,6 +268,29 @@ const SettingsModal = ({ isOpen, onClose }) => {
             </div>
           </div>
 
+          {/* Layout Mode */}
+          <div className="space-y-4">
+            <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">
+              <Layout size={14} /> Interface Layout
+            </h3>
+            <div className="premium-segmented-control grid-cols-2">
+              <button
+                type="button"
+                onClick={() => updateSetting('layoutMode', 'sanctuary')}
+                className={`segmented-control-btn ${settings.layoutMode !== 'pookiz' ? 'active' : ''}`}
+              >
+                Sanctuary (Default)
+              </button>
+              <button
+                type="button"
+                onClick={() => updateSetting('layoutMode', 'pookiz')}
+                className={`segmented-control-btn ${settings.layoutMode === 'pookiz' ? 'active' : ''}`}
+              >
+                Pookiz (Sleek Dark)
+              </button>
+            </div>
+          </div>
+
           {/* Reading Mode */}
           <div className="space-y-4">
             <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">

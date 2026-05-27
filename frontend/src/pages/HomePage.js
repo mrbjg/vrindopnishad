@@ -6,6 +6,7 @@ import { ApiContext } from '../App';
 import { extractRelations } from '../utils/relations';
 import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { useSettings } from '../contexts/SettingsContext';
+import PookizDashboardView from '../components/PookizDashboardView';
 
 const THEME_SWATCHES = {
   dark: '#09090b',
@@ -550,6 +551,30 @@ const HomePage = () => {
           </div>
         </div>
       </div>
+    );
+  }
+
+  if (settings.layoutMode === 'pookiz') {
+    return (
+      <PookizDashboardView
+        isHi={isHi}
+        dailyShloka={dailyShloka}
+        japaCount={japaCount}
+        handleUpdateJapaCount={handleUpdateJapaCount}
+        streak={streak}
+        handleComplete={handleComplete}
+        isCompleted={isCompleted}
+        isPlaying={isPlaying}
+        handleChantAudio={handleChantAudio}
+        isTanpuraPlaying={isTanpuraPlaying}
+        toggleTanpura={toggleTanpura}
+        dailyGoal={dailyGoal}
+        percentComplete={percentComplete}
+        rounds={rounds}
+        currentGreeting={currentGreeting}
+        settings={settings}
+        updateSetting={updateSetting}
+      />
     );
   }
 

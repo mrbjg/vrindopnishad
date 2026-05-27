@@ -38,7 +38,8 @@ export const SettingsProvider = ({ children }) => {
       smoothScroll: false,
       theme: 'light',
       devoteeName: '',
-      dailyGoal: 432
+      dailyGoal: 432,
+      layoutMode: 'sanctuary'
     };
     
     // Migration from old string-based font sizes
@@ -53,6 +54,7 @@ export const SettingsProvider = ({ children }) => {
     // Ensure new settings fields exist
     if (initial.devoteeName === undefined) initial.devoteeName = '';
     if (initial.dailyGoal === undefined) initial.dailyGoal = 432;
+    if (initial.layoutMode === undefined) initial.layoutMode = 'sanctuary';
     
     return initial;
   });
@@ -62,6 +64,7 @@ export const SettingsProvider = ({ children }) => {
     
     document.documentElement.setAttribute('data-font-size', settings.fontSize);
     document.documentElement.setAttribute('data-font-style', settings.fontStyle);
+    document.documentElement.setAttribute('data-layout-mode', settings.layoutMode || 'sanctuary');
 
     // Apply theme
     const theme = settings.theme || 'light';

@@ -15,12 +15,14 @@ import {
   Settings,
   Search,
   X,
-  User
+  User,
+  BookOpen
 } from 'lucide-react';
 import GlobalAudioPlayer from './GlobalAudioPlayer';
 import SettingsModal from './SettingsModal';
 import ThemeOnboardingModal from './ThemeOnboardingModal';
 import CelestialParticles from './CelestialParticles';
+import PookizLayout from './PookizLayout';
 
 const Layout = ({ children }) => {
   const { isDark } = useTheme();
@@ -214,6 +216,11 @@ const Layout = ({ children }) => {
     '/content', '/saints', '/books', '/ragas',
     '/hi/content', '/hi/saints', '/hi/books', '/hi/ragas'
   ].includes(location.pathname);
+
+  // Use settings.layoutMode to select layout type
+  if (settings.layoutMode === 'pookiz') {
+    return <PookizLayout>{children}</PookizLayout>;
+  }
 
   return (
     <div className={`min-h-screen relative text-foreground ${hideHeaderSearch ? 'layout-no-header-search' : ''}`}>
@@ -547,6 +554,10 @@ const Layout = ({ children }) => {
           <Link to="/content" className={`dock-item-minimal ${isActive('/content') ? 'active' : ''}`} title="All Content">
             <Compass size={22} />
             <span className="dock-tooltip-minimal">Sanctuary Library</span>
+          </Link>
+          <Link to={isHiRoute ? "/hi/knowledge-base" : "/knowledge-base"} className={`dock-item-minimal ${location.pathname.includes('/knowledge-base') ? 'active' : ''}`} title="Knowledge Base">
+            <BookOpen size={22} />
+            <span className="dock-tooltip-minimal">{isHiRoute ? "ज्ञान कोष" : "Knowledge Base"}</span>
           </Link>
           <div className="w-8 h-[1px] bg-white/10 my-1"></div>
           <Link to="/category/shloka" className={`dock-item-minimal ${isCategoryActive('shloka') ? 'active' : ''}`} title="Shlokas">

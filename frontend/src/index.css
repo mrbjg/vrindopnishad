@@ -3903,3 +3903,206 @@ html.light-mode .header-chant-btn:hover {
 .animate-bar-pulse-2 { animation: bar-pulse 0.8s infinite ease-in-out 0.15s; }
 .animate-bar-pulse-3 { animation: bar-pulse 0.5s infinite ease-in-out 0.3s; }
 .animate-bar-pulse-4 { animation: bar-pulse 0.7s infinite ease-in-out 0.1s; }
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* POOKIZ LAYOUT DESIGN SYSTEM OVERRIDES                                       */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+html[data-layout-mode="pookiz"] {
+    background: #000000 !important;
+    background-color: #000000 !important;
+}
+
+html[data-layout-mode="pookiz"] body {
+    background: #000000 !important;
+    background-color: #000000 !important;
+    color: #f4f4f5 !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+}
+
+/* Hide celestial glow & particles in Pookiz layout */
+html[data-layout-mode="pookiz"] .celestial-bg,
+html[data-layout-mode="pookiz"] .stars,
+html[data-layout-mode="pookiz"] .nebula,
+html[data-layout-mode="pookiz"] .particles-container {
+    display: none !important;
+}
+
+/* Override glass-card to match the flat sleek cards */
+html[data-layout-mode="pookiz"] .glass-card {
+    background: #121215 !important;
+    background-color: #121215 !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 1.25rem !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transform: none !important;
+    transition: border-color 0.2s ease, background-color 0.2s ease !important;
+    perspective: none !important;
+    transform-style: flat !important;
+}
+
+html[data-layout-mode="pookiz"] .glass-card::before {
+    display: none !important;
+}
+
+html[data-layout-mode="pookiz"] .glass-card:hover {
+    transform: none !important;
+    background: #121215 !important;
+    background-color: #121215 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: none !important;
+}
+
+/* Header text overrides */
+html[data-layout-mode="pookiz"] .glass-card h3,
+html[data-layout-mode="pookiz"] h3 {
+    transform: none !important;
+    color: #ffffff !important;
+}
+
+html[data-layout-mode="pookiz"] .text-sacred-gradient {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: unset !important;
+    background-clip: unset !important;
+    color: #ffffff !important;
+}
+
+/* Table styling for user directory / universities in Pookiz */
+html[data-layout-mode="pookiz"] table {
+    width: 100%;
+}
+
+html[data-layout-mode="pookiz"] th {
+    color: #71717a !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding-bottom: 0.75rem !important;
+}
+
+html[data-layout-mode="pookiz"] td {
+    padding: 0.875rem 0.5rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
+    color: #e4e4e7 !important;
+}
+
+/* Floating animation override */
+@keyframes pookiz-float {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-40px) translateX(var(--float-x, 0px)) rotate(var(--float-rot, 0deg));
+        opacity: 0;
+    }
+}
+
+html[data-layout-mode="pookiz"] .floating-chant-text {
+    animation: pookiz-float 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    color: #a78bfa !important;
+}
+
+/* Sleek scrollbar for Pookiz layout */
+html[data-layout-mode="pookiz"] ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+html[data-layout-mode="pookiz"] ::-webkit-scrollbar-track {
+    background: #000000;
+}
+
+html[data-layout-mode="pookiz"] ::-webkit-scrollbar-thumb {
+    background: #27272a;
+    border-radius: 3px;
+}
+
+html[data-layout-mode="pookiz"] ::-webkit-scrollbar-thumb:hover {
+    background: #3f3f46;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* KNOWLEDGE BASE READER — Customizer Overrides                                */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Font Family Scoping */
+.kb-reader-container.font-serif,
+.kb-reader-container.font-serif p,
+.kb-reader-container.font-serif li,
+.kb-reader-container.font-serif a,
+.kb-reader-container.font-serif span,
+.kb-reader-container.font-serif h1,
+.kb-reader-container.font-serif h2,
+.kb-reader-container.font-serif h3,
+.kb-reader-container.font-serif h4 {
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif !important;
+}
+
+.kb-reader-container.font-sans,
+.kb-reader-container.font-sans p,
+.kb-reader-container.font-sans li,
+.kb-reader-container.font-sans a,
+.kb-reader-container.font-sans span,
+.kb-reader-container.font-sans h1,
+.kb-reader-container.font-sans h2,
+.kb-reader-container.font-sans h3,
+.kb-reader-container.font-sans h4 {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+/* Font Size Scales */
+.kb-reader-container.text-sm p,
+.kb-reader-container.text-sm li,
+.kb-reader-container.text-sm a,
+.kb-reader-container.text-sm span {
+    font-size: 0.875rem !important; /* 14px */
+}
+.kb-reader-container.text-md p,
+.kb-reader-container.text-md li,
+.kb-reader-container.text-md a,
+.kb-reader-container.text-md span {
+    font-size: 1rem !important; /* 16px */
+}
+.kb-reader-container.text-lg p,
+.kb-reader-container.text-lg li,
+.kb-reader-container.text-lg a,
+.kb-reader-container.text-lg span {
+    font-size: 1.125rem !important; /* 18px */
+}
+.kb-reader-container.text-xl p,
+.kb-reader-container.text-xl li,
+.kb-reader-container.text-xl a,
+.kb-reader-container.text-xl span {
+    font-size: 1.25rem !important; /* 20px */
+}
+
+/* Line Spacing Scales */
+.kb-reader-container.leading-cozy p,
+.kb-reader-container.leading-cozy li {
+    line-height: 1.55 !important;
+}
+.kb-reader-container.leading-normal p,
+.kb-reader-container.leading-normal li {
+    line-height: 1.75 !important;
+}
+.kb-reader-container.leading-relaxed p,
+.kb-reader-container.leading-relaxed li {
+    line-height: 2.05 !important;
+}
+
+/* Sub-headings responsive sizing */
+.kb-reader-container.text-sm h2 { font-size: 1.25rem !important; }
+.kb-reader-container.text-md h2 { font-size: 1.5rem !important; }
+.kb-reader-container.text-lg h2 { font-size: 1.75rem !important; }
+.kb-reader-container.text-xl h2 { font-size: 2rem !important; }
+
+.kb-reader-container.text-sm h1 { font-size: 1.75rem !important; }
+.kb-reader-container.text-md h1 { font-size: 2.125rem !important; }
+.kb-reader-container.text-lg h1 { font-size: 2.5rem !important; }
+.kb-reader-container.text-xl h1 { font-size: 3rem !important; }

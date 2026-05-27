@@ -52,8 +52,10 @@ const MadhuryaBhavaPage = React.lazy(() => import('./pages/seo/MadhuryaBhavaPage
 const RadhavallabhVsGaudiya = React.lazy(() => import('./pages/seo/RadhavallabhVsGaudiya'));
 const ParikramaGuide = React.lazy(() => import('./pages/seo/ParikramaGuide'));
 const GlossaryDetailPage = React.lazy(() => import('./pages/seo/GlossaryDetailPage'));
-const HistoryOfRadhavallabh = React.lazy(() => import('./pages/seo/HistoryOfRadhavallabh'));
 const MajorRasikSaints = React.lazy(() => import('./pages/seo/MajorRasikSaints'));
+const KnowledgeBasePage = React.lazy(() => import('./pages/KnowledgeBasePage'));
+const HistoryOfRadhavallabh = React.lazy(() => import('./pages/seo/HistoryOfRadhavallabh'));
+const KnowledgeBaseLayout = React.lazy(() => import('./components/KnowledgeBaseLayout'));
 
 
 // Backend URL with fallback for development
@@ -247,69 +249,76 @@ function App() {
                     <Route path="/raga/:slug" element={<RagaDetailPage />} />
                     <Route path="/hi/raga/:slug" element={<RagaDetailPage />} />
                     
-                    {/* SEO Content Pages */}
-                    <Route path="/what-is-vrindopnishad" element={<WhatIsVrindopnishad />} />
-                    <Route path="/hi/what-is-vrindopnishad" element={<WhatIsVrindopnishad />} />
-                    
-                    <Route path="/meaning" element={<MeaningPage />} />
-                    <Route path="/hi/meaning" element={<MeaningPage />} />
-                    
-                    <Route path="/origin" element={<OriginPage />} />
-                    <Route path="/hi/origin" element={<OriginPage />} />
-                    
-                    <Route path="/philosophy" element={<PhilosophyPage />} />
-                    <Route path="/hi/philosophy" element={<PhilosophyPage />} />
-                    
-                    <Route path="/teachings" element={<TeachingsPage />} />
-                    <Route path="/hi/teachings" element={<TeachingsPage />} />
-                    
-                    <Route path="/importance" element={<ImportancePage />} />
-                    <Route path="/hi/importance" element={<ImportancePage />} />
-                    
-                    <Route path="/devotion" element={<DevotionalPage />} />
-                    <Route path="/hi/devotion" element={<DevotionalPage />} />
-                    
-                    <Route path="/faq" element={<FAQPage />} />
-                    <Route path="/hi/faq" element={<FAQPage />} />
-                    
-                    <Route path="/comparison-with-upanishads" element={<ComparisonPage />} />
-                    <Route path="/hi/comparison-with-upanishads" element={<ComparisonPage />} />
-                    
-                    <Route path="/guide" element={<GuidePage />} />
-                    <Route path="/hi/guide" element={<GuidePage />} />
-                    
-                    <Route path="/braj-rasik-heritage" element={<BrajRasikHeritage />} />
-                    <Route path="/hi/braj-rasik-heritage" element={<BrajRasikHeritage />} />
-                    
-                    <Route path="/what-is-radha-snata" element={<RadhaSnataPage />} />
-                    <Route path="/hi/what-is-radha-snata" element={<RadhaSnataPage />} />
-                    
-                    <Route path="/nitya-vihar-vs-nikunj-vihar" element={<NityaViharPage />} />
-                    <Route path="/hi/nitya-vihar-vs-nikunj-vihar" element={<NityaViharPage />} />
-                    
-                    <Route path="/glossary" element={<GlossaryPage />} />
-                    <Route path="/hi/glossary" element={<GlossaryPage />} />
-                    <Route path="/glossary/:slug" element={<GlossaryDetailPage />} />
-                    <Route path="/hi/glossary/:slug" element={<GlossaryDetailPage />} />
-                    <Route path="/history-of-radhavallabh-sampradaya" element={<HistoryOfRadhavallabh />} />
-                    <Route path="/hi/history-of-radhavallabh-sampradaya" element={<HistoryOfRadhavallabh />} />
-                    <Route path="/major-rasik-saints-of-braj" element={<MajorRasikSaints />} />
-                    <Route path="/hi/major-rasik-saints-of-braj" element={<MajorRasikSaints />} />
-                    
-                    <Route path="/places" element={<PlacesPage />} />
-                    <Route path="/hi/places" element={<PlacesPage />} />
+                    {/* Knowledge Base Hub Layout Route */}
+                    <Route element={<KnowledgeBaseLayout />}>
+                      {/* Knowledge Base Hub */}
+                      <Route path="/knowledge-base" element={<KnowledgeBasePage />} />
+                      <Route path="/hi/knowledge-base" element={<KnowledgeBasePage />} />
 
-                    <Route path="/who-is-harirae-ji" element={<HariraeJiPage />} />
-                    <Route path="/hi/who-is-harirae-ji" element={<HariraeJiPage />} />
+                      {/* SEO Content Pages */}
+                      <Route path="/what-is-vrindopnishad" element={<WhatIsVrindopnishad />} />
+                      <Route path="/hi/what-is-vrindopnishad" element={<WhatIsVrindopnishad />} />
+                      
+                      <Route path="/meaning" element={<MeaningPage />} />
+                      <Route path="/hi/meaning" element={<MeaningPage />} />
+                      
+                      <Route path="/origin" element={<OriginPage />} />
+                      <Route path="/hi/origin" element={<OriginPage />} />
+                      
+                      <Route path="/philosophy" element={<PhilosophyPage />} />
+                      <Route path="/hi/philosophy" element={<PhilosophyPage />} />
+                      
+                      <Route path="/teachings" element={<TeachingsPage />} />
+                      <Route path="/hi/teachings" element={<TeachingsPage />} />
+                      
+                      <Route path="/importance" element={<ImportancePage />} />
+                      <Route path="/hi/importance" element={<ImportancePage />} />
+                      
+                      <Route path="/devotion" element={<DevotionalPage />} />
+                      <Route path="/hi/devotion" element={<DevotionalPage />} />
+                      
+                      <Route path="/faq" element={<FAQPage />} />
+                      <Route path="/hi/faq" element={<FAQPage />} />
+                      
+                      <Route path="/comparison-with-upanishads" element={<ComparisonPage />} />
+                      <Route path="/hi/comparison-with-upanishads" element={<ComparisonPage />} />
+                      
+                      <Route path="/guide" element={<GuidePage />} />
+                      <Route path="/hi/guide" element={<GuidePage />} />
+                      
+                      <Route path="/braj-rasik-heritage" element={<BrajRasikHeritage />} />
+                      <Route path="/hi/braj-rasik-heritage" element={<BrajRasikHeritage />} />
+                      
+                      <Route path="/what-is-radha-snata" element={<RadhaSnataPage />} />
+                      <Route path="/hi/what-is-radha-snata" element={<RadhaSnataPage />} />
+                      
+                      <Route path="/nitya-vihar-vs-nikunj-vihar" element={<NityaViharPage />} />
+                      <Route path="/hi/nitya-vihar-vs-nikunj-vihar" element={<NityaViharPage />} />
+                      
+                      <Route path="/glossary" element={<GlossaryPage />} />
+                      <Route path="/hi/glossary" element={<GlossaryPage />} />
+                      <Route path="/glossary/:slug" element={<GlossaryDetailPage />} />
+                      <Route path="/hi/glossary/:slug" element={<GlossaryDetailPage />} />
+                      <Route path="/history-of-radhavallabh-sampradaya" element={<HistoryOfRadhavallabh />} />
+                      <Route path="/hi/history-of-radhavallabh-sampradaya" element={<HistoryOfRadhavallabh />} />
+                      <Route path="/major-rasik-saints-of-braj" element={<MajorRasikSaints />} />
+                      <Route path="/hi/major-rasik-saints-of-braj" element={<MajorRasikSaints />} />
+                      
+                      <Route path="/places" element={<PlacesPage />} />
+                      <Route path="/hi/places" element={<PlacesPage />} />
 
-                    <Route path="/what-is-madhurya-and-sakhi-bhava" element={<MadhuryaBhavaPage />} />
-                    <Route path="/hi/what-is-madhurya-and-sakhi-bhava" element={<MadhuryaBhavaPage />} />
+                      <Route path="/who-is-harirae-ji" element={<HariraeJiPage />} />
+                      <Route path="/hi/who-is-harirae-ji" element={<HariraeJiPage />} />
 
-                    <Route path="/radhavallabh-vs-gaudiya-sampradaya" element={<RadhavallabhVsGaudiya />} />
-                    <Route path="/hi/radhavallabh-vs-gaudiya-sampradaya" element={<RadhavallabhVsGaudiya />} />
+                      <Route path="/what-is-madhurya-and-sakhi-bhava" element={<MadhuryaBhavaPage />} />
+                      <Route path="/hi/what-is-madhurya-and-sakhi-bhava" element={<MadhuryaBhavaPage />} />
 
-                    <Route path="/vrindavan-parikrama-guide" element={<ParikramaGuide />} />
-                    <Route path="/hi/vrindavan-parikrama-guide" element={<ParikramaGuide />} />
+                      <Route path="/radhavallabh-vs-gaudiya-sampradaya" element={<RadhavallabhVsGaudiya />} />
+                      <Route path="/hi/radhavallabh-vs-gaudiya-sampradaya" element={<RadhavallabhVsGaudiya />} />
+
+                      <Route path="/vrindavan-parikrama-guide" element={<ParikramaGuide />} />
+                      <Route path="/hi/vrindavan-parikrama-guide" element={<ParikramaGuide />} />
+                    </Route>
 
                     
                     <Route path="/login" element={<LoginPage />} />
