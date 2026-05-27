@@ -260,7 +260,11 @@ const SEO_PAGES = [
   { path: '/faq', priority: '0.9', changefreq: 'weekly' },
   { path: '/comparison-with-upanishads', priority: '0.9', changefreq: 'weekly' },
   { path: '/guide', priority: '0.9', changefreq: 'weekly' },
-  { path: '/braj-rasik-heritage', priority: '0.9', changefreq: 'weekly' }
+  { path: '/braj-rasik-heritage', priority: '0.9', changefreq: 'weekly' },
+  { path: '/what-is-radha-snata', priority: '0.9', changefreq: 'weekly' },
+  { path: '/nitya-vihar-vs-nikunj-vihar', priority: '0.9', changefreq: 'weekly' },
+  { path: '/glossary', priority: '0.9', changefreq: 'weekly' },
+  { path: '/places', priority: '0.9', changefreq: 'weekly' }
 ];
 
 async function generateSitemap() {

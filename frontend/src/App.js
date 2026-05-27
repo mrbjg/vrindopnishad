@@ -45,6 +45,9 @@ const GuidePage = React.lazy(() => import('./pages/seo/GuidePage'));
 const BrajRasikHeritage = React.lazy(() => import('./pages/seo/BrajRasikHeritage'));
 const RadhaSnataPage = React.lazy(() => import('./pages/seo/RadhaSnataPage'));
 const NityaViharPage = React.lazy(() => import('./pages/seo/NityaViharPage'));
+const GlossaryPage = React.lazy(() => import('./pages/seo/GlossaryPage'));
+const PlacesPage = React.lazy(() => import('./pages/seo/PlacesPage'));
+
 
 // Backend URL with fallback for development
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -276,6 +279,13 @@ function App() {
                     
                     <Route path="/nitya-vihar-vs-nikunj-vihar" element={<NityaViharPage />} />
                     <Route path="/hi/nitya-vihar-vs-nikunj-vihar" element={<NityaViharPage />} />
+                    
+                    <Route path="/glossary" element={<GlossaryPage />} />
+                    <Route path="/hi/glossary" element={<GlossaryPage />} />
+                    
+                    <Route path="/places" element={<PlacesPage />} />
+                    <Route path="/hi/places" element={<PlacesPage />} />
+
                     
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/admin-old/login" element={<AdminLoginPage />} />
