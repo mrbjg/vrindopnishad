@@ -333,7 +333,7 @@ export default async function handler(req, res) {
 
     while (hasMore) {
       const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/content?select=id,title,slug,category,author,hindi_text,sanskrit_text,english_text,english_translation,content_text,commentary,description,created_at&order=id&offset=${offset}&limit=${PAGE_SIZE}`,
+        `${SUPABASE_URL}/rest/v1/content?select=id,title,slug,category,author,hindi_text,sanskrit_text&order=id&offset=${offset}&limit=${PAGE_SIZE}`,
         {
           headers: {
             'apikey': SUPABASE_KEY,
@@ -377,21 +377,49 @@ export default async function handler(req, res) {
       if (transliteratedSlug && s === transliteratedSlug) return true;
       if (transliteratedSlug && s.toLowerCase() === transliteratedSlug) return true;
       if (item.id?.toString() === decodedSlug) return true;
+      
+      // Fallback to derived slug from title
+      const genSlug = generateSlug(item.title);
+      if (genSlug && genSlug === decodedSlug) return true;
+      if (genSlug && genSlug.toLowerCase() === decodedSlug.toLowerCase()) return true;
+      if (genSlug && transliteratedSlug && genSlug === transliteratedSlug) return true;
       return false;
     });
     
     if (content) {
-      const canonicalSlug = encodeURIComponent(content.slug || content.id);
-      title = `${content.title} — ${content.category || 'Sacred Verse'} | ${content.author || 'Vrindopnishad'}`;
-      description = (content.sanskrit_text || content.hindi_text || content.description || '').substring(0, 160).replace(/[\r\n]+/g, ' ') + '...';
+      // Fetch full details for this specific content item dynamically
+      let fullContent = content;
+      try {
+        const detailResponse = await fetch(
+          `${SUPABASE_URL}/rest/v1/content?select=id,title,slug,category,author,hindi_text,sanskrit_text,english_text,english_translation,content_text,commentary,description,created_at&id=eq.${content.id}&limit=1`,
+          {
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`
+            }
+          }
+        );
+        const details = await detailResponse.json();
+        if (Array.isArray(details) && details.length > 0) {
+          fullContent = details[0];
+        }
+      } catch (err) {
+        console.error('Error fetching content detail from Supabase:', err);
+      }
+
+      const canonicalSlug = encodeURIComponent(fullContent.slug || fullContent.id);
+      title = isHindiRoute
+        ? `${fullContent.title} — ${fullContent.category || 'पवित्र पाठ'} | ${fullContent.author || 'वृंदोपनिषद्'}`
+        : `${fullContent.title} — ${fullContent.category || 'Sacred Verse'} | ${fullContent.author || 'Vrindopnishad'}`;
+      description = (fullContent.sanskrit_text || fullContent.hindi_text || fullContent.description || '').substring(0, 160).replace(/[\r\n]+/g, ' ') + '...';
       pageUrl = getRouteLink(`/content/${canonicalSlug}`);
 
       jsonLd = JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
-        "headline": content.title,
+        "headline": fullContent.title,
         "description": description,
-        "author": { "@type": "Person", "name": content.author || "Vrindopnishad" },
+        "author": { "@type": "Person", "name": fullContent.author || "Vrindopnishad" },
         "publisher": {
           "@type": "Organization",
           "name": "Vrindopnishad",
@@ -399,21 +427,30 @@ export default async function handler(req, res) {
         },
         "mainEntityOfPage": { "@type": "WebPage", "@id": pageUrl },
         "inLanguage": ["hi", "sa", "en"],
-        "genre": content.category || "Sacred Literature",
-        "datePublished": content.created_at || today
+        "genre": fullContent.category || "Sacred Literature",
+        "datePublished": fullContent.created_at || today
       });
+
+      const transliteratedSanskrit = fullContent.sanskrit_text ? transliterate(fullContent.sanskrit_text) : "";
+      const transliteratedHindi = fullContent.hindi_text ? transliterate(fullContent.hindi_text) : "";
 
       mainBodyHtml = `
         <article>
-          <h1>${escapeHtml(content.title)}</h1>
-          <p><strong>Category:</strong> ${escapeHtml(content.category || 'Sacred Literature')}</p>
-          <p><strong>Author/Saint:</strong> ${escapeHtml(content.author || 'Vaishnava Saint')}</p>
-          ${content.sanskrit_text ? `<div lang="sa" style="font-size: 1.25rem; margin: 20px 0; font-family: serif;"><h2>Sanskrit Verse</h2><p style="white-space: pre-wrap; line-height: 1.8;">${escapeHtml(content.sanskrit_text)}</p></div>` : ''}
-          ${content.hindi_text ? `<div lang="hi" style="margin: 20px 0;"><h2>Hindi Translation</h2><p style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(content.hindi_text)}</p></div>` : ''}
-          ${content.english_text ? `<div lang="en" style="margin: 20px 0;"><h2>English Text</h2><p style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(content.english_text)}</p></div>` : ''}
-          ${content.english_translation ? `<div lang="en" style="margin: 20px 0;"><h2>English Translation</h2><p style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(content.english_translation)}</p></div>` : ''}
-          ${content.commentary ? `<div lang="en" style="margin: 20px 0;"><h2>Commentary</h2><p style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(content.commentary)}</p></div>` : ''}
-          ${content.description ? `<div lang="en" style="margin: 20px 0;"><h2>Explanation</h2><p>${escapeHtml(content.description)}</p></div>` : ''}
+          <h1>${escapeHtml(fullContent.title)}</h1>
+          <p><strong>${isHindiRoute ? 'श्रेणी' : 'Category'}:</strong> ${escapeHtml(fullContent.category || (isHindiRoute ? 'पवित्र साहित्य' : 'Sacred Literature'))}</p>
+          <p><strong>${isHindiRoute ? 'लेखक/संत' : 'Author/Saint'}:</strong> ${escapeHtml(fullContent.author || (isHindiRoute ? 'वैष्णव संत' : 'Vaishnava Saint'))}</p>
+          ${fullContent.sanskrit_text ? `<div lang="sa" style="font-size: 1.25rem; margin: 20px 0; font-family: serif;"><h2>${isHindiRoute ? 'मूल संस्कृत श्लोक' : 'Sanskrit Verse'}</h2><p style="white-space: pre-wrap; line-height: 1.8;">${escapeHtml(fullContent.sanskrit_text)}</p></div>` : ''}
+          ${fullContent.hindi_text ? `<div lang="hi" style="margin: 20px 0;"><h2>${isHindiRoute ? 'हिंदी अनुवाद' : 'Hindi Translation'}</h2><p style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(fullContent.hindi_text)}</p></div>` : ''}
+          ${(transliteratedSanskrit || transliteratedHindi) ? `
+            <div lang="en-Latn" style="margin: 20px 0;">
+              <h2>${isHindiRoute ? 'रोमन पाठ (Hinglish Transliteration)' : 'Hinglish Transliteration (रोमन पाठ)'}</h2>
+              <p style="white-space: pre-wrap; line-height: 1.6; color: #4b5563;">${escapeHtml(transliteratedSanskrit || transliteratedHindi)}</p>
+            </div>
+          ` : ''}
+          ${fullContent.english_text ? `<div lang="en" style="margin: 20px 0;"><h2>${isHindiRoute ? 'अंग्रेजी रोमन पाठ' : 'English Text'}</h2><p style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(fullContent.english_text)}</p></div>` : ''}
+          ${fullContent.english_translation ? `<div lang="en" style="margin: 20px 0;"><h2>${isHindiRoute ? 'अंग्रेजी अनुवाद' : 'English Translation'}</h2><p style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(fullContent.english_translation)}</p></div>` : ''}
+          ${fullContent.commentary ? `<div lang="en" style="margin: 20px 0;"><h2>${isHindiRoute ? 'टीका / व्याख्या' : 'Commentary'}</h2><p style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(fullContent.commentary)}</p></div>` : ''}
+          ${fullContent.description ? `<div lang="en" style="margin: 20px 0;"><h2>${isHindiRoute ? 'विवरण' : 'Explanation'}</h2><p>${escapeHtml(fullContent.description)}</p></div>` : ''}
         </article>
       `;
     } else {
@@ -426,26 +463,35 @@ export default async function handler(req, res) {
   } else if (type === 'saint' && slug) {
     // Dynamic Saint Detail page
     const decodedSlug = decodeURIComponent(slug);
-    const sant = sants.find(s => s.slug === decodedSlug);
+    const transliteratedSlug = slugify(transliterate(decodedSlug));
+    const lowerSlug = decodedSlug.toLowerCase();
+    const sant = sants.find(s => {
+      const sSlug = s.slug || '';
+      return sSlug === decodedSlug ||
+             sSlug.toLowerCase() === lowerSlug ||
+             (transliteratedSlug && sSlug === transliteratedSlug) ||
+             (transliteratedSlug && sSlug.toLowerCase() === transliteratedSlug) ||
+             (s.name && slugify(transliterate(s.name)) === transliteratedSlug);
+    });
 
     if (sant) {
-      title = isHindiRoute ? `${sant.name} जीवनी एवं वाणी संग्रह | Vrindopnishad` : `${sant.hinglishName} Biography & Vaanis | Vrindopnishad`;
-      description = sant.biography?.text ? sant.biography.text.substring(0, 160) : `Complete collection of spiritual poetry and hymns written by ${sant.hinglishName}.`;
-      pageUrl = getRouteLink(`/saint/${encodeURIComponent(slug)}`);
+      title = isHindiRoute ? `${sant.name} जीवनी एवं वाणी संग्रह | Vrindopnishad` : `${sant.hinglishName || sant.name} Biography & Vaanis | Vrindopnishad`;
+      description = sant.biography?.text ? sant.biography.text.substring(0, 160) : `Complete collection of spiritual poetry and hymns written by ${sant.hinglishName || sant.name}.`;
+      pageUrl = getRouteLink(`/saint/${encodeURIComponent(sant.slug || slug)}`);
 
       mainBodyHtml = `
         <h1>${escapeHtml(sant.name)}</h1>
-        <h2>Biography & Devotional History</h2>
+        <h2>${isHindiRoute ? 'जीवनी एवं भक्ति इतिहास' : 'Biography & Devotional History'}</h2>
         <div style="background: #fdfdfd; padding: 20px; border-left: 4px solid #f2a60d; margin: 20px 0;">
-          <p style="white-space: pre-wrap; line-height: 1.7;">${escapeHtml(sant.biography?.text || 'Vaishnava saint of the Braj tradition.')}</p>
+          <p style="white-space: pre-wrap; line-height: 1.7;">${escapeHtml(sant.biography?.text || (isHindiRoute ? 'ब्रज परंपरा के वैष्णव संत।' : 'Vaishnava saint of the Braj tradition.'))}</p>
         </div>
         ${sant.books.length > 0 ? `
-          <h2>Major Granthas & Literature</h2>
+          <h2>${isHindiRoute ? 'मुख्य ग्रन्थ एवं साहित्य' : 'Major Granthas & Literature'}</h2>
           <ul>
             ${sant.books.map(book => `<li><a href="${getRouteLink(`/book/${slugify(transliterate(book))}`)}">${escapeHtml(book)}</a></li>`).join('')}
           </ul>
         ` : ''}
-        <h2>Collected Verses & Vaanis (${sant.verses.length})</h2>
+        <h2>${isHindiRoute ? 'संकलित पद एवं वाणियाँ' : 'Collected Verses & Vaanis'} (${sant.verses.length})</h2>
         <ul>
           ${sant.verses.map(v => `<li><a href="${getRouteLink(`/content/${v.slug || v.id}`)}">${escapeHtml(v.title)}</a></li>`).join('')}
         </ul>
@@ -459,17 +505,28 @@ export default async function handler(req, res) {
   } else if (type === 'book' && slug) {
     // Dynamic Book Detail page
     const decodedSlug = decodeURIComponent(slug);
-    const book = books.find(b => b.slug === decodedSlug);
+    const transliteratedSlug = slugify(transliterate(decodedSlug));
+    const lowerSlug = decodedSlug.toLowerCase();
+    const book = books.find(b => {
+      const bSlug = b.slug || '';
+      return bSlug === decodedSlug ||
+             bSlug.toLowerCase() === lowerSlug ||
+             (transliteratedSlug && bSlug === transliteratedSlug) ||
+             (transliteratedSlug && bSlug.toLowerCase() === transliteratedSlug) ||
+             (b.name && slugify(transliterate(b.name)) === transliteratedSlug);
+    });
 
     if (book) {
-      title = `${book.name} ग्रन्थ - वाणी संग्रह एवं हिंदी अनुवाद | Vrindopnishad`;
+      title = isHindiRoute 
+        ? `${book.name} ग्रन्थ - वाणी संग्रह एवं हिंदी अनुवाद | Vrindopnishad`
+        : `${book.name} Grantha - Verse Collection & Translation | Vrindopnishad`;
       description = `Read and contemplate the sacred verses and translations from the grantha ${book.name} written by ${book.author}.`;
-      pageUrl = getRouteLink(`/book/${encodeURIComponent(slug)}`);
+      pageUrl = getRouteLink(`/book/${encodeURIComponent(book.slug || slug)}`);
 
       mainBodyHtml = `
         <h1>${escapeHtml(book.name)}</h1>
-        <p><strong>Author/Authoritative Source:</strong> <a href="${getRouteLink(`/saint/${slugify(transliterate(book.author))}`)}">${escapeHtml(book.author)}</a></p>
-        <h2>Verses under this Grantha (${book.verses.length})</h2>
+        <p><strong>${isHindiRoute ? 'लेखक / मूल स्रोत' : 'Author/Authoritative Source'}:</strong> <a href="${getRouteLink(`/saint/${slugify(transliterate(book.author))}`)}">${escapeHtml(book.author)}</a></p>
+        <h2>${isHindiRoute ? 'इस ग्रन्थ के अंतर्गत पद' : 'Verses under this Grantha'} (${book.verses.length})</h2>
         <ul>
           ${book.verses.map(v => `<li><a href="${getRouteLink(`/content/${v.slug || v.id}`)}">${escapeHtml(v.title)}</a></li>`).join('')}
         </ul>
@@ -483,17 +540,28 @@ export default async function handler(req, res) {
   } else if (type === 'raga' && slug) {
     // Dynamic Raga Detail page
     const decodedSlug = decodeURIComponent(slug);
-    const raga = ragas.find(r => r.slug === decodedSlug);
+    const transliteratedSlug = slugify(transliterate(decodedSlug));
+    const lowerSlug = decodedSlug.toLowerCase();
+    const raga = ragas.find(r => {
+      const rSlug = r.slug || '';
+      return rSlug === decodedSlug ||
+             rSlug.toLowerCase() === lowerSlug ||
+             (transliteratedSlug && rSlug === transliteratedSlug) ||
+             (transliteratedSlug && rSlug.toLowerCase() === transliteratedSlug) ||
+             (r.name && slugify(transliterate(r.name)) === transliteratedSlug);
+    });
 
     if (raga) {
-      title = `राग ${raga.name} के पद एवं संकीर्तन | Vrindopnishad`;
-      description = `Explore kirtan, bhajans and verses set to the classical melody of Raga ${raga.name}.`;
-      pageUrl = getRouteLink(`/raga/${encodeURIComponent(slug)}`);
+      title = isHindiRoute
+        ? `राग ${raga.name} के पद एवं संकीर्तन | Vrindopnishad`
+        : `Raga ${raga.hinglishName || raga.name} Sankirtan & Verses | Vrindopnishad`;
+      description = `Explore kirtan, bhajans and verses set to the classical melody of Raga ${raga.hinglishName || raga.name}.`;
+      pageUrl = getRouteLink(`/raga/${encodeURIComponent(raga.slug || slug)}`);
 
       mainBodyHtml = `
-        <h1>Raga ${escapeHtml(raga.name)}</h1>
-        <p>Classical melody and sankirtan hymns set in Raga ${escapeHtml(raga.name)}.</p>
-        <h2>Verses set in this Raga (${raga.verses.length})</h2>
+        <h1>${isHindiRoute ? `राग ${escapeHtml(raga.name)}` : `Raga ${escapeHtml(raga.name)}`}</h1>
+        <p>${isHindiRoute ? `राग ${escapeHtml(raga.name)} में निबद्ध पद एवं संकीर्तन भजन।` : `Classical melody and sankirtan hymns set in Raga ${escapeHtml(raga.name)}.`}</p>
+        <h2>${isHindiRoute ? 'इस राग में संकलित पद' : 'Verses set in this Raga'} (${raga.verses.length})</h2>
         <ul>
           ${raga.verses.map(v => `<li><a href="${getRouteLink(`/content/${v.slug || v.id}`)}">${escapeHtml(v.title)}</a></li>`).join('')}
         </ul>
@@ -510,14 +578,16 @@ export default async function handler(req, res) {
     const filteredVerses = allContentItems.filter(item => item.category?.toLowerCase().trim().replace(/\s+/g, '-') === decodedSlug);
     const categoryTitle = decodedSlug.charAt(0).toUpperCase() + decodedSlug.slice(1);
 
-    title = `${categoryTitle} संग्रह एवं व्याख्या | Vrindopnishad`;
+    title = isHindiRoute
+      ? `${categoryTitle} संग्रह एवं व्याख्या | Vrindopnishad`
+      : `${categoryTitle} Collection & Meanings | Vrindopnishad`;
     description = `Read the complete collection of ${categoryTitle} on Vrindopnishad. Text, Hindi translations, and English explanations available.`;
     pageUrl = getRouteLink(`/category/${encodeURIComponent(slug)}`);
 
     mainBodyHtml = `
-      <h1>Category: ${escapeHtml(categoryTitle)}</h1>
-      <p>Browse through our collection of sacred verses tagged under ${escapeHtml(categoryTitle)}.</p>
-      <h2>Verses (${filteredVerses.length})</h2>
+      <h1>${isHindiRoute ? `श्रेणी: ${escapeHtml(categoryTitle)}` : `Category: ${escapeHtml(categoryTitle)}`}</h1>
+      <p>${isHindiRoute ? `${escapeHtml(categoryTitle)} के अंतर्गत संकलित श्लोक/पद पढ़ें।` : `Browse through our collection of sacred verses tagged under ${escapeHtml(categoryTitle)}.`}</p>
+      <h2>${isHindiRoute ? 'संकलित पद' : 'Verses'} (${filteredVerses.length})</h2>
       <ul>
         ${filteredVerses.map(v => `<li><a href="${getRouteLink(`/content/${v.slug || v.id}`)}">${escapeHtml(v.title)}</a></li>`).join('')}
       </ul>
@@ -541,44 +611,44 @@ export default async function handler(req, res) {
     } else {
       // Fallback list pages
       if (decodedSlug === 'saints') {
-        title = `रसिक सन्त एवं चरित्र (Rasik Saints & Biographies) | Vrindopnishad`;
-        description = `Learn about the lives, teachings, and spiritual literature of the Rasik saints of Vrindavan, Barsana, and Braj.`;
+        title = isHindiRoute ? `रसिक सन्त एवं चरित्र (Rasik Saints & Biographies) | Vrindopnishad` : `Vaishnava Rasik Saints & Biographies | Vrindopnishad`;
+        description = isHindiRoute ? `ब्रज के महान रसिक संतों की जीवनी, इतिहास और उनके वाणी पदों का संग्रह पढ़ें।` : `Learn about the lives, teachings, and spiritual literature of the Rasik saints of Vrindavan, Barsana, and Braj.`;
         pageUrl = getRouteLink('/saints');
         mainBodyHtml = `
-          <h1>Vaishnava Rasik Saints</h1>
-          <p>Read detailed biographies and collected works of Vrindavan saints.</p>
+          <h1>${isHindiRoute ? 'वैष्णव रसिक संत' : 'Vaishnava Rasik Saints'}</h1>
+          <p>${isHindiRoute ? 'वृंदावन और ब्रज के संतों की विस्तृत जीवनी और उनके पद।' : 'Read detailed biographies and collected works of Vrindavan saints.'}</p>
           <ul>
             ${sants.map(s => `<li><a href="${getRouteLink(`/saint/${s.slug}`)}">${escapeHtml(s.name)}</a></li>`).join('')}
           </ul>
         `;
       } else if (decodedSlug === 'books') {
-        title = `पवित्र ग्रन्थ एवं साहित्य (Sacred Scriptures & Literature) | Vrindopnishad`;
-        description = `Browse and read the digital editions of sacred Vaishnava granthas, vanis, and spiritual scriptures.`;
+        title = isHindiRoute ? `पवित्र ग्रन्थ एवं वाणी साहित्य (Sacred Scriptures & Literature) | Vrindopnishad` : `Sacred Scriptures & Literature | Vrindopnishad`;
+        description = isHindiRoute ? `पवित्र वैष्णव ग्रंथों, वाणियों और साहित्यों के डिजिटल संस्करण पढ़ें।` : `Browse and read the digital editions of sacred Vaishnava granthas, vanis, and spiritual scriptures.`;
         pageUrl = getRouteLink('/books');
         mainBodyHtml = `
-          <h1>Sacred Granthas</h1>
-          <p>Browse digital editions of Vaishnava sacred scriptures.</p>
+          <h1>${isHindiRoute ? 'पवित्र ग्रन्थ साहित्य' : 'Sacred Granthas'}</h1>
+          <p>${isHindiRoute ? 'वैष्णव संप्रदाय के पवित्र शास्त्रों और ग्रंथों के भावार्थ।' : 'Browse digital editions of Vaishnava sacred scriptures.'}</p>
           <ul>
             ${books.map(b => `<li><a href="${getRouteLink(`/book/${b.slug}`)}">${escapeHtml(b.name)}</a></li>`).join('')}
           </ul>
         `;
       } else if (decodedSlug === 'ragas') {
-        title = `शास्त्रीय राग एवं कीर्तन राग (Vaishnava Raga Registry) | Vrindopnishad`;
-        description = `Explore devotional songs and verses organized by their classical raag melodies.`;
+        title = isHindiRoute ? `शास्त्रीय राग एवं कीर्तन राग (Vaishnava Raga Registry) | Vrindopnishad` : `Vaishnava Raga Registry | Vrindopnishad`;
+        description = isHindiRoute ? `शास्त्रीय रागों में रचित संकीर्तन पद और भजनों का राग-अनुसार संग्रह।` : `Explore devotional songs and verses organized by their classical raag melodies.`;
         pageUrl = getRouteLink('/ragas');
         mainBodyHtml = `
-          <h1>Devotional Classical Ragas</h1>
-          <p>Explore verses and hymns classified by raag.</p>
+          <h1>${isHindiRoute ? 'देवभक्ति शास्त्रीय राग' : 'Devotional Classical Ragas'}</h1>
+          <p>${isHindiRoute ? 'रागों के आधार पर वर्गीकृत पद और संकीर्तन संग्रह।' : 'Explore verses and hymns classified by raag.'}</p>
           <ul>
             ${ragas.map(r => `<li><a href="${getRouteLink(`/raga/${r.slug}`)}">${escapeHtml(r.name)}</a></li>`).join('')}
           </ul>
         `;
       } else if (decodedSlug === 'content') {
-        title = `वृंदोपनिषद् पाठ लाइब्रेरी (Browse All Sacred Content) | Vrindopnishad`;
-        description = `Access the complete index of shlokas, strotras, bhajans, kirtans, and spiritual poetry.`;
+        title = isHindiRoute ? `वृंदोपनिषद् पाठ लाइब्रेरी (Browse All Sacred Content) | Vrindopnishad` : `Vrindopnishad Paath Library (Browse All Sacred Content) | Vrindopnishad`;
+        description = isHindiRoute ? `संस्कृत श्लोकों, स्तोत्रों, भजनों, और आध्यात्मिक कविताओं की संपूर्ण लाइब्रेरी।` : `Access the complete index of shlokas, strotras, bhajans, kirtans, and spiritual poetry.`;
         pageUrl = getRouteLink('/content');
         mainBodyHtml = `
-          <h1>All Sacred Verses & Content</h1>
+          <h1>${isHindiRoute ? 'सभी संकलित पाठ एवं श्लोक' : 'All Sacred Verses & Content'}</h1>
           <ul>
             ${allContentItems.map(item => `<li><a href="${getRouteLink(`/content/${item.slug || item.id}`)}">${escapeHtml(item.title)}</a></li>`).join('')}
           </ul>
