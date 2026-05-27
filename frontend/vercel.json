@@ -36,7 +36,7 @@
       "destination": "/api/seo-handler?type=static&lang=hi"
     },
     {
-      "source": "/:slug(what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|saints|books|ragas|content)",
+      "source": "/:slug(what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|what-is-radha-snata|nitya-vihar-vs-nikunj-vihar|saints|books|ragas|content)",
       "has": [
         {
           "type": "header",
@@ -47,7 +47,7 @@
       "destination": "/api/seo-handler?type=static&slug=:slug"
     },
     {
-      "source": "/hi/:slug(what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|saints|books|ragas|content)",
+      "source": "/hi/:slug(what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|what-is-radha-snata|nitya-vihar-vs-nikunj-vihar|saints|books|ragas|content)",
       "has": [
         {
           "type": "header",
