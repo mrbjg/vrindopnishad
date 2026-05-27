@@ -191,23 +191,20 @@ const PookizLayout = ({ children }) => {
                 </button>
               </div>
             ) : (
-              <div className="flex flex-row items-center justify-between w-full px-2 py-1.5 gap-4">
+              <div className="flex flex-row items-center justify-between w-full px-2 py-1.5 gap-4 min-w-0">
                 <Link 
                   to={isHiRoute ? "/hi" : "/"} 
-                  className="flex items-center gap-3 group transition-all"
+                  className="flex items-center gap-3 group transition-all min-w-0"
                 >
                   <img 
                     src="/official-logo-dark.svg" 
                     alt="Vrindopnishad Logo" 
                     className="w-7 h-7 object-contain hover:scale-110 transition-transform duration-500 shrink-0" 
                   />
-                  <span className="font-bold text-lg tracking-wide text-white group-hover:text-purple-300 transition-colors">
-                    {isHiRoute ? 'वृंदोपनिषद्' : 'Vrindopnishad'}
-                  </span>
                 </Link>
                 <button 
                   onClick={() => setIsSettingsOpen(true)}
-                  className="text-zinc-400 hover:text-white rounded-xl hover:bg-white/5 transition-colors flex items-center justify-center p-1.5"
+                  className="text-zinc-400 hover:text-white rounded-xl hover:bg-white/5 transition-colors flex items-center justify-center p-1.5 shrink-0"
                   title={isHiRoute ? 'प्राथमिकताएं' : 'Preferences'}
                 >
                   <Settings size={18} />
@@ -333,20 +330,17 @@ const PookizLayout = ({ children }) => {
           {/* Sidebar Drawer */}
           <aside className="absolute top-0 bottom-0 left-0 w-64 bg-black border-r border-white/5 flex flex-col justify-between p-4 animate-fade-in-left">
             <div className="space-y-6">
-              <div className="flex items-center justify-between px-2 py-1.5">
-                <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between px-2 py-1.5 gap-4">
+                <div className="flex items-center gap-3 min-w-0">
                   <img 
                     src="/official-logo-dark.svg" 
                     alt="Vrindopnishad Logo" 
                     className="w-7 h-7 object-contain shrink-0" 
                   />
-                  <span className="font-bold text-lg tracking-wide text-white">
-                    {isHiRoute ? 'वृंदोपनिषद्' : 'Vrindopnishad'}
-                  </span>
                 </div>
                 <button 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-white/5"
+                  className="text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-white/5 shrink-0"
                 >
                   <X size={18} />
                 </button>
@@ -407,20 +401,20 @@ const PookizLayout = ({ children }) => {
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
         
         {/* Mobile Sticky Header */}
-        <header className="lg:hidden h-14 border-b border-white/5 bg-black/80 backdrop-blur-md px-4 flex items-center justify-between sticky top-0 z-40">
-          <div className="flex items-center gap-3">
+        <header className="lg:hidden h-14 border-b border-white/5 bg-black/80 backdrop-blur-md px-4 flex items-center justify-between sticky top-0 z-40 gap-4">
+          <div className="flex items-center gap-3 min-w-0">
             <button 
               onClick={() => setIsMobileMenuOpen(true)}
-              className="text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-white/5 transition-colors"
+              className="text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-white/5 transition-colors shrink-0"
             >
               <Menu size={20} />
             </button>
-            <span className="font-bold text-sm tracking-wide text-white">
+            <span className="font-bold text-sm tracking-wide text-white truncate">
               {isHiRoute ? 'वृंदोपनिषद्' : 'Vrindopnishad'}
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <button 
               onClick={() => setIsSettingsOpen(true)}
               className="text-zinc-400 hover:text-white p-1.5 rounded-lg hover:bg-white/5 transition-colors"
