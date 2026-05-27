@@ -36,7 +36,7 @@
       "destination": "/api/seo-handler?type=static&lang=hi"
     },
     {
-      "source": "/:slug(what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|what-is-radha-snata|nitya-vihar-vs-nikunj-vihar|glossary|places|saints|books|ragas|content)",
+      "source": "/:slug(what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|what-is-radha-snata|nitya-vihar-vs-nikunj-vihar|glossary|places|saints|books|ragas|content|who-is-harirae-ji|what-is-madhurya-and-sakhi-bhava|radhavallabh-vs-gaudiya-sampradaya|vrindavan-parikrama-guide|history-of-radhavallabh-sampradaya|major-rasik-saints-of-braj)",
       "has": [
         {
           "type": "header",
@@ -47,7 +47,7 @@
       "destination": "/api/seo-handler?type=static&slug=:slug"
     },
     {
-      "source": "/hi/:slug(what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|what-is-radha-snata|nitya-vihar-vs-nikunj-vihar|glossary|places|saints|books|ragas|content)",
+      "source": "/hi/:slug(what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|what-is-radha-snata|nitya-vihar-vs-nikunj-vihar|glossary|places|saints|books|ragas|content|who-is-harirae-ji|what-is-madhurya-and-sakhi-bhava|radhavallabh-vs-gaudiya-sampradaya|vrindavan-parikrama-guide|history-of-radhavallabh-sampradaya|major-rasik-saints-of-braj)",
       "has": [
         {
           "type": "header",
@@ -166,6 +166,28 @@
         }
       ],
       "destination": "/api/seo-handler?type=category&slug=:slug&lang=hi"
+    },
+    {
+      "source": "/glossary/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(googlebot|bingbot|yandex|baidu|twitterbot|facebookexternalhit|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|applebot).*"
+        }
+      ],
+      "destination": "/api/seo-handler?type=glossary&slug=:slug"
+    },
+    {
+      "source": "/hi/glossary/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(googlebot|bingbot|yandex|baidu|twitterbot|facebookexternalhit|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|applebot).*"
+        }
+      ],
+      "destination": "/api/seo-handler?type=glossary&slug=:slug&lang=hi"
     },
     {
       "source": "/((?!api|sitemap\\.xml|robots\\.txt|google27b1a7fc60901288\\.html|static|manifest\\.json|favicon).*)",

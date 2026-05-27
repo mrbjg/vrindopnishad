@@ -47,6 +47,13 @@ const RadhaSnataPage = React.lazy(() => import('./pages/seo/RadhaSnataPage'));
 const NityaViharPage = React.lazy(() => import('./pages/seo/NityaViharPage'));
 const GlossaryPage = React.lazy(() => import('./pages/seo/GlossaryPage'));
 const PlacesPage = React.lazy(() => import('./pages/seo/PlacesPage'));
+const HariraeJiPage = React.lazy(() => import('./pages/seo/HariraeJiPage'));
+const MadhuryaBhavaPage = React.lazy(() => import('./pages/seo/MadhuryaBhavaPage'));
+const RadhavallabhVsGaudiya = React.lazy(() => import('./pages/seo/RadhavallabhVsGaudiya'));
+const ParikramaGuide = React.lazy(() => import('./pages/seo/ParikramaGuide'));
+const GlossaryDetailPage = React.lazy(() => import('./pages/seo/GlossaryDetailPage'));
+const HistoryOfRadhavallabh = React.lazy(() => import('./pages/seo/HistoryOfRadhavallabh'));
+const MajorRasikSaints = React.lazy(() => import('./pages/seo/MajorRasikSaints'));
 
 
 // Backend URL with fallback for development
@@ -282,9 +289,27 @@ function App() {
                     
                     <Route path="/glossary" element={<GlossaryPage />} />
                     <Route path="/hi/glossary" element={<GlossaryPage />} />
+                    <Route path="/glossary/:slug" element={<GlossaryDetailPage />} />
+                    <Route path="/hi/glossary/:slug" element={<GlossaryDetailPage />} />
+                    <Route path="/history-of-radhavallabh-sampradaya" element={<HistoryOfRadhavallabh />} />
+                    <Route path="/hi/history-of-radhavallabh-sampradaya" element={<HistoryOfRadhavallabh />} />
+                    <Route path="/major-rasik-saints-of-braj" element={<MajorRasikSaints />} />
+                    <Route path="/hi/major-rasik-saints-of-braj" element={<MajorRasikSaints />} />
                     
                     <Route path="/places" element={<PlacesPage />} />
                     <Route path="/hi/places" element={<PlacesPage />} />
+
+                    <Route path="/who-is-harirae-ji" element={<HariraeJiPage />} />
+                    <Route path="/hi/who-is-harirae-ji" element={<HariraeJiPage />} />
+
+                    <Route path="/what-is-madhurya-and-sakhi-bhava" element={<MadhuryaBhavaPage />} />
+                    <Route path="/hi/what-is-madhurya-and-sakhi-bhava" element={<MadhuryaBhavaPage />} />
+
+                    <Route path="/radhavallabh-vs-gaudiya-sampradaya" element={<RadhavallabhVsGaudiya />} />
+                    <Route path="/hi/radhavallabh-vs-gaudiya-sampradaya" element={<RadhavallabhVsGaudiya />} />
+
+                    <Route path="/vrindavan-parikrama-guide" element={<ParikramaGuide />} />
+                    <Route path="/hi/vrindavan-parikrama-guide" element={<ParikramaGuide />} />
 
                     
                     <Route path="/login" element={<LoginPage />} />

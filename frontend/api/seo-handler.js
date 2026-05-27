@@ -8,6 +8,9 @@
  * Cached aggressively at the Vercel Edge Network CDN (s-maxage=86400 / 24 hours).
  */
 
+const { getSaintMetadata } = require('./saintMetadata');
+const { GLOSSARY_TERMS } = require('./glossaryTerms');
+
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || 'https://tilimltxgeucefxzerqi.supabase.co';
 const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpbGltbHR4Z2V1Y2VmeHplcnFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2MjQyNTQsImV4cCI6MjA4MzIwMDI1NH0.lwaCJyTRW6jNsfQJ32R_wAwp11yj6bvsJ4fzC0EX_00';
 const DOMAIN = 'https://path.vrindopnishad.in';
@@ -445,6 +448,78 @@ const STATIC_SEO_PAGES = {
       description: 'ब्रज रसिक विरासत में राधा स्नात (राधा-स्नात-विभूषिता) की अवधारणा को समझें। अष्टकाली लीला और प्रातःकालीन भक्ति ध्यान में इसकी भूमिका का अध्ययन करें।',
       body: '<h1>राधा स्नात क्या है?</h1><p>वृंदावन की रसिक वैष्णव परंपरा में, <strong>राधा स्नात</strong> (संस्कृत श्लोकों में <em>राधा स्नात-विभूषिता</em> — दिव्य प्रातःकालीन स्नान और श्रृंगार के बाद श्री राधा) केवल एक शारीरिक क्रिया नहीं है, बल्कि यह मानसिक साधना और गहन भक्ति ध्यान (स्मरण) का एक महत्वपूर्ण विषय है।</p><p>रसिक शास्त्रों के अनुसार, श्री राधा कृष्ण की नित्य लीलाएँ आठ पहरों में विभाजित हैं, जिन्हें <strong>अष्टकालीन लीला</strong> कहा जाता है। प्रातःकाल की लीला (द्वितीय याम, लगभग सुबह 6:00 से 8:20 बजे) में श्री राधा अपने गृह यावट लौटती हैं, जहाँ सखियाँ और मंजरी दासियाँ उन्हें सुगंधित जल, केसर और चंदन से स्नान कराती हैं। स्नान के पश्चात उन्हें नील वस्त्र (नीलाम्बरी) पहनाया जाता है और दिव्य आभूषणों तथा सोलह श्रृंगार से सुसज्जित किया जाता है। रसिक साधक इस स्वरूप का ध्यान करते हैं ताकि वे सखी भाव या मंजरी भाव में प्रतिष्ठित होकर युगल सरकार की सेवा कर सकें।</p>'
     }
+  },
+  'who-is-harirae-ji': {
+    en: {
+      title: 'Who is Harirae Ji? — Biography, Teachings & Varta Literature',
+      description: 'Discover the life and spiritual contributions of Shri Harirae Ji Mahaprabhu, the prominent acharya of Pushtimarg and writer of historical Varta literature.',
+      body: '<h1>Shri Harirae Ji Mahaprabhu</h1><p>Shri Harirae Ji Mahaprabhu (1612–1715 AD) was one of the most prominent acharyas in the disciplic lineage of Shri Vallabhacharya, within the Pushtimarg (path of grace) tradition. Born in Gokul, he was blessed with deep spiritual insight from childhood. He is celebrated for his absolute dedication to the service of Lord Shrinathji and is considered an embodiment of the spiritual mood of service (Bhava).</p><p>Shri Harirae Ji is historically famous for compiling and commenting on the **Varta Literature**—specifically the *Chaurasi Vaishnavan Ki Varta* (Chronicles of 84 Vaishnavas) and *Do Sau Vaishnavan Ki Varta* (Chronicles of 252 Vaishnavas). These texts form the bedrock of historical Vaishnava biography in India, detailing the lives, struggles, and devotional realizations of Vallabhacharya’s and Vitthalnath’s disciples.</p><p>Beyond Vartas, he wrote the *Siksha Patra* (letters of instruction)—41 letters containing detailed instructions on daily sadhana, mental control, and Vaishnava behavior. His Sanskrit commentary on Vallabhacharya’s work, *Siddhanta Muktavali*, remains a canonical guide for understanding the philosophy of Shuddhadvaita (pure non-dualism).</p>'
+    },
+    hi: {
+      title: 'श्री हरिराय जी महाप्रभु कौन हैं? — जीवनी, शिक्षाएँ एवं वार्ता साहित्य',
+      description: 'पुष्टिमार्ग के महान आचार्य और वार्ता साहित्य के लेखक श्री हरिराय जी महाप्रभु के जीवन और आध्यात्मिक योगदान के बारे में विस्तार से जानें।',
+      body: '<h1>श्री हरिराय जी महाप्रभु</h1><p>श्री हरिराय जी महाप्रभु (1612-1715 ई.) पुष्टिमार्ग सम्प्रदाय (वल्लभ संप्रदाय) के अंतर्गत श्री वल्लभाचार्य जी की शिष्य परंपरा में एक महान आचार्य थे। गोकुल में जन्मे हरिराय जी बचपन से ही उच्च कोटि के भगवद-भक्त थे और वे श्रीनाथजी की निकुंज सेवा के प्रति पूर्ण समर्पित थे। उन्हें पुष्टिमार्गीय साधना में \'भाव रूप\' माना जाता है।</p><p>वे मुख्य रूप से <strong>वार्ता साहित्य</strong> (जैसे *चौरासी वैष्णवन की वार्ता* और *दो सौ बावन वैष्णवन की वार्ता*) के संपादन और टीका के लिए इतिहास में प्रसिद्ध हैं। यह वार्ता साहित्य भारत में वैष्णव भक्तों के जीवन चरित्र और उनके भक्ति अनुभवों का आधार ग्रन्थ है, जो प्रारंभिक ब्रजभाषा गद्य में लिखा गया है।</p><p>इसके अतिरिक्त उन्होंने *शिक्षा पत्र* की रचना की, जिसमें ४१ पत्र हैं जो साधक के लिए दैनिक साधना, मन पर नियंत्रण और वैष्णवोचित आचरण के महत्वपूर्ण नियमों को सरल भाषा में समझाते हैं।</p>'
+    }
+  },
+  'what-is-madhurya-and-sakhi-bhava': {
+    en: {
+      title: 'What is Madhurya Bhava & Sakhi Bhava? — Sentiments of Divine Love',
+      description: 'Understand the deep spiritual sentiments of Madhurya Bhava (conjugal love) and Sakhi Bhava (friendship/maidservant mood) in Vrindavan Vaishnavism.',
+      body: '<h1>Madhurya Bhava & Sakhi Bhava</h1><p><strong>Madhurya Bhava</strong> represents the conjugal or romantic relationship sentiment between the soul and God. Regarded as the highest and sweetest of the five primary devotional relationships (Rasas) in Vaishnavism, it transcends the awe and reverence of majestic worship, replacing it with absolute intimacy, mutual surrender, and complete selflessness.</p><p>In this mood, Lord Krishna is not approached as the almighty creator or king, but as the supreme beloved (Shyamasundar). Srimati Radharani is the ideal embodiment of Madhurya Bhava, where every action is performed solely for the sensory and spiritual pleasure of the Divine Couple.</p><p><strong>Sakhi Bhava</strong> is the mood of serving as an intimate friend or female companion (Sakhi) to Shri Radha and Krishna. Sakhis (like Lalita and Vishakha) coordinate the pastimes, decorate the arbors, and directly share in the blissful sport of the Divine Couple. An even more confidential aspect is **Manjari Bhava** (the mood of maidservants), championed by the Gaudiya tradition. Manjaris are young assistant sakhis who serve Srimati Radharani exclusively. They do not seek direct association with Krishna; rather, their ultimate joy lies in assisting Radha in Her union, representing the highest peak of selflessness.</p>'
+    },
+    hi: {
+      title: 'माधुर्य भाव और सखी भाव क्या है? — दिव्य प्रेम दर्शन एवं अंतर',
+      description: 'वृंदावन दर्शन के दिव्य भावों: माधुर्य भाव (प्रियतम भाव) और सखी/मंजरी भाव (दासी/सहेली भाव) के गहरे आध्यात्मिक रहस्यों को समझें।',
+      body: '<h1>माधुर्य भाव एवं सखी भाव</h1><p><strong>माधुर्य भाव</strong> आत्मा और परमात्मा के बीच के मधुर प्रियतम संबंध (पति-पत्नी या प्रेमी-प्रेमिका) का प्रतीक है। वैष्णव भक्ति शास्त्रों में इसे पाँच मुख्य रसों में सबसे उत्तम और मधुर माना गया है, जहाँ ईश्वर के प्रति भय या ऐश्वर्य को भूलकर भक्त पूर्ण अंतरंगता और निस्वार्थ प्रेम में डूब जाता है।</p><p>इस भाव में भगवान कृष्ण को सृष्टि के नियामक के रूप में नहीं, बल्कि मन को मोहने वाले श्यामसुंदर के रूप में भजा जाता है। श्री राधा जी इस भाव की आदर्श प्रतिमूर्ति हैं, जहाँ प्रत्येक लीला केवल प्रियतम के सुख के लिए होती है।</p><p><strong>सखी एवं मंजरी भाव</strong> में साधक स्वयं को सखी या सहचरी मानकर श्री राधा कृष्ण की लीलाओं में सेवा करता है। गौड़ीय परंपरा में <strong>मंजरी भाव</strong> को अत्यंत गोपनीय माना गया है, जहाँ साधिका श्री राधारानी की दासी बनकर उनकी प्रसन्नता के लिए कुंजों की सेवा करती है और स्वयं कृष्ण से मिलन की आकांक्षा नहीं रखती, जो निस्वार्थता की पराकाष्ठा है।</p>'
+    }
+  },
+  'radhavallabh-vs-gaudiya-sampradaya': {
+    en: {
+      title: 'Radha Vallabh vs Gaudiya Sampradaya — Philosophy, Founders & Differences',
+      description: 'Understand the key philosophical differences between Radha Vallabh and Gaudiya Sampradaya. Compare Hit Harivansh and Chaitanya Mahaprabhu\'s teachings.',
+      body: '<h1>Radhavallabh vs Gaudiya Sampradaya</h1><p>The <strong>Gaudiya Sampradaya</strong> traces its modern renaissance to <strong>Sri Chaitanya Mahaprabhu</strong> (1486–1534 AD) in Bengal. Chaitanya Mahaprabhu instructed the Six Goswamis to establish the Achintya-Bheda-Abheda philosophy. The <strong>Radhavallabh Sampradaya</strong> was established by <strong>Goswami Hit Harivansh Mahaprabhu</strong> (1502–1552 AD). He manifested the deity of Shri Radhavallabh Lal Ji in Vrindavan, centering the entire tradition on spontaneous love rather than conventional Vedic rituals.</p><p>In Gaudiya theology, Shri Radha is established as the <em>Hladini Shakti</em> (pleasure-giving energy) of Lord Krishna, who is the ultimate energetic source (Shaktiman). In the Radhavallabh tradition, the theology is radically <strong>Radha-centric</strong>. Shri Radha is not merely the potency; She is the supreme, sovereign ruler of Vrindavan. Lord Krishna is considered Her absolute servant, dedicated solely to Her pleasure.</p><p>Gaudiya Vaishnavism champions <strong>Manjari Bhava</strong>, where devotees meditate on serving under the principal sakhis as tiny maidservants. The pastimes involve both union and separation (viraha/vipralambha). Radhavallabh sadhana revolves around <strong>Sahachari Bhava</strong> and is focused exclusively on <strong>Nitya Vihar</strong>—continuous, uninterrupted union in the bowers of Nikunj. There is absolutely no place for separation (viraha) in this sentiment.</p>'
+    },
+    hi: {
+      title: 'राधावल्लभ बनाम गौड़ीय संप्रदाय — दर्शन, आचार्य एवं अंतर',
+      description: 'राधावल्लभ और गौड़ीय संप्रदाय के बीच प्रमुख दार्शनिक अंतर समझें। हित हरिवंश महाप्रभु और चैतन्य महाप्रभु के सिद्धांतों का तुलनात्मक अध्ययन।',
+      body: '<h1>राधावल्लभ बनाम गौड़ीय संप्रदाय</h1><p>गौड़ीय सम्प्रदाय का प्राकट्य 16वीं शताब्दी में <strong>श्रीमन् महाप्रभु चैतन्य देव</strong> (1486–1534 ई.) के बंगाल से आगमन के साथ हुआ। इन्होंने अचिन्त्य-भेदाभेद दर्शन की स्थापना की। वहीं, <strong>राधावल्लभ सम्प्रदाय</strong> की स्थापना <strong>गोस्वामी हित हरिवंश महाप्रभु</strong> (1502–1552 ई.) द्वारा की गई, जिन्होंने मदन टेर पर श्री राधावल्लभ लाल जी को विराजमान किया।</p><p>गौड़ीय दर्शन में श्री राधा को भगवान कृष्ण की \'ह्लादिनी शक्ति\' (आनंददायिनी शक्ति) माना जाता है, जहाँ कृष्ण परम पुरुष हैं। इसके विपरीत, राधावल्लभ सम्प्रदाय में श्री राधा ही सर्वोपरि सत्ता हैं और कृष्ण भी उनके अधीन रहकर उनकी प्रसन्नता के लिए लीला विलास करते हैं (राधा चरण प्रधान)।</p><p>गौड़ीय मत में <strong>मंजरी भाव</strong> प्रमुख है जिसमें मिलन के साथ-साथ वियोग (विरह) का भाव भी रस की पुष्टि के लिए आवश्यक है। राधावल्लभ मत में <strong>सहचरी भाव</strong> प्रमुख है जहाँ केवल <strong>नित्य विहार</strong> (अखंड मिलन) की उपासना होती है और विरह का सर्वथा निषेध है।</p>'
+    }
+  },
+  'vrindavan-parikrama-guide': {
+    en: {
+      title: 'Vrindavan Parikrama Guide — Route, Holy Ghats & Spiritual Rules',
+      description: 'Complete guide to the sacred Vrindavan Parikrama circumambulation (~10km). Learn about the route, starting points, holy temples, and spiritual rules.',
+      body: '<h1>Vrindavan Parikrama Guide</h1><p>Performing the Parikrama (circumambulation) is a practice of physical and mental submission to the divine. Devotees believe that circling the holy town of Vrindavan cleanses accumulated karma and grants entrance into the eternal arbors of Nikunj. The total distance is approximately **10 Kilometers (6 miles)** and takes between **2.5 to 4 hours** at a normal walking pace.</p><p>While the Parikrama can be started at any point, most pilgrims prefer to begin at the banks of the Yamuna River (such as **Keshi Ghat**), the historical **Madan Mohan Temple**, or near **ISKCON temple**. Key landmarks include Keshi Ghat, Madan Mohan Temple on the red-sandstone hill, Kaliya Dah where Krishna subdued Kaliya serpent, and Imli Tala where Chaitanya Mahaprabhu sat in deep ecstasy under the sacred tamarind tree.</p><p>Spiritual etiquette suggests walking barefoot to touch the sacred dust (Braj Raj) directly, constantly chanting the names of Radha and Krishna, and showing respect to sadhus, cowherds, and the sacred cows along the path.</p>'
+    },
+    hi: {
+      title: 'वृंदावन परिक्रमा मार्गदर्शिका — मार्ग, प्रमुख घाट एवं महत्व',
+      description: 'वृंदावन की पवित्र परिक्रमा (लगभग 10 किमी) का संपूर्ण विवरण। परिक्रमा का समय, प्रारंभ बिंदु, मुख्य घाट और दर्शन स्थल।',
+      body: '<h1>वृंदावन परिक्रमा मार्गदर्शिका</h1><p>वृंदावन की पावन पंचकोसीय परिक्रमा (लगभग १० किलोमीटर) ब्रजमंडल का एक अत्यंत महत्वपूर्ण साधना अंग है। मान्यता है कि परिक्रमा लगाने से अनंत पापों का नाश होता है और साधक को गोलोक धाम की प्राप्ति होती है। इसे पूरा करने में लगभग २.५ से ४ घंटे का समय लगता है।</p><p>श्रद्धालु मुख्य रूप से इस्कॉन मंदिर के पास से, केशी घाट से या मदन मोहन जी के मंदिर से परिक्रमा प्रारंभ करते हैं। इसके मुख्य पड़ावों में यमुना नदी का केशी घाट, काली दह (काली नाग दमन स्थल), इमली तला (चैतन्य महाप्रभु की साधना स्थली) आदि तीर्थ आते हैं।</p><p>परिक्रमा के समय नंगे पैर चलना सर्वश्रेष्ठ माना जाता है ताकि पवित्र रज का सीधे स्पर्श हो। यात्रा के समय मुख से निरंतर राधे-राधे या हरे कृष्ण महामंत्र का नाम जप करना चाहिए और मार्ग में पड़ने वाले गौवंश व संतों की सेवा करनी चाहिए।</p>'
+    }
+  },
+  'history-of-radhavallabh-sampradaya': {
+    en: {
+      title: 'History of Radha Vallabh Sampradaya — Founder, Philosophy & Temples',
+      description: 'An in-depth historical and theological guide to the Radhavallabh Sampradaya of Vrindavan, founded by Shri Hit Harivansh Mahaprabhu. Learn about Sahachari Bhava and Radha Dasya.',
+      body: '<h1>History of Radha Vallabh Sampradaya</h1><p>The Radha Vallabh Sampradaya was established in the 16th century by <strong>Shri Hit Harivansh Mahaprabhu</strong> (1502–1552 AD), who is worshiped as the incarnation of Lord Krishna\'s divine flute. He brought the deity of Shri Radhavallabh Lal Ji to Vrindavan and installed Him at Madan Ter in 1534 AD.</p><p>The central philosophy of the sampradaya is <strong>Radha Dasya</strong>, which holds Srimati Radharani as the supreme controller of Vrindavan. Lord Krishna is considered Her servant, dedicated entirely to Her pleasure. Practitioners cultivate <strong>Sahachari Bhava</strong>, identifying as companions who witness and serve the eternal couple in the secluded bowers (Nikunj) of Vrindavan. The tradition focuses exclusively on <strong>Nitya Vihar</strong>, which represents continuous, uninterrupted union devoid of physical or emotional separation.</p><p>Canonical literature includes the <em>Hit Chaurasi</em> (84 Braj Bhasha verses) and <em>Radha Sudha Nidhi</em> (270 Sanskrit verses), which outline the aesthetics of devotion and disciplic teachings.</p>'
+    },
+    hi: {
+      title: 'राधावल्लभ संप्रदाय का इतिहास — संस्थापक, दर्शन एवं मुख्य मंदिर',
+      description: 'राधावल्लभ संप्रदाय के इतिहास, संस्थापक श्री हित हरिवंश महाप्रभु, सहचरी भाव दर्शन और वृंदावन के मुख्य मंदिरों का विस्तृत विवरण।',
+      body: '<h1>राधावल्लभ संप्रदाय का इतिहास</h1><p>राधावल्लभ संप्रदाय की स्थापना 16वीं शताब्दी में <strong>श्री हित हरिवंश महाप्रभु</strong> (1502–1552 ईस्वी) द्वारा की गई थी, जिन्हें भगवान कृष्ण की मुरली का अवतार माना जाता है। उन्होंने संवत 1591 (1534 ईस्वी) में श्री राधावल्लभ लाल जी के विग्रह को वृंदावन के मदन टेर पर प्रतिष्ठित किया।</p><p>इस संप्रदाय का मुख्य दर्शन <strong>राधा दास्य</strong> है, जहाँ श्री राधा रानी को ही सर्वोपरि आराध्या माना जाता है और श्री कृष्ण उनके अधीन रहकर सेवा करते हैं। साधक <strong>सहचरी भाव</strong> की उपासना करते हैं, जिसमें वे सखी बनकर निकुंज की नित्य लीलाओं में युगल की सेवा करते हैं। इसमें केवल <strong>नित्य विहार</strong> (अखंड मिलन) का स्थान है, वियोग का कोई स्थान नहीं है।</p><p>मुख्य ग्रंथों में हित हरिवंश महाप्रभु जी रचित <em>हित चौरासी</em> (ब्रजभाषा) और <em>राधासुधानिधि</em> (संस्कृत) शामिल हैं, जो इस उपासना पद्धति के सैद्धांतिक आधार हैं।</p>'
+    }
+  },
+  'major-rasik-saints-of-braj': {
+    en: {
+      title: 'Major Rasik Saints of Braj — Lineages, Biographies & Contributions',
+      description: 'A comprehensive guide and disciplic map of the prominent Rasik saints of Vrindavan, including Swami Haridas, Hit Harivansh, Hariram Vyas, and Dhruvdas.',
+      body: '<h1>Major Rasik Saints of Braj</h1><p>Vrindavan\'s spiritual heritage is shaped by the <strong>Rasik saints</strong>, who lived in constant contemplation of the intimate pastimes of Radha and Krishna. They expressed their realizations through poetry and classical music, rejecting dry ritualism.</p><p>The foundation of this tradition rests on the <strong>Haritrayi</strong> (the triad of saints): <strong>Swami Haridas</strong>, who manifested Bankey Bihari Ji in Nidhivan; <strong>Shri Hit Harivansh Mahaprabhu</strong>, who founded the Radhavallabh lineage; and <strong>Shri Hariram Vyas</strong> of Vyas Ghera. In the 17th century, <strong>Shri Dhruvdas</strong> compiled the disciplic histories in his monumental <em>Bayalees Leela</em>. Today, this lineage continues through contemporary saints like <strong>Shri Premanand Ji Maharaj</strong>.</p>'
+    },
+    hi: {
+      title: 'ब्रज के प्रमुख रसिक संत — जीवनी, गुरु परंपरा एवं साहित्यिक योगदान',
+      description: 'वृंदावन के महान रसिक संतों — स्वामी हरिदास, श्री हित हरिवंश, हरीराम व्यास, ध्रुवदास आदि का जीवन चरित्र एवं गुरु परंपरा इतिहास।',
+      body: '<h1>ब्रज के प्रमुख रसिक संत</h1><p>वृंदावन की आध्यात्मिक विरासत यहाँ के <strong>रसिक संतों</strong> द्वारा रची गई है, जो युगल सरकार की निकुंज लीलाओं में मग्न रहते थे। उन्होंने कर्मकांडों और शुष्क ज्ञान को छोड़कर केवल प्रेम मार्ग को अपनाया।</p><p>इस परंपरा के मूल आधार <strong>हरित्रयी</strong> कहे जाने वाले तीन संत हैं: <strong>स्वामी हरिदास जी</strong> (निधिवन में बिहारी जी को प्रकट करने वाले), <strong>श्री हित हरिवंश महाप्रभु</strong> (राधावल्लभ संप्रदाय के प्रवर्तक), और व्यास घेरा के <strong>श्री हरिराम व्यास जी</strong>। 17वीं शताब्दी में <strong>श्री ध्रुवदास जी</strong> ने <em>बयालीस लीला</em> की रचना कर इस परंपरा के सिद्धांतों को लिपिबद्ध किया। वर्तमान समय में पूज्य <strong>श्री प्रेमानंद जी महाराज</strong> इस रसमय धारा का प्रचार कर रहे हैं।</p>'
+    }
   }
 };
 
@@ -735,20 +810,54 @@ export default async function handler(req, res) {
     if (sant) {
       const santName = sant.name;
       const santHinglish = sant.hinglishName || sant.name;
+      
+      // Load custom metadata if available
+      const meta = getSaintMetadata(sant.slug || slug);
+
+      const lineage = meta 
+        ? (isHindiRoute ? meta.lineageHi : meta.lineageEn)
+        : (isHindiRoute ? "वैष्णव संप्रदाय" : "Vaishnava Tradition");
+      
+      const timeline = meta 
+        ? (isHindiRoute ? meta.timelineHi : meta.timelineEn)
+        : (isHindiRoute ? "मध्यकालीन काल" : "Medieval Era");
+
+      const places = meta 
+        ? (isHindiRoute ? meta.associatedPlacesHi : meta.associatedPlacesEn)
+        : (isHindiRoute ? "वृंदावन धाम" : "Vrindavan Dham");
+
+      const bioText = meta 
+        ? (isHindiRoute ? meta.biographyHi : meta.biographyEn)
+        : (sant.biography?.text || (isHindiRoute ? "ब्रज परंपरा के वैष्णव संत।" : "Vaishnava saint of the Braj tradition."));
+
       title = isHindiRoute
         ? `${santName} की जीवनी, ग्रन्थ एवं सम्पूर्ण वाणी संग्रह | वृंदोपनिषद्`
         : `${santHinglish} Biography, Granthas & Complete Vaanis | Vrindopnishad`;
         
-      const bioSnippet = sant.biography?.text ? sant.biography.text.substring(0, 150) : "";
       description = isHindiRoute
-        ? `महान वैष्णव संत ${santName} का जीवन चरित्र, इतिहास, उनके द्वारा रचित ग्रन्थ और वाणी पदों का भावार्थ सहित संग्रह। ${bioSnippet}`
-        : `Explore the life history, spiritual teachings, and complete collection of verses written by the revered Vaishnava saint ${santHinglish}. ${bioSnippet}`;
+        ? `महान रसिक संत ${santName} (परंपरा: ${lineage}, काल: ${timeline}) का जीवन चरित्र, इतिहास, ग्रन्थ और वाणी संग्रह। ${bioText.substring(0, 140)}`
+        : `Explore the biography of ${santHinglish} (Lineage: ${lineage}, Era: ${timeline}), including spiritual teachings and complete verses. ${bioText.substring(0, 140)}`;
       
       pageUrl = getRouteLink(`/saint/${encodeURIComponent(sant.slug || slug)}`);
 
       if (sant.imageUrl) {
         ogImageUrl = sant.imageUrl;
       }
+
+      const faqGraph = meta && meta.faq ? [
+        {
+          "@type": "FAQPage",
+          "@id": `${pageUrl}/#faq`,
+          "mainEntity": meta.faq.map(f => ({
+            "@type": "Question",
+            "name": isHindiRoute ? f.qHi : f.qEn,
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": isHindiRoute ? f.aHi : f.aEn
+            }
+          }))
+        }
+      ] : [];
 
       jsonLd = JSON.stringify({
         "@context": "https://schema.org",
@@ -758,7 +867,7 @@ export default async function handler(req, res) {
             "@id": `${pageUrl}/#person`,
             "name": santName,
             "alternateName": santHinglish !== santName ? santHinglish : undefined,
-            "description": sant.biography?.text ? sant.biography.text.substring(0, 200) : description,
+            "description": bioText.substring(0, 200),
             "image": ogImageUrl,
             "knowsAbout": ["Vaishnavism", "Bhakti", "Sanskrit", "Braj Ras", "Vrindavan"],
             "url": pageUrl
@@ -786,26 +895,84 @@ export default async function handler(req, res) {
                 "item": pageUrl
               }
             ]
-          }
+          },
+          ...faqGraph
         ]
       });
 
       mainBodyHtml = `
-        <h1>${escapeHtml(sant.name)}</h1>
+        <h1>${escapeHtml(santName)}</h1>
+        <p><strong>${isHindiRoute ? 'परंपरा' : 'Lineage'}:</strong> ${escapeHtml(lineage)} | <strong>${isHindiRoute ? 'काल' : 'Era'}:</strong> ${escapeHtml(timeline)} | <strong>${isHindiRoute ? 'साधना स्थल' : 'Place'}:</strong> ${escapeHtml(places)}</p>
+        ${meta ? `
+          <p>
+            ${meta.discipleOfEn ? `<strong>${isHindiRoute ? 'दीक्षा गुरु / पिता' : 'Disciple of / Guru'}:</strong> ${escapeHtml(isHindiRoute ? meta.discipleOfHi : meta.discipleOfEn)} | ` : ''}
+            ${meta.influencedByEn ? `<strong>${isHindiRoute ? 'विचारधारा प्रभाव' : 'Influenced by'}:</strong> ${escapeHtml(isHindiRoute ? meta.influencedByHi : meta.influencedByEn)} | ` : ''}
+            ${meta.devotionalMoodEn ? `<strong>${isHindiRoute ? 'भक्ति भाव / रस' : 'Devotional Mood'}:</strong> ${escapeHtml(isHindiRoute ? meta.devotionalMoodHi : meta.devotionalMoodEn)}` : ''}
+          </p>
+        ` : ''}
+        
         <h2>${isHindiRoute ? 'जीवनी एवं भक्ति इतिहास' : 'Biography & Devotional History'}</h2>
         <div style="background: #fdfdfd; padding: 20px; border-left: 4px solid #f2a60d; margin: 20px 0;">
-          <p style="white-space: pre-wrap; line-height: 1.7;">${escapeHtml(sant.biography?.text || (isHindiRoute ? 'ब्रज परंपरा के वैष्णव संत।' : 'Vaishnava saint of the Braj tradition.'))}</p>
+          <p style="white-space: pre-wrap; line-height: 1.7;">${escapeHtml(bioText)}</p>
         </div>
+
+        ${meta ? `
+          <h2>${isHindiRoute ? 'दार्शनिक सिद्धांत एवं उपदेश' : 'Philosophy & Core Teachings'}</h2>
+          <div style="background: #fafafa; padding: 20px; border-left: 4px solid #a78bfa; margin: 20px 0;">
+            <p style="line-height: 1.7;">${escapeHtml(isHindiRoute ? meta.teachingsHi : meta.teachingsEn)}</p>
+          </div>
+          
+          <h2>${isHindiRoute ? 'साहित्यिक शैली एवं ग्रन्थ रचना' : 'Literary Style & Scriptural Contributions'}</h2>
+          <div style="background: #fafafa; padding: 20px; border-left: 4px solid #0ea5e9; margin: 20px 0;">
+            <p style="line-height: 1.7;">${escapeHtml(isHindiRoute ? meta.literaryStyleHi : meta.literaryStyleEn)}</p>
+          </div>
+        ` : ''}
+
         ${sant.books.length > 0 ? `
-          <h2>${isHindiRoute ? 'मुख्य ग्रन्थ एवं साहित्य' : 'Major Granthas & Literature'}</h2>
+          <h2>${isHindiRoute ? 'मुख्य ग्रन्थ एवं साहित्य सूची' : 'Major Granthas & Literature'}</h2>
           <ul>
             ${sant.books.map(book => `<li><a href="${getRouteLink(`/book/${slugify(transliterate(book))}`)}">${escapeHtml(book)}</a></li>`).join('')}
           </ul>
         ` : ''}
+
+        ${meta && (meta.relatedSaints || meta.relatedGranthas || meta.associatedGlossary) ? `
+          <h2>${isHindiRoute ? 'सम्बन्धित सन्दर्भ (Topical Connections)' : 'Topical Connections'}</h2>
+          <div style="background: #fafafa; padding: 20px; border-left: 4px solid #10b981; margin: 20px 0;">
+            ${meta.relatedSaints && meta.relatedSaints.length > 0 ? `
+              <p><strong>${isHindiRoute ? 'सम्बन्धित सन्त' : 'Related Saints'}:</strong> 
+                ${meta.relatedSaints.map(s => `<a href="${getRouteLink(`/saint/${s.slug}`)}">${escapeHtml(isHindiRoute ? s.nameHi : s.nameEn)}</a>`).join(', ')}
+              </p>
+            ` : ''}
+            ${meta.relatedGranthas && meta.relatedGranthas.length > 0 ? `
+              <p><strong>प्रमुख ग्रन्थ (Key Scriptures):</strong> 
+                ${meta.relatedGranthas.map(g => `<a href="${getRouteLink(`/book/${g.slug}`)}">${escapeHtml(isHindiRoute ? g.nameHi : g.nameEn)}</a>`).join(', ')}
+              </p>
+            ` : ''}
+            ${meta.associatedGlossary && meta.associatedGlossary.length > 0 ? `
+              <p><strong>प्रमुख अवधारणाएँ (Core Concepts):</strong> 
+                ${meta.associatedGlossary.map(c => `<a href="${getRouteLink(`/glossary/${c.slug}`)}">${escapeHtml(isHindiRoute ? c.termHi : c.termEn)}</a>`).join(', ')}
+              </p>
+            ` : ''}
+          </div>
+        ` : ''}
+
+        ${meta && meta.faq ? `
+          <h2>${isHindiRoute ? 'अक्सर पूछे जाने वाले प्रश्न (FAQ)' : 'Frequently Asked Questions'}</h2>
+          <div style="margin-top: 20px;">
+            ${meta.faq.map(f => `
+              <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 8px;">
+                <p><strong>Q: ${escapeHtml(isHindiRoute ? f.qHi : f.qEn)}</strong></p>
+                <p>A: ${escapeHtml(isHindiRoute ? f.aHi : f.aEn)}</p>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+
         <h2>${isHindiRoute ? 'संकलित पद एवं वाणियाँ' : 'Collected Verses & Vaanis'} (${sant.verses.length})</h2>
         <ul>
-          ${sant.verses.map(v => `<li><a href="${getRouteLink(`/content/${v.slug || v.id}`)}">${escapeHtml(v.title)}</a></li>`).join('')}
+          ${sant.verses.map(v => `<li><a href="${getRouteLink(`/content/${v.slug || v.id}`)}">${escapeHtml(v.cleanTitle || v.title)}</a></li>`).join('')}
         </ul>
+
         ${(() => {
           const otherSants = sants.filter(s => s.slug !== sant.slug && s.name !== sant.name).slice(0, 4);
           if (otherSants.length > 0) {
@@ -820,6 +987,102 @@ export default async function handler(req, res) {
     } else {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.status(404).send(`<!doctype html><html lang="hi"><head><meta charset="utf-8"/><title>Saint Not Found — Vrindopnishad</title><meta name="robots" content="noindex"/></head><body style="font-family:sans-serif;text-align:center;padding:60px 20px;"><h1>404 — Saint Not Found</h1><p><a href="${DOMAIN}/saints">Browse All Saints →</a></p></body></html>`);
+      return;
+    }
+
+  } else if (type === 'glossary' && slug) {
+    // Dynamic Glossary Detail page
+    const decodedSlug = decodeURIComponent(slug).toLowerCase();
+    const termData = GLOSSARY_TERMS.find(t => t.slug === decodedSlug);
+
+    if (termData) {
+      title = isHindiRoute 
+        ? `${termData.term} (${termData.devanagari}) का अर्थ, परिभाषा और आध्यात्मिक संदर्भ | वृंदोपनिषद्`
+        : `${termData.term} Meaning, Definition & Theological Context | Vrindopnishad`;
+      description = isHindiRoute
+        ? `${termData.term} (${termData.devanagari}) क्या है? जानिए इसका संस्कृत अर्थ, परिभाषा और रसिक संतों के विचार।`
+        : `Explore the definition, Sanskrit meaning, etymology, and deep theological context of ${termData.term} (${termData.devanagari}) in Braj Ras.`;
+      
+      pageUrl = getRouteLink(`/glossary/${termData.slug}`);
+
+      jsonLd = JSON.stringify({
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Article",
+            "@id": `${pageUrl}/#article`,
+            "headline": title,
+            "description": description,
+            "url": pageUrl,
+            "datePublished": "2026-05-27",
+            "author": {
+              "@type": "Organization",
+              "name": "Vrindopnishad",
+              "url": DOMAIN
+            }
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": `${pageUrl}/#breadcrumb`,
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": isHindiRoute ? "होम" : "Home",
+                "item": getRouteLink('/')
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": isHindiRoute ? "शब्दकोश" : "Glossary",
+                "item": getRouteLink('/glossary')
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": termData.term,
+                "item": pageUrl
+              }
+            ]
+          }
+        ]
+      });
+
+      mainBodyHtml = `
+        <h1>${escapeHtml(termData.term)} (${escapeHtml(termData.devanagari)})</h1>
+        <p><strong>${isHindiRoute ? 'श्रेणी' : 'Category'}:</strong> ${escapeHtml(termData.category)} | <strong>${isHindiRoute ? 'व्युत्पत्ति' : 'Etymology'}:</strong> ${escapeHtml(termData.etymology)}</p>
+        
+        <h2>${isHindiRoute ? 'परिभाषा' : 'Definition'}</h2>
+        <p style="font-size: 1.1rem; line-height: 1.6; font-weight: bold;">${escapeHtml(termData.definition)}</p>
+
+        <h2>${isHindiRoute ? 'दार्शनिक संदर्भ' : 'Theological Context'}</h2>
+        <div style="background: #faf9f6; padding: 20px; border-left: 4px solid #f2a60d; margin: 20px 0; line-height: 1.8;">
+          <p>${escapeHtml(isHindiRoute ? termData.theologicalContextHi : termData.theologicalContextEn)}</p>
+        </div>
+
+        ${termData.references ? `
+          <p><strong>${isHindiRoute ? 'शास्त्र प्रमाण' : 'Citations / References'}:</strong> <em>${escapeHtml(termData.references)}</em></p>
+        ` : ''}
+
+        ${termData.relatedSaints && termData.relatedSaints.length > 0 ? `
+          <h3>${isHindiRoute ? 'सम्बन्धित सन्त' : 'Related Saints'}</h3>
+          <ul>
+            ${termData.relatedSaints.map(s => `<li><a href="${getRouteLink(`/saint/${s.slug}`)}">${escapeHtml(s.nameEn)}</a></li>`).join('')}
+          </ul>
+        ` : ''}
+
+        ${termData.relatedGranthas && termData.relatedGranthas.length > 0 ? `
+          <h3>${isHindiRoute ? 'सम्बन्धित ग्रन्थ' : 'Related Scriptures'}</h3>
+          <ul>
+            ${termData.relatedGranthas.map(g => `<li><a href="${getRouteLink(`/book/${g.slug}`)}">${escapeHtml(g.nameEn)}</a></li>`).join('')}
+          </ul>
+        ` : ''}
+
+        <p style="margin-top: 30px;"><a href="${getRouteLink('/glossary')}">← ${isHindiRoute ? 'सम्पूर्ण शब्दकोश' : 'Back to Glossary'}</a></p>
+      `;
+    } else {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.status(404).send(`<!doctype html><html lang="hi"><head><meta charset="utf-8"/><title>Term Not Found — Vrindopnishad</title><meta name="robots" content="noindex"/></head><body style="font-family:sans-serif;text-align:center;padding:60px 20px;"><h1>404 — Term Not Found</h1><p><a href="${DOMAIN}/glossary">Browse All Terms →</a></p></body></html>`);
       return;
     }
 

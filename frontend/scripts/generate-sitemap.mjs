@@ -3,6 +3,8 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import glossaryTermsApi from '../api/glossaryTerms.js';
+const { GLOSSARY_TERMS } = glossaryTermsApi;
 
 // Load .env
 const __filename = fileURLToPath(import.meta.url);
@@ -264,7 +266,13 @@ const SEO_PAGES = [
   { path: '/what-is-radha-snata', priority: '0.9', changefreq: 'weekly' },
   { path: '/nitya-vihar-vs-nikunj-vihar', priority: '0.9', changefreq: 'weekly' },
   { path: '/glossary', priority: '0.9', changefreq: 'weekly' },
-  { path: '/places', priority: '0.9', changefreq: 'weekly' }
+  { path: '/places', priority: '0.9', changefreq: 'weekly' },
+  { path: '/who-is-harirae-ji', priority: '0.9', changefreq: 'weekly' },
+  { path: '/what-is-madhurya-and-sakhi-bhava', priority: '0.9', changefreq: 'weekly' },
+  { path: '/radhavallabh-vs-gaudiya-sampradaya', priority: '0.9', changefreq: 'weekly' },
+  { path: '/vrindavan-parikrama-guide', priority: '0.9', changefreq: 'weekly' },
+  { path: '/history-of-radhavallabh-sampradaya', priority: '0.9', changefreq: 'weekly' },
+  { path: '/major-rasik-saints-of-braj', priority: '0.9', changefreq: 'weekly' }
 ];
 
 async function generateSitemap() {
@@ -424,6 +432,14 @@ async function generateSitemap() {
     ];
   }).join('\n');
 
+  const glossaryUrls = GLOSSARY_TERMS.flatMap(term => {
+    const escSlug = encodeURIComponent(decodeURIComponent(term.slug));
+    return [
+      `  <url><loc>${DOMAIN}/glossary/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`,
+      `  <url><loc>${DOMAIN}/hi/glossary/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
+    ];
+  }).join('\n');
+
   const seenSlugs = new Set();
   const contentUrls = allContentItems
     .flatMap(item => {
@@ -455,6 +471,7 @@ ${catUrls}
 ${santUrls}
 ${bookUrls}
 ${ragaUrls}
+${glossaryUrls}
 ${contentUrls}
 </urlset>`;
 
@@ -464,7 +481,7 @@ ${contentUrls}
     }
 
     fs.writeFileSync('public/sitemap.xml', sitemap);
-    const totalUrls = SEO_PAGES.length * 2 + uniqueCategories.length * 2 + (sants.length + books.length + ragas.length) * 2 + seenSlugs.size * 2;
+    const totalUrls = SEO_PAGES.length * 2 + uniqueCategories.length * 2 + (sants.length + books.length + ragas.length + GLOSSARY_TERMS.length) * 2 + seenSlugs.size * 2;
     console.log(`✅ sitemap.xml generated in public/ with approx ${totalUrls} URLs`);
 
   } catch (err) {

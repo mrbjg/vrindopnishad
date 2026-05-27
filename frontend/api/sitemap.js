@@ -7,6 +7,7 @@
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || 'https://tilimltxgeucefxzerqi.supabase.co';
 const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpbGltbHR4Z2V1Y2VmeHplcnFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2MjQyNTQsImV4cCI6MjA4MzIwMDI1NH0.lwaCJyTRW6jNsfQJ32R_wAwp11yj6bvsJ4fzC0EX_00';
 const DOMAIN = 'https://path.vrindopnishad.in';
+const { GLOSSARY_TERMS } = require('./glossaryTerms');
 
 // Devanagari to Hinglish Phonetic Map for SEO Slugs
 const DevanagariToHinglishMap = {
@@ -258,7 +259,13 @@ const SEO_PAGES = [
   { path: '/what-is-radha-snata', priority: '0.9', changefreq: 'weekly' },
   { path: '/nitya-vihar-vs-nikunj-vihar', priority: '0.9', changefreq: 'weekly' },
   { path: '/glossary', priority: '0.9', changefreq: 'weekly' },
-  { path: '/places', priority: '0.9', changefreq: 'weekly' }
+  { path: '/places', priority: '0.9', changefreq: 'weekly' },
+  { path: '/who-is-harirae-ji', priority: '0.9', changefreq: 'weekly' },
+  { path: '/what-is-madhurya-and-sakhi-bhava', priority: '0.9', changefreq: 'weekly' },
+  { path: '/radhavallabh-vs-gaudiya-sampradaya', priority: '0.9', changefreq: 'weekly' },
+  { path: '/vrindavan-parikrama-guide', priority: '0.9', changefreq: 'weekly' },
+  { path: '/history-of-radhavallabh-sampradaya', priority: '0.9', changefreq: 'weekly' },
+  { path: '/major-rasik-saints-of-braj', priority: '0.9', changefreq: 'weekly' }
 ];
 
 export default async function handler(req, res) {
@@ -350,6 +357,16 @@ export default async function handler(req, res) {
     ];
   }).join('\n');
 
+  const glossaryUrls = GLOSSARY_TERMS.flatMap(term => {
+    const escSlug = encodeURIComponent(decodeURIComponent(term.slug));
+    const enUrl = escapeXmlUrl(`${DOMAIN}/glossary/${escSlug}`);
+    const hiUrl = escapeXmlUrl(`${DOMAIN}/hi/glossary/${escSlug}`);
+    return [
+      `  <url>\n    <loc>${enUrl}</loc>\n    <xhtml:link rel="alternate" hreflang="en" href="${enUrl}"/>\n    <xhtml:link rel="alternate" hreflang="hi" href="${hiUrl}"/>\n    <xhtml:link rel="alternate" hreflang="x-default" href="${enUrl}"/>\n    <lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority>\n  </url>`,
+      `  <url>\n    <loc>${hiUrl}</loc>\n    <xhtml:link rel="alternate" hreflang="en" href="${enUrl}"/>\n    <xhtml:link rel="alternate" hreflang="hi" href="${hiUrl}"/>\n    <xhtml:link rel="alternate" hreflang="x-default" href="${enUrl}"/>\n    <lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority>\n  </url>`
+    ];
+  }).join('\n');
+
   const seenSlugs = new Set();
   const contentUrls = contentItems
     .flatMap(item => {
@@ -380,6 +397,7 @@ ${catUrls}
 ${santUrls}
 ${bookUrls}
 ${ragaUrls}
+${glossaryUrls}
 ${contentUrls}
 </urlset>`;
 
