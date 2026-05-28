@@ -8,12 +8,23 @@
  * Cached aggressively at the Vercel Edge Network CDN (s-maxage=86400 / 24 hours).
  */
 
+const fs = require('fs');
+const path = require('path');
+
 const { getSaintMetadata } = require('./saintMetadata');
 const { GLOSSARY_TERMS } = require('./glossaryTerms');
 
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || 'https://tilimltxgeucefxzerqi.supabase.co';
 const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpbGltbHR4Z2V1Y2VmeHplcnFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2MjQyNTQsImV4cCI6MjA4MzIwMDI1NH0.lwaCJyTRW6jNsfQJ32R_wAwp11yj6bvsJ4fzC0EX_00';
 const DOMAIN = 'https://path.vrindopnishad.in';
+
+// Warm container cache to avoid fetching content index from Supabase on every crawler request
+let globalCache = {
+  items: null,
+  timestamp: 0,
+  promise: null
+};
+const CACHE_TTL = 300000; // 5 minutes cache TTL
 
 // Devanagari to Hinglish Phonetic Map for SEO Slugs
 const DevanagariToHinglishMap = {
@@ -557,32 +568,101 @@ export default async function handler(req, res) {
   // 1. Fetch content index from Supabase (with image_url)
   let allContentItems = [];
   try {
-    const PAGE_SIZE = 1000;
-    let offset = 0;
-    let hasMore = true;
-
-    while (hasMore) {
-      const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/content?select=id,title,slug,category,author,hindi_text,sanskrit_text,image_url&order=id&offset=${offset}&limit=${PAGE_SIZE}`,
-        {
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`
+    const now = Date.now();
+    if (globalCache.items && (now - globalCache.timestamp < CACHE_TTL)) {
+      allContentItems = globalCache.items;
+      console.log('⚡ Serving content index from serverless cache (size:', allContentItems.length, ')');
+    } else {
+      // Coalesce multiple concurrent requests by reusing the active promise
+      if (!globalCache.promise) {
+        globalCache.promise = (async () => {
+          let fetchedItems = [];
+          const PAGE_SIZE = 1000;
+          let offset = 0;
+          let hasMore = true;
+          
+          while (hasMore) {
+            const response = await fetch(
+              `${SUPABASE_URL}/rest/v1/content?select=id,title,slug,category,author,hindi_text,sanskrit_text,image_url&order=id&offset=${offset}&limit=${PAGE_SIZE}`,
+              {
+                headers: {
+                  'apikey': SUPABASE_KEY,
+                  'Authorization': `Bearer ${SUPABASE_KEY}`
+                },
+                timeout: 10000 // 10s timeout to prevent serverless function hangs
+              }
+            );
+            const items = await response.json();
+            
+            if (Array.isArray(items) && items.length > 0) {
+              fetchedItems = fetchedItems.concat(items);
+              offset += PAGE_SIZE;
+              hasMore = items.length === PAGE_SIZE;
+            } else {
+              hasMore = false;
+            }
           }
-        }
-      );
-      const items = await response.json();
+          return fetchedItems;
+        })();
+      }
 
-      if (Array.isArray(items) && items.length > 0) {
-        allContentItems = allContentItems.concat(items);
-        offset += PAGE_SIZE;
-        hasMore = items.length === PAGE_SIZE;
-      } else {
-        hasMore = false;
+      try {
+        allContentItems = await globalCache.promise;
+        globalCache.items = allContentItems;
+        globalCache.timestamp = Date.now();
+      } catch (fetchError) {
+        console.error('Supabase fetch query failed:', fetchError.message);
+        // If we have stale cache, return it as fallback
+        if (globalCache.items) {
+          allContentItems = globalCache.items;
+          console.warn('⚠️ Stale cache used as fallback after Supabase fetch failed');
+        } else {
+          throw fetchError;
+        }
+      } finally {
+        globalCache.promise = null;
       }
     }
   } catch (e) {
-    console.error('Supabase fetch failed:', e.message);
+    console.error('Supabase fetch failed, trying local backups fallback:', e.message);
+    
+    // Fallback: load from local backup files (just like scripts/generate-sitemap.mjs does)
+    try {
+      const localFilePath = path.join(process.cwd(), 'admin/data/brajrasik_hi_full.json');
+      const localSaintsPath = path.join(process.cwd(), 'admin/data/saints_formatted.json');
+      
+      let backupItems = [];
+      if (fs.existsSync(localFilePath)) {
+        const fileContent = fs.readFileSync(localFilePath, 'utf8');
+        const localData = JSON.parse(fileContent);
+        console.log(`📦 Loaded ${localData.length} items from local backup.`);
+        
+        const sanitizedData = localData.map((item, index) => ({
+          id: item.id || `local-${index}`,
+          ...item
+        }));
+        backupItems = backupItems.concat(sanitizedData);
+      }
+      
+      if (fs.existsSync(localSaintsPath)) {
+        const saintsContent = fs.readFileSync(localSaintsPath, 'utf8');
+        const localSaints = JSON.parse(saintsContent);
+        
+        const formattedSaints = localSaints.map((s, index) => ({
+          id: s.id || `local-saint-${index}`,
+          ...s,
+          category: 'saint'
+        }));
+        backupItems = backupItems.concat(formattedSaints);
+      }
+      
+      allContentItems = backupItems;
+      // Cache the backup items temporarily for 30 seconds so we don't spam disk reads
+      globalCache.items = allContentItems;
+      globalCache.timestamp = Date.now() - CACHE_TTL + 30000;
+    } catch (fallbackError) {
+      console.error('❌ Failed to load local backups fallback:', fallbackError.message);
+    }
   }
 
   // Extract relationships

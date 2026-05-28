@@ -475,17 +475,44 @@ ${glossaryUrls}
 ${contentUrls}
 </urlset>`;
 
-  try {
-    if (!fs.existsSync('public')) {
-      fs.mkdirSync('public');
+  // If we are building on Vercel, do NOT output a static sitemap in the build folder
+  // so that Vercel is forced to route /sitemap.xml to the dynamic serverless function /api/sitemap.
+  if (process.env.VERCEL) {
+    console.log('⚡ Vercel build environment detected. Deleting static build sitemaps to ensure dynamic sitemap rewrite routing is active.');
+    try {
+      const buildSitemapPath = join(__dirname, '../build/sitemap.xml');
+      if (fs.existsSync(buildSitemapPath)) {
+        fs.unlinkSync(buildSitemapPath);
+        console.log('🗑️ Deleted build/sitemap.xml');
+      }
+      const publicSitemapPath = join(__dirname, '../public/sitemap.xml');
+      if (fs.existsSync(publicSitemapPath)) {
+        fs.unlinkSync(publicSitemapPath);
+        console.log('🗑️ Deleted public/sitemap.xml');
+      }
+    } catch (e) {
+      console.warn('⚠️ Non-critical failure cleaning build sitemaps:', e.message);
     }
+  } else {
+    try {
+      if (!fs.existsSync('public')) {
+        fs.mkdirSync('public');
+      }
 
-    fs.writeFileSync('public/sitemap.xml', sitemap);
-    const totalUrls = SEO_PAGES.length * 2 + uniqueCategories.length * 2 + (sants.length + books.length + ragas.length + GLOSSARY_TERMS.length) * 2 + seenSlugs.size * 2;
-    console.log(`✅ sitemap.xml generated in public/ with approx ${totalUrls} URLs`);
+      fs.writeFileSync('public/sitemap.xml', sitemap);
+      
+      // Also write directly to build/ if it exists (useful for local production builds for static sites)
+      if (fs.existsSync('build')) {
+        fs.writeFileSync('build/sitemap.xml', sitemap);
+        console.log('✅ sitemap.xml written to build/');
+      }
+      
+      const totalUrls = SEO_PAGES.length * 2 + uniqueCategories.length * 2 + (sants.length + books.length + ragas.length + GLOSSARY_TERMS.length) * 2 + seenSlugs.size * 2;
+      console.log(`✅ sitemap.xml generated in public/ with approx ${totalUrls} URLs`);
 
-  } catch (err) {
-    console.error('❌ Error writing sitemap file:', err.message);
+    } catch (err) {
+      console.error('❌ Error writing sitemap file:', err.message);
+    }
   }
 }
 
