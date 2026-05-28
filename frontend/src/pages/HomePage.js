@@ -2,7 +2,8 @@ import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronRight, Music, FileText, ArrowRight, Volume2, Clock, X, Edit2, VolumeX, Sun, Sunrise, Sunset, MapPin, BookOpen } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
-import { ApiContext } from '../App';
+import { ApiContext, AuthContext } from '../App';
+import { supabase } from '../lib/supabase';
 import { extractRelations } from '../utils/relations';
 import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { useSettings } from '../contexts/SettingsContext';
@@ -98,7 +99,7 @@ const getInitials = (name) => {
 /* ─── Cache Keys ─── */
 const CACHE_KEY = 'vrindopnishad_all_content_cache';
 const CACHE_TIME_KEY = 'vrindopnishad_all_content_time';
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes cache
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours cache
 
 /* ═══════════════════════════════════════════════════
    HOMEPAGE COMPONENT
@@ -108,6 +109,7 @@ const HomePage = () => {
   const navigate = useNavigate();
   const isHi = location.pathname.startsWith('/hi');
   const { apiService } = useContext(ApiContext);
+  const { user } = useContext(AuthContext);
 
   const [allItems, setAllItems] = useState([]);
   const [saints, setSaints] = useState([]);
@@ -120,6 +122,42 @@ const HomePage = () => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [streak, setStreak] = useState(0);
   const [particles, setParticles] = useState([]);
+
+  // Personalized Calendar State
+  const [calendarData, setCalendarData] = useState(() => {
+    try {
+      const saved = localStorage.getItem('vrindopnishad_calendar_data');
+      return saved ? JSON.parse(saved) : {
+        tithiEn: "Ekadashi (Shukla)",
+        tithiHi: "एकादशी (शुक्ल पक्ष)",
+        seasonEn: "Grishma Ritu (Summer)",
+        seasonHi: "ग्रीष्म ऋतु (Summer)",
+        lilaEn: "Madhyāhna (Radha Kund)",
+        lilaHi: "मध्याह्न लीला (राधा कुण्ड)",
+        festivalEn: "Nirjala Ekadashi (in 3 Days)",
+        festivalHi: "निर्जला एकादशी (3 दिन में)"
+      };
+    } catch (e) {
+      return {
+        tithiEn: "Ekadashi (Shukla)",
+        tithiHi: "एकादशी (शुक्ल पक्ष)",
+        seasonEn: "Grishma Ritu (Summer)",
+        seasonHi: "ग्रीष्म ऋतु (Summer)",
+        lilaEn: "Madhyāhna (Radha Kund)",
+        lilaHi: "मध्याह्न लीला (राधा कुण्ड)",
+        festivalEn: "Nirjala Ekadashi (in 3 Days)",
+        festivalHi: "निर्जला एकादशी (3 दिन में)"
+      };
+    }
+  });
+
+  const [isEditingCalendar, setIsEditingCalendar] = useState(false);
+  const [editCalendarForm, setEditCalendarForm] = useState({ ...calendarData });
+
+  // Sync edit form when calendarData changes
+  useEffect(() => {
+    setEditCalendarForm({ ...calendarData });
+  }, [calendarData]);
 
   // Drawer state
   const [selectedItem, setSelectedItem] = useState(null);
@@ -230,10 +268,30 @@ const HomePage = () => {
     };
   }, [tanpuraTimer, audioCtx]);
 
-  const handleUpdateJapaCount = (val) => {
+  const saveToSupabase = async (updatedFields) => {
+    if (!user) return;
+    try {
+      const { error } = await supabase
+        .from('users_sadhana')
+        .upsert({
+          id: user.uid,
+          ...updatedFields,
+          updated_at: new Date().toISOString()
+        });
+      if (error) throw error;
+    } catch (e) {
+      console.warn("Failed to save to Supabase:", e);
+    }
+  };
+
+  const handleUpdateJapaCount = async (val) => {
     setJapaCount(val);
     localStorage.setItem('vrindopnishad_japa_count', val.toString());
     window.dispatchEvent(new Event('storage'));
+
+    if (user) {
+      await saveToSupabase({ japa_count: val });
+    }
   };
 
   const getGreeting = () => {
@@ -310,7 +368,7 @@ const HomePage = () => {
     };
   }, []);
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     if (isCompleted) return;
     
     const todayStr = new Date().toDateString();
@@ -329,6 +387,13 @@ const HomePage = () => {
     setIsCompleted(true);
     setStreak(newStreak);
 
+    if (user) {
+      await saveToSupabase({
+        swadhyaya_streak: newStreak,
+        last_swadhyaya_date: todayStr
+      });
+    }
+
     // Trigger local particle explosion
     const newParticles = Array.from({ length: 24 }).map((_, i) => ({
       id: i,
@@ -342,6 +407,146 @@ const HomePage = () => {
   };
 
   const [japaCount, setJapaCount] = useState(0);
+
+  // Supabase Sync Effect
+  useEffect(() => {
+    if (!user) return;
+
+    let active = true;
+
+    const syncUserSadhana = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('users_sadhana')
+          .select('*')
+          .eq('id', user.uid)
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (data) {
+          if (!active) return;
+          if (data.japa_count !== undefined) {
+            setJapaCount(data.japa_count);
+            localStorage.setItem('vrindopnishad_japa_count', data.japa_count.toString());
+          }
+          if (data.swadhyaya_streak !== undefined) {
+            setStreak(data.swadhyaya_streak);
+            localStorage.setItem('swadhyaya_streak', data.swadhyaya_streak.toString());
+          }
+          if (data.last_swadhyaya_date !== undefined) {
+            localStorage.setItem('last_swadhyaya_date', data.last_swadhyaya_date);
+            if (data.last_swadhyaya_date === new Date().toDateString()) {
+              setIsCompleted(true);
+            } else {
+              setIsCompleted(false);
+            }
+          }
+          if (data.calendar) {
+            setCalendarData(data.calendar);
+            localStorage.setItem('vrindopnishad_calendar_data', JSON.stringify(data.calendar));
+          }
+        } else {
+          // Record doesn't exist: initialize it
+          const initialCalendar = {
+            tithiEn: "Ekadashi (Shukla)",
+            tithiHi: "एकादशी (शुक्ल पक्ष)",
+            seasonEn: "Grishma Ritu (Summer)",
+            seasonHi: "ग्रीष्म ऋतु (Summer)",
+            lilaEn: "Madhyāhna (Radha Kund)",
+            lilaHi: "मध्याह्न लीला (राधा कुण्ड)",
+            festivalEn: "Nirjala Ekadashi (in 3 Days)",
+            festivalHi: "निर्जला एकादशी (3 दिन में)"
+          };
+          
+          await supabase.from('users_sadhana').insert({
+            id: user.uid,
+            japa_count: japaCount,
+            swadhyaya_streak: streak,
+            last_swadhyaya_date: localStorage.getItem('last_swadhyaya_date') || '',
+            calendar: calendarData || initialCalendar,
+            updated_at: new Date().toISOString()
+          });
+        }
+      } catch (err) {
+        console.warn("Failed to initialize or sync sadhana from Supabase:", err);
+      }
+    };
+
+    syncUserSadhana();
+
+    // Subscribe to Postgres changes on this user's record in users_sadhana table
+    const channel = supabase
+      .channel(`public:users_sadhana:id=eq.${user.uid}`)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'users_sadhana',
+        filter: `id=eq.${user.uid}`
+      }, (payload) => {
+        if (!active) return;
+        const data = payload.new;
+        if (data) {
+          if (data.japa_count !== undefined) {
+            setJapaCount(data.japa_count);
+            localStorage.setItem('vrindopnishad_japa_count', data.japa_count.toString());
+          }
+          if (data.swadhyaya_streak !== undefined) {
+            setStreak(data.swadhyaya_streak);
+            localStorage.setItem('swadhyaya_streak', data.swadhyaya_streak.toString());
+          }
+          if (data.last_swadhyaya_date !== undefined) {
+            localStorage.setItem('last_swadhyaya_date', data.last_swadhyaya_date);
+            if (data.last_swadhyaya_date === new Date().toDateString()) {
+              setIsCompleted(true);
+            } else {
+              setIsCompleted(false);
+            }
+          }
+          if (data.calendar) {
+            setCalendarData(data.calendar);
+            localStorage.setItem('vrindopnishad_calendar_data', JSON.stringify(data.calendar));
+          }
+        }
+      })
+      .subscribe();
+
+    return () => {
+      active = false;
+      supabase.removeChannel(channel);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  // Load guest/offline calendar data from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('vrindopnishad_calendar_data');
+      if (saved) {
+        setCalendarData(JSON.parse(saved));
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+  }, []);
+
+  const handleSaveCalendar = async () => {
+    if (user) {
+      await saveToSupabase({
+        calendar: editCalendarForm
+      });
+      setCalendarData(editCalendarForm);
+      setIsEditingCalendar(false);
+    } else {
+      setCalendarData(editCalendarForm);
+      try {
+        localStorage.setItem('vrindopnishad_calendar_data', JSON.stringify(editCalendarForm));
+      } catch (e) {
+        console.warn(e);
+      }
+      setIsEditingCalendar(false);
+    }
+  };
 
   useEffect(() => {
     try {
@@ -391,18 +596,6 @@ const HomePage = () => {
             setRagas(rel.ragas);
             setLoading(false);
           }
-          // Silent background update to keep data fresh
-          apiService.getAllContent(null, 10000).then(freshItems => {
-            localStorage.setItem(CACHE_KEY, JSON.stringify(freshItems));
-            localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
-            const freshRel = extractRelations(freshItems);
-            if (active) {
-              setAllItems(freshItems);
-              setSaints(freshRel.sants);
-              setBooks(freshRel.books);
-              setRagas(freshRel.ragas);
-            }
-          }).catch(e => console.log('Background content refresh failed:', e));
         } else {
           const items = await apiService.getAllContent(null, 10000);
           localStorage.setItem(CACHE_KEY, JSON.stringify(items));
@@ -765,36 +958,144 @@ const HomePage = () => {
           <div className="lg:col-span-1 h-full">
             <div className="glass-card p-5 rounded-3xl border border-primary/10 flex flex-col justify-between h-full select-none text-left">
               <div>
-                <div className="flex items-center gap-2 mb-4 pb-2 border-b border-white/5">
-                  <Clock size={16} className="text-primary" />
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-white/60 font-bold">
-                    {isHi ? "ब्रज पंचांग" : "Braj Calendar"}
-                  </span>
+                <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/5">
+                  <div className="flex items-center gap-2">
+                    <Clock size={16} className="text-primary" />
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-white/60 font-bold">
+                      {isHi ? "ब्रज पंचांग" : "Braj Calendar"}
+                    </span>
+                  </div>
+                  {!isEditingCalendar && (
+                    <button 
+                      onClick={() => setIsEditingCalendar(true)}
+                      className="text-zinc-600 hover:text-white transition-colors"
+                      title="Edit Calendar"
+                    >
+                      <Edit2 size={12} />
+                    </button>
+                  )}
                 </div>
                 
-                <div className="space-y-4">
-                  <div>
-                    <span className="text-[9px] uppercase tracking-wider text-white/35 block">{isHi ? "तिथि / Lunar Day" : "Lunar Tithi"}</span>
-                    <span className="text-xs font-bold text-white/80 block mt-0.5">{isHi ? "एकादशी (शुक्ल पक्ष)" : "Ekadashi (Shukla)"}</span>
+                {isEditingCalendar ? (
+                  <div className="space-y-2.5 my-2">
+                    <div>
+                      <span className="text-[8px] uppercase tracking-wider text-white/40 block mb-0.5">Tithi (EN / HI)</span>
+                      <div className="grid grid-cols-2 gap-1">
+                        <input 
+                          type="text" 
+                          className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
+                          value={editCalendarForm.tithiEn}
+                          onChange={e => setEditCalendarForm(prev => ({ ...prev, tithiEn: e.target.value }))}
+                          placeholder="Tithi EN"
+                        />
+                        <input 
+                          type="text" 
+                          className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
+                          value={editCalendarForm.tithiHi}
+                          onChange={e => setEditCalendarForm(prev => ({ ...prev, tithiHi: e.target.value }))}
+                          placeholder="तिथि हिन्दी"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-[8px] uppercase tracking-wider text-white/40 block mb-0.5">Season (EN / HI)</span>
+                      <div className="grid grid-cols-2 gap-1">
+                        <input 
+                          type="text" 
+                          className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
+                          value={editCalendarForm.seasonEn}
+                          onChange={e => setEditCalendarForm(prev => ({ ...prev, seasonEn: e.target.value }))}
+                          placeholder="Season EN"
+                        />
+                        <input 
+                          type="text" 
+                          className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
+                          value={editCalendarForm.seasonHi}
+                          onChange={e => setEditCalendarForm(prev => ({ ...prev, seasonHi: e.target.value }))}
+                          placeholder="ऋतु हिन्दी"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-[8px] uppercase tracking-wider text-white/40 block mb-0.5">Astayama Lila (EN / HI)</span>
+                      <div className="grid grid-cols-2 gap-1">
+                        <input 
+                          type="text" 
+                          className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
+                          value={editCalendarForm.lilaEn}
+                          onChange={e => setEditCalendarForm(prev => ({ ...prev, lilaEn: e.target.value }))}
+                          placeholder="Lila EN"
+                        />
+                        <input 
+                          type="text" 
+                          className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
+                          value={editCalendarForm.lilaHi}
+                          onChange={e => setEditCalendarForm(prev => ({ ...prev, lilaHi: e.target.value }))}
+                          placeholder="लीला हिन्दी"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-[8px] uppercase tracking-wider text-white/40 block mb-0.5">Next Festival (EN / HI)</span>
+                      <div className="grid grid-cols-2 gap-1">
+                        <input 
+                          type="text" 
+                          className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
+                          value={editCalendarForm.festivalEn}
+                          onChange={e => setEditCalendarForm(prev => ({ ...prev, festivalEn: e.target.value }))}
+                          placeholder="Festival EN"
+                        />
+                        <input 
+                          type="text" 
+                          className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
+                          value={editCalendarForm.festivalHi}
+                          onChange={e => setEditCalendarForm(prev => ({ ...prev, festivalHi: e.target.value }))}
+                          placeholder="उत्सव हिन्दी"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-2 justify-end pt-1">
+                      <button 
+                        onClick={() => setIsEditingCalendar(false)}
+                        className="px-2 py-0.5 text-[9px] rounded border border-white/10 hover:bg-white/5 text-zinc-400 hover:text-white transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button 
+                        onClick={handleSaveCalendar}
+                        className="px-2 py-0.5 text-[9px] rounded bg-white text-zinc-950 hover:bg-zinc-200 font-semibold transition-colors"
+                      >
+                        Save
+                      </button>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[9px] uppercase tracking-wider text-white/35 block">{isHi ? "ऋतु / Season" : "Current Season"}</span>
-                    <span className="text-xs font-bold text-white/80 block mt-0.5">{isHi ? "ग्रीष्म ऋतु (Summer)" : "Grishma Ritu (Summer)"}</span>
-                  </div>
-                  <div>
-                    <span className="text-[9px] uppercase tracking-wider text-white/35 block">{isHi ? "अष्टयाम लीला / Pastime" : "Aṣṭayāma Līlā"}</span>
-                    <span className="text-xs font-bold text-white/80 block mt-0.5 truncate">{isHi ? "मध्याह्न लीला (राधा कुण्ड)" : "Madhyāhna (Radha Kund)"}</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mt-4 pt-3 border-t border-white/5">
-                <span className="text-[9px] uppercase tracking-wider text-primary font-bold block mb-1">
-                  🎉 {isHi ? "आगामी उत्सव" : "Next Festival"}
-                </span>
-                <span className="text-[11px] font-semibold text-minimal-gold block">
-                  {isHi ? "निर्जला एकादशी (3 दिन में)" : "Nirjala Ekadashi (in 3 Days)"}
-                </span>
+                ) : (
+                  <>
+                    <div className="space-y-4">
+                      <div>
+                        <span className="text-[9px] uppercase tracking-wider text-white/35 block">{isHi ? "तिथि / Lunar Day" : "Lunar Tithi"}</span>
+                        <span className="text-xs font-bold text-white/80 block mt-0.5">{isHi ? calendarData.tithiHi : calendarData.tithiEn}</span>
+                      </div>
+                      <div>
+                        <span className="text-[9px] uppercase tracking-wider text-white/35 block">{isHi ? "ऋतु / Season" : "Current Season"}</span>
+                        <span className="text-xs font-bold text-white/80 block mt-0.5">{isHi ? calendarData.seasonHi : calendarData.seasonEn}</span>
+                      </div>
+                      <div>
+                        <span className="text-[9px] uppercase tracking-wider text-white/35 block">{isHi ? "अष्टयाम लीला / Pastime" : "Aṣṭayāma Līlā"}</span>
+                        <span className="text-xs font-bold text-white/80 block mt-0.5 truncate">{isHi ? calendarData.lilaHi : calendarData.lilaEn}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4 pt-3 border-t border-white/5">
+                      <span className="text-[9px] uppercase tracking-wider text-primary font-bold block mb-1">
+                        🎉 {isHi ? "आगामी उत्सव" : "Next Festival"}
+                      </span>
+                      <span className="text-[11px] font-semibold text-minimal-gold block">
+                        {isHi ? calendarData.festivalHi : calendarData.festivalEn}
+                      </span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -916,12 +1217,12 @@ const HomePage = () => {
 
                 {activeTab === 'translation' && (
                   <div className="space-y-4 text-left animate-in fade-in zoom-in-95 duration-200">
-                    <div className="grid md:grid-cols-2 gap-4 text-xs font-light leading-relaxed">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 text-xs font-light leading-relaxed">
                       <div className="space-y-1">
                         <span className="text-[9px] uppercase tracking-wider text-primary font-bold block">भावार्थ (Hindi)</span>
                         <p className="text-white/80 font-medium leading-relaxed whitespace-pre-line">{dailyShloka.hindi}</p>
                       </div>
-                      <div className="border-t md:border-t-0 md:border-l border-white/5 pt-3 md:pt-0 md:pl-4 space-y-1">
+                      <div className="border-t md:border-t-0 md:border-l lg:border-l-0 lg:border-t xl:border-t-0 xl:border-l border-white/5 pt-3 md:pt-0 md:pl-4 lg:pl-0 lg:pt-3 xl:pt-0 xl:pl-4 space-y-1">
                         <span className="text-[9px] uppercase tracking-wider text-sky-400/80 font-bold block">English</span>
                         <p className="text-white/70 italic leading-relaxed whitespace-pre-line">{dailyShloka.english}</p>
                       </div>

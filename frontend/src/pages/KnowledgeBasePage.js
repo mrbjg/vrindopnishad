@@ -47,9 +47,9 @@ const KnowledgeBasePage = () => {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 border-b border-white/5 pb-4">
         <div>
-          <Link to="/" className="inline-flex items-center gap-1.5 text-white/40 hover:text-white mb-1.5 transition-colors text-[10px] uppercase tracking-wider">
+          <Link to={isHindiRoute ? "/hi" : "/"} className="inline-flex items-center gap-1.5 text-white/40 hover:text-white mb-1.5 transition-colors text-[10px] uppercase tracking-wider">
             <ArrowLeft size={12} />
-            Back to Dashboard
+            {isHindiRoute ? "डैशबोर्ड पर वापस" : "Back to Dashboard"}
           </Link>
           <h1 className="text-xl md:text-2xl lg:text-3xl font-bold font-headings text-white flex items-center gap-2.5">
             <BookOpen className="text-purple-400 shrink-0" size={26} />
@@ -132,7 +132,6 @@ const KnowledgeBasePage = () => {
               <div className="pt-2.5 border-t border-white/5 flex justify-between items-center text-[10px] font-semibold">
                 <span className="text-zinc-500 uppercase tracking-wide whitespace-nowrap shrink-0">Vedic Wiki</span>
                 <span className="text-purple-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform whitespace-nowrap shrink-0">
-                  {isHindiRoute ? "लेख पढ़ें" : "Read Article"}
                   <ChevronRight size={12} />
                 </span>
               </div>

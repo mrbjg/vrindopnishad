@@ -154,6 +154,29 @@ const ContentListPage = () => {
     };
   }, [selectedCategory, apiService]);
 
+  const expandedTerms = useMemo(() => {
+    return expandHinglishQuery(debouncedSearch);
+  }, [debouncedSearch]);
+
+  const filteredContent = useMemo(() => {
+    if (!debouncedSearch) return content;
+    return content.filter(item => {
+      const searchableText = [
+        item.title,
+        item.hindi_text,
+        item.english_translation,
+        item.english_text,
+        item.description,
+        item.author,
+        item.category,
+        item.slug,
+        ...(item.tags || [])
+      ].filter(Boolean).join(' ').toLowerCase();
+
+      return expandedTerms.some(term => searchableText.includes(term.toLowerCase()));
+    });
+  }, [content, debouncedSearch, expandedTerms]);
+
   // Infinite Scroll Observer
   useEffect(() => {
     if (loading || filteredContent.length <= visibleCount) return;
@@ -178,28 +201,7 @@ const ContentListPage = () => {
     };
   }, [loading, filteredContent.length, visibleCount]);
 
-  const expandedTerms = useMemo(() => {
-    return expandHinglishQuery(debouncedSearch);
-  }, [debouncedSearch]);
 
-  const filteredContent = useMemo(() => {
-    if (!debouncedSearch) return content;
-    return content.filter(item => {
-      const searchableText = [
-        item.title,
-        item.hindi_text,
-        item.english_translation,
-        item.english_text,
-        item.description,
-        item.author,
-        item.category,
-        item.slug,
-        ...(item.tags || [])
-      ].filter(Boolean).join(' ').toLowerCase();
-
-      return expandedTerms.some(term => searchableText.includes(term.toLowerCase()));
-    });
-  }, [content, debouncedSearch, expandedTerms]);
 
   const getCategoryColorClasses = (category) => {
     switch (category?.toLowerCase()) {
@@ -361,7 +363,8 @@ const ContentListPage = () => {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredContent.slice(0, visibleCount).map(item => {
             const colors = getCategoryColorClasses(item.category);
             return (
@@ -407,7 +410,8 @@ const ContentListPage = () => {
           <div className="w-8 h-8 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></div>
         </div>
       )}
-    )}
+        </>
+      )}
 
       {!loading && filteredContent.length === 0 && (
         <div className="text-center py-24 glass-card">

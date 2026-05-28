@@ -104,95 +104,139 @@ const classifyItemCategory = (item) => {
   return 'poem';
 };
 
+const fetchStaticBackup = async () => {
+  try {
+    const res = await fetch('/data/content_backup.json');
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    return await res.json();
+  } catch (e) {
+    console.warn("Failed to fetch static backup content, using empty array:", e);
+    return [];
+  }
+};
+
 export const apiService = {
   getCachedData: (key) => getCache(key),
 
   // Content APIs
   getAllContent: async (category = null, limit = 50) => {
-    const cacheKey = `all_${category || 'none'}_${limit}`;
-    let cached = getCache(cacheKey);
-
-    // Fallback: Prioritize global pre-fetched localStorage cache
-    if (!cached) {
-      try {
-        const localCached = localStorage.getItem('vrindopnishad_all_content_cache');
-        if (localCached) {
-          const allItems = JSON.parse(localCached);
-          let filtered = allItems;
-          if (category) {
-            const targetCat = category.toLowerCase().trim();
-            filtered = filtered.filter(item => item.category?.toLowerCase() === targetCat);
-          }
-          if (limit) {
-            filtered = filtered.slice(0, limit);
-          }
-          console.log(`[Cache-Hit] getAllContent loaded from global localStorage cache for category: ${category}`);
-          setCache(cacheKey, filtered);
-          return filtered;
-        }
-      } catch (e) {
-        console.warn('Failed to parse global localStorage content cache:', e);
-      }
-    }
-
-    if (cached) return cached;
-
-    if (USE_MOCK) {
-      const data = await mockApiService.getAllContent(category);
-      setCache(cacheKey, data);
-      return data;
-    }
-
-    let rawItems = [];
-
-    // 1. Try Firebase RTDB
+    // 1. Check if we have the global cache
+    let cachedItems = [];
+    let lastUpdated = '1970-01-01T00:00:00.000Z';
+    
     try {
-      const snapshot = await get(ref(contentDb, 'public/content'));
-      if (snapshot.exists()) {
-        const rawData = snapshot.val();
-        rawItems = Array.isArray(rawData) ? rawData.filter(Boolean) : 
-                   Object.keys(rawData).map(key => ({ id: key, ...rawData[key] }));
-        rawItems = rawItems.reverse();
+      const localCached = localStorage.getItem('vrindopnishad_all_content_cache');
+      const cachedTime = localStorage.getItem('vrindopnishad_all_content_last_updated');
+      if (localCached) {
+        cachedItems = JSON.parse(localCached);
       }
-    } catch (error) {
-      console.warn('Firebase connection failed, falling back to Supabase...', error.message);
-      // 2. Fallback to Supabase
-      try {
-        const { data, error: supaError } = await supabase
-          .from('content')
-          .select('*')
-          .order('created_at', { ascending: false });
-        if (supaError) throw supaError;
-        rawItems = data || [];
-      } catch (err) {
-        console.error('All database sources failed:', err);
-        throw err;
+      if (cachedTime) {
+        lastUpdated = cachedTime;
+      }
+    } catch (e) {
+      console.warn('Failed to parse global cache:', e);
+    }
+
+    // 2. If no cache exists, load static backup JSON first (serves from CDN, 0 egress)
+    if (!cachedItems || cachedItems.length === 0) {
+      console.log('[Cache-Miss] Loading initial dataset from local static backup (0 egress)...');
+      cachedItems = await fetchStaticBackup();
+      
+      // Calculate initial lastUpdated from static items
+      if (cachedItems && cachedItems.length > 0) {
+        let maxTime = new Date('1970-01-01T00:00:00Z');
+        cachedItems.forEach(item => {
+          if (item.updated_at) {
+            const t = new Date(item.updated_at);
+            if (t > maxTime) maxTime = t;
+          }
+        });
+        lastUpdated = maxTime.toISOString();
+        
+        try {
+          localStorage.setItem('vrindopnishad_all_content_cache', JSON.stringify(cachedItems));
+          localStorage.setItem('vrindopnishad_all_content_last_updated', lastUpdated);
+        } catch (e) {}
       }
     }
 
-    // 3. Dynamic client-side categorization & enhancement
-    let processedItems = rawItems.map(item => {
-      const cleanCategory = classifyItemCategory(item);
-      return {
-        ...item,
-        category: cleanCategory,
-        slug: item.slug || generateSlug(item.title)
-      };
-    });
+    // 3. Trigger a background delta-sync with Supabase (only fetches rows updated since lastUpdated, minimizing egress!)
+    if (!USE_MOCK && typeof window !== 'undefined') {
+      // Run delta-sync asynchronously without blocking the UI
+      setTimeout(async () => {
+        try {
+          console.log(`[Delta-Sync] Fetching updates since: ${lastUpdated}...`);
+          let updates = [];
+          
+          const { data, error } = await supabase
+            .from('content')
+            .select('*')
+            .gt('updated_at', lastUpdated)
+            .order('updated_at', { ascending: true });
+            
+          if (error) throw error;
+          updates = data || [];
+          
+          if (updates.length > 0) {
+            console.log(`[Delta-Sync] Found ${updates.length} new or updated items from Supabase!`);
+            
+            // Merge updates into cachedItems
+            const itemMap = new Map(cachedItems.map(item => [item.id, item]));
+            
+            updates.forEach(upd => {
+              const cleanCategory = classifyItemCategory(upd);
+              const processed = {
+                ...upd,
+                category: cleanCategory,
+                slug: upd.slug || generateSlug(upd.title)
+              };
+              itemMap.set(upd.id, processed);
+            });
+            
+            const newCachedItems = Array.from(itemMap.values());
+            
+            // Find new max updated_at
+            let maxTime = new Date(lastUpdated);
+            updates.forEach(upd => {
+              if (upd.updated_at) {
+                const t = new Date(upd.updated_at);
+                if (t > maxTime) maxTime = t;
+              }
+            });
+            
+            localStorage.setItem('vrindopnishad_all_content_cache', JSON.stringify(newCachedItems));
+            localStorage.setItem('vrindopnishad_all_content_last_updated', maxTime.toISOString());
+            
+            // Dispatch storage event to update other components or tabs
+            window.dispatchEvent(new Event('storage'));
+          } else {
+            console.log('[Delta-Sync] Database is up to date. 0 new items fetched.');
+          }
+        } catch (err) {
+          console.warn('[Delta-Sync] Background delta sync failed:', err.message);
+        }
+      }, 2000);
+    }
 
-    // 4. Client-side category filtering
+    // 4. Return requested subset from cached items
+    let filtered = cachedItems;
     if (category) {
       const targetCat = category.toLowerCase().trim();
-      processedItems = processedItems.filter(item => item.category?.toLowerCase() === targetCat);
+      filtered = filtered.filter(item => item.category?.toLowerCase() === targetCat);
     }
+    
+    // Sort by created_at (descending)
+    filtered = [...filtered].sort((a, b) => {
+      const dateA = a.created_at ? new Date(a.created_at) : new Date(0);
+      const dateB = b.created_at ? new Date(b.created_at) : new Date(0);
+      return dateB - dateA;
+    });
 
-    // 5. Apply limit
     if (limit) {
-      processedItems = processedItems.slice(0, limit);
+      filtered = filtered.slice(0, limit);
     }
-
-    setCache(cacheKey, processedItems);
-    return processedItems;
+    
+    return filtered;
   },
 
   getContentById: async (id) => {

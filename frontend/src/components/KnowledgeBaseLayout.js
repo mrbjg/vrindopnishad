@@ -120,6 +120,69 @@ const KnowledgeBaseLayout = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Inject Google Translate script and listen to translation triggers
+  useEffect(() => {
+    window.googleTranslateElementInit = () => {
+      new window.google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,hi',
+        layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      }, 'google_translate_element');
+    };
+
+    if (!document.getElementById('google-translate-script')) {
+      const script = document.createElement('script');
+      script.id = 'google-translate-script';
+      script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  // Listen to path changes and apply translation programmatically
+  useEffect(() => {
+    const targetLang = isHindiRoute ? 'hi' : 'en';
+    
+    const setGoogTransCookie = (lang) => {
+      const domain = window.location.hostname;
+      document.cookie = `googtrans=/en/${lang}; path=/;`;
+      document.cookie = `googtrans=/en/${lang}; path=/; domain=.${domain};`;
+      document.cookie = `googtrans=/en/${lang}; path=/; domain=${domain};`;
+    };
+
+    setGoogTransCookie(targetLang);
+
+    const triggerTranslation = () => {
+      const selectEl = document.querySelector('.goog-te-combo');
+      if (selectEl) {
+        if (selectEl.value !== targetLang) {
+          selectEl.value = targetLang;
+          selectEl.dispatchEvent(new Event('change'));
+        }
+        return true;
+      }
+      return false;
+    };
+
+    if (!triggerTranslation()) {
+      const interval = setInterval(() => {
+        if (triggerTranslation()) {
+          clearInterval(interval);
+        }
+      }, 150);
+      
+      const timeout = setTimeout(() => {
+        clearInterval(interval);
+      }, 5000);
+      
+      return () => {
+        clearInterval(interval);
+        clearTimeout(timeout);
+      };
+    }
+  }, [isHindiRoute]);
+
   // Extract headings from the article dynamically for table of contents
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -317,6 +380,9 @@ const KnowledgeBaseLayout = () => {
 
   return (
     <div className={`flex flex-col lg:flex-row ${isPookiz ? 'gap-4' : 'gap-6'} w-full ${isPookiz ? 'min-h-[calc(100vh-80px)]' : 'lg:h-full lg:overflow-hidden'} animate-fade-in`}>
+      {/* Hidden Google Translate container */}
+      <div id="google_translate_element" style={{ display: 'none' }}></div>
+      
       {/* Mobile Toggle Button */}
       <div className="lg:hidden flex items-center justify-between p-3 bg-white/[0.02] border border-white/5 rounded-2xl">
         <button 
@@ -459,7 +525,7 @@ const KnowledgeBaseLayout = () => {
         {/* Main Content Pane */}
         <div className="flex-1 flex flex-col min-w-0 lg:h-full lg:overflow-hidden">
           {/* Controls Toolbar */}
-          <div className={`flex items-center justify-between ${isPookiz ? 'p-2.5 md:p-3 rounded-t-2xl' : 'p-3 md:p-4 rounded-t-3xl'} border-t border-x border-white/5 ${panelBg} gap-4`}>
+          <div className={`relative z-10 flex items-center justify-between ${isPookiz ? 'p-2.5 md:p-3 rounded-t-2xl' : 'p-3 md:p-4 rounded-t-3xl'} border-t border-x border-white/5 ${panelBg} gap-4`}>
             {/* Left: Breadcrumbs */}
             <div className="flex items-center gap-1.5 text-[10px] md:text-xs text-zinc-500 truncate">
               <Link to={isHindiRoute ? "/hi" : "/"} className="hover:text-white">
