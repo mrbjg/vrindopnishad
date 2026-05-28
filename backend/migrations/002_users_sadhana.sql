@@ -17,6 +17,12 @@ CREATE TABLE IF NOT EXISTS users_sadhana (
 -- Enable Row Level Security
 ALTER TABLE users_sadhana ENABLE ROW LEVEL SECURITY;
 
+-- Clean up existing policies if they exist to prevent duplication errors
+DROP POLICY IF EXISTS "Allow select sadhana" ON users_sadhana;
+DROP POLICY IF EXISTS "Allow insert sadhana" ON users_sadhana;
+DROP POLICY IF EXISTS "Allow update sadhana" ON users_sadhana;
+DROP POLICY IF EXISTS "Allow delete sadhana" ON users_sadhana;
+
 -- Policy: Allow read/select access to user sadhana records
 -- If the client is logged in via Supabase, auth.uid() will match.
 -- For Firebase Auth client fallbacks (which query anonymously), we check that the client knows the UID.
