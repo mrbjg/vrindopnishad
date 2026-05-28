@@ -5,6 +5,7 @@ import '../models/daily_gyaan.dart';
 import '../models/sacred_event.dart';
 import '../models/achievement.dart';
 import '../models/daily_challenge.dart';
+import '../core/cache_service.dart';
 
 class SpiritualContentService {
   final sb.SupabaseClient _supabase = sb.Supabase.instance.client;
@@ -14,6 +15,12 @@ class SpiritualContentService {
   /// Fetch a motivation appropriate for user's level
   Future<DailyMotivation?> getDailyMotivation(int userLevel) async {
     try {
+      // Try local cache first
+      final cached = CacheService.instance.getCachedDailyMotivation();
+      if (cached != null) {
+        return cached;
+      }
+
       final response = await _supabase
           .from('daily_motivations')
           .select()
@@ -26,7 +33,11 @@ class SpiritualContentService {
 
       // Pick a pseudo-random one based on today's date for consistency
       final dayIndex = DateTime.now().day % list.length;
-      return DailyMotivation.fromJson(list[dayIndex]);
+      final motivation = DailyMotivation.fromJson(list[dayIndex]);
+      
+      // Save to cache
+      await CacheService.instance.cacheDailyMotivation(motivation);
+      return motivation;
     } catch (e) {
       debugPrint('Error fetching motivation: $e');
       return null;
@@ -61,6 +72,12 @@ class SpiritualContentService {
   /// Fetch today's gyaan based on difficulty matching user level
   Future<DailyGyaan?> getDailyGyaan(int userLevel) async {
     try {
+      // Try local cache first
+      final cached = CacheService.instance.getCachedDailyGyaan();
+      if (cached != null) {
+        return cached;
+      }
+
       // Map user level to difficulty: 1-10 = beginner, 11-20 = intermediate, 21+ = advanced
       int difficulty = 1;
       if (userLevel > 20) {
@@ -77,22 +94,26 @@ class SpiritualContentService {
           .limit(10);
 
       final list = (response as List).cast<Map<String, dynamic>>();
-      if (list.isEmpty) return null;
-
+      
+      DailyGyaan? todayGyaan;
       // Pick a pseudo-random one based on today's date for consistency
       if (list.isNotEmpty) {
         final dayIndex = DateTime.now().day % list.length;
-        return DailyGyaan.fromJson(list[dayIndex]);
+        todayGyaan = DailyGyaan.fromJson(list[dayIndex]);
+      } else {
+        // Fallback Sample Data for UI Demo
+        todayGyaan = DailyGyaan(
+          id: 'sample_today',
+          title: 'The Eternal Witness',
+          content: 'Know that you are the eternal witness, untouched by the tides of time. In the silence of your heart, the universe speaks.',
+          difficulty: 2,
+          createdAt: DateTime.now(),
+        );
       }
-      
-      // Fallback Sample Data for UI Demo
-      return DailyGyaan(
-        id: 'sample_today',
-        title: 'The Eternal Witness',
-        content: 'Know that you are the eternal witness, untouched by the tides of time. In the silence of your heart, the universe speaks.',
-        difficulty: 2,
-        createdAt: DateTime.now(),
-      );
+
+      // Cache for today
+      await CacheService.instance.cacheDailyGyaan(todayGyaan);
+      return todayGyaan;
     } catch (e) {
       debugPrint('Error fetching gyaan: $e');
       return DailyGyaan(
@@ -108,21 +129,32 @@ class SpiritualContentService {
   /// Fetch all gyaan for browse
   Future<List<DailyGyaan>> getAllGyaan({int? difficulty}) async {
     try {
-      var query = _supabase.from('daily_gyaan').select();
-      if (difficulty != null) {
-        query = query.eq('difficulty', difficulty);
-      }
-      final response =
-          await query.order('created_at', ascending: false).limit(50);
+      List<DailyGyaan> list = [];
+      final cached = CacheService.instance.getCachedAllGyaan();
+      if (cached != null) {
+        list = cached;
+      } else {
+        var query = _supabase.from('daily_gyaan').select();
+        final response =
+            await query.order('created_at', ascending: false).limit(50);
 
-      final apiList = (response as List)
-          .cast<Map<String, dynamic>>()
-          .map((e) => DailyGyaan.fromJson(e))
-          .toList();
+        final apiList = (response as List)
+            .cast<Map<String, dynamic>>()
+            .map((e) => DailyGyaan.fromJson(e))
+            .toList();
+
+        list = apiList;
+        await CacheService.instance.cacheAllGyaan(list);
+      }
+
+      // Filter by difficulty locally
+      if (difficulty != null) {
+        list = list.where((e) => e.difficulty == difficulty).toList();
+      }
 
       // Add high-quality samples for UI demonstration
       return [
-        ...apiList,
+        ...list,
         DailyGyaan(
             id: 's1',
             title: 'Transcending Ego',
@@ -153,6 +185,12 @@ class SpiritualContentService {
   /// Fetch upcoming events
   Future<List<SacredEvent>> getUpcomingEvents({int limit = 10}) async {
     try {
+      // Try cache first
+      final cached = CacheService.instance.getCachedUpcomingEvents();
+      if (cached != null) {
+        return cached;
+      }
+
       final today = DateTime.now().toIso8601String().split('T')[0];
       final response = await _supabase
           .from('sacred_calendar')
@@ -166,8 +204,7 @@ class SpiritualContentService {
           .map((e) => SacredEvent.fromJson(e))
           .toList();
 
-      // Prepend Sample Data for UI Demo
-      return [
+      final resultList = [
         SacredEvent(
           id: 'e1',
           title: 'Full Moon Meditation',
@@ -186,6 +223,10 @@ class SpiritualContentService {
         ),
         ...apiList,
       ];
+
+      // Save to cache
+      await CacheService.instance.cacheUpcomingEvents(resultList);
+      return resultList;
     } catch (e) {
       debugPrint('Error fetching events: $e');
       return [];
@@ -195,6 +236,12 @@ class SpiritualContentService {
   /// Fetch events for a specific month
   Future<List<SacredEvent>> getEventsForMonth(int year, int month) async {
     try {
+      // Try cache first
+      final cached = CacheService.instance.getCachedMonthlyEvents(year, month);
+      if (cached != null) {
+        return cached;
+      }
+
       final startDate = '$year-${month.toString().padLeft(2, '0')}-01';
       final endMonth = month == 12 ? 1 : month + 1;
       final endYear = month == 12 ? year + 1 : year;
@@ -207,10 +254,14 @@ class SpiritualContentService {
           .lt('date', endDate)
           .order('date', ascending: true);
 
-      return (response as List)
+      final resultList = (response as List)
           .cast<Map<String, dynamic>>()
           .map((e) => SacredEvent.fromJson(e))
           .toList();
+
+      // Save to cache
+      await CacheService.instance.cacheMonthlyEvents(year, month, resultList);
+      return resultList;
     } catch (e) {
       debugPrint('Error fetching monthly events: $e');
       return [];
@@ -220,6 +271,12 @@ class SpiritualContentService {
   /// Fetch today's events
   Future<List<SacredEvent>> getTodayEvents() async {
     try {
+      // Try cache first
+      final cached = CacheService.instance.getCachedTodayEvents();
+      if (cached != null) {
+        return cached;
+      }
+
       final today = DateTime.now().toIso8601String().split('T')[0];
       final response = await _supabase
           .from('sacred_calendar')
@@ -231,9 +288,10 @@ class SpiritualContentService {
           .map((e) => SacredEvent.fromJson(e))
           .toList();
           
+      List<SacredEvent> resultList = apiList;
       // Ensure Today has an event for UI Demo
       if (apiList.isEmpty) {
-        return [
+        resultList = [
           SacredEvent(
             id: 'today_sample',
             title: 'Celestial Alignment Day',
@@ -244,7 +302,10 @@ class SpiritualContentService {
           ),
         ];
       }
-      return apiList;
+
+      // Save to cache
+      await CacheService.instance.cacheTodayEvents(resultList);
+      return resultList;
     } catch (e) {
       debugPrint('Error fetching today events: $e');
       return [
@@ -301,6 +362,12 @@ class SpiritualContentService {
   Future<List<DailyChallenge>> getDailyChallenges(
       String uid, int userLevel) async {
     try {
+      // Try local cache first
+      final cached = CacheService.instance.getCachedDailyChallenges();
+      if (cached != null) {
+        return cached;
+      }
+
       // Get challenges matching user level
       final response = await _supabase
           .from('daily_challenges')
@@ -329,7 +396,7 @@ class SpiritualContentService {
       }
 
       // Merge progress into challenges
-      return challenges.map((challenge) {
+      final merged = challenges.map((challenge) {
         final progress = progressMap[challenge.id];
         if (progress != null) {
           return challenge.copyWith(
@@ -342,6 +409,10 @@ class SpiritualContentService {
         }
         return challenge;
       }).toList();
+
+      // Save to cache
+      await CacheService.instance.cacheDailyChallenges(merged);
+      return merged;
     } catch (e) {
       debugPrint('Error fetching challenges: $e');
       return [];
@@ -351,6 +422,27 @@ class SpiritualContentService {
   /// Update challenge progress
   Future<void> updateChallengeProgress(
       String uid, String challengeId, int newValue, bool completed) async {
+    // Optimistically update local cache
+    try {
+      final cached = CacheService.instance.getCachedDailyChallenges();
+      if (cached != null) {
+        final updated = cached.map((c) {
+          if (c.id == challengeId) {
+            return c.copyWith(
+              currentValue: newValue,
+              isCompleted: completed,
+              completedAt: completed ? DateTime.now() : null,
+            );
+          }
+          return c;
+        }).toList();
+        await CacheService.instance.cacheDailyChallenges(updated);
+      }
+    } catch (e) {
+      debugPrint('Error updating local challenge cache: $e');
+    }
+
+    // Sync with Supabase in background
     try {
       await _supabase.from('user_challenge_progress').upsert({
         'firebase_uid': uid,
