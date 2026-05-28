@@ -37,6 +37,8 @@ const ContentListPage = () => {
   const [aiResults, setAiResults] = useState([]);
   const [aiLoading, setAiLoading] = useState(false);
   const searchRef = useRef(null);
+  const [visibleCount, setVisibleCount] = useState(12);
+  const sentinelRef = useRef(null);
 
   // Sync state with URL search params changes
   useEffect(() => {
@@ -83,63 +85,98 @@ const ContentListPage = () => {
     let active = true;
 
     const fetchContent = async () => {
-      // 1. Get cached content (if any) first to avoid skeleton flickering.
-      const cacheKey = `all_${selectedCategory || 'none'}_10000`;
-      let cachedData = apiService.getCachedData(cacheKey);
+      // Reset visibleCount on category change
+      setVisibleCount(12);
 
-      if (!cachedData) {
-        // Fallback: try to filter from the full content cache in localStorage
-        try {
-          const fullCache = localStorage.getItem('vrindopnishad_all_content_cache') || localStorage.getItem('sanctuary_content_cache');
-          if (fullCache) {
-            const parsed = JSON.parse(fullCache);
-            if (selectedCategory) {
-              const targetCat = selectedCategory.toLowerCase().trim();
-              cachedData = parsed.filter(item => item.category?.toLowerCase() === targetCat);
-            } else {
-              cachedData = parsed;
-            }
+      // Try to read cache first
+      let cachedData = null;
+      try {
+        const fullCache = localStorage.getItem('vrindopnishad_all_content_cache') || localStorage.getItem('sanctuary_content_cache');
+        if (fullCache) {
+          const parsed = JSON.parse(fullCache);
+          if (selectedCategory) {
+            const targetCat = selectedCategory.toLowerCase().trim();
+            cachedData = parsed.filter(item => item.category?.toLowerCase() === targetCat);
+          } else {
+            cachedData = parsed;
           }
-        } catch (e) {
-          console.warn('Failed to read from localStorage fallback', e);
         }
+      } catch (e) {
+        console.warn('Failed to read from localStorage cache', e);
       }
 
+      // If cache hit, render instantly
       if (cachedData && cachedData.length > 0) {
         if (active) {
           setContent(cachedData);
-          setLoading(false); // Render cache instantly
-        }
-      } else {
-        if (active) {
-          setLoading(true);
-        }
-      }
-
-      try {
-        const data = await apiService.getAllContent(selectedCategory, 10000);
-        const cats = await apiService.getCategories();
-        if (active) {
-          setContent(data);
-          setCategories(cats);
-          // Cache all content if no category is selected
-          if (!selectedCategory) {
-            localStorage.setItem('sanctuary_content_cache', JSON.stringify(data));
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching content:', error);
-      } finally {
-        if (active) {
           setLoading(false);
+        }
+        
+        // Background update categories
+        try {
+          const cats = await apiService.getCategories();
+          if (active) setCategories(cats);
+        } catch {}
+      } else {
+        // Cache miss: dual-stage loading
+        if (active) setLoading(true);
+        
+        try {
+          // Stage 1: Load first chunk (24 items)
+          const firstChunk = await apiService.getAllContent(selectedCategory, 24);
+          const cats = await apiService.getCategories();
+          
+          if (active) {
+            setContent(firstChunk);
+            setCategories(cats);
+            setLoading(false);
+          }
+
+          // Stage 2: Background load the rest of the database (up to 10000 items)
+          const fullData = await apiService.getAllContent(selectedCategory, 10000);
+          if (active) {
+            setContent(fullData);
+            if (!selectedCategory) {
+              localStorage.setItem('sanctuary_content_cache', JSON.stringify(fullData));
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching content:', error);
+        } finally {
+          if (active) setLoading(false);
         }
       }
     };
+
     fetchContent();
     return () => {
       active = false;
     };
   }, [selectedCategory, apiService]);
+
+  // Infinite Scroll Observer
+  useEffect(() => {
+    if (loading || filteredContent.length <= visibleCount) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setVisibleCount(prev => prev + 12);
+      }
+    }, {
+      rootMargin: '200px'
+    });
+
+    const currentSentinel = sentinelRef.current;
+    if (currentSentinel) {
+      observer.observe(currentSentinel);
+    }
+
+    return () => {
+      if (currentSentinel) {
+        observer.unobserve(currentSentinel);
+      }
+    };
+  }, [loading, filteredContent.length, visibleCount]);
 
   const expandedTerms = useMemo(() => {
     return expandHinglishQuery(debouncedSearch);
@@ -325,7 +362,7 @@ const ContentListPage = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredContent.map(item => {
+          {filteredContent.slice(0, visibleCount).map(item => {
             const colors = getCategoryColorClasses(item.category);
             return (
               <Link 
@@ -363,6 +400,13 @@ const ContentListPage = () => {
           );
         })}
       </div>
+
+      {/* Scroll Sentinel Loader */}
+      {filteredContent.length > visibleCount && (
+        <div ref={sentinelRef} className="py-10 flex justify-center w-full">
+          <div className="w-8 h-8 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
     )}
 
       {!loading && filteredContent.length === 0 && (

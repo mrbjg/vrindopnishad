@@ -148,27 +148,42 @@ const KnowledgeBaseLayout = () => {
   useEffect(() => {
     if (headings.length === 0) return;
 
+    let ticking = false;
+
     const handleScroll = () => {
-      const scrollThreshold = 160; // Offset for header/top spacing
-      
-      let currentActive = headings[0].id;
-      for (const heading of headings) {
-        const el = document.getElementById(heading.id);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= scrollThreshold) {
-            currentActive = heading.id;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollThreshold = 160; // Offset for header/top spacing
+          let currentActive = headings[0].id;
+          
+          for (const heading of headings) {
+            const el = document.getElementById(heading.id);
+            if (el) {
+              const rect = el.getBoundingClientRect();
+              if (rect.top <= scrollThreshold) {
+                currentActive = heading.id;
+              }
+            }
           }
-        }
+          
+          setActiveHeadingId(prev => {
+            if (prev !== currentActive) {
+              return currentActive;
+            }
+            return prev;
+          });
+          
+          ticking = false;
+        });
+        ticking = true;
       }
-      setActiveHeadingId(currentActive);
     };
 
     const container = contentScrollRef.current;
     if (container) {
-      container.addEventListener('scroll', handleScroll);
+      container.addEventListener('scroll', handleScroll, { passive: true });
     }
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
       if (container) {

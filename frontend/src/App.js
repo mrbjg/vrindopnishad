@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { auth } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
@@ -89,8 +89,83 @@ export const USE_DEMO_MODE = USE_MOCK_DATA;
 export const AuthContext = React.createContext();
 export const ApiContext = React.createContext();
 
-function App() {
+const LenisScroll = () => {
   const { settings } = useSettings();
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    // Detect mobile touch devices or small viewports
+    const isMobile = window.matchMedia('(max-width: 1023px)').matches || 
+                     ('ontouchstart' in window) || 
+                     (navigator.maxTouchPoints > 0);
+
+    if (!settings.smoothScroll || isMobile) {
+      document.documentElement.style.removeProperty('overflow');
+      document.body.style.removeProperty('overflow');
+      document.documentElement.classList.remove('lenis');
+      
+      const pookizContainer = document.getElementById('pookiz-main-scroll-container');
+      if (pookizContainer) {
+        pookizContainer.style.removeProperty('overflow');
+      }
+      const kbClassicContainer = document.getElementById('kb-classic-content-container');
+      if (kbClassicContainer) {
+        kbClassicContainer.style.removeProperty('overflow');
+      }
+      return;
+    }
+
+    // Configure wrapper and content for Lenis based on layout mode / presence of containers
+    const lenisOptions = {
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      smoothTouch: false,
+      infinite: false,
+    };
+
+    const pookizContainer = document.getElementById('pookiz-main-scroll-container');
+    const kbClassicContainer = document.getElementById('kb-classic-content-container');
+
+    if (settings.layoutMode === 'pookiz' && pookizContainer) {
+      lenisOptions.wrapper = pookizContainer;
+      lenisOptions.content = pookizContainer.firstElementChild || pookizContainer;
+    } else if (kbClassicContainer) {
+      lenisOptions.wrapper = kbClassicContainer;
+      lenisOptions.content = kbClassicContainer.firstElementChild || kbClassicContainer;
+    }
+
+    const lenis = new Lenis(lenisOptions);
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    const rafId = requestAnimationFrame(raf);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      lenis.destroy();
+      document.documentElement.style.removeProperty('overflow');
+      document.body.style.removeProperty('overflow');
+      
+      if (pookizContainer) {
+        pookizContainer.style.removeProperty('overflow');
+      }
+      if (kbClassicContainer) {
+        kbClassicContainer.style.removeProperty('overflow');
+      }
+    };
+  }, [settings.smoothScroll, settings.layoutMode, pathname]);
+
+  return null;
+};
+
+function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
@@ -146,69 +221,6 @@ function App() {
     }, 1500); // 1.5 seconds delay to prioritize critical initial render path
     return () => clearTimeout(timer);
   }, []);
-
-  // Dedicated useEffect for Smooth Scrolling (Lenis)
-  useEffect(() => {
-    // Detect mobile touch devices or small viewports
-    const isMobile = window.matchMedia('(max-width: 1023px)').matches || 
-                     ('ontouchstart' in window) || 
-                     (navigator.maxTouchPoints > 0);
-
-    if (!settings.smoothScroll || isMobile) {
-      // Restore native scrolling immediately by clearing inline styles
-      document.documentElement.style.removeProperty('overflow');
-      document.body.style.removeProperty('overflow');
-      document.documentElement.classList.remove('lenis');
-      
-      const pookizContainer = document.getElementById('pookiz-main-scroll-container');
-      if (pookizContainer) {
-        pookizContainer.style.removeProperty('overflow');
-      }
-      return;
-    }
-
-    // Configure wrapper and content for Lenis based on layout mode
-    const lenisOptions = {
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      smoothTouch: false, // Disable touch handling on mobile to prevent conflicts
-      infinite: false,
-    };
-
-    if (settings.layoutMode === 'pookiz') {
-      const pookizContainer = document.getElementById('pookiz-main-scroll-container');
-      if (pookizContainer) {
-        lenisOptions.wrapper = pookizContainer;
-        lenisOptions.content = pookizContainer.firstElementChild || pookizContainer;
-      }
-    }
-
-    // Initialize Lenis Smooth Scroll
-    const lenis = new Lenis(lenisOptions);
-
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    const rafId = requestAnimationFrame(raf);
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      lenis.destroy();
-      document.documentElement.style.removeProperty('overflow');
-      document.body.style.removeProperty('overflow');
-      
-      const pookizContainer = document.getElementById('pookiz-main-scroll-container');
-      if (pookizContainer) {
-        pookizContainer.style.removeProperty('overflow');
-      }
-    };
-  }, [settings.smoothScroll, settings.layoutMode]);
 
   const verifyToken = async (tk) => {
     try {
@@ -317,6 +329,7 @@ function App() {
           <ApiContext.Provider value={{ apiService: apiService, isDemoMode: USE_MOCK_DATA }}>
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
               <ScrollToTop />
+              <LenisScroll />
               <Layout>
                 <React.Suspense fallback={<PageSkeleton variant="grid" count={6} />}>
                   <Routes>
