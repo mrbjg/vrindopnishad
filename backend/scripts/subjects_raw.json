@@ -1,0 +1,46 @@
+[
+  {
+    "_id": "64de391620ddae00080ebabb",
+    "subject_id": "glories-of-radha-name",
+    "type": "general",
+    "name": "Glories of Sri Radha Name",
+    "info": "Glories of Sri Radha Name",
+    "nameHindi": "श्री राधा नाम की महिमा",
+    "infoHindi": "श्री राधा नाम की महिमा",
+    "priority": "1",
+    "active": true,
+    "createdAt": "Thu Aug 17 2023 15:13:26 GMT+0000 (Coordinated Universal Time)",
+    "updatedAt": "Sun Aug 20 2023 14:04:55 GMT+0000 (Coordinated Universal Time)",
+    "__v": 0,
+    "facebook_id": ""
+  },
+  {
+    "_id": "64e21ea5b847540008dee65f",
+    "subject_id": "shriradha-as-a-spiritual-master-guru-in-nijunj",
+    "type": "general",
+    "name": "Shri Radha, a Supreme Master (Guru)",
+    "info": "The rasikas, in the sacred groves of Nikunj, hold Sri Radha in the highest reverence, regarding her as a spiritual master of unparalleled significance. In the lush, ethereal surroundings of Nikunj, Sri Radha's presence is perceived as a guiding light, illuminating the path of devotion and divine love. A sadhaka, should also consider Sri Radha as Her ultimate guru.",
+    "nameHindi": "श्री राधा ही सर्वोच्च गुरु हैं",
+    "infoHindi": "वृंदावन के रसिक निकुंज में श्री राधा को साक्षात गुरु स्वरूप में मानते ही मानते हैं । एक साधक को भी श्री राधा को ही अनन्य रूप से गुरु मानना चाहिए। ",
+    "priority": "1",
+    "active": true,
+    "createdAt": "Sun Aug 20 2023 14:09:41 GMT+0000 (Coordinated Universal Time)",
+    "updatedAt": "Thu Aug 31 2023 07:23:03 GMT+0000 (Coordinated Universal Time)",
+    "__v": 0,
+    "facebook_id": ""
+  },
+  {
+    "_id": "64ef2de8d4012c0008820870",
+    "subject_id": "exclusive-shelter",
+    "type": "general",
+    "name": "Exclusive Shelter",
+    "info": "The devotion of a soul reaches its utmost culmination only when it finds exclusive refuge in its deity.",
+    "nameHindi": "अनन्य आश्रय",
+    "infoHindi": "जीव की भक्ति चरम सीमा पर तभी पहुँचती है जब उसे अपने इष्टदेव पर अनन्य आश्रय होता है।",
+    "priority": "1",
+    "active": true,
+    "createdAt": "Wed Aug 30 2023 11:54:16 GMT+0000 (Coordinated Universal Time)",
+    "updatedAt": "Wed Aug 30 2023 11:54:16 GMT+0000 (Coordinated Universal Time)",
+    "__v": 0
+  }
+]
