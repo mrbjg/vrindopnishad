@@ -9,16 +9,16 @@ const CategoryPage = () => {
   const location = useLocation();
   const isHindiRoute = location.pathname.startsWith('/hi');
   const { apiService } = useContext(ApiContext);
-  const cacheKey = `all_${category}_50`;
+  const cacheKey = `all_${category}_10000`;
   
   const getInitialData = () => {
     const cached = apiService.getCachedData(cacheKey);
     if (cached) return cached;
     try {
-      const fullCache = localStorage.getItem('sanctuary_content_cache');
+      const fullCache = localStorage.getItem('vrindopnishad_all_content_cache') || localStorage.getItem('sanctuary_content_cache');
       if (fullCache) {
         const parsed = JSON.parse(fullCache);
-        const filtered = parsed.filter(item => item.category === category);
+        const filtered = parsed.filter(item => item.category?.toLowerCase() === category?.toLowerCase());
         if (filtered.length > 0) return filtered;
       }
     } catch (e) {}
@@ -111,15 +111,15 @@ const CategoryPage = () => {
     let active = true;
 
     const load = async () => {
-      const cacheKey = `all_${category}_50`;
+      const cacheKey = `all_${category}_10000`;
       let cachedData = apiService.getCachedData(cacheKey);
 
       if (!cachedData) {
         try {
-          const fullCache = localStorage.getItem('sanctuary_content_cache');
+          const fullCache = localStorage.getItem('vrindopnishad_all_content_cache') || localStorage.getItem('sanctuary_content_cache');
           if (fullCache) {
             const parsed = JSON.parse(fullCache);
-            const filtered = parsed.filter(item => item.category === category);
+            const filtered = parsed.filter(item => item.category?.toLowerCase() === category?.toLowerCase());
             if (filtered.length > 0) {
               cachedData = filtered;
             }
@@ -139,7 +139,7 @@ const CategoryPage = () => {
       }
 
       try {
-        const data = await apiService.getAllContent(category);
+        const data = await apiService.getAllContent(category, 10000);
         if (active) {
           setContent(data || []);
         }

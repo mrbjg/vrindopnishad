@@ -4,6 +4,7 @@ import { AuthContext, ApiContext } from '../App';
 import { useTheme } from '../contexts/ThemeContext';
 import { useSettings } from '../contexts/SettingsContext';
 import { extractRelations } from '../utils/relations';
+import { articles } from '../utils/kbArticles';
 import { 
   Home, 
   Compass, 
@@ -37,6 +38,11 @@ const Layout = ({ children }) => {
   const isCategoryActive = (category) => location.pathname === `/category/${category}`;
   const isAuthPage = location.pathname === '/login' || location.pathname === '/admin-old/login';
   const isHiRoute = location.pathname.startsWith('/hi');
+
+  const isKbRoute = useMemo(() => {
+    return location.pathname.includes('/knowledge-base') || 
+           articles.some(art => location.pathname.includes(art.slug));
+  }, [location.pathname]);
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
@@ -223,7 +229,7 @@ const Layout = ({ children }) => {
   }
 
   return (
-    <div className={`min-h-screen relative text-foreground ${hideHeaderSearch ? 'layout-no-header-search' : ''}`}>
+    <div className={`min-h-screen relative text-foreground ${hideHeaderSearch ? 'layout-no-header-search' : ''} ${isKbRoute ? 'lg:h-screen lg:overflow-hidden' : ''}`}>
       {/* Celestial Background */}
       <div className="celestial-bg">
         <div className="stars"></div>
@@ -600,8 +606,8 @@ const Layout = ({ children }) => {
       )}
 
       {/* Main Content Area */}
-      <main className={`${isAuthPage ? 'pt-0 pl-0' : 'pl-0 md:pl-28 pt-[152px] md:pt-[120px] lg:pt-24 pb-12'}`}>
-        <div className={`${isAuthPage ? 'w-full min-h-screen flex items-center justify-center' : 'w-full px-4 md:px-6'}`}>
+      <main className={`${isAuthPage ? 'pt-0 pl-0' : `${isKbRoute ? 'pl-0 md:pl-[88px] lg:h-screen lg:pt-20 lg:pb-0 lg:overflow-hidden' : 'pl-0 md:pl-28'} pt-[152px] md:pt-[120px] lg:pt-20 pb-12`}`}>
+        <div className={`${isAuthPage ? 'w-full min-h-screen flex items-center justify-center' : 'w-full px-4 md:px-6'} ${isKbRoute ? 'lg:h-full lg:px-6 lg:pb-4' : ''}`}>
           {children}
         </div>
       </main>

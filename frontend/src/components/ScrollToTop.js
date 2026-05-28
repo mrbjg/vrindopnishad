@@ -12,6 +12,12 @@ const ScrollToTop = () => {
     if (pookizContainer) {
       pookizContainer.scrollTo(0, 0);
     }
+
+    // Also scroll Classic KB layout content scroll container to top if present
+    const kbClassicContainer = document.getElementById('kb-classic-content-container');
+    if (kbClassicContainer) {
+      kbClassicContainer.scrollTo(0, 0);
+    }
   }, [pathname]);
 
   return null;

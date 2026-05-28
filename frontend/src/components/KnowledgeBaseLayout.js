@@ -32,10 +32,12 @@ const KnowledgeBaseLayout = () => {
   // Reading settings state (persisted in localStorage)
   const [kbSidebarWidth, setKbSidebarWidth] = useState(() => {
     const saved = localStorage.getItem('pookiz_kb_sidebar_width');
-    return saved ? parseInt(saved, 10) : 256;
+    const width = saved ? parseInt(saved, 10) : 360;
+    return width < 320 ? 360 : width;
   });
   const [isKbResizing, setIsKbResizing] = useState(false);
   const resizeRef = useRef({ startX: 0, startWidth: 0 });
+  const contentScrollRef = useRef(null);
 
   const startKbResizing = useCallback((e) => {
     setIsKbResizing(true);
@@ -63,7 +65,7 @@ const KnowledgeBaseLayout = () => {
     if (isKbResizing) {
       const { startX, startWidth } = resizeRef.current;
       const deltaX = e.clientX - startX;
-      const newWidth = Math.max(180, Math.min(380, startWidth + deltaX));
+      const newWidth = Math.max(300, Math.min(500, startWidth + deltaX));
       
       const sidebarEl = document.getElementById('kb-category-sidebar');
       if (sidebarEl) {
@@ -147,21 +149,33 @@ const KnowledgeBaseLayout = () => {
     if (headings.length === 0) return;
 
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + 160; // Offset for header/top spacing
+      const scrollThreshold = 160; // Offset for header/top spacing
       
-      // Find the current heading in view
       let currentActive = headings[0].id;
       for (const heading of headings) {
         const el = document.getElementById(heading.id);
-        if (el && el.getBoundingClientRect().top + window.scrollY <= scrollPosition) {
-          currentActive = heading.id;
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= scrollThreshold) {
+            currentActive = heading.id;
+          }
         }
       }
       setActiveHeadingId(currentActive);
     };
 
+    const container = contentScrollRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+    }
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    return () => {
+      if (container) {
+        container.removeEventListener('scroll', handleScroll);
+      }
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, [headings]);
 
   // Determine active article from path
@@ -279,15 +293,15 @@ const KnowledgeBaseLayout = () => {
   };
 
   // Theme-based layout wrapper classes
-  const panelBg = isPookiz ? 'bg-[#121215] border-white/5 text-[#f4f4f5]' : 'bg-black/30 backdrop-blur-md border-white/10 text-white';
-  const sidebarBg = isPookiz ? 'bg-[#09090b] border-white/5' : 'bg-[#000]/10 backdrop-blur-lg border-white/10';
+  const panelBg = isPookiz ? 'bg-[#121215] border-white/5 text-[#f4f4f5]' : 'bg-[#0c0c0e]/50 backdrop-blur-xl border-white/[0.08] text-white';
+  const sidebarBg = isPookiz ? 'bg-[#09090b] border-white/5' : 'bg-[#0c0c0e]/50 backdrop-blur-xl border-white/[0.08]';
   const activeLinkStyle = isPookiz 
     ? 'bg-purple-500/10 text-purple-300 border-l-2 border-purple-500 font-medium' 
-    : 'bg-amber-400/10 text-amber-300 border-l-2 border-amber-400 font-medium';
-  const normalLinkStyle = 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02] border-l border-white/5';
+    : 'bg-amber-400/10 text-amber-200 border-l-2 border-amber-400 font-semibold shadow-[inset_4px_0_12px_rgba(251,191,36,0.05)]';
+  const normalLinkStyle = 'text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.02] border-l border-white/10';
 
   return (
-    <div className={`flex flex-col lg:flex-row ${isPookiz ? 'gap-4' : 'gap-6'} w-full ${isPookiz ? 'min-h-[calc(100vh-80px)]' : 'min-h-[70vh]'} animate-fade-in`}>
+    <div className={`flex flex-col lg:flex-row ${isPookiz ? 'gap-4' : 'gap-6'} w-full ${isPookiz ? 'min-h-[calc(100vh-80px)]' : 'lg:h-full lg:overflow-hidden'} animate-fade-in`}>
       {/* Mobile Toggle Button */}
       <div className="lg:hidden flex items-center justify-between p-3 bg-white/[0.02] border border-white/5 rounded-2xl">
         <button 
@@ -315,13 +329,13 @@ const KnowledgeBaseLayout = () => {
         style={{ '--kb-sidebar-width': `${kbSidebarWidth}px` }}
         className={`${
           isPookiz 
-            ? `fixed inset-y-0 left-0 w-80 max-w-[85vw] ${sidebarBg} z-[500] lg:translate-x-0 lg:w-[var(--kb-sidebar-width)] lg:z-10 lg:bg-[#121215]/40 lg:border lg:border-white/5 lg:rounded-2xl lg:sticky lg:top-4 lg:h-[calc(100vh-100px)] flex flex-col relative`
-            : `fixed inset-y-0 left-0 w-80 max-w-[85vw] ${sidebarBg} border-r z-[500] lg:sticky lg:top-24 lg:translate-x-0 lg:w-[var(--kb-sidebar-width)] lg:z-10 lg:bg-transparent lg:border-r-0 lg:border-none flex flex-col h-screen lg:h-[calc(100vh-140px)] relative`
+            ? `fixed inset-y-0 left-0 w-80 max-w-[85vw] ${sidebarBg} z-[500] lg:translate-x-0 lg:w-[var(--kb-sidebar-width)] lg:z-10 lg:bg-[#121215]/40 lg:border lg:border-white/5 lg:rounded-2xl lg:sticky lg:top-4 lg:h-[calc(100vh-100px)] flex flex-col`
+            : `fixed inset-y-0 left-0 w-80 max-w-[85vw] ${sidebarBg} border-r z-[500] lg:relative lg:translate-x-0 lg:w-[var(--kb-sidebar-width)] lg:z-10 lg:bg-[#0c0c0e]/50 lg:backdrop-blur-xl lg:border lg:border-white/[0.08] lg:rounded-2xl flex flex-col h-screen lg:h-full`
         } transform ${isKbResizing ? 'transition-none !transition-none' : 'transition-transform duration-300 lg:transition-none lg:!transition-none'} ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:block'
         }`}
       >
-        <div className={`w-full h-full flex flex-col ${isPookiz ? 'p-5 lg:p-3.5 overflow-y-auto custom-scrollbar' : 'p-5 lg:p-0'}`}>
+        <div className={`w-full h-full flex flex-col lg:rounded-2xl ${isPookiz ? 'p-5 lg:p-3.5 overflow-y-auto custom-scrollbar' : 'p-5 lg:p-4 lg:pr-2 lg:overflow-hidden'}`}>
           <div className="flex items-center justify-between lg:hidden mb-6">
             <span className="font-bold text-sm text-white uppercase tracking-wider flex items-center gap-2">
               <BookOpen size={16} className="text-purple-400" />
@@ -426,9 +440,9 @@ const KnowledgeBaseLayout = () => {
       )}
 
       {/* Main Content Pane + Right Sidebar Container */}
-      <div className={`flex-1 flex flex-col xl:flex-row ${isPookiz ? 'gap-4' : 'gap-6'} min-w-0`}>
+      <div className={`flex-1 flex flex-col xl:flex-row ${isPookiz ? 'gap-4' : 'gap-6'} min-w-0 lg:h-full lg:overflow-hidden`}>
         {/* Main Content Pane */}
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0 lg:h-full lg:overflow-hidden">
           {/* Controls Toolbar */}
           <div className={`flex items-center justify-between ${isPookiz ? 'p-2.5 md:p-3 rounded-t-2xl' : 'p-3 md:p-4 rounded-t-3xl'} border-t border-x border-white/5 ${panelBg} gap-4`}>
             {/* Left: Breadcrumbs */}
@@ -566,7 +580,11 @@ const KnowledgeBaseLayout = () => {
           </div>
 
           {/* Content Pane Core */}
-          <div className={`flex-1 ${isPookiz ? 'p-4 md:p-5 rounded-b-2xl' : 'p-5 md:p-8 rounded-b-3xl'} border-x border-b border-white/5 ${panelBg} shadow-xl`}>
+          <div 
+            ref={contentScrollRef} 
+            id="kb-classic-content-container" 
+            className={`flex-1 ${isPookiz ? 'p-4 md:p-5 rounded-b-2xl' : 'p-5 md:p-8 rounded-b-3xl'} border-x border-b border-white/5 ${panelBg} shadow-xl lg:overflow-y-auto custom-scrollbar`}
+          >
             {/* Custom scoped container with reader choices applied */}
             <div className={getReadingClasses()}>
               <Outlet />
@@ -611,8 +629,8 @@ const KnowledgeBaseLayout = () => {
 
         {/* Right Sidebar: Table of Contents (visible only on desktop wide screen) */}
         {currentArticle && headings.length > 0 && (
-          <aside className="hidden xl:block w-56 shrink-0 sticky top-[100px] self-start space-y-4">
-            <div className={`p-4 rounded-2xl border border-white/5 ${isPookiz ? 'bg-[#121215]' : 'bg-black/20 backdrop-blur-md'}`}>
+          <aside className="hidden xl:block w-56 shrink-0 lg:h-full lg:py-2 space-y-4">
+            <div className={`p-4 rounded-2xl border border-white/[0.08] ${isPookiz ? 'bg-[#121215]' : 'bg-[#0c0c0e]/50 backdrop-blur-xl'} max-h-full overflow-y-auto custom-scrollbar`}>
               <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3">
                 {isHindiRoute ? 'इस पृष्ठ पर' : 'On This Page'}
               </h4>
@@ -625,9 +643,20 @@ const KnowledgeBaseLayout = () => {
                       e.preventDefault();
                       const el = document.getElementById(h.id);
                       if (el) {
-                        const yOffset = -140; // Offset for sticky header
-                        const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                        window.scrollTo({ top: y, behavior: 'smooth' });
+                        const container = contentScrollRef.current;
+                        if (container) {
+                          const containerRect = container.getBoundingClientRect();
+                          const elRect = el.getBoundingClientRect();
+                          const relativeTop = elRect.top - containerRect.top + container.scrollTop;
+                          container.scrollTo({
+                            top: relativeTop - 24,
+                            behavior: 'smooth'
+                          });
+                        } else {
+                          const yOffset = -140; // Offset for sticky header
+                          const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                          window.scrollTo({ top: y, behavior: 'smooth' });
+                        }
                         setActiveHeadingId(h.id);
                       }
                     }}

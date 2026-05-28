@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ApiContext } from '../App';
 import { Search, ArrowRight, Tag, Sparkles, Brain } from 'lucide-react';
 import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { Helmet } from 'react-helmet-async';
-import { hinglishMatch, getSearchSuggestions } from '../utils/hinglishSearch';
+import { getSearchSuggestions, expandHinglishQuery } from '../utils/hinglishSearch';
 import { semanticSearch } from '../utils/semanticSearch';
 
 const ContentListPage = () => {
@@ -15,8 +15,16 @@ const ContentListPage = () => {
 
   const [content, setContent] = useState(() => {
     try {
-      const cached = localStorage.getItem('sanctuary_content_cache');
-      return cached ? JSON.parse(cached) : [];
+      const cached = localStorage.getItem('vrindopnishad_all_content_cache') || localStorage.getItem('sanctuary_content_cache');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (urlCategory) {
+          const targetCat = urlCategory.toLowerCase().trim();
+          return parsed.filter(item => item.category?.toLowerCase() === targetCat);
+        }
+        return parsed;
+      }
+      return [];
     } catch { return []; }
   });
   const [categories, setCategories] = useState(() => apiService.getCachedData('categories') || []);
@@ -76,18 +84,18 @@ const ContentListPage = () => {
 
     const fetchContent = async () => {
       // 1. Get cached content (if any) first to avoid skeleton flickering.
-      // Cache key matches what api.js uses internally: `all_${category || 'none'}_50`
-      const cacheKey = `all_${selectedCategory || 'none'}_50`;
+      const cacheKey = `all_${selectedCategory || 'none'}_10000`;
       let cachedData = apiService.getCachedData(cacheKey);
 
       if (!cachedData) {
         // Fallback: try to filter from the full content cache in localStorage
         try {
-          const fullCache = localStorage.getItem('sanctuary_content_cache');
+          const fullCache = localStorage.getItem('vrindopnishad_all_content_cache') || localStorage.getItem('sanctuary_content_cache');
           if (fullCache) {
             const parsed = JSON.parse(fullCache);
             if (selectedCategory) {
-              cachedData = parsed.filter(item => item.category === selectedCategory);
+              const targetCat = selectedCategory.toLowerCase().trim();
+              cachedData = parsed.filter(item => item.category?.toLowerCase() === targetCat);
             } else {
               cachedData = parsed;
             }
@@ -109,7 +117,7 @@ const ContentListPage = () => {
       }
 
       try {
-        const data = await apiService.getAllContent(selectedCategory);
+        const data = await apiService.getAllContent(selectedCategory, 10000);
         const cats = await apiService.getCategories();
         if (active) {
           setContent(data);
@@ -133,7 +141,28 @@ const ContentListPage = () => {
     };
   }, [selectedCategory, apiService]);
 
-  const filteredContent = content.filter(item => hinglishMatch(item, debouncedSearch));
+  const expandedTerms = useMemo(() => {
+    return expandHinglishQuery(debouncedSearch);
+  }, [debouncedSearch]);
+
+  const filteredContent = useMemo(() => {
+    if (!debouncedSearch) return content;
+    return content.filter(item => {
+      const searchableText = [
+        item.title,
+        item.hindi_text,
+        item.english_translation,
+        item.english_text,
+        item.description,
+        item.author,
+        item.category,
+        item.slug,
+        ...(item.tags || [])
+      ].filter(Boolean).join(' ').toLowerCase();
+
+      return expandedTerms.some(term => searchableText.includes(term.toLowerCase()));
+    });
+  }, [content, debouncedSearch, expandedTerms]);
 
   const getCategoryColorClasses = (category) => {
     switch (category?.toLowerCase()) {
