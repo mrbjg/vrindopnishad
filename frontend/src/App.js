@@ -3,7 +3,6 @@ import './App.css';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { auth } from './firebase';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { AudioProvider } from './contexts/AudioContext';
 import { LoadingProvider } from './contexts/LoadingContext';
 import { useSettings } from './contexts/SettingsContext';
@@ -192,18 +191,16 @@ function App() {
   useEffect(() => {
     const storedToken = localStorage.getItem('admin_token');
 
-    // Firebase Auth Listener
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setUser(firebaseUser);
-      if (firebaseUser) {
-        const token = await firebaseUser.getIdToken();
-        setToken(token);
-        // If the user's email is the admin email, consider them admin
-        if (firebaseUser.email === 'admin@vrindopnishad.com') {
+    // Unified Auth Listener supporting both Firebase and Supabase
+    const unsubscribe = apiService.onAuthChanged(async (currentUser, activeToken) => {
+      setUser(currentUser);
+      setToken(activeToken);
+      if (currentUser) {
+        // Consider admin if email matches admin addresses
+        if (currentUser.email === 'admin@vrindopnishad.com' || currentUser.email === 'admin@vrindavaani.com') {
           setIsAdmin(true);
         }
       } else {
-        setToken(null);
         setIsAdmin(false);
       }
       setLoading(false);
@@ -282,11 +279,11 @@ function App() {
     localStorage.removeItem('admin_token');
     setToken(null);
     setIsAdmin(false);
-    await signOut(auth);
+    await apiService.logout();
   };
 
   const refreshUser = () => {
-    if (auth.currentUser) {
+    if (auth?.currentUser) {
       // Create a new object reference to trigger re-render
       setUser({ ...auth.currentUser });
     }

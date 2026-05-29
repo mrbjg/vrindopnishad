@@ -5,13 +5,13 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useSettings } from '../contexts/SettingsContext';
 import { extractRelations } from '../utils/relations';
 import { articles } from '../utils/kbArticles';
-import { 
-  Home, 
-  Compass, 
-  Sparkle, 
-  Waves, 
-  Feather, 
-  LayoutDashboard, 
+import {
+  Home,
+  Compass,
+  Sparkle,
+  Waves,
+  Feather,
+  LayoutDashboard,
   LogOut,
   Settings,
   Search,
@@ -40,8 +40,8 @@ const Layout = ({ children }) => {
   const isHiRoute = location.pathname.startsWith('/hi');
 
   const isKbRoute = useMemo(() => {
-    return location.pathname.includes('/knowledge-base') || 
-           articles.some(art => location.pathname.includes(art.slug));
+    return location.pathname.includes('/knowledge-base') ||
+      articles.some(art => location.pathname.includes(art.slug));
   }, [location.pathname]);
 
   // Search & Filter state
@@ -74,7 +74,7 @@ const Layout = ({ children }) => {
       if (!AudioContext) return;
       const ctx = new AudioContext();
       const now = ctx.currentTime;
-      
+
       // Warm E5 note (fundamental)
       const osc1 = ctx.createOscillator();
       const gain1 = ctx.createGain();
@@ -85,7 +85,7 @@ const Layout = ({ children }) => {
       gain1.connect(ctx.destination);
       osc1.start();
       osc1.stop(now + 1.8);
-      
+
       // Rich E6 octave overtone
       const osc2 = ctx.createOscillator();
       const gain2 = ctx.createGain();
@@ -107,32 +107,32 @@ const Layout = ({ children }) => {
     setChantCount(newCount);
     try {
       localStorage.setItem('vrindopnishad_japa_count', newCount);
-    } catch (err) {}
-    
+    } catch (err) { }
+
     // Play bell sound
     playTempleBell();
-    
+
     // Trigger floating +1 Radhe! animation at cursor/click coordinates
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX || (rect.left + rect.width / 2);
     const y = e.clientY || rect.top;
-    
+
     const floatText = document.createElement('span');
     const divineNames = ['🌸 Radhe!', '✨ Radhe Radhe!', '🌸 Radhe Shyam!', '✨ Radhe!'];
     floatText.innerText = divineNames[newCount % divineNames.length];
-    
+
     // Organic dynamic drift calculations for physics-based modern feel
     const randomX = (Math.random() - 0.5) * 60; // -30px to +30px
     const randomRot = (Math.random() - 0.5) * 30; // -15deg to +15deg
-    
+
     floatText.className = 'fixed pointer-events-none text-xs font-bold font-headings z-[5000] floating-chant-text';
     floatText.style.left = `${x - 20}px`;
     floatText.style.top = `${y - 20}px`;
     floatText.style.setProperty('--float-x', `${randomX}px`);
     floatText.style.setProperty('--float-rot', `${randomRot}deg`);
-    
+
     document.body.appendChild(floatText);
-    
+
     setTimeout(() => {
       floatText.remove();
     }, 1000);
@@ -188,22 +188,22 @@ const Layout = ({ children }) => {
     const showAll = searchFilter === 'all';
 
     return {
-      sants: (showAll || searchFilter === 'saint') 
-        ? searchData.sants.filter(s => s.name?.toLowerCase().includes(q) || s.hinglishName?.toLowerCase().includes(q)).slice(0, 4) 
+      sants: (showAll || searchFilter === 'saint')
+        ? searchData.sants.filter(s => s.name?.toLowerCase().includes(q) || s.hinglishName?.toLowerCase().includes(q)).slice(0, 4)
         : [],
-      books: (showAll || searchFilter === 'book') 
-        ? searchData.books.filter(b => b.name?.toLowerCase().includes(q) || (b.author && b.author.toLowerCase().includes(q))).slice(0, 4) 
+      books: (showAll || searchFilter === 'book')
+        ? searchData.books.filter(b => b.name?.toLowerCase().includes(q) || (b.author && b.author.toLowerCase().includes(q))).slice(0, 4)
         : [],
-      ragas: (showAll || searchFilter === 'raga') 
-        ? searchData.ragas.filter(r => r.name?.toLowerCase().includes(q) || r.hinglishName?.toLowerCase().includes(q)).slice(0, 4) 
+      ragas: (showAll || searchFilter === 'raga')
+        ? searchData.ragas.filter(r => r.name?.toLowerCase().includes(q) || r.hinglishName?.toLowerCase().includes(q)).slice(0, 4)
         : [],
-      verses: (showAll || searchFilter === 'verse') 
-        ? searchData.verses.filter(v => 
-            v.title?.toLowerCase().includes(q) || 
-            v.sanskrit_text?.toLowerCase().includes(q) ||
-            v.hindi_text?.toLowerCase().includes(q) || 
-            v.english_translation?.toLowerCase().includes(q)
-          ).slice(0, 6) 
+      verses: (showAll || searchFilter === 'verse')
+        ? searchData.verses.filter(v =>
+          v.title?.toLowerCase().includes(q) ||
+          v.sanskrit_text?.toLowerCase().includes(q) ||
+          v.hindi_text?.toLowerCase().includes(q) ||
+          v.english_translation?.toLowerCase().includes(q)
+        ).slice(0, 6)
         : [],
     };
   }, [searchQuery, searchFilter, searchData, dataLoaded]);
@@ -243,10 +243,10 @@ const Layout = ({ children }) => {
           <div className="flex items-center justify-between w-full md:w-auto">
             <div className="logo-container flex items-center gap-2 shrink-0">
               <Link to="/">
-                <img 
-                  src={isDark ? '/official-logo-dark.svg' : '/official-logo.svg'} 
-                  alt="Vrindopnishad Logo" 
-                  className="app-logo hover:scale-110 transition-transform duration-500" 
+                <img
+                  src={isDark ? '/official-logo-dark.svg' : '/official-logo.svg'}
+                  alt="Vrindopnishad Logo"
+                  className="app-logo hover:scale-110 transition-transform duration-500"
                 />
               </Link>
               <span className="app-title hidden lg:block text-minimal-gold font-headings text-lg">वृंदोपनिषद्</span>
@@ -255,7 +255,7 @@ const Layout = ({ children }) => {
             {/* Mobile Actions Container (visible only on mobile viewports) */}
             <div className="flex md:hidden items-center gap-2">
               {/* Mobile Japa Chant Button */}
-              <button 
+              <button
                 onClick={handleChant}
                 className="header-chant-btn py-1 px-2.5 text-[9px] leading-none shrink-0"
                 title={isHiRoute ? "राधे राधे जाप करें" : "Chant Radhe Radhe"}
@@ -265,7 +265,7 @@ const Layout = ({ children }) => {
               </button>
 
               {/* Standalone Settings Button */}
-              <button 
+              <button
                 onClick={() => setIsSettingsOpen(true)}
                 className="header-control-btn shrink-0 w-8 h-8"
                 title="Settings"
@@ -277,9 +277,9 @@ const Layout = ({ children }) => {
                 <div className="header-profile-pill shrink-0 py-0.5 px-1 bg-white/5 border border-white/5 rounded-full flex items-center gap-1">
                   <div className="header-profile-avatar w-6 h-6">
                     {user.photoURL ? (
-                      <img 
-                        src={user.photoURL} 
-                        alt="User" 
+                      <img
+                        src={user.photoURL}
+                        alt="User"
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           e.target.style.display = 'none';
@@ -289,17 +289,17 @@ const Layout = ({ children }) => {
                         }}
                       />
                     ) : null}
-                    <span 
+                    <span
                       className={`text-[9px] font-bold uppercase flex items-center justify-center w-full h-full ${user.photoURL ? 'hidden' : 'flex'}`}
                     >
                       {(settings.devoteeName || user.displayName || user.email || 'V')[0]}
                     </span>
                   </div>
-                  <button 
+                  <button
                     onClick={(e) => {
                       e.stopPropagation();
                       logout();
-                    }} 
+                    }}
                     className="text-white/40 hover:text-white p-0.5"
                     title="Logout"
                   >
@@ -307,7 +307,7 @@ const Layout = ({ children }) => {
                   </button>
                 </div>
               ) : settings.devoteeName ? (
-                <div 
+                <div
                   onClick={() => setIsSettingsOpen(true)}
                   className="header-control-btn shrink-0 w-8 h-8 flex items-center justify-center bg-primary/10 border border-primary/20 text-primary"
                 >
@@ -326,19 +326,19 @@ const Layout = ({ children }) => {
             <div className="relative w-full md:flex-1 md:max-w-sm md:max-w-md md:mx-6" ref={searchRef}>
               <div className="flex items-center bg-white/[0.04] border border-white/10 rounded-full pl-3 pr-2 h-9 text-xs md:text-sm focus-within:border-primary/50 focus-within:bg-white/[0.07] transition-all">
                 <Search className="text-white/30 mr-1.5 shrink-0" size={14} />
-                <input 
+                <input
                   type="text"
                   placeholder={isHiRoute ? "खोजें..." : "Search..."}
                   className="w-full bg-transparent outline-none pr-2 text-white/95 placeholder:text-white/35 h-full text-xs font-light"
                   value={searchQuery}
                   onFocus={handleSearchFocus}
                   onKeyDown={handleKeyDown}
-                  onChange={(e) => setSearchQuery(e.target.value)} 
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                
+
                 {/* Category Filter Select */}
-                <select 
-                  value={searchFilter} 
+                <select
+                  value={searchFilter}
                   onChange={(e) => setSearchFilter(e.target.value)}
                   className="bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 rounded-full text-[9px] md:text-[10px] text-white/70 py-0.5 px-2 outline-none cursor-pointer shrink-0 transition-colors mr-1"
                 >
@@ -456,7 +456,7 @@ const Layout = ({ children }) => {
 
             <div className="flex items-center gap-2 sm:gap-3">
               {/* Desktop Japa Chant Button */}
-              <button 
+              <button
                 onClick={handleChant}
                 className="header-chant-btn py-1.5 px-3.5 text-[10px] sm:text-xs leading-none shrink-0"
                 title={isHiRoute ? "राधे राधे जाप करें" : "Chant Radhe Radhe"}
@@ -466,7 +466,7 @@ const Layout = ({ children }) => {
               </button>
 
               {/* Standalone Settings Button */}
-              <button 
+              <button
                 onClick={() => setIsSettingsOpen(true)}
                 className="header-control-btn shrink-0"
                 title="Settings"
@@ -479,9 +479,9 @@ const Layout = ({ children }) => {
                   {/* Avatar Section */}
                   <div className="header-profile-avatar">
                     {user.photoURL ? (
-                      <img 
-                        src={user.photoURL} 
-                        alt="User" 
+                      <img
+                        src={user.photoURL}
+                        alt="User"
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           e.target.style.display = 'none';
@@ -491,13 +491,13 @@ const Layout = ({ children }) => {
                         }}
                       />
                     ) : null}
-                    <span 
+                    <span
                       className={`text-xs font-bold uppercase tracking-wider flex items-center justify-center w-full h-full ${user.photoURL ? 'hidden' : 'flex'}`}
                     >
                       {(settings.devoteeName || user.displayName || user.email || 'V')[0]}
                     </span>
                   </div>
-                  
+
                   {/* User Name Section */}
                   <div className="hidden sm:flex flex-col">
                     <span className="header-profile-label">Devotee</span>
@@ -508,13 +508,13 @@ const Layout = ({ children }) => {
 
                   {/* Divider */}
                   <div className="header-profile-divider"></div>
-                  
+
                   {/* Logout Button */}
-                  <button 
+                  <button
                     onClick={(e) => {
                       e.stopPropagation();
                       logout();
-                    }} 
+                    }}
                     className="header-profile-logout"
                     title="Logout"
                   >
@@ -522,7 +522,7 @@ const Layout = ({ children }) => {
                   </button>
                 </div>
               ) : settings.devoteeName ? (
-                <div 
+                <div
                   onClick={() => setIsSettingsOpen(true)}
                   className="header-profile-pill cursor-pointer"
                 >
@@ -530,7 +530,7 @@ const Layout = ({ children }) => {
                     {(settings.devoteeName || 'V')[0]}
                   </div>
                   <div className="hidden sm:flex flex-col text-left">
-                    <span className="header-profile-label">Guest Sadhaka</span>
+                    <span className="header-profile-label">Guest Sadhak</span>
                     <span className="header-profile-name">{settings.devoteeName}</span>
                   </div>
                 </div>
@@ -539,11 +539,11 @@ const Layout = ({ children }) => {
                   <User size={18} className="w-[16px] h-[16px] sm:w-[18px] sm:h-[18px] text-white/70" />
                 </Link>
               )}
-              
+
               {isAdmin && (
-                 <Link to="/admin-old/dashboard" className="header-control-btn shrink-0" title="Dashboard">
-                   <LayoutDashboard size={18} className="text-amber-300 w-[16px] h-[16px] sm:w-[18px] sm:h-[18px]" />
-                 </Link>
+                <Link to="/admin-old/dashboard" className="header-control-btn shrink-0" title="Dashboard">
+                  <LayoutDashboard size={18} className="text-amber-300 w-[16px] h-[16px] sm:w-[18px] sm:h-[18px]" />
+                </Link>
               )}
             </div>
           </div>
@@ -633,9 +633,9 @@ const Layout = ({ children }) => {
       <GlobalAudioPlayer />
 
       {/* Settings Modal */}
-      <SettingsModal 
-        isOpen={isSettingsOpen} 
-        onClose={() => setIsSettingsOpen(false)} 
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
       />
 
       {/* Theme Onboarding Modal */}

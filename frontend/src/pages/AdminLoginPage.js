@@ -1,8 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../App';
-import axios from 'axios';
-import { API } from '../App';
+import { apiService } from '../services/api';
 import { Shield, Lock, LogIn, ArrowLeft } from 'lucide-react';
 
 const AdminLoginPage = () => {
@@ -31,9 +30,17 @@ const AdminLoginPage = () => {
         return;
       }
 
-      const response = await axios.post(`${API}/auth/login`, { email, password });
-      login(response.data.token);
-      navigate('/admin-old/dashboard');
+      const user = await apiService.login(email, password);
+      if (user && (user.email === 'admin@vrindopnishad.com' || user.email === 'admin@vrindavaani.com')) {
+        navigate('/admin-old/dashboard');
+      } else {
+        if (typeof user === 'string') {
+          login(user);
+          navigate('/admin-old/dashboard');
+        } else {
+          setError('Access denied: User is not an administrator.');
+        }
+      }
     } catch (err) {
       setError('Invalid admin credentials.');
     } finally {

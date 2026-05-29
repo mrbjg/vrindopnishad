@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import { API, AuthContext } from '../App';
+import { AuthContext } from '../App';
+import { apiService } from '../services/api';
 import Navigation from '../components/Navigation';
 import { Plus, X, Edit2, Trash2, Music, Image as ImageIcon, Video, Sparkles, Save } from 'lucide-react';
 
@@ -38,8 +38,8 @@ const AdminDashboard = () => {
   const fetchContent = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API}/content`);
-      setContent(response.data.content || []);
+      const items = await apiService.getAllContent(null, 10000);
+      setContent(items || []);
     } catch (error) {
       console.error('Error fetching content:', error);
     } finally {
@@ -50,20 +50,18 @@ const AdminDashboard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const headers = { Authorization: `Bearer ${token}` };
-
       if (editingId) {
-        await axios.put(`${API}/content/${editingId}`, formData, { headers });
+        await apiService.updateContent(editingId, formData);
         alert('Content updated successfully!');
       } else {
-        await axios.post(`${API}/content`, formData, { headers });
+        await apiService.createContent(formData);
         alert('Content created successfully!');
       }
 
       resetForm();
       fetchContent();
     } catch (error) {
-      alert('Error saving content: ' + (error.response?.data?.detail || error.message));
+      alert('Error saving content: ' + error.message);
     }
   };
 
@@ -71,12 +69,11 @@ const AdminDashboard = () => {
     if (!window.confirm('Are you sure you want to delete this content?')) return;
 
     try {
-      const headers = { Authorization: `Bearer ${token}` };
-      await axios.delete(`${API}/content/${id}`, { headers });
+      await apiService.deleteContent(id);
       alert('Content deleted successfully!');
       fetchContent();
     } catch (error) {
-      alert('Error deleting content: ' + (error.response?.data?.detail || error.message));
+      alert('Error deleting content: ' + error.message);
     }
   };
 
@@ -116,18 +113,13 @@ const AdminDashboard = () => {
 
     try {
       setGeneratingAudio(true);
-      const headers = { Authorization: `Bearer ${token}` };
-      await axios.post(
-        `${API}/content/${selectedContentId}/generate-audio`,
-        { text: audioGenText, language: audioGenLang },
-        { headers }
-      );
+      await apiService.generateAudio(selectedContentId, audioGenText, audioGenLang, token);
       alert('Audio generated successfully!');
       fetchContent();
       setAudioGenText('');
       setSelectedContentId(null);
     } catch (error) {
-      alert('Error generating audio: ' + (error.response?.data?.detail || error.message));
+      alert('Error generating audio: ' + error.message);
     } finally {
       setGeneratingAudio(false);
     }
@@ -141,18 +133,13 @@ const AdminDashboard = () => {
 
     try {
       setGeneratingImage(true);
-      const headers = { Authorization: `Bearer ${token}` };
-      await axios.post(
-        `${API}/content/${selectedContentId}/generate-image`,
-        { prompt: imagePrompt },
-        { headers }
-      );
+      await apiService.generateImage(selectedContentId, imagePrompt, token);
       alert('Image generated successfully!');
       fetchContent();
       setImagePrompt('');
       setSelectedContentId(null);
     } catch (error) {
-      alert('Error generating image: ' + (error.response?.data?.detail || error.message));
+      alert('Error generating image: ' + error.message);
     } finally {
       setGeneratingImage(false);
     }
@@ -161,15 +148,11 @@ const AdminDashboard = () => {
   // eslint-disable-next-line no-unused-vars
   const handleFileUpload = async (contentId, file, type) => {
     try {
-      const headers = { Authorization: `Bearer ${token}` };
-      const formData = new FormData();
-      formData.append('file', file);
-
-      await axios.post(`${API}/upload/${type}/${contentId}`, formData, { headers });
+      await apiService.uploadFile(contentId, file, type, token);
       alert(`${type.charAt(0).toUpperCase() + type.slice(1)} uploaded successfully!`);
       fetchContent();
     } catch (error) {
-      alert(`Error uploading ${type}: ` + (error.response?.data?.detail || error.message));
+      alert(`Error uploading ${type}: ` + error.message);
     }
   };
 

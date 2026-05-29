@@ -1,15 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../App';
-import { auth } from '../firebase';
-import { 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
-  sendPasswordResetEmail,
-  GoogleAuthProvider,
-  signInWithPopup,
-  updateProfile
-} from 'firebase/auth';
+import { apiService } from '../services/api';
 import { Mail, Lock, LogIn, ArrowLeft, UserPlus, Info, User } from 'lucide-react';
 
 const LoginPage = () => {
@@ -35,17 +27,14 @@ const LoginPage = () => {
 
     try {
       if (isSignUp) {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        if (fullName) {
-          await updateProfile(userCredential.user, { displayName: fullName });
-        }
+        await apiService.signUp(email, password, fullName);
       } else {
-        await signInWithEmailAndPassword(auth, email, password);
+        await apiService.login(email, password);
       }
       navigate('/');
     } catch (err) {
       console.error('Auth error:', err);
-      let errorMsg = 'An error occurred. Please try again.';
+      let errorMsg = err.message || 'An error occurred. Please try again.';
       if (err.code === 'auth/user-not-found') errorMsg = 'No account found with this email.';
       if (err.code === 'auth/wrong-password') errorMsg = 'Incorrect password.';
       if (err.code === 'auth/email-already-in-use') errorMsg = 'Email already registered.';
@@ -58,8 +47,7 @@ const LoginPage = () => {
   const handleGoogleLogin = async () => {
     setLoading(true);
     try {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      await apiService.signInWithGoogle();
       navigate('/');
     } catch (err) {
       console.error('Google login error:', err);
@@ -75,7 +63,7 @@ const LoginPage = () => {
       return;
     }
     try {
-      await sendPasswordResetEmail(auth, email);
+      await apiService.resetPassword(email);
       setMessage({ type: 'success', text: 'Reset email sent! Check your inbox.' });
     } catch (err) {
       setMessage({ type: 'error', text: 'Failed to send reset email.' });

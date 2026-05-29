@@ -64,7 +64,7 @@ const GLOSSARY_TERMS = [
     category: 'Sadhana',
     definition: 'The highly confidential mood of spiritual practice in Gaudiya Vaishnavism where the practitioner identifies as a "Manjari" (a young maidservant of Srimati Radharani). The goal is to assist in Her service without desiring any direct association with Shri Krishna.',
     etymology: 'From "Manjari" (bud, blossom, maidservant) + "Bhava" (devotional sentiment).',
-    theologicalContextEn: 'Manjari Bhava represents the finest refinement of Madhurya Rasa. The sadhaka meditates in a spiritual body (siddha-deha) as a young girl (usually 8-12 years old) whose sole joy is Srimati Radharani\'s happiness. Unlike the principal sakhis, a Manjari has access to the most confidential services during the intimate pastimes. She feels no independent attraction to Krishna; rather, she is delighted when Krishna meets Radharani.',
+    theologicalContextEn: 'Manjari Bhava represents the finest refinement of Madhurya Rasa. The sadhak meditates in a spiritual body (siddha-deha) as a young girl (usually 8-12 years old) whose sole joy is Srimati Radharani\'s happiness. Unlike the principal sakhis, a Manjari has access to the most confidential services during the intimate pastimes. She feels no independent attraction to Krishna; rather, she is delighted when Krishna meets Radharani.',
     theologicalContextHi: 'मंजरी भाव सखी भाव की भी चरम परिपक्व अवस्था है, जो विशेष रूप से गौड़ीय वैष्णव संप्रदाय में प्रतिष्ठित है। इसमें साधक स्वयं को श्री राधा जी की दासी (मंजरी) मानकर ध्यान करता है। मंजरी का कृष्ण से सीधे मिलन का कोई भाव नहीं होता; उसका परम सुख केवल श्री राधा रानी के अंगों की सेवा करना और युगल मिलन को देखकर आनंदित होना है।',
     relatedSaints: [
       { nameEn: 'Shri Dhruvdas', slug: 'dhruvdas' }

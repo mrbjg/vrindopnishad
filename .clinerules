@@ -38,3 +38,5 @@ This file documents the strict guidelines, constraints, and professional standar
 ## 5. Database & Multi-Repo Schema Synchronization
 - **Cross-Component Schema Audits**: When updating database schemas, always perform a search/grep across all linked client applications (e.g. Flutter mobile apps, Next.js web frontends) to ensure database models are fully unified and do not leave out client-required columns.
 - **Unified Data Seeding Checklists**: Keep a centralized SQL directory representing the unified database state to make sure schema alterations and seeding are run as cohesive operations across backend and client repos.
+
+- * **PostgreSQL Field Normalization**: When integrating GraphQL-based relational databases (like Firebase SQL Connect or Hasura), always isolate database-to-UI field mapping via a central mapper function (e.g. camelCase to snake_case) to protect client components from backend schema naming drifts.

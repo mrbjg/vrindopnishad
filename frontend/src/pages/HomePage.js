@@ -236,7 +236,7 @@ const HomePage = () => {
         baseFreq * 2.0, // Sa (C4)
         baseFreq        // Sa (C3)
       ];
-      
+
       let pluckIdx = 0;
       pluckString(ctx, freqs[pluckIdx], ctx.currentTime);
       pluckIdx = (pluckIdx + 1) % 4;
@@ -328,7 +328,7 @@ const HomePage = () => {
     } else {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(dailyShloka.sanskrit);
-      
+
       const voices = window.speechSynthesis.getVoices();
       const hiVoice = voices.find(v => v.lang.startsWith('hi') || v.lang.startsWith('sa'));
       if (hiVoice) {
@@ -353,7 +353,7 @@ const HomePage = () => {
     const todayStr = new Date().toDateString();
     const lastCompleted = localStorage.getItem('last_swadhyaya_date');
     const currentStreak = parseInt(localStorage.getItem('swadhyaya_streak') || '0', 10);
-    
+
     if (lastCompleted === todayStr) {
       setIsCompleted(true);
     }
@@ -366,7 +366,7 @@ const HomePage = () => {
 
   const handleComplete = async () => {
     if (isCompleted) return;
-    
+
     const todayStr = new Date().toDateString();
     const yesterdayStr = new Date(Date.now() - 86400000).toDateString();
     const lastCompleted = localStorage.getItem('last_swadhyaya_date');
@@ -454,7 +454,7 @@ const HomePage = () => {
             festivalEn: "Nirjala Ekadashi (in 3 Days)",
             festivalHi: "निर्जला एकादशी (3 दिन में)"
           };
-          
+
           await supabase.from('users_sadhana').insert({
             id: user.uid,
             japa_count: japaCount,
@@ -783,13 +783,15 @@ const HomePage = () => {
           "alternateName": ["Vrindopnishad", "वृंदोपनिषद्", "Sant Vaani"],
           "description": "Largest digital collection of sacred Sanskrit shlokas, strotras, Rasik Sant vaani, and Vedic wisdom from Vrindavan.",
           "url": "https://path.vrindopnishad.in", "inLanguage": ["hi", "en", "sa"],
-          "publisher": { "@type": "Organization", "name": "Vrindopnishad", "logo": { "@type": "ImageObject", "url": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png" }},
-          "mainEntity": { "@type": "ItemList", "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Rasik Sant Vaani", "url": "https://path.vrindopnishad.in/saints" },
-            { "@type": "ListItem", "position": 2, "name": "Sacred Granthas", "url": "https://path.vrindopnishad.in/books" },
-            { "@type": "ListItem", "position": 3, "name": "Classical Ragas", "url": "https://path.vrindopnishad.in/ragas" },
-            { "@type": "ListItem", "position": 4, "name": "Sacred Verses", "url": "https://path.vrindopnishad.in/content" }
-          ]}
+          "publisher": { "@type": "Organization", "name": "Vrindopnishad", "logo": { "@type": "ImageObject", "url": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png" } },
+          "mainEntity": {
+            "@type": "ItemList", "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Rasik Sant Vaani", "url": "https://path.vrindopnishad.in/saints" },
+              { "@type": "ListItem", "position": 2, "name": "Sacred Granthas", "url": "https://path.vrindopnishad.in/books" },
+              { "@type": "ListItem", "position": 3, "name": "Classical Ragas", "url": "https://path.vrindopnishad.in/ragas" },
+              { "@type": "ListItem", "position": 4, "name": "Sacred Verses", "url": "https://path.vrindopnishad.in/content" }
+            ]
+          }
         })}</script>
       </Helmet>
 
@@ -860,11 +862,11 @@ const HomePage = () => {
                   ) : (
                     <div className="flex items-center gap-2">
                       <h1 className="text-base md:text-lg font-bold font-headings text-minimal-gold leading-tight">
-                        {isHi 
-                          ? `राधे राधे, ${settings.devoteeName || 'साधक'}` 
-                          : `Radhe Radhe, ${settings.devoteeName || 'Sadhaka'}`}
+                        {isHi
+                          ? `राधे राधे, ${settings.devoteeName || 'साधक'}`
+                          : `Radhe Radhe, ${settings.devoteeName || 'Sadhak'}`}
                       </h1>
-                      <button 
+                      <button
                         onClick={() => setIsEditingName(true)}
                         className="text-white/35 hover:text-primary transition-colors p-1"
                         title={isHi ? "नाम बदलें" : "Edit Name"}
@@ -879,7 +881,7 @@ const HomePage = () => {
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-3 shrink-0 self-stretch justify-between md:justify-end border-t md:border-t-0 border-white/5 pt-3 md:pt-0">
               <div className="text-left md:text-right">
                 <span className="text-[9px] uppercase tracking-wider text-white/35 block">Atmosphere</span>
@@ -913,15 +915,14 @@ const HomePage = () => {
                 <button
                   key={t.id}
                   onClick={() => updateSetting('theme', t.id)}
-                  className={`flex-none px-4 py-3 rounded-2xl border text-left transition-all duration-300 w-44 hover:scale-[1.02] ${
-                    settings.theme === t.id
+                  className={`flex-none px-4 py-3 rounded-2xl border text-left transition-all duration-300 w-44 hover:scale-[1.02] ${settings.theme === t.id
                       ? 'border-primary bg-primary/10 text-primary shadow-lg shadow-primary/5'
                       : 'border-white/5 bg-white/2 text-white/60 hover:border-white/10'
-                  }`}
+                    }`}
                 >
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-bold truncate block">{t.label}</span>
-                    <div 
+                    <div
                       className="w-3 h-3 rounded-full border border-white/10 shrink-0"
                       style={{ background: THEME_SWATCHES[t.id] }}
                     />
@@ -935,7 +936,7 @@ const HomePage = () => {
 
         {/* ═══ THREE COLUMN HERO SANCTUARY ═══ */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 max-w-6xl mx-auto items-stretch">
-          
+
           {/* Column 1: Braj Calendar (col-span-1) */}
           <div className="lg:col-span-1 h-full">
             <div className="glass-card p-5 rounded-3xl border border-primary/10 flex flex-col justify-between h-full select-none text-left">
@@ -948,7 +949,7 @@ const HomePage = () => {
                     </span>
                   </div>
                   {!isEditingCalendar && (
-                    <button 
+                    <button
                       onClick={() => setIsEditingCalendar(true)}
                       className="text-zinc-600 hover:text-white transition-colors"
                       title="Edit Calendar"
@@ -957,21 +958,21 @@ const HomePage = () => {
                     </button>
                   )}
                 </div>
-                
+
                 {isEditingCalendar ? (
                   <div className="space-y-2.5 my-2">
                     <div>
                       <span className="text-[8px] uppercase tracking-wider text-white/40 block mb-0.5">Tithi (EN / HI)</span>
                       <div className="grid grid-cols-2 gap-1">
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
                           value={editCalendarForm.tithiEn}
                           onChange={e => setEditCalendarForm(prev => ({ ...prev, tithiEn: e.target.value }))}
                           placeholder="Tithi EN"
                         />
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
                           value={editCalendarForm.tithiHi}
                           onChange={e => setEditCalendarForm(prev => ({ ...prev, tithiHi: e.target.value }))}
@@ -982,15 +983,15 @@ const HomePage = () => {
                     <div>
                       <span className="text-[8px] uppercase tracking-wider text-white/40 block mb-0.5">Season (EN / HI)</span>
                       <div className="grid grid-cols-2 gap-1">
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
                           value={editCalendarForm.seasonEn}
                           onChange={e => setEditCalendarForm(prev => ({ ...prev, seasonEn: e.target.value }))}
                           placeholder="Season EN"
                         />
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
                           value={editCalendarForm.seasonHi}
                           onChange={e => setEditCalendarForm(prev => ({ ...prev, seasonHi: e.target.value }))}
@@ -1001,15 +1002,15 @@ const HomePage = () => {
                     <div>
                       <span className="text-[8px] uppercase tracking-wider text-white/40 block mb-0.5">Astayama Lila (EN / HI)</span>
                       <div className="grid grid-cols-2 gap-1">
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
                           value={editCalendarForm.lilaEn}
                           onChange={e => setEditCalendarForm(prev => ({ ...prev, lilaEn: e.target.value }))}
                           placeholder="Lila EN"
                         />
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
                           value={editCalendarForm.lilaHi}
                           onChange={e => setEditCalendarForm(prev => ({ ...prev, lilaHi: e.target.value }))}
@@ -1020,15 +1021,15 @@ const HomePage = () => {
                     <div>
                       <span className="text-[8px] uppercase tracking-wider text-white/40 block mb-0.5">Next Festival (EN / HI)</span>
                       <div className="grid grid-cols-2 gap-1">
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
                           value={editCalendarForm.festivalEn}
                           onChange={e => setEditCalendarForm(prev => ({ ...prev, festivalEn: e.target.value }))}
                           placeholder="Festival EN"
                         />
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
                           value={editCalendarForm.festivalHi}
                           onChange={e => setEditCalendarForm(prev => ({ ...prev, festivalHi: e.target.value }))}
@@ -1037,13 +1038,13 @@ const HomePage = () => {
                       </div>
                     </div>
                     <div className="flex gap-2 justify-end pt-1">
-                      <button 
+                      <button
                         onClick={() => setIsEditingCalendar(false)}
                         className="px-2 py-0.5 text-[9px] rounded border border-white/10 hover:bg-white/5 text-zinc-400 hover:text-white transition-colors"
                       >
                         Cancel
                       </button>
-                      <button 
+                      <button
                         onClick={handleSaveCalendar}
                         className="px-2 py-0.5 text-[9px] rounded bg-white text-zinc-950 hover:bg-zinc-200 font-semibold transition-colors"
                       >
@@ -1067,7 +1068,7 @@ const HomePage = () => {
                         <span className="text-xs font-bold text-white/80 block mt-0.5 truncate">{isHi ? calendarData.lilaHi : calendarData.lilaEn}</span>
                       </div>
                     </div>
-                    
+
                     <div className="mt-4 pt-3 border-t border-white/5">
                       <span className="text-[9px] uppercase tracking-wider text-primary font-bold block mb-1">
                         🎉 {isHi ? "आगामी उत्सव" : "Next Festival"}
@@ -1081,14 +1082,14 @@ const HomePage = () => {
               </div>
             </div>
           </div>
-          
+
           {/* Column 2 & 3: Daily Swadhyaya (col-span-2) */}
           <div className="lg:col-span-2 h-full flex flex-col">
             <div className="glass-card p-6 md:p-8 rounded-3xl border border-primary/10 shadow-2xl relative overflow-hidden h-full flex flex-col justify-between group">
               <div className="absolute top-0 right-0 p-6 opacity-[0.02] pointer-events-none">
                 <ChevronRight size={180} className="text-primary" />
               </div>
-              
+
               <div>
                 <div className="flex items-center justify-between mb-6 border-b border-white/5 pb-4">
                   <div className="flex items-center gap-2">
@@ -1114,15 +1115,14 @@ const HomePage = () => {
                           setIsPlaying(false);
                         }
                       }}
-                      className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all z-10 ${
-                        activeTab === tab ? 'text-primary' : 'text-white/45 hover:text-white/70'
-                      }`}
+                      className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all z-10 ${activeTab === tab ? 'text-primary' : 'text-white/45 hover:text-white/70'
+                        }`}
                     >
                       {tab === 'verse' ? (isHi ? "श्लोक" : "Verse") : tab === 'translation' ? (isHi ? "भावार्थ" : "Translation") : (isHi ? "शब्दार्थ" : "Breakdown")}
                     </button>
                   ))}
                   {/* Sliding indicator */}
-                  <div 
+                  <div
                     className="absolute top-1 bottom-1 bg-white/[0.04] border border-white/10 rounded-lg transition-all duration-300 ease-out z-0"
                     style={{
                       width: 'calc(33.33% - 4px)',
@@ -1141,15 +1141,14 @@ const HomePage = () => {
                         {dailyShloka.sanskrit}
                       </p>
                     </blockquote>
-                    
+
                     <div className="flex justify-center gap-3">
-                      <button 
+                      <button
                         onClick={handleChantAudio}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all text-xs font-bold ${
-                          isPlaying 
-                            ? 'border-primary bg-primary/10 text-primary' 
+                        className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all text-xs font-bold ${isPlaying
+                            ? 'border-primary bg-primary/10 text-primary'
                             : 'border-white/10 hover:border-primary/30 text-white/70'
-                        }`}
+                          }`}
                       >
                         <span>{isPlaying ? '⏸' : '▶'}</span>
                         <span>{isHi ? "सुनिए" : "Listen"}</span>
@@ -1163,19 +1162,18 @@ const HomePage = () => {
                         )}
                       </button>
 
-                      <button 
+                      <button
                         onClick={handleComplete}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all text-xs font-bold relative ${
-                          isCompleted 
-                            ? 'border-green-500 bg-green-500/10 text-green-500 cursor-default' 
+                        className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all text-xs font-bold relative ${isCompleted
+                            ? 'border-green-500 bg-green-500/10 text-green-500 cursor-default'
                             : 'border-white/10 hover:border-green-500/30 text-white/70'
-                        }`}
+                          }`}
                       >
                         <span>{isCompleted ? '✓' : '📿'}</span>
                         <span>{isCompleted ? (isHi ? "पूर्ण" : "Completed") : (isHi ? "Mark Read" : "Mark Read")}</span>
-                        
+
                         {particles.map(p => (
-                          <span 
+                          <span
                             key={p.id}
                             className="absolute w-1.5 h-1.5 rounded-full pointer-events-none animate-particle"
                             style={{
@@ -1259,11 +1257,10 @@ const HomePage = () => {
                       <span className="text-xl font-extrabold text-minimal-gold block mt-0.5 font-mono">{japaCount}</span>
                       <button
                         onClick={toggleTanpura}
-                        className={`p-1.5 rounded-full border transition-all ${
-                          isTanpuraPlaying 
-                            ? 'bg-sky-500/10 border-sky-500/40 text-sky-400 animate-pulse' 
+                        className={`p-1.5 rounded-full border transition-all ${isTanpuraPlaying
+                            ? 'bg-sky-500/10 border-sky-500/40 text-sky-400 animate-pulse'
                             : 'bg-white/5 border-white/10 text-white/40 hover:text-white'
-                        }`}
+                          }`}
                         title={isTanpuraPlaying ? "Stop Tanpura Drone" : "Start Tanpura Drone"}
                       >
                         {isTanpuraPlaying ? <Volume2 size={12} /> : <VolumeX size={12} />}
@@ -1308,8 +1305,8 @@ const HomePage = () => {
                   <span className="text-primary">{percentComplete}%</span>
                 </div>
                 <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
-                  <div 
-                    className="h-full bg-primary rounded-full transition-all duration-500 ease-out" 
+                  <div
+                    className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
                     style={{ width: `${percentComplete}%` }}
                   />
                 </div>
@@ -1431,7 +1428,7 @@ const HomePage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
             {/* Card 1: Braj Dham Guide */}
-            <div 
+            <div
               onClick={() => navigate(isHi ? "/hi/places" : "/places")}
               className="glass-card p-6 rounded-3xl border border-white/5 hover:border-amber-500/20 cursor-pointer group transition-all flex flex-col justify-between space-y-4 hover:scale-[1.01]"
             >
@@ -1449,8 +1446,8 @@ const HomePage = () => {
                     {isHi ? "ब्रज धाम दर्शन मार्गदर्शिका" : "Braj Dham Sacred Places"}
                   </h3>
                   <p className="text-[11px] text-white/45 font-light leading-relaxed">
-                    {isHi 
-                      ? "वृंदावन के पावन वनों, कुंडों और संतों की साधना-स्थली का अलौकिक परिचय। आध्यात्मिक इतिहास और भौगोलिक महत्व के साथ।" 
+                    {isHi
+                      ? "वृंदावन के पावन वनों, कुंडों और संतों की साधना-स्थली का अलौकिक परिचय। आध्यात्मिक इतिहास और भौगोलिक महत्व के साथ।"
                       : "A spiritual guide to the holy groves, sacred lakes, and mystical temples of Vrindavan, complete with historical and saintly connections."
                     }
                   </p>
@@ -1465,7 +1462,7 @@ const HomePage = () => {
             </div>
 
             {/* Card 2: Glossary */}
-            <div 
+            <div
               onClick={() => navigate(isHi ? "/hi/glossary" : "/glossary")}
               className="glass-card p-6 rounded-3xl border border-white/5 hover:border-amber-500/20 cursor-pointer group transition-all flex flex-col justify-between space-y-4 hover:scale-[1.01]"
             >
@@ -1483,8 +1480,8 @@ const HomePage = () => {
                     {isHi ? "ब्रज रसिक शब्दावली" : "Braj Rasik Glossary"}
                   </h3>
                   <p className="text-[11px] text-white/45 font-light leading-relaxed">
-                    {isHi 
-                      ? "वाणी साहित्य और रस उपासना में प्रयुक्त होने वाले गहन आध्यात्मिक शब्दों, दर्शनों और भावों का प्रामाणिक शब्दकोश।" 
+                    {isHi
+                      ? "वाणी साहित्य और रस उपासना में प्रयुक्त होने वाले गहन आध्यात्मिक शब्दों, दर्शनों और भावों का प्रामाणिक शब्दकोश।"
                       : "Explore the meanings, etymologies, and philosophical contexts of core theological terms used in the spiritual poetry of Vrindavan."
                     }
                   </p>
@@ -1618,7 +1615,7 @@ const HomePage = () => {
                 </span>
                 <h2 className="text-xl font-bold font-headings text-minimal-gold truncate">
                   {previewType === 'saint' ? (isHi ? selectedItem.name : selectedItem.hinglishName) :
-                   previewType === 'book' ? selectedItem.name : previewType === 'raga' ? selectedItem.name : selectedItem.title}
+                    previewType === 'book' ? selectedItem.name : previewType === 'raga' ? selectedItem.name : selectedItem.title}
                 </h2>
                 {previewType === 'book' && selectedItem.author && <span className="text-xs text-white/40 block mt-1">By {selectedItem.author}</span>}
                 {previewType === 'raga' && <span className="text-xs text-white/40 block mt-0.5">{selectedItem.hinglishName}</span>}
@@ -1645,7 +1642,7 @@ const HomePage = () => {
                 {drawerTab === 'books' && (<div className="grid grid-cols-1 gap-2">
                   {selectedItem.books?.length > 0 ? selectedItem.books.map(bName => {
                     const m = books.find(b => b.name === bName);
-                    return (<button key={bName} onClick={() => { if (m) { setSelectedItem(m); setPreviewType('book'); }}}
+                    return (<button key={bName} onClick={() => { if (m) { setSelectedItem(m); setPreviewType('book'); } }}
                       className="p-3 text-left rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 flex items-center justify-between text-xs font-bold w-full transition-colors group">
                       <span className="text-white/90 group-hover:text-primary transition-colors">{bName}</span>
                       <ChevronRight size={14} className="text-white/20 group-hover:text-primary transition-colors" />

@@ -81,3 +81,7 @@ android-sdk/ -e
 # # Environment files
 # *.env
 # *.env.*
+
+# Firebase debug logs
+firebase-debug.log
+

@@ -1,14 +1,26 @@
-import { supabase } from '../lib/supabase';
 import { mockApiService } from './mockData';
-import { auth, contentDb } from '../firebase';
-import { ref, get } from 'firebase/database';
+import { auth } from '../firebase';
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signInWithPopup, 
-  GoogleAuthProvider 
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signOut,
+  sendPasswordResetEmail
 } from 'firebase/auth';
+import { supabase } from '../lib/supabase';
 import { transliterate } from '../utils/transliterate';
+import { 
+  getContentById as dcGetContentById, 
+  getContentBySlug as dcGetContentBySlug, 
+  syncContentUpdates, 
+  upsertContent, 
+  deleteContent 
+} from '../lib/dataconnect';
+
+const DB_PROVIDER = process.env.REACT_APP_DATABASE_PROVIDER || 'firebase';
+
 
 const USE_MOCK = process.env.REACT_APP_DEMO_MODE === 'true';
 const CACHE_PREFIX = 'sv_cache_';
@@ -136,6 +148,31 @@ const classifyItemCategory = (item) => {
   return 'poem';
 };
 
+const mapToAppModel = (item) => {
+  if (!item) return null;
+  return {
+    id: item.id,
+    title: item.title,
+    sanskrit_text: item.sanskrit_text || item.sanskritText || '',
+    hindi_text: item.hindi_text || item.hindiText || '',
+    english_text: item.english_text || item.englishText || '',
+    english_translation: item.english_translation || item.englishTranslation || '',
+    category: item.category,
+    description: item.description || '',
+    content_text: item.content_text || item.contentText || '',
+    tags: item.tags || [],
+    status: (item.status || '').toLowerCase(),
+    author: item.author || '',
+    media_links: item.media_links || item.mediaLinks || [],
+    audio_url: item.audio_url || item.audioUrl || '',
+    image_urls: item.image_urls || item.imageUrls || [],
+    video_urls: item.video_urls || item.videoUrls || [],
+    slug: item.slug,
+    created_at: item.created_at || item.createdAt,
+    updated_at: item.updated_at || item.updatedAt
+  };
+};
+
 const fetchStaticBackup = async () => {
   try {
     const res = await fetch('/data/content_backup.json');
@@ -213,7 +250,7 @@ export const apiService = {
       memoryCategoryCache = {}; // Reset category cache since base items changed
     }
 
-    // 3. Trigger a background delta-sync with Supabase (only fetches rows updated since lastUpdated, minimizing egress!)
+    // 3. Trigger a background delta-sync (only fetches rows updated since lastUpdated)
     if (!USE_MOCK && typeof window !== 'undefined') {
       const now = Date.now();
       // Throttle delta sync to once every 5 minutes
@@ -222,20 +259,25 @@ export const apiService = {
         // Run delta-sync asynchronously without blocking the UI
         setTimeout(async () => {
           try {
-            console.log(`[Delta-Sync] Fetching updates since: ${lastUpdated}...`);
             let updates = [];
-            
-            const { data, error } = await supabase
-              .from('content')
-              .select('*')
-              .gt('updated_at', lastUpdated)
-              .order('updated_at', { ascending: true });
+            if (DB_PROVIDER === 'supabase') {
+              console.log(`[Supabase-Sync] Fetching updates since: ${lastUpdated}...`);
+              const { data: rawUpdates, error } = await supabase
+                .from('content')
+                .select('*')
+                .gt('updated_at', lastUpdated);
               
-            if (error) throw error;
-            updates = data || [];
+              if (error) throw error;
+              updates = (rawUpdates || []).map(mapToAppModel).filter(Boolean);
+            } else {
+              console.log(`[Delta-Sync] Fetching updates since: ${lastUpdated}...`);
+              const res = await syncContentUpdates({ lastUpdated });
+              const rawUpdates = res.data?.contents || [];
+              updates = rawUpdates.map(mapToAppModel).filter(Boolean);
+            }
             
             if (updates.length > 0) {
-              console.log(`[Delta-Sync] Found ${updates.length} new or updated items from Supabase!`);
+              console.log(`[Delta-Sync] Found ${updates.length} new or updated items!`);
               
               // Merge updates into cachedItems
               const itemMap = new Map(cachedItems.map(item => [item.id, item]));
@@ -347,94 +389,49 @@ export const apiService = {
       return data;
     }
     try {
-      const snapshot = await get(ref(contentDb, 'public/content'));
-      if (snapshot.exists()) {
-        const rawData = snapshot.val();
-        let contentItem = null;
-        
-        // Normalize to array for consistent searching
-        const items = Array.isArray(rawData) 
-          ? rawData.map((item, index) => ({ id: item.id || index.toString(), ...item })).filter(i => i.title)
-          : Object.keys(rawData).map(key => ({ id: key, ...rawData[key] }));
-
-        console.log(`Searching for content with ID/Slug: "${id}" in ${items.length} items`);
-
-        // Search by exact ID, stored Slug, or derived Title-Slug
-        contentItem = items.find(item => {
-          const s1 = item.id?.toString() === id.toString();
-          const s2 = item.slug === id;
-          const s3 = generateSlug(item.title) === id;
-          const s4 = generateSlug(item.title) === decodeURIComponent(id);
-          return s1 || s2 || s3 || s4;
-        });
-
-        if (contentItem) {
-          console.log(`Found content: ${contentItem.title}`);
-          const cleanCategory = classifyItemCategory(contentItem);
-          const data = { 
-            ...contentItem, 
-            category: cleanCategory,
-            slug: contentItem.slug || generateSlug(contentItem.title) 
-          };
-          setCache(cacheKey, data);
-          return data;
+      const decodedId = decodeURIComponent(id);
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decodedId);
+      
+      let rawData = null;
+      if (DB_PROVIDER === 'supabase') {
+        console.log('[Supabase] Fetching content by ID/Slug:', decodedId);
+        let query = supabase.from('content').select('*');
+        if (isUuid) {
+          query = query.eq('id', decodedId);
         } else {
-          console.warn(`Content not found for ID/Slug: "${id}"`);
+          query = query.eq('slug', decodedId);
+        }
+        const { data, error } = await query.maybeSingle();
+        if (error) throw error;
+        rawData = data;
+      } else {
+        let res;
+        if (isUuid) {
+          console.log('[Data-Connect] Fetching content by ID:', decodedId);
+          res = await dcGetContentById({ id: decodedId });
+          rawData = res.data?.content || null;
+        } else {
+          console.log('[Data-Connect] Fetching content by Slug:', decodedId);
+          res = await dcGetContentBySlug({ slug: decodedId });
+          rawData = res.data?.content || null;
         }
       }
-      throw new Error("Content not found");
-    } catch (error) {
-      console.warn('Firebase fetch failed, falling back to Supabase...', error.message);
-      try {
-          const decodedId = decodeURIComponent(id);
-          let data = null;
-
-          // 1. Try lookup by slug column first
-          const { data: slugData } = await supabase.from('content').select('*').eq('slug', id).maybeSingle();
-          if (slugData) {
-            data = slugData;
-          }
-
-          // 2. Try decoded slug
-          if (!data && decodedId !== id) {
-            const { data: decodedSlugData } = await supabase.from('content').select('*').eq('slug', decodedId).maybeSingle();
-            if (decodedSlugData) data = decodedSlugData;
-          }
-
-          // 3. Try lookup by UUID id
-          if (!data) {
-            const { data: idData } = await supabase.from('content').select('*').eq('id', id).maybeSingle();
-            if (idData) data = idData;
-          }
-
-          // 4. Last resort: fetch all and match by generated slug from title
-          if (!data) {
-             console.log('Not found by slug/id in Supabase, searching by generated slug...');
-             const { data: allData, error: allErr } = await supabase.from('content').select('*');
-             if (allErr) throw allErr;
-             
-             data = allData.find(item => 
-                item.slug === id ||
-                item.slug === decodedId ||
-                generateSlug(item.title) === id || 
-                generateSlug(item.title) === decodedId
-             );
-          }
-
-          if (!data) throw new Error("Content not found in Supabase");
-
-          const cleanCategory = classifyItemCategory(data);
-          const contentData = { 
-            ...data, 
-            category: cleanCategory,
-            slug: data.slug || generateSlug(data.title) 
-          };
-          setCache(cacheKey, contentData);
-          return contentData;
-      } catch (supaErr) {
-          console.error('Error fetching content from Supabase:', supaErr);
-          throw supaErr;
+      
+      if (rawData) {
+        const data = mapToAppModel(rawData);
+        const cleanCategory = classifyItemCategory(data);
+        const contentData = { 
+          ...data, 
+          category: cleanCategory,
+          slug: data.slug || generateSlug(data.title) 
+        };
+        setCache(cacheKey, contentData);
+        return contentData;
       }
+      throw new Error("Content not found in database");
+    } catch (error) {
+      console.error('Error fetching content:', error);
+      throw error;
     }
   },
 
@@ -444,10 +441,58 @@ export const apiService = {
     return ['shloka', 'strotra', 'poem'];
   },
 
-  // Admin APIs (In case frontend needs them)
+  // Admin APIs supporting both Providers
   createContent: async (contentData) => {
     try {
-      throw new Error("createContent not implemented yet for Firebase");
+      const id = contentData.id || crypto.randomUUID();
+      const slug = contentData.slug || generateSlug(contentData.title);
+      
+      if (DB_PROVIDER === 'supabase') {
+        const payload = {
+          id: id,
+          title: contentData.title,
+          sanskrit_text: contentData.sanskrit_text || '',
+          hindi_text: contentData.hindi_text || '',
+          english_text: contentData.english_text || '',
+          english_translation: contentData.english_translation || '',
+          category: contentData.category,
+          description: contentData.description || '',
+          content_text: contentData.content_text || '',
+          tags: contentData.tags || [],
+          status: (contentData.status || 'PUBLISHED').toLowerCase(),
+          author: contentData.author || '',
+          media_links: contentData.media_links || [],
+          audio_url: contentData.audio_url || '',
+          image_urls: contentData.image_urls || [],
+          video_urls: contentData.video_urls || [],
+          slug: slug
+        };
+        const { data, error } = await supabase.from('content').insert([payload]).select().single();
+        if (error) throw error;
+        return mapToAppModel(data);
+      } else {
+        const vars = {
+          id: id,
+          title: contentData.title,
+          sanskritText: contentData.sanskrit_text,
+          hindiText: contentData.hindi_text,
+          englishText: contentData.english_text,
+          englishTranslation: contentData.english_translation,
+          category: contentData.category,
+          description: contentData.description,
+          contentText: contentData.content_text,
+          tags: contentData.tags || [],
+          status: (contentData.status || 'PUBLISHED').toUpperCase(),
+          author: contentData.author,
+          mediaLinks: contentData.media_links || [],
+          audioUrl: contentData.audio_url,
+          imageUrls: contentData.image_urls || [],
+          videoUrls: contentData.video_urls || [],
+          slug: slug
+        };
+        await upsertContent(vars);
+        return { ...contentData, id, slug };
+      }
     } catch (error) {
       console.error('Error creating content:', error);
       throw error;
@@ -456,7 +501,53 @@ export const apiService = {
 
   updateContent: async (id, contentData) => {
     try {
-      throw new Error("updateContent not implemented yet for Firebase");
+      const slug = contentData.slug || generateSlug(contentData.title);
+      
+      if (DB_PROVIDER === 'supabase') {
+        const payload = {
+          title: contentData.title,
+          sanskrit_text: contentData.sanskrit_text || '',
+          hindi_text: contentData.hindi_text || '',
+          english_text: contentData.english_text || '',
+          english_translation: contentData.english_translation || '',
+          category: contentData.category,
+          description: contentData.description || '',
+          content_text: contentData.content_text || '',
+          tags: contentData.tags || [],
+          status: (contentData.status || 'PUBLISHED').toLowerCase(),
+          author: contentData.author || '',
+          media_links: contentData.media_links || [],
+          audio_url: contentData.audio_url || '',
+          image_urls: contentData.image_urls || [],
+          video_urls: contentData.video_urls || [],
+          slug: slug
+        };
+        const { data, error } = await supabase.from('content').update(payload).eq('id', id).select().single();
+        if (error) throw error;
+        return mapToAppModel(data);
+      } else {
+        const vars = {
+          id: id,
+          title: contentData.title,
+          sanskritText: contentData.sanskrit_text,
+          hindiText: contentData.hindi_text,
+          englishText: contentData.english_text,
+          englishTranslation: contentData.english_translation,
+          category: contentData.category,
+          description: contentData.description,
+          contentText: contentData.content_text,
+          tags: contentData.tags || [],
+          status: (contentData.status || 'PUBLISHED').toUpperCase(),
+          author: contentData.author,
+          mediaLinks: contentData.media_links || [],
+          audioUrl: contentData.audio_url,
+          imageUrls: contentData.image_urls || [],
+          videoUrls: contentData.video_urls || [],
+          slug: slug
+        };
+        await upsertContent(vars);
+        return { ...contentData, id, slug };
+      }
     } catch (error) {
       console.error('Error updating content:', error);
       throw error;
@@ -465,7 +556,14 @@ export const apiService = {
 
   deleteContent: async (id) => {
     try {
-      throw new Error("deleteContent not implemented yet for Firebase");
+      if (DB_PROVIDER === 'supabase') {
+        const { error } = await supabase.from('content').delete().eq('id', id);
+        if (error) throw error;
+        return true;
+      } else {
+        await deleteContent({ id });
+        return true;
+      }
     } catch (error) {
       console.error('Error deleting content:', error);
       throw error;
@@ -475,18 +573,38 @@ export const apiService = {
   // Auth APIs
   login: async (email, password) => {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      return userCredential.user;
+      if (DB_PROVIDER === 'supabase') {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        return data.user;
+      } else {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        return userCredential.user;
+      }
     } catch (error) {
       console.error('Login error:', error);
       throw error;
     }
   },
 
-  signUp: async (email, password) => {
+  signUp: async (email, password, fullName = '') => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      return userCredential.user;
+      if (DB_PROVIDER === 'supabase') {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              display_name: fullName
+            }
+          }
+        });
+        if (error) throw error;
+        return data.user;
+      } else {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        return userCredential.user;
+      }
     } catch (error) {
       console.error('Sign up error:', error);
       throw error;
@@ -495,9 +613,17 @@ export const apiService = {
 
   signInWithGoogle: async () => {
     try {
-      const provider = new GoogleAuthProvider();
-      const userCredential = await signInWithPopup(auth, provider);
-      return userCredential.user;
+      if (DB_PROVIDER === 'supabase') {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+        });
+        if (error) throw error;
+        return data.user;
+      } else {
+        const provider = new GoogleAuthProvider();
+        const userCredential = await signInWithPopup(auth, provider);
+        return userCredential.user;
+      }
     } catch (error) {
       console.error('Google sign in error:', error);
       throw error;
@@ -509,11 +635,93 @@ export const apiService = {
       return mockApiService.verifyToken();
     }
     try {
-      if (!auth.currentUser) throw new Error("No user signed in");
-      return await auth.currentUser.getIdTokenResult();
+      if (DB_PROVIDER === 'supabase') {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error || !session) throw new Error("No session found");
+        return session;
+      } else {
+        if (!auth.currentUser) throw new Error("No user signed in");
+        return await auth.currentUser.getIdTokenResult();
+      }
     } catch (error) {
       console.error('Token verification error:', error);
       throw error;
+    }
+  },
+
+  onAuthChanged: (callback) => {
+    if (DB_PROVIDER === 'supabase') {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        callback(session?.user || null, session?.access_token || null);
+      });
+      return () => subscription.unsubscribe();
+    } else {
+      return onAuthStateChanged(auth, async (firebaseUser) => {
+        if (firebaseUser) {
+          try {
+            const token = await firebaseUser.getIdToken();
+            callback(firebaseUser, token);
+          } catch (e) {
+            callback(firebaseUser, null);
+          }
+        } else {
+          callback(null, null);
+        }
+      });
+    }
+  },
+
+  logout: async () => {
+    if (DB_PROVIDER === 'supabase') {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    } else {
+      await signOut(auth);
+    }
+  },
+
+  // AI & Upload APIs
+  generateAudio: async (contentId, text, language, token) => {
+    const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const axios = require('axios');
+    await axios.post(
+      `${backendUrl}/content/${contentId}/generate-audio`,
+      { text, language },
+      { headers }
+    );
+  },
+
+  generateImage: async (contentId, prompt, token) => {
+    const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const axios = require('axios');
+    await axios.post(
+      `${backendUrl}/content/${contentId}/generate-image`,
+      { prompt },
+      { headers }
+    );
+  },
+
+  uploadFile: async (contentId, file, type, token) => {
+    const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const formData = new FormData();
+    formData.append('file', file);
+    const axios = require('axios');
+    await axios.post(
+      `${backendUrl}/upload/${type}/${contentId}`,
+      formData,
+      { headers }
+    );
+  },
+
+  resetPassword: async (email) => {
+    if (DB_PROVIDER === 'supabase') {
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      if (error) throw error;
+    } else {
+      await sendPasswordResetEmail(auth, email);
     }
   }
 };
