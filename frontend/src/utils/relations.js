@@ -35,6 +35,28 @@ export function extractRelations(items) {
     }
   }
 
+  // Check persistent cache in localStorage to avoid parsing on next mounts/refresh
+  const cacheKey = 'sv_extracted_relations_cache';
+  if (typeof window !== 'undefined') {
+    try {
+      const localCached = localStorage.getItem(cacheKey);
+      if (localCached) {
+        const parsed = JSON.parse(localCached);
+        if (
+          parsed.itemsLength === items.length &&
+          parsed.firstId === items[0]?.id &&
+          parsed.lastId === items[items.length - 1]?.id
+        ) {
+          lastItemsRef = items;
+          lastResult = parsed.data;
+          return parsed.data;
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to parse persistent relations cache:', e);
+    }
+  }
+
   const santsMap = {};
   const booksMap = {};
   const ragasMap = {};
@@ -213,5 +235,18 @@ export function extractRelations(items) {
   const result = { sants, books, ragas, biographies };
   lastItemsRef = items;
   lastResult = result;
+
+  // Persist cache to localStorage
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem('sv_extracted_relations_cache', JSON.stringify({
+        itemsLength: items.length,
+        firstId: items[0]?.id,
+        lastId: items[items.length - 1]?.id,
+        data: result
+      }));
+    } catch (e) {}
+  }
+
   return result;
 }

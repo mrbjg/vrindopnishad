@@ -4183,3 +4183,36 @@ body {
         --header-bg: rgba(9, 9, 11, 0.95);
     }
 }
+
+/* Mobile-specific animations and tactile instant-click feedback */
+@media (max-width: 1023px) {
+    /* Set faster, responsive transition durations for touch */
+    .glass-card, 
+    .premium-content-card, 
+    button, 
+    a, 
+    .btn-premium,
+    .book-cover-premium {
+        transition: transform 0.1s ease, opacity 0.1s ease, background-color 0.1s ease, border-color 0.1s ease !important;
+    }
+    
+    /* Remove hover transformations to prevent sticky scaling on tap */
+    .glass-card:hover,
+    .premium-content-card:hover,
+    .book-cover-premium:hover,
+    button:hover,
+    a:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Tactile instant-press feedback on touch */
+    .glass-card:active,
+    .premium-content-card:active,
+    button:active,
+    a:active {
+        opacity: 0.85 !important;
+        transform: scale(0.97) !important;
+        transition: transform 0.05s ease !important;
+    }
+}
