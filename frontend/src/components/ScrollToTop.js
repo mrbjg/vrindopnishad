@@ -18,6 +18,12 @@ const ScrollToTop = () => {
     if (kbClassicContainer) {
       kbClassicContainer.scrollTo(0, 0);
     }
+
+    // Reset Lenis smooth scroll coordinates and boundary limits if active
+    if (window.lenis) {
+      window.lenis.scrollTo(0, { immediate: true });
+      window.lenis.resize();
+    }
   }, [pathname]);
 
   return null;

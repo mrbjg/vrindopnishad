@@ -156,6 +156,7 @@ const LenisScroll = () => {
     }
 
     const lenis = new Lenis(lenisOptions);
+    window.lenis = lenis;
 
     function raf(time) {
       lenis.raf(time);
@@ -164,9 +165,24 @@ const LenisScroll = () => {
 
     const rafId = requestAnimationFrame(raf);
 
+    // Watch for dynamic DOM size updates (like asynchronous content fetching) to recalculate scroll constraints
+    const resizeObserver = new ResizeObserver(() => {
+      lenis.resize();
+    });
+
+    const target = containerType === 'pookiz' && pookizContainer ? pookizContainer :
+                   containerType === 'kb' && kbClassicContainer ? kbClassicContainer :
+                   document.body;
+
+    if (target) {
+      resizeObserver.observe(target);
+    }
+
     return () => {
       cancelAnimationFrame(rafId);
+      resizeObserver.disconnect();
       lenis.destroy();
+      window.lenis = null;
       document.documentElement.style.removeProperty('overflow');
       document.body.style.removeProperty('overflow');
       
