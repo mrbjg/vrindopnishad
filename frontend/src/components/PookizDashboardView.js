@@ -1,9 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Search, Plus, Trash2, Volume2, Play, Pause, 
   Check, X, VolumeX, Info, BookOpen, Sparkles, Feather
 } from 'lucide-react';
+
+const getStorageKey = (currentUser) => {
+  return currentUser ? `vrindopnishad_reflections_${currentUser.uid || currentUser.email}` : 'vrindopnishad_reflections';
+};
+
+const getInitialReflections = (currentUser, hindiMode) => {
+  try {
+    const key = getStorageKey(currentUser);
+    const saved = localStorage.getItem(key);
+    if (saved) return JSON.parse(saved);
+  } catch (e) {}
+
+  return [
+    { 
+      id: 1, 
+      text: hindiMode 
+        ? 'सुबह जप करते समय तानपुरा सिंथेसाइज़र सुनते हुए गहरा ध्यान अनुभव किया।' 
+        : 'Experienced deep focus during morning Japa while listening to the Tanpura synthesizer.', 
+      date: '05/27/2026' 
+    },
+    { 
+      id: 2, 
+      text: hindiMode 
+        ? 'श्रीमद्भगवद्गीता के श्लोक २.४७ पर विचार किया। केवल प्रयास पर ध्यान केंद्रित करना आवश्यक है, परिणामों पर नहीं।' 
+        : 'Contemplated Shloka 2.47 from Bhagavad Gita. Essential to focus only on effort, not results.', 
+      date: '05/26/2026' 
+    }
+  ];
+};
 
 const PookizDashboardView = ({
   isHi,
@@ -25,7 +54,8 @@ const PookizDashboardView = ({
   rounds,
   currentGreeting,
   settings,
-  updateSetting
+  updateSetting,
+  user
 }) => {
   // Active Tab
   const [activeTab, setActiveTab] = useState('moderationAudit'); // 'moderationAudit', 'userDirectory', 'broadcasts', 'feedback', 'universities'
@@ -53,19 +83,28 @@ const PookizDashboardView = ({
   const [selectedBookSlug, setSelectedBookSlug] = useState('');
   const [dailyTargetVerses, setDailyTargetVerses] = useState('2');
 
-  // Local state for Devotee Reflections (replaces mock Feedback)
-  const [reflections, setReflections] = useState(() => {
-    try {
-      const saved = localStorage.getItem('vrindopnishad_reflections');
-      if (saved) return JSON.parse(saved);
-    } catch (e) {}
+  const getDevoteeName = () => {
+    if (settings && settings.devoteeName) return settings.devoteeName;
+    if (user) {
+      if (user.displayName) return user.displayName;
+      if (user.email) return user.email.split('@')[0];
+    }
+    return isHi ? 'साधक' : 'Devotee';
+  };
 
-    return [
-      { id: 1, text: 'Experienced deep focus during morning Japa while listening to the Tanpura synthesizer.', date: '05/27/2026' },
-      { id: 2, text: 'Contemplated Shloka 2.47 from Bhagavad Gita. Essential to focus only on effort, not results.', date: '05/26/2026' }
-    ];
-  });
+  const getDevoteeInitial = () => {
+    const name = getDevoteeName();
+    return name ? name.charAt(0).toUpperCase() : 'D';
+  };
+
+  // Local state for Devotee Reflections (replaces mock Feedback)
+  const [reflections, setReflections] = useState(() => getInitialReflections(user, isHi));
   const [newReflectionText, setNewReflectionText] = useState('');
+
+  // Sync reflections whenever user or language changes
+  useEffect(() => {
+    setReflections(getInitialReflections(user, isHi));
+  }, [user, isHi]);
 
   // Local state for Active Broadcasts list
   const [broadcasts] = useState([
@@ -146,7 +185,7 @@ const PookizDashboardView = ({
 
     const updated = [newRef, ...reflections];
     setReflections(updated);
-    localStorage.setItem('vrindopnishad_reflections', JSON.stringify(updated));
+    localStorage.setItem(getStorageKey(user), JSON.stringify(updated));
     triggerToast(isHi ? 'अनुभूति डायरी में प्रविष्टि अंकित की गई।' : 'Reflection added to your journal.');
     setNewReflectionText('');
   };
@@ -842,11 +881,11 @@ const PookizDashboardView = ({
                 reflections.map((ref) => (
                   <div key={ref.id} className="bg-[#18181c] border border-white/5 p-4 rounded-xl flex items-start gap-4">
                     <div className="w-8 h-8 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center font-bold text-purple-400 text-xs shrink-0">
-                      {settings.devoteeName ? settings.devoteeName.charAt(0) : 'A'}
+                      {getDevoteeInitial()}
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col">
                       <div className="flex items-center justify-between gap-4">
-                        <span className="font-semibold text-white text-xs">{settings.devoteeName || 'arpit_admin_8395'}</span>
+                        <span className="font-semibold text-white text-xs">{getDevoteeName()}</span>
                         <span className="text-[10px] text-zinc-600">{ref.date}</span>
                       </div>
                       <p className="text-xs text-zinc-300 mt-2 leading-relaxed font-light">"{ref.text}"</p>
@@ -857,7 +896,7 @@ const PookizDashboardView = ({
                             if (window.confirm(isHi ? 'इस प्रविष्टि को हटाएं?' : 'Delete this entry?')) {
                               const updated = reflections.filter(r => r.id !== ref.id);
                               setReflections(updated);
-                              localStorage.setItem('vrindopnishad_reflections', JSON.stringify(updated));
+                              localStorage.setItem(getStorageKey(user), JSON.stringify(updated));
                               triggerToast(isHi ? 'प्रविष्टि हटाई गई।' : 'Entry deleted.');
                             }
                           }}

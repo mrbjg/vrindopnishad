@@ -748,6 +748,7 @@ const HomePage = () => {
         currentGreeting={currentGreeting}
         settings={settings}
         updateSetting={updateSetting}
+        user={user}
       />
     );
   }
