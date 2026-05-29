@@ -1,4 +1,4 @@
-// Comprehensive Metadata Dictionary for Braj Rasik Saints (CommonJS version for Serverless Functions)
+
 
 const SAINT_METADATA = {
   'haridas': {

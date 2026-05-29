@@ -6,7 +6,7 @@ import { dirname, join } from 'path';
 import glossaryTermsApi from '../api/glossaryTerms.js';
 const { GLOSSARY_TERMS } = glossaryTermsApi;
 
-// Load .env
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 dotenv.config({ path: join(__dirname, '../.env') });
@@ -16,7 +16,7 @@ const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || '';
 const FIREBASE_DB_URL = 'https://santvaanig-default-rtdb.asia-southeast1.firebasedatabase.app';
 const DOMAIN = 'https://path.vrindopnishad.in';
 
-// Devanagari to Hinglish Phonetic Map for SEO Slugs
+
 const DevanagariToHinglishMap = {
   'अ': 'a', 'आ': 'aa', 'इ': 'i', 'ई': 'ee', 'उ': 'u', 'ऊ': 'oo', 'ऋ': 'ri',
   'ए': 'e', 'ऐ': 'ai', 'ओ': 'o', 'औ': 'au', 'अं': 'an', 'अः': 'ah',
@@ -142,7 +142,7 @@ const escapeXmlUrl = (url) => {
     .replace(/>/g, '&gt;');
 };
 
-// Dynamic relations extractor
+
 function extractRelations(items) {
   if (!items || !items.length) {
     return { sants: [], books: [], ragas: [] };
@@ -153,7 +153,7 @@ function extractRelations(items) {
   const ragasMap = {};
   const biographies = [];
 
-  // Pass 1: Gather biographies
+  
   items.forEach(item => {
     if (item.category?.toLowerCase() === 'saint') {
       const title = item.title || '';
@@ -166,7 +166,7 @@ function extractRelations(items) {
     }
   });
 
-  // Pass 2: Extract relations from verses
+  
   items.forEach(item => {
     if (item.category?.toLowerCase() === 'saint') return;
 
@@ -198,7 +198,7 @@ function extractRelations(items) {
       saintName = item.author;
     }
 
-    // Extract Raga
+    
     let ragaName = null;
     const ragaRegex = /(राग\s+[^\s,;()\-]+)/;
     const matchTitle = title.match(ragaRegex);
@@ -278,9 +278,9 @@ const SEO_PAGES = [
 async function generateSitemap() {
   console.log('--- 🚀 SEO Sitemap Generator ---');
   
-  // If we are building on Vercel, dynamic routing handles /sitemap.xml.
-  // We only need to delete any static sitemaps in public/ or build/ so they do not block the Vercel rewrite,
-  // and then exit immediately. This avoids downloading 8000+ content rows from Supabase, saving vast egress.
+  
+  
+  
   if (process.env.VERCEL) {
     console.log('⚡ Vercel build environment detected. Deleting static sitemaps and skipping database queries.');
     try {
@@ -303,7 +303,7 @@ async function generateSitemap() {
   const today = new Date().toISOString().split('T')[0];
   let allContentItems = [];
 
-  // 1. Fetch from Firebase RTDB (Primary source)
+  
   try {
     console.log('📡 Fetching content from Firebase RTDB...');
     const response = await axios.get(`${FIREBASE_DB_URL}/public/content.json`, { timeout: 15000 });
@@ -321,7 +321,7 @@ async function generateSitemap() {
     console.warn('⚠️ Firebase fetch failed:', error.message);
   }
 
-  // 2. Fetch from Supabase with pagination (1000 rows per page)
+  
   if (SUPABASE_KEY) {
     try {
       console.log('📡 Fetching content from Supabase (paginated)...');
@@ -362,7 +362,7 @@ async function generateSitemap() {
     }
   }
 
-  // 3. Fallback: If both database fetches failed (e.g. sandboxed/offline), load from local backups
+  
   if (allContentItems.length === 0) {
     console.log('⚠️ Both database fetches failed (offline/sandboxed). Loading from local backups...');
     try {
@@ -375,7 +375,7 @@ async function generateSitemap() {
         const localData = JSON.parse(fileContent);
         console.log(`✅ Loaded ${localData.length} items from local backup.`);
         
-        // Add id field if missing to keep database consistency
+        
         const sanitizedData = localData.map((item, index) => ({
           id: item.id || `local-${index}`,
           ...item
@@ -389,7 +389,7 @@ async function generateSitemap() {
         const localSaints = JSON.parse(saintsContent);
         console.log(`✅ Loaded ${localSaints.length} saints from local backup.`);
         
-        // Map category to 'saint' for relations extraction to identify them correctly
+        
         const formattedSaints = localSaints.map((s, index) => ({
           id: s.id || `local-saint-${index}`,
           ...s,
@@ -402,7 +402,7 @@ async function generateSitemap() {
     }
   }
 
-  // 3. Extract unique categories dynamically case-insensitively and handle spaces/hyphens
+  
   const categoriesSet = new Set();
   const uniqueCategories = [];
   allContentItems.forEach(item => {
@@ -416,11 +416,11 @@ async function generateSitemap() {
   });
   console.log(`📂 Found ${uniqueCategories.length} unique categories.`);
 
-  // 4. Extract dynamic relations
+  
   const { sants, books, ragas } = extractRelations(allContentItems);
   console.log(`👥 Extracted Relations: ${sants.length} Saints, ${books.length} Books, ${ragas.length} Ragas`);
 
-  // 5. Generate XML — single-line <url> blocks to prevent whitespace corruption
+  
   const staticUrls = SEO_PAGES.flatMap(page => [
     `  <url><loc>${DOMAIN}${page.path}</loc><lastmod>${today}</lastmod><changefreq>${page.changefreq}</changefreq><priority>${page.priority}</priority></url>`,
     `  <url><loc>${DOMAIN}/hi${page.path === '/' ? '' : page.path}</loc><lastmod>${today}</lastmod><changefreq>${page.changefreq}</changefreq><priority>${page.priority}</priority></url>`
@@ -505,7 +505,7 @@ ${contentUrls}
 
     fs.writeFileSync('public/sitemap.xml', sitemap);
     
-    // Also write directly to build/ if it exists (useful for local production builds for static sites)
+    
     if (fs.existsSync('build')) {
       fs.writeFileSync('build/sitemap.xml', sitemap);
       console.log('✅ sitemap.xml written to build/');

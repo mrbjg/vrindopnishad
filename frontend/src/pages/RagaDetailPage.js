@@ -39,7 +39,7 @@ const RagaDetailPage = () => {
   useEffect(() => {
     let active = true;
 
-    // Reset state to initial data for the new slug immediately when slug changes
+    
     const getInitialRaga = () => {
       try {
         const memCached = apiService.getMemoryCachedItems();

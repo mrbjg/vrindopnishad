@@ -37,7 +37,7 @@ const HariraeJiPage = () => {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch mb-12">
-        {/* Main Content (col-span-2) */}
+        
         <div className="lg:col-span-2 space-y-6 text-left">
           <section className="glass-card p-6 rounded-3xl border border-white/5 space-y-4">
             <h2 className="text-lg font-bold text-minimal-gold flex items-center gap-2">
@@ -66,7 +66,7 @@ const HariraeJiPage = () => {
           </section>
         </div>
 
-        {/* Sidebar Info (col-span-1) */}
+        
         <div className="space-y-6 text-left">
           <div className="glass-card p-6 rounded-3xl border border-white/5 space-y-4 bg-white/[0.015]">
             <h3 className="font-bold text-sm text-minimal-gold uppercase tracking-wider flex items-center gap-1.5">
@@ -105,7 +105,7 @@ const HariraeJiPage = () => {
         </div>
       </div>
 
-      {/* FAQ Section */}
+      
       <section className="glass-card p-8 rounded-3xl border border-white/5 text-left max-w-4xl mx-auto mb-12">
         <h2 className="text-xl font-bold text-minimal-gold mb-6 flex items-center gap-2">
           <BookOpen size={20} className="text-primary" />

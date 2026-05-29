@@ -3,11 +3,7 @@ import Loader from '../components/Loader';
 import { useLoading } from '../contexts/LoadingContext';
 import Navigation from '../components/Navigation';
 
-/**
- * LoaderDemo Component - Demonstrates all loader variations
- * This is a test/demo page to showcase the loader component
- * Can be accessed at /loader-demo route
- */
+
 const LoaderDemo = () => {
     const [showInlineLoader, setShowInlineLoader] = useState(false);
     const { showLoading, hideLoading } = useLoading();
@@ -44,7 +40,7 @@ const LoaderDemo = () => {
                     </p>
                 </div>
 
-                {/* Demo 1: Global Fullscreen Loader */}
+                
                 <div className="card mb-4">
                     <h3 style={{ marginBottom: '1rem' }}>1. Global Fullscreen Loader</h3>
                     <p style={{ marginBottom: '1rem', color: '#666' }}>
@@ -76,12 +72,12 @@ const LoaderDemo = () => {
                         <strong>Code:</strong><br />
                         const &#123; showLoading, hideLoading &#125; = useLoading();<br />
                         showLoading('Custom message...');<br />
-                        {/* ... async work ... */}<br />
+                        <br />
                         hideLoading();
                     </div>
                 </div>
 
-                {/* Demo 2: Inline Loader */}
+                
                 <div className="card mb-4">
                     <h3 style={{ marginBottom: '1rem' }}>2. Inline Loader</h3>
                     <p style={{ marginBottom: '1rem', color: '#666' }}>
@@ -131,7 +127,7 @@ const LoaderDemo = () => {
                     </div>
                 </div>
 
-                {/* Demo 3: Loader with Different Texts */}
+                
                 <div className="card mb-4">
                     <h3 style={{ marginBottom: '1rem' }}>3. Loader Text Variations</h3>
                     <p style={{ marginBottom: '1rem', color: '#666' }}>
@@ -151,7 +147,7 @@ const LoaderDemo = () => {
                     </div>
                 </div>
 
-                {/* Demo 4: Loader Without Text */}
+                
                 <div className="card mb-4">
                     <h3 style={{ marginBottom: '1rem' }}>4. Loader Without Text</h3>
                     <p style={{ marginBottom: '1rem', color: '#666' }}>
@@ -175,7 +171,7 @@ const LoaderDemo = () => {
                     </div>
                 </div>
 
-                {/* Animation Details */}
+                
                 <div className="card" style={{ background: 'linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(255, 215, 0, 0.05) 100%)' }}>
                     <h3 style={{ marginBottom: '1rem' }}>✨ Animation Details</h3>
                     <div style={{ lineHeight: '1.8', color: '#5d3a1a' }}>

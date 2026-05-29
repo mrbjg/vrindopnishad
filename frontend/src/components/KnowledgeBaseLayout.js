@@ -16,7 +16,7 @@ const KnowledgeBaseLayout = () => {
   const isHindiRoute = location.pathname.startsWith('/hi');
   const isPookiz = settings.layoutMode === 'pookiz';
 
-  // State
+  
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedCategories, setExpandedCategories] = useState({
@@ -29,7 +29,7 @@ const KnowledgeBaseLayout = () => {
   const [headings, setHeadings] = useState([]);
   const [activeHeadingId, setActiveHeadingId] = useState('');
 
-  // Reading settings state (persisted in localStorage)
+  
   const [kbSidebarWidth, setKbSidebarWidth] = useState(() => {
     const saved = localStorage.getItem('pookiz_kb_sidebar_width');
     const width = saved ? parseInt(saved, 10) : 360;
@@ -85,18 +85,18 @@ const KnowledgeBaseLayout = () => {
     };
   }, [isKbResizing, resizeKb, stopKbResizing]);
   const [fontSize, setFontSize] = useState(() => {
-    return localStorage.getItem('vrindopnishad_read_font_size') || 'md'; // sm, md, lg, xl
+    return localStorage.getItem('vrindopnishad_read_font_size') || 'md'; 
   });
   const [fontFamily, setFontFamily] = useState(() => {
-    return localStorage.getItem('vrindopnishad_read_font_family') || 'serif'; // serif, sans
+    return localStorage.getItem('vrindopnishad_read_font_family') || 'serif'; 
   });
   const [lineHeight, setLineHeight] = useState(() => {
-    return localStorage.getItem('vrindopnishad_read_line_height') || 'normal'; // cozy, normal, relaxed
+    return localStorage.getItem('vrindopnishad_read_line_height') || 'normal'; 
   });
 
   const settingsRef = useRef(null);
 
-  // Sync reading settings to local storage
+  
   useEffect(() => {
     localStorage.setItem('vrindopnishad_read_font_size', fontSize);
   }, [fontSize]);
@@ -109,7 +109,7 @@ const KnowledgeBaseLayout = () => {
     localStorage.setItem('vrindopnishad_read_line_height', lineHeight);
   }, [lineHeight]);
 
-  // Click outside listener to close settings dropdown
+  
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (settingsRef.current && !settingsRef.current.contains(e.target)) {
@@ -120,7 +120,7 @@ const KnowledgeBaseLayout = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Inject Google Translate script and listen to translation triggers
+  
   useEffect(() => {
     window.googleTranslateElementInit = () => {
       new window.google.translate.TranslateElement({
@@ -140,7 +140,7 @@ const KnowledgeBaseLayout = () => {
     }
   }, []);
 
-  // Listen to path changes and apply translation programmatically
+  
   useEffect(() => {
     const targetLang = isHindiRoute ? 'hi' : 'en';
     
@@ -183,7 +183,7 @@ const KnowledgeBaseLayout = () => {
     }
   }, [isHindiRoute]);
 
-  // Extract headings from the article dynamically for table of contents
+  
   useEffect(() => {
     const timer = setTimeout(() => {
       const h2Elements = document.querySelectorAll('.prose-content h2, article h2, section h2, .glass-card h2');
@@ -202,14 +202,14 @@ const KnowledgeBaseLayout = () => {
       } else {
         setActiveHeadingId('');
       }
-    }, 450); // 450ms delay for route fade-in & lazy load mount
+    }, 450); 
 
     return () => clearTimeout(timer);
   }, [location.pathname]);
 
-  // Scroll spy to highlight active heading on scroll
+  
   useEffect(() => {
-    // Detect mobile touch devices or small viewports once per render to bypass scroll tracking
+    
     const isMobile = window.matchMedia('(max-width: 1023px)').matches || 
                      ('ontouchstart' in window) || 
                      (navigator.maxTouchPoints > 0);
@@ -221,7 +221,7 @@ const KnowledgeBaseLayout = () => {
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          const scrollThreshold = 160; // Offset for header/top spacing
+          const scrollThreshold = 160; 
           let currentActive = headings[0].id;
           
           for (const heading of headings) {
@@ -261,11 +261,11 @@ const KnowledgeBaseLayout = () => {
     };
   }, [headings]);
 
-  // Determine active article from path
+  
   const getActiveSlug = () => {
     const parts = location.pathname.split('/');
     const lastPart = parts[parts.length - 1];
-    // If it's a known slug, return it
+    
     if (articles.some(art => art.slug === lastPart)) {
       return lastPart;
     }
@@ -276,7 +276,7 @@ const KnowledgeBaseLayout = () => {
   const activeArticleIndex = articles.findIndex(art => art.slug === activeSlug);
   const currentArticle = activeArticleIndex !== -1 ? articles[activeArticleIndex] : null;
 
-  // Toggle categories expansion
+  
   const toggleCategory = (catId) => {
     setExpandedCategories(prev => ({
       ...prev,
@@ -284,7 +284,7 @@ const KnowledgeBaseLayout = () => {
     }));
   };
 
-  // Switch languages but keep the current article open
+  
   const handleLanguageSwitch = (targetHindi) => {
     const currentPath = location.pathname;
     let newPath = '';
@@ -305,11 +305,11 @@ const KnowledgeBaseLayout = () => {
     navigate(newPath);
   };
 
-  // Find next/previous article
+  
   const prevArticle = activeArticleIndex > 0 ? articles[activeArticleIndex - 1] : null;
   const nextArticle = activeArticleIndex !== -1 && activeArticleIndex < articles.length - 1 ? articles[activeArticleIndex + 1] : null;
 
-  // Search filtering for sidebar
+  
   const filteredArticles = articles.filter(art => {
     const title = isHindiRoute ? art.titleHi : art.titleEn;
     const desc = isHindiRoute ? art.descHi : art.descEn;
@@ -318,7 +318,7 @@ const KnowledgeBaseLayout = () => {
            art.slug.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
-  // Group filtered articles by category
+  
   const groupedArticles = {
     philosophy: filteredArticles.filter(art => art.category === 'philosophy'),
     traditions: filteredArticles.filter(art => art.category === 'traditions'),
@@ -341,18 +341,18 @@ const KnowledgeBaseLayout = () => {
     }
   };
 
-  // CSS classes mapped dynamically based on reading customizer
+  
   const getReadingClasses = () => {
     let classes = '';
     
-    // Font family
+    
     if (fontFamily === 'serif') {
       classes += ' font-serif ';
     } else {
       classes += ' font-sans ';
     }
 
-    // Font size
+    
     if (fontSize === 'sm') {
       classes += ' text-xs md:text-sm ';
     } else if (fontSize === 'md') {
@@ -363,7 +363,7 @@ const KnowledgeBaseLayout = () => {
       classes += ' text-lg md:text-xl ';
     }
 
-    // Line height
+    
     if (lineHeight === 'cozy') {
       classes += ' leading-snug ';
     } else if (lineHeight === 'normal') {
@@ -375,7 +375,7 @@ const KnowledgeBaseLayout = () => {
     return classes;
   };
 
-  // Theme-based layout wrapper classes
+  
   const isLight = isLightTheme(settings.theme);
 
   const panelBg = isPookiz 
@@ -408,10 +408,10 @@ const KnowledgeBaseLayout = () => {
 
   return (
     <div className={`flex flex-col lg:flex-row ${isPookiz ? 'gap-4' : 'gap-6'} w-full ${isPookiz ? 'min-h-[calc(100vh-80px)]' : 'lg:h-full lg:overflow-hidden'} animate-fade-in`}>
-      {/* Hidden Google Translate container */}
+      
       <div id="google_translate_element" style={{ display: 'none' }}></div>
       
-      {/* Mobile Toggle Button */}
+      
       <div className="lg:hidden flex items-center justify-between p-3 bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-2xl">
         <button 
           onClick={() => setSidebarOpen(true)}
@@ -422,7 +422,7 @@ const KnowledgeBaseLayout = () => {
         </button>
 
         <div className="flex items-center gap-2">
-          {/* Quick Lang Switch */}
+          
           <button 
             onClick={() => handleLanguageSwitch(!isHindiRoute)}
             className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--text-color)]/[0.04] border border-[var(--glass-border)] text-[10px] font-bold tracking-wide uppercase hover:bg-[var(--text-color)]/[0.08] text-[var(--text-color)]/80 hover:text-[var(--text-color)] transition-colors"
@@ -455,7 +455,7 @@ const KnowledgeBaseLayout = () => {
             </button>
           </div>
 
-          {/* Search Field */}
+          
           <div className="relative mb-5 shrink-0">
             <Search size={14} className="absolute left-3 top-3 text-[var(--text-color)]/40" />
             <input 
@@ -467,9 +467,9 @@ const KnowledgeBaseLayout = () => {
             />
           </div>
 
-          {/* Tree List */}
+          
           <div className="flex-1 overflow-y-auto space-y-4 pr-1 scrollbar-thin">
-            {/* Main Link back to Hub */}
+            
             <Link 
               to={isHindiRoute ? "/hi/knowledge-base" : "/knowledge-base"}
               onClick={() => setSidebarOpen(false)}
@@ -529,7 +529,7 @@ const KnowledgeBaseLayout = () => {
           </div>
         </div>
 
-        {/* Resize handle */}
+        
         <div 
           onMouseDown={startKbResizing}
           className="hidden lg:block absolute top-0 -right-1 bottom-0 w-3 cursor-col-resize z-50 group"
@@ -540,7 +540,7 @@ const KnowledgeBaseLayout = () => {
         </div>
       </aside>
 
-      {/* Screen Backdrop for mobile sidebar */}
+      
       {sidebarOpen && (
         <div 
           onClick={() => setSidebarOpen(false)}
@@ -548,11 +548,11 @@ const KnowledgeBaseLayout = () => {
         ></div>
       )}
 
-      {/* Main Content Pane + Right Sidebar Container */}
+      
       <div className={`flex-1 flex flex-col xl:flex-row ${isPookiz ? 'gap-4' : 'gap-6'} min-w-0 lg:h-full lg:overflow-hidden`}>
-        {/* Main Content Pane */}
+        
         <div className="flex-1 flex flex-col min-w-0 lg:h-full lg:overflow-hidden">
-          {/* Controls Toolbar */}
+          
           <div className={`relative z-10 flex items-center justify-between p-3 md:p-4 rounded-none lg:rounded-t-3xl border-b border-[var(--glass-border)] lg:border-t lg:border-x lg:border-b-0 ${
             isPookiz 
               ? (isLight 
@@ -560,7 +560,7 @@ const KnowledgeBaseLayout = () => {
                   : 'bg-transparent border-white/5 lg:bg-[#121215] lg:border-white/5 text-[#f4f4f5]') 
               : 'bg-transparent border-[var(--glass-border)] lg:bg-[var(--glass-bg)] lg:border-[var(--glass-border)] text-[var(--text-color)] backdrop-blur-none lg:backdrop-blur-xl'
           } gap-4`}>
-            {/* Left: Breadcrumbs */}
+            
             <div className="flex items-center gap-1.5 text-[10px] md:text-xs text-[var(--text-color)]/50 truncate">
               <Link to={isHindiRoute ? "/hi" : "/"} className="hover:text-[var(--text-color)]">
                 {isHindiRoute ? "डैशबोर्ड" : "Dashboard"}
@@ -579,9 +579,9 @@ const KnowledgeBaseLayout = () => {
               )}
             </div>
 
-            {/* Right: Settings, Lang Toggle */}
+            
             <div className="flex items-center gap-2 shrink-0">
-              {/* Lang switcher */}
+              
               <div className="flex items-center bg-[var(--text-color)]/[0.03] border border-[var(--glass-border)] rounded-full p-0.5">
                 <button 
                   onClick={() => handleLanguageSwitch(false)}
@@ -605,7 +605,7 @@ const KnowledgeBaseLayout = () => {
                 </button>
               </div>
 
-              {/* Typography Customizer Dropdown */}
+              
               <div className="relative" ref={settingsRef}>
                 <button 
                   onClick={() => setShowSettings(!showSettings)}
@@ -622,7 +622,7 @@ const KnowledgeBaseLayout = () => {
                       <span>Reading Layout</span>
                     </h4>
 
-                    {/* Font Family Option */}
+                    
                     <div className="space-y-1.5 mb-4">
                       <span className="text-[10px] text-[var(--text-color)]/50 uppercase font-bold tracking-wide block">Typography</span>
                       <div className="grid grid-cols-2 gap-1.5">
@@ -641,7 +641,7 @@ const KnowledgeBaseLayout = () => {
                       </div>
                     </div>
 
-                    {/* Font Size Option */}
+                    
                     <div className="space-y-1.5 mb-4">
                       <span className="text-[10px] text-[var(--text-color)]/50 uppercase font-bold tracking-wide block">Text Scale</span>
                       <div className="grid grid-cols-4 gap-1">
@@ -657,7 +657,7 @@ const KnowledgeBaseLayout = () => {
                       </div>
                     </div>
 
-                    {/* Line Spacing Option */}
+                    
                     <div className="space-y-1.5">
                       <span className="text-[10px] text-[var(--text-color)]/50 uppercase font-bold tracking-wide block">Line Spacing</span>
                       <div className="grid grid-cols-3 gap-1">
@@ -678,7 +678,7 @@ const KnowledgeBaseLayout = () => {
             </div>
           </div>
 
-          {/* Content Pane Core */}
+          
           <div 
             ref={contentScrollRef} 
             id="kb-classic-content-container" 
@@ -690,12 +690,12 @@ const KnowledgeBaseLayout = () => {
                 : 'bg-transparent lg:bg-[var(--glass-bg)] lg:border-[var(--glass-border)] text-[var(--text-color)] lg:backdrop-blur-xl lg:shadow-xl'
             } lg:overflow-y-auto custom-scrollbar`}
           >
-            {/* Custom scoped container with reader choices applied */}
+            
             <div className={getReadingClasses()}>
               <Outlet />
             </div>
 
-            {/* Sequential Next/Prev footer */}
+            
             {currentArticle && (
               <div className="mt-12 pt-6 border-t border-[var(--glass-border)] flex items-center justify-between gap-4">
                 {prevArticle ? (
@@ -732,7 +732,7 @@ const KnowledgeBaseLayout = () => {
           </div>
         </div>
 
-        {/* Right Sidebar: Table of Contents (visible only on desktop wide screen) */}
+        
         {currentArticle && headings.length > 0 && (
           <aside className="hidden xl:block w-56 shrink-0 lg:h-full lg:py-2 space-y-4">
             <div className={`p-4 rounded-2xl border border-[var(--glass-border)] ${panelBg} max-h-full overflow-y-auto custom-scrollbar`}>
@@ -758,7 +758,7 @@ const KnowledgeBaseLayout = () => {
                             behavior: 'smooth'
                           });
                         } else {
-                          const yOffset = -140; // Offset for sticky header
+                          const yOffset = -140; 
                           const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
                           window.scrollTo({ top: y, behavior: 'smooth' });
                         }

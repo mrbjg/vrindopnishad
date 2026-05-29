@@ -1,4 +1,4 @@
-// Centralized glossary terms database with rich metadata for SEO interlinking and dynamic detail pages.
+
 
 export const GLOSSARY_TERMS = [
   {

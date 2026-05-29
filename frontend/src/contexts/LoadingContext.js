@@ -1,10 +1,7 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import Loader from '../components/Loader';
 
-/**
- * Loading Context - Provides global loading state management
- * Use this to show/hide loading indicator from any component
- */
+
 const LoadingContext = createContext();
 
 export const useLoading = () => {

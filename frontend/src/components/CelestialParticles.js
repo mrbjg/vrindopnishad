@@ -27,15 +27,15 @@ const CelestialParticles = () => {
     let shootingStars = [];
     let birds = [];
     
-    // Throttle rendering: 30 FPS on mobile, 60 FPS on desktop
+    
     let lastTime = 0;
     const fpsInterval = isMobile ? 1000 / 30 : 1000 / 60;
 
-    // Create offscreen backdrop canvas for static background items
+    
     const backdropCanvas = document.createElement('canvas');
     const bCtx = backdropCanvas.getContext('2d');
 
-    // Pre-render moon crescent if night theme
+    
     let moonCanvas = null;
     if (theme === 'night') {
       moonCanvas = document.createElement('canvas');
@@ -59,7 +59,7 @@ const CelestialParticles = () => {
       }
     }
     
-    // Reduced particle count for maximum performance
+    
     let particleCount = isMobile ? 10 : 35;
     if (theme === 'snow' || theme === 'winter') {
       particleCount = isMobile ? 20 : 60;
@@ -85,14 +85,14 @@ const CelestialParticles = () => {
       particleCount = isMobile ? 30 : 80;
     }
 
-    // Particle constructor helper
+    
     const createParticle = (initY = false) => {
       const w = canvas.width;
       const h = canvas.height;
       const randX = Math.random() * w;
       const randY = initY ? Math.random() * h : h + 10;
 
-      // Base configuration - tiny shimmering dots
+      
       let p = {
         x: randX,
         y: randY,
@@ -106,7 +106,7 @@ const CelestialParticles = () => {
         extra: {}
       };
 
-      // Customizations per theme
+      
       if (theme === 'snow' || theme === 'winter') {
         p.radius = Math.random() * (isMobile ? 1.5 : 2.5) + 0.6;
         p.vy = Math.random() * 0.7 + 0.3;
@@ -264,7 +264,7 @@ const CelestialParticles = () => {
           lastWidth = width;
           lastHeight = height;
 
-          // Re-initialize and draw backdrop
+          
           backdropCanvas.width = canvas.width;
           backdropCanvas.height = canvas.height;
           renderStaticBackdrop();
@@ -277,22 +277,22 @@ const CelestialParticles = () => {
       }, 150);
     };
 
-    // Initial canvas dimensions setup
+    
     canvas.width = window.innerWidth + 8;
     canvas.height = window.innerHeight + 8;
     
-    // Set initial backdrop size
+    
     backdropCanvas.width = canvas.width;
     backdropCanvas.height = canvas.height;
 
     window.addEventListener('resize', resizeCanvas);
 
-    // Initialize particles across the canvas
+    
     for (let i = 0; i < particleCount; i++) {
       particles.push(createParticle(true));
     }
 
-    // Static Backdrop drawing functions (render to bCtx)
+    
     const drawMoon = (pCtx, cWidth, cHeight) => {
       if (!moonCanvas) return;
       if (cWidth < 1024) return;
@@ -946,7 +946,7 @@ const CelestialParticles = () => {
       }
     };
 
-    // Render initial static backdrop
+    
     renderStaticBackdrop();
 
     const drawLeaf = (pCtx, x, y, size, angle, color) => {
@@ -974,10 +974,10 @@ const CelestialParticles = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const time = now * 0.0035;
 
-      // 1. Draw static backdrop cached image
+      
       ctx.drawImage(backdropCanvas, 0, 0);
 
-      // 2. Draw dynamic backdrop elements
+      
       if (theme === 'aurora') {
         drawAuroraBackdrop(ctx, canvas.width, canvas.height);
       } else if (theme === 'ocean') {
@@ -986,9 +986,9 @@ const CelestialParticles = () => {
         drawWaterfallDynamic(ctx, canvas.width, canvas.height);
       }
 
-      // 3. Render and update particles
+      
       particles.forEach((p, index) => {
-        // Core Physics
+        
         if (theme === 'snow' || theme === 'winter') {
           p.extra.swayPhase += p.extra.swaySpeed;
           p.x += p.vx + Math.sin(p.extra.swayPhase) * p.extra.swayAmplitude * 0.25;
@@ -1030,11 +1030,11 @@ const CelestialParticles = () => {
           p.y += p.vy;
         }
 
-        // Twinkle/Shimmer cycle
+        
         p.twinklePhase += p.twinkleSpeed;
         const currentAlpha = Math.max(0.05, p.alpha + Math.sin(p.twinklePhase) * 0.18);
 
-        // Draw particle representation
+        
         if (theme === 'rainy') {
           ctx.beginPath();
           ctx.strokeStyle = `rgba(174, 207, 238, ${currentAlpha})`;
@@ -1093,7 +1093,7 @@ const CelestialParticles = () => {
           ctx.fill();
         }
 
-        // Bounds check & recycle particle
+        
         let isOffScreen = false;
         if (theme === 'snow' || theme === 'winter' || theme === 'rainy' || theme === 'forest' || theme === 'cherryblossom' || theme === 'cherryblossom_light') {
           isOffScreen = p.y > canvas.height + 20 || p.x < -20 || p.x > canvas.width + 20;
@@ -1120,7 +1120,7 @@ const CelestialParticles = () => {
         }
       });
 
-      // 4. Space Theme Shooting Stars
+      
       if (theme === 'space') {
         if (Math.random() < 0.006 && shootingStars.length < 2) {
           shootingStars.push({
@@ -1153,7 +1153,7 @@ const CelestialParticles = () => {
         });
       }
 
-      // 5. Mountain Theme Flying Birds
+      
       if (theme === 'mountains' || theme === 'mountains morning' || theme === 'mountain_morning') {
         if (Math.random() < 0.005 && birds.length < 4) {
           birds.push({

@@ -1,6 +1,6 @@
 import { transliterate } from './transliterate';
 
-// Helper to generate URL-friendly slug
+
 export const slugify = (text) => {
   if (!text) return '';
   return text
@@ -17,25 +17,25 @@ export const slugify = (text) => {
 let lastItemsRef = null;
 let lastResult = null;
 
-// Main function to parse and extract relationships from the content library
+
 export function extractRelations(items) {
   if (!items || !items.length) {
     return { sants: [], books: [], ragas: [], biographies: [] };
   }
 
-  // Fast memoization check to avoid O(N) processing of 10,000 items
+  
   if (items === lastItemsRef && lastResult) {
     return lastResult;
   }
 
   if (lastItemsRef && items.length === lastItemsRef.length && items.length > 0) {
     if (items[0] === lastItemsRef[0] && items[items.length - 1] === lastItemsRef[lastItemsRef.length - 1]) {
-      lastItemsRef = items; // Sync reference for exact hit next time
+      lastItemsRef = items; 
       return lastResult;
     }
   }
 
-  // Check persistent cache in localStorage to avoid parsing on next mounts/refresh
+  
   const cacheKey = 'sv_extracted_relations_cache';
   if (typeof window !== 'undefined') {
     try {
@@ -62,7 +62,7 @@ export function extractRelations(items) {
   const ragasMap = {};
   const biographies = [];
 
-  // 1. Separate Biographies (category === 'saint')
+  
   items.forEach(item => {
     if (item.category?.toLowerCase() === 'saint') {
       const title = item.title || '';
@@ -83,9 +83,9 @@ export function extractRelations(items) {
     }
   });
 
-  // 2. Process Content Items & Extract Relations
+  
   items.forEach(item => {
-    if (item.category?.toLowerCase() === 'saint') return; // Skip biography items themselves
+    if (item.category?.toLowerCase() === 'saint') return; 
 
     const title = item.title || '';
     let cleanTitle = title;
@@ -93,19 +93,19 @@ export function extractRelations(items) {
     let bookName = null;
     let verseNum = null;
 
-    // Check for " - " separator
+    
     const parts = title.split(/\s+-\s+/);
     if (parts.length >= 2) {
       cleanTitle = parts[0].trim();
       const relationText = parts[1].trim();
 
-      // Extract verse number, e.g. (14.41) or (10)
+      
       const verseMatch = relationText.match(/\(([^)]+)\)$/);
       if (verseMatch) {
         verseNum = verseMatch[1].trim();
         const textWithoutVerse = relationText.replace(/\(([^)]+)\)$/, '').trim();
         
-        // Split by comma for Saint and Book
+        
         const relParts = textWithoutVerse.split(/\s*,\s*/);
         if (relParts.length >= 2) {
           saintName = relParts[0].trim();
@@ -119,7 +119,7 @@ export function extractRelations(items) {
           }
         }
       } else {
-        // No verse number
+        
         const relParts = relationText.split(/\s*,\s*/);
         if (relParts.length >= 2) {
           saintName = relParts[0].trim();
@@ -135,12 +135,12 @@ export function extractRelations(items) {
       }
     }
 
-    // Fallback if saintName is still null but item.author is valid
+    
     if (!saintName && item.author && item.author !== 'Braj Rasik Heritage') {
       saintName = item.author;
     }
 
-    // Extract Raga
+    
     let ragaName = null;
     const ragaRegex = /(राग\s+[^\s,;()-]+)/;
     const matchTitle = title.match(ragaRegex);
@@ -152,11 +152,11 @@ export function extractRelations(items) {
     else if (matchHindi) ragaName = matchHindi[1];
 
     if (ragaName) {
-      // Clean up Raga name (e.g. "राग परज" instead of "राग परज, त्रिताल")
+      
       ragaName = ragaName.split(/[,]/)[0].trim();
     }
 
-    // Enrich the item
+    
     const enrichedItem = {
       ...item,
       cleanTitle,
@@ -167,13 +167,13 @@ export function extractRelations(items) {
       slug: item.slug || slugify(transliterate(cleanTitle))
     };
 
-    // Add to Sants Map
+    
     if (saintName) {
       const cleanSantKey = saintName.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim();
       const santSlug = slugify(transliterate(cleanSantKey));
       
       if (!santsMap[cleanSantKey]) {
-        // Try to find matching biography
+        
         const matchedBio = biographies.find(bio => 
           bio.name.includes(cleanSantKey) || cleanSantKey.includes(bio.name)
         );
@@ -192,7 +192,7 @@ export function extractRelations(items) {
       if (bookName) santsMap[cleanSantKey].books.add(bookName);
     }
 
-    // Add to Books Map
+    
     if (bookName) {
       const bookSlug = slugify(transliterate(bookName));
       if (!booksMap[bookName]) {
@@ -208,7 +208,7 @@ export function extractRelations(items) {
       booksMap[bookName].verses.push(enrichedItem);
     }
 
-    // Add to Ragas Map
+    
     if (ragaName) {
       const ragaSlug = slugify(transliterate(ragaName));
       if (!ragasMap[ragaName]) {
@@ -223,7 +223,7 @@ export function extractRelations(items) {
     }
   });
 
-  // Convert Sets to Arrays and structure final response
+  
   const sants = Object.values(santsMap).map(s => ({
     ...s,
     books: Array.from(s.books)
@@ -236,7 +236,7 @@ export function extractRelations(items) {
   lastItemsRef = items;
   lastResult = result;
 
-  // Persist cache to localStorage
+  
   if (typeof window !== 'undefined') {
     try {
       localStorage.setItem('sv_extracted_relations_cache', JSON.stringify({

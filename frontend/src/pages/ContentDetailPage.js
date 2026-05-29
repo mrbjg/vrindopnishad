@@ -64,7 +64,7 @@ const ContentDetailPage = () => {
   useEffect(() => {
     let active = true;
 
-    // Reset state to initial data for the new ID immediately when ID changes
+    
     const getInitialContent = () => {
       const sessionCached = apiService.getCachedData(`id_${id}`);
       if (sessionCached) return sessionCached;
@@ -94,11 +94,11 @@ const ContentDetailPage = () => {
         if (active) {
           setContent(data);
           
-          // Now fetch relations to identify matching Saint, Book, Raga, and related verses
+          
           const allItems = await apiService.getAllContent(null, 10000);
           const relations = extractRelations(allItems);
           
-          // Find matching saint
+          
           const currentAuthor = data.author;
           let matchedSaint = null;
           if (currentAuthor) {
@@ -106,7 +106,7 @@ const ContentDetailPage = () => {
             matchedSaint = relations.sants.find(s => s.cleanName === cleanAuthorKey || s.name.includes(cleanAuthorKey));
           }
           
-          // Find matching book
+          
           const cleanTitle = data.title || "";
           let bookName = null;
           const parts = cleanTitle.split(/\s+-\s+/);
@@ -126,7 +126,7 @@ const ContentDetailPage = () => {
           }
           const matchedBook = bookName ? relations.books.find(b => b.name === bookName) : null;
           
-          // Find matching raga
+          
           let ragaName = null;
           const ragaRegex = /(राग\s+[^\s,;()-]+)/;
           const matchTitle = cleanTitle.match(ragaRegex);
@@ -139,7 +139,7 @@ const ContentDetailPage = () => {
           
           const matchedRaga = ragaName ? relations.ragas.find(r => r.name === ragaName) : null;
           
-          // Related verses (same category, different ID)
+          
           const categoryVerses = allItems.filter(item => 
             item.category === data.category && 
             item.id?.toString() !== data.id?.toString() &&
@@ -169,12 +169,12 @@ const ContentDetailPage = () => {
   const formatVerseText = (text) => {
     if (!text) return null;
 
-    // Feature Check: Line-by-Line Reading
+    
     if (!settings.lineByLine) {
       return <div>{text}</div>;
     }
 
-    // Split by । or ॥ (with optional verse numbers) or comma followed by space
+    
     const parts = text.split(/([।॥]\s*(?:\[\d+\]|\(?\d+\)?)?|,\s)/g);
 
     const lines = [];
@@ -192,12 +192,12 @@ const ContentDetailPage = () => {
       }
     }
 
-    // Catch any trailing text
+    
     if (currentLine.trim()) {
       lines.push(currentLine.trim());
     }
 
-    // If no punctuation was found, just return original but trimmed
+    
     if (lines.length === 0) return <div>{text}</div>;
 
     return lines.map((line, idx) => (
@@ -230,13 +230,13 @@ const ContentDetailPage = () => {
         <div className="skeleton w-32 h-6 mb-12 rounded"></div>
 
         <div className="space-y-12">
-          {/* Title skeleton */}
+          
           <div className="skeleton h-16 w-3/4 mb-10 rounded-xl"></div>
 
-          {/* Description skeleton */}
+          
           <div className="skeleton h-24 w-full mb-12 rounded-xl"></div>
 
-          {/* Content sections skeletons */}
+          
           <div className="space-y-16">
             <div className="py-12 border-b border-white/5">
               <div className="skeleton h-8 w-40 mb-8 rounded"></div>
@@ -307,10 +307,10 @@ const ContentDetailPage = () => {
         <meta name="description" content={`${displayTitle} — ${content.category} by ${displayAuthor || 'Sant Vaani'}. ${isHindiRoute && content.hindi_text ? content.hindi_text.substring(0, 150) + '...' : transliteratedHindi ? transliteratedHindi.substring(0, 150) + '...' : content.sanskrit_text ? content.sanskrit_text.substring(0, 150) + '...' : content.description?.substring(0, 150) + '...'}`} />
         <meta name="keywords" content={`${content.title}, ${titleHing}, ${content.author || 'Sant Vaani'}, ${authorHing}, ${content.category}, Sanskrit Shloka, Hindi meaning, English translation, Vrindopnishad, Sant Vaani, sacred verse, devotional, spiritual wisdom, Hinglish transliteration, roman hindi lyrics, ${titleHing} bhajan lyrics`} />
 
-        {/* Canonical Link */}
+        
         <link rel="canonical" href={canonicalUrl} />
 
-        {/* Open Graph / social media tags */}
+        
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Sant-Vaani | Sacred Digital Sanctuary" />
         <meta property="og:title" content={`${displayTitle} - ${content.category}`} />
@@ -323,7 +323,7 @@ const ContentDetailPage = () => {
         <meta name="twitter:title" content={displayTitle} />
         <meta name="twitter:description" content={content.description?.substring(0, 160)} />
 
-        {/* JSON-LD Structured Data for Search Ranking */}
+        
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -394,7 +394,7 @@ const ContentDetailPage = () => {
         </Link>
 
         <div className="w-full px-0 py-4 md:px-14 md:py-14 mb-12 relative overflow-hidden">
-          {/* Main Content Header - Overhauled for Mobile Relatability */}
+          
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10 mb-12 border-b border-white/5 pb-10">
             <div className="flex flex-col gap-6 w-full lg:w-auto">
               <div className="flex flex-col items-center lg:items-start gap-4">
@@ -415,7 +415,7 @@ const ContentDetailPage = () => {
               </div>
             </div>
 
-            {/* Reading Controls - Hidden on Mobile, Top-Right on Desktop */}
+            
             <div className="hidden lg:flex flex-col items-center lg:items-end w-full lg:w-auto">
               <FontWheel 
                 value={settings.fontSize} 
@@ -543,7 +543,7 @@ const ContentDetailPage = () => {
               </div>
             )}
 
-            {/* Media Sections */}
+            
             {content.audio_url && (
               <div className="pt-8 border-t border-white/5">
                 <h3 className="text-xl font-bold mb-6 flex items-center gap-3">
@@ -598,7 +598,7 @@ const ContentDetailPage = () => {
                 </div>
               </div>
             )}
-            {/* End of Content - Mobile Appearance Dial */}
+            
             <div className="lg:hidden mt-20 pt-10 border-t border-white/5 flex flex-col items-center gap-6">
               <span className="content-section-label text-[10px] uppercase tracking-[0.3em] font-bold">Reading Settings</span>
               <div className="w-full max-w-[320px]">
@@ -612,7 +612,7 @@ const ContentDetailPage = () => {
         </div>
       </article>
 
-      {/* SEO Internal Linking: Related Content Section */}
+      
       <section className="mt-24 mb-12 animate-fade-in">
         <div className="flex items-center gap-4 mb-10">
           <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/10"></div>
@@ -674,7 +674,7 @@ const ContentDetailPage = () => {
             </Link>
           )}
 
-          {/* Fallback related verses if we don't have enough dynamic relations, or just show them in the grid */}
+          
           {(!relatedSaint || !relatedBook || !relatedRaga) && relatedVerses.slice(0, 3 - (relatedSaint ? 1 : 0) - (relatedBook ? 1 : 0) - (relatedRaga ? 1 : 0)).map(verse => (
             <Link key={verse.id} to={isHindiRoute ? `/hi/content/${verse.slug || verse.id}` : `/content/${verse.slug || verse.id}`} className="glass-card p-6 group hover:border-amber-500/30 transition-all flex flex-col justify-between">
               <div>

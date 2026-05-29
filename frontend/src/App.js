@@ -13,7 +13,7 @@ import PageSkeleton from './components/ui/PageSkeleton';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 
-// Helper for resilient lazy loading that handles chunk failure (e.g. after code redeployments or server restarts)
+
 const lazyWithRetry = (componentImport) => React.lazy(() => 
   componentImport().catch((error) => {
     const errorMsg = error && error.message ? String(error.message).toLowerCase() : '';
@@ -26,13 +26,13 @@ const lazyWithRetry = (componentImport) => React.lazy(() =>
       errorName.includes('chunkloaderror');
     if (isChunkError) {
       window.location.reload();
-      return new Promise(() => {}); // prevent render crashes by returning unresolved promise
+      return new Promise(() => {}); 
     }
     throw error;
   })
 );
 
-// Performance: Route-based Code Splitting
+
 const HomePage = lazyWithRetry(() => import('./pages/HomePage'));
 const ContentListPage = lazyWithRetry(() => import('./pages/ContentListPage'));
 const ContentDetailPage = lazyWithRetry(() => import('./pages/ContentDetailPage'));
@@ -42,7 +42,7 @@ const AdminLoginPage = lazyWithRetry(() => import('./pages/AdminLoginPage'));
 const AdminDashboard = lazyWithRetry(() => import('./pages/AdminDashboard'));
 const LoaderDemo = lazyWithRetry(() => import('./pages/LoaderDemo'));
 
-// Dynamic Relations Pages
+
 const SaintsListPage = lazyWithRetry(() => import('./pages/SaintsListPage'));
 const SaintDetailPage = lazyWithRetry(() => import('./pages/SaintDetailPage'));
 const BooksListPage = lazyWithRetry(() => import('./pages/BooksListPage'));
@@ -50,7 +50,7 @@ const BookDetailPage = lazyWithRetry(() => import('./pages/BookDetailPage'));
 const RagasListPage = lazyWithRetry(() => import('./pages/RagasListPage'));
 const RagaDetailPage = lazyWithRetry(() => import('./pages/RagaDetailPage'));
 
-// SEO Content Pages
+
 const WhatIsVrindopnishad = lazyWithRetry(() => import('./pages/seo/WhatIsVrindopnishad'));
 const MeaningPage = lazyWithRetry(() => import('./pages/seo/MeaningPage'));
 const OriginPage = lazyWithRetry(() => import('./pages/seo/OriginPage'));
@@ -77,7 +77,7 @@ const HistoryOfRadhavallabh = lazyWithRetry(() => import('./pages/seo/HistoryOfR
 const KnowledgeBaseLayout = lazyWithRetry(() => import('./components/KnowledgeBaseLayout'));
 
 
-// Backend URL with fallback for development
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const USE_SUPABASE = process.env.REACT_APP_SUPABASE_URL && process.env.REACT_APP_SUPABASE_ANON_KEY;
 const USE_MOCK_DATA = process.env.REACT_APP_DEMO_MODE === 'true';
@@ -93,12 +93,12 @@ const LenisScroll = () => {
   const { pathname } = useLocation();
   const [containerType, setContainerType] = useState('window');
 
-  // Detect mobile touch devices or small viewports once per render
+  
   const isMobile = window.matchMedia('(max-width: 1023px)').matches || 
                    ('ontouchstart' in window) || 
                    (navigator.maxTouchPoints > 0);
 
-  // Synchronously or via animation frame check if scroll container changed in DOM
+  
   useEffect(() => {
     const checkContainer = () => {
       const pookizContainer = document.getElementById('pookiz-main-scroll-container');
@@ -121,10 +121,10 @@ const LenisScroll = () => {
   }, [pathname, settings.layoutMode, containerType]);
 
   useEffect(() => {
-    // 1. Zero execution overhead on mobile screens during route transitions
+    
     if (isMobile) return;
 
-    // 2. Clean up styling if smooth scrolling is disabled on desktop
+    
     if (!settings.smoothScroll) {
       document.documentElement.style.removeProperty('overflow');
       document.body.style.removeProperty('overflow');
@@ -135,7 +135,7 @@ const LenisScroll = () => {
     const pookizContainer = document.getElementById('pookiz-main-scroll-container');
     const kbClassicContainer = document.getElementById('kb-classic-content-container');
 
-    // Configure wrapper and content for Lenis based on containerType state
+    
     const lenisOptions = {
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -165,7 +165,7 @@ const LenisScroll = () => {
 
     const rafId = requestAnimationFrame(raf);
 
-    // Watch for dynamic DOM size updates (like asynchronous content fetching) to recalculate scroll constraints
+    
     const resizeObserver = new ResizeObserver(() => {
       lenis.resize();
     });
@@ -207,12 +207,12 @@ function App() {
   useEffect(() => {
     const storedToken = localStorage.getItem('admin_token');
 
-    // Unified Auth Listener supporting both Firebase and Supabase
+    
     const unsubscribe = apiService.onAuthChanged(async (currentUser, activeToken) => {
       setUser(currentUser);
       setToken(activeToken);
       if (currentUser) {
-        // Consider admin if email matches admin addresses
+        
         if (currentUser.email === 'admin@vrindopnishad.com' || currentUser.email === 'admin@vrindavaani.com') {
           setIsAdmin(true);
         }
@@ -231,17 +231,17 @@ function App() {
     };
   }, []);
 
-  // Preload major route chunks and warm up local database caches in the background
+  
   useEffect(() => {
     const timer = setTimeout(() => {
-      // 1. Warm up in-memory caches
+      
       try {
         apiService.getAllContent(null, 10000);
       } catch (e) {
         console.warn('Failed to warm up database cache:', e);
       }
 
-      // 2. Preload major route chunks sequentially on idle time to guarantee 0ms navigation latency without congesting mobile devices
+      
       const preloadList = [
         () => import('./pages/ContentListPage'),
         () => import('./pages/ContentDetailPage'),
@@ -257,24 +257,24 @@ function App() {
       const loadNextChunk = (index) => {
         if (index >= preloadList.length) return;
 
-        // Use requestIdleCallback if available, fallback to setTimeout for older mobile browsers
+        
         const scheduler = window.requestIdleCallback || ((cb) => setTimeout(cb, 1000));
 
         scheduler(() => {
           preloadList[index]()
             .then(() => {
-              // Wait 600ms before preloading the next chunk to keep CPU/thread clear for user inputs
+              
               setTimeout(() => loadNextChunk(index + 1), 600);
             })
             .catch(() => {
-              // Continue loading subsequent chunks even if one fails
+              
               setTimeout(() => loadNextChunk(index + 1), 300);
             });
         });
       };
 
       loadNextChunk(0);
-    }, 4500); // 4.5 seconds delay to prioritize critical initial render path
+    }, 4500); 
     return () => clearTimeout(timer);
   }, []);
 
@@ -317,7 +317,7 @@ function App() {
 
   const refreshUser = () => {
     if (auth?.currentUser) {
-      // Create a new object reference to trigger re-render
+      
       setUser({ ...auth.currentUser });
     }
   };
@@ -337,7 +337,7 @@ function App() {
     );
   }
 
-  // Dynamic arrays to render both standard and Hindi (/hi) localized routes, simplifying the codebase
+  
   const mainRoutes = [
     { path: '/', element: <HomePage /> },
     { path: '/content', element: <ContentListPage /> },
@@ -389,13 +389,13 @@ function App() {
               <Layout>
                 <React.Suspense fallback={<PageSkeleton variant="grid" count={6} />}>
                   <Routes>
-                    {/* Main localized routes */}
+                    
                     {mainRoutes.flatMap(({ path, element }) => [
                       <Route key={path} path={path} element={element} />,
                       <Route key={`hi-${path}`} path={path === '/' ? '/hi' : `/hi${path}`} element={element} />
                     ])}
                     
-                    {/* Knowledge Base Hub Layout Routes */}
+                    
                     <Route element={<KnowledgeBaseLayout />}>
                       {kbRoutes.flatMap(({ path, element }) => [
                         <Route key={path} path={`/${path}`} element={element} />,
@@ -403,7 +403,7 @@ function App() {
                       ])}
                     </Route>
                     
-                    {/* Auth & Admin Routes */}
+                    
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/admin-old/login" element={<AdminLoginPage />} />
                     <Route
@@ -411,7 +411,7 @@ function App() {
                       element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin-old/login" />}
                     />
                     
-                    {/* Catch-all: redirect unknown routes to home */}
+                    
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
                 </React.Suspense>

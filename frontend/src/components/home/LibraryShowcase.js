@@ -33,7 +33,7 @@ const LibraryShowcase = ({ isHi, books, navigate }) => {
         </Link>
       </div>
 
-      {/* Swipeable row optimized for touch scroll on mobile devices */}
+      
       <div className="flex gap-4 overflow-x-auto pb-4 pt-1 snap-x book-shelf-row scrollbar-hide select-none -mx-4 px-4 sm:mx-0 sm:px-0">
         {books.slice(0, 8).map((book, index) => (
           <div
@@ -41,7 +41,7 @@ const LibraryShowcase = ({ isHi, books, navigate }) => {
             onClick={() => navigate(isHi ? `/hi/book/${book.slug}` : `/book/${book.slug}`)}
             className="w-[280px] sm:w-80 flex-none glass-card p-4 rounded-2xl hover:border-amber-500/25 transition-all snap-start flex gap-4 border border-white/5 cursor-pointer group shadow-lg touch-manipulation"
           >
-            {/* CSS Designed Premium Book Cover */}
+            
             <div
               className="book-cover-premium shrink-0 text-white select-none shadow-xl w-[90px] h-[130px] rounded-lg overflow-hidden relative"
               style={{ background: getBookGradient(book.name) }}
@@ -57,7 +57,7 @@ const LibraryShowcase = ({ isHi, books, navigate }) => {
               </div>
             </div>
 
-            {/* Book Metadata */}
+            
             <div className="flex flex-col justify-between py-1 min-w-0 flex-1">
               <div className="space-y-1">
                 <h3 className="font-bold text-xs text-white/95 group-hover:text-primary transition-colors leading-snug line-clamp-2">

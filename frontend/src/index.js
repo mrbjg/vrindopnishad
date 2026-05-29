@@ -9,8 +9,8 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 
 const rootElement = document.getElementById("root");
 
-// Support hydration for pre-rendered HTML (react-snap / SSG)
-// Falls back to createRoot for development
+
+
 if (rootElement.hasChildNodes()) {
   ReactDOM.hydrateRoot(
     rootElement,

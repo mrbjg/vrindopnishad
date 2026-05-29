@@ -42,7 +42,7 @@ const MajorRasikSaints = () => {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch mb-12">
-        {/* Main Content (col-span-2) */}
+        
         <div className="lg:col-span-2 space-y-8 text-left">
           
           <section className="glass-card p-6 rounded-3xl border border-white/5 space-y-4">
@@ -109,7 +109,7 @@ const MajorRasikSaints = () => {
           </section>
         </div>
 
-        {/* Sidebar Info (col-span-1) */}
+        
         <div className="space-y-6 text-left">
           <div className="glass-card p-6 rounded-3xl border border-white/5 space-y-4 bg-white/[0.015]">
             <h3 className="font-bold text-sm text-minimal-gold uppercase tracking-wider flex items-center gap-1.5">

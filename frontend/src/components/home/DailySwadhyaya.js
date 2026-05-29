@@ -9,10 +9,10 @@ const DailySwadhyaya = ({
   handleComplete,
   particles,
 }) => {
-  const [activeTab, setActiveTab] = useState('verse'); // 'verse' | 'translation' | 'breakdown'
+  const [activeTab, setActiveTab] = useState('verse'); 
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // Speak / Speech synthesis handler optimized for mobile browsers
+  
   const handleChantAudio = () => {
     if (isPlaying) {
       window.speechSynthesis.cancel();
@@ -22,7 +22,7 @@ const DailySwadhyaya = ({
       const utterance = new SpeechSynthesisUtterance(dailyShloka.sanskrit);
 
       const voices = window.speechSynthesis.getVoices();
-      // Search for Hindi or Sanskrit voice matching mobile browsers (iOS/Android)
+      
       const hiVoice = voices.find(
         (v) =>
           v.lang.startsWith('hi') ||
@@ -33,7 +33,7 @@ const DailySwadhyaya = ({
       if (hiVoice) {
         utterance.voice = hiVoice;
       }
-      utterance.rate = 0.75; // Slower rate for clear pronunciation
+      utterance.rate = 0.75; 
       utterance.pitch = 0.9;
 
       utterance.onend = () => setIsPlaying(false);
@@ -69,7 +69,7 @@ const DailySwadhyaya = ({
           </span>
         </div>
 
-        {/* Sliding Tabs - Large Touch Targets for Mobile */}
+        
         <div className="flex bg-white/5 p-1 rounded-xl gap-1 mb-5 relative select-none">
           {['verse', 'translation', 'breakdown'].map((tab) => (
             <button
@@ -92,7 +92,7 @@ const DailySwadhyaya = ({
                 : isHi ? "शब्दार्थ" : "Breakdown"}
             </button>
           ))}
-          {/* Sliding indicator */}
+          
           <div
             className="absolute top-1 bottom-1 bg-white/[0.04] border border-white/10 rounded-lg transition-all duration-300 ease-out z-0"
             style={{
@@ -103,7 +103,7 @@ const DailySwadhyaya = ({
         </div>
       </div>
 
-      {/* Tab Content - Responsive Padding & Font Sizes */}
+      
       <div className="min-h-[10rem] flex flex-col justify-center transition-all duration-300 flex-1">
         {activeTab === 'verse' && (
           <div className="space-y-5 animate-in fade-in zoom-in-95 duration-200 text-center">

@@ -1,5 +1,5 @@
-// Comprehensive Metadata Dictionary for Braj Rasik Saints
-// Solves duplicate layout/thin content SEO issues by providing highly structured, unique copy.
+
+
 
 export const SAINT_METADATA = {
   'haridas': {
@@ -235,7 +235,7 @@ export const SAINT_METADATA = {
   }
 };
 
-// Fallback to determine if a slug is a major saint and return its metadata
+
 export const getSaintMetadata = (slug) => {
   if (!slug) return null;
   const cleanSlug = slug.toLowerCase().replace(/-maharaj$/, '').trim();

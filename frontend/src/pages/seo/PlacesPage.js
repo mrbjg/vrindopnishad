@@ -197,9 +197,9 @@ const PlacesPage = () => {
         </p>
       </header>
 
-      {/* Filter and Search Controls */}
+      
       <div className="glass-card p-4 rounded-2xl border border-white/5 mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
-        {/* Search */}
+        
         <div className="relative w-full md:w-80">
           <input
             type="text"
@@ -211,7 +211,7 @@ const PlacesPage = () => {
           <Search size={14} className="absolute left-3.5 top-3 text-white/30" />
         </div>
 
-        {/* Category Tabs */}
+        
         <div className="flex flex-wrap gap-1.5 justify-center">
           {categories.map(cat => (
             <button
@@ -229,7 +229,7 @@ const PlacesPage = () => {
         </div>
       </div>
 
-      {/* Places Grid */}
+      
       {filteredPlaces.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {filteredPlaces.map(p => (
@@ -278,7 +278,7 @@ const PlacesPage = () => {
         </div>
       )}
 
-      {/* Practical Guide Section */}
+      
       <section className="mt-16 bg-white/[0.015] border border-white/5 rounded-3xl p-8 max-w-4xl mx-auto text-left">
         <h2 className="text-lg font-bold text-minimal-gold mb-4 flex items-center gap-2">
           <Landmark size={18} className="text-primary" />

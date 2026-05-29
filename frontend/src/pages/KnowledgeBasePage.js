@@ -13,7 +13,7 @@ const KnowledgeBasePage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
 
-  // Filtering logic
+  
   const filteredArticles = articles.filter(art => {
     const title = isHindiRoute ? art.titleHi : art.titleEn;
     const desc = isHindiRoute ? art.descHi : art.descEn;
@@ -36,14 +36,14 @@ const KnowledgeBasePage = () => {
 
   return (
     <div className="animate-fade-in w-full px-1 py-4">
-      {/* SEO Metadata */}
+      
       <Helmet>
         <title>{isHindiRoute ? "वैदिक ज्ञान कोष और रसिक विकी | Vrindopnishad" : "Vedic Knowledge Base & Rasik Wiki | Vrindopnishad"}</title>
         <meta name="description" content={isHindiRoute ? "ब्रज रस के दार्शनिक सिद्धांतों, रसिक आचार्यों के इतिहास और शब्दकोश का संग्रह।" : "A unified portal exploring Braj Bhakti, philosophy, saint biographies and devotee guides."} />
         <link rel="canonical" href={isHindiRoute ? "https://path.vrindopnishad.in/hi/knowledge-base" : "https://path.vrindopnishad.in/knowledge-base"} />
       </Helmet>
 
-      {/* Page Header */}
+      
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 border-b border-[var(--glass-border)] pb-4">
         <div>
           <Link to={isHindiRoute ? "/hi" : "/"} className="inline-flex items-center gap-1.5 text-[var(--text-color)]/40 hover:text-[var(--text-color)] mb-1.5 transition-colors text-[10px] uppercase tracking-wider">
@@ -61,7 +61,7 @@ const KnowledgeBasePage = () => {
           </p>
         </div>
 
-        {/* Search Input */}
+        
         <div className="relative w-full md:w-80 max-w-xs">
           <div className="flex items-center bg-[var(--text-color)]/[0.03] border border-[var(--glass-border)] rounded-xl pl-3 pr-4 h-9.5 text-sm focus-within:border-[rgba(var(--primary-rgb),0.5)] focus-within:bg-[var(--text-color)]/[0.06] transition-all">
             <Search className="text-[var(--text-color)]/30 shrink-0 mr-2" size={14} />
@@ -76,7 +76,7 @@ const KnowledgeBasePage = () => {
         </div>
       </div>
 
-      {/* Category Tabs Row - Unboxed and Scrollable */}
+      
       <div className="flex items-center gap-2 mb-6 overflow-x-auto scrollbar-hide py-1.5 shrink-0">
         {categories.map((cat) => (
           <button
@@ -93,7 +93,7 @@ const KnowledgeBasePage = () => {
         ))}
       </div>
 
-      {/* Articles Grid */}
+      
       {filteredArticles.length === 0 ? (
         <div className="text-center py-20 bg-[var(--glass-bg)] border-[var(--glass-border)] text-[var(--text-color)] border rounded-[1.5rem]">
           <HelpCircle size={48} className="mx-auto text-[var(--text-color)]/20 mb-4" />

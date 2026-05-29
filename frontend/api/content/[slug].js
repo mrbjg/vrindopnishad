@@ -1,13 +1,4 @@
-/**
- * Vercel Serverless Function: Dynamic Meta Tag Injector for SEO
- * 
- * When Googlebot requests /content/:slug, this function:
- * 1. Fetches the content data from Supabase
- * 2. Injects proper <title>, <meta description>, and JSON-LD into the HTML
- * 3. Returns the modified HTML so Google sees unique titles WITHOUT waiting for JS
- * 
- * This is "dynamic rendering" — Google officially supports this approach.
- */
+
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -64,7 +55,7 @@ export default async function handler(req, res) {
       if (Array.isArray(data) && data.length > 0) {
         content = data[0];
       }
-    } catch (e) { /* fallback failed */ }
+    } catch (e) 
   }
 
   // Build the meta tags
@@ -85,7 +76,7 @@ export default async function handler(req, res) {
 
   // JSON-LD structured data
   const jsonLd = content ? JSON.stringify({
-    "@context": "https://schema.org",
+    "@context": "https:
     "@type": "Article",
     "headline": content.title || "Sacred Verse",
     "description": (content.description || content.hindi_text || '').substring(0, 200),
@@ -102,10 +93,10 @@ export default async function handler(req, res) {
     ...(content.image_url ? { "image": content.image_url } : {})
   }) : '';
 
-  // Build full HTML page with pre-rendered meta tags for bots
-  // CRITICAL: Do NOT add meta http-equiv="refresh" or window.location.replace here!
-  // This handler only serves bots (Googlebot etc.) via the vercel.json user-agent rewrite.
-  // Adding redirects causes an infinite loop: bot → /content/slug → rewrite → /api/content/slug → redirect → /content/slug → loop
+  
+  
+  
+  
   const html = `<!doctype html>
 <html lang="hi" dir="ltr">
 <head>

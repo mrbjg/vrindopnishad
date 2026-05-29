@@ -57,16 +57,16 @@ const PookizDashboardView = ({
   updateSetting,
   user
 }) => {
-  // Active Tab
-  const [activeTab, setActiveTab] = useState('moderationAudit'); // 'moderationAudit', 'userDirectory', 'broadcasts', 'feedback', 'universities'
+  
+  const [activeTab, setActiveTab] = useState('moderationAudit'); 
 
-  // Search queries
+  
   const [saintSearchQuery, setSaintSearchQuery] = useState('');
   const [bookSearchQuery, setBookSearchQuery] = useState('');
 
 
 
-  // Local state for Reading Shelf (replaces mock Universities)
+  
   const [readingShelf, setReadingShelf] = useState(() => {
     try {
       const saved = localStorage.getItem('vrindopnishad_reading_shelf');
@@ -79,7 +79,7 @@ const PookizDashboardView = ({
     ];
   });
 
-  // Selected Book for Reading Plan Form
+  
   const [selectedBookSlug, setSelectedBookSlug] = useState('');
   const [dailyTargetVerses, setDailyTargetVerses] = useState('2');
 
@@ -97,34 +97,34 @@ const PookizDashboardView = ({
     return name ? name.charAt(0).toUpperCase() : 'D';
   };
 
-  // Local state for Devotee Reflections (replaces mock Feedback)
+  
   const [reflections, setReflections] = useState(() => getInitialReflections(user, isHi));
   const [newReflectionText, setNewReflectionText] = useState('');
 
-  // Sync reflections whenever user or language changes
+  
   useEffect(() => {
     setReflections(getInitialReflections(user, isHi));
   }, [user, isHi]);
 
-  // Local state for Active Broadcasts list
+  
   const [broadcasts] = useState([
     { id: 1, title: 'Braj Parikrama Guide Uploaded', msg: 'Explore the complete guide for Vrindavan parikrama, timing and sacred spots in the library.', time: 'Just now' }
   ]);
 
-  // Selected Saint for Biography Audit Modal
+  
   const [auditingSaint, setAuditingSaint] = useState(null);
 
-  // Toast message
+  
   const [toastMessage, setToastMessage] = useState(null);
   const triggerToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 4000);
   };
 
-  // Swadhyaya Sub-Tab
+  
   const [swadhyayaSubTab, setSwadhyayaSubTab] = useState('verse');
 
-  // Add Book to Reading Shelf
+  
   const handleAddToShelf = (e) => {
     e.preventDefault();
     if (!selectedBookSlug) {
@@ -160,7 +160,7 @@ const PookizDashboardView = ({
     setSelectedBookSlug('');
   };
 
-  // Delete Book from Reading Shelf
+  
   const handleRemoveFromShelf = (id, name) => {
     const updated = readingShelf.filter(item => item.id !== id);
     setReadingShelf(updated);
@@ -168,7 +168,7 @@ const PookizDashboardView = ({
     triggerToast(isHi ? `"${name}" शेल्फ से हटाया गया।` : `Removed "${name}" from reading shelf.`);
   };
 
-  // Add reflection/journal entry
+  
   const handleAddReflection = (e) => {
     e.preventDefault();
     if (!newReflectionText.trim()) return;
@@ -192,7 +192,7 @@ const PookizDashboardView = ({
 
 
 
-  // Filter Lists
+  
   const filteredSaints = saints.filter(s => 
     s.name.toLowerCase().includes(saintSearchQuery.toLowerCase()) ||
     (s.hinglishName && s.hinglishName.toLowerCase().includes(saintSearchQuery.toLowerCase())) ||
@@ -217,7 +217,7 @@ const PookizDashboardView = ({
   return (
     <div className="space-y-8 animate-fade-in text-left select-none relative">
       
-      {/* Toast Notification Banner */}
+      
       {toastMessage && (
         <div className="fixed top-18 right-6 bg-purple-600/95 backdrop-blur border border-purple-400 text-white px-4 py-3 rounded-2xl shadow-2xl z-[5000] flex items-center gap-2 text-xs font-semibold animate-scale-in">
           <Info size={16} />
@@ -228,7 +228,7 @@ const PookizDashboardView = ({
         </div>
       )}
 
-      {/* Broadcast Notice Banner */}
+      
       {broadcasts.length > 0 && (
         <div className="bg-[#1c1917] border border-[#f59e0b]/20 p-3 rounded-2xl flex items-start gap-3 text-xs shadow-md">
           <Sparkles className="text-[#f59e0b] shrink-0 mt-0.5" size={15} />
@@ -239,7 +239,7 @@ const PookizDashboardView = ({
         </div>
       )}
 
-      {/* Header bar matching the screenshots but devotee-friendly */}
+      
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-4 mb-2">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white font-headings">
@@ -252,7 +252,7 @@ const PookizDashboardView = ({
           </p>
         </div>
 
-        {/* Tab Selection Row (top right) */}
+        
         <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1 shrink-0">
           {[
             { id: 'moderationAudit', label: isHi ? 'साधना व स्वाध्याय' : 'Sadhana & Swadhyaya' },
@@ -276,9 +276,9 @@ const PookizDashboardView = ({
         </div>
       </div>
 
-      {/* --- TAB CONTENT AREA --- */}
       
-      {/* 1. SAINTS DIRECTORY TAB (User Directory in screenshots) */}
+      
+      
       {activeTab === 'userDirectory' && (
         <div className="bg-[#121215] border border-white/5 rounded-2xl p-4 md:p-5 shadow-xl animate-scale-in">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -292,7 +292,7 @@ const PookizDashboardView = ({
               </p>
             </div>
             
-            {/* Search Input in Card */}
+            
             <div className="relative w-full sm:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={14} />
               <input
@@ -305,7 +305,7 @@ const PookizDashboardView = ({
             </div>
           </div>
 
-          {/* Directory Table */}
+          
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -377,12 +377,12 @@ const PookizDashboardView = ({
         </div>
       )}
 
-      {/* 2. GRANTHAS SHELF MANAGER (Universities in screenshots) */}
+      
       {activeTab === 'universities' && (
         <div className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
             
-            {/* Left Card: Setup study goals */}
+            
             <div className="bg-[#121215] border border-white/5 rounded-2xl p-4 md:p-5 shadow-xl flex flex-col justify-between">
               <div>
                 <h2 className="text-base font-bold text-white flex items-center gap-2 mb-1">
@@ -436,7 +436,7 @@ const PookizDashboardView = ({
               </div>
             </div>
 
-            {/* Right Card: Reading Shelf Table */}
+            
             <div className="bg-[#121215] border border-white/5 rounded-2xl p-4 md:p-5 shadow-xl flex flex-col justify-between">
               <div>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -509,7 +509,7 @@ const PookizDashboardView = ({
             </div>
           </div>
 
-          {/* Lower Section: Recommendations */}
+          
           <div className="bg-[#121215] border border-white/5 rounded-2xl p-4 md:p-5 shadow-xl">
             <h2 className="text-base font-bold text-white mb-1">{isHi ? 'पुस्तकालय से ग्रन्थ संस्तुति' : 'Library Recommendations'}</h2>
             <p className="text-zinc-500 text-xs mb-4">
@@ -559,11 +559,11 @@ const PookizDashboardView = ({
         </div>
       )}
 
-      {/* 3. Daily Sadhana Tracker (Moderation & Audit in original) */}
+      
       {activeTab === 'moderationAudit' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
           
-          {/* Swadhyaya Section */}
+          
           <div className="lg:col-span-2 bg-[#121215] border border-white/5 rounded-2xl p-4 md:p-5 shadow-xl flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-4">
@@ -581,7 +581,7 @@ const PookizDashboardView = ({
                 </span>
               </div>
 
-              {/* Sub-tabs inside Swadhyaya card */}
+              
               <div className="flex bg-[#18181c] p-1 rounded-xl gap-1 mb-6 max-w-xs">
                 {[
                   { id: 'verse', label: isHi ? 'श्लोक' : 'Verse' },
@@ -602,7 +602,7 @@ const PookizDashboardView = ({
                 ))}
               </div>
 
-              {/* Content Panel */}
+              
               <div className="min-h-[160px] flex items-center justify-center p-4 bg-[#18181c]/50 rounded-2xl border border-white/5 mb-6 text-center select-text">
                 {swadhyayaSubTab === 'verse' && (
                   <p className="font-headings text-lg md:text-xl text-amber-200/90 leading-loose whitespace-pre-line font-medium">
@@ -633,7 +633,7 @@ const PookizDashboardView = ({
               </div>
             </div>
 
-            {/* Actions */}
+            
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-white/5">
               <div className="flex items-center gap-2">
                 <button
@@ -665,7 +665,7 @@ const PookizDashboardView = ({
             </div>
           </div>
 
-          {/* Japa Meditation */}
+          
           <div className="bg-[#121215] border border-white/5 rounded-2xl p-4 md:p-5 shadow-xl flex flex-col justify-between">
             <div className="text-center">
               <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-4 text-left">
@@ -675,7 +675,7 @@ const PookizDashboardView = ({
                 </div>
               </div>
 
-              {/* Progress Ring */}
+              
               <div className="relative w-36 h-36 mx-auto mb-6 flex items-center justify-center">
                 <svg className="w-full h-full transform -rotate-90">
                   <circle
@@ -705,7 +705,7 @@ const PookizDashboardView = ({
                 </div>
               </div>
 
-              {/* Stats */}
+              
               <div className="grid grid-cols-2 gap-2 mb-6">
                 <div className="bg-[#18181c] p-2 rounded-xl border border-white/5">
                   <span className="text-[10px] text-zinc-500 block">{isHi ? 'क्रमबद्धता' : 'Streak'}</span>
@@ -718,7 +718,7 @@ const PookizDashboardView = ({
               </div>
             </div>
 
-            {/* Japa Actions */}
+            
             <div className="space-y-3">
               <button
                 onClick={(e) => {
@@ -767,7 +767,7 @@ const PookizDashboardView = ({
         </div>
       )}
 
-      {/* 4. BROADCASTS TAB (Satsang Announcements Feed) */}
+      
       {activeTab === 'broadcasts' && (
         <div className="space-y-4">
           <div className="bg-[#121215] border border-white/5 rounded-2xl p-4 md:p-5 shadow-xl">
@@ -830,11 +830,11 @@ const PookizDashboardView = ({
         </div>
       )}
 
-      {/* 5. JOURNAL & REFLECTIONS TAB (Feedback in screenshots) */}
+      
       {activeTab === 'feedback' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
           
-          {/* Left panel: Add Journal Entry */}
+          
           <div className="lg:col-span-1 bg-[#121215] border border-white/5 rounded-2xl p-4 md:p-5 shadow-xl">
             <h2 className="text-base font-bold text-white flex items-center gap-2 mb-1">
               <Feather size={16} className="text-purple-400" />
@@ -867,7 +867,7 @@ const PookizDashboardView = ({
             </form>
           </div>
 
-          {/* Right panel: Log of Entries */}
+          
           <div className="lg:col-span-2 bg-[#121215] border border-white/5 rounded-2xl p-4 md:p-5 shadow-xl">
             <h2 className="text-base font-bold text-white mb-1">{isHi ? 'दैनिक साधक अनुभूति डायरी' : 'Devotee Sadhana Journal'}</h2>
             <p className="text-zinc-500 text-xs mb-6">
@@ -916,7 +916,7 @@ const PookizDashboardView = ({
 
 
 
-      {/* --- AUDIT DIALOG: SAINT BIOGRAPHY & VERSES INFO --- */}
+      
       {auditingSaint && (
         <div className="fixed inset-0 z-[6000] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/85 backdrop-blur-sm animate-fade-in" onClick={() => setAuditingSaint(null)}></div>
@@ -939,7 +939,7 @@ const PookizDashboardView = ({
               </button>
             </div>
 
-            {/* Biography Content scroll area */}
+            
             <div className="flex-1 overflow-y-auto space-y-5 pr-1 py-2 max-h-[50vh] custom-scrollbar select-text">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 block mb-2">{isHi ? 'जीवन परिचय' : 'Biography'}</span>
@@ -974,7 +974,7 @@ const PookizDashboardView = ({
               </div>
             </div>
 
-            {/* Actions Footer */}
+            
             <div className="border-t border-white/5 pt-4 mt-4 flex items-center justify-between gap-4">
               <span className="text-[10px] text-zinc-600">{isHi ? 'ब्रज रसिक परम्परा' : 'Braj Rasik Tradition'}</span>
               <div className="flex gap-2">

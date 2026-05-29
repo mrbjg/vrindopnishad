@@ -1,30 +1,27 @@
-/**
- * Vrindopnishad Admin Panel - JavaScript
- * Modern Supabase-powered CMS
- */
 
-// ========================================
-// Supabase Configuration
-// ========================================
+
+
+
+
 
 const SUPABASE_URL = 'https://tilimltxgeucefxzerqi.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_0YiM-Q8itRORUDdToracaQ_vzcrjUlC';
 
-// Use a different variable name to avoid shadowing the global 'supabase'
+
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ========================================
-// State
-// ========================================
+
+
+
 
 let currentUser = null;
 let allContent = [];
 let categories = ['Shloka', 'Strotra', 'Mantra', 'Bhajan', 'Katha', 'Aarti', 'Chalisa'];
 let importData = [];
 
-// ========================================
-// DOM Elements
-// ========================================
+
+
+
 
 const elements = {
     loginModal: document.getElementById('login-modal'),
@@ -66,16 +63,16 @@ const elements = {
     categoryList: document.getElementById('category-list'),
 };
 
-// ========================================
-// Initialization
-// ========================================
+
+
+
 
 document.addEventListener('DOMContentLoaded', async () => {
     await checkAuth();
     setupEventListeners();
     setupDragAndDrop();
 
-    // Re-initialize Lucide icons after dynamic content
+    
     if (window.lucide) {
         lucide.createIcons();
     }
@@ -94,16 +91,16 @@ async function checkAuth() {
     }
 }
 
-// ========================================
-// Event Listeners
-// ========================================
+
+
+
 
 function setupEventListeners() {
-    // Login
+    
     elements.loginForm.addEventListener('submit', handleLogin);
     elements.logoutBtn.addEventListener('click', handleLogout);
 
-    // Navigation
+    
     elements.navItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
@@ -111,27 +108,27 @@ function setupEventListeners() {
         });
     });
 
-    // Add Content Form
+    
     elements.addContentForm?.addEventListener('submit', handleAddContent);
     elements.clearFormBtn?.addEventListener('click', () => elements.addContentForm.reset());
 
-    // Edit Modal
+    
     elements.closeModalBtn?.addEventListener('click', closeEditModal);
     elements.cancelEditBtn?.addEventListener('click', closeEditModal);
     elements.editContentForm?.addEventListener('submit', handleEditContent);
 
-    // Close modal on overlay click
+    
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', () => {
             elements.editModal?.classList.add('hidden');
         });
     });
 
-    // Filters
+    
     elements.filterCategory?.addEventListener('change', filterContent);
     elements.filterSearch?.addEventListener('input', debounce(filterContent, 300));
 
-    // Import
+    
     elements.csvImport?.addEventListener('click', () => elements.csvFile.click());
     elements.jsonImport?.addEventListener('click', () => elements.jsonFile.click());
     elements.csvFile?.addEventListener('change', handleCSVUpload);
@@ -139,11 +136,11 @@ function setupEventListeners() {
     elements.confirmImport?.addEventListener('click', confirmImport);
     elements.cancelImport?.addEventListener('click', cancelImportPreview);
 
-    // Template downloads
+    
     document.getElementById('download-csv-template')?.addEventListener('click', downloadCSVTemplate);
     document.getElementById('download-json-template')?.addEventListener('click', downloadJSONTemplate);
 
-    // Mobile menu
+    
     document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
         document.querySelector('.sidebar').classList.toggle('open');
     });
@@ -187,9 +184,9 @@ function setupDropZone(zone, input) {
     });
 }
 
-// ========================================
-// Authentication
-// ========================================
+
+
+
 
 async function handleLogin(e) {
     e.preventDefault();
@@ -222,22 +219,22 @@ async function handleLogout() {
     showToast('Logged out', 'success');
 }
 
-// ========================================
-// Navigation
-// ========================================
+
+
+
 
 function switchTab(tabId) {
-    // Update nav items
+    
     elements.navItems.forEach(item => {
         item.classList.toggle('active', item.dataset.tab === tabId);
     });
 
-    // Update tab content
+    
     elements.tabContents.forEach(tab => {
         tab.classList.toggle('active', tab.id === `${tabId}-tab`);
     });
 
-    // Update page title
+    
     const titles = {
         'dashboard': ['Dashboard', 'Overview'],
         'add-content': ['Add Content', 'Content'],
@@ -250,25 +247,25 @@ function switchTab(tabId) {
     elements.pageTitle.textContent = title;
     elements.breadcrumbCurrent.textContent = breadcrumb;
 
-    // Load data for specific tabs
+    
     if (tabId === 'manage') {
         loadContentGrid();
     } else if (tabId === 'categories') {
         loadCategories();
     }
 
-    // Re-init icons
+    
     if (window.lucide) {
         setTimeout(() => lucide.createIcons(), 50);
     }
 }
 
-// Make switchTab globally available
+
 window.switchTab = switchTab;
 
-// ========================================
-// Dashboard
-// ========================================
+
+
+
 
 async function loadDashboard() {
     try {
@@ -281,15 +278,15 @@ async function loadDashboard() {
 
         allContent = content || [];
 
-        // Update stats with animation
+        
         animateValue(elements.totalContent, allContent.length);
         animateValue(elements.totalCategories, new Set(allContent.map(c => c.category)).size);
         animateValue(elements.totalViews, allContent.reduce((sum, c) => sum + (c.view_count || 0), 0));
 
-        // Render recent content
+        
         renderRecentContent(allContent.slice(0, 5));
 
-        // Populate filter categories
+        
         populateFilterCategories();
 
     } catch (error) {
@@ -366,9 +363,9 @@ function populateFilterCategories() {
         uniqueCategories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
 }
 
-// ========================================
-// Add Content
-// ========================================
+
+
+
 
 async function handleAddContent(e) {
     e.preventDefault();
@@ -392,7 +389,7 @@ async function handleAddContent(e) {
 
         if (error) throw error;
 
-        // Handle file uploads
+        
         const imageFile = elements.imageUpload?.files[0];
         const audioFile = elements.audioUpload?.files[0];
 
@@ -402,7 +399,7 @@ async function handleAddContent(e) {
         showToast('Content published successfully!', 'success');
         e.target.reset();
 
-        // Reset file upload zones
+        
         if (elements.imageDropZone) {
             elements.imageDropZone.querySelector('p').textContent = 'Drop image here';
         }
@@ -442,9 +439,9 @@ async function uploadFile(contentId, file, bucket) {
     return urlData.publicUrl;
 }
 
-// ========================================
-// Manage Content
-// ========================================
+
+
+
 
 function loadContentGrid() {
     renderContentGrid(allContent);
@@ -510,9 +507,9 @@ function filterContent() {
     renderContentGrid(filtered);
 }
 
-// ========================================
-// Edit Content
-// ========================================
+
+
+
 
 function openEditModal(id) {
     const content = allContent.find(c => c.id === id);
@@ -589,9 +586,9 @@ async function deleteContent(id) {
 
 window.deleteContent = deleteContent;
 
-// ========================================
-// Bulk Import
-// ========================================
+
+
+
 
 function handleCSVUpload(e) {
     const file = e.target.files[0];
@@ -717,7 +714,7 @@ function downloadFile(content, filename, type) {
     URL.revokeObjectURL(url);
 }
 
-// Backup function
+
 function downloadBackup() {
     if (allContent.length === 0) {
         showToast('No content to backup', 'warning');
@@ -729,9 +726,9 @@ function downloadBackup() {
 
 window.downloadBackup = downloadBackup;
 
-// ========================================
-// Categories
-// ========================================
+
+
+
 
 function loadCategories() {
     if (!elements.categoryList) return;
@@ -746,9 +743,9 @@ function loadCategories() {
     if (window.lucide) lucide.createIcons();
 }
 
-// ========================================
-// Toast Notifications
-// ========================================
+
+
+
 
 function showToast(message, type = 'info') {
     const icons = {
@@ -774,9 +771,9 @@ function showToast(message, type = 'info') {
     }, 4000);
 }
 
-// ========================================
-// Utilities
-// ========================================
+
+
+
 
 function debounce(func, wait) {
     let timeout;

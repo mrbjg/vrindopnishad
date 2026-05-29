@@ -49,7 +49,7 @@ const SaintDetailPage = () => {
   useEffect(() => {
     let active = true;
 
-    // Reset state to initial data for the new slug immediately when slug changes
+    
     const getInitialSaint = () => {
       try {
         const memCached = apiService.getMemoryCachedItems();
@@ -113,7 +113,7 @@ const SaintDetailPage = () => {
     );
   }
 
-  // Load custom metadata if available
+  
   const meta = getSaintMetadata(slug);
 
   const lineage = meta 
@@ -139,7 +139,7 @@ const SaintDetailPage = () => {
         <meta name="description" content={bioText.substring(0, 160)} />
         <link rel="canonical" href={isHindiRoute ? `https://path.vrindopnishad.in/hi/saint/${slug}` : `https://path.vrindopnishad.in/saint/${slug}`} />
         
-        {/* Structured Data: Person (Saint), Breadcrumb & FAQ (if available) */}
+        
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -209,7 +209,7 @@ const SaintDetailPage = () => {
         {isHindiRoute ? "सभी संत" : "All Saints"}
       </Link>
 
-      {/* Header Profile Section */}
+      
       <div className="flex flex-col sm:flex-row items-center gap-6 mb-8 pb-6 border-b border-white/5 text-center sm:text-left select-none">
         <div className="w-24 h-24 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 font-bold text-4xl shadow-xl shrink-0">
           {getInitials(isHindiRoute ? sant.name : sant.hinglishName)}
@@ -222,7 +222,7 @@ const SaintDetailPage = () => {
             {isHindiRoute ? sant.name : sant.hinglishName}
           </h1>
           
-          {/* Quick Facts Grid */}
+          
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left mt-3 w-full">
             <Link 
               to={isHindiRoute ? `/hi/saints?q=${encodeURIComponent(lineage)}` : `/saints?q=${encodeURIComponent(lineage)}`}
@@ -249,7 +249,7 @@ const SaintDetailPage = () => {
         </div>
       </div>
 
-      {/* Relational Knowledge Graph Card */}
+      
       {meta && (
         <section className="mb-8 p-5 rounded-2xl border border-white/5 bg-white/[0.01] hover:border-amber-500/10 transition-all text-left">
           <h2 className="text-xs font-bold uppercase tracking-widest text-amber-500/80 mb-4 flex items-center gap-2">
@@ -285,7 +285,7 @@ const SaintDetailPage = () => {
         </section>
       )}
 
-      {/* Dynamic Detail Tabs - Styled as elegant bottom border tabs */}
+      
       <div className="flex border-b border-white/10 mb-8 overflow-x-auto scrollbar-hide gap-6 select-none">
         {[
           { id: 'bio', label: isHindiRoute ? "जीवनी" : "Biography" },
@@ -307,9 +307,9 @@ const SaintDetailPage = () => {
         ))}
       </div>
 
-      {/* Tab Contents */}
+      
       <div className="min-h-[16rem]">
-        {/* Tab 1: Biography */}
+        
         {activeDetailTab === 'bio' && (
           <section className="mb-12 animate-fade-in text-left">
             <h2 className="text-xl font-bold font-headings text-minimal-gold mb-4 flex items-center gap-2">
@@ -322,7 +322,7 @@ const SaintDetailPage = () => {
           </section>
         )}
 
-        {/* Tab 2: Teachings */}
+        
         {activeDetailTab === 'teachings' && meta && (
           <section className="mb-12 animate-fade-in text-left">
             <h2 className="text-xl font-bold font-headings text-minimal-gold mb-4 flex items-center gap-2">
@@ -335,7 +335,7 @@ const SaintDetailPage = () => {
           </section>
         )}
 
-        {/* Tab 3: Literary Works */}
+        
         {activeDetailTab === 'literary' && (
           <section className="mb-12 animate-fade-in text-left space-y-6">
             {meta && (
@@ -375,7 +375,7 @@ const SaintDetailPage = () => {
           </section>
         )}
 
-        {/* Tab 4: FAQ */}
+        
         {activeDetailTab === 'faq' && meta && meta.faq && (
           <section className="mb-12 animate-fade-in text-left space-y-4">
             <h2 className="text-xl font-bold font-headings text-minimal-gold mb-4 flex items-center gap-2">
@@ -394,7 +394,7 @@ const SaintDetailPage = () => {
         )}
       </div>
 
-      {/* Topical Connections Section */}
+      
       {meta && (meta.relatedSaints || meta.relatedGranthas || meta.associatedGlossary) && (
         <section className="mt-8 border-t border-white/5 pt-8 text-left">
           <h2 className="text-xl font-bold font-headings text-minimal-gold mb-6 flex items-center gap-2">
@@ -402,7 +402,7 @@ const SaintDetailPage = () => {
             {isHindiRoute ? "सम्बन्धित सन्दर्भ (Topical Connections)" : "Topical Connections"}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Related Saints */}
+            
             {meta.relatedSaints && meta.relatedSaints.length > 0 && (
               <div className="glass-card p-5 rounded-2xl border border-white/5 space-y-3">
                 <h3 className="font-bold text-xs uppercase tracking-wider text-amber-500/80">
@@ -422,7 +422,7 @@ const SaintDetailPage = () => {
               </div>
             )}
 
-            {/* Related Granthas */}
+            
             {meta.relatedGranthas && meta.relatedGranthas.length > 0 && (
               <div className="glass-card p-5 rounded-2xl border border-white/5 space-y-3">
                 <h3 className="font-bold text-xs uppercase tracking-wider text-sky-400">
@@ -442,7 +442,7 @@ const SaintDetailPage = () => {
               </div>
             )}
 
-            {/* Associated Glossary Concepts */}
+            
             {meta.associatedGlossary && meta.associatedGlossary.length > 0 && (
               <div className="glass-card p-5 rounded-2xl border border-white/5 space-y-3">
                 <h3 className="font-bold text-xs uppercase tracking-wider text-indigo-400">
@@ -465,7 +465,7 @@ const SaintDetailPage = () => {
         </section>
       )}
 
-      {/* Verse collection */}
+      
       <section className="mt-8 border-t border-white/5 pt-8">
         <h2 className="text-xl font-bold font-headings text-minimal-gold mb-6 flex items-center gap-2 text-left">
           <FileText size={20} className="text-primary" />

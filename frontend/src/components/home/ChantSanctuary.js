@@ -9,7 +9,7 @@ const ChantSanctuary = ({
   percentComplete,
   rounds,
 }) => {
-  // Tanpura Synthesizer State
+  
   const [isTanpuraPlaying, setIsTanpuraPlaying] = useState(false);
   const [audioCtx, setAudioCtx] = useState(null);
   const [tanpuraTimer, setTanpuraTimer] = useState(null);
@@ -66,12 +66,12 @@ const ChantSanctuary = ({
       setAudioCtx(ctx);
       setIsTanpuraPlaying(true);
 
-      const baseFreq = 130.81; // C3
+      const baseFreq = 130.81; 
       const freqs = [
-        baseFreq * 1.5, // Pa (G3)
-        baseFreq * 2.0, // Sa (C4)
-        baseFreq * 2.0, // Sa (C4)
-        baseFreq        // Sa (C3)
+        baseFreq * 1.5, 
+        baseFreq * 2.0, 
+        baseFreq * 2.0, 
+        baseFreq        
       ];
 
       let pluckIdx = 0;
@@ -87,7 +87,7 @@ const ChantSanctuary = ({
     }
   };
 
-  // Clean up audio on unmount
+  
   useEffect(() => {
     return () => {
       if (tanpuraTimer) clearInterval(tanpuraTimer);
@@ -150,7 +150,7 @@ const ChantSanctuary = ({
           </div>
         </div>
 
-        {/* Tap Friendly Buttons for mobile layout */}
+        
         <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-white/5">
           <button
             onClick={() => handleUpdateJapaCount(japaCount + 1)}

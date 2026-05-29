@@ -1,7 +1,4 @@
-/**
- * Centralized JSON-LD Schema generators for SEO
- * Used across all content and SEO pages
- */
+
 
 const SITE_URL = 'https://path.vrindopnishad.in';
 const ORG_NAME = 'Vrindopnishad';

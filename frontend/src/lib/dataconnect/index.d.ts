@@ -195,9 +195,9 @@ export interface UpsertContentVariables {
 }
 
 interface UpsertContentRef {
-  /* Allow users to create refs without passing in DataConnect */
+  
   (vars: UpsertContentVariables): MutationRef<UpsertContentData, UpsertContentVariables>;
-  /* Allow users to pass in custom DataConnect instances */
+  
   (dc: DataConnect, vars: UpsertContentVariables): MutationRef<UpsertContentData, UpsertContentVariables>;
   operationName: string;
 }
@@ -207,9 +207,9 @@ export function upsertContent(vars: UpsertContentVariables): MutationPromise<Ups
 export function upsertContent(dc: DataConnect, vars: UpsertContentVariables): MutationPromise<UpsertContentData, UpsertContentVariables>;
 
 interface DeleteContentRef {
-  /* Allow users to create refs without passing in DataConnect */
+  
   (vars: DeleteContentVariables): MutationRef<DeleteContentData, DeleteContentVariables>;
-  /* Allow users to pass in custom DataConnect instances */
+  
   (dc: DataConnect, vars: DeleteContentVariables): MutationRef<DeleteContentData, DeleteContentVariables>;
   operationName: string;
 }
@@ -219,9 +219,9 @@ export function deleteContent(vars: DeleteContentVariables): MutationPromise<Del
 export function deleteContent(dc: DataConnect, vars: DeleteContentVariables): MutationPromise<DeleteContentData, DeleteContentVariables>;
 
 interface GetContentByIdRef {
-  /* Allow users to create refs without passing in DataConnect */
+  
   (vars: GetContentByIdVariables): QueryRef<GetContentByIdData, GetContentByIdVariables>;
-  /* Allow users to pass in custom DataConnect instances */
+  
   (dc: DataConnect, vars: GetContentByIdVariables): QueryRef<GetContentByIdData, GetContentByIdVariables>;
   operationName: string;
 }
@@ -231,9 +231,9 @@ export function getContentById(vars: GetContentByIdVariables, options?: ExecuteQ
 export function getContentById(dc: DataConnect, vars: GetContentByIdVariables, options?: ExecuteQueryOptions): QueryPromise<GetContentByIdData, GetContentByIdVariables>;
 
 interface GetContentBySlugRef {
-  /* Allow users to create refs without passing in DataConnect */
+  
   (vars: GetContentBySlugVariables): QueryRef<GetContentBySlugData, GetContentBySlugVariables>;
-  /* Allow users to pass in custom DataConnect instances */
+  
   (dc: DataConnect, vars: GetContentBySlugVariables): QueryRef<GetContentBySlugData, GetContentBySlugVariables>;
   operationName: string;
 }
@@ -243,9 +243,9 @@ export function getContentBySlug(vars: GetContentBySlugVariables, options?: Exec
 export function getContentBySlug(dc: DataConnect, vars: GetContentBySlugVariables, options?: ExecuteQueryOptions): QueryPromise<GetContentBySlugData, GetContentBySlugVariables>;
 
 interface ListContentRef {
-  /* Allow users to create refs without passing in DataConnect */
+  
   (vars: ListContentVariables): QueryRef<ListContentData, ListContentVariables>;
-  /* Allow users to pass in custom DataConnect instances */
+  
   (dc: DataConnect, vars: ListContentVariables): QueryRef<ListContentData, ListContentVariables>;
   operationName: string;
 }
@@ -255,9 +255,9 @@ export function listContent(vars: ListContentVariables, options?: ExecuteQueryOp
 export function listContent(dc: DataConnect, vars: ListContentVariables, options?: ExecuteQueryOptions): QueryPromise<ListContentData, ListContentVariables>;
 
 interface ListAllContentRef {
-  /* Allow users to create refs without passing in DataConnect */
+  
   (vars?: ListAllContentVariables): QueryRef<ListAllContentData, ListAllContentVariables>;
-  /* Allow users to pass in custom DataConnect instances */
+  
   (dc: DataConnect, vars?: ListAllContentVariables): QueryRef<ListAllContentData, ListAllContentVariables>;
   operationName: string;
 }
@@ -267,9 +267,9 @@ export function listAllContent(vars?: ListAllContentVariables, options?: Execute
 export function listAllContent(dc: DataConnect, vars?: ListAllContentVariables, options?: ExecuteQueryOptions): QueryPromise<ListAllContentData, ListAllContentVariables>;
 
 interface SyncContentUpdatesRef {
-  /* Allow users to create refs without passing in DataConnect */
+  
   (vars: SyncContentUpdatesVariables): QueryRef<SyncContentUpdatesData, SyncContentUpdatesVariables>;
-  /* Allow users to pass in custom DataConnect instances */
+  
   (dc: DataConnect, vars: SyncContentUpdatesVariables): QueryRef<SyncContentUpdatesData, SyncContentUpdatesVariables>;
   operationName: string;
 }

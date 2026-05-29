@@ -72,15 +72,15 @@ const LoginPage = () => {
 
   return (
     <div className="animate-fade-in flex items-center justify-center py-12 px-4 relative min-h-screen w-full overflow-hidden">
-      {/* Premium Shifting Background Blobs */}
+      
       <div className="glow-blob-1"></div>
       <div className="glow-blob-2"></div>
       
-      {/* Ambient Backlighting Halo */}
+      
       <div className="login-ambient-halo"></div>
 
       <div className="login-card w-full max-w-md p-8 md:p-12 relative z-10 overflow-hidden">
-        {/* Decorative Background Elements */}
+        
         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-[60px] rounded-full -mr-16 -mt-16 pointer-events-none"></div>
         
         <div className="text-center mb-10 relative z-10">
@@ -89,7 +89,7 @@ const LoginPage = () => {
              Back to Home
            </Link>
            
-           {/* Pulsing OM Symbol in Geometric frame */}
+           
            <div className="om-badge-container">
              <div className="om-geometric-ring"></div>
              <div className="om-geometric-ring-inner"></div>

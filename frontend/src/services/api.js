@@ -26,13 +26,13 @@ const USE_MOCK = process.env.REACT_APP_DEMO_MODE === 'true';
 const CACHE_PREFIX = 'sv_cache_';
 const CACHE_EXPIRY = 30 * 60 * 1000;
 
-// Module-scoped in-memory cache for all items and metadata
+
 let memoryCachedItems = null;
 let memoryLastUpdated = '1970-01-01T00:00:00.000Z';
 let memoryCategoryCache = {};
 let lastSyncTime = 0;
 
-// Fast numeric date sorter to sort database once in O(N log N) and avoid redundant sorting
+
 const ensureSorted = (items) => {
   if (!items || !Array.isArray(items)) return [];
   items.forEach(item => {
@@ -48,7 +48,7 @@ if (typeof window !== 'undefined') {
     if (e.key === 'vrindopnishad_all_content_cache') {
       try {
         memoryCachedItems = e.newValue ? ensureSorted(JSON.parse(e.newValue)) : null;
-        memoryCategoryCache = {}; // invalidate categorized caches
+        memoryCategoryCache = {}; 
         const time = localStorage.getItem('vrindopnishad_all_content_last_updated');
         if (time) memoryLastUpdated = time;
       } catch (err) {
@@ -58,7 +58,7 @@ if (typeof window !== 'undefined') {
   });
 }
 
-// Helper to generate a URL-friendly Hinglish slug from a title (matches brajrasik.org SEO)
+
 const generateSlug = (text) => {
   if (!text) return '';
   const transliterated = transliterate(text);
@@ -66,11 +66,11 @@ const generateSlug = (text) => {
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9\s-]/g, '') // Keep letters, numbers, spaces, hyphens only
-    .replace(/\s+/g, '-')         // Spaces to hyphens
-    .replace(/--+/g, '-')         // Collapse multiple hyphens
-    .replace(/^-+/, '')            // Trim leading
-    .replace(/-+$/, '');           // Trim trailing
+    .replace(/[^a-z0-9\s-]/g, '') 
+    .replace(/\s+/g, '-')         
+    .replace(/--+/g, '-')         
+    .replace(/^-+/, '')            
+    .replace(/-+$/, '');           
 };
 
 const setCache = (key, data) => {
@@ -95,7 +95,7 @@ const getCache = (key) => {
     } catch (e) { return null; }
 };
 
-// Smart client-side categorizer to map generic DB categories into Shlokas, Strotras, and Poems
+
 const classifyItemCategory = (item) => {
   if (!item) return 'poem';
   const rawCat = (item.category || '').toLowerCase().trim();
@@ -117,7 +117,7 @@ const classifyItemCategory = (item) => {
   const title = (item.title || '').toLowerCase();
   const sanskrit = (item.sanskrit_text || '').toLowerCase();
   
-  // 1. Check if it's a Strotra (e.g. Strotram, Ashtakam, Shatakam, Mahimamritam)
+  
   if (
     title.includes('स्तोत्र') || title.includes('strotra') || title.includes('stotra') ||
     title.includes('शतक') || title.includes('shatak') ||
@@ -130,7 +130,7 @@ const classifyItemCategory = (item) => {
     return 'strotra';
   }
   
-  // 2. Check if it's a Shloka (Sanskrit verses from scriptures like Gita, Upanishad, Samhitas)
+  
   const hasSanskritText = sanskrit.trim().length > 10 && 
     (sanskrit.includes('॥') || sanskrit.includes('।') || sanskrit.includes('ॐ') || !/[a-z]{5,}/.test(sanskrit));
   
@@ -144,7 +144,7 @@ const classifyItemCategory = (item) => {
     return 'shloka';
   }
   
-  // 3. Fallback to Poem (vaani pads, dohas, sakhis, savaiyas, etc.)
+  
   return 'poem';
 };
 
@@ -198,9 +198,9 @@ export const apiService = {
     return memoryCategoryCache[targetCat];
   },
 
-  // Content APIs
+  
   getAllContent: async (category = null, limit = 50) => {
-    // 1. Check if we have the global cache in memory first
+    
     let cachedItems = [];
     let lastUpdated = '1970-01-01T00:00:00.000Z';
     
@@ -224,12 +224,12 @@ export const apiService = {
       }
     }
 
-    // 2. If no cache exists, load static backup JSON first (serves from CDN, 0 egress)
+    
     if (!cachedItems || cachedItems.length === 0) {
       console.log('[Cache-Miss] Loading initial dataset from local static backup (0 egress)...');
       cachedItems = ensureSorted(await fetchStaticBackup());
       
-      // Calculate initial lastUpdated from static items
+      
       if (cachedItems && cachedItems.length > 0) {
         let maxTime = new Date('1970-01-01T00:00:00Z');
         cachedItems.forEach(item => {
@@ -247,16 +247,16 @@ export const apiService = {
       }
       memoryCachedItems = cachedItems;
       memoryLastUpdated = lastUpdated;
-      memoryCategoryCache = {}; // Reset category cache since base items changed
+      memoryCategoryCache = {}; 
     }
 
-    // 3. Trigger a background delta-sync (only fetches rows updated since lastUpdated)
+    
     if (!USE_MOCK && typeof window !== 'undefined') {
       const now = Date.now();
-      // Throttle delta sync to once every 5 minutes
+      
       if (now - lastSyncTime > 5 * 60 * 1000) {
         lastSyncTime = now;
-        // Run delta-sync asynchronously without blocking the UI
+        
         setTimeout(async () => {
           try {
             let updates = [];
@@ -279,7 +279,7 @@ export const apiService = {
             if (updates.length > 0) {
               console.log(`[Delta-Sync] Found ${updates.length} new or updated items!`);
               
-              // Merge updates into cachedItems
+              
               const itemMap = new Map(cachedItems.map(item => [item.id, item]));
               
               updates.forEach(upd => {
@@ -294,7 +294,7 @@ export const apiService = {
               
               const newCachedItems = ensureSorted(Array.from(itemMap.values()));
               
-              // Find new max updated_at
+              
               let maxTime = new Date(lastUpdated);
               updates.forEach(upd => {
                 if (upd.updated_at) {
@@ -305,12 +305,12 @@ export const apiService = {
               
               memoryCachedItems = newCachedItems;
               memoryLastUpdated = maxTime.toISOString();
-              memoryCategoryCache = {}; // Invalidate categorized cache
+              memoryCategoryCache = {}; 
               
               localStorage.setItem('vrindopnishad_all_content_cache', JSON.stringify(newCachedItems));
               localStorage.setItem('vrindopnishad_all_content_last_updated', maxTime.toISOString());
               
-              // Dispatch storage event to update other components or tabs
+              
               window.dispatchEvent(new Event('storage'));
             } else {
               console.log('[Delta-Sync] Database is up to date. 0 new items fetched.');
@@ -322,7 +322,7 @@ export const apiService = {
       }
     }
 
-    // 4. Return requested subset from cached items
+    
     let filtered = cachedItems;
     if (category) {
       const targetCat = category.toLowerCase().trim();
@@ -334,7 +334,7 @@ export const apiService = {
       }
     }
     
-    // Skip dynamic O(N log N) sorting since global cachedItems is pre-sorted!
+    
     if (limit && limit < filtered.length) {
       filtered = filtered.slice(0, limit);
     }
@@ -347,7 +347,7 @@ export const apiService = {
     let cached = getCache(cacheKey);
     if (cached) return cached;
 
-    // Fallback: Check global pre-fetched in-memory/localStorage cache first
+    
     try {
       let items = memoryCachedItems;
       if (!items) {
@@ -435,13 +435,13 @@ export const apiService = {
     }
   },
 
-  // Categories API
+  
   getCategories: async () => {
-    // Return standard client-side categories corresponding to filter pills and paths
+    
     return ['shloka', 'strotra', 'poem'];
   },
 
-  // Admin APIs supporting both Providers
+  
   createContent: async (contentData) => {
     try {
       const id = contentData.id || crypto.randomUUID();
@@ -570,7 +570,7 @@ export const apiService = {
     }
   },
 
-  // Auth APIs
+  
   login: async (email, password) => {
     try {
       if (DB_PROVIDER === 'supabase') {
@@ -680,7 +680,7 @@ export const apiService = {
     }
   },
 
-  // AI & Upload APIs
+  
   generateAudio: async (contentId, text, language, token) => {
     const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
     const headers = token ? { Authorization: `Bearer ${token}` } : {};

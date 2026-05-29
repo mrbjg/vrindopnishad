@@ -12,7 +12,7 @@ const GlossaryDetailPage = () => {
   const location = useLocation();
   const isHindiRoute = location.pathname.startsWith('/hi');
 
-  // Find the exact term matching the slug
+  
   const termData = GLOSSARY_TERMS.find(t => t.slug === slug.toLowerCase());
 
   const [activeLangTab, setActiveLangTab] = useState(isHindiRoute ? 'hi' : 'en');
@@ -55,7 +55,7 @@ const GlossaryDetailPage = () => {
             { name: termData.term, path: `/glossary/${termData.slug}` }
           ]))}
         </script>
-        {/* FAQ Schema for quick SERP Answer Box targeting */}
+        
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -106,7 +106,7 @@ const GlossaryDetailPage = () => {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch mb-12">
-        {/* Main Theological Context Column (col-span-2) */}
+        
         <div className="lg:col-span-2 space-y-6 text-left">
           <div className="glass-card p-6 rounded-3xl border border-white/5 space-y-6">
             <div className="flex justify-between items-center border-b border-white/5 pb-4">
@@ -114,7 +114,7 @@ const GlossaryDetailPage = () => {
                 <Sparkles size={16} className="text-primary" />
                 {isHindiRoute ? "विस्तृत दार्शनिक एवं आध्यात्मिक विवेचन" : "Theological Context & Philosophy"}
               </h2>
-              {/* Language Switcher for bilingual access */}
+              
               <div className="flex bg-white/5 p-0.5 rounded-lg gap-0.5">
                 <button 
                   onClick={() => setActiveLangTab('en')}
@@ -136,7 +136,7 @@ const GlossaryDetailPage = () => {
             </div>
           </div>
 
-          {/* Academic Citations block (Authority Feature) */}
+          
           {termData.references && (
             <div className="glass-card p-6 rounded-3xl border border-white/5 space-y-3 bg-white/[0.015]">
               <h3 className="font-bold text-xs uppercase tracking-wider text-white/45 flex items-center gap-1.5">
@@ -150,9 +150,9 @@ const GlossaryDetailPage = () => {
           )}
         </div>
 
-        {/* Sidebar Info Column (col-span-1) */}
+        
         <div className="space-y-6 text-left">
-          {/* Quick Etymology Box */}
+          
           <div className="glass-card p-6 rounded-3xl border border-white/5 space-y-4 bg-white/[0.015]">
             <h3 className="font-bold text-xs uppercase tracking-wider text-minimal-gold flex items-center gap-1.5">
               <BookOpen size={14} className="text-primary" />
@@ -163,7 +163,7 @@ const GlossaryDetailPage = () => {
             </p>
           </div>
 
-          {/* Relational Interlinking Links */}
+          
           {(termData.relatedSaints || termData.relatedGranthas) && (
             <div className="glass-card p-6 rounded-3xl border border-white/5 space-y-4">
               <h3 className="font-bold text-xs uppercase tracking-wider text-minimal-gold flex items-center gap-1.5">

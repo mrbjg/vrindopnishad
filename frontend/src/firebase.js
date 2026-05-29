@@ -1,5 +1,5 @@
-// Firebase configuration
-// This file connects the Web App to the same Firebase project as the Mobile App ("santvaanig")
+
+
 
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
@@ -19,7 +19,7 @@ const firebaseConfig = {
     databaseURL: "https://santvaanig-default-rtdb.asia-southeast1.firebasedatabase.app"
 };
 
-// Initialize Default Firebase App
+
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);

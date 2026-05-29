@@ -1,19 +1,19 @@
-// babel-metadata-plugin.js
-// Babel plugin for JSX transformation - adds metadata to all elements
+
+
 const path = require("path");
 const fs = require("fs");
 
-// ───────────────────────────────────────────────────────────────────────────────
-// ===== Dynamic composite detection (auto-exclude) =====
+
+
 const EXTENSIONS = [".tsx", ".ts", ".jsx", ".js"];
-const PROJECT_ROOT = path.resolve(__dirname, '../..'); // frontend root (../../ from plugins/visual-edits/)
+const PROJECT_ROOT = path.resolve(__dirname, '../..'); 
 const SRC_ALIAS = path.resolve(PROJECT_ROOT, "src");
 
-const RESOLVE_CACHE = new Map(); // key: fromFile::source -> absPath | null
-const FILE_AST_CACHE = new Map(); // absPath -> { ast, mtimeMs }
-const PORTAL_COMP_CACHE = new Map(); // key: absPath::exportName -> boolean
-const DYNAMIC_COMP_CACHE = new Map(); // key: absPath::exportName -> boolean
-const BINDING_DYNAMIC_CACHE = new WeakMap(); // node -> boolean
+const RESOLVE_CACHE = new Map(); 
+const FILE_AST_CACHE = new Map(); 
+const PORTAL_COMP_CACHE = new Map(); 
+const DYNAMIC_COMP_CACHE = new Map(); 
+const BINDING_DYNAMIC_CACHE = new WeakMap(); 
 
 function resolveImportPath(source, fromFile) {
   const cacheKey = `${fromFile}::${source}`;
@@ -25,12 +25,12 @@ function resolveImportPath(source, fromFile) {
   } else if (source.startsWith("./") || source.startsWith("../")) {
     base = path.resolve(path.dirname(fromFile), source);
   } else {
-    // bare specifier (node_modules) — skip analysis
+    
     RESOLVE_CACHE.set(cacheKey, null);
     return null;
   }
 
-  // try direct file
+  
   for (const ext of EXTENSIONS) {
     const file = base.endsWith(ext) ? base : base + ext;
     if (fs.existsSync(file) && fs.statSync(file).isFile()) {
@@ -38,7 +38,7 @@ function resolveImportPath(source, fromFile) {
       return file;
     }
   }
-  // try index.* in directory
+  
   if (fs.existsSync(base) && fs.statSync(base).isDirectory()) {
     for (const ext of EXTENSIONS) {
       const idx = path.join(base, "index" + ext);
@@ -74,7 +74,7 @@ function parseFileAst(absPath, parser) {
 function jsxNameOf(openingEl, t) {
   const n = openingEl?.name;
   if (t.isJSXIdentifier(n)) return n.name;
-  if (t.isJSXMemberExpression(n)) return n.property.name; // <X.Y>
+  if (t.isJSXMemberExpression(n)) return n.property.name; 
   return null;
 }
 
@@ -86,10 +86,10 @@ function isPortalishName(name, RADIX_ROOTS) {
   return RADIX_ROOTS.has(name) || PORTAL_SUFFIX_RE.test(name);
 }
 
-// Analyze a specific exported component in a file
+
 function fileExportHasPortals({
   absPath,
-  exportName, // string or "default"
+  exportName, 
   t,
   traverse,
   parser,
@@ -107,8 +107,8 @@ function fileExportHasPortals({
     return false;
   }
 
-  // Map local imports -> file paths for recursive checks
-  const importMap = new Map(); // localName -> { absPath, importName }
+  
+  const importMap = new Map(); 
   traverse(ast, {
     ImportDeclaration(p) {
       const src = p.node.source.value;
@@ -130,7 +130,7 @@ function fileExportHasPortals({
     },
   });
 
-  // Find the component declaration for exportName
+  
   let compPaths = [];
 
   traverse(ast, {
@@ -196,7 +196,7 @@ function fileExportHasPortals({
           return;
         }
         if (/^[A-Z]/.test(name || "")) {
-          // capitalized child: may itself be portalish
+          
           const binding = op.scope.getBinding(name);
           if (binding && binding.path) {
             const childHas = subtreeHasPortals(binding.path);
@@ -238,7 +238,7 @@ function fileExportHasPortals({
   return found;
 }
 
-// Decide at a usage site whether <ElementName /> is a composite that should be excluded
+
 function usageIsCompositePortal({
   elementName,
   jsxPath,
@@ -248,10 +248,10 @@ function usageIsCompositePortal({
   parser,
   RADIX_ROOTS,
 }) {
-  // Same-file binding?
+  
   const binding = jsxPath.scope.getBinding(elementName);
   if (binding && binding.path) {
-    // Analyze the definition directly
+    
     let hit = false;
     binding.path.traverse({
       JSXOpeningElement(op) {
@@ -272,7 +272,7 @@ function usageIsCompositePortal({
     if (hit) return true;
   }
 
-  // Imported binding (named)
+  
   if (binding && binding.path && binding.path.isImportSpecifier()) {
     const from = binding.path.parent.source.value;
     const fileFrom =
@@ -293,7 +293,7 @@ function usageIsCompositePortal({
     });
   }
 
-  // Imported binding (default)
+  
   if (binding && binding.path && binding.path.isImportDefaultSpecifier()) {
     const from = binding.path.parent.source.value;
     const fileFrom =
@@ -316,11 +316,11 @@ function usageIsCompositePortal({
   return false;
 }
 
-// ───────────────────────────────────────────────────────────────────────────────
-// Babel plugin for JSX transformation - adds metadata to all elements
+
+
 const babelMetadataPlugin = ({ types: t }) => {
   const fileNameCache = new Map();
-  const processedNodes = new WeakSet(); // Track processed nodes to prevent infinite loops
+  const processedNodes = new WeakSet(); 
 
   const ARRAY_METHODS = new Set([
     "map",
@@ -335,7 +335,7 @@ const babelMetadataPlugin = ({ types: t }) => {
     "every",
   ]);
 
-  // ---------- helpers ----------
+  
   const getName = (openingEl) => {
     const n = openingEl?.name;
     return t.isJSXIdentifier(n) ? n.name : null;
@@ -369,7 +369,7 @@ const babelMetadataPlugin = ({ types: t }) => {
     "Command",
   ]);
 
-  // direct child of a Trigger / asChild / Slot parent?
+  
   const isDirectChildOfAsChildOrTrigger = (jsxPath) => {
     const p = jsxPath.parentPath;
     if (!p || !p.isJSXElement || !p.isJSXElement()) return false;
@@ -386,7 +386,7 @@ const babelMetadataPlugin = ({ types: t }) => {
         a.name.name.startsWith("x-"),
     );
 
-  // ⬇️ Add { markExcluded } option: when true, include x-excluded="true"
+  
   const insertMetaAttributes = (openingEl, attrsToAdd) => {
     if (!openingEl.attributes) openingEl.attributes = [];
     const spreadIndex = openingEl.attributes.findIndex((attr) =>
@@ -435,7 +435,7 @@ const babelMetadataPlugin = ({ types: t }) => {
     insertMetaAttributes(openingEl, metaAttrs);
   };
 
-  // Check if a JSX element is inside an array iteration callback
+  
   function isJSXDynamic(jsxPath) {
     let currentPath = jsxPath.parentPath;
     while (currentPath) {
@@ -450,7 +450,7 @@ const babelMetadataPlugin = ({ types: t }) => {
     return false;
   }
 
-  // Check if JSX element has any expressions (data dependencies)
+  
   function hasAnyExpression(jsxElement) {
     const openingEl = jsxElement.openingElement;
     if (openingEl?.attributes?.some((attr) => t.isJSXSpreadAttribute(attr))) {
@@ -470,7 +470,7 @@ const babelMetadataPlugin = ({ types: t }) => {
     return false;
   }
 
-  // bring in parser/traverse for dynamic analysis
+  
   const parser = require("@babel/parser");
   const traverse = require("@babel/traverse").default;
 
@@ -758,8 +758,8 @@ const babelMetadataPlugin = ({ types: t }) => {
   return {
     name: "element-metadata-plugin",
     visitor: {
-      // Wrap React components (capitalized JSX) with metadata divs,
-      // or stamp attributes when wrapping would break Radix/Floating-UI.
+      
+      
       JSXElement(jsxPath, state) {
         if (processedNodes.has(jsxPath.node)) return;
 
@@ -768,26 +768,26 @@ const babelMetadataPlugin = ({ types: t }) => {
         const elementName = getName(openingElement);
         if (!elementName) return;
 
-        // Only process capitalized components (React components)
+        
         if (!/^[A-Z]/.test(elementName)) return;
 
-        // Exclude components that have strict child requirements or break when wrapped
+        
         const excludedComponents = new Set([
           "Route",
           "Routes",
           "Switch",
           "Redirect",
-          "Navigate", // React Router
+          "Navigate", 
           "Fragment",
           "Suspense",
-          "StrictMode", // React built-ins
+          "StrictMode", 
           "ErrorBoundary",
           "Provider",
           "Consumer",
           "Outlet",
           "Link",
           "NavLink",
-          // Portal-based primitives/triggers (Radix/Floating-UI)
+          
           "Sheet",
           "SheetContent",
           "SheetOverlay",
@@ -822,7 +822,7 @@ const babelMetadataPlugin = ({ types: t }) => {
           "ContextMenuPortal",
           "Command",
           "CommandDialog",
-          // Triggers & measured bits
+          
           "PopoverTrigger",
           "TooltipTrigger",
           "DropdownMenuTrigger",
@@ -835,7 +835,7 @@ const babelMetadataPlugin = ({ types: t }) => {
           "DrawerTrigger",
           "CommandInput",
           "Slot",
-          // icons (avoid wrapping)
+          
           "X",
           "ChevronRight",
           "ChevronLeft",
@@ -854,7 +854,7 @@ const babelMetadataPlugin = ({ types: t }) => {
         ]);
         if (excludedComponents.has(elementName)) return;
 
-        // Check if parent is a component that strictly validates children
+        
         const parent = jsxPath.parentPath;
         if (parent?.isJSXElement?.()) {
           const parentName = getName(parent.node.openingElement) || "";
@@ -869,12 +869,12 @@ const babelMetadataPlugin = ({ types: t }) => {
             ].includes(parentName) ||
             RADIX_ROOTS.has(parentName)
           ) {
-            // Don't wrap if direct child of strict parent (e.g., Route inside Routes, or Radix roots)
+            
             return;
           }
         }
 
-        // Get source location
+        
         const filename =
           state.filename ||
           state.file?.opts?.filename ||
@@ -888,7 +888,7 @@ const babelMetadataPlugin = ({ types: t }) => {
         }
         const normalizedPath = fileNameCache.get(filename) || "unknown";
 
-        // Detect dynamic
+        
         let isDynamic = isJSXDynamic(jsxPath) || hasAnyExpression(jsxPath.node);
 
         if (!isDynamic) {
@@ -898,14 +898,14 @@ const babelMetadataPlugin = ({ types: t }) => {
           }
         }
 
-        // Check if parent is a detected composite portal
+        
         const parentIsCompositePortal = (() => {
           const p = jsxPath.parentPath;
           if (!p || !p.isJSXElement || !p.isJSXElement()) return false;
           const parentName = getName(p.node.openingElement);
           if (!parentName || !/^[A-Z]/.test(parentName)) return false;
 
-          // Check if parent was detected as composite portal
+          
           return usageIsCompositePortal({
             elementName: parentName,
             jsxPath: p,
@@ -917,9 +917,9 @@ const babelMetadataPlugin = ({ types: t }) => {
           });
         })();
 
-        // 🚫 If this element is a direct child of a Trigger/asChild/Slot,
-        // or itself a primitive/root, DO NOT WRAP — stamp x-* on the element itself
-        // and mark it with x-excluded="true".
+        
+        
+        
         if (
           hasProp(openingElement, "asChild") ||
           isPortalPrimitive(elementName) ||
@@ -935,7 +935,7 @@ const babelMetadataPlugin = ({ types: t }) => {
           return;
         }
 
-        // NEW: dynamic composite detection (e.g., DemoPopover renders Popover primitives)
+        
         const compositePortal = usageIsCompositePortal({
           elementName,
           jsxPath,
@@ -947,7 +947,7 @@ const babelMetadataPlugin = ({ types: t }) => {
         });
 
         if (compositePortal) {
-          // Treat like a primitive/root: don't wrap; stamp + mark excluded
+          
           pushMetaAttrs(
             openingElement,
             { normalizedPath, lineNumber, elementName, isDynamic },
@@ -956,7 +956,7 @@ const babelMetadataPlugin = ({ types: t }) => {
           return;
         }
 
-        // ✅ Normal case: wrap with display: contents and preserve an existing key
+        
         processedNodes.add(jsxPath.node);
 
         const keyAttr = openingElement.attributes?.find(
@@ -1019,7 +1019,7 @@ const babelMetadataPlugin = ({ types: t }) => {
         jsxPath.replaceWith(wrapper);
       },
 
-      // Add metadata to native HTML elements (lowercase JSX)
+      
       JSXOpeningElement(jsxPath, state) {
         if (!jsxPath.node.name || !jsxPath.node.name.name) {
           return;
@@ -1027,17 +1027,17 @@ const babelMetadataPlugin = ({ types: t }) => {
 
         const elementName = jsxPath.node.name.name;
 
-        // Skip fragments
+        
         if (elementName === "Fragment") {
           return;
         }
 
-        // Only process lowercase (native HTML)
+        
         if (/^[A-Z]/.test(elementName)) {
           return;
         }
 
-        // Skip if already has metadata
+        
         const hasDebugAttr = jsxPath.node.attributes.some(
           (attr) =>
             t.isJSXAttribute(attr) &&
@@ -1047,7 +1047,7 @@ const babelMetadataPlugin = ({ types: t }) => {
         );
         if (hasDebugAttr) return;
 
-        // Get source location
+        
         const filename =
           state.filename ||
           state.file?.opts?.filename ||
@@ -1062,14 +1062,14 @@ const babelMetadataPlugin = ({ types: t }) => {
         }
         const normalizedPath = fileNameCache.get(filename) || "unknown";
 
-        // Detect if native element is inside an array iteration or has expressions
+        
         const parentJSXElement = jsxPath.findParent((p) => p.isJSXElement());
         const isDynamic = parentJSXElement
           ? isJSXDynamic(parentJSXElement) ||
             hasAnyExpression(parentJSXElement.node)
           : false;
 
-        // Add metadata attributes
+        
         insertMetaAttributes(jsxPath.node, [
           t.jsxAttribute(
             t.jsxIdentifier("x-file-name"),

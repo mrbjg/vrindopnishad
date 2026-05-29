@@ -18,7 +18,7 @@ const BrajRasikHeritage = () => {
         <meta name="description" content={description} />
         <link rel="canonical" href={pageUrl} />
         
-        {/* Keywords targeting brajrasik.org space */}
+        
         <meta name="keywords" content="braj rasik, brajrasik, braj ras, vrindavan heritage, braj saints, barsana, radha krishna bhajans, sankirtan, rasik sant, premanand ji, hit harivansh, shree bhatt, vrindopnishad, sant vaani" />
         
         <meta property="og:title" content={title} />

@@ -5,7 +5,7 @@ import { Moon, Sun, Monitor } from 'lucide-react';
 const ThemeToggle = ({ className = '', showLabel = false }) => {
     const { theme, isDark, setTheme, toggleTheme } = useTheme();
 
-    // Simple toggle button (just switches between light/dark)
+    
     if (!showLabel) {
         return (
             <button
@@ -22,7 +22,7 @@ const ThemeToggle = ({ className = '', showLabel = false }) => {
         );
     }
 
-    // Full theme selector with system option
+    
     return (
         <div className={`flex items-center gap-1 p-1 rounded-xl bg-muted ${className}`}>
             <ThemeButton

@@ -5,7 +5,7 @@ const BrajCalendar = ({ isHi, calendarData, onSaveCalendar }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState({ ...calendarData });
 
-  // Keep local form in sync when calendarData changes from database
+  
   useEffect(() => {
     setForm({ ...calendarData });
   }, [calendarData]);

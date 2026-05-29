@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 
 const SettingsContext = createContext();
 
-// All available themes with metadata for the picker UI
+
 export const THEMES = [
   { id: 'dark',      label: 'Dark',        icon: 'Moon',      group: 'base' },
   { id: 'light',     label: 'Light',       icon: 'Sun',       group: 'base' },
@@ -23,7 +23,7 @@ export const THEMES = [
   { id: 'aurora',    label: 'Aurora Glow',   icon: 'Sparkles', group: 'mood' },
 ];
 
-// Themes that use light text (dark backgrounds)
+
 const DARK_THEMES = ['dark', 'night', 'space', 'void', 'waterfall', 'cherryblossom', 'aurora'];
 
 export const isLightTheme = (themeId) => !DARK_THEMES.includes(themeId);
@@ -43,16 +43,16 @@ export const SettingsProvider = ({ children }) => {
       enableAnimations: true
     };
     
-    // Migration from old string-based font sizes
+    
     if (typeof initial.fontSize === 'string') {
       const mapping = { 'normal': 2, 'large': 3, 'xlarge': 4 };
       initial.fontSize = mapping[initial.fontSize] || 2;
     }
 
-    // Migration: add theme if missing
+    
     if (!initial.theme) initial.theme = 'light';
     
-    // Ensure new settings fields exist
+    
     if (initial.devoteeName === undefined) initial.devoteeName = '';
     if (initial.dailyGoal === undefined) initial.dailyGoal = 432;
     if (initial.layoutMode === undefined) initial.layoutMode = 'sanctuary';
@@ -68,11 +68,11 @@ export const SettingsProvider = ({ children }) => {
     document.documentElement.setAttribute('data-font-style', settings.fontStyle);
     document.documentElement.setAttribute('data-layout-mode', settings.layoutMode || 'sanctuary');
 
-    // Apply theme
+    
     const theme = settings.theme || 'light';
     document.documentElement.setAttribute('data-theme', theme);
 
-    // Toggle light/dark class for Tailwind dark: variants
+    
     if (isLightTheme(theme)) {
       document.documentElement.classList.remove('dark');
       document.documentElement.classList.add('light-mode');

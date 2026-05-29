@@ -1,15 +1,11 @@
-/**
- * Vercel Serverless Function: Dynamic Sitemap Generator
- * Fetches ALL content from Supabase (paginated) and generates XML.
- * Cached by Vercel CDN for 1 hour via s-maxage.
- */
+
 
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || 'https://tilimltxgeucefxzerqi.supabase.co';
 const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpbGltbHR4Z2V1Y2VmeHplcnFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2MjQyNTQsImV4cCI6MjA4MzIwMDI1NH0.lwaCJyTRW6jNsfQJ32R_wAwp11yj6bvsJ4fzC0EX_00';
 const DOMAIN = 'https://path.vrindopnishad.in';
 const { GLOSSARY_TERMS } = require('./glossaryTerms');
 
-// Devanagari to Hinglish Phonetic Map for SEO Slugs
+
 const DevanagariToHinglishMap = {
   'अ': 'a', 'आ': 'aa', 'इ': 'i', 'ई': 'ee', 'उ': 'u', 'ऊ': 'oo', 'ऋ': 'ri',
   'ए': 'e', 'ऐ': 'ai', 'ओ': 'o', 'औ': 'au', 'अं': 'an', 'अः': 'ah',
@@ -135,7 +131,7 @@ const escapeXmlUrl = (url) => {
     .replace(/>/g, '&gt;');
 };
 
-// Dynamic relations extractor
+
 function extractRelations(items) {
   if (!items || !items.length) {
     return { sants: [], books: [], ragas: [] };
@@ -146,7 +142,7 @@ function extractRelations(items) {
   const ragasMap = {};
   const biographies = [];
 
-  // Pass 1: Gather biographies
+  
   items.forEach(item => {
     if (item.category?.toLowerCase() === 'saint') {
       const title = item.title || '';
@@ -159,7 +155,7 @@ function extractRelations(items) {
     }
   });
 
-  // Pass 2: Extract relations from verses
+  
   items.forEach(item => {
     if (item.category?.toLowerCase() === 'saint') return;
 
@@ -191,7 +187,7 @@ function extractRelations(items) {
       saintName = item.author;
     }
 
-    // Extract Raga
+    
     let ragaName = null;
     const ragaRegex = /(राग\s+[^\s,;()\-]+)/;
     const matchTitle = title.match(ragaRegex);
@@ -272,7 +268,7 @@ export default async function handler(req, res) {
   const today = new Date().toISOString().split('T')[0];
   let contentItems = [];
 
-  // Paginated fetch from Supabase (1000 per page)
+  
   try {
     const PAGE_SIZE = 1000;
     let offset = 0;
@@ -302,7 +298,7 @@ export default async function handler(req, res) {
     console.error('Supabase fetch failed:', e.message);
   }
 
-  // Extract unique categories dynamically
+  
   const categoriesSet = new Set();
   const categories = [];
   contentItems.forEach(i => {
@@ -315,10 +311,10 @@ export default async function handler(req, res) {
     }
   });
 
-  // Extract dynamic relations
+  
   const { sants, books, ragas } = extractRelations(contentItems);
 
-  // Build XML blocks
+  
   const staticUrls = SEO_PAGES.flatMap(p => {
     const enPath = p.path;
     const hiPath = '/hi' + (p.path === '/' ? '' : p.path);

@@ -1,12 +1,8 @@
-/**
- * Hinglish Search Utility — Smart multilingual search for Sant-Vaani
- * Maps Romanized Hindi (Hinglish) to Devanagari for fuzzy matching.
- * Users type "radha krishna bhajan" → matches "राधा कृष्ण भजन"
- */
 
-// Common Hinglish → Hindi keyword mappings (spiritual/devotional domain)
+
+
 const HINGLISH_MAP = {
-  // Deities & Names
+  
   'radha': ['राधा', 'राधे', 'राधिका'],
   'radhe': ['राधे', 'राधा', 'राधिका'],
   'radhika': ['राधिका', 'राधा'],
@@ -46,7 +42,7 @@ const HINGLISH_MAP = {
   'kabir': ['कबीर', 'कबीरदास'],
   'premanand': ['प्रेमानंद', 'प्रेमानन्द'],
 
-  // Places
+  
   'vrindavan': ['वृंदावन', 'वृन्दावन', 'ब्रिंदावन'],
   'brindavan': ['वृंदावन', 'वृन्दावन', 'ब्रिंदावन'],
   'braj': ['ब्रज', 'व्रज'],
@@ -64,7 +60,7 @@ const HINGLISH_MAP = {
   'ghat': ['घाट'],
   'van': ['वन'],
 
-  // Content types & concepts
+  
   'bhajan': ['भजन', 'भजनी'],
   'shloka': ['श्लोक', 'श्लोकी'],
   'shlok': ['श्लोक'],
@@ -115,7 +111,7 @@ const HINGLISH_MAP = {
   'sakhi': ['सखी', 'साखी'],
   'gopi': ['गोपी', 'गोपियों'],
 
-  // Emotions / Descriptors
+  
   'pyar': ['प्यार', 'प्यारे', 'प्यारी'],
   'pyare': ['प्यारे', 'प्यार', 'प्यारी'],
   'sundar': ['सुंदर', 'सुन्दर'],
@@ -128,7 +124,7 @@ const HINGLISH_MAP = {
   'hare': ['हरे', 'हारे'],
   'hari': ['हरि', 'हरी'],
 
-  // Scriptures
+  
   'gita': ['गीता', 'गीत'],
   'geeta': ['गीता'],
   'veda': ['वेद', 'वेदों'],
@@ -142,10 +138,7 @@ const HINGLISH_MAP = {
   'bhagavat': ['भागवत', 'भगवत'],
 };
 
-/**
- * Expand a Hinglish search query into multiple search variants
- * "radha pyari" → ["radha pyari", "राधा", "राधे", "राधिका", "प्यार", "प्यारे", "प्यारी"]
- */
+
 export function expandHinglishQuery(query) {
   if (!query || typeof query !== 'string') return [];
 
@@ -153,20 +146,20 @@ export function expandHinglishQuery(query) {
   const words = normalizedQuery.split(/\s+/);
   const expandedTerms = new Set();
 
-  // Always include original query
+  
   expandedTerms.add(normalizedQuery);
 
   for (const word of words) {
-    // Add the original word
+    
     expandedTerms.add(word);
 
-    // Look up in dictionary
+    
     const hindiVariants = HINGLISH_MAP[word];
     if (hindiVariants) {
       hindiVariants.forEach(v => expandedTerms.add(v));
     }
 
-    // Also try partial matches (e.g., "krishn" matches "krishna")
+    
     for (const [key, variants] of Object.entries(HINGLISH_MAP)) {
       if (key.startsWith(word) && word.length >= 3) {
         variants.forEach(v => expandedTerms.add(v));
@@ -177,9 +170,7 @@ export function expandHinglishQuery(query) {
   return Array.from(expandedTerms);
 }
 
-/**
- * Smart search: check if any expanded term matches the content fields
- */
+
 export function hinglishMatch(item, query) {
   if (!query || !item) return true;
 
@@ -196,13 +187,11 @@ export function hinglishMatch(item, query) {
     ...(item.tags || [])
   ].filter(Boolean).join(' ').toLowerCase();
 
-  // Check if ANY expanded term matches
+  
   return expandedTerms.some(term => searchableText.includes(term.toLowerCase()));
 }
 
-/**
- * Generate search suggestions based on popular spiritual terms
- */
+
 export function getSearchSuggestions(query) {
   if (!query || query.length < 2) return [];
 
@@ -219,5 +208,5 @@ export function getSearchSuggestions(query) {
     }
   }
 
-  return suggestions.slice(0, 8); // Max 8 suggestions
+  return suggestions.slice(0, 8); 
 }

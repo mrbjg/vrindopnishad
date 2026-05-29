@@ -32,7 +32,7 @@ const RagasListPage = () => {
   const sentinelRef = useRef(null);
 
   useEffect(() => {
-    setVisibleCount(12); // Reset count on search query change to keep DOM small
+    setVisibleCount(12); 
   }, [searchQuery]);
 
   useEffect(() => {
@@ -59,7 +59,7 @@ const RagasListPage = () => {
     r.hinglishName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Infinite Scroll Observer
+  
   useEffect(() => {
     if (loading || filteredRagas.length <= visibleCount) return;
 
@@ -172,7 +172,7 @@ const RagasListPage = () => {
             ))}
           </div>
 
-          {/* Scroll Sentinel Loader */}
+          
           {filteredRagas.length > visibleCount && (
             <div ref={sentinelRef} className="py-10 flex justify-center w-full">
               <div className="w-8 h-8 border-2 border-[var(--primary-color)] border-t-transparent rounded-full animate-spin"></div>

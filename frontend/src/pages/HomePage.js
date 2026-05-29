@@ -8,7 +8,7 @@ import { extractRelations } from '../utils/relations';
 import { useSettings } from '../contexts/SettingsContext';
 import PookizDashboardView from '../components/PookizDashboardView';
 
-// Import our new modular components
+
 import AtmosphereCustomizer from '../components/home/AtmosphereCustomizer';
 import BrajCalendar from '../components/home/BrajCalendar';
 import DailySwadhyaya from '../components/home/DailySwadhyaya';
@@ -19,10 +19,10 @@ import PilgrimageHub from '../components/home/PilgrimageHub';
 import LatestVersesFeed from '../components/home/LatestVersesFeed';
 import RagasIndex from '../components/home/RagasIndex';
 
-// Lazy load the PreviewDrawer for O(1) initial loading
+
 const PreviewDrawer = React.lazy(() => import('../components/home/PreviewDrawer'));
 
-/* ─── Daily Shloka Rotation ─── */
+
 const DAILY_SHLOKAS = [
   {
     source: "श्रीमद्भगवद्गीता २.४७",
@@ -71,7 +71,7 @@ const DAILY_SHLOKAS = [
   }
 ];
 
-/* ─── Get initials for circular avatar ─── */
+
 const getInitials = (name) => {
   if (!name) return 'V';
   let clean = name.replace(/^(Shri|Swami|Sri|Shree|श्री|स्वामी|श्रीमद्)\s+/i, '').trim();
@@ -93,12 +93,12 @@ const HomePage = () => {
   const [ragas, setRagas] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Daily Swadhyaya / Sadhana Tracking States
+  
   const [isCompleted, setIsCompleted] = useState(false);
   const [streak, setStreak] = useState(0);
   const [particles, setParticles] = useState([]);
 
-  // Personalized Calendar State
+  
   const [calendarData, setCalendarData] = useState(() => {
     try {
       const saved = localStorage.getItem('vrindopnishad_calendar_data');
@@ -126,7 +126,7 @@ const HomePage = () => {
     }
   });
 
-  // Drawer / Preview state
+  
   const [selectedItem, setSelectedItem] = useState(null);
   const [previewType, setPreviewType] = useState(null);
 
@@ -144,7 +144,7 @@ const HomePage = () => {
   const [isEditingName, setIsEditingName] = useState(false);
   const [tempName, setTempName] = useState(settings.devoteeName || '');
 
-  // Keep temp name updated if changed externally
+  
   useEffect(() => {
     setTempName(settings.devoteeName || '');
   }, [settings.devoteeName]);
@@ -243,7 +243,7 @@ const HomePage = () => {
       });
     }
 
-    // Trigger local particle explosion
+    
     const newParticles = Array.from({ length: 24 }).map((_, i) => ({
       id: i,
       x: (Math.random() - 0.5) * 140,
@@ -257,7 +257,7 @@ const HomePage = () => {
 
   const [japaCount, setJapaCount] = useState(0);
 
-  // Supabase Sync Effect
+  
   useEffect(() => {
     if (!user) return;
 
@@ -296,7 +296,7 @@ const HomePage = () => {
             localStorage.setItem('vrindopnishad_calendar_data', JSON.stringify(data.calendar));
           }
         } else {
-          // Record doesn't exist: initialize it
+          
           const initialCalendar = {
             tithiEn: "Ekadashi (Shukla)",
             tithiHi: "एकादशी (शुक्ल पक्ष)",
@@ -324,7 +324,7 @@ const HomePage = () => {
 
     syncUserSadhana();
 
-    // Subscribe to Postgres changes on this user's record in users_sadhana table
+    
     const channel = supabase
       .channel(`public:users_sadhana:id=eq.${user.uid}`)
       .on('postgres_changes', {
@@ -364,10 +364,10 @@ const HomePage = () => {
       active = false;
       supabase.removeChannel(channel);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [user]);
 
-  // Load guest/offline calendar data from localStorage on mount
+  
   useEffect(() => {
     try {
       const saved = localStorage.getItem('vrindopnishad_calendar_data');
@@ -450,7 +450,7 @@ const HomePage = () => {
   const latestVerses = useMemo(() => allItems.filter(i => i.category?.toLowerCase() !== 'saint').slice(0, 6), [allItems]);
   const dailyShloka = DAILY_SHLOKAS[new Date().getDate() % DAILY_SHLOKAS.length];
 
-  /* ── Category dynamic stats ── */
+  
   const categoryStats = useMemo(() => {
     const counts = { shloka: 0, strotra: 0, poem: 0, raga: ragas.length };
     allItems.forEach(item => {
@@ -462,19 +462,19 @@ const HomePage = () => {
     return counts;
   }, [allItems, ragas]);
 
-  /* ── Loading State ── */
+  
   if (loading) {
     return (
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-left min-h-screen">
-        {/* Title/Header Skeleton */}
+        
         <div className="flex justify-between items-center mb-10">
           <div className="skeleton w-48 h-8 rounded-lg" />
           <div className="skeleton w-24 h-6 rounded-full" />
         </div>
 
-        {/* 1. Dashboard Grid Skeleton */}
+        
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start mb-16">
-          {/* Calendar Panel Skeleton */}
+          
           <div className="skeleton-card p-6 h-[440px] flex flex-col justify-between">
             <div>
               <div className="skeleton w-32 h-5 mb-6" />
@@ -490,7 +490,7 @@ const HomePage = () => {
             <div className="skeleton w-full h-10 rounded-xl" />
           </div>
 
-          {/* Swadhyaya Panel Skeleton */}
+          
           <div className="skeleton-card lg:col-span-2 p-8 h-[440px] flex flex-col justify-between">
             <div>
               <div className="flex gap-3 mb-6">
@@ -514,7 +514,7 @@ const HomePage = () => {
             </div>
           </div>
 
-          {/* Japa Chant Panel Skeleton */}
+          
           <div className="skeleton-card p-6 h-[440px] flex flex-col justify-between items-center text-center">
             <div className="w-full">
               <div className="skeleton w-36 h-5 mx-auto mb-8" />
@@ -530,7 +530,7 @@ const HomePage = () => {
           </div>
         </div>
 
-        {/* 2. Categories Skeleton */}
+        
         <div className="py-8 border-t border-white/5 mb-16">
           <div className="skeleton w-40 h-6 mb-8" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -546,7 +546,7 @@ const HomePage = () => {
           </div>
         </div>
 
-        {/* 3. Latest Wisdom Feed Skeleton */}
+        
         <div className="py-8 border-t border-white/5">
           <div className="skeleton w-44 h-6 mb-8" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -598,7 +598,7 @@ const HomePage = () => {
 
   return (
     <div className="relative overflow-hidden animate-fade-in font-sans min-h-screen">
-      {/* ── SEO ── */}
+      
       <Helmet>
         <title>Vrindopnishad Paath — वृंदोपनिषद् पाठ | Sacred Shlokas, Strotras &amp; Devotional Poetry</title>
         <meta name="description" content="Vrindopnishad Paath (वृंदोपनिषद् पाठ) — Read and listen to authentic sacred Sanskrit shlokas, devotional strotras, spiritual poetry &amp; Vedic wisdom from Vrindavan saints. Free online paath in Hindi, Sanskrit &amp; English." />
@@ -637,7 +637,7 @@ const HomePage = () => {
         })}</script>
       </Helmet>
 
-      {/* ── Ambient Glow Blobs ── */}
+      
       <div className="home-theme-glow-ambient top-[-250px] left-[-200px] md:w-[800px] md:h-[800px]"
         style={{ background: `radial-gradient(circle, rgba(var(--primary-rgb), 0.03) 0%, rgba(var(--primary-rgb), 0.005) 50%, transparent 70%)` }} />
 
@@ -646,9 +646,9 @@ const HomePage = () => {
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-4 animate-fade-in space-y-12 pt-6">
 
-        {/* Sadhana Personalization Hub */}
+        
         <div className="space-y-6">
-          {/* Welcome Banner */}
+          
           <div className="glass-card !p-4 sm:!p-5 rounded-3xl border border-primary/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-left shadow-lg select-none">
             <div className="flex items-center gap-4 w-full sm:w-auto">
               <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-xl uppercase shrink-0">
@@ -738,7 +738,7 @@ const HomePage = () => {
             </div>
           </div>
 
-          {/* Atmosphere Preset Selection Customizer */}
+          
           <AtmosphereCustomizer
             isHi={isHi}
             theme={settings.theme}
@@ -746,9 +746,9 @@ const HomePage = () => {
           />
         </div>
 
-        {/* ═══ THREE COLUMN HERO SANCTUARY ═══ */}
+        
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 max-w-6xl mx-auto items-stretch">
-          {/* Column 1: Braj Calendar (col-span-1) */}
+          
           <div className="lg:col-span-1 h-full">
             <BrajCalendar
               isHi={isHi}
@@ -757,7 +757,7 @@ const HomePage = () => {
             />
           </div>
 
-          {/* Column 2 & 3: Daily Swadhyaya (col-span-2) */}
+          
           <div className="lg:col-span-2 h-full flex flex-col">
             <DailySwadhyaya
               isHi={isHi}
@@ -769,7 +769,7 @@ const HomePage = () => {
             />
           </div>
 
-          {/* Column 4: Chant Tracker (col-span-1) */}
+          
           <div className="lg:col-span-1 h-full">
             <ChantSanctuary
               isHi={isHi}
@@ -782,7 +782,7 @@ const HomePage = () => {
           </div>
         </div>
 
-        {/* ═══ CATEGORIES INHERITED GRID BLOCKS ═══ */}
+        
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { to: '/category/shloka', name: isHi ? 'वैदिक श्लोक' : 'Sacred Shlokas', label: 'Vedic', count: categoryStats.shloka, color: 'from-amber-500/20 to-yellow-600/5', border: 'border-amber-500/20', text: 'text-amber-400' },
@@ -801,41 +801,41 @@ const HomePage = () => {
           ))}
         </div>
 
-        {/* ═══ GRANTHAS SHOWCASE (STOREFRONT LIBRARY) ═══ */}
+        
         <LibraryShowcase
           isHi={isHi}
           books={books}
           navigate={navigate}
         />
 
-        {/* ═══ RASIK SAINTS CREATOR SPOTLIGHT ═══ */}
+        
         <SaintsSpotlight
           isHi={isHi}
           saints={saints}
           navigate={navigate}
         />
 
-        {/* ═══ DIVINE KNOWLEDGE & PILGRIMAGE HUB ═══ */}
+        
         <PilgrimageHub
           isHi={isHi}
           navigate={navigate}
         />
 
-        {/* ═══ LATEST DEVOTIONAL FEED (BLOG STYLE GRID) ═══ */}
+        
         <LatestVersesFeed
           isHi={isHi}
           latestVerses={latestVerses}
           navigate={navigate}
         />
 
-        {/* ═══ CLASSICAL RAGAS COMPACT INDEX ═══ */}
+        
         <RagasIndex
           isHi={isHi}
           ragas={ragas}
           navigate={navigate}
         />
 
-        {/* ═══ GOOGLE SEO CONTEXT AND FOOTER ═══ */}
+        
         <div className="py-8 max-w-4xl mx-auto border-t border-white/5 text-center text-xs text-white/35 leading-relaxed font-light space-y-4 select-none">
           <p>
             <strong className="text-white/55 font-bold">Vrindopnishad Paath (वृंदोपनिषद् पाठ)</strong> online sanctuary: Engage daily with authentic Vedic Sanskrit Shlokas (श्लोक), devotional hymns (Strotras / स्तोत्र), and spiritual poetry from Braj Dham saints including Premanand Ji Maharaj, Swami Haridas, Hit Harivansh, and other Braj rasiks. Access complete Hindi भावार्थ translations, English meanings, and classical Raga notations for devotional chanting and swadhyaya.
@@ -852,7 +852,7 @@ const HomePage = () => {
 
       </div>
 
-      {/* ═══ PREVIEW DRAWER (LAZY LOADED ON DEMAND) ─── */}
+      
       {selectedItem && (
         <React.Suspense fallback={null}>
           <PreviewDrawer

@@ -37,7 +37,7 @@ const MadhuryaBhavaPage = () => {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12 items-stretch text-left">
-        {/* Card 1: Madhurya Bhava */}
+        
         <section className="glass-card p-6 rounded-3xl border border-white/5 flex flex-col justify-between space-y-4">
           <div className="space-y-3">
             <div className="w-10 h-10 rounded-2xl bg-amber-500/5 border border-amber-500/10 flex items-center justify-center text-amber-500">
@@ -58,7 +58,7 @@ const MadhuryaBhavaPage = () => {
           </div>
         </section>
 
-        {/* Card 2: Sakhi Bhava */}
+        
         <section className="glass-card p-6 rounded-3xl border border-white/5 flex flex-col justify-between space-y-4">
           <div className="space-y-3">
             <div className="w-10 h-10 rounded-2xl bg-sky-500/5 border border-sky-500/10 flex items-center justify-center text-sky-400">
@@ -80,7 +80,7 @@ const MadhuryaBhavaPage = () => {
         </section>
       </div>
 
-      {/* Comparison Detail */}
+      
       <section className="glass-card p-8 rounded-3xl border border-white/5 text-left max-w-4xl mx-auto mb-12 space-y-4">
         <h2 className="text-lg font-bold text-minimal-gold flex items-center gap-2">
           <BookOpen size={18} className="text-primary" />
@@ -94,7 +94,7 @@ const MadhuryaBhavaPage = () => {
         </p>
       </section>
 
-      {/* FAQ Section */}
+      
       <section className="glass-card p-8 rounded-3xl border border-white/5 text-left max-w-4xl mx-auto mb-12">
         <h2 className="text-xl font-bold text-minimal-gold mb-6 flex items-center gap-2">
           <BookOpen size={20} className="text-primary" />

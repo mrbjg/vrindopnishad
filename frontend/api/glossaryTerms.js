@@ -1,4 +1,4 @@
-// Centralized glossary terms database for Serverless pre-rendering (CommonJS)
+
 
 const GLOSSARY_TERMS = [
   {

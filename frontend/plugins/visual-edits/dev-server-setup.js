@@ -1,11 +1,11 @@
-// dev-server-setup.js
-// Dev server middleware configuration for visual editing
+
+
 const fs = require("fs");
 const path = require("path");
 const express = require("express");
 const { execSync } = require("child_process");
 
-// 🔍 Read Supervisor code-server password from conf.d
+
 function getCodeServerPassword() {
   try {
     const conf = fs.readFileSync(
@@ -13,7 +13,7 @@ function getCodeServerPassword() {
       "utf8",
     );
 
-    // Match environment=PASSWORD="value"
+    
     const match = conf.match(/PASSWORD="([^"]+)"/);
     return match ? match[1] : null;
   } catch {

@@ -212,7 +212,7 @@ const PookizLayout = ({ children }) => {
               </div>
             )}
 
-            {/* Navigation Links */}
+            
             <nav className="space-y-1">
               {menuItems.map((item, idx) => {
                 if (item.adminOnly && !isAdmin) return null;
@@ -237,7 +237,7 @@ const PookizLayout = ({ children }) => {
             </nav>
           </div>
 
-          {/* Bottom Profile Section */}
+          
           <div className="relative border-t border-white/5 pt-4">
             <div 
               onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
@@ -264,7 +264,7 @@ const PookizLayout = ({ children }) => {
           </div>
         </div>
 
-        {/* Mini Profile Dropdown Menu - Placed outside inner overflow-y-auto to prevent clipping */}
+        
         {isProfileMenuOpen && (
           <div className={`absolute bg-[#121215] border border-white/5 rounded-2xl shadow-xl p-1.5 z-[100] animate-fade-in text-left ${
             isSidebarCollapsed ? 'w-44 left-3 bottom-[56px]' : 'left-4 right-4 bottom-[72px]'
@@ -293,7 +293,7 @@ const PookizLayout = ({ children }) => {
         </div>
       )}
 
-      {/* Collapse toggle button on sideline */}
+      
         <button
           onClick={toggleSidebar}
           className="absolute top-20 -right-3 w-6 h-6 rounded-full bg-zinc-950 border border-white/10 hover:border-purple-500/40 hover:bg-zinc-900 flex items-center justify-center text-zinc-400 hover:text-white shadow-md z-[60] transition-all duration-200 group/collapse"
@@ -306,7 +306,7 @@ const PookizLayout = ({ children }) => {
           )}
         </button>
 
-        {/* Resize handle */}
+        
         {!isSidebarCollapsed && (
           <div 
             onMouseDown={startResizing}
@@ -319,15 +319,15 @@ const PookizLayout = ({ children }) => {
         )}
       </aside>
 
-      {/* Sidebar - Mobile Slider Overlay */}
+      
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-[1000] lg:hidden">
-          {/* Backdrop */}
+          
           <div 
             className="absolute inset-0 bg-black/80 backdrop-blur-sm"
             onClick={() => setIsMobileMenuOpen(false)}
           ></div>
-          {/* Sidebar Drawer */}
+          
           <aside className="absolute top-0 bottom-0 left-0 w-64 bg-black border-r border-white/5 flex flex-col justify-between p-4 animate-fade-in-left">
             <div className="space-y-6">
               <div className="flex items-center justify-between px-2 py-1.5 gap-4">
@@ -368,7 +368,7 @@ const PookizLayout = ({ children }) => {
               </nav>
             </div>
 
-            {/* Mobile Sidebar Footer */}
+            
             <div className="border-t border-white/5 pt-4">
               <div className="flex items-center justify-between p-2 rounded-xl">
                 <div className="flex items-center gap-3 min-w-0">
@@ -397,10 +397,10 @@ const PookizLayout = ({ children }) => {
         </div>
       )}
 
-      {/* Main Area */}
+      
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
         
-        {/* Mobile Sticky Header */}
+        
         <header className="lg:hidden h-14 border-b border-white/5 bg-black/80 backdrop-blur-md px-4 flex items-center justify-between sticky top-0 z-40 gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <button 
@@ -427,7 +427,7 @@ const PookizLayout = ({ children }) => {
           </div>
         </header>
 
-        {/* Scrollable Content Container */}
+        
         <main 
           id="pookiz-main-scroll-container"
           className="flex-1 p-3 md:p-4 w-full pb-16 overflow-y-auto custom-scrollbar"
@@ -438,13 +438,13 @@ const PookizLayout = ({ children }) => {
         </main>
       </div>
 
-      {/* Settings Modal */}
+      
       <SettingsModal 
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
       />
 
-      {/* Embedded Global Audio Player */}
+      
       <GlobalAudioPlayer />
     </div>
   );

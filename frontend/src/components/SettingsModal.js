@@ -56,17 +56,17 @@ const SettingsModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
-      {/* Backdrop */}
+      
       <div 
         className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
       ></div>
 
-      {/* Modal Card */}
+      
       <div 
         className="settings-modal-card-v2 w-full max-w-md relative z-10 animate-scale-in flex flex-col max-h-[90vh] shadow-2xl p-0 overflow-hidden"
       >
-        {/* Fixed Header */}
+        
         <div className="settings-modal-header flex justify-between items-center p-6 sm:p-8 pb-3 sm:pb-4">
           <div className="flex items-center gap-3">
             <div className="settings-modal-header-badge">
@@ -82,12 +82,12 @@ const SettingsModal = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* Scrollable Content */}
+        
         <div 
           data-lenis-prevent 
           className="flex-1 overflow-y-auto p-6 sm:p-8 pt-4 sm:pt-6 space-y-8 sm:space-y-10 custom-scrollbar"
         >
-          {/* Personal Profile Section */}
+          
           {user ? (
             <div className="space-y-4">
               <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">
@@ -147,14 +147,14 @@ const SettingsModal = ({ isOpen, onClose }) => {
             </div>
           )}
 
-          {/* Sanctuary Themes & Celestial Moods */}
+          
           <div className="space-y-4">
             <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">
               <Palette size={14} /> Sanctuary Theme
             </h3>
             
             <div className="space-y-5">
-              {/* Base Themes */}
+              
               <div>
                 <span className="settings-modal-subsection text-[10px] uppercase tracking-widest block mb-2 font-bold">Core Modes</span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -181,7 +181,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
                 </div>
               </div>
 
-              {/* Moods */}
+              
               <div>
                 <span className="settings-modal-subsection text-[10px] uppercase tracking-widest block mb-2 font-bold">Celestial Moods</span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -210,7 +210,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* Font Size */}
+          
           <div className="space-y-4">
             <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">
               <Type size={14} /> Font Size
@@ -228,7 +228,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* Font Style */}
+          
           <div className="space-y-4">
             <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">
               <AlignLeft size={14} /> Typography
@@ -250,7 +250,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* Sadhana Daily Goal */}
+          
           <div className="space-y-4">
             <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">
               <Check size={14} /> Sadhana Daily Goal
@@ -268,7 +268,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* Layout Mode */}
+          
           <div className="space-y-4">
             <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">
               <Layout size={14} /> Interface Layout
@@ -291,7 +291,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* Reading Mode */}
+          
           <div className="space-y-4">
             <h3 className="settings-modal-section-label text-xs uppercase tracking-[0.2em] font-bold flex items-center gap-2">
               <Layout size={14} /> Reading Experience
@@ -343,7 +343,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
           </div>
         </div>
 
-        {/* Fixed Footer */}
+        
         <div className="settings-modal-footer p-6 sm:p-8 pt-3 sm:pt-4">
           <button 
             onClick={onClose}

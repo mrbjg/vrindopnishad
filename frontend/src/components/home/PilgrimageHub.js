@@ -14,7 +14,7 @@ const PilgrimageHub = ({ isHi, navigate }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-left">
-        {/* Card 1: Braj Dham Guide */}
+        
         <div
           onClick={() => navigate(isHi ? "/hi/places" : "/places")}
           className="glass-card p-5 sm:p-6 rounded-3xl border border-white/5 hover:border-amber-500/20 cursor-pointer group transition-all flex flex-col justify-between space-y-4 hover:scale-[1.01] touch-manipulation"
@@ -48,7 +48,7 @@ const PilgrimageHub = ({ isHi, navigate }) => {
           </div>
         </div>
 
-        {/* Card 2: Glossary */}
+        
         <div
           onClick={() => navigate(isHi ? "/hi/glossary" : "/glossary")}
           className="glass-card p-5 sm:p-6 rounded-3xl border border-white/5 hover:border-amber-500/20 cursor-pointer group transition-all flex flex-col justify-between space-y-4 hover:scale-[1.01] touch-manipulation"

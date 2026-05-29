@@ -1,4 +1,4 @@
-// Mock data for development without Firebase
+
 export const mockContent = [
   {
     id: "mock-1",
@@ -67,7 +67,7 @@ export const mockCategories = [
 
 export const mockApiService = {
   getAllContent: async (category = null) => {
-    await new Promise(resolve => setTimeout(resolve, 300)); // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 300)); 
     if (category) {
       return {
         success: true,
@@ -80,7 +80,7 @@ export const mockApiService = {
   getContentById: async (id) => {
     await new Promise(resolve => setTimeout(resolve, 300));
     
-    // Simple helper for mock slugs (non-Hindi for simplicity in mock)
+    
     const mockSlug = (t) => t.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
     
     const content = mockContent.find(c => 

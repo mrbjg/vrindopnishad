@@ -27,7 +27,7 @@ const Navigation = () => {
           <img src={VLogo} alt="Vrindopnishad Logo" className="nav-logo-img" />
         </Link>
 
-        {/* Animated Hamburger Menu Toggle */}
+        
         <label
           className={`hamburger-menu ${mobileMenuOpen ? 'open' : ''}`}
           data-testid="mobile-menu-toggle"
@@ -42,7 +42,7 @@ const Navigation = () => {
           <span></span>
         </label>
 
-        {/* Navigation links */}
+        
         <div className={`nav-links ${mobileMenuOpen ? 'mobile-open' : ''}`}>
           <Link to="/" className="nav-link" data-testid="nav-home" onClick={closeMobileMenu}>
             <Home size={20} />

@@ -1,12 +1,4 @@
-/**
- * Vercel Serverless Function: Unified Dynamic Meta Tag & Content Injector (SEO Handler)
- * 
- * Serves fully populated HTML with unique titles, meta tags, and readable plain-text
- * content to search engines and crawler bots, solving indexation issues (Soft 404s,
- * duplicates without canonicals, crawled not indexed) in client-side React SPAs.
- * 
- * Cached aggressively at the Vercel Edge Network CDN (s-maxage=86400 / 24 hours).
- */
+
 
 const fs = require('fs');
 const path = require('path');
@@ -18,15 +10,15 @@ const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || 'https://tilimltxgeuc
 const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpbGltbHR4Z2V1Y2VmeHplcnFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2MjQyNTQsImV4cCI6MjA4MzIwMDI1NH0.lwaCJyTRW6jNsfQJ32R_wAwp11yj6bvsJ4fzC0EX_00';
 const DOMAIN = 'https://path.vrindopnishad.in';
 
-// Warm container cache to avoid fetching content index from Supabase on every crawler request
+
 let globalCache = {
   items: null,
   timestamp: 0,
   promise: null
 };
-const CACHE_TTL = 300000; // 5 minutes cache TTL
+const CACHE_TTL = 300000; 
 
-// Devanagari to Hinglish Phonetic Map for SEO Slugs
+
 const DevanagariToHinglishMap = {
   'अ': 'a', 'आ': 'aa', 'इ': 'i', 'ई': 'ee', 'उ': 'u', 'ऊ': 'oo', 'ऋ': 'ri',
   'ए': 'e', 'ऐ': 'ai', 'ओ': 'o', 'औ': 'au', 'अं': 'an', 'अः': 'ah',
@@ -548,7 +540,7 @@ export default async function handler(req, res) {
   let mainBodyHtml = '';
   let ogImageUrl = 'https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png';
 
-  // FAQ structured data definitions
+  
   const faqDataEn = [
     { question: "What is Vrindopnishad?", answer: "Vrindopnishad is a sacred digital platform dedicated to preserving and sharing authentic spiritual and Vedic knowledge. It hosts sacred Sanskrit shlokas, devotional strotras, spiritual poetry, and the teachings of Vrindavan saints in Hindi, Sanskrit, and English." },
     { question: "What does the word Vrindopnishad mean?", answer: "Vrindopnishad combines 'Vrinda' (the sacred groves of Vrindavan) and 'Upanishad' (sacred, esoteric knowledge transmitted from teacher to student). Together it means 'the sacred knowledge flowing from Vrindavan.'" },
@@ -565,7 +557,7 @@ export default async function handler(req, res) {
     { question: "क्या मैं श्लोकों का उच्चारण सुन सकता हूँ?", answer: "हाँ, इस मंच पर अधिकांश श्लोकों और पदों के साथ ऑडियो उच्चारण/गायन दिया गया है, जिससे आप पारंपरिक रागों में इनके पाठ को सुन सकते हैं।" }
   ];
 
-  // 1. Fetch content index from Supabase (with image_url)
+  
   let allContentItems = [];
   try {
     const now = Date.now();
@@ -573,7 +565,7 @@ export default async function handler(req, res) {
       allContentItems = globalCache.items;
       console.log('⚡ Serving content index from serverless cache (size:', allContentItems.length, ')');
     } else {
-      // Coalesce multiple concurrent requests by reusing the active promise
+      
       if (!globalCache.promise) {
         globalCache.promise = (async () => {
           let fetchedItems = [];
@@ -589,7 +581,7 @@ export default async function handler(req, res) {
                   'apikey': SUPABASE_KEY,
                   'Authorization': `Bearer ${SUPABASE_KEY}`
                 },
-                timeout: 10000 // 10s timeout to prevent serverless function hangs
+                timeout: 10000 
               }
             );
             const items = await response.json();
@@ -612,7 +604,7 @@ export default async function handler(req, res) {
         globalCache.timestamp = Date.now();
       } catch (fetchError) {
         console.error('Supabase fetch query failed:', fetchError.message);
-        // If we have stale cache, return it as fallback
+        
         if (globalCache.items) {
           allContentItems = globalCache.items;
           console.warn('⚠️ Stale cache used as fallback after Supabase fetch failed');
@@ -626,7 +618,7 @@ export default async function handler(req, res) {
   } catch (e) {
     console.error('Supabase fetch failed, trying local backups fallback:', e.message);
     
-    // Fallback: load from local backup files (just like scripts/generate-sitemap.mjs does)
+    
     try {
       const localFilePath = path.join(process.cwd(), 'admin/data/brajrasik_hi_full.json');
       const localSaintsPath = path.join(process.cwd(), 'admin/data/saints_formatted.json');
@@ -657,7 +649,7 @@ export default async function handler(req, res) {
       }
       
       allContentItems = backupItems;
-      // Cache the backup items temporarily for 30 seconds so we don't spam disk reads
+      
       globalCache.items = allContentItems;
       globalCache.timestamp = Date.now() - CACHE_TTL + 30000;
     } catch (fallbackError) {
@@ -665,17 +657,17 @@ export default async function handler(req, res) {
     }
   }
 
-  // Extract relationships
+  
   const { sants, books, ragas } = extractRelations(allContentItems);
 
-  // Helper to build links matching the active language route
+  
   const getRouteLink = (path) => {
     return DOMAIN + (isHindiRoute ? '/hi' : '') + path;
   };
 
-  // 2. Render route content based on requested type
+  
   if (type === 'content' && slug) {
-    // Dynamic Verse Detail page — fuzzy slug matching for Devanagari/transliterated slugs
+    
     const decodedSlug = decodeURIComponent(slug);
     const transliteratedSlug = slugify(transliterate(decodedSlug));
     const lowerSlug = decodedSlug.toLowerCase();
@@ -688,7 +680,7 @@ export default async function handler(req, res) {
       if (transliteratedSlug && s.toLowerCase() === transliteratedSlug) return true;
       if (item.id?.toString() === decodedSlug) return true;
       
-      // Fallback to derived slug from title
+      
       const genSlug = generateSlug(item.title);
       if (genSlug && genSlug === decodedSlug) return true;
       if (genSlug && genSlug.toLowerCase() === decodedSlug.toLowerCase()) return true;
@@ -697,7 +689,7 @@ export default async function handler(req, res) {
     });
     
     if (content) {
-      // Fetch full details for this specific content item dynamically (with image_url)
+      
       let fullContent = content;
       try {
         const detailResponse = await fetch(
@@ -867,14 +859,14 @@ export default async function handler(req, res) {
         })()}
       `;
     } else {
-      // Proper 404 HTML response — prevents GSC soft-404/redirect misclassification
+      
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.status(404).send(`<!doctype html><html lang="hi"><head><meta charset="utf-8"/><title>Content Not Found — Vrindopnishad</title><meta name="robots" content="noindex"/></head><body style="font-family:sans-serif;text-align:center;padding:60px 20px;"><h1>404 — Content Not Found</h1><p>The requested verse could not be located.</p><p><a href="${DOMAIN}/content">Browse All Sacred Content →</a></p></body></html>`);
       return;
     }
 
   } else if (type === 'saint' && slug) {
-    // Dynamic Saint Detail page
+    
     const decodedSlug = decodeURIComponent(slug);
     const transliteratedSlug = slugify(transliterate(decodedSlug));
     const lowerSlug = decodedSlug.toLowerCase();
@@ -891,7 +883,7 @@ export default async function handler(req, res) {
       const santName = sant.name;
       const santHinglish = sant.hinglishName || sant.name;
       
-      // Load custom metadata if available
+      
       const meta = getSaintMetadata(sant.slug || slug);
 
       const lineage = meta 
@@ -1071,7 +1063,7 @@ export default async function handler(req, res) {
     }
 
   } else if (type === 'glossary' && slug) {
-    // Dynamic Glossary Detail page
+    
     const decodedSlug = decodeURIComponent(slug).toLowerCase();
     const termData = GLOSSARY_TERMS.find(t => t.slug === decodedSlug);
 
@@ -1167,7 +1159,7 @@ export default async function handler(req, res) {
     }
 
   } else if (type === 'book' && slug) {
-    // Dynamic Book Detail page
+    
     const decodedSlug = decodeURIComponent(slug);
     const transliteratedSlug = slugify(transliterate(decodedSlug));
     const lowerSlug = decodedSlug.toLowerCase();
@@ -1265,7 +1257,7 @@ export default async function handler(req, res) {
     }
 
   } else if (type === 'raga' && slug) {
-    // Dynamic Raga Detail page
+    
     const decodedSlug = decodeURIComponent(slug);
     const transliteratedSlug = slugify(transliterate(decodedSlug));
     const lowerSlug = decodedSlug.toLowerCase();
@@ -1345,7 +1337,7 @@ export default async function handler(req, res) {
     }
 
   } else if (type === 'category' && slug) {
-    // Category page
+    
     const decodedSlug = decodeURIComponent(slug).toLowerCase().trim().replace(/\s+/g, '-');
     const filteredVerses = allContentItems.filter(item => item.category?.toLowerCase().trim().replace(/\s+/g, '-') === decodedSlug);
     const categoryTitle = decodedSlug.charAt(0).toUpperCase() + decodedSlug.slice(1);
@@ -1368,7 +1360,7 @@ export default async function handler(req, res) {
     `;
 
   } else if (type === 'static' && slug) {
-    // Static page lookup
+    
     const decodedSlug = decodeURIComponent(slug);
     const staticPageData = STATIC_SEO_PAGES[decodedSlug];
 
@@ -1384,7 +1376,7 @@ export default async function handler(req, res) {
         </article>
       `;
 
-      // Schemas for static pages
+      
       if (decodedSlug === 'faq') {
         const faqList = isHindiRoute ? faqDataHi : faqDataEn;
         jsonLd = JSON.stringify({
@@ -1475,7 +1467,7 @@ export default async function handler(req, res) {
         });
       }
     } else {
-      // Fallback list pages
+      
       let listName = "";
       if (decodedSlug === 'saints') {
         title = isHindiRoute ? `रसिक सन्त एवं चरित्र (Rasik Saints & Biographies) | Vrindopnishad` : `Vaishnava Rasik Saints & Biographies | Vrindopnishad`;
@@ -1565,7 +1557,7 @@ export default async function handler(req, res) {
     }
 
   } else {
-    // Default: Home Page
+    
     pageUrl = getRouteLink('/');
     title = isHindiRoute ? `वृंदोपनिषद् पाठ | श्लोक, स्तोत्र, और आध्यात्मिक कविता संग्रह` : `Vrindopnishad Paath — वृंदोपनिषद् पाठ | Sacred Shlokas, Strotras & Devotional Poetry`;
     description = `Vrindopnishad Paath (वृंदोपनिषद् पाठ) — Read and listen to sacred Sanskrit shlokas, strotras, devotional poetry and Vedic wisdom from Vrindavan saints. Free online paath in Hindi, Sanskrit and English. भगवद्गीता, मंत्र, श्लोक, स्तोत्र सब यहाँ पढ़ें।`;
@@ -1644,14 +1636,14 @@ export default async function handler(req, res) {
     `;
   }
 
-  // Build hreflang alternate URLs
+  
   const currentPath = pageUrl.replace(DOMAIN, '');
   const isHi = currentPath.startsWith('/hi');
   const cleanPath = isHi ? (currentPath.replace(/^\/hi/, '') || '/') : currentPath;
   const enUrl = DOMAIN + cleanPath;
   const hiUrl = DOMAIN + '/hi' + (cleanPath === '/' ? '' : cleanPath);
 
-  // Build the final complete pre-rendered HTML payload
+  
   const html = `<!doctype html>
 <html lang="hi" dir="ltr">
 <head>

@@ -13,7 +13,7 @@ const PreviewDrawer = ({
 }) => {
   const [drawerTab, setDrawerTab] = useState('bio');
 
-  // Reset tab to 'bio' whenever selectedItem changes
+  
   useEffect(() => {
     setDrawerTab('bio');
   }, [selectedItem]);
@@ -29,7 +29,7 @@ const PreviewDrawer = ({
       <div className={`preview-drawer ${selectedItem ? 'active' : ''}`}>
         <div className="drawer-drag-handle" />
         <div className="flex-1 flex flex-col overflow-hidden px-5 sm:px-6 pt-4">
-          {/* Header */}
+          
           <div className="flex items-start justify-between gap-4 mb-4 pb-4 border-b border-white/5">
             <div className="min-w-0">
               <span className="text-[9px] uppercase tracking-[0.2em] text-primary font-bold block mb-1">
@@ -63,9 +63,9 @@ const PreviewDrawer = ({
             </button>
           </div>
 
-          {/* Scrollable Content */}
+          
           <div className="drawer-scroll-container pb-6">
-            {/* Saint type details */}
+            
             {previewType === 'saint' && (
               <div>
                 <div className="drawer-tabs mb-4 flex gap-1 bg-white/5 p-1 rounded-xl">
@@ -141,7 +141,7 @@ const PreviewDrawer = ({
               </div>
             )}
 
-            {/* Book type details */}
+            
             {previewType === 'book' && (
               <div className="space-y-2">
                 {selectedItem.verses?.map((v, i) => (
@@ -157,7 +157,7 @@ const PreviewDrawer = ({
               </div>
             )}
 
-            {/* Raga type details */}
+            
             {previewType === 'raga' && (
               <div className="space-y-2">
                 {selectedItem.verses?.map((v, i) => (
@@ -173,7 +173,7 @@ const PreviewDrawer = ({
               </div>
             )}
 
-            {/* Verse type details */}
+            
             {previewType === 'verse' && (
               <div className="space-y-4 text-xs sm:text-sm">
                 {selectedItem.audio_url && (
@@ -226,7 +226,7 @@ const PreviewDrawer = ({
             )}
           </div>
 
-          {/* Footer Link */}
+          
           <div className="py-4 border-t border-white/5 flex gap-3 shrink-0">
             {previewType === 'saint' && (
               <Link

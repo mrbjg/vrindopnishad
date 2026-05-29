@@ -44,18 +44,18 @@ const Layout = ({ children }) => {
       articles.some(art => location.pathname.includes(art.slug));
   }, [location.pathname]);
 
-  // Search & Filter state
+  
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchFilter, setSearchFilter] = useState('all'); // 'all', 'saint', 'book', 'raga', 'verse'
+  const [searchFilter, setSearchFilter] = useState('all'); 
   const [searchFocused, setSearchFocused] = useState(false);
   const [searchData, setSearchData] = useState({ sants: [], books: [], ragas: [], verses: [] });
   const [dataLoaded, setDataLoaded] = useState(false);
   const [loadingSearchData, setLoadingSearchData] = useState(false);
 
-  // Japa Chant state
+  
   const [chantCount, setChantCount] = useState(0);
 
-  // Load chants count from localStorage on mount
+  
   useEffect(() => {
     try {
       const savedCount = localStorage.getItem('vrindopnishad_japa_count');
@@ -67,7 +67,7 @@ const Layout = ({ children }) => {
     }
   }, []);
 
-  // Programmatic rich temple bell sound synthesizer using Web Audio API
+  
   const playTempleBell = () => {
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -75,7 +75,7 @@ const Layout = ({ children }) => {
       const ctx = new AudioContext();
       const now = ctx.currentTime;
 
-      // Warm E5 note (fundamental)
+      
       const osc1 = ctx.createOscillator();
       const gain1 = ctx.createGain();
       osc1.frequency.setValueAtTime(659.25, now);
@@ -86,7 +86,7 @@ const Layout = ({ children }) => {
       osc1.start();
       osc1.stop(now + 1.8);
 
-      // Rich E6 octave overtone
+      
       const osc2 = ctx.createOscillator();
       const gain2 = ctx.createGain();
       osc2.frequency.setValueAtTime(1318.5, now);
@@ -109,10 +109,10 @@ const Layout = ({ children }) => {
       localStorage.setItem('vrindopnishad_japa_count', newCount);
     } catch (err) { }
 
-    // Play bell sound
+    
     playTempleBell();
 
-    // Trigger floating +1 Radhe! animation at cursor/click coordinates
+    
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX || (rect.left + rect.width / 2);
     const y = e.clientY || rect.top;
@@ -121,9 +121,9 @@ const Layout = ({ children }) => {
     const divineNames = ['🌸 Radhe!', '✨ Radhe Radhe!', '🌸 Radhe Shyam!', '✨ Radhe!'];
     floatText.innerText = divineNames[newCount % divineNames.length];
 
-    // Organic dynamic drift calculations for physics-based modern feel
-    const randomX = (Math.random() - 0.5) * 60; // -30px to +30px
-    const randomRot = (Math.random() - 0.5) * 30; // -15deg to +15deg
+    
+    const randomX = (Math.random() - 0.5) * 60; 
+    const randomRot = (Math.random() - 0.5) * 30; 
 
     floatText.className = 'fixed pointer-events-none text-xs font-bold font-headings z-[5000] floating-chant-text';
     floatText.style.left = `${x - 20}px`;
@@ -140,7 +140,7 @@ const Layout = ({ children }) => {
 
   const searchRef = useRef(null);
 
-  // Lazy load search items only when search input is focused
+  
   const handleSearchFocus = async () => {
     setSearchFocused(true);
     if (dataLoaded || loadingSearchData) return;
@@ -168,7 +168,7 @@ const Layout = ({ children }) => {
     }
   };
 
-  // Close search suggestions on click outside
+  
   useEffect(() => {
     const handleClick = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
@@ -179,7 +179,7 @@ const Layout = ({ children }) => {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  // Filter search queries dynamically
+  
   const filteredResults = useMemo(() => {
     if (!searchQuery.trim() || searchQuery.trim().length < 2 || !dataLoaded) {
       return { sants: [], books: [], ragas: [], verses: [] };
@@ -208,7 +208,7 @@ const Layout = ({ children }) => {
     };
   }, [searchQuery, searchFilter, searchData, dataLoaded]);
 
-  // Navigate to ContentListPage on enter key
+  
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && searchQuery.trim().length > 0) {
       setSearchFocused(false);
@@ -223,21 +223,21 @@ const Layout = ({ children }) => {
     '/hi/content', '/hi/saints', '/hi/books', '/hi/ragas'
   ].includes(location.pathname);
 
-  // Use settings.layoutMode to select layout type
+  
   if (settings.layoutMode === 'pookiz') {
     return <PookizLayout>{children}</PookizLayout>;
   }
 
   return (
     <div className={`min-h-screen relative text-foreground ${hideHeaderSearch ? 'layout-no-header-search' : ''} ${isKbRoute ? 'lg:h-screen lg:min-h-0 lg:overflow-hidden' : ''}`}>
-      {/* Celestial Background */}
+      
       <div className="celestial-bg">
         <div className="stars"></div>
         <div className="nebula"></div>
         <CelestialParticles />
       </div>
 
-      {/* App Header */}
+      
       {!isAuthPage && (
         <header className="app-header animate-fade-in-down flex flex-col md:flex-row md:items-center justify-between px-4 sm:px-6 py-2.5 md:py-3 gap-2.5 md:gap-0">
           <div className="flex items-center justify-between w-full md:w-auto">
@@ -252,9 +252,9 @@ const Layout = ({ children }) => {
               <span className="app-title hidden lg:block text-minimal-gold font-headings text-lg">वृंदोपनिषद्</span>
             </div>
 
-            {/* Mobile Actions Container (visible only on mobile viewports) */}
+            
             <div className="flex md:hidden items-center gap-2">
-              {/* Mobile Japa Chant Button */}
+              
               <button
                 onClick={handleChant}
                 className="header-chant-btn py-1 px-2.5 text-[9px] leading-none shrink-0"
@@ -264,7 +264,7 @@ const Layout = ({ children }) => {
                 <span>{isHiRoute ? "जाप" : "Chant"}: <span className="chant-number">{chantCount}</span></span>
               </button>
 
-              {/* Standalone Settings Button */}
+              
               <button
                 onClick={() => setIsSettingsOpen(true)}
                 className="header-control-btn shrink-0 w-8 h-8"
@@ -321,7 +321,7 @@ const Layout = ({ children }) => {
             </div>
           </div>
 
-          {/* Global Search & Filter bar */}
+          
           {!hideHeaderSearch && (
             <div className="relative w-full md:flex-1 md:max-w-sm md:max-w-md md:mx-6" ref={searchRef}>
               <div className="flex items-center bg-white/[0.04] border border-white/10 rounded-full pl-3 pr-2 h-9 text-xs md:text-sm focus-within:border-primary/50 focus-within:bg-white/[0.07] transition-all">
@@ -336,7 +336,7 @@ const Layout = ({ children }) => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
 
-                {/* Category Filter Select */}
+                
                 <select
                   value={searchFilter}
                   onChange={(e) => setSearchFilter(e.target.value)}
@@ -356,7 +356,7 @@ const Layout = ({ children }) => {
                 )}
               </div>
 
-              {/* Suggestions Overlay Dropdown */}
+              
               {searchFocused && searchQuery.trim().length >= 2 && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-[#121216]/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-md z-[3000] overflow-y-auto max-h-[50vh] p-3 text-left">
                   {loadingSearchData ? (
@@ -428,7 +428,7 @@ const Layout = ({ children }) => {
             </div>
           )}
 
-          {/* Desktop Navigation & Actions (hidden on mobile viewports) */}
+          
           <div className="hidden md:flex items-center gap-4">
             <nav className="hidden lg:flex items-center gap-1.5 xl:gap-3">
               <Link to="/" className={`header-nav-link text-xs xl:text-sm ${isActive('/') ? 'active' : ''}`}>
@@ -455,7 +455,7 @@ const Layout = ({ children }) => {
             </nav>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              {/* Desktop Japa Chant Button */}
+              
               <button
                 onClick={handleChant}
                 className="header-chant-btn py-1.5 px-3.5 text-[10px] sm:text-xs leading-none shrink-0"
@@ -465,7 +465,7 @@ const Layout = ({ children }) => {
                 <span>{isHiRoute ? "जाप" : "Chants"}: <span className="chant-number">{chantCount}</span></span>
               </button>
 
-              {/* Standalone Settings Button */}
+              
               <button
                 onClick={() => setIsSettingsOpen(true)}
                 className="header-control-btn shrink-0"
@@ -476,7 +476,7 @@ const Layout = ({ children }) => {
 
               {user ? (
                 <div className="header-profile-pill shrink-0">
-                  {/* Avatar Section */}
+                  
                   <div className="header-profile-avatar">
                     {user.photoURL ? (
                       <img
@@ -498,7 +498,7 @@ const Layout = ({ children }) => {
                     </span>
                   </div>
 
-                  {/* User Name Section */}
+                  
                   <div className="hidden sm:flex flex-col">
                     <span className="header-profile-label">Devotee</span>
                     <span className="header-profile-name">
@@ -506,10 +506,10 @@ const Layout = ({ children }) => {
                     </span>
                   </div>
 
-                  {/* Divider */}
+                  
                   <div className="header-profile-divider"></div>
 
-                  {/* Logout Button */}
+                  
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -550,7 +550,7 @@ const Layout = ({ children }) => {
         </header>
       )}
 
-      {/* Floating Vertical Sidebar Dock */}
+      
       {!isAuthPage && (
         <aside className="sidebar-dock-minimal animate-fade-in-left">
           <Link to="/" className={`dock-item-minimal ${isActive('/') ? 'active' : ''}`} title="Home">
@@ -581,7 +581,7 @@ const Layout = ({ children }) => {
         </aside>
       )}
 
-      {/* Mobile/Tablet Category Quick Links (sticky sub-bar, hidden on desktop) */}
+      
       {!isAuthPage && (
         <div className="lg:hidden flex items-center gap-2 overflow-x-auto px-4 py-2 header-sub-bar border-b scrollbar-hide fixed top-[112px] md:top-[80px] left-0 right-0 z-[999] h-10">
           <Link to="/saints" className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all ${isActive('/saints') ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-white/5 text-white/60 border border-white/5'}`}>
@@ -605,14 +605,14 @@ const Layout = ({ children }) => {
         </div>
       )}
 
-      {/* Main Content Area */}
+      
       <main className={`${isAuthPage ? 'pt-0 pl-0' : `${isKbRoute ? 'pl-0 md:pl-[88px] lg:h-screen lg:pt-20 lg:pb-0 lg:overflow-hidden' : 'pl-0 md:pl-28'} pt-[152px] md:pt-[120px] lg:pt-20 pb-36 md:pb-12`}`}>
         <div className={`${isAuthPage ? 'w-full min-h-screen flex items-center justify-center' : 'w-full px-4 md:px-6'} ${isKbRoute ? 'lg:h-full lg:px-6 lg:pb-4' : ''}`}>
           {children}
         </div>
       </main>
 
-      {/* Mobile Bottom Nav */}
+      
       {!isAuthPage && (
         <div className="mobile-bottom-nav">
           <Link to="/" className={`mobile-nav-item ${isActive('/') ? 'active' : ''}`} title="Home">
@@ -629,16 +629,16 @@ const Layout = ({ children }) => {
           </Link>
         </div>
       )}
-      {/* Global Audio Player */}
+      
       <GlobalAudioPlayer />
 
-      {/* Settings Modal */}
+      
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
       />
 
-      {/* Theme Onboarding Modal */}
+      
       <ThemeOnboardingModal />
     </div>
   );

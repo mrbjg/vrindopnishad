@@ -79,13 +79,13 @@ async function runMigration() {
 
   console.log(`Successfully fetched ${allContent.length} rows from Supabase. Beginning bulk upload...`);
 
-  // Pre-process all slugs to ensure absolute uniqueness across the entire dataset
-  const slugMap = new Map(); // slug -> id
+  
+  const slugMap = new Map(); 
   allContent.forEach(item => {
     const title = item.title || 'Untitled';
     let baseSlug = item.slug || cleanSlug(null, title);
     if (!baseSlug) baseSlug = 'untitled';
-    baseSlug = baseSlug.substring(0, 180); // Leave room for suffix
+    baseSlug = baseSlug.substring(0, 180); 
     
     if (!slugMap.has(baseSlug)) {
       slugMap.set(baseSlug, item.id);
@@ -113,7 +113,7 @@ async function runMigration() {
     let gql = `mutation SupabaseBatch${batchIdx} {\n`;
     
     batchItems.forEach((item, idx) => {
-      // Map columns from Supabase (typically snake_case)
+      
       const id = item.id;
       const title = item.title || 'Untitled';
       const sanskritText = item.sanskrit_text || item.sanskritText || null;
@@ -169,13 +169,13 @@ async function runMigration() {
     
     try {
       console.log(`[Batch ${batchIdx / BATCH_SIZE + 1}/${Math.ceil(allContent.length / BATCH_SIZE)}] Uploading items ${batchIdx} to ${batchIdx + batchItems.length}...`);
-      // Run relative to /Users/sakhi/Code/Company where firebase.json is located
+      
       const cmd = `npx firebase dataconnect:execute "${tempGqlFile}"`;
       execSync(cmd, { cwd: '/Users/sakhi/Code/Company', stdio: 'pipe' });
       console.log(`[Batch ${batchIdx / BATCH_SIZE + 1}] Successfully migrated!`);
     } catch (err) {
       console.error(`[Batch ${batchIdx / BATCH_SIZE + 1}] Failed:`, err.message);
-      // Wait a moment and retry once
+      
       try {
         console.log(`Retrying batch...`);
         const cmd = `npx firebase dataconnect:execute "${tempGqlFile}"`;
@@ -186,7 +186,7 @@ async function runMigration() {
       }
     }
     
-    // Slight pause to manage rate limits and network latency
+    
     await new Promise(resolve => setTimeout(resolve, 300));
   }
 

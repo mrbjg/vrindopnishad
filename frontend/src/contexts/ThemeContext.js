@@ -17,7 +17,7 @@ export const ThemeProvider = ({ children }) => {
     const isDark = !isLightTheme(currentTheme);
 
     useEffect(() => {
-        // Update meta theme-color for mobile browsers
+        
         const metaThemeColor = document.querySelector('meta[name="theme-color"]');
         if (metaThemeColor) {
             metaThemeColor.setAttribute(

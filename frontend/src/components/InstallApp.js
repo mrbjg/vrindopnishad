@@ -8,9 +8,9 @@ const InstallApp = () => {
 
     useEffect(() => {
         window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevent Chrome 67 and earlier from automatically showing the prompt
+            
             e.preventDefault();
-            // Stash the event so it can be triggered later.
+            
             setDeferredPrompt(e);
             setShowPrompt(true);
         });
@@ -21,7 +21,7 @@ const InstallApp = () => {
             console.log('App was installed');
         });
 
-        // Check if already installed
+        
         if (window.matchMedia('(display-mode: standalone)').matches) {
             setIsInstalled(true);
         }
@@ -30,14 +30,14 @@ const InstallApp = () => {
     const handleInstallClick = async () => {
         if (!deferredPrompt) return;
 
-        // Show the prompt
+        
         deferredPrompt.prompt();
 
-        // Wait for the user to respond to the prompt
+        
         const { outcome } = await deferredPrompt.userChoice;
         console.log(`User response to the install prompt: ${outcome}`);
 
-        // We've used the prompt, and can't use it again, throw it away
+        
         setDeferredPrompt(null);
         setShowPrompt(false);
     };
@@ -131,7 +131,7 @@ const InstallApp = () => {
                     </div>
                 </div>
 
-                {/* Decorative Elements */}
+                
                 <div style={{
                     position: 'absolute',
                     top: '-50px',

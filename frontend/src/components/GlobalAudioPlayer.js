@@ -39,7 +39,7 @@ const GlobalAudioPlayer = () => {
         <div className={`fixed bottom-24 md:bottom-8 left-6 right-6 z-[1100] transition-all duration-500 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
             <div className={`glass-card overflow-hidden border border-white/10 shadow-2xl transition-all duration-500 ${isExpanded ? 'h-auto p-8' : 'h-20 p-4'}`}>
                 
-                {/* Progress Bar (Always on top of the card) */}
+                
                 <div 
                     className="absolute top-0 left-0 h-1 bg-primary/30 w-full cursor-pointer group"
                     onClick={(e) => {
@@ -57,7 +57,7 @@ const GlobalAudioPlayer = () => {
                     </div>
                 </div>
 
-                {/* Mini Player View */}
+                
                 {!isExpanded && (
                     <div className="flex items-center justify-between h-full gap-4">
                         <div className="flex items-center gap-4 flex-1 min-w-0">
@@ -98,7 +98,7 @@ const GlobalAudioPlayer = () => {
                     </div>
                 )}
 
-                {/* Expanded View */}
+                
                 {isExpanded && (
                     <div className="animate-fade-in">
                         <div className="flex justify-between items-start mb-8">

@@ -1,10 +1,10 @@
-/* Legacy App.css - Cleaned of global overrides to prevent conflicts with index.css */
+
 
 .App {
   min-height: 100vh;
 }
 
-/* Typography Extensions */
+
 
 .sanskrit-text {
   font-family: 'Cormorant Garamond', serif;
@@ -20,7 +20,7 @@
   }
 }
 
-/* Loading Screen */
+
 .loading-screen {
   display: flex;
   justify-content: center;
@@ -56,7 +56,7 @@
   }
 }
 
-/* Navigation */
+
 .navbar {
   background: linear-gradient(135deg, #ff6b35 0%, #d84315 100%);
   padding: 0.75rem 1rem;
@@ -64,7 +64,7 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  /* Safe area for notched devices */
+  
   padding-top: calc(0.75rem + env(safe-area-inset-top));
 }
 
@@ -94,7 +94,7 @@
   width: auto;
   object-fit: cover;
   border-radius: 4px;
-  /* Optional: adds a slight curve if desired, remove if not needed */
+  
 }
 
 @media (min-width: 768px) {
@@ -103,7 +103,7 @@
   }
 }
 
-/* Animated Hamburger Menu */
+
 .hamburger-menu {
   display: flex;
   flex-direction: column;
@@ -139,13 +139,13 @@
   width: 75%;
 }
 
-/* Animation when open - proper X alignment */
+
 .hamburger-menu.open span:nth-of-type(1) {
   width: 100%;
   transform: translateY(8px) rotate(45deg);
 }
 
-/* Audio Player Animations */
+
 @keyframes audio-bar {
   0%, 100% { height: 10%; }
   50% { height: 100%; }
@@ -172,7 +172,7 @@
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
 }
 
-/* Custom Range Input Styling */
+
 input[type="range"] {
   -webkit-appearance: none;
   background: transparent;
@@ -213,14 +213,14 @@ input[type="range"]::-webkit-slider-runnable-track {
   }
 }
 
-/* Navigation Links */
+
 .nav-links {
   display: flex;
   gap: 0.5rem;
   align-items: center;
 }
 
-/* Mobile Navigation Styles - Enhanced Animation */
+
 @media (max-width: 768px) {
   .nav-links {
     position: fixed;
@@ -239,7 +239,7 @@ input[type="range"]::-webkit-slider-runnable-track {
     box-shadow: -8px 0 30px rgba(0, 0, 0, 0.3);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    /* Slide animation using transform */
+    
     transform: translateX(100%);
     transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
   }
@@ -248,7 +248,7 @@ input[type="range"]::-webkit-slider-runnable-track {
     transform: translateX(0);
   }
 
-  /* Backdrop overlay with blur */
+  
   .nav-links::before {
     content: '';
     position: fixed;
@@ -331,7 +331,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   background: rgba(255, 215, 0, 0.15);
 }
 
-/* Buttons */
+
 .btn {
   padding: 0.875rem 1.5rem;
   border: none;
@@ -345,7 +345,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   align-items: center;
   justify-content: center;
   min-height: 48px;
-  /* Touch target */
+  
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -405,7 +405,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   color: white;
 }
 
-/* Cards */
+
 .card {
   background: white;
   border-radius: 12px;
@@ -422,7 +422,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   }
 }
 
-/* Disable hover lift on touch devices for better UX */
+
 @media (hover: hover) {
   .card:hover {
     box-shadow: none;
@@ -433,7 +433,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   transform: scale(0.99);
 }
 
-/* Container */
+
 .container {
   max-width: 1400px;
   margin: 0 auto;
@@ -446,7 +446,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   }
 }
 
-/* Hero Section */
+
 .hero {
   min-height: 60vh;
   display: flex;
@@ -549,7 +549,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   }
 }
 
-/* Content Grid */
+
 .content-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -577,7 +577,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   }
 }
 
-/* Audio Player */
+
 .audio-player {
   background: linear-gradient(135deg, #fff5e6 0%, #ffe4b5 100%);
   border-radius: 12px;
@@ -603,7 +603,7 @@ audio::-webkit-media-controls-panel {
   background: linear-gradient(135deg, #ff6b35 0%, #d84315 100%);
 }
 
-/* Image Gallery */
+
 .image-gallery {
   display: grid;
   grid-template-columns: 1fr;
@@ -653,7 +653,7 @@ audio::-webkit-media-controls-panel {
   border-color: #ff6b35;
 }
 
-/* Video Player */
+
 .video-container {
   margin: 1rem 0;
   border-radius: 12px;
@@ -673,7 +673,7 @@ video {
   display: block;
 }
 
-/* Form Inputs */
+
 .form-group {
   margin-bottom: 1.25rem;
 }
@@ -706,7 +706,7 @@ video {
   border: 2px solid rgba(255, 107, 53, 0.2);
   border-radius: 8px;
   font-size: 16px;
-  /* Prevents zoom on iOS */
+  
   font-family: 'Inter', sans-serif;
   transition: all 0.3s ease;
   background: white;
@@ -735,7 +735,7 @@ video {
   }
 }
 
-/* Category Badge */
+
 .category-badge {
   display: inline-flex;
   align-items: center;
@@ -769,9 +769,9 @@ video {
   color: white;
 }
 
-/* Page-specific mobile adjustments */
 
-/* Category Page - Icon sizing */
+
+
 .category-icon-large {
   font-size: 3rem;
 }
@@ -782,7 +782,7 @@ video {
   }
 }
 
-/* Filter buttons container */
+
 .filter-buttons {
   display: flex;
   gap: 0.5rem;
@@ -804,7 +804,7 @@ video {
   }
 }
 
-/* Content Detail Page adjustments */
+
 .content-detail-card {
   padding: 1.5rem;
 }
@@ -815,7 +815,7 @@ video {
   }
 }
 
-/* Animations */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -832,7 +832,7 @@ video {
   animation: fadeIn 0.6s ease-out;
 }
 
-/* Decorative Elements */
+
 .decorative-border {
   border-top: 3px solid;
   border-image: linear-gradient(90deg, transparent, #ff6b35, transparent) 1;
@@ -857,7 +857,7 @@ video {
   }
 }
 
-/* Utility Classes */
+
 .text-center {
   text-align: center;
 }
@@ -922,7 +922,7 @@ video {
   padding: 3rem;
 }
 
-/* Mobile-specific utility overrides */
+
 @media (max-width: 768px) {
   .mt-5 {
     margin-top: 2rem;
@@ -937,7 +937,7 @@ video {
   }
 }
 
-/* Hide desktop-only elements on mobile */
+
 .desktop-only {
   display: none;
 }
@@ -948,7 +948,7 @@ video {
   }
 }
 
-/* Show mobile-only elements */
+
 .mobile-only {
   display: block;
 }
@@ -959,7 +959,7 @@ video {
   }
 }
 
-/* Prevent text selection on interactive elements */
+
 .nav-link,
 .btn,
 .mobile-menu-toggle {
@@ -967,12 +967,12 @@ video {
   user-select: none;
 }
 
-/* Smooth scrolling */
+
 html {
   scroll-behavior: smooth;
 }
 
-/* Reduced motion preference */
+
 @media (prefers-reduced-motion: reduce) {
 
   *,
@@ -988,7 +988,7 @@ html {
   }
 }
 
-/* Navigation User Profile */
+
 .nav-user-container {
   display: flex;
   align-items: center;
@@ -1078,7 +1078,7 @@ html {
 
 
 
-/* Smooth theme transition - only for theme-related properties */
+
 body,
 .navbar,
 .card,
@@ -1096,7 +1096,7 @@ body,
     box-shadow 0.3s ease;
 }
 
-/* Preserve smooth hover/click animations for buttons */
+
 .btn {
   transition:
     background-color 0.3s ease,
@@ -1107,7 +1107,7 @@ body,
     transform 0.2s ease;
 }
 
-/* Preserve card hover animations */
+
 .card {
   transition:
     background-color 0.3s ease,
@@ -1117,7 +1117,7 @@ body,
     transform 0.3s ease;
 }
 
-/* Preserve navigation link animations */
+
 .nav-link {
   transition:
     background-color 0.2s ease,
@@ -1125,7 +1125,7 @@ body,
     transform 0.1s ease;
 }
 
-/* Preserve gallery image animations */
+
 .gallery-image {
   transition:
     transform 0.3s ease,

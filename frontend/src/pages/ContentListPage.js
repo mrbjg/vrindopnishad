@@ -39,7 +39,7 @@ const ContentListPage = () => {
   const [visibleCount, setVisibleCount] = useState(12);
   const sentinelRef = useRef(null);
 
-  // Sync state with URL search params changes
+  
   useEffect(() => {
     const q = searchParams.get('q') || '';
     const cat = searchParams.get('category') || null;
@@ -55,7 +55,7 @@ const ContentListPage = () => {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Close suggestions on click outside
+  
   useEffect(() => {
     const handleClick = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
@@ -66,7 +66,7 @@ const ContentListPage = () => {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  // AI Semantic Search (runs in background, doesn't block UI)
+  
   useEffect(() => {
     if (debouncedSearch.length < 3) { setAiResults([]); return; }
     let cancelled = false;
@@ -108,7 +108,7 @@ const ContentListPage = () => {
     return () => {
       active = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [selectedCategory, apiService]);
 
   const expandedTerms = useMemo(() => {
@@ -134,7 +134,7 @@ const ContentListPage = () => {
     });
   }, [content, debouncedSearch, expandedTerms]);
 
-  // Infinite Scroll Observer
+  
   useEffect(() => {
     if (loading || filteredContent.length <= visibleCount) return;
 
@@ -223,7 +223,7 @@ const ContentListPage = () => {
               onFocus={() => setShowSuggestions(true)}
             />
           </div>
-          {/* Hinglish Suggestions Dropdown */}
+          
           {showSuggestions && suggestions.length > 0 && (
             <div className="absolute top-full left-0 right-0 mt-2 bg-[#1a1a24] border border-white/10 rounded-2xl shadow-2xl shadow-black/50 z-50 overflow-hidden">
               <div className="px-4 py-2 border-b border-white/5 flex items-center gap-2">
@@ -334,7 +334,7 @@ const ContentListPage = () => {
         })}
       </div>
 
-      {/* Scroll Sentinel Loader */}
+      
       {filteredContent.length > visibleCount && (
         <div ref={sentinelRef} className="py-10 flex justify-center w-full">
           <div className="w-8 h-8 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></div>
@@ -350,7 +350,7 @@ const ContentListPage = () => {
         </div>
       )}
 
-      {/* AI Semantic Recommendations */}
+      
       {debouncedSearch.length >= 3 && (aiResults.length > 0 || aiLoading) && (
         <section className="mt-16">
           <div className="flex items-center gap-3 mb-8">

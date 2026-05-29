@@ -7,7 +7,7 @@ const ThemeOnboardingModal = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Check if user has already onboarded the theme selection
+    
     const onboarded = localStorage.getItem('theme_onboarded');
     if (onboarded !== 'true') {
       setIsOpen(true);
@@ -23,16 +23,16 @@ const ThemeOnboardingModal = () => {
 
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-      {/* Backdrop with heavy blur */}
+      
       <div className="absolute inset-0 bg-black/75 backdrop-blur-md animate-fade-in"></div>
 
-      {/* Modal Container */}
+      
       <div className="settings-modal-card-v2 w-full max-w-md relative z-10 animate-scale-in flex flex-col shadow-2xl p-8 overflow-hidden rounded-[32px]">
-        {/* Decorative background glow */}
+        
         <div className="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-[#e2a850]/10 blur-[80px] pointer-events-none"></div>
         <div className="absolute -bottom-24 -right-24 w-48 h-48 rounded-full bg-[#e2a850]/5 blur-[80px] pointer-events-none"></div>
 
-        {/* Sacred ॐ Symbol Header */}
+        
         <div className="sacred-symbol-minimal mb-2 scale-90">
           <div className="sacred-symbol-ring" />
           <div className="sacred-symbol-text">ॐ</div>
@@ -50,9 +50,9 @@ const ThemeOnboardingModal = () => {
           </p>
         </div>
 
-        {/* Dynamic Theme Selection Grid */}
+        
         <div className="grid grid-cols-2 gap-4 my-8 relative z-20">
-          {/* Dark Mode */}
+          
           <div
             onClick={() => updateSetting('theme', 'dark')}
             className={`p-6 rounded-[24px] border-2 cursor-pointer transition-all duration-300 flex flex-col items-center justify-between min-h-[160px] select-none ${
@@ -69,7 +69,7 @@ const ThemeOnboardingModal = () => {
               <Moon size={20} />
             </div>
             
-            {/* Custom styled Radio Dot matching user screenshot */}
+            
             <div className="w-5 h-5 rounded-full border border-stone-300 dark:border-white/25 flex items-center justify-center bg-stone-100 dark:bg-[#111115]">
               <div className={`w-2.5 h-2.5 rounded-full transition-transform duration-300 bg-[#e2a850] ${
                 settings.theme === 'dark' ? 'scale-100' : 'scale-0'
@@ -83,7 +83,7 @@ const ThemeOnboardingModal = () => {
             </span>
           </div>
 
-          {/* Light Mode */}
+          
           <div
             onClick={() => updateSetting('theme', 'light')}
             className={`p-6 rounded-[24px] border-2 cursor-pointer transition-all duration-300 flex flex-col items-center justify-between min-h-[160px] select-none ${
@@ -100,7 +100,7 @@ const ThemeOnboardingModal = () => {
               <Sun size={20} />
             </div>
             
-            {/* Custom styled Radio Dot matching user screenshot */}
+            
             <div className="w-5 h-5 rounded-full border border-stone-300 dark:border-white/25 flex items-center justify-center bg-stone-100 dark:bg-[#111115]">
               <div className={`w-2.5 h-2.5 rounded-full transition-transform duration-300 bg-[#e2a850] ${
                 settings.theme === 'light' ? 'scale-100' : 'scale-0'
@@ -115,7 +115,7 @@ const ThemeOnboardingModal = () => {
           </div>
         </div>
 
-        {/* Dismiss Button */}
+        
         <button
           onClick={handleConfirm}
           className="w-full btn-sacred-gold py-4 text-xs uppercase tracking-widest font-bold transition-all duration-300 flex items-center justify-center gap-2 rounded-xl"

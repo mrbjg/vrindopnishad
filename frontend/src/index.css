@@ -4,9 +4,9 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* VRINDOPNISHAD DESIGN SYSTEM - PREMIUM DARK GLASSMORPHISM                    */
-/* ═══════════════════════════════════════════════════════════════════════════ */
+
+
+
 
 :root {
     --background: 240 10% 3.9%;
@@ -15,7 +15,7 @@
     --primary-color: #e2a850;
     --primary: 37 71% 60%;
     --primary-foreground: 240 10% 3.9%;
-    /* HSL for Tailwind */
+    
     --primary-rgb: 226, 168, 80;
     --accent-gold: #e2c28a;
     --primary-btn-text: #09090b;
@@ -26,20 +26,20 @@
     --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     --border-radius-md: 24px;
     --blur-effect: blur(8px);
-    /* Reduced from 12px for performance */
+    
     --star-color: rgba(255, 255, 255, 0.4);
     --nebula-color-1: rgba(0, 0, 0, 0);
     --nebula-color-2: rgba(0, 0, 0, 0);
     --nebula-color-3: rgba(0, 0, 0, 0);
 
-    /* Glass and Celestial theme defaults */
+    
     --glass-bg: rgba(12, 12, 15, 0.45);
     --glass-border: rgba(255, 255, 255, 0.04);
     --header-bg: rgba(9, 9, 11, 0.7);
     --stars-opacity: 0.12;
     --celestial-bg: #09090b;
 
-    /* shadcn/ui required CSS variables — dark glassmorphism palette */
+    
     --card: 240 10% 6%;
     --card-foreground: 240 5% 96%;
     --popover: 240 10% 6%;
@@ -58,7 +58,7 @@
     --radius: 0.75rem;
 }
 
-/* Premium Toggle State */
+
 .sacred-toggle-active {
     background: var(--primary-color) !important;
     box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.4);
@@ -109,11 +109,11 @@ body {
     color: var(--text-color);
 }
 
-/* Scroll optimizations disabled for smoother rendering */
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* LIGHTWEIGHT CELESTIAL BACKGROUND                                            */
-/* ═══════════════════════════════════════════════════════════════════════════ */
+
+
+
+
 
 .celestial-bg {
     position: fixed;
@@ -129,12 +129,12 @@ body {
     transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
     will-change: transform;
-    /* Extra stability for mobile */
+    
     -webkit-transform: translate3d(0, 0, 0);
     transition: background 0.8s ease-in-out, background-color 0.8s ease-in-out;
 }
 
-/* Shimmering, high-performance stars */
+
 .stars {
     position: absolute;
     inset: 0;
@@ -158,7 +158,7 @@ body {
     50% { opacity: calc(var(--stars-opacity) * 0.35); }
 }
 
-/* Static, low-filter nebula */
+
 .nebula {
     position: absolute;
     inset: 0;
@@ -170,9 +170,9 @@ body {
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* GLASSMORPHISM UTILITIES                                                     */
-/* ═══════════════════════════════════════════════════════════════════════════ */
+
+
+
 
 .glass {
     background: var(--glass-bg);
@@ -188,7 +188,7 @@ body {
     padding: 2rem;
     position: relative;
     overflow: hidden;
-    /* Scroll performance optimizations */
+    
     will-change: border-color, box-shadow;
     transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
@@ -205,7 +205,7 @@ body {
     transition: background 0.4s ease;
 }
 
-/* Glass Header Polish */
+
 .app-header {
     backdrop-filter: blur(20px) saturate(180%);
     background: var(--header-bg);
@@ -213,7 +213,7 @@ body {
     transition: background 0.4s ease, border-color 0.4s ease;
 }
 
-/* Sticky Sub-bar for mobile */
+
 .header-sub-bar {
     background: var(--header-bg) !important;
     backdrop-filter: var(--blur-effect);
@@ -222,7 +222,7 @@ body {
     transition: background 0.4s ease, border-color 0.4s ease;
 }
 
-/* Improved Glassmorphism for profile pill on mobile */
+
 .app-header .header-profile-pill {
     background: rgba(255, 255, 255, 0.03);
     box-shadow:
@@ -230,7 +230,7 @@ body {
         0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-/* Font Scaling for mobile content */
+
 @media (max-width: 640px) {
     .hindi-text {
         line-height: 1.8;
@@ -238,7 +238,7 @@ body {
     }
 }
 
-/* Sacred Text Gradient - Theme-aware */
+
 .text-sacred-gradient {
     background: linear-gradient(135deg, var(--text-color) 0%, hsl(var(--foreground) / 0.6) 100%);
     -webkit-background-clip: text;
@@ -249,7 +249,7 @@ body {
     line-height: normal;
 }
 
-/* Sacred Badge Style - Refined for Categorical Colors */
+
 .sacred-badge {
     text-transform: uppercase;
     letter-spacing: 0.2em;
@@ -267,7 +267,7 @@ body {
     box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.1);
 }
 
-/* Categorical Utility Overrides */
+
 .badge-shloka {
     background: rgba(245, 158, 11, 0.1) !important;
     border-color: rgba(245, 158, 11, 0.2) !important;
@@ -302,7 +302,7 @@ body {
     box-shadow: 0 0 20px rgba(251, 146, 60, 0.1) !important;
 }
 
-/* Premium Sacred Buttons */
+
 .btn-sacred-gold {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-gold) 100%) !important;
     color: white !important;
@@ -325,7 +325,7 @@ body {
     box-shadow: none !important;
 }
 
-/* Modern Range Slider - Sanctuary Dial */
+
 .sacred-slider-container {
     --slider-percent: 50%;
     position: relative;
@@ -348,7 +348,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Track fill effect using linear-gradient */
+
 .sacred-slider {
     background: linear-gradient(to right,
             var(--primary) 0%,
@@ -364,7 +364,7 @@ body {
     height: 20px;
     background: #ffffff;
     border-radius: 4px;
-    /* Diamond/Square look */
+    
     transform: rotate(45deg);
     border: 2px solid var(--primary);
     box-shadow:
@@ -391,7 +391,7 @@ body {
     cursor: pointer;
 }
 
-/* Verse Text Transitions */
+
 .hindi-text,
 .sanskrit-text {
     display: block;
@@ -406,7 +406,7 @@ body {
     will-change: font-size, line-height;
 }
 
-/* Font Wheel Controller */
+
 .font-wheel-wrapper {
     display: flex;
     flex-direction: column;
@@ -504,7 +504,7 @@ html.light-mode .font-wheel-item-segmented {
     font-weight: 700;
 }
 
-/* Outer Concentric Sacred Yantra Ring (Dynamic Rotating Indicator) */
+
 .font-wheel-item-segmented::after {
     content: '';
     position: absolute;
@@ -535,7 +535,7 @@ html.light-mode .font-wheel-item-segmented {
     animation: font-wheel-spin 25s linear infinite;
 }
 
-/* Inner Concentric Glow Ring & Fill */
+
 .font-wheel-item-segmented::before {
     content: '';
     position: absolute;
@@ -594,23 +594,23 @@ html.light-mode .font-wheel-item-segmented.active::after {
 .glass-card {
     position: relative;
     border: 1px solid var(--glass-border);
-    /* Adjusted border */
+    
     border-radius: 2rem;
-    /* Adjusted border-radius */
+    
     padding: 2rem;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
     transition:
         all 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-        /* Adjusted transition */
+        
         transform 0.6s var(--transition-smooth),
         border-color 0.4s ease,
         box-shadow 0.6s var(--transition-smooth);
     overflow: hidden;
 }
 
-/* Scroll guards disabled */
 
-/* Glassmorphism Shine Effect */
+
+
 .glass-card::before,
 .btn-premium::before {
     content: '';
@@ -640,7 +640,7 @@ html.light-mode .font-wheel-item-segmented.active::after {
     box-shadow: inset 0 0 20px rgba(251, 191, 36, 0.05);
 }
 
-/* Minimal Reading Block - Meditative Experience (Transparent & Borderless) */
+
 .glass-card.reading-card,
 .reading-card {
     cursor: default;
@@ -671,7 +671,7 @@ html.light-mode .font-wheel-item-segmented.active::after {
 
 
 
-/* Specialized Typography for Reading */
+
 .reading-card .hindi-text {
     line-height: 2.2 !important;
     letter-spacing: 0.01em;
@@ -689,9 +689,9 @@ html.light-mode .font-wheel-item-segmented.active::after {
     color: var(--accent-gold);
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* SKELETON LOADERS (PREMIUM & DYNAMIC THEMED SHIMMER)                         */
-/* ═══════════════════════════════════════════════════════════════════════════ */
+
+
+
 
 @keyframes shimmer {
     0% {
@@ -760,10 +760,10 @@ html.light-mode .skeleton {
 }
 
 
-/* App Layout Structure */
+
 .app-layout {
     display: block;
-    /* Content full-width on mobile */
+    
     min-height: 100vh;
 }
 
@@ -777,7 +777,7 @@ html.light-mode .skeleton {
 .main-content {
     padding: 1rem;
     margin-top: 80px;
-    /* Space for Header */
+    
 }
 
 @media (min-width: 768px) {
@@ -786,10 +786,10 @@ html.light-mode .skeleton {
     }
 }
 
-/* Sidebar */
+
 .sidebar {
     display: none;
-    /* Hidden on mobile */
+    
     position: fixed;
     left: 20px;
     top: 50%;
@@ -812,7 +812,7 @@ html.light-mode .skeleton {
 @media (min-width: 768px) {
     .sidebar {
         display: flex;
-        /* Visible from tablet upwards */
+        
     }
 }
 
@@ -842,7 +842,7 @@ html.light-mode .skeleton {
     color: var(--primary-color);
 }
 
-/* Vertical indicator for active item */
+
 .side-item.active::before {
     content: '';
     position: absolute;
@@ -854,7 +854,7 @@ html.light-mode .skeleton {
     box-shadow: none !important;
 }
 
-/* Header */
+
 header.app-header {
     position: fixed;
     top: 0;
@@ -872,16 +872,16 @@ header.app-header {
     transition: background 0.4s ease, border-color 0.4s ease;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* SANCTUARY THEMES & MOODS                                                    */
-/* ═══════════════════════════════════════════════════════════════════════════ */
 
-/* 1. Base Dark (uses default root values) */
+
+
+
+
 html[data-theme='dark'] {
-    /* Uses root values */
+    
 }
 
-/* 2. Base Light */
+
 html[data-theme='light'] {
     --background: 36 20% 95%;
     --foreground: 20 15% 15%;
@@ -916,7 +916,7 @@ html[data-theme='light'] {
     --header-bg: rgba(255, 255, 255, 0.65);
 }
 
-/* 3. Night Sky */
+
 html[data-theme='night'] {
     --background: 224 40% 4%;
     --foreground: 210 20% 98%;
@@ -951,7 +951,7 @@ html[data-theme='night'] {
     --header-bg: rgba(3, 7, 18, 0.7);
 }
 
-/* 4. Cosmic Space */
+
 html[data-theme='space'] {
     --background: 260 40% 3%;
     --foreground: 260 10% 95%;
@@ -986,7 +986,7 @@ html[data-theme='space'] {
     --header-bg: rgba(8, 7, 13, 0.7);
 }
 
-/* 5. Deep Void */
+
 html[data-theme='void'] {
     --background: 0 0% 0%;
     --foreground: 0 0% 95%;
@@ -1021,7 +1021,7 @@ html[data-theme='void'] {
     --header-bg: rgba(0, 0, 0, 0.8);
 }
 
-/* 6. Winter */
+
 html[data-theme='winter'] {
     --background: 210 40% 96%;
     --foreground: 210 30% 15%;
@@ -1056,7 +1056,7 @@ html[data-theme='winter'] {
     --header-bg: rgba(224, 242, 254, 0.7);
 }
 
-/* 7. Snowfall (Light silver-white) */
+
 html[data-theme='snow'] {
     --background: 210 20% 97%;
     --foreground: 210 25% 12%;
@@ -1091,7 +1091,7 @@ html[data-theme='snow'] {
     --header-bg: rgba(248, 250, 252, 0.75);
 }
 
-/* 8. Rainy (Light misty gray-blue) */
+
 html[data-theme='rainy'] {
     --background: 210 15% 95%;
     --foreground: 210 25% 15%;
@@ -1126,7 +1126,7 @@ html[data-theme='rainy'] {
     --header-bg: rgba(241, 245, 249, 0.75);
 }
 
-/* 9. Silent Mountains (Light stone-sage) */
+
 html[data-theme='mountains'] {
     --background: 45 10% 95%;
     --foreground: 45 20% 12%;
@@ -1161,7 +1161,7 @@ html[data-theme='mountains'] {
     --header-bg: rgba(250, 250, 249, 0.75);
 }
 
-/* 9b. Mountain Morning (Light warm peach-rose) */
+
 html[data-theme='mountain_morning'] {
     --background: 20 30% 96%;
     --foreground: 20 35% 15%;
@@ -1196,7 +1196,7 @@ html[data-theme='mountain_morning'] {
     --header-bg: rgba(255, 247, 237, 0.75);
 }
 
-/* 10. Sacred Sunset (Light peach-rose) */
+
 html[data-theme='sunset'] {
     --background: 20 30% 96%;
     --foreground: 20 35% 15%;
@@ -1231,7 +1231,7 @@ html[data-theme='sunset'] {
     --header-bg: rgba(255, 247, 237, 0.75);
 }
 
-/* 11. Forest (Light sage-green) */
+
 html[data-theme='forest'] {
     --background: 120 15% 96%;
     --foreground: 120 30% 12%;
@@ -1266,7 +1266,7 @@ html[data-theme='forest'] {
     --header-bg: rgba(240, 253, 244, 0.75);
 }
 
-/* 12. Ocean (Light turquoise/azure) */
+
 html[data-theme='ocean'] {
     --background: 190 20% 96%;
     --foreground: 190 35% 15%;
@@ -1301,7 +1301,7 @@ html[data-theme='ocean'] {
     --header-bg: rgba(236, 254, 255, 0.75);
 }
 
-/* 13. Enchanted Waterfall (Deep dark teal) */
+
 html[data-theme='waterfall'] {
     --background: 200 40% 6%;
     --foreground: 200 20% 96%;
@@ -1336,7 +1336,7 @@ html[data-theme='waterfall'] {
     --header-bg: rgba(6, 18, 23, 0.7);
 }
 
-/* 14. Cherry Blossom (Sakura Night - deep violet plum with pink highlights) */
+
 html[data-theme='cherryblossom'] {
     --background: 300 40% 6%;
     --foreground: 300 20% 96%;
@@ -1371,7 +1371,7 @@ html[data-theme='cherryblossom'] {
     --header-bg: rgba(20, 10, 21, 0.7);
 }
 
-/* 14.5 Cherry Blossom Light (Sakura Day - soft pink with plum-rose text) */
+
 html[data-theme='cherryblossom_light'] {
     --background: 343 50% 97%;
     --foreground: 343 40% 15%;
@@ -1407,7 +1407,7 @@ html[data-theme='cherryblossom_light'] {
 }
 
 
-/* 15. Aurora Glow (Northern Lights - space teal-green matching waterfall accent) */
+
 html[data-theme='aurora'] {
     --background: 210 45% 5%;
     --foreground: 210 20% 96%;
@@ -1442,9 +1442,9 @@ html[data-theme='aurora'] {
     --header-bg: rgba(4, 13, 26, 0.7);
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* TAILWIND UTILITY COLOR OVERRIDES FOR LIGHT THEME COMPATIBILITY             */
-/* ═══════════════════════════════════════════════════════════════════════════ */
+
+
+
 
 html.light-mode .text-white {
     color: var(--text-color) !important;
@@ -1507,7 +1507,7 @@ html.light-mode [class~="text-white/5"] {
     color: hsl(var(--foreground) / 0.05) !important;
 }
 
-/* Hover State Overrides for Light Theme */
+
 html.light-mode [class~="hover:text-white"]:hover {
     color: hsl(var(--foreground)) !important;
 }
@@ -1527,19 +1527,19 @@ html.light-mode [class~="hover:text-white/50"]:hover {
     color: hsl(var(--foreground) / 0.5) !important;
 }
 
-/* App Title and Logo */
+
 html.light-mode .app-title {
     color: var(--text-color) !important;
 }
 
-/* Reading View Legibility Fix */
+
 html.light-mode .reading-card .hindi-text,
 html.light-mode .reading-card .sanskrit-text {
     color: var(--text-color) !important;
     text-shadow: none !important;
 }
 
-/* Borders and Backgrounds */
+
 html.light-mode [class~="border-white/5"] { border-color: hsl(var(--foreground) / 0.05) !important; }
 html.light-mode [class~="border-white/10"] { border-color: hsl(var(--foreground) / 0.08) !important; }
 html.light-mode [class~="border-white/15"] { border-color: hsl(var(--foreground) / 0.12) !important; }
@@ -1554,7 +1554,7 @@ html.light-mode [class~="bg-white/20"] { background-color: hsl(var(--foreground)
 html.light-mode [class~="bg-white/30"] { background-color: hsl(var(--foreground) / 0.2) !important; }
 html.light-mode [class~="bg-white/40"] { background-color: hsl(var(--foreground) / 0.3) !important; }
 
-/* Arbitrary Opacities (e.g. bg-white/[0.01]) */
+
 html.light-mode [class~="bg-white/[0.01]"] {
     background-color: hsl(var(--foreground) / 0.01) !important;
 }
@@ -1608,7 +1608,7 @@ h5,
 h6 {
     font-family: var(--font-headings) !important;
     line-height: 1.4;
-    /* Slightly increased from 1.3 to prevent cropping */
+    
     padding-top: 0.1em;
     padding-bottom: 0.1em;
 }
@@ -1645,14 +1645,14 @@ h6 {
 }
 
 
-/* Feed Grid */
+
 .content-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 2rem;
 }
 
-/* Category Badges */
+
 .badge {
     padding: 0.4rem 1.2rem;
     border-radius: 20px;
@@ -1665,9 +1665,9 @@ h6 {
     display: inline-block;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* ANIMATION KEYFRAMES & UTILITIES                                             */
-/* ═══════════════════════════════════════════════════════════════════════════ */
+
+
+
 
 @keyframes fade-in {
     from { opacity: 0; transform: translateY(12px); }
@@ -1710,7 +1710,7 @@ h6 {
     animation: fade-in-up 0.25s ease-out both;
 }
 
-/* Scrollbar Hide Utility */
+
 .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -1719,7 +1719,7 @@ h6 {
     display: none;
 }
 
-/* Selection Style */
+
 ::selection {
     background: rgba(var(--primary-rgb), 0.28) !important;
     color: var(--text-color) !important;
@@ -1733,7 +1733,7 @@ input::selection, textarea::selection {
     color: var(--text-color) !important;
 }
 
-/* Custom Scrollbar */
+
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -1764,7 +1764,7 @@ html.light-mode ::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.3);
 }
 
-/* Reduced Motion Accessibility */
+
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -1774,15 +1774,15 @@ html.light-mode ::-webkit-scrollbar-thumb:hover {
     }
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* PERFORMANCE OPTIMIZATIONS FOR ACTIVE SCROLLING                            */
-/* ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Active scroll styling overrides removed to preserve visual rendering, layout, and GPU layers stability */
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* SETTINGS MODAL — Theme-aware Styling                                       */
-/* ═══════════════════════════════════════════════════════════════════════════ */
+
+
+
+
+
+
+
 
 .settings-modal-card {
     background: var(--glass-bg);
@@ -1860,7 +1860,7 @@ html.light-mode ::-webkit-scrollbar-thumb:hover {
     color: rgba(255, 255, 255, 0.15);
 }
 
-/* Premium Segmented Slider Control */
+
 .premium-segmented-control {
     display: grid;
     background: rgba(255, 255, 255, 0.02);
@@ -1896,7 +1896,7 @@ html.light-mode ::-webkit-scrollbar-thumb:hover {
     transform: scale(1.02);
 }
 
-/* Modern Theme Choice Cards */
+
 .theme-picker-card {
     display: flex;
     align-items: center;
@@ -1950,7 +1950,7 @@ html.light-mode ::-webkit-scrollbar-thumb:hover {
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
 }
 
-/* Premium Settings Toggles */
+
 .premium-toggle-row {
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.06);
@@ -2010,9 +2010,9 @@ html.light-mode ::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.01);
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* LOGIN PAGE — Theme-aware Styling                                            */
-/* ═══════════════════════════════════════════════════════════════════════════ */
+
+
+
 
 .login-card {
     background: rgba(15, 23, 42, 0.35) !important;
@@ -2037,7 +2037,7 @@ html.light-mode .login-card {
         inset 0 1px 0 0 rgba(255, 255, 255, 0.4) !important;
 }
 
-/* Ambient Backlighting Halo */
+
 .login-ambient-halo {
     position: absolute;
     top: 50%;
@@ -2160,7 +2160,7 @@ html.light-mode .login-card {
     color: hsl(var(--foreground) / 0.4);
 }
 
-/* Premium Shimmer for btn-sacred-gold */
+
 .btn-sacred-gold {
     position: relative;
     overflow: hidden;
@@ -2186,9 +2186,9 @@ html.light-mode .login-card {
     transition: all 1s ease-in-out;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* CONTENT DETAIL — Theme-aware section headings & labels                     */
-/* ═══════════════════════════════════════════════════════════════════════════ */
+
+
+
 
 .content-section-heading {
     color: hsl(var(--foreground) / 0.35);
@@ -2232,9 +2232,9 @@ html.light-mode .login-card {
     color: hsl(var(--foreground) / 0.92);
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* HEADER & NAVIGATION COMPONENT STYLES                                        */
-/* ═══════════════════════════════════════════════════════════════════════════ */
+
+
+
 
 .header-nav-link {
     color: hsl(var(--foreground) / 0.7);
@@ -2398,11 +2398,11 @@ html.light-mode .login-card {
     box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.05);
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* ROBUST LIGHT MODE CONTRAST & LEGIBILITY OVERRIDES                         */
-/* ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Remove shadows and enforce lite outline on light theme */
+
+
+
+
 html.light-mode .glass-card,
 html.light-mode .glass,
 html.light-mode .premium-content-card,
@@ -2437,7 +2437,7 @@ html.light-mode .premium-content-card:hover {
     border-color: rgba(var(--primary-rgb), 0.25) !important;
 }
 
-/* Force all headings to have high-contrast dark coloring in light mode */
+
 html.light-mode h1,
 html.light-mode h2,
 html.light-mode h3,
@@ -2448,13 +2448,13 @@ html.light-mode .font-headings {
     color: var(--text-color) !important;
 }
 
-/* Ensure paragraph and general text descriptions are highly readable in light mode */
+
 html.light-mode p,
 html.light-mode p span {
     color: hsl(var(--foreground) / 0.75) !important;
 }
 
-/* Header & Sidebar Navigation Link Contrast Fixes */
+
 html.light-mode .header-nav-link {
     color: hsl(var(--foreground) / 0.7) !important;
 }
@@ -2469,7 +2469,7 @@ html.light-mode .header-nav-link.active {
     background-color: hsl(var(--foreground) / 0.08) !important;
 }
 
-/* Sidebar navigation links */
+
 html.light-mode .side-item {
     color: hsl(var(--foreground) / 0.6) !important;
 }
@@ -2484,7 +2484,7 @@ html.light-mode .side-item.active {
     background: hsl(var(--foreground) / 0.08) !important;
 }
 
-/* Settings button and other header controls */
+
 html.light-mode .header-control-btn {
     color: hsl(var(--foreground) / 0.75) !important;
     background-color: hsl(var(--foreground) / 0.04) !important;
@@ -2497,7 +2497,7 @@ html.light-mode .header-control-btn:hover {
     border-color: var(--primary-color) !important;
 }
 
-/* Profile pill display in header */
+
 html.light-mode .header-profile-pill {
     background-color: hsl(var(--foreground) / 0.04) !important;
     border-color: hsl(var(--foreground) / 0.12) !important;
@@ -2521,7 +2521,7 @@ html.light-mode .header-profile-logout:hover {
     background-color: rgba(239, 68, 68, 0.08) !important;
 }
 
-/* Mobile bottom nav contrast and styling */
+
 html.light-mode .mobile-bottom-nav {
     background-color: hsl(var(--background) / 0.8) !important;
     backdrop-filter: blur(20px) !important;
@@ -2544,21 +2544,21 @@ html.light-mode .mobile-nav-item.active {
     background-color: hsl(var(--foreground) / 0.06) !important;
 }
 
-/* Reading portion legibility overrides in light mode */
+
 html.light-mode .content-section-heading {
     color: hsl(var(--foreground) / 0.6) !important;
 }
 
 html.light-mode .content-section-heading--hindi {
-    color: hsl(38 92% 35%) !important; /* Beautiful deep amber/orange */
+    color: hsl(38 92% 35%) !important; 
 }
 
 html.light-mode .content-section-heading--english {
-    color: hsl(217 91% 35%) !important; /* Beautiful deep blue */
+    color: hsl(217 91% 35%) !important; 
 }
 
 html.light-mode .content-verse-text {
-    color: #431407 !important; /* Deep rich terracotta brown */
+    color: #431407 !important; 
 }
 
 html.light-mode .content-body-text {
@@ -2583,7 +2583,7 @@ html.light-mode .content-section-line--english {
     background: hsl(217 91% 35% / 0.25) !important;
 }
 
-/* Homepage Category and Braj Dham Cards in Light Mode */
+
 html.light-mode .grid a[class*="border-white/5"] {
     background-color: hsl(var(--card)) !important;
     border-color: hsl(var(--foreground) / 0.08) !important;
@@ -2595,16 +2595,16 @@ html.light-mode .grid a[class*="border-white/5"]:hover {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
 }
 
-/* General button secondary state contrast fix */
+
 html.light-mode .btn-secondary {
     color: #431407 !important;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* ULTRA-PREMIUM REDESIGN ADDITIONS                                            */
-/* ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Rotating animation for circular mandalic frame */
+
+
+
+
 @keyframes shanti-spin {
     from {
         transform: rotate(0deg);
@@ -2614,7 +2614,7 @@ html.light-mode .btn-secondary {
     }
 }
 
-/* Breathing animation for the OM icon */
+
 @keyframes om-pulse-glowing {
     0%, 100% {
         transform: scale(1);
@@ -2626,7 +2626,7 @@ html.light-mode .btn-secondary {
     }
 }
 
-/* Floating background blobs */
+
 @keyframes drifting-glow-1 {
     0%, 100% {
         transform: translate(-10%, -10%) scale(1);
@@ -2672,7 +2672,7 @@ html.light-mode .btn-secondary {
     z-index: 0;
 }
 
-/* Rotating geometric OM badge wrap */
+
 .om-badge-container {
     position: relative;
     width: 100px;
@@ -2712,7 +2712,7 @@ html.light-mode .btn-secondary {
     line-height: 1;
 }
 
-/* Floating label/highly polished inputs */
+
 .premium-input-container {
     position: relative;
     width: 100%;
@@ -2751,7 +2751,7 @@ html.light-mode .btn-secondary {
     transform: scale(1.05);
 }
 
-/* Light mode adjustments for inputs */
+
 html.light-mode .premium-input-container {
     background: rgba(0, 0, 0, 0.015) !important;
     border-color: rgba(0, 0, 0, 0.09) !important;
@@ -2773,7 +2773,7 @@ html.light-mode .premium-input-container:focus-within .premium-input-icon {
     filter: drop-shadow(0 0 6px rgba(var(--primary-rgb), 0.3)) !important;
 }
 
-/* Layout without header search overrides */
+
 .layout-no-header-search header.app-header {
     height: 80px !important;
 }
@@ -2787,7 +2787,7 @@ html.light-mode .premium-input-container:focus-within .premium-input-icon {
     }
 }
 
-/* Quick links sub-bar positioning adjustments */
+
 .layout-no-header-search .header-sub-bar {
     top: 80px !important;
 }
@@ -2798,7 +2798,7 @@ html.light-mode .premium-input-container:focus-within .premium-input-icon {
     }
 }
 
-/* Main Content Area padding adjustments */
+
 .layout-no-header-search main {
     padding-top: 120px !important;
 }
@@ -2813,7 +2813,7 @@ html.light-mode .premium-input-container:focus-within .premium-input-icon {
     }
 }
 
-/* Premium dynamic border search container (flat, outline-only) */
+
 .premium-search-container {
     position: relative;
     width: 100%;
@@ -2842,11 +2842,11 @@ html.light-mode .premium-search-container:focus-within {
     box-shadow: none !important;
 }
 
-/* Theme Picker V2 Cards */
+
 .theme-picker-card-v2 {
     position: relative;
     border-radius: 16px;
-    padding: 1px; /* border thickness */
+    padding: 1px; 
     background: rgba(255, 255, 255, 0.06);
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -2910,7 +2910,7 @@ html.light-mode .theme-icon-wrap-v2 {
     color: var(--primary-color) !important;
 }
 
-/* Gradient swatch preview */
+
 .theme-swatch-v2 {
     width: 26px;
     height: 26px;
@@ -2930,7 +2930,7 @@ html.light-mode .theme-swatch-v2 {
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
 }
 
-/* Shimmer Button Gold */
+
 .shimmer-btn {
     position: relative;
     overflow: hidden;
@@ -2951,7 +2951,7 @@ html.light-mode .theme-swatch-v2 {
 }
 
 .shimmer-btn:active {
-    /* Flat active state */
+    
 }
 
 .shimmer-btn::before {
@@ -2976,7 +2976,7 @@ html.light-mode .theme-swatch-v2 {
     transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* Settings modal header badge and card */
+
 .settings-modal-header-badge {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-gold) 100%) !important;
     color: var(--primary-btn-text) !important;
@@ -3003,11 +3003,11 @@ html.light-mode .settings-modal-card-v2 {
     box-shadow: none !important;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* PREMIUM HOMEPAGE OVERHAUL STYLES                                           */
-/* ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Dynamic Theme Glow Blobs */
+
+
+
+
 .home-theme-glow-ambient {
     position: absolute;
     width: 650px;
@@ -3020,7 +3020,7 @@ html.light-mode .settings-modal-card-v2 {
     transition: background 1s ease-in-out, transform 1s ease-in-out;
 }
 
-/* Cosmic Mandala Concentric Rings */
+
 .cosmic-mandala-wrapper {
     position: relative;
     width: 140px;
@@ -3059,7 +3059,7 @@ html.light-mode .settings-modal-card-v2 {
     box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.05);
 }
 
-/* Premium Glass Hero Card Wrap */
+
 .premium-hero-card {
     background: rgba(15, 15, 25, 0.45);
     backdrop-filter: blur(24px);
@@ -3081,7 +3081,7 @@ html.light-mode .premium-hero-card {
         inset 0 1px 0 0 rgba(255, 255, 255, 0.4);
 }
 
-/* Premium Compact Theme Cards (Atmosphere Portal) */
+
 .theme-card-premium {
     position: relative;
     border-radius: 18px;
@@ -3153,7 +3153,7 @@ html.light-mode .theme-card-premium.active .theme-card-premium-inner {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
-/* Premium Category Cards */
+
 .premium-category-card {
     background: rgba(255, 255, 255, 0.02);
     backdrop-filter: blur(16px);
@@ -3186,7 +3186,7 @@ html.light-mode .premium-category-card:hover {
         0 0 25px rgba(var(--card-accent-rgb), 0.12);
 }
 
-/* Meditation Card Home */
+
 .meditation-card-home {
     background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.1) 0%, rgba(12, 10, 20, 0.5) 100%);
     backdrop-filter: blur(20px);
@@ -3205,7 +3205,7 @@ html.light-mode .meditation-card-home {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
 }
 
-/* Sleek Accordion/Link Panels */
+
 .premium-hub-panel {
     background: rgba(255, 255, 255, 0.01);
     border: 1px solid rgba(255, 255, 255, 0.04);
@@ -3230,11 +3230,11 @@ html.light-mode .premium-hub-panel:hover {
     border-color: rgba(var(--primary-rgb), 0.2);
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* MODERN MINIMALIST SANCTUARY STYLES                                         */
-/* ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Minimal Matte Gold Typography */
+
+
+
+
 .text-minimal-gold {
     color: var(--primary-color, #e2a850);
     letter-spacing: 0.04em;
@@ -3244,7 +3244,7 @@ html.light-mode .text-minimal-gold {
     color: #78350f;
 }
 
-/* Minimalist Sacred Symbol (ॐ) */
+
 .sacred-symbol-minimal {
     position: relative;
     width: 130px;
@@ -3298,7 +3298,7 @@ html.light-mode .text-minimal-gold {
     }
 }
 
-/* Minimalist Glassmorphic Card */
+
 .minimal-card {
     position: relative;
     background: rgba(255, 255, 255, 0.015);
@@ -3329,7 +3329,7 @@ html.light-mode .minimal-card:hover {
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
 }
 
-/* Sidebar Dock Minimalist */
+
 .sidebar-dock-minimal {
     display: none;
     position: fixed;
@@ -3433,9 +3433,9 @@ html.light-mode .dock-tooltip-minimal {
     transform: translateX(0);
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* INTERACTIVE PREVIEW DRAWER & EXPLORE OVERLAYS                              */
-/* ═══════════════════════════════════════════════════════════════════════════ */
+
+
+
 
 .preview-drawer-backdrop {
     position: fixed;
@@ -3513,7 +3513,7 @@ html.light-mode .preview-drawer {
     }
 }
 
-/* Light mode drawer items transparent-with-outline overhaul */
+
 html.light-mode .preview-drawer [class*="bg-white/5"] {
     background-color: transparent !important;
     border-color: rgba(0, 0, 0, 0.06) !important;
@@ -3545,7 +3545,7 @@ html.light-mode .drawer-drag-handle {
     scrollbar-width: thin;
 }
 
-/* Tab bar in drawer */
+
 .drawer-tabs {
     display: flex;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -3575,7 +3575,7 @@ html.light-mode .drawer-tab {
     border-bottom-color: var(--primary-color);
 }
 
-/* Accordion expander transitions for verses */
+
 .verse-expansion-panel {
     max-height: 0;
     overflow: hidden;
@@ -3585,7 +3585,7 @@ html.light-mode .drawer-tab {
     max-height: 1000px;
 }
 
-/* Dynamic Book Cover simulated style */
+
 .dynamic-book-cover {
     height: 120px;
     width: 90px;
@@ -3615,7 +3615,7 @@ html.light-mode .dynamic-book-cover {
     border-left-color: rgba(0, 0, 0, 0.15);
 }
 
-/* Sidebar panel standard formatting */
+
 .sidebar-section-card {
     background: rgba(255, 255, 255, 0.015);
     backdrop-filter: blur(20px);
@@ -3632,7 +3632,7 @@ html.light-mode .sidebar-section-card {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
 }
 
-/* E-Commerce Book Shelf and Spine Effects */
+
 .book-cover-premium {
     position: relative;
     width: 130px;
@@ -3684,7 +3684,7 @@ html.light-mode .book-cover-premium {
     -ms-overflow-style: none;
 }
 
-/* Premium Card hover upward shift and soft glow */
+
 .premium-content-card {
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 20px;
@@ -3717,12 +3717,12 @@ html.light-mode .premium-content-card:hover {
     box-shadow: 0 12px 30px rgba(var(--primary-rgb), 0.04);
 }
 
-/* Custom layout typography overrides */
+
 .font-laila-headings {
     font-family: 'Laila', serif !important;
 }
 
-/* Responsive header styling and mobile overrides */
+
 @media (max-width: 767px) {
     header.app-header {
         height: 112px !important;
@@ -3730,7 +3730,7 @@ html.light-mode .premium-content-card:hover {
     }
 }
 
-/* Japa Chant floating animation */
+
 @keyframes float-fade-up {
     0% {
         transform: translate3d(0, 15px, 0) scale(0.4) rotate(0deg);
@@ -3760,7 +3760,7 @@ html.light-mode .premium-content-card:hover {
     will-change: transform, opacity, filter;
 }
 
-/* Glass Card padding helper overrides */
+
 .glass-card.p-4 {
     padding: 1rem !important;
 }
@@ -3771,7 +3771,7 @@ html.light-mode .premium-content-card:hover {
     padding: 0.5rem !important;
 }
 
-/* Book cover text visibility protection in all themes/moods */
+
 html .book-cover-premium,
 html .book-cover-premium span,
 html .book-cover-premium div,
@@ -3798,7 +3798,7 @@ html.light-mode .book-cover-premium .opacity-40 {
     color: rgba(255, 255, 255, 0.4) !important;
 }
 
-/* Saint Card typography wrapping and clipping fix */
+
 .saint-card-title {
     display: -webkit-box !important;
     -webkit-line-clamp: 2 !important;
@@ -3813,7 +3813,7 @@ html.light-mode .book-cover-premium .opacity-40 {
     text-align: center !important;
 }
 
-/* Premium Media (Images & Videos) styling for all theme moods */
+
 .reading-card img,
 .reading-card video,
 .reading-card .aspect-video {
@@ -3830,7 +3830,7 @@ html.light-mode .book-cover-premium .opacity-40 {
     box-shadow: none !important;
 }
 
-/* Light mode overrides for media elements */
+
 html.light-mode .reading-card img,
 html.light-mode .reading-card video,
 html.light-mode .reading-card .aspect-video {
@@ -3845,7 +3845,7 @@ html.light-mode .reading-card .aspect-video:hover {
     box-shadow: none !important;
 }
 
-/* Light mode content reading view layout & border overrides */
+
 html.light-mode .glass-card.reading-card,
 html.light-mode .reading-card {
     background: transparent !important;
@@ -3853,7 +3853,7 @@ html.light-mode .reading-card {
     box-shadow: none !important;
 }
 
-/* Theme Adaptive Japa Chant Button */
+
 .header-chant-btn {
     position: relative;
     display: flex;
@@ -3891,7 +3891,7 @@ html.light-mode .header-chant-btn:hover {
     border-color: rgba(var(--primary-rgb), 0.4) !important;
 }
 
-/* Swadhyaya Interactive Animations */
+
 @keyframes particle-explode {
     0% {
         transform: translate(0, 0) scale(1);
@@ -3915,9 +3915,9 @@ html.light-mode .header-chant-btn:hover {
 .animate-bar-pulse-3 { animation: bar-pulse 0.5s infinite ease-in-out 0.3s; }
 .animate-bar-pulse-4 { animation: bar-pulse 0.7s infinite ease-in-out 0.1s; }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* POOKIZ LAYOUT DESIGN SYSTEM OVERRIDES                                       */
-/* ═══════════════════════════════════════════════════════════════════════════ */
+
+
+
 
 html[data-layout-mode="pookiz"] {
     background: #000000 !important;
@@ -3931,7 +3931,7 @@ html[data-layout-mode="pookiz"] body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
 }
 
-/* Hide celestial glow & particles in Pookiz layout */
+
 html[data-layout-mode="pookiz"] .celestial-bg,
 html[data-layout-mode="pookiz"] .stars,
 html[data-layout-mode="pookiz"] .nebula,
@@ -3939,7 +3939,7 @@ html[data-layout-mode="pookiz"] .particles-container {
     display: none !important;
 }
 
-/* Override glass-card to match the flat sleek cards */
+
 html[data-layout-mode="pookiz"] .glass-card {
     background: #121215 !important;
     background-color: #121215 !important;
@@ -3970,7 +3970,7 @@ html[data-layout-mode="pookiz"] .glass-card:hover {
     box-shadow: none !important;
 }
 
-/* Header text overrides */
+
 html[data-layout-mode="pookiz"] .glass-card h3,
 html[data-layout-mode="pookiz"] h3 {
     transform: none !important;
@@ -3985,7 +3985,7 @@ html[data-layout-mode="pookiz"] .text-sacred-gradient {
     color: #ffffff !important;
 }
 
-/* Table styling for user directory / universities in Pookiz */
+
 html[data-layout-mode="pookiz"] table {
     width: 100%;
 }
@@ -4006,7 +4006,7 @@ html[data-layout-mode="pookiz"] td {
     color: #e4e4e7 !important;
 }
 
-/* Floating animation override */
+
 @keyframes pookiz-float {
     0% {
         transform: translateY(0) rotate(0deg);
@@ -4023,7 +4023,7 @@ html[data-layout-mode="pookiz"] .floating-chant-text {
     color: #a78bfa !important;
 }
 
-/* Sleek scrollbar for Pookiz layout */
+
 html[data-layout-mode="pookiz"] ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -4042,11 +4042,11 @@ html[data-layout-mode="pookiz"] ::-webkit-scrollbar-thumb:hover {
     background: #3f3f46;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* KNOWLEDGE BASE READER — Customizer Overrides                                */
-/* ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Font Family Scoping */
+
+
+
+
 .kb-reader-container.font-serif,
 .kb-reader-container.font-serif p,
 .kb-reader-container.font-serif li,
@@ -4071,33 +4071,33 @@ html[data-layout-mode="pookiz"] ::-webkit-scrollbar-thumb:hover {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
-/* Font Size Scales */
+
 .kb-reader-container.text-sm p,
 .kb-reader-container.text-sm li,
 .kb-reader-container.text-sm a,
 .kb-reader-container.text-sm span {
-    font-size: 0.875rem !important; /* 14px */
+    font-size: 0.875rem !important; 
 }
 .kb-reader-container.text-md p,
 .kb-reader-container.text-md li,
 .kb-reader-container.text-md a,
 .kb-reader-container.text-md span {
-    font-size: 1rem !important; /* 16px */
+    font-size: 1rem !important; 
 }
 .kb-reader-container.text-lg p,
 .kb-reader-container.text-lg li,
 .kb-reader-container.text-lg a,
 .kb-reader-container.text-lg span {
-    font-size: 1.125rem !important; /* 18px */
+    font-size: 1.125rem !important; 
 }
 .kb-reader-container.text-xl p,
 .kb-reader-container.text-xl li,
 .kb-reader-container.text-xl a,
 .kb-reader-container.text-xl span {
-    font-size: 1.25rem !important; /* 20px */
+    font-size: 1.25rem !important; 
 }
 
-/* Line Spacing Scales */
+
 .kb-reader-container.leading-cozy p,
 .kb-reader-container.leading-cozy li {
     line-height: 1.55 !important;
@@ -4111,7 +4111,7 @@ html[data-layout-mode="pookiz"] ::-webkit-scrollbar-thumb:hover {
     line-height: 2.05 !important;
 }
 
-/* Sub-headings responsive sizing */
+
 .kb-reader-container.text-sm h2 { font-size: 1.25rem !important; }
 .kb-reader-container.text-md h2 { font-size: 1.5rem !important; }
 .kb-reader-container.text-lg h2 { font-size: 1.75rem !important; }
@@ -4122,14 +4122,14 @@ html[data-layout-mode="pookiz"] ::-webkit-scrollbar-thumb:hover {
 .kb-reader-container.text-lg h1 { font-size: 2.5rem !important; }
 .kb-reader-container.text-xl h1 { font-size: 3rem !important; }
 
-/* Responsive Category Sidebar width override on desktop to bypass Tailwind class resolution during drag */
+
 @media (min-width: 1024px) {
     #kb-category-sidebar {
         width: var(--kb-sidebar-width) !important;
     }
 }
 
-/* Google Translate Custom Theme Integration */
+
 iframe.goog-te-banner-frame {
     display: none !important;
 }
@@ -4162,7 +4162,7 @@ body {
     box-shadow: none !important;
 }
 
-/* Performance: Disable expensive backdrop-filter calculations on mobile and tablet devices to prevent route transition delays and lag */
+
 @media (max-width: 1023px) {
     .glass,
     .glass-card,
@@ -4184,9 +4184,9 @@ body {
     }
 }
 
-/* Mobile-specific animations and tactile instant-click feedback */
+
 @media (max-width: 1023px) {
-    /* Set faster, responsive transition durations for touch */
+    
     .glass-card, 
     .premium-content-card, 
     button, 
@@ -4196,7 +4196,7 @@ body {
         transition: transform 0.1s ease, opacity 0.1s ease, background-color 0.1s ease, border-color 0.1s ease !important;
     }
     
-    /* Remove hover transformations to prevent sticky scaling on tap */
+    
     .glass-card:hover,
     .premium-content-card:hover,
     .book-cover-premium:hover,
@@ -4206,7 +4206,7 @@ body {
         box-shadow: none !important;
     }
 
-    /* Tactile instant-press feedback on touch */
+    
     .glass-card:active,
     .premium-content-card:active,
     button:active,

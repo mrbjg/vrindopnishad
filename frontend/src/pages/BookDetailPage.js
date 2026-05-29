@@ -39,7 +39,7 @@ const BookDetailPage = () => {
   useEffect(() => {
     let active = true;
 
-    // Reset state to initial data for the new slug immediately when slug changes
+    
     const getInitialBook = () => {
       try {
         const memCached = apiService.getMemoryCachedItems();
@@ -109,7 +109,7 @@ const BookDetailPage = () => {
         <meta name="description" content={`Read the sacred verses from ${book.hinglishName} with Hindi explanation, translation and audio chanting.`} />
         <link rel="canonical" href={isHindiRoute ? `https://path.vrindopnishad.in/hi/book/${slug}` : `https://path.vrindopnishad.in/book/${slug}`} />
         
-        {/* Structured Data: Book & Breadcrumb */}
+        
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",

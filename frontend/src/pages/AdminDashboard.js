@@ -12,7 +12,7 @@ const AdminDashboard = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
-  // Form state
+  
   const [formData, setFormData] = useState({
     title: '',
     sanskrit_text: '',
@@ -23,7 +23,7 @@ const AdminDashboard = () => {
     description: ''
   });
 
-  // AI generation states
+  
   const [audioGenText, setAudioGenText] = useState('');
   const [audioGenLang, setAudioGenLang] = useState('hi-IN');
   const [imagePrompt, setImagePrompt] = useState('');
@@ -145,7 +145,7 @@ const AdminDashboard = () => {
     }
   };
 
-  // eslint-disable-next-line no-unused-vars
+  
   const handleFileUpload = async (contentId, file, type) => {
     try {
       await apiService.uploadFile(contentId, file, type, token);

@@ -1,10 +1,7 @@
-/* ========================================
-   Vrindopnishad Admin Panel - Modern UI
-   Design System V3 - Premium & Engaging
-   ======================================== */
+
 
 :root {
-    /* Golden Saffron Theme */
+    
     --primary: #EDA638;
     --primary-dark: #D68C22;
     --primary-light: #FBCB6A;
@@ -12,7 +9,7 @@
     --primary-alpha-20: rgba(237, 166, 56, 0.2);
     --primary-glow: rgba(237, 166, 56, 0.4);
 
-    /* Accent Colors */
+    
     --purple: #A855F7;
     --purple-alpha: rgba(168, 85, 247, 0.15);
     --blue: #3B82F6;
@@ -22,13 +19,13 @@
     --green: #10B981;
     --green-alpha: rgba(16, 185, 129, 0.15);
 
-    /* Semantic */
+    
     --success: #10B981;
     --warning: #F59E0B;
     --danger: #EF4444;
     --info: #3B82F6;
 
-    /* Neutrals */
+    
     --bg-base: #09090B;
     --bg-primary: #0C0C10;
     --bg-secondary: #131318;
@@ -44,11 +41,11 @@
     --border: rgba(255, 255, 255, 0.06);
     --border-strong: rgba(255, 255, 255, 0.12);
 
-    /* Layout */
+    
     --sidebar-width: 260px;
     --header-height: 64px;
 
-    /* Radius */
+    
     --radius-xs: 6px;
     --radius-sm: 8px;
     --radius-md: 12px;
@@ -57,14 +54,14 @@
     --radius-2xl: 24px;
     --radius-full: 9999px;
 
-    /* Shadows */
+    
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
     --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.5);
     --shadow-glow: 0 0 30px var(--primary-glow);
 
-    /* Transitions */
+    
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -89,7 +86,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Text styles */
+
 .sanskrit-input,
 .hindi-input,
 .content-card-sanskrit {
@@ -98,18 +95,14 @@ body {
     line-height: 1.7;
 }
 
-/* ========================================
-   Layout
-   ======================================== */
+
 
 .app {
     display: flex;
     min-height: 100vh;
 }
 
-/* ========================================
-   Sidebar
-   ======================================== */
+
 
 .sidebar {
     width: var(--sidebar-width);
@@ -161,7 +154,7 @@ body {
     letter-spacing: 0.05em;
 }
 
-/* Navigation */
+
 .nav {
     flex: 1;
     padding: 16px 12px;
@@ -216,7 +209,7 @@ body {
     color: var(--primary);
 }
 
-/* Sidebar Footer */
+
 .sidebar-footer {
     padding: 16px;
     border-top: 1px solid var(--border);
@@ -271,9 +264,7 @@ body {
     color: var(--text-muted);
 }
 
-/* ========================================
-   Main Content
-   ======================================== */
+
 
 .main {
     flex: 1;
@@ -333,7 +324,7 @@ body {
     gap: 12px;
 }
 
-/* Search Box */
+
 .search-box {
     position: relative;
     display: flex;
@@ -386,15 +377,13 @@ body {
     color: var(--text-muted);
 }
 
-/* Content Area */
+
 .content {
     padding: 24px;
     max-width: 1400px;
 }
 
-/* ========================================
-   Tabs
-   ======================================== */
+
 
 .tab-content {
     display: none;
@@ -417,9 +406,7 @@ body {
     }
 }
 
-/* ========================================
-   Welcome Banner
-   ======================================== */
+
 
 .welcome-banner {
     background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
@@ -456,9 +443,7 @@ body {
     font-size: 0.9rem;
 }
 
-/* ========================================
-   Stats Grid
-   ======================================== */
+
 
 .stats-grid {
     display: grid;
@@ -561,9 +546,7 @@ body {
     height: 12px;
 }
 
-/* ========================================
-   Cards
-   ======================================== */
+
 
 .card {
     background: var(--bg-secondary);
@@ -606,14 +589,14 @@ body {
     text-decoration: underline;
 }
 
-/* Dashboard Grid */
+
 .dashboard-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 20px;
 }
 
-/* Recent Content */
+
 .recent-section .content-list {
     padding: 12px;
 }
@@ -645,7 +628,7 @@ body {
     color: var(--text-muted);
 }
 
-/* Quick Actions */
+
 .quick-actions .actions-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -687,7 +670,7 @@ body {
     color: var(--primary);
 }
 
-/* Empty State */
+
 .empty-state {
     display: flex;
     flex-direction: column;
@@ -735,9 +718,7 @@ body {
     margin-bottom: 20px;
 }
 
-/* ========================================
-   Page Header
-   ======================================== */
+
 
 .page-header {
     display: flex;
@@ -757,9 +738,7 @@ body {
     font-size: 0.9rem;
 }
 
-/* ========================================
-   Forms
-   ======================================== */
+
 
 .form-grid {
     display: grid;
@@ -838,7 +817,7 @@ body {
     line-height: 1.6;
 }
 
-/* File Upload */
+
 .file-upload {
     border: 2px dashed var(--border-strong);
     border-radius: var(--radius-md);
@@ -881,16 +860,14 @@ body {
     background: var(--primary-alpha-20);
 }
 
-/* Form Actions */
+
 .form-actions-sticky {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-/* ========================================
-   Buttons
-   ======================================== */
+
 
 .btn {
     display: inline-flex;
@@ -990,9 +967,7 @@ body {
     color: var(--text-primary);
 }
 
-/* ========================================
-   Filter Bar
-   ======================================== */
+
 
 .filter-bar {
     display: flex;
@@ -1096,9 +1071,7 @@ body {
     color: var(--primary);
 }
 
-/* ========================================
-   Content Grid
-   ======================================== */
+
 
 .content-grid {
     display: grid;
@@ -1171,9 +1144,7 @@ body {
     font-size: 0.8rem;
 }
 
-/* ========================================
-   Import Section
-   ======================================== */
+
 
 .import-options {
     display: grid;
@@ -1242,7 +1213,7 @@ body {
     padding: 16px 20px;
 }
 
-/* Import Preview */
+
 .import-preview {
     margin-bottom: 24px;
 }
@@ -1292,9 +1263,7 @@ body {
     border-top: 1px solid var(--border);
 }
 
-/* ========================================
-   Categories
-   ======================================== */
+
 
 .category-list {
     display: flex;
@@ -1358,9 +1327,7 @@ body {
     outline: none;
 }
 
-/* ========================================
-   Modals
-   ======================================== */
+
 
 .modal {
     position: fixed;
@@ -1451,7 +1418,7 @@ body {
     border-top: 1px solid var(--border);
 }
 
-/* Login Modal */
+
 .login-modal {
     max-width: 400px;
     text-align: center;
@@ -1497,9 +1464,7 @@ body {
     margin-top: 8px;
 }
 
-/* ========================================
-   Toast Notifications
-   ======================================== */
+
 
 #toast-container {
     position: fixed;
@@ -1558,9 +1523,7 @@ body {
     }
 }
 
-/* ========================================
-   Scrollbar
-   ======================================== */
+
 
 ::-webkit-scrollbar {
     width: 8px;
@@ -1580,9 +1543,7 @@ body {
     background: var(--text-muted);
 }
 
-/* ========================================
-   Responsive
-   ======================================== */
+
 
 @media (max-width: 1200px) {
     .stats-grid {

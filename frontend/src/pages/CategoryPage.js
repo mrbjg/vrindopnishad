@@ -98,9 +98,9 @@ const CategoryPage = () => {
 
   useEffect(() => {
     let active = true;
-    setVisibleCount(12); // Reset item count on category change to prevent render lag
+    setVisibleCount(12); 
 
-    // Synchronously reset state using initial cached data for the new category to prevent lag
+    
     const initialData = getInitialData();
     setContent(initialData);
     setLoading(initialData.length === 0);
@@ -125,10 +125,10 @@ const CategoryPage = () => {
     return () => {
       active = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [category, apiService]);
 
-  // Infinite Scroll Observer
+  
   useEffect(() => {
     if (loading || content.length <= visibleCount) return;
 
@@ -254,7 +254,7 @@ const CategoryPage = () => {
             })}
           </div>
 
-          {/* Scroll Sentinel Loader */}
+          
           {content.length > visibleCount && (
             <div ref={sentinelRef} className="py-10 flex justify-center w-full">
               <div className="w-8 h-8 border-2 border-[var(--primary-color)] border-t-transparent rounded-full animate-spin"></div>

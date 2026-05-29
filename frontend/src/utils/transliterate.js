@@ -1,11 +1,11 @@
-// Devanagari to Hinglish (Latin) Phonetic Transliterator for SEO & Accessibility
+
 
 const DevanagariToHinglishMap = {
-  // Independent Vowels
+  
   'अ': 'a', 'आ': 'aa', 'इ': 'i', 'ई': 'ee', 'उ': 'u', 'ऊ': 'oo', 'ऋ': 'ri',
   'ए': 'e', 'ऐ': 'ai', 'ओ': 'o', 'औ': 'au', 'अं': 'an', 'अः': 'ah',
   
-  // Consonants (with implicit 'a' sound)
+  
   'क': 'ka', 'ख': 'kha', 'ग': 'ga', 'घ': 'gha', 'ङ': 'nga',
   'च': 'cha', 'छ': 'chha', 'ज': 'ja', 'झ': 'jha', 'ञ': 'nya',
   'ट': 'ta', 'ठ': 'tha', 'ड': 'da', 'ढ': 'dha', 'ण': 'na',
@@ -14,18 +14,18 @@ const DevanagariToHinglishMap = {
   'य': 'ya', 'र': 'ra', 'ल': 'la', 'व': 'va', 'श': 'sha', 'ष': 'sha',
   'स': 'sa', 'ह': 'ha', 'ळ': 'la', 'क्ष': 'ksha', 'त्र': 'tra', 'ज्ञ': 'gya',
   
-  // Modifiers and Matras (vowel signs)
+  
   'ा': 'a', 'ि': 'i', 'ी': 'ee', 'ु': 'u', 'ू': 'oo', 'ृ': 'ri',
   'े': 'e', 'ै': 'ai', 'ो': 'o', 'ौ': 'au', 'ं': 'n', 'ः': 'h', 'ँ': 'n',
   'ॅ': 'e', 'ॉ': 'o',
   
-  // Nuqta consonants (Hindi/Urdu sounds)
+  
   'क़': 'qa', 'ख़': 'kha', 'ग़': 'gha', 'ज़': 'za', 'फ़': 'fa', 'ड़': 'da', 'ढ़': 'dha',
   
-  // Numbers
+  
   '०': '0', '१': '1', '२': '2', '३': '3', '४': '4', '५': '5', '६': '6', '७': '7', '८': '8', '९': '9',
   
-  // Punctuation
+  
   '।': '.', '॥': '..'
 };
 
@@ -55,16 +55,16 @@ export function transliterate(text) {
     const char = chars[i];
     const nextChar = chars[i + 1] || "";
     
-    // Look ahead to check for composite Nuqta characters
+    
     const nuqtaCombo = char + nextChar;
     if (DevanagariToHinglishMap[nuqtaCombo] !== undefined) {
       result += DevanagariToHinglishMap[nuqtaCombo];
-      i++; // skip Nuqta character
+      i++; 
       continue;
     }
     
     if (char === '्') {
-      // Halant suppresses the implicit 'a' of the previous consonant
+      
       if (result.endsWith('a')) {
         result = result.substring(0, result.length - 1);
       }
@@ -75,13 +75,13 @@ export function transliterate(text) {
     if (mapped !== undefined) {
       result += mapped;
       
-      // Implicit 'a' rule: if a consonant is NOT followed by a matra, a halant,
-      // or a space/end of word, it carries an implicit 'a' sound.
+      
+      
       if (Consonants.has(char)) {
         const nextHasMatra = Matras.has(nextChar);
         const nextIsHalant = nextChar === '्';
         
-        // Suppress trailing 'a' at word boundaries or ends of sentences
+        
         const nextIsWordBoundary = nextChar === ' ' || nextChar === '\n' || nextChar === '\t' || 
                                    nextChar === '।' || nextChar === '॥' || nextChar === ',' || 
                                    nextChar === '.' || nextChar === '?' || nextChar === '!' || 
@@ -102,12 +102,12 @@ export function transliterate(text) {
     }
   }
 
-  // Refine phonetic substitutions to match modern informal search habits (Hinglish)
+  
   const finalResult = result
-    .replace(/aa/g, 'a') // aa -> a (e.g. shyaama -> shyama, raadha -> radha)
-    .replace(/ee/g, 'i') // ee -> i (e.g. bhee -> bhi, pyaree -> pyari)
-    .replace(/oo/g, 'u') // oo -> u (e.g. too -> tu)
-    .replace(/\s+/g, ' ') // Collapse multiple spaces
+    .replace(/aa/g, 'a') 
+    .replace(/ee/g, 'i') 
+    .replace(/oo/g, 'u') 
+    .replace(/\s+/g, ' ') 
     .trim();
 
   transliterateCache.set(text, finalResult);

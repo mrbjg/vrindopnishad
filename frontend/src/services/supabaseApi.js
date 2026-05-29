@@ -1,15 +1,10 @@
-/**
- * Supabase API Service for VrindaVaani
- * Handles all database operations using Supabase client
- */
+
 import { supabase } from '../lib/supabase';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
 
 class SupabaseAPI {
-    /**
-     * Get all content from Supabase
-     */
+    
     async getAllContent(category = null) {
         try {
             let query = supabase
@@ -41,9 +36,7 @@ class SupabaseAPI {
         }
     }
 
-    /**
-     * Get single content by ID
-     */
+    
     async getContentById(id) {
         try {
             const { data, error } = await supabase
@@ -68,9 +61,7 @@ class SupabaseAPI {
         }
     }
 
-    /**
-     * Create new content (requires authentication)
-     */
+    
     async createContent(contentData, token) {
         try {
             const response = await fetch(`${API_BASE_URL}/content`, {
@@ -90,9 +81,7 @@ class SupabaseAPI {
         }
     }
 
-    /**
-     * Update content (requires authentication)
-     */
+    
     async updateContent(id, contentData, token) {
         try {
             const response = await fetch(`${API_BASE_URL}/content/${id}`, {
@@ -112,9 +101,7 @@ class SupabaseAPI {
         }
     }
 
-    /**
-     * Delete content (requires authentication)
-     */
+    
     async deleteContent(id, token) {
         try {
             const response = await fetch(`${API_BASE_URL}/content/${id}`, {
@@ -132,9 +119,7 @@ class SupabaseAPI {
         }
     }
 
-    /**
-     * Get all categories
-     */
+    
     async getCategories() {
         try {
             const { data, error } = await supabase
@@ -144,7 +129,7 @@ class SupabaseAPI {
 
             if (error) throw error;
 
-            // Get unique categories
+            
             const uniqueCategories = [...new Set(data.map(item => item.category))];
             const categories = uniqueCategories.map(cat => ({
                 id: cat.toLowerCase().replace(/\s+/g, '-'),
@@ -164,9 +149,7 @@ class SupabaseAPI {
         }
     }
 
-    /**
-     * Admin login
-     */
+    
     async login(email, password) {
         try {
             const response = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -185,9 +168,7 @@ class SupabaseAPI {
         }
     }
 
-    /**
-     * Verify token
-     */
+    
     async verifyToken(token) {
         try {
             const response = await fetch(`${API_BASE_URL}/auth/verify`, {
@@ -204,9 +185,7 @@ class SupabaseAPI {
         }
     }
 
-    /**
-     * Upload file
-     */
+    
     async uploadFile(type, contentId, file, token) {
         try {
             const formData = new FormData();
@@ -228,9 +207,7 @@ class SupabaseAPI {
         }
     }
 
-    /**
-     * Search content
-     */
+    
     async searchContent(searchTerm) {
         try {
             const { data, error } = await supabase
