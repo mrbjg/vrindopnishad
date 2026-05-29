@@ -214,7 +214,7 @@ const PookizDashboardView = ({
         </div>
 
         {/* Tab Selection Row (top right) */}
-        <div className="flex flex-wrap items-center bg-[#121215] border border-white/5 p-1 rounded-full gap-1 shrink-0">
+        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1 shrink-0">
           {[
             { id: 'moderationAudit', label: isHi ? 'साधना व स्वाध्याय' : 'Sadhana & Swadhyaya' },
             { id: 'userDirectory', label: isHi ? 'रसिक सन्त' : 'Rasik Saints' },
@@ -227,8 +227,8 @@ const PookizDashboardView = ({
               onClick={() => setActiveTab(tab.id)}
               className={`px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all border whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'bg-black text-white border-white/30 shadow-md'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5 border-transparent'
+                  ? 'bg-purple-600 border-transparent text-white shadow-lg'
+                  : 'bg-white/5 text-zinc-400 hover:text-white border-white/10'
               }`}
             >
               {tab.label}

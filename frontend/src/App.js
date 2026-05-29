@@ -92,30 +92,51 @@ export const ApiContext = React.createContext();
 const LenisScroll = () => {
   const { settings } = useSettings();
   const { pathname } = useLocation();
+  const [containerType, setContainerType] = useState('window');
+
+  // Detect mobile touch devices or small viewports once per render
+  const isMobile = window.matchMedia('(max-width: 1023px)').matches || 
+                   ('ontouchstart' in window) || 
+                   (navigator.maxTouchPoints > 0);
+
+  // Synchronously or via animation frame check if scroll container changed in DOM
+  useEffect(() => {
+    const checkContainer = () => {
+      const pookizContainer = document.getElementById('pookiz-main-scroll-container');
+      const kbClassicContainer = document.getElementById('kb-classic-content-container');
+      
+      let detectedType = 'window';
+      if (settings.layoutMode === 'pookiz' && pookizContainer) {
+        detectedType = 'pookiz';
+      } else if (kbClassicContainer) {
+        detectedType = 'kb';
+      }
+
+      if (detectedType !== containerType) {
+        setContainerType(detectedType);
+      }
+    };
+
+    const frameId = requestAnimationFrame(checkContainer);
+    return () => cancelAnimationFrame(frameId);
+  }, [pathname, settings.layoutMode, containerType]);
 
   useEffect(() => {
-    // Detect mobile touch devices or small viewports
-    const isMobile = window.matchMedia('(max-width: 1023px)').matches || 
-                     ('ontouchstart' in window) || 
-                     (navigator.maxTouchPoints > 0);
+    // 1. Zero execution overhead on mobile screens during route transitions
+    if (isMobile) return;
 
-    if (!settings.smoothScroll || isMobile) {
+    // 2. Clean up styling if smooth scrolling is disabled on desktop
+    if (!settings.smoothScroll) {
       document.documentElement.style.removeProperty('overflow');
       document.body.style.removeProperty('overflow');
       document.documentElement.classList.remove('lenis');
-      
-      const pookizContainer = document.getElementById('pookiz-main-scroll-container');
-      if (pookizContainer) {
-        pookizContainer.style.removeProperty('overflow');
-      }
-      const kbClassicContainer = document.getElementById('kb-classic-content-container');
-      if (kbClassicContainer) {
-        kbClassicContainer.style.removeProperty('overflow');
-      }
       return;
     }
 
-    // Configure wrapper and content for Lenis based on layout mode / presence of containers
+    const pookizContainer = document.getElementById('pookiz-main-scroll-container');
+    const kbClassicContainer = document.getElementById('kb-classic-content-container');
+
+    // Configure wrapper and content for Lenis based on containerType state
     const lenisOptions = {
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -127,13 +148,10 @@ const LenisScroll = () => {
       infinite: false,
     };
 
-    const pookizContainer = document.getElementById('pookiz-main-scroll-container');
-    const kbClassicContainer = document.getElementById('kb-classic-content-container');
-
-    if (settings.layoutMode === 'pookiz' && pookizContainer) {
+    if (containerType === 'pookiz' && pookizContainer) {
       lenisOptions.wrapper = pookizContainer;
       lenisOptions.content = pookizContainer.firstElementChild || pookizContainer;
-    } else if (kbClassicContainer) {
+    } else if (containerType === 'kb' && kbClassicContainer) {
       lenisOptions.wrapper = kbClassicContainer;
       lenisOptions.content = kbClassicContainer.firstElementChild || kbClassicContainer;
     }
@@ -160,7 +178,7 @@ const LenisScroll = () => {
         kbClassicContainer.style.removeProperty('overflow');
       }
     };
-  }, [settings.smoothScroll, settings.layoutMode, pathname]);
+  }, [settings.smoothScroll, containerType, isMobile]);
 
   return null;
 };
@@ -200,9 +218,17 @@ function App() {
     };
   }, []);
 
-  // Preload major route chunks in the background to guarantee 0ms chunk-load latency on navigation
+  // Preload major route chunks and warm up local database caches in the background
   useEffect(() => {
     const timer = setTimeout(() => {
+      // 1. Warm up in-memory caches
+      try {
+        apiService.getAllContent(null, 10000);
+      } catch (e) {
+        console.warn('Failed to warm up database cache:', e);
+      }
+
+      // 2. Preload major route chunks to guarantee 0ms chunk-load latency on navigation
       const preloadList = [
         () => import('./pages/HomePage'),
         () => import('./pages/ContentListPage'),

@@ -325,6 +325,20 @@ const SettingsModal = ({ isOpen, onClose }) => {
                   <div className="premium-toggle-knob"></div>
                 </button>
               </div>
+
+              <div className="premium-toggle-row flex items-center justify-between transition-all group">
+                <div className="flex flex-col">
+                  <span className="settings-modal-toggle-title font-bold text-sm transition-all duration-300">Celestial Particles</span>
+                  <span className="settings-modal-toggle-desc text-xs">Background effects (turn off to boost performance)</span>
+                </div>
+                <button
+                  onClick={() => updateSetting('enableAnimations', settings.enableAnimations !== false ? false : true)}
+                  className={`premium-toggle-switch ${settings.enableAnimations !== false ? 'active' : ''}`}
+                  aria-label="Toggle celestial particles"
+                >
+                  <div className="premium-toggle-knob"></div>
+                </button>
+              </div>
             </div>
           </div>
         </div>

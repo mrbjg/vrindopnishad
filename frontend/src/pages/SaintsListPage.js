@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ApiContext } from '../App';
 import { extractRelations } from '../utils/relations';
@@ -20,15 +20,37 @@ const SaintsListPage = () => {
   
   const [saints, setSaints] = useState(() => {
     try {
-      const cached = localStorage.getItem('vrindopnishad_saints_cache');
-      return cached ? JSON.parse(cached) : [];
-    } catch { return []; }
+      const memCached = apiService.getMemoryCachedItems();
+      if (memCached) {
+        const relations = extractRelations(memCached);
+        if (relations && relations.sants.length > 0) return relations.sants;
+      }
+    } catch { }
+    return [];
   });
   const [loading, setLoading] = useState(() => {
-    try { return !localStorage.getItem('vrindopnishad_saints_cache'); }
-    catch { return true; }
+    try {
+      const memCached = apiService.getMemoryCachedItems();
+      if (memCached) return false;
+    } catch { }
+    return true;
   });
-  const [searchQuery, setSearchQuery] = useState('');
+  const queryParams = new URLSearchParams(location.search);
+  const initialQuery = queryParams.get('q') || '';
+
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
+  const [visibleCount, setVisibleCount] = useState(12);
+  const sentinelRef = useRef(null);
+
+  // Sync state if URL query changes (e.g. clicking different link in detail page)
+  useEffect(() => {
+    const q = new URLSearchParams(location.search).get('q') || '';
+    setSearchQuery(q);
+  }, [location.search]);
+
+  useEffect(() => {
+    setVisibleCount(12); // Reset count on search query change to keep DOM small
+  }, [searchQuery]);
 
   useEffect(() => {
     let active = true;
@@ -38,7 +60,6 @@ const SaintsListPage = () => {
         const relations = extractRelations(allItems);
         if (active) {
           setSaints(relations.sants);
-          localStorage.setItem('vrindopnishad_saints_cache', JSON.stringify(relations.sants));
         }
       } catch (error) {
         console.error('Error loading saints:', error);
@@ -52,8 +73,36 @@ const SaintsListPage = () => {
 
   const filteredSaints = saints.filter(s => 
     s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.hinglishName.toLowerCase().includes(searchQuery.toLowerCase())
+    s.hinglishName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (s.lineage && s.lineage.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (s.lineageEn && s.lineageEn.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (s.timeline && s.timeline.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (s.timelineEn && s.timelineEn.toLowerCase().includes(searchQuery.toLowerCase()))
   );
+
+  // Infinite Scroll Observer
+  useEffect(() => {
+    if (loading || filteredSaints.length <= visibleCount) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setVisibleCount(prev => prev + 12);
+      }
+    }, {
+      rootMargin: '200px'
+    });
+
+    const currentSentinel = sentinelRef.current;
+    if (currentSentinel) {
+      observer.observe(currentSentinel);
+    }
+
+    return () => {
+      if (currentSentinel) {
+        observer.unobserve(currentSentinel);
+      }
+    };
+  }, [loading, filteredSaints.length, visibleCount]);
 
   return (
     <div className="animate-fade-in max-w-6xl mx-auto px-4 py-8">
@@ -64,26 +113,26 @@ const SaintsListPage = () => {
       </Helmet>
 
       <div className="flex flex-col md:flex-row md:items-start md:items-center justify-between gap-4 mb-6 md:mb-8">
-        <div>
-          <Link to="/" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-2 md:mb-3 transition-colors text-xs uppercase tracking-wider">
+        <div className="flex flex-col items-start w-full md:w-auto text-left">
+          <Link to="/" className="inline-flex items-center gap-2 text-[var(--text-color)]/40 hover:text-[var(--text-color)] mb-2 md:mb-3 transition-colors text-xs uppercase tracking-wider">
             <ArrowLeft size={14} />
             Back to Home
           </Link>
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold font-headings text-sacred-gradient">
             {isHindiRoute ? "ब्रज के रसिक सन्त" : "Rasik Saints & Authors"}
           </h1>
-          <p className="text-white/50 text-xs md:text-sm mt-1">
+          <p className="text-[var(--text-color)]/60 text-xs md:text-sm mt-1">
             {isHindiRoute ? "परम पावन रसिक संतों की वाणी एवं जीवन चरित्र" : "Sacred digital repository of devotional masters"}
           </p>
         </div>
 
         <div className="relative w-full md:w-80 max-w-xs">
           <div className="premium-search-container flex items-center pl-4 pr-6 h-11">
-            <Search className="text-white/30 shrink-0 mr-3" size={16} />
+            <Search className="text-[var(--text-color)]/30 shrink-0 mr-3" size={16} />
             <input 
               type="text" 
               placeholder={isHindiRoute ? "संत खोजें..." : "Search Sants..."} 
-              className="w-full bg-transparent outline-none text-white/90 placeholder:text-white/35 h-full text-sm font-light"
+              className="w-full bg-transparent outline-none text-[var(--text-color)]/90 placeholder:text-[var(--text-color)]/35 h-full text-sm font-light"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -102,7 +151,7 @@ const SaintsListPage = () => {
                   <div className="skeleton skeleton-text w-1/2 mb-0"></div>
                 </div>
               </div>
-              <div className="pt-3 border-t border-white/5 flex justify-between items-center mt-4 w-full">
+              <div className="pt-3 border-t border-[var(--glass-border)] flex justify-between items-center mt-4 w-full">
                 <div className="skeleton w-20 h-4 rounded"></div>
                 <div className="skeleton w-16 h-4 rounded"></div>
               </div>
@@ -111,54 +160,63 @@ const SaintsListPage = () => {
         </div>
       ) : filteredSaints.length === 0 ? (
         <div className="text-center py-20 glass-card">
-          <Users size={48} className="mx-auto text-white/20 mb-4" />
-          <p className="text-white/40">{isHindiRoute ? "कोई संत नहीं मिले" : "No saints found matching your search."}</p>
+          <Users size={48} className="mx-auto text-[var(--text-color)]/20 mb-4" />
+          <p className="text-[var(--text-color)]/50">{isHindiRoute ? "कोई संत नहीं मिले" : "No saints found matching your search."}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredSaints.map(sant => {
-            const bioText = sant.biography?.text 
-              ? (sant.biography.text.substring(0, 100) + '...')
-              : `${sant.verses.length} verses available in library.`;
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredSaints.slice(0, visibleCount).map(sant => {
+              const bioText = sant.biography?.text 
+                ? (sant.biography.text.substring(0, 100) + '...')
+                : `${sant.verses.length} verses available in library.`;
 
-            return (
-              <Link 
-                key={sant.cleanName} 
-                to={isHindiRoute ? `/hi/saint/${sant.slug}` : `/saint/${sant.slug}`}
-                className="glass-card group hover:border-amber-500/30 transition-all duration-300 flex flex-col justify-between hover:shadow-2xl"
-              >
-                <div>
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-14 h-14 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 font-bold text-xl group-hover:scale-105 transition-transform duration-300">
-                      {getInitials(isHindiRoute ? sant.name : sant.hinglishName)}
+              return (
+                <Link 
+                  key={sant.cleanName} 
+                  to={isHindiRoute ? `/hi/saint/${sant.slug}` : `/saint/${sant.slug}`}
+                  className="glass-card group hover:border-[rgba(var(--primary-rgb),0.3)] transition-all duration-300 flex flex-col justify-between hover:shadow-2xl"
+                >
+                  <div>
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-14 h-14 rounded-full bg-[rgba(var(--primary-rgb),0.08)] border border-[rgba(var(--primary-rgb),0.2)] flex items-center justify-center text-[var(--primary-color)] font-bold text-xl group-hover:scale-105 transition-transform duration-300">
+                        {getInitials(isHindiRoute ? sant.name : sant.hinglishName)}
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-lg text-[var(--text-color)]/90 group-hover:text-[var(--primary-color)] transition-colors leading-tight">
+                          {isHindiRoute ? sant.name : sant.hinglishName}
+                        </h3>
+                        <span className="text-[10px] uppercase tracking-wider text-[var(--text-color)]/40 block mt-1">
+                          {sant.books.length} {sant.books.length === 1 ? 'Book' : 'Books'}
+                        </span>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-bold text-lg text-white/90 group-hover:text-primary transition-colors leading-tight">
-                        {isHindiRoute ? sant.name : sant.hinglishName}
-                      </h3>
-                      <span className="text-[10px] uppercase tracking-wider text-white/30 block mt-1">
-                        {sant.books.length} {sant.books.length === 1 ? 'Book' : 'Books'}
-                      </span>
-                    </div>
+                    <p className="text-[var(--text-color)]/60 text-xs leading-relaxed line-clamp-3">
+                      {bioText}
+                    </p>
                   </div>
-                  <p className="text-white/50 text-xs leading-relaxed line-clamp-3">
-                    {bioText}
-                  </p>
-                </div>
-                
-                <div className="pt-4 mt-4 border-t border-white/5 flex justify-between items-center text-xs">
-                  <span className="text-white/30 flex items-center gap-1">
-                    <FileText size={12} />
-                    {sant.verses.length} {sant.verses.length === 1 ? 'Verse' : 'Verses'}
-                  </span>
-                  <span className="text-primary font-medium group-hover:translate-x-1 transition-transform">
-                    {isHindiRoute ? "वाणी संग्रह →" : "View Vaanis →"}
-                  </span>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+                  
+                  <div className="pt-4 mt-4 border-t border-[var(--glass-border)] flex justify-between items-center text-xs">
+                    <span className="text-[var(--text-color)]/40 flex items-center gap-1">
+                      <FileText size={12} />
+                      {sant.verses.length} {sant.verses.length === 1 ? 'Verse' : 'Verses'}
+                    </span>
+                    <span className="text-[var(--primary-color)] font-medium group-hover:translate-x-1 transition-transform">
+                      {isHindiRoute ? "वाणी संग्रह →" : "View Vaanis →"}
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Scroll Sentinel Loader */}
+          {filteredSaints.length > visibleCount && (
+            <div ref={sentinelRef} className="py-10 flex justify-center w-full">
+              <div className="w-8 h-8 border-2 border-[var(--primary-color)] border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

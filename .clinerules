@@ -8,6 +8,9 @@ This file documents the strict guidelines, constraints, and professional standar
 - **Canvas Static Backdrop Fallbacks**: Every theme registered in the settings context must map to a corresponding static/vector drawing routine inside `CelestialParticles.js` to ensure there are no empty/blank backdrops.
 - **CPU-Friendly Dynamic Waves**: Any fluid, wave, or particle movement animation drawn in real-time loops must limit canvas recalculations by using coarse step widths (e.g., `x += 15` intervals) instead of pixel-by-pixel increments to maintain high framerates on low-end mobile devices.
 - **Rich & Modern Aesthetics**: UIs must feel premium, modern, and trendy. Avoid raw browser defaults or generic colors. Use HSL-tailored palettes, smooth transitions, glassmorphic textures, and subtle micro-animations.
+- **Responsive Card Reading Widths**: Always design reading sections with `p-0 bg-transparent border-0` layout on mobile, scaling up to card boxes only on tablet and desktop viewports (`sm:` or `md:`) to maximize readable column width.
+- **Avoid Inline Heading Overlaps**: Page headings (`h1`-`h6`) using text-gradients should always be wrapper-isolated using `flex flex-col items-start` to avoid colliding with inline navigation items (`Links`, `buttons`).
+- **Active Tab Highlights**: Prefer bottom-border accent lines with smooth transitions (`transition-all duration-300`) over solid capsule container bars for clean modern tab bars.
 
 ---
 

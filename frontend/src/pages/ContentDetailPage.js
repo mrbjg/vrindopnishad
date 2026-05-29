@@ -24,20 +24,16 @@ const ContentDetailPage = () => {
     const sessionCached = apiService.getCachedData(`id_${id}`);
     if (sessionCached) return sessionCached;
     try {
-      const decodedId = decodeURIComponent(id);
-      const cacheKeys = ['vrindopnishad_all_content_cache', 'sanctuary_content_cache'];
-      for (const key of cacheKeys) {
-        const cached = localStorage.getItem(key);
-        if (cached) {
-          const items = JSON.parse(cached);
-          const matched = items.find(item => 
-            item.id?.toString() === id.toString() ||
-            item.id?.toString() === decodedId.toString() ||
-            item.slug === id ||
-            item.slug === decodedId
-          );
-          if (matched) return matched;
-        }
+      const memCached = apiService.getMemoryCachedItems();
+      if (memCached && memCached.length > 0) {
+        const decodedId = decodeURIComponent(id);
+        const matched = memCached.find(item => 
+          item.id?.toString() === id.toString() ||
+          item.id?.toString() === decodedId.toString() ||
+          item.slug === id ||
+          item.slug === decodedId
+        );
+        if (matched) return matched;
       }
     } catch (e) {}
     return null;
@@ -46,20 +42,16 @@ const ContentDetailPage = () => {
     const sessionCached = apiService.getCachedData(`id_${id}`);
     if (sessionCached) return false;
     try {
-      const decodedId = decodeURIComponent(id);
-      const cacheKeys = ['vrindopnishad_all_content_cache', 'sanctuary_content_cache'];
-      for (const key of cacheKeys) {
-        const cached = localStorage.getItem(key);
-        if (cached) {
-          const items = JSON.parse(cached);
-          const matched = items.find(item => 
-            item.id?.toString() === id.toString() ||
-            item.id?.toString() === decodedId.toString() ||
-            item.slug === id ||
-            item.slug === decodedId
-          );
-          if (matched) return false;
-        }
+      const memCached = apiService.getMemoryCachedItems();
+      if (memCached && memCached.length > 0) {
+        const decodedId = decodeURIComponent(id);
+        const matched = memCached.find(item => 
+          item.id?.toString() === id.toString() ||
+          item.id?.toString() === decodedId.toString() ||
+          item.slug === id ||
+          item.slug === decodedId
+        );
+        if (matched) return false;
       }
     } catch (e) {}
     return true;
@@ -71,6 +63,29 @@ const ContentDetailPage = () => {
 
   useEffect(() => {
     let active = true;
+
+    // Reset state to initial data for the new ID immediately when ID changes
+    const getInitialContent = () => {
+      const sessionCached = apiService.getCachedData(`id_${id}`);
+      if (sessionCached) return sessionCached;
+      try {
+        const memCached = apiService.getMemoryCachedItems();
+        if (memCached && memCached.length > 0) {
+          const decodedId = decodeURIComponent(id);
+          return memCached.find(item => 
+            item.id?.toString() === id.toString() ||
+            item.id?.toString() === decodedId.toString() ||
+            item.slug === id ||
+            item.slug === decodedId
+          ) || null;
+        }
+      } catch (e) {}
+      return null;
+    };
+
+    const initialContent = getInitialContent();
+    setContent(initialContent);
+    setLoading(initialContent === null);
 
     const fetchContentData = async () => {
       try {
@@ -378,7 +393,7 @@ const ContentDetailPage = () => {
           Back to Collection
         </Link>
 
-        <div className="glass-card reading-card p-8 md:p-14 mb-12 relative overflow-hidden">
+        <div className="w-full px-0 py-4 md:px-14 md:py-14 mb-12 relative overflow-hidden">
           {/* Main Content Header - Overhauled for Mobile Relatability */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10 mb-12 border-b border-white/5 pb-10">
             <div className="flex flex-col gap-6 w-full lg:w-auto">

@@ -183,18 +183,26 @@ body {
 }
 
 .glass-card {
-    background: var(--glass-bg);
-    backdrop-filter: var(--blur-effect);
-    -webkit-backdrop-filter: var(--blur-effect);
     border: 1px solid var(--glass-border);
     border-radius: 24px;
     padding: 2rem;
     position: relative;
     overflow: hidden;
     /* Scroll performance optimizations */
-    will-change: transform, border-color, box-shadow;
-    transform: translateZ(0); /* Force GPU */
-    transition: background 0.4s ease, border-color 0.4s ease;
+    will-change: border-color, box-shadow;
+    transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.glass-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--glass-bg);
+    backdrop-filter: var(--blur-effect);
+    -webkit-backdrop-filter: var(--blur-effect);
+    z-index: -1;
+    pointer-events: none;
+    transition: background 0.4s ease;
 }
 
 /* Glass Header Polish */
@@ -585,11 +593,6 @@ html.light-mode .font-wheel-item-segmented.active::after {
 
 .glass-card {
     position: relative;
-    background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    /* Optimized blur */
-    -webkit-backdrop-filter: blur(16px);
-    /* Optimized blur */
     border: 1px solid var(--glass-border);
     /* Adjusted border */
     border-radius: 2rem;
@@ -600,15 +603,9 @@ html.light-mode .font-wheel-item-segmented.active::after {
         all 0.4s cubic-bezier(0.16, 1, 0.3, 1),
         /* Adjusted transition */
         transform 0.6s var(--transition-smooth),
-        background 0.4s ease,
         border-color 0.4s ease,
         box-shadow 0.6s var(--transition-smooth);
     overflow: hidden;
-    transform-style: preserve-3d;
-    perspective: 1000px;
-    backface-visibility: hidden;
-    transform: translateZ(0);
-    /* Force GPU */
 }
 
 /* Scroll guards disabled */
@@ -638,7 +635,6 @@ html.light-mode .font-wheel-item-segmented.active::after {
 }
 
 .glass-card:hover {
-    transform: translateZ(0);
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(124, 58, 237, 0.4);
     box-shadow: inset 0 0 20px rgba(251, 191, 36, 0.05);
@@ -653,6 +649,11 @@ html.light-mode .font-wheel-item-segmented.active::after {
     -webkit-backdrop-filter: none !important;
     border: none !important;
     box-shadow: none !important;
+}
+
+.glass-card.reading-card::after,
+.reading-card::after {
+    display: none !important;
 }
 
 .glass-card.reading-card:hover,
@@ -1694,19 +1695,19 @@ h6 {
 }
 
 .animate-fade-in {
-    animation: fade-in 0.6s ease-out both;
+    animation: fade-in 0.2s ease-out both;
 }
 
 .animate-fade-in-down {
-    animation: fade-in-down 0.5s ease-out both;
+    animation: fade-in-down 0.25s ease-out both;
 }
 
 .animate-fade-in-left {
-    animation: fade-in-left 0.5s ease-out both;
+    animation: fade-in-left 0.25s ease-out both;
 }
 
 .animate-fade-in-up {
-    animation: fade-in-up 0.5s ease-out both;
+    animation: fade-in-up 0.25s ease-out both;
 }
 
 /* Scrollbar Hide Utility */
@@ -3685,12 +3686,22 @@ html.light-mode .book-cover-premium {
 
 /* Premium Card hover upward shift and soft glow */
 .premium-content-card {
-    background: rgba(255, 255, 255, 0.02);
-    backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 20px;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+.premium-content-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: -1;
+    pointer-events: none;
 }
 .premium-content-card:hover {
     border-color: rgba(var(--primary-rgb), 0.25);
@@ -3943,6 +3954,10 @@ html[data-layout-mode="pookiz"] .glass-card {
     transform-style: flat !important;
 }
 
+html[data-layout-mode="pookiz"] .glass-card::after {
+    display: none !important;
+}
+
 html[data-layout-mode="pookiz"] .glass-card::before {
     display: none !important;
 }
@@ -4145,4 +4160,26 @@ body {
 .goog-text-highlight {
     background-color: transparent !important;
     box-shadow: none !important;
+}
+
+/* Performance: Disable expensive backdrop-filter calculations on mobile and tablet devices to prevent route transition delays and lag */
+@media (max-width: 1023px) {
+    .glass,
+    .glass-card,
+    .app-header,
+    .header-sub-bar,
+    .mobile-bottom-nav,
+    .font-wheel-container,
+    .sidebar,
+    .sidebar-dock-minimal,
+    [class*="glass"],
+    [class*="backdrop-blur"] {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+    
+    :root {
+        --glass-bg: rgba(12, 12, 15, 0.85);
+        --header-bg: rgba(9, 9, 11, 0.95);
+    }
 }

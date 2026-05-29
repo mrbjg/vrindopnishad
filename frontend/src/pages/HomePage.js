@@ -96,10 +96,6 @@ const getInitials = (name) => {
   return first.match(/[a-zA-Z]/) ? first.toUpperCase() : first;
 };
 
-/* ─── Cache Keys ─── */
-const CACHE_KEY = 'vrindopnishad_all_content_cache';
-const CACHE_TIME_KEY = 'vrindopnishad_all_content_time';
-const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours cache
 
 /* ═══════════════════════════════════════════════════
    HOMEPAGE COMPONENT
@@ -582,32 +578,14 @@ const HomePage = () => {
     let active = true;
     const load = async () => {
       try {
-        const cachedData = localStorage.getItem(CACHE_KEY);
-        const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
-        const now = Date.now();
-
-        if (cachedData && cachedTime && (now - parseInt(cachedTime, 10) < CACHE_DURATION)) {
-          const items = JSON.parse(cachedData);
-          const rel = extractRelations(items);
-          if (active) {
-            setAllItems(items);
-            setSaints(rel.sants);
-            setBooks(rel.books);
-            setRagas(rel.ragas);
-            setLoading(false);
-          }
-        } else {
-          const items = await apiService.getAllContent(null, 10000);
-          localStorage.setItem(CACHE_KEY, JSON.stringify(items));
-          localStorage.setItem(CACHE_TIME_KEY, now.toString());
-          const rel = extractRelations(items);
-          if (active) {
-            setAllItems(items);
-            setSaints(rel.sants);
-            setBooks(rel.books);
-            setRagas(rel.ragas);
-            setLoading(false);
-          }
+        const items = await apiService.getAllContent(null, 10000);
+        const rel = extractRelations(items);
+        if (active) {
+          setAllItems(items);
+          setSaints(rel.sants);
+          setBooks(rel.books);
+          setRagas(rel.ragas);
+          setLoading(false);
         }
       } catch (e) {
         console.error('HomePage load:', e);
@@ -751,6 +729,9 @@ const HomePage = () => {
     return (
       <PookizDashboardView
         isHi={isHi}
+        saints={saints}
+        books={books}
+        ragas={ragas}
         dailyShloka={dailyShloka}
         japaCount={japaCount}
         handleUpdateJapaCount={handleUpdateJapaCount}
@@ -1370,8 +1351,8 @@ const HomePage = () => {
             </div>
 
             <div className="flex gap-4 overflow-x-auto pb-4 pt-1 snap-x book-shelf-row">
-              {books.slice(0, 8).map(book => (
-                <div key={book.name} onClick={() => navigate(isHi ? `/hi/book/${book.slug}` : `/book/${book.slug}`)}
+              {books.slice(0, 8).map((book, index) => (
+                <div key={`${book.slug || book.name || 'book'}-${index}`} onClick={() => navigate(isHi ? `/hi/book/${book.slug}` : `/book/${book.slug}`)}
                   className="w-80 flex-none glass-card p-4 rounded-2xl hover:border-amber-500/25 transition-all snap-start flex gap-4 border border-white/5 cursor-pointer group shadow-lg">
                   {/* CSS Designed Premium Book Cover */}
                   <div className="book-cover-premium shrink-0 text-white select-none shadow-xl"
@@ -1417,8 +1398,8 @@ const HomePage = () => {
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-              {saints.slice(0, 6).map(sant => (
-                <div key={sant.cleanName} onClick={() => navigate(isHi ? `/hi/saint/${sant.slug}` : `/saint/${sant.slug}`)}
+              {saints.slice(0, 6).map((sant, index) => (
+                <div key={`${sant.slug || sant.cleanName || 'sant'}-${index}`} onClick={() => navigate(isHi ? `/hi/saint/${sant.slug}` : `/saint/${sant.slug}`)}
                   className="glass-card !p-3 rounded-2xl border border-white/5 hover:border-amber-500/20 text-center cursor-pointer group transition-all flex flex-col items-center justify-between space-y-3">
                   <div className="w-14 h-14 rounded-full bg-amber-500/5 border border-amber-500/10 group-hover:border-amber-500/40 flex items-center justify-center text-amber-500 font-bold text-lg shadow-inner group-hover:scale-105 transition-all duration-300">
                     {getInitials(isHi ? sant.name : sant.hinglishName)}
@@ -1532,11 +1513,11 @@ const HomePage = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {latestVerses.map(verse => {
+              {latestVerses.map((verse, index) => {
                 const excerpt = verse.hindi_text || verse.sanskrit_text || verse.english_translation || verse.description || "";
                 const readingTime = Math.max(1, Math.ceil(excerpt.length / 120)) + " min read";
                 return (
-                  <div key={verse.id} onClick={() => navigate(isHi ? `/hi/content/${verse.slug || verse.id}` : `/content/${verse.slug || verse.id}`)}
+                  <div key={`${verse.slug || verse.id || 'verse'}-${index}`} onClick={() => navigate(isHi ? `/hi/content/${verse.slug || verse.id}` : `/content/${verse.slug || verse.id}`)}
                     className="premium-content-card p-5 cursor-pointer flex flex-col justify-between space-y-4 group">
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
@@ -1591,8 +1572,8 @@ const HomePage = () => {
               <Link to={isHi ? "/hi/ragas" : "/ragas"} className="text-[10px] text-primary hover:underline font-bold">{isHi ? "सभी राग" : "View All"}</Link>
             </div>
             <div className="flex flex-wrap gap-2">
-              {ragas.slice(0, 10).map(raga => (
-                <button key={raga.name} onClick={() => navigate(isHi ? `/hi/raga/${raga.slug}` : `/raga/${raga.slug}`)}
+              {ragas.slice(0, 10).map((raga, index) => (
+                <button key={`${raga.slug || raga.name || 'raga'}-${index}`} onClick={() => navigate(isHi ? `/hi/raga/${raga.slug}` : `/raga/${raga.slug}`)}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 text-xs text-left transition-all group">
                   <span className="font-semibold text-white/90 group-hover:text-primary transition-colors text-[11px]">{raga.name}</span>
                   <span className="text-[9px] text-white/35 font-light bg-white/5 px-1.5 py-0.5 rounded-md flex items-center gap-0.5 shrink-0">
@@ -1671,8 +1652,8 @@ const HomePage = () => {
                   }) : <p className="text-white/40 text-center py-8 text-xs">No books.</p>}
                 </div>)}
                 {drawerTab === 'verses' && (<div className="space-y-2">
-                  {selectedItem.verses?.map(v => (
-                    <Link key={v.id} to={isHi ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`} onClick={closePreview}
+                  {selectedItem.verses?.map((v, i) => (
+                    <Link key={`${v.slug || v.id || 'verse'}-${i}`} to={isHi ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`} onClick={closePreview}
                       className="block p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-xs font-bold text-white/85 hover:text-primary transition-colors truncate">{v.cleanTitle || v.title}</Link>
                   ))}
                 </div>)}
@@ -1680,16 +1661,16 @@ const HomePage = () => {
 
               {/* Book */}
               {previewType === 'book' && (<div className="space-y-2">
-                {selectedItem.verses?.map(v => (
-                  <Link key={v.id} to={isHi ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`} onClick={closePreview}
+                {selectedItem.verses?.map((v, i) => (
+                  <Link key={`${v.slug || v.id || 'verse'}-${i}`} to={isHi ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`} onClick={closePreview}
                     className="block p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-xs font-bold text-white/85 hover:text-primary transition-colors truncate">{v.cleanTitle || v.title}</Link>
                 ))}
               </div>)}
 
               {/* Raga */}
               {previewType === 'raga' && (<div className="space-y-2">
-                {selectedItem.verses?.map(v => (
-                  <Link key={v.id} to={isHi ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`} onClick={closePreview}
+                {selectedItem.verses?.map((v, i) => (
+                  <Link key={`${v.slug || v.id || 'verse'}-${i}`} to={isHi ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`} onClick={closePreview}
                     className="block p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-xs font-bold text-white/85 hover:text-primary transition-colors truncate">{v.cleanTitle || v.title}</Link>
                 ))}
               </div>)}

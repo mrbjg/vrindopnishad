@@ -13,20 +13,24 @@ const RagaDetailPage = () => {
 
   const [raga, setRaga] = useState(() => {
     try {
-      const cached = localStorage.getItem('vrindopnishad_ragas_cache');
-      if (cached) {
-        const ragasList = JSON.parse(cached);
-        return ragasList.find(r => r.slug === slug) || null;
+      const memCached = apiService.getMemoryCachedItems();
+      if (memCached) {
+        const relations = extractRelations(memCached);
+        if (relations && relations.ragas.length > 0) {
+          return relations.ragas.find(r => r.slug === slug) || null;
+        }
       }
     } catch (e) {}
     return null;
   });
   const [loading, setLoading] = useState(() => {
     try {
-      const cached = localStorage.getItem('vrindopnishad_ragas_cache');
-      if (cached) {
-        const ragasList = JSON.parse(cached);
-        return !ragasList.find(r => r.slug === slug);
+      const memCached = apiService.getMemoryCachedItems();
+      if (memCached) {
+        const relations = extractRelations(memCached);
+        if (relations && relations.ragas.length > 0) {
+          return !relations.ragas.find(r => r.slug === slug);
+        }
       }
     } catch (e) {}
     return true;
@@ -34,6 +38,25 @@ const RagaDetailPage = () => {
 
   useEffect(() => {
     let active = true;
+
+    // Reset state to initial data for the new slug immediately when slug changes
+    const getInitialRaga = () => {
+      try {
+        const memCached = apiService.getMemoryCachedItems();
+        if (memCached) {
+          const relations = extractRelations(memCached);
+          if (relations && relations.ragas.length > 0) {
+            return relations.ragas.find(r => r.slug === slug) || null;
+          }
+        }
+      } catch (e) {}
+      return null;
+    };
+
+    const initialRaga = getInitialRaga();
+    setRaga(initialRaga);
+    setLoading(initialRaga === null);
+
     const load = async () => {
       try {
         const allItems = await apiService.getAllContent(null, 10000);
@@ -41,7 +64,6 @@ const RagaDetailPage = () => {
         const foundRaga = relations.ragas.find(r => r.slug === slug);
         if (active) {
           setRaga(foundRaga || null);
-          localStorage.setItem('vrindopnishad_ragas_cache', JSON.stringify(relations.ragas));
         }
       } catch (error) {
         console.error('Error loading raga details:', error);

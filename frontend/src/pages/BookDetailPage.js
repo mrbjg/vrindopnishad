@@ -13,20 +13,24 @@ const BookDetailPage = () => {
 
   const [book, setBook] = useState(() => {
     try {
-      const cached = localStorage.getItem('vrindopnishad_books_cache');
-      if (cached) {
-        const booksList = JSON.parse(cached);
-        return booksList.find(b => b.slug === slug) || null;
+      const memCached = apiService.getMemoryCachedItems();
+      if (memCached) {
+        const relations = extractRelations(memCached);
+        if (relations && relations.books.length > 0) {
+          return relations.books.find(b => b.slug === slug) || null;
+        }
       }
     } catch (e) {}
     return null;
   });
   const [loading, setLoading] = useState(() => {
     try {
-      const cached = localStorage.getItem('vrindopnishad_books_cache');
-      if (cached) {
-        const booksList = JSON.parse(cached);
-        return !booksList.find(b => b.slug === slug);
+      const memCached = apiService.getMemoryCachedItems();
+      if (memCached) {
+        const relations = extractRelations(memCached);
+        if (relations && relations.books.length > 0) {
+          return !relations.books.find(b => b.slug === slug);
+        }
       }
     } catch (e) {}
     return true;
@@ -34,6 +38,25 @@ const BookDetailPage = () => {
 
   useEffect(() => {
     let active = true;
+
+    // Reset state to initial data for the new slug immediately when slug changes
+    const getInitialBook = () => {
+      try {
+        const memCached = apiService.getMemoryCachedItems();
+        if (memCached) {
+          const relations = extractRelations(memCached);
+          if (relations && relations.books.length > 0) {
+            return relations.books.find(b => b.slug === slug) || null;
+          }
+        }
+      } catch (e) {}
+      return null;
+    };
+
+    const initialBook = getInitialBook();
+    setBook(initialBook);
+    setLoading(initialBook === null);
+
     const load = async () => {
       try {
         const allItems = await apiService.getAllContent(null, 10000);
@@ -41,7 +64,6 @@ const BookDetailPage = () => {
         const foundBook = relations.books.find(b => b.slug === slug);
         if (active) {
           setBook(foundBook || null);
-          localStorage.setItem('vrindopnishad_books_cache', JSON.stringify(relations.books));
         }
       } catch (error) {
         console.error('Error loading book details:', error);

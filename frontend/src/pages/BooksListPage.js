@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ApiContext } from '../App';
 import { extractRelations } from '../utils/relations';
@@ -12,15 +12,28 @@ const BooksListPage = () => {
   
   const [books, setBooks] = useState(() => {
     try {
-      const cached = localStorage.getItem('vrindopnishad_books_cache');
-      return cached ? JSON.parse(cached) : [];
-    } catch { return []; }
+      const memCached = apiService.getMemoryCachedItems();
+      if (memCached) {
+        const relations = extractRelations(memCached);
+        if (relations && relations.books.length > 0) return relations.books;
+      }
+    } catch { }
+    return [];
   });
   const [loading, setLoading] = useState(() => {
-    try { return !localStorage.getItem('vrindopnishad_books_cache'); }
-    catch { return true; }
+    try {
+      const memCached = apiService.getMemoryCachedItems();
+      if (memCached) return false;
+    } catch { }
+    return true;
   });
   const [searchQuery, setSearchQuery] = useState('');
+  const [visibleCount, setVisibleCount] = useState(12);
+  const sentinelRef = useRef(null);
+
+  useEffect(() => {
+    setVisibleCount(12); // Reset count on search query change to keep DOM small
+  }, [searchQuery]);
 
   useEffect(() => {
     let active = true;
@@ -30,7 +43,6 @@ const BooksListPage = () => {
         const relations = extractRelations(allItems);
         if (active) {
           setBooks(relations.books);
-          localStorage.setItem('vrindopnishad_books_cache', JSON.stringify(relations.books));
         }
       } catch (error) {
         console.error('Error loading books:', error);
@@ -48,6 +60,30 @@ const BooksListPage = () => {
     b.author.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Infinite Scroll Observer
+  useEffect(() => {
+    if (loading || filteredBooks.length <= visibleCount) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setVisibleCount(prev => prev + 12);
+      }
+    }, {
+      rootMargin: '200px'
+    });
+
+    const currentSentinel = sentinelRef.current;
+    if (currentSentinel) {
+      observer.observe(currentSentinel);
+    }
+
+    return () => {
+      if (currentSentinel) {
+        observer.unobserve(currentSentinel);
+      }
+    };
+  }, [loading, filteredBooks.length, visibleCount]);
+
   return (
     <div className="animate-fade-in max-w-6xl mx-auto px-4 py-8">
       <Helmet>
@@ -57,26 +93,26 @@ const BooksListPage = () => {
       </Helmet>
 
       <div className="flex flex-col md:flex-row md:items-start md:items-center justify-between gap-4 mb-6 md:mb-8">
-        <div>
-          <Link to="/" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-2 md:mb-3 transition-colors text-xs uppercase tracking-wider">
+        <div className="flex flex-col items-start w-full md:w-auto text-left">
+          <Link to="/" className="inline-flex items-center gap-2 text-[var(--text-color)]/40 hover:text-[var(--text-color)] mb-2 md:mb-3 transition-colors text-xs uppercase tracking-wider">
             <ArrowLeft size={14} />
             Back to Home
           </Link>
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold font-headings text-sacred-gradient">
             {isHindiRoute ? "प्रमुख ग्रन्थ एवं वाणियाँ" : "Sacred Granthas & Vaanis"}
           </h1>
-          <p className="text-white/50 text-xs md:text-sm mt-1">
+          <p className="text-[var(--text-color)]/60 text-xs md:text-sm mt-1">
             {isHindiRoute ? "रसिक संतों द्वारा रचित दिव्य ग्रन्थ और वाणी संग्रह" : "Treasury of classical devotional scriptures"}
           </p>
         </div>
 
         <div className="relative w-full md:w-80 max-w-xs">
           <div className="premium-search-container flex items-center pl-4 pr-6 h-11">
-            <Search className="text-white/30 shrink-0 mr-3" size={16} />
+            <Search className="text-[var(--text-color)]/30 shrink-0 mr-3" size={16} />
             <input 
               type="text" 
               placeholder={isHindiRoute ? "ग्रन्थ खोजें..." : "Search Books..."} 
-              className="w-full bg-transparent outline-none text-white/90 placeholder:text-white/35 h-full text-sm font-light"
+              className="w-full bg-transparent outline-none text-[var(--text-color)]/90 placeholder:text-[var(--text-color)]/35 h-full text-sm font-light"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -93,7 +129,7 @@ const BooksListPage = () => {
                 <div className="skeleton skeleton-title w-3/4 mb-3"></div>
                 <div className="skeleton skeleton-text w-1/2 mb-0"></div>
               </div>
-              <div className="pt-3 border-t border-white/5 flex justify-between items-center mt-4 w-full">
+              <div className="pt-3 border-t border-[var(--glass-border)] flex justify-between items-center mt-4 w-full">
                 <div className="skeleton w-16 h-4 rounded"></div>
                 <div className="skeleton w-20 h-4 rounded"></div>
               </div>
@@ -102,39 +138,48 @@ const BooksListPage = () => {
         </div>
       ) : filteredBooks.length === 0 ? (
         <div className="text-center py-20 glass-card">
-          <Book size={48} className="mx-auto text-white/20 mb-4" />
-          <p className="text-white/40">{isHindiRoute ? "कोई ग्रन्थ नहीं मिले" : "No books found matching your search."}</p>
+          <Book size={48} className="mx-auto text-[var(--text-color)]/20 mb-4" />
+          <p className="text-[var(--text-color)]/55">{isHindiRoute ? "कोई ग्रन्थ नहीं मिले" : "No books found matching your search."}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredBooks.map(book => (
-            <Link 
-              key={book.name} 
-              to={isHindiRoute ? `/hi/book/${book.slug}` : `/book/${book.slug}`}
-              className="glass-card group hover:border-amber-500/30 transition-all duration-300 flex flex-col justify-between hover:shadow-2xl"
-            >
-              <div>
-                <span className="text-[10px] uppercase tracking-widest text-amber-500 font-bold block mb-2">Grantha</span>
-                <h3 className="font-bold text-lg text-white/90 group-hover:text-primary transition-colors leading-tight mb-1">
-                  {book.name}
-                </h3>
-                <span className="text-xs text-white/40 block">
-                  By {isHindiRoute ? book.author : book.author}
-                </span>
-              </div>
-              
-              <div className="pt-4 mt-6 border-t border-white/5 flex justify-between items-center text-xs">
-                <span className="text-white/30 flex items-center gap-1">
-                  <FileText size={12} />
-                  {book.verses.length} {book.verses.length === 1 ? 'Verse' : 'Verses'}
-                </span>
-                <span className="text-primary font-medium group-hover:translate-x-1 transition-transform">
-                  {isHindiRoute ? "पाठ खोलें →" : "Read Book →"}
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredBooks.slice(0, visibleCount).map(book => (
+              <Link 
+                key={book.name} 
+                to={isHindiRoute ? `/hi/book/${book.slug}` : `/book/${book.slug}`}
+                className="glass-card group hover:border-[rgba(var(--primary-rgb),0.3)] transition-all duration-300 flex flex-col justify-between hover:shadow-2xl"
+              >
+                <div>
+                  <span className="text-[10px] uppercase tracking-widest text-[var(--primary-color)] font-bold block mb-2">Grantha</span>
+                  <h3 className="font-bold text-lg text-[var(--text-color)]/90 group-hover:text-[var(--primary-color)] transition-colors leading-tight mb-1">
+                    {book.name}
+                  </h3>
+                  <span className="text-xs text-[var(--text-color)]/40 block">
+                    By {isHindiRoute ? book.author : book.author}
+                  </span>
+                </div>
+                
+                <div className="pt-4 mt-6 border-t border-[var(--glass-border)] flex justify-between items-center text-xs">
+                  <span className="text-[var(--text-color)]/40 flex items-center gap-1">
+                    <FileText size={12} />
+                    {book.verses.length} {book.verses.length === 1 ? 'Verse' : 'Verses'}
+                  </span>
+                  <span className="text-[var(--primary-color)] font-medium group-hover:translate-x-1 transition-transform">
+                    {isHindiRoute ? "पाठ खोलें →" : "Read Book →"}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Scroll Sentinel Loader */}
+          {filteredBooks.length > visibleCount && (
+            <div ref={sentinelRef} className="py-10 flex justify-center w-full">
+              <div className="w-8 h-8 border-2 border-[var(--primary-color)] border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

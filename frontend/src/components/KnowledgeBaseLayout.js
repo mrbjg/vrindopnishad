@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
-import { useSettings } from '../contexts/SettingsContext';
+import { useSettings, isLightTheme } from '../contexts/SettingsContext';
 import { categories, articles } from '../utils/kbArticles';
 import { 
   BookOpen, Search, Settings, ChevronDown, ChevronUp, 
@@ -209,6 +209,11 @@ const KnowledgeBaseLayout = () => {
 
   // Scroll spy to highlight active heading on scroll
   useEffect(() => {
+    // Detect mobile touch devices or small viewports once per render to bypass scroll tracking
+    const isMobile = window.matchMedia('(max-width: 1023px)').matches || 
+                     ('ontouchstart' in window) || 
+                     (navigator.maxTouchPoints > 0);
+    if (isMobile) return;
     if (headings.length === 0) return;
 
     let ticking = false;
@@ -371,12 +376,35 @@ const KnowledgeBaseLayout = () => {
   };
 
   // Theme-based layout wrapper classes
-  const panelBg = isPookiz ? 'bg-[#121215] border-white/5 text-[#f4f4f5]' : 'bg-[#0c0c0e]/50 backdrop-blur-xl border-white/[0.08] text-white';
-  const sidebarBg = isPookiz ? 'bg-[#09090b] border-white/5' : 'bg-[#0c0c0e]/50 backdrop-blur-xl border-white/[0.08]';
+  const isLight = isLightTheme(settings.theme);
+
+  const panelBg = isPookiz 
+    ? (isLight ? 'bg-[#fbf9f4] border-black/10 text-[#1c1917]' : 'bg-[#121215] border-white/5 text-[#f4f4f5]') 
+    : 'bg-[var(--glass-bg)] backdrop-blur-xl border-[var(--glass-border)] text-[var(--text-color)]';
+    
+  const sidebarBg = isPookiz 
+    ? (isLight ? 'bg-[#f5f2eb] border-black/10' : 'bg-[#09090b] border-white/5') 
+    : 'bg-[var(--glass-bg)] backdrop-blur-xl border-[var(--glass-border)]';
+
   const activeLinkStyle = isPookiz 
-    ? 'bg-purple-500/10 text-purple-300 border-l-2 border-purple-500 font-medium' 
-    : 'bg-amber-400/10 text-amber-200 border-l-2 border-amber-400 font-semibold shadow-[inset_4px_0_12px_rgba(251,191,36,0.05)]';
-  const normalLinkStyle = 'text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.02] border-l border-white/10';
+    ? (isLight ? 'bg-purple-500/10 text-purple-700 border-l-2 border-purple-500 font-semibold' : 'bg-purple-500/10 text-purple-300 border-l-2 border-purple-500 font-medium')
+    : 'bg-[rgba(var(--primary-rgb),0.1)] text-[color:var(--primary-color)] border-l-2 border-[color:var(--primary-color)] font-bold shadow-[inset_4px_0_12px_rgba(var(--primary-rgb),0.03)]';
+    
+  const normalLinkStyle = isPookiz
+    ? (isLight ? 'text-stone-500 hover:text-stone-900 hover:bg-stone-100/50' : 'text-zinc-400 hover:text-white hover:bg-white/5')
+    : 'text-[var(--text-color)]/60 hover:text-[var(--text-color)] hover:bg-[var(--text-color)]/[0.03] border-l border-[var(--glass-border)]';
+
+  const getBtnClass = (active) => {
+    if (active) {
+      return isPookiz
+        ? (isLight ? 'border-purple-500 bg-purple-50 text-purple-700 font-bold' : 'border-purple-500/50 bg-purple-500/10 text-purple-300 font-medium')
+        : 'border-[color:var(--primary-color)] bg-[rgba(var(--primary-rgb),0.08)] text-[color:var(--primary-color)] font-semibold';
+    } else {
+      return isPookiz
+        ? (isLight ? 'border-stone-200 bg-stone-50 text-stone-500 hover:text-stone-900 hover:bg-stone-100' : 'border-white/5 bg-white/[0.02] text-zinc-400 hover:text-white')
+        : 'border-[var(--glass-border)] bg-[var(--text-color)]/[0.02] text-[var(--text-color)]/60 hover:text-[var(--text-color)] hover:bg-[var(--text-color)]/[0.05]';
+    }
+  };
 
   return (
     <div className={`flex flex-col lg:flex-row ${isPookiz ? 'gap-4' : 'gap-6'} w-full ${isPookiz ? 'min-h-[calc(100vh-80px)]' : 'lg:h-full lg:overflow-hidden'} animate-fade-in`}>
@@ -384,10 +412,10 @@ const KnowledgeBaseLayout = () => {
       <div id="google_translate_element" style={{ display: 'none' }}></div>
       
       {/* Mobile Toggle Button */}
-      <div className="lg:hidden flex items-center justify-between p-3 bg-white/[0.02] border border-white/5 rounded-2xl">
+      <div className="lg:hidden flex items-center justify-between p-3 bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-2xl">
         <button 
           onClick={() => setSidebarOpen(true)}
-          className="flex items-center gap-2 text-xs font-semibold text-zinc-300 hover:text-white"
+          className="flex items-center gap-2 text-xs font-semibold text-[var(--text-color)]/80 hover:text-[var(--text-color)]"
         >
           <Menu size={16} />
           {isHindiRoute ? 'ज्ञान कोष अनुक्रमणिका' : 'Wiki Directory'}
@@ -397,7 +425,7 @@ const KnowledgeBaseLayout = () => {
           {/* Quick Lang Switch */}
           <button 
             onClick={() => handleLanguageSwitch(!isHindiRoute)}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/[0.04] border border-white/10 text-[10px] font-bold tracking-wide uppercase hover:bg-white/10 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--text-color)]/[0.04] border border-[var(--glass-border)] text-[10px] font-bold tracking-wide uppercase hover:bg-[var(--text-color)]/[0.08] text-[var(--text-color)]/80 hover:text-[var(--text-color)] transition-colors"
           >
             <Globe size={11} />
             <span>{isHindiRoute ? 'English' : 'हिंदी'}</span>
@@ -410,30 +438,30 @@ const KnowledgeBaseLayout = () => {
         style={{ '--kb-sidebar-width': `${kbSidebarWidth}px` }}
         className={`${
           isPookiz 
-            ? `fixed inset-y-0 left-0 w-80 max-w-[85vw] ${sidebarBg} z-[500] lg:translate-x-0 lg:w-[var(--kb-sidebar-width)] lg:z-10 lg:bg-[#121215]/40 lg:border lg:border-white/5 lg:rounded-2xl lg:sticky lg:top-4 lg:h-[calc(100vh-100px)] flex flex-col`
-            : `fixed inset-y-0 left-0 w-80 max-w-[85vw] ${sidebarBg} border-r z-[500] lg:relative lg:translate-x-0 lg:w-[var(--kb-sidebar-width)] lg:z-10 lg:bg-[#0c0c0e]/50 lg:backdrop-blur-xl lg:border lg:border-white/[0.08] lg:rounded-2xl flex flex-col h-screen lg:h-full`
+            ? `fixed inset-y-0 left-0 w-80 max-w-[85vw] ${sidebarBg} z-[500] lg:translate-x-0 lg:w-[var(--kb-sidebar-width)] lg:z-10 ${isLight ? 'lg:bg-[#f5f2eb]/40' : 'lg:bg-[#121215]/40'} lg:border lg:border-white/5 lg:rounded-2xl lg:sticky lg:top-4 lg:h-[calc(100vh-100px)] flex flex-col`
+            : `fixed inset-y-0 left-0 w-80 max-w-[85vw] ${sidebarBg} border-r z-[500] lg:relative lg:translate-x-0 lg:w-[var(--kb-sidebar-width)] lg:z-10 lg:bg-[var(--glass-bg)] lg:backdrop-blur-xl lg:border lg:border-[var(--glass-border)] lg:rounded-2xl flex flex-col h-screen lg:h-full`
         } transform ${isKbResizing ? 'transition-none !transition-none' : 'transition-transform duration-300 lg:transition-none lg:!transition-none'} ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:block'
         }`}
       >
         <div className={`w-full h-full flex flex-col lg:rounded-2xl ${isPookiz ? 'p-5 lg:p-3.5 overflow-y-auto custom-scrollbar' : 'p-5 lg:p-4 lg:pr-2 lg:overflow-hidden'}`}>
           <div className="flex items-center justify-between lg:hidden mb-6">
-            <span className="font-bold text-sm text-white uppercase tracking-wider flex items-center gap-2">
-              <BookOpen size={16} className="text-purple-400" />
+            <span className="font-bold text-sm text-[var(--text-color)] uppercase tracking-wider flex items-center gap-2">
+              <BookOpen size={16} className="text-[color:var(--primary-color)]" />
               {isHindiRoute ? 'ज्ञान कोष' : 'Wiki Directory'}
             </span>
-            <button onClick={() => setSidebarOpen(false)} className="text-zinc-400 hover:text-white p-1 hover:bg-white/5 rounded-lg">
+            <button onClick={() => setSidebarOpen(false)} className="text-[var(--text-color)]/60 hover:text-[var(--text-color)] p-1 hover:bg-[var(--text-color)]/5 rounded-lg">
               <X size={20} />
             </button>
           </div>
 
           {/* Search Field */}
           <div className="relative mb-5 shrink-0">
-            <Search size={14} className="absolute left-3 top-3 text-zinc-500" />
+            <Search size={14} className="absolute left-3 top-3 text-[var(--text-color)]/40" />
             <input 
               type="text"
               placeholder={isHindiRoute ? "ज्ञान कोष में खोजें..." : "Filter articles..."}
-              className="w-full bg-white/[0.03] border border-white/5 rounded-xl py-2 pl-9 pr-4 text-xs placeholder:text-zinc-600 focus:outline-none focus:border-purple-500/50 text-white font-light"
+              className="w-full bg-[var(--text-color)]/[0.03] border border-[var(--glass-border)] rounded-xl py-2 pl-9 pr-4 text-xs placeholder:text-[var(--text-color)]/40 focus:outline-none focus:border-[rgba(var(--primary-rgb),0.5)] text-[var(--text-color)] font-light"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -447,15 +475,15 @@ const KnowledgeBaseLayout = () => {
               onClick={() => setSidebarOpen(false)}
               className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all ${
                 !activeSlug 
-                  ? isPookiz ? 'bg-purple-500/10 text-purple-300 font-bold' : 'bg-amber-400/10 text-amber-300 font-bold'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-[rgba(var(--primary-rgb),0.12)] text-[color:var(--primary-color)] font-bold'
+                  : 'text-[var(--text-color)]/60 hover:text-[var(--text-color)] hover:bg-[var(--text-color)]/[0.04]'
               }`}
             >
               <BookOpen size={14} />
               <span>{isHindiRoute ? 'ज्ञान कोष मुखपृष्ठ' : 'Knowledge Base Home'}</span>
             </Link>
 
-            <div className="h-[1px] bg-white/5 my-2"></div>
+            <div className="h-[1px] bg-[var(--glass-border)] my-2"></div>
 
             {Object.keys(groupedArticles).map(catId => {
               const catArticles = groupedArticles[catId];
@@ -466,13 +494,13 @@ const KnowledgeBaseLayout = () => {
                 <div key={catId} className="space-y-1">
                   <button 
                     onClick={() => toggleCategory(catId)}
-                    className="w-full flex items-center justify-between py-1.5 px-2 hover:bg-white/[0.02] rounded-lg transition-colors text-left"
+                    className="w-full flex items-center justify-between py-1.5 px-2 hover:bg-[var(--text-color)]/[0.03] rounded-lg transition-colors text-left"
                   >
-                    <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                    <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-[var(--text-color)]/60">
                       {getCategoryIcon(catId)}
                       <span>{getCategoryLabel(catId)}</span>
                     </span>
-                    {isExpanded ? <ChevronUp size={12} className="text-zinc-500" /> : <ChevronDown size={12} className="text-zinc-500" />}
+                    {isExpanded ? <ChevronUp size={12} className="text-[var(--text-color)]/50" /> : <ChevronDown size={12} className="text-[var(--text-color)]/50" />}
                   </button>
 
                   {isExpanded && (
@@ -507,7 +535,7 @@ const KnowledgeBaseLayout = () => {
           className="hidden lg:block absolute top-0 -right-1 bottom-0 w-3 cursor-col-resize z-50 group"
         >
           <div className={`w-0.5 h-full mx-auto transition-colors duration-200 ${
-            isKbResizing ? 'bg-purple-500/80' : 'bg-transparent group-hover:bg-purple-500/40'
+            isKbResizing ? 'bg-[color:var(--primary-color)]' : 'bg-transparent group-hover:bg-[color:var(--primary-color)]/40'
           }`} />
         </div>
       </aside>
@@ -525,20 +553,26 @@ const KnowledgeBaseLayout = () => {
         {/* Main Content Pane */}
         <div className="flex-1 flex flex-col min-w-0 lg:h-full lg:overflow-hidden">
           {/* Controls Toolbar */}
-          <div className={`relative z-10 flex items-center justify-between ${isPookiz ? 'p-2.5 md:p-3 rounded-t-2xl' : 'p-3 md:p-4 rounded-t-3xl'} border-t border-x border-white/5 ${panelBg} gap-4`}>
+          <div className={`relative z-10 flex items-center justify-between p-3 md:p-4 rounded-none lg:rounded-t-3xl border-b border-[var(--glass-border)] lg:border-t lg:border-x lg:border-b-0 ${
+            isPookiz 
+              ? (isLight 
+                  ? 'bg-transparent border-black/10 lg:bg-[#fbf9f4] lg:border-black/10 text-[#1c1917]' 
+                  : 'bg-transparent border-white/5 lg:bg-[#121215] lg:border-white/5 text-[#f4f4f5]') 
+              : 'bg-transparent border-[var(--glass-border)] lg:bg-[var(--glass-bg)] lg:border-[var(--glass-border)] text-[var(--text-color)] backdrop-blur-none lg:backdrop-blur-xl'
+          } gap-4`}>
             {/* Left: Breadcrumbs */}
-            <div className="flex items-center gap-1.5 text-[10px] md:text-xs text-zinc-500 truncate">
-              <Link to={isHindiRoute ? "/hi" : "/"} className="hover:text-white">
+            <div className="flex items-center gap-1.5 text-[10px] md:text-xs text-[var(--text-color)]/50 truncate">
+              <Link to={isHindiRoute ? "/hi" : "/"} className="hover:text-[var(--text-color)]">
                 {isHindiRoute ? "डैशबोर्ड" : "Dashboard"}
               </Link>
               <ChevronRight size={10} />
-              <Link to={isHindiRoute ? "/hi/knowledge-base" : "/knowledge-base"} className="hover:text-white">
+              <Link to={isHindiRoute ? "/hi/knowledge-base" : "/knowledge-base"} className="hover:text-[var(--text-color)]">
                 {isHindiRoute ? "ज्ञान कोष" : "Knowledge Base"}
               </Link>
               {currentArticle && (
                 <>
                   <ChevronRight size={10} />
-                  <span className="text-zinc-400 font-medium truncate">
+                  <span className="text-[var(--text-color)]/80 font-medium truncate">
                     {isHindiRoute ? currentArticle.titleHi : currentArticle.titleEn}
                   </span>
                 </>
@@ -548,23 +582,23 @@ const KnowledgeBaseLayout = () => {
             {/* Right: Settings, Lang Toggle */}
             <div className="flex items-center gap-2 shrink-0">
               {/* Lang switcher */}
-              <div className="flex items-center bg-white/[0.02] border border-white/5 rounded-xl p-0.5">
+              <div className="flex items-center bg-[var(--text-color)]/[0.03] border border-[var(--glass-border)] rounded-full p-0.5">
                 <button 
                   onClick={() => handleLanguageSwitch(false)}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-bold tracking-wide uppercase transition-all ${
+                  className={`px-2 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase transition-all ${
                     !isHindiRoute 
-                      ? isPookiz ? 'bg-purple-500/20 text-purple-300' : 'bg-amber-400/20 text-amber-300'
-                      : 'text-zinc-500 hover:text-zinc-300'
+                      ? 'bg-[rgba(var(--primary-rgb),0.15)] text-[color:var(--primary-color)]'
+                      : 'text-[var(--text-color)]/50 hover:text-[var(--text-color)]'
                   }`}
                 >
                   EN
                 </button>
                 <button 
                   onClick={() => handleLanguageSwitch(true)}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-bold tracking-wide uppercase transition-all ${
+                  className={`px-2 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase transition-all ${
                     isHindiRoute 
-                      ? isPookiz ? 'bg-purple-500/20 text-purple-300' : 'bg-amber-400/20 text-amber-300'
-                      : 'text-zinc-500 hover:text-zinc-300'
+                      ? 'bg-[rgba(var(--primary-rgb),0.15)] text-[color:var(--primary-color)]'
+                      : 'text-[var(--text-color)]/50 hover:text-[var(--text-color)]'
                   }`}
                 >
                   हिन्दी
@@ -575,40 +609,32 @@ const KnowledgeBaseLayout = () => {
               <div className="relative" ref={settingsRef}>
                 <button 
                   onClick={() => setShowSettings(!showSettings)}
-                  className="p-2 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 text-zinc-400 hover:text-white transition-colors"
+                  className="p-2 rounded-xl bg-[var(--text-color)]/[0.03] hover:bg-[var(--text-color)]/[0.08] border border-[var(--glass-border)] text-[var(--text-color)]/60 hover:text-[var(--text-color)] transition-colors"
                   title="Reading Settings"
                 >
                   <Type size={14} />
                 </button>
 
                 {showSettings && (
-                  <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-[#121215] border border-white/10 shadow-2xl p-4 z-[999] animate-fade-in text-left">
-                    <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                      <Settings size={12} className="text-purple-400" />
+                  <div className={`absolute right-0 mt-2 w-56 rounded-2xl border shadow-2xl p-4 z-[999] animate-fade-in text-left bg-[var(--glass-bg)] border-[var(--glass-border)] text-[var(--text-color)] backdrop-blur-xl`}>
+                    <h4 className="text-xs font-bold uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                      <Settings size={12} className="text-[color:var(--primary-color)]" />
                       <span>Reading Layout</span>
                     </h4>
 
                     {/* Font Family Option */}
                     <div className="space-y-1.5 mb-4">
-                      <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wide block">Typography</span>
+                      <span className="text-[10px] text-[var(--text-color)]/50 uppercase font-bold tracking-wide block">Typography</span>
                       <div className="grid grid-cols-2 gap-1.5">
                         <button 
                           onClick={() => setFontFamily('serif')}
-                          className={`py-1.5 rounded-lg text-xs font-serif border transition-all ${
-                            fontFamily === 'serif' 
-                              ? 'border-purple-500/50 bg-purple-500/10 text-purple-300' 
-                              : 'border-white/5 bg-white/[0.02] text-zinc-400 hover:text-white'
-                          }`}
+                          className={`py-1.5 rounded-lg text-xs font-serif border transition-all ${getBtnClass(fontFamily === 'serif')}`}
                         >
                           Scripture (Serif)
                         </button>
                         <button 
                           onClick={() => setFontFamily('sans')}
-                          className={`py-1.5 rounded-lg text-xs font-sans border transition-all ${
-                            fontFamily === 'sans' 
-                              ? 'border-purple-500/50 bg-purple-500/10 text-purple-300' 
-                              : 'border-white/5 bg-white/[0.02] text-zinc-400 hover:text-white'
-                          }`}
+                          className={`py-1.5 rounded-lg text-xs font-sans border transition-all ${getBtnClass(fontFamily === 'sans')}`}
                         >
                           Modern (Sans)
                         </button>
@@ -617,17 +643,13 @@ const KnowledgeBaseLayout = () => {
 
                     {/* Font Size Option */}
                     <div className="space-y-1.5 mb-4">
-                      <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wide block">Text Scale</span>
+                      <span className="text-[10px] text-[var(--text-color)]/50 uppercase font-bold tracking-wide block">Text Scale</span>
                       <div className="grid grid-cols-4 gap-1">
                         {['sm', 'md', 'lg', 'xl'].map((sz) => (
                           <button 
                             key={sz}
                             onClick={() => setFontSize(sz)}
-                            className={`py-1.5 rounded-lg text-xs border uppercase tracking-wider transition-all ${
-                              fontSize === sz 
-                                ? 'border-purple-500/50 bg-purple-500/10 text-purple-300' 
-                                : 'border-white/5 bg-white/[0.02] text-zinc-400 hover:text-white'
-                            }`}
+                            className={`py-1.5 rounded-lg text-xs border uppercase tracking-wider transition-all ${getBtnClass(fontSize === sz)}`}
                           >
                             {sz}
                           </button>
@@ -637,17 +659,13 @@ const KnowledgeBaseLayout = () => {
 
                     {/* Line Spacing Option */}
                     <div className="space-y-1.5">
-                      <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wide block">Line Spacing</span>
+                      <span className="text-[10px] text-[var(--text-color)]/50 uppercase font-bold tracking-wide block">Line Spacing</span>
                       <div className="grid grid-cols-3 gap-1">
                         {['cozy', 'normal', 'relaxed'].map((space) => (
                           <button 
                             key={space}
                             onClick={() => setLineHeight(space)}
-                            className={`py-1 rounded-lg text-[10px] border capitalize transition-all ${
-                              lineHeight === space 
-                                ? 'border-purple-500/50 bg-purple-500/10 text-purple-300' 
-                                : 'border-white/5 bg-white/[0.02] text-zinc-400 hover:text-white'
-                            }`}
+                            className={`py-1 rounded-lg text-[10px] border capitalize transition-all ${getBtnClass(lineHeight === space)}`}
                           >
                             {space}
                           </button>
@@ -664,7 +682,13 @@ const KnowledgeBaseLayout = () => {
           <div 
             ref={contentScrollRef} 
             id="kb-classic-content-container" 
-            className={`flex-1 ${isPookiz ? 'p-4 md:p-5 rounded-b-2xl' : 'p-5 md:p-8 rounded-b-3xl'} border-x border-b border-white/5 ${panelBg} shadow-xl lg:overflow-y-auto custom-scrollbar`}
+            className={`flex-1 p-0 lg:p-8 rounded-none lg:rounded-b-3xl border-0 lg:border-x lg:border-b lg:border-[var(--glass-border)] ${
+              isPookiz 
+                ? (isLight 
+                    ? 'bg-transparent lg:bg-[#fbf9f4] lg:border-black/10 text-[#1c1917]' 
+                    : 'bg-transparent lg:bg-[#121215] lg:border-white/5 text-[#f4f4f5]') 
+                : 'bg-transparent lg:bg-[var(--glass-bg)] lg:border-[var(--glass-border)] text-[var(--text-color)] lg:backdrop-blur-xl lg:shadow-xl'
+            } lg:overflow-y-auto custom-scrollbar`}
           >
             {/* Custom scoped container with reader choices applied */}
             <div className={getReadingClasses()}>
@@ -673,15 +697,15 @@ const KnowledgeBaseLayout = () => {
 
             {/* Sequential Next/Prev footer */}
             {currentArticle && (
-              <div className="mt-12 pt-6 border-t border-white/5 flex items-center justify-between gap-4">
+              <div className="mt-12 pt-6 border-t border-[var(--glass-border)] flex items-center justify-between gap-4">
                 {prevArticle ? (
                   <Link 
                     to={isHindiRoute ? `/hi/${prevArticle.slug}` : `/${prevArticle.slug}`}
-                    className="flex items-center gap-2 text-zinc-400 hover:text-white text-xs md:text-sm font-medium transition-colors"
+                    className="flex items-center gap-2 text-[var(--text-color)]/60 hover:text-[var(--text-color)] text-xs md:text-sm font-medium transition-colors"
                   >
                     <ChevronLeft size={16} />
                     <div className="text-left">
-                      <span className="text-[10px] text-zinc-600 uppercase block tracking-wider font-bold">Previous</span>
+                      <span className="text-[10px] text-[var(--text-color)]/40 uppercase block tracking-wider font-bold">Previous</span>
                       <span>{isHindiRoute ? prevArticle.titleHi : prevArticle.titleEn}</span>
                     </div>
                   </Link>
@@ -692,10 +716,10 @@ const KnowledgeBaseLayout = () => {
                 {nextArticle ? (
                   <Link 
                     to={isHindiRoute ? `/hi/${nextArticle.slug}` : `/${nextArticle.slug}`}
-                    className="flex items-center gap-2 text-zinc-400 hover:text-white text-xs md:text-sm font-medium transition-colors text-right"
+                    className="flex items-center gap-2 text-[var(--text-color)]/60 hover:text-[var(--text-color)] text-xs md:text-sm font-medium transition-colors text-right"
                   >
                     <div className="text-right">
-                      <span className="text-[10px] text-zinc-600 uppercase block tracking-wider font-bold">Next</span>
+                      <span className="text-[10px] text-[var(--text-color)]/40 uppercase block tracking-wider font-bold">Next</span>
                       <span>{isHindiRoute ? nextArticle.titleHi : nextArticle.titleEn}</span>
                     </div>
                     <ChevronRight size={16} />
@@ -711,8 +735,8 @@ const KnowledgeBaseLayout = () => {
         {/* Right Sidebar: Table of Contents (visible only on desktop wide screen) */}
         {currentArticle && headings.length > 0 && (
           <aside className="hidden xl:block w-56 shrink-0 lg:h-full lg:py-2 space-y-4">
-            <div className={`p-4 rounded-2xl border border-white/[0.08] ${isPookiz ? 'bg-[#121215]' : 'bg-[#0c0c0e]/50 backdrop-blur-xl'} max-h-full overflow-y-auto custom-scrollbar`}>
-              <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3">
+            <div className={`p-4 rounded-2xl border border-[var(--glass-border)] ${panelBg} max-h-full overflow-y-auto custom-scrollbar`}>
+              <h4 className="text-[10px] font-bold text-[var(--text-color)]/50 uppercase tracking-widest mb-3">
                 {isHindiRoute ? 'इस पृष्ठ पर' : 'On This Page'}
               </h4>
               <nav className="space-y-2">
@@ -743,8 +767,8 @@ const KnowledgeBaseLayout = () => {
                     }}
                     className={`block text-[11px] leading-relaxed transition-all truncate text-left ${
                       activeHeadingId === h.id 
-                        ? isPookiz ? 'text-purple-400 font-bold translate-x-1' : 'text-amber-400 font-bold translate-x-1'
-                        : 'text-zinc-500 hover:text-zinc-300'
+                        ? 'text-[color:var(--primary-color)] font-bold translate-x-1'
+                        : 'text-[var(--text-color)]/50 hover:text-[var(--text-color)]/80'
                     }`}
                   >
                     {h.text}

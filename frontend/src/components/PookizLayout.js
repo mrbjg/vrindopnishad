@@ -261,39 +261,39 @@ const PookizLayout = ({ children }) => {
                 <ChevronDown size={14} className={`text-zinc-500 transition-transform ${isProfileMenuOpen ? 'rotate-180' : ''}`} />
               )}
             </div>
-
-            {/* Mini Profile Dropdown Menu */}
-            {isProfileMenuOpen && (
-              <div className={`absolute bottom-full mb-2 bg-[#121215] border border-white/5 rounded-2xl shadow-xl p-1.5 z-[100] animate-fade-in text-left ${
-                isSidebarCollapsed ? 'w-44 left-0' : 'left-0 right-0'
-              }`}>
-                <button 
-                  onClick={() => {
-                    setIsProfileMenuOpen(false);
-                    setIsSettingsOpen(true);
-                  }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-zinc-300 hover:text-white hover:bg-white/5 transition-colors"
-                >
-                  <Settings size={14} />
-                  <span>{isHiRoute ? 'प्राथमिकताएं' : 'Preferences'}</span>
-                </button>
-                <button 
-                  onClick={() => {
-                    setIsProfileMenuOpen(false);
-                    logout();
-                    navigate(isHiRoute ? '/hi' : '/');
-                  }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
-                >
-                  <LogOut size={14} />
-                  <span>{isHiRoute ? 'लॉग आउट' : 'Sign Out'}</span>
-                </button>
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Collapse toggle button on sideline */}
+        {/* Mini Profile Dropdown Menu - Placed outside inner overflow-y-auto to prevent clipping */}
+        {isProfileMenuOpen && (
+          <div className={`absolute bg-[#121215] border border-white/5 rounded-2xl shadow-xl p-1.5 z-[100] animate-fade-in text-left ${
+            isSidebarCollapsed ? 'w-44 left-3 bottom-[56px]' : 'left-4 right-4 bottom-[72px]'
+          }`}>
+            <button 
+              onClick={() => {
+                setIsProfileMenuOpen(false);
+                setIsSettingsOpen(true);
+              }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-zinc-300 hover:text-white hover:bg-white/5 transition-colors"
+            >
+              <Settings size={14} />
+              <span>{isHiRoute ? 'प्राथमिकताएं' : 'Preferences'}</span>
+            </button>
+            <button 
+              onClick={() => {
+                setIsProfileMenuOpen(false);
+                logout();
+                navigate(isHiRoute ? '/hi' : '/');
+              }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+            >
+            <LogOut size={14} />
+            <span>{isHiRoute ? 'लॉग आउट' : 'Sign Out'}</span>
+          </button>
+        </div>
+      )}
+
+      {/* Collapse toggle button on sideline */}
         <button
           onClick={toggleSidebar}
           className="absolute top-20 -right-3 w-6 h-6 rounded-full bg-zinc-950 border border-white/10 hover:border-purple-500/40 hover:bg-zinc-900 flex items-center justify-center text-zinc-400 hover:text-white shadow-md z-[60] transition-all duration-200 group/collapse"

@@ -14,10 +14,25 @@ export const slugify = (text) => {
     .replace(/-+$/, '');
 };
 
+let lastItemsRef = null;
+let lastResult = null;
+
 // Main function to parse and extract relationships from the content library
 export function extractRelations(items) {
   if (!items || !items.length) {
     return { sants: [], books: [], ragas: [], biographies: [] };
+  }
+
+  // Fast memoization check to avoid O(N) processing of 10,000 items
+  if (items === lastItemsRef && lastResult) {
+    return lastResult;
+  }
+
+  if (lastItemsRef && items.length === lastItemsRef.length && items.length > 0) {
+    if (items[0] === lastItemsRef[0] && items[items.length - 1] === lastItemsRef[lastItemsRef.length - 1]) {
+      lastItemsRef = items; // Sync reference for exact hit next time
+      return lastResult;
+    }
   }
 
   const santsMap = {};
@@ -195,5 +210,8 @@ export function extractRelations(items) {
   const books = Object.values(booksMap).sort((a, b) => b.verses.length - a.verses.length);
   const ragas = Object.values(ragasMap).sort((a, b) => b.verses.length - a.verses.length);
 
-  return { sants, books, ragas, biographies };
+  const result = { sants, books, ragas, biographies };
+  lastItemsRef = items;
+  lastResult = result;
+  return result;
 }

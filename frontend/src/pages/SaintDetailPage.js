@@ -22,20 +22,24 @@ const SaintDetailPage = () => {
 
   const [sant, setSant] = useState(() => {
     try {
-      const cached = localStorage.getItem('vrindopnishad_saints_cache');
-      if (cached) {
-        const santsList = JSON.parse(cached);
-        return santsList.find(s => s.slug === slug) || null;
+      const memCached = apiService.getMemoryCachedItems();
+      if (memCached) {
+        const relations = extractRelations(memCached);
+        if (relations && relations.sants.length > 0) {
+          return relations.sants.find(s => s.slug === slug) || null;
+        }
       }
     } catch (e) {}
     return null;
   });
   const [loading, setLoading] = useState(() => {
     try {
-      const cached = localStorage.getItem('vrindopnishad_saints_cache');
-      if (cached) {
-        const santsList = JSON.parse(cached);
-        return !santsList.find(s => s.slug === slug);
+      const memCached = apiService.getMemoryCachedItems();
+      if (memCached) {
+        const relations = extractRelations(memCached);
+        if (relations && relations.sants.length > 0) {
+          return !relations.sants.find(s => s.slug === slug);
+        }
       }
     } catch (e) {}
     return true;
@@ -44,6 +48,25 @@ const SaintDetailPage = () => {
 
   useEffect(() => {
     let active = true;
+
+    // Reset state to initial data for the new slug immediately when slug changes
+    const getInitialSaint = () => {
+      try {
+        const memCached = apiService.getMemoryCachedItems();
+        if (memCached) {
+          const relations = extractRelations(memCached);
+          if (relations && relations.sants.length > 0) {
+            return relations.sants.find(s => s.slug === slug) || null;
+          }
+        }
+      } catch (e) {}
+      return null;
+    };
+
+    const initialSaint = getInitialSaint();
+    setSant(initialSaint);
+    setLoading(initialSaint === null);
+
     const load = async () => {
       try {
         const allItems = await apiService.getAllContent(null, 10000);
@@ -51,7 +74,6 @@ const SaintDetailPage = () => {
         const foundSant = relations.sants.find(s => s.slug === slug);
         if (active) {
           setSant(foundSant || null);
-          localStorage.setItem('vrindopnishad_saints_cache', JSON.stringify(relations.sants));
         }
       } catch (error) {
         console.error('Error loading saint details:', error);
@@ -192,28 +214,37 @@ const SaintDetailPage = () => {
         <div className="w-24 h-24 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 font-bold text-4xl shadow-xl shrink-0">
           {getInitials(isHindiRoute ? sant.name : sant.hinglishName)}
         </div>
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 flex flex-col items-center sm:items-start w-full">
           <div className="badge border-amber-500/20 text-amber-500 bg-amber-500/5 mb-2 uppercase tracking-widest text-[9px] font-bold">
             {isHindiRoute ? "रसिक संत जीवनी" : "Rasik Saint Biography"}
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold font-headings text-sacred-gradient mb-3 truncate">
+          <h1 className="text-3xl md:text-4xl font-bold font-headings text-sacred-gradient mb-3 text-center sm:text-left w-full truncate">
             {isHindiRoute ? sant.name : sant.hinglishName}
           </h1>
           
           {/* Quick Facts Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left mt-3">
-            <div className="bg-white/[0.015] border border-white/5 rounded-xl p-2.5">
-              <span className="text-[8px] uppercase tracking-wider text-white/35 block">{isHindiRoute ? "परंपरा / Lineage" : "Lineage"}</span>
-              <span className="text-xs font-bold text-white/80 block mt-0.5 truncate">{lineage}</span>
-            </div>
-            <div className="bg-white/[0.015] border border-white/5 rounded-xl p-2.5">
-              <span className="text-[8px] uppercase tracking-wider text-white/35 block">{isHindiRoute ? "काल / Era" : "Era / Timeline"}</span>
-              <span className="text-xs font-bold text-white/80 block mt-0.5 truncate">{timeline}</span>
-            </div>
-            <div className="bg-white/[0.015] border border-white/5 rounded-xl p-2.5">
-              <span className="text-[8px] uppercase tracking-wider text-white/35 block">{isHindiRoute ? "साधना स्थल / Place" : "Associated Place"}</span>
-              <span className="text-xs font-bold text-white/80 block mt-0.5 truncate">{places}</span>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left mt-3 w-full">
+            <Link 
+              to={isHindiRoute ? `/hi/saints?q=${encodeURIComponent(lineage)}` : `/saints?q=${encodeURIComponent(lineage)}`}
+              className="bg-white/[0.015] border border-white/5 hover:border-amber-500/25 hover:bg-white/[0.03] transition-all rounded-xl p-2.5 group cursor-pointer"
+            >
+              <span className="text-[8px] uppercase tracking-wider text-white/35 block group-hover:text-amber-500/80 transition-colors">{isHindiRoute ? "परंपरा / Lineage" : "Lineage"}</span>
+              <span className="text-xs font-bold text-white/80 block mt-0.5 truncate group-hover:text-white transition-colors">{lineage}</span>
+            </Link>
+            <Link 
+              to={isHindiRoute ? `/hi/saints?q=${encodeURIComponent(timeline)}` : `/saints?q=${encodeURIComponent(timeline)}`}
+              className="bg-white/[0.015] border border-white/5 hover:border-amber-500/25 hover:bg-white/[0.03] transition-all rounded-xl p-2.5 group cursor-pointer"
+            >
+              <span className="text-[8px] uppercase tracking-wider text-white/35 block group-hover:text-amber-500/80 transition-colors">{isHindiRoute ? "काल / Era" : "Era / Timeline"}</span>
+              <span className="text-xs font-bold text-white/80 block mt-0.5 truncate group-hover:text-white transition-colors">{timeline}</span>
+            </Link>
+            <Link 
+              to={isHindiRoute ? "/hi/category/dham" : "/category/dham"}
+              className="bg-white/[0.015] border border-white/5 hover:border-amber-500/25 hover:bg-white/[0.03] transition-all rounded-xl p-2.5 group cursor-pointer"
+            >
+              <span className="text-[8px] uppercase tracking-wider text-white/35 block group-hover:text-amber-500/80 transition-colors">{isHindiRoute ? "साधना स्थल / Place" : "Associated Place"}</span>
+              <span className="text-xs font-bold text-white/80 block mt-0.5 truncate group-hover:text-white transition-colors">{places}</span>
+            </Link>
           </div>
         </div>
       </div>
@@ -254,8 +285,8 @@ const SaintDetailPage = () => {
         </section>
       )}
 
-      {/* Dynamic Detail Tabs */}
-      <div className="flex bg-white/5 p-1 rounded-xl gap-1 mb-8 overflow-x-auto scrollbar-hide">
+      {/* Dynamic Detail Tabs - Styled as elegant bottom border tabs */}
+      <div className="flex border-b border-white/10 mb-8 overflow-x-auto scrollbar-hide gap-6 select-none">
         {[
           { id: 'bio', label: isHindiRoute ? "जीवनी" : "Biography" },
           ...(meta ? [{ id: 'teachings', label: isHindiRoute ? "दर्शन एवं शिक्षा" : "Teachings" }] : []),
@@ -265,10 +296,10 @@ const SaintDetailPage = () => {
           <button
             key={tab.id}
             onClick={() => setActiveDetailTab(tab.id)}
-            className={`flex-1 min-w-[80px] py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${
+            className={`py-3 text-xs font-bold uppercase tracking-wider transition-all relative ${
               activeDetailTab === tab.id 
-                ? 'bg-white/[0.04] border border-white/10 text-primary' 
-                : 'text-white/45 hover:text-white/70'
+                ? 'text-primary border-b-2 border-primary -mb-[2px]' 
+                : 'text-white/45 hover:text-white/70 border-b-2 border-transparent -mb-[2px]'
             }`}
           >
             {tab.label}
@@ -285,7 +316,7 @@ const SaintDetailPage = () => {
               <BookOpen size={20} className="text-primary" />
               {isHindiRoute ? "जीवन चरित" : "Biography & History"}
             </h2>
-            <div className="border-l-4 border-primary/50 bg-white/[0.02] dark:bg-white/[0.01] p-6 rounded-r-2xl text-sm leading-relaxed text-stone-600 dark:text-white/70 whitespace-pre-line border-y border-r border-white/5">
+            <div className="border-l-4 border-primary/50 bg-transparent sm:bg-white/[0.02] sm:dark:bg-white/[0.01] p-0 sm:p-6 sm:rounded-r-2xl text-sm leading-relaxed text-stone-600 dark:text-white/70 whitespace-pre-line border-y-0 sm:border-y border-r-0 sm:border-r border-white/5 pl-4 sm:pl-6">
               {bioText}
             </div>
           </section>
@@ -298,7 +329,7 @@ const SaintDetailPage = () => {
               <Star size={20} className="text-primary" />
               {isHindiRoute ? "आध्यात्मिक दर्शन एवं उपदेश" : "Philosophy & Core Teachings"}
             </h2>
-            <div className="border-l-4 border-amber-500/50 bg-white/[0.02] dark:bg-white/[0.01] p-6 rounded-r-2xl text-sm leading-relaxed text-stone-600 dark:text-white/70 whitespace-pre-line border-y border-r border-white/5">
+            <div className="border-l-4 border-amber-500/50 bg-transparent sm:bg-white/[0.02] sm:dark:bg-white/[0.01] p-0 sm:p-6 sm:rounded-r-2xl text-sm leading-relaxed text-stone-600 dark:text-white/70 whitespace-pre-line border-y-0 sm:border-y border-r-0 sm:border-r border-white/5 pl-4 sm:pl-6">
               {isHindiRoute ? meta.teachingsHi : meta.teachingsEn}
             </div>
           </section>
@@ -308,7 +339,7 @@ const SaintDetailPage = () => {
         {activeDetailTab === 'literary' && (
           <section className="mb-12 animate-fade-in text-left space-y-6">
             {meta && (
-              <div className="border-l-4 border-sky-500/50 bg-white/[0.02] dark:bg-white/[0.01] p-6 rounded-r-2xl text-sm leading-relaxed text-stone-600 dark:text-white/70 whitespace-pre-line border-y border-r border-white/5">
+              <div className="border-l-4 border-sky-500/50 bg-transparent sm:bg-white/[0.02] sm:dark:bg-white/[0.01] p-0 sm:p-6 sm:rounded-r-2xl text-sm leading-relaxed text-stone-600 dark:text-white/70 whitespace-pre-line border-y-0 sm:border-y border-r-0 sm:border-r border-white/5 pl-4 sm:pl-6">
                 <h3 className="font-bold text-xs uppercase text-sky-400 mb-2 tracking-wider">Literary Style & Focus</h3>
                 <p>{isHindiRoute ? meta.literaryStyleHi : meta.literaryStyleEn}</p>
               </div>

@@ -14,6 +14,38 @@ const USE_MOCK = process.env.REACT_APP_DEMO_MODE === 'true';
 const CACHE_PREFIX = 'sv_cache_';
 const CACHE_EXPIRY = 30 * 60 * 1000;
 
+// Module-scoped in-memory cache for all items and metadata
+let memoryCachedItems = null;
+let memoryLastUpdated = '1970-01-01T00:00:00.000Z';
+let memoryCategoryCache = {};
+let lastSyncTime = 0;
+
+// Fast numeric date sorter to sort database once in O(N log N) and avoid redundant sorting
+const ensureSorted = (items) => {
+  if (!items || !Array.isArray(items)) return [];
+  items.forEach(item => {
+    if (item && !item._created_time) {
+      item._created_time = item.created_at ? new Date(item.created_at).getTime() : 0;
+    }
+  });
+  return items.sort((a, b) => b._created_time - a._created_time);
+};
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'vrindopnishad_all_content_cache') {
+      try {
+        memoryCachedItems = e.newValue ? ensureSorted(JSON.parse(e.newValue)) : null;
+        memoryCategoryCache = {}; // invalidate categorized caches
+        const time = localStorage.getItem('vrindopnishad_all_content_last_updated');
+        if (time) memoryLastUpdated = time;
+      } catch (err) {
+        memoryCachedItems = null;
+      }
+    }
+  });
+}
+
 // Helper to generate a URL-friendly Hinglish slug from a title (matches brajrasik.org SEO)
 const generateSlug = (text) => {
   if (!text) return '';
@@ -117,30 +149,48 @@ const fetchStaticBackup = async () => {
 
 export const apiService = {
   getCachedData: (key) => getCache(key),
+  getMemoryCachedItems: () => memoryCachedItems,
+  getMemoryCachedCategoryItems: (category) => {
+    if (!category || !memoryCachedItems) return [];
+    const targetCat = category.toLowerCase().trim();
+    if (!memoryCategoryCache[targetCat]) {
+      memoryCategoryCache[targetCat] = memoryCachedItems.filter(
+        item => item.category?.toLowerCase() === targetCat
+      );
+    }
+    return memoryCategoryCache[targetCat];
+  },
 
   // Content APIs
   getAllContent: async (category = null, limit = 50) => {
-    // 1. Check if we have the global cache
+    // 1. Check if we have the global cache in memory first
     let cachedItems = [];
     let lastUpdated = '1970-01-01T00:00:00.000Z';
     
-    try {
-      const localCached = localStorage.getItem('vrindopnishad_all_content_cache');
-      const cachedTime = localStorage.getItem('vrindopnishad_all_content_last_updated');
-      if (localCached) {
-        cachedItems = JSON.parse(localCached);
+    if (memoryCachedItems && memoryCachedItems.length > 0) {
+      cachedItems = memoryCachedItems;
+      lastUpdated = memoryLastUpdated;
+    } else {
+      try {
+        const localCached = localStorage.getItem('vrindopnishad_all_content_cache');
+        const cachedTime = localStorage.getItem('vrindopnishad_all_content_last_updated');
+        if (localCached) {
+          cachedItems = ensureSorted(JSON.parse(localCached));
+          memoryCachedItems = cachedItems;
+        }
+        if (cachedTime) {
+          lastUpdated = cachedTime;
+          memoryLastUpdated = cachedTime;
+        }
+      } catch (e) {
+        console.warn('Failed to parse global cache:', e);
       }
-      if (cachedTime) {
-        lastUpdated = cachedTime;
-      }
-    } catch (e) {
-      console.warn('Failed to parse global cache:', e);
     }
 
     // 2. If no cache exists, load static backup JSON first (serves from CDN, 0 egress)
     if (!cachedItems || cachedItems.length === 0) {
       console.log('[Cache-Miss] Loading initial dataset from local static backup (0 egress)...');
-      cachedItems = await fetchStaticBackup();
+      cachedItems = ensureSorted(await fetchStaticBackup());
       
       // Calculate initial lastUpdated from static items
       if (cachedItems && cachedItems.length > 0) {
@@ -158,81 +208,92 @@ export const apiService = {
           localStorage.setItem('vrindopnishad_all_content_last_updated', lastUpdated);
         } catch (e) {}
       }
+      memoryCachedItems = cachedItems;
+      memoryLastUpdated = lastUpdated;
+      memoryCategoryCache = {}; // Reset category cache since base items changed
     }
 
     // 3. Trigger a background delta-sync with Supabase (only fetches rows updated since lastUpdated, minimizing egress!)
     if (!USE_MOCK && typeof window !== 'undefined') {
-      // Run delta-sync asynchronously without blocking the UI
-      setTimeout(async () => {
-        try {
-          console.log(`[Delta-Sync] Fetching updates since: ${lastUpdated}...`);
-          let updates = [];
-          
-          const { data, error } = await supabase
-            .from('content')
-            .select('*')
-            .gt('updated_at', lastUpdated)
-            .order('updated_at', { ascending: true });
+      const now = Date.now();
+      // Throttle delta sync to once every 5 minutes
+      if (now - lastSyncTime > 5 * 60 * 1000) {
+        lastSyncTime = now;
+        // Run delta-sync asynchronously without blocking the UI
+        setTimeout(async () => {
+          try {
+            console.log(`[Delta-Sync] Fetching updates since: ${lastUpdated}...`);
+            let updates = [];
             
-          if (error) throw error;
-          updates = data || [];
-          
-          if (updates.length > 0) {
-            console.log(`[Delta-Sync] Found ${updates.length} new or updated items from Supabase!`);
+            const { data, error } = await supabase
+              .from('content')
+              .select('*')
+              .gt('updated_at', lastUpdated)
+              .order('updated_at', { ascending: true });
+              
+            if (error) throw error;
+            updates = data || [];
             
-            // Merge updates into cachedItems
-            const itemMap = new Map(cachedItems.map(item => [item.id, item]));
-            
-            updates.forEach(upd => {
-              const cleanCategory = classifyItemCategory(upd);
-              const processed = {
-                ...upd,
-                category: cleanCategory,
-                slug: upd.slug || generateSlug(upd.title)
-              };
-              itemMap.set(upd.id, processed);
-            });
-            
-            const newCachedItems = Array.from(itemMap.values());
-            
-            // Find new max updated_at
-            let maxTime = new Date(lastUpdated);
-            updates.forEach(upd => {
-              if (upd.updated_at) {
-                const t = new Date(upd.updated_at);
-                if (t > maxTime) maxTime = t;
-              }
-            });
-            
-            localStorage.setItem('vrindopnishad_all_content_cache', JSON.stringify(newCachedItems));
-            localStorage.setItem('vrindopnishad_all_content_last_updated', maxTime.toISOString());
-            
-            // Dispatch storage event to update other components or tabs
-            window.dispatchEvent(new Event('storage'));
-          } else {
-            console.log('[Delta-Sync] Database is up to date. 0 new items fetched.');
+            if (updates.length > 0) {
+              console.log(`[Delta-Sync] Found ${updates.length} new or updated items from Supabase!`);
+              
+              // Merge updates into cachedItems
+              const itemMap = new Map(cachedItems.map(item => [item.id, item]));
+              
+              updates.forEach(upd => {
+                const cleanCategory = classifyItemCategory(upd);
+                const processed = {
+                  ...upd,
+                  category: cleanCategory,
+                  slug: upd.slug || generateSlug(upd.title)
+                };
+                itemMap.set(upd.id, processed);
+              });
+              
+              const newCachedItems = ensureSorted(Array.from(itemMap.values()));
+              
+              // Find new max updated_at
+              let maxTime = new Date(lastUpdated);
+              updates.forEach(upd => {
+                if (upd.updated_at) {
+                  const t = new Date(upd.updated_at);
+                  if (t > maxTime) maxTime = t;
+                }
+              });
+              
+              memoryCachedItems = newCachedItems;
+              memoryLastUpdated = maxTime.toISOString();
+              memoryCategoryCache = {}; // Invalidate categorized cache
+              
+              localStorage.setItem('vrindopnishad_all_content_cache', JSON.stringify(newCachedItems));
+              localStorage.setItem('vrindopnishad_all_content_last_updated', maxTime.toISOString());
+              
+              // Dispatch storage event to update other components or tabs
+              window.dispatchEvent(new Event('storage'));
+            } else {
+              console.log('[Delta-Sync] Database is up to date. 0 new items fetched.');
+            }
+          } catch (err) {
+            console.warn('[Delta-Sync] Background delta sync failed:', err.message);
           }
-        } catch (err) {
-          console.warn('[Delta-Sync] Background delta sync failed:', err.message);
-        }
-      }, 2000);
+        }, 2000);
+      }
     }
 
     // 4. Return requested subset from cached items
     let filtered = cachedItems;
     if (category) {
       const targetCat = category.toLowerCase().trim();
-      filtered = filtered.filter(item => item.category?.toLowerCase() === targetCat);
+      if (memoryCategoryCache[targetCat]) {
+        filtered = memoryCategoryCache[targetCat];
+      } else {
+        filtered = filtered.filter(item => item.category?.toLowerCase() === targetCat);
+        memoryCategoryCache[targetCat] = filtered;
+      }
     }
     
-    // Sort by created_at (descending)
-    filtered = [...filtered].sort((a, b) => {
-      const dateA = a.created_at ? new Date(a.created_at) : new Date(0);
-      const dateB = b.created_at ? new Date(b.created_at) : new Date(0);
-      return dateB - dateA;
-    });
-
-    if (limit) {
+    // Skip dynamic O(N log N) sorting since global cachedItems is pre-sorted!
+    if (limit && limit < filtered.length) {
       filtered = filtered.slice(0, limit);
     }
     
@@ -244,11 +305,17 @@ export const apiService = {
     let cached = getCache(cacheKey);
     if (cached) return cached;
 
-    // Fallback: Check global pre-fetched localStorage cache first
+    // Fallback: Check global pre-fetched in-memory/localStorage cache first
     try {
-      const localCached = localStorage.getItem('vrindopnishad_all_content_cache');
-      if (localCached) {
-        const items = JSON.parse(localCached);
+      let items = memoryCachedItems;
+      if (!items) {
+        const localCached = localStorage.getItem('vrindopnishad_all_content_cache');
+        if (localCached) {
+          items = JSON.parse(localCached);
+          memoryCachedItems = items;
+        }
+      }
+      if (items) {
         const decodedId = decodeURIComponent(id);
         const matched = items.find(item => 
           item.id?.toString() === id.toString() ||
@@ -259,7 +326,7 @@ export const apiService = {
           generateSlug(item.title) === decodedId
         );
         if (matched) {
-          console.log(`[Cache-Hit] getContentById matched item ${id} in global localStorage cache.`);
+          console.log(`[Cache-Hit] getContentById matched item ${id} in global in-memory cache.`);
           const cleanCategory = classifyItemCategory(matched);
           const data = { 
             ...matched, 
@@ -271,7 +338,7 @@ export const apiService = {
         }
       }
     } catch (e) {
-      console.warn('Failed to check global localStorage content cache:', e);
+      console.warn('Failed to check global cache for getContentById:', e);
     }
 
     if (USE_MOCK) {

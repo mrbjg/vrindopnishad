@@ -606,7 +606,7 @@ const Layout = ({ children }) => {
       )}
 
       {/* Main Content Area */}
-      <main className={`${isAuthPage ? 'pt-0 pl-0' : `${isKbRoute ? 'pl-0 md:pl-[88px] lg:h-screen lg:pt-20 lg:pb-0 lg:overflow-hidden' : 'pl-0 md:pl-28'} pt-[152px] md:pt-[120px] lg:pt-20 pb-12`}`}>
+      <main className={`${isAuthPage ? 'pt-0 pl-0' : `${isKbRoute ? 'pl-0 md:pl-[88px] lg:h-screen lg:pt-20 lg:pb-0 lg:overflow-hidden' : 'pl-0 md:pl-28'} pt-[152px] md:pt-[120px] lg:pt-20 pb-36 md:pb-12`}`}>
         <div className={`${isAuthPage ? 'w-full min-h-screen flex items-center justify-center' : 'w-full px-4 md:px-6'} ${isKbRoute ? 'lg:h-full lg:px-6 lg:pb-4' : ''}`}>
           {children}
         </div>

@@ -41,8 +41,13 @@ const Matras = new Set([
   'ा', 'ि', 'ी', 'ु', 'ू', 'ृ', 'े', 'ै', 'ो', 'ौ', 'ं', 'ः', 'ँ', 'ॅ', 'ॉ'
 ]);
 
+const transliterateCache = new Map();
+
 export function transliterate(text) {
   if (!text) return "";
+  if (transliterateCache.has(text)) {
+    return transliterateCache.get(text);
+  }
   let result = "";
   const chars = Array.from(text);
   
@@ -98,10 +103,13 @@ export function transliterate(text) {
   }
 
   // Refine phonetic substitutions to match modern informal search habits (Hinglish)
-  return result
+  const finalResult = result
     .replace(/aa/g, 'a') // aa -> a (e.g. shyaama -> shyama, raadha -> radha)
     .replace(/ee/g, 'i') // ee -> i (e.g. bhee -> bhi, pyaree -> pyari)
     .replace(/oo/g, 'u') // oo -> u (e.g. too -> tu)
     .replace(/\s+/g, ' ') // Collapse multiple spaces
     .trim();
+
+  transliterateCache.set(text, finalResult);
+  return finalResult;
 }

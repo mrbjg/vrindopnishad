@@ -2,13 +2,20 @@ import React, { useEffect, useRef } from 'react';
 import { useSettings, isLightTheme } from '../contexts/SettingsContext';
 
 const CelestialParticles = () => {
-  const canvasRef = useRef(null);
   const { settings } = useSettings();
+  const canvasRef = useRef(null);
+
   const settingsTheme = settings.theme || 'light';
   const isAuthPage = window.location.pathname.includes('/login');
   const theme = isAuthPage ? 'space' : settingsTheme;
 
+  const isMobile = window.innerWidth < 1024 || 
+                   ('ontouchstart' in window) || 
+                   (navigator.maxTouchPoints > 0);
+
   useEffect(() => {
+    if (settings.enableAnimations === false || isMobile) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -20,8 +27,13 @@ const CelestialParticles = () => {
     let shootingStars = [];
     let birds = [];
     
-    // Adjust caps for performance (mobile vs desktop)
-    const isMobile = window.innerWidth < 768;
+    // Throttle rendering: 30 FPS on mobile, 60 FPS on desktop
+    let lastTime = 0;
+    const fpsInterval = isMobile ? 1000 / 30 : 1000 / 60;
+
+    // Create offscreen backdrop canvas for static background items
+    const backdropCanvas = document.createElement('canvas');
+    const bCtx = backdropCanvas.getContext('2d');
 
     // Pre-render moon crescent if night theme
     let moonCanvas = null;
@@ -47,32 +59,31 @@ const CelestialParticles = () => {
       }
     }
     
-    let particleCount = isMobile ? 25 : 60;
+    // Reduced particle count for maximum performance
+    let particleCount = isMobile ? 10 : 35;
     if (theme === 'snow' || theme === 'winter') {
-      particleCount = isMobile ? 60 : 140;
+      particleCount = isMobile ? 20 : 60;
     } else if (theme === 'rainy') {
-      particleCount = isMobile ? 80 : 180;
+      particleCount = isMobile ? 25 : 80;
     } else if (theme === 'forest') {
-      particleCount = isMobile ? 25 : 60;
+      particleCount = isMobile ? 12 : 35;
     } else if (theme === 'ocean') {
-      particleCount = isMobile ? 30 : 75;
+      particleCount = isMobile ? 12 : 40;
     } else if (theme === 'void') {
-      particleCount = isMobile ? 20 : 45;
+      particleCount = isMobile ? 8 : 25;
     } else if (theme === 'waterfall') {
-      particleCount = isMobile ? 90 : 190;
+      particleCount = isMobile ? 15 : 60;
     } else if (theme === 'cherryblossom' || theme === 'cherryblossom_light') {
-      particleCount = isMobile ? 35 : 75;
+      particleCount = isMobile ? 15 : 45;
     } else if (theme === 'aurora') {
-      particleCount = isMobile ? 40 : 95;
+      particleCount = isMobile ? 15 : 45;
     } else if (theme === 'mountain_morning') {
-      particleCount = isMobile ? 45 : 100;
+      particleCount = isMobile ? 15 : 45;
     } else if (theme === 'night') {
-      particleCount = isMobile ? 85 : 190;
+      particleCount = isMobile ? 25 : 70;
     } else if (theme === 'space') {
-      particleCount = isMobile ? 100 : 220;
+      particleCount = isMobile ? 30 : 80;
     }
-
-
 
     // Particle constructor helper
     const createParticle = (initY = false) => {
@@ -81,13 +92,13 @@ const CelestialParticles = () => {
       const randX = Math.random() * w;
       const randY = initY ? Math.random() * h : h + 10;
 
-      // Base configuration - tiny shimmering dots like in sky
+      // Base configuration - tiny shimmering dots
       let p = {
         x: randX,
         y: randY,
-        radius: Math.random() * (isMobile ? 0.45 : 0.65) + 0.15, // Shimmering dot sizes
-        vx: (Math.random() - 0.5) * 0.03, // Slower horizontal drift
-        vy: -(Math.random() * 0.03 + 0.005), // Very slow float up to represent realistic stars
+        radius: Math.random() * (isMobile ? 0.45 : 0.65) + 0.15,
+        vx: (Math.random() - 0.5) * 0.03,
+        vy: -(Math.random() * 0.03 + 0.005),
         color: 'rgba(255, 255, 255, 0.8)',
         alpha: Math.random() * 0.5 + 0.4,
         twinkleSpeed: Math.random() * 0.035 + 0.015,
@@ -98,8 +109,8 @@ const CelestialParticles = () => {
       // Customizations per theme
       if (theme === 'snow' || theme === 'winter') {
         p.radius = Math.random() * (isMobile ? 1.5 : 2.5) + 0.6;
-        p.vy = Math.random() * 0.7 + 0.3; // Fall down
-        p.vx = (Math.random() - 0.3) * 0.25; // Sway direction
+        p.vy = Math.random() * 0.7 + 0.3;
+        p.vx = (Math.random() - 0.3) * 0.25;
         p.color = 'rgba(255, 255, 255, 0.75)';
         p.alpha = Math.random() * 0.4 + 0.4;
         p.extra = {
@@ -109,8 +120,8 @@ const CelestialParticles = () => {
         };
       } else if (theme === 'rainy') {
         p.radius = Math.random() * 0.8 + 0.4;
-        p.vy = Math.random() * 5 + 9; // Rapid drop
-        p.vx = -1.2 - Math.random() * 0.8; // Slanted fall
+        p.vy = Math.random() * 5 + 9;
+        p.vx = -1.2 - Math.random() * 0.8;
         p.color = 'rgba(174, 207, 238, 0.45)';
         p.alpha = Math.random() * 0.3 + 0.2;
         p.extra = {
@@ -118,13 +129,13 @@ const CelestialParticles = () => {
         };
       } else if (theme === 'forest') {
         p.radius = Math.random() * (isMobile ? 2.5 : 4.5) + 1.5;
-        p.vy = Math.random() * 0.4 + 0.2; // Gentle drift down
+        p.vy = Math.random() * 0.4 + 0.2;
         p.vx = (Math.random() - 0.5) * 0.3;
         const leafColors = [
-          'rgba(34, 197, 94, 0.35)',  // green
-          'rgba(234, 179, 8, 0.35)',   // gold
-          'rgba(249, 115, 22, 0.35)',  // orange
-          'rgba(16, 185, 129, 0.35)'   // emerald
+          'rgba(34, 197, 94, 0.35)',
+          'rgba(234, 179, 8, 0.35)',
+          'rgba(249, 115, 22, 0.35)',
+          'rgba(16, 185, 129, 0.35)'
         ];
         p.color = leafColors[Math.floor(Math.random() * leafColors.length)];
         p.alpha = Math.random() * 0.4 + 0.3;
@@ -136,7 +147,7 @@ const CelestialParticles = () => {
         };
       } else if (theme === 'ocean') {
         p.radius = Math.random() * (isMobile ? 2 : 4) + 1.0;
-        p.vy = -(Math.random() * 0.4 + 0.15); // Rise up
+        p.vy = -(Math.random() * 0.4 + 0.15);
         p.vx = (Math.random() - 0.5) * 0.2;
         p.color = 'rgba(14, 165, 233, 0.22)';
         p.alpha = Math.random() * 0.3 + 0.15;
@@ -173,7 +184,6 @@ const CelestialParticles = () => {
       } else if (theme === 'waterfall') {
         const isMobileOrTablet = w < 1024;
         if (isMobileOrTablet) {
-          // On mobile/tablet, show only sky stars to keep it clean and fast!
           p.extra.type = 'star';
           p.x = Math.random() * w;
           p.y = Math.random() * h;
@@ -185,26 +195,23 @@ const CelestialParticles = () => {
           const waterfallWidth = Math.min(220, w * 0.22);
           const rand = Math.random();
           if (rand < 0.42) {
-            // Waterfall water droplet cascade (faster fall speed, slightly thicker droplets)
             p.extra.type = 'droplet';
             p.x = Math.random() * (waterfallWidth * 0.8) + (waterfallWidth * 0.1);
-            p.y = initY ? Math.random() * h : h * 0.15; // Start from top ledge (15% height)
+            p.y = initY ? Math.random() * h : h * 0.15;
             p.radius = Math.random() * 0.55 + 0.3;
-            p.vy = Math.random() * 6.0 + 5.5; // Rapid rush
-            p.vx = (Math.random() * 0.25) - 0.125; // Splash outwards slightly
+            p.vy = Math.random() * 6.0 + 5.5;
+            p.vx = (Math.random() * 0.25) - 0.125;
             p.color = 'rgba(165, 243, 252, 0.85)';
           } else if (rand < 0.65) {
-            // Bottom rising mist/foam (much fluffier, larger radius, slow rise)
             p.extra.type = 'mist';
             p.x = Math.random() * (waterfallWidth * 1.25);
             p.y = initY ? (h - Math.random() * 140) : h + 10;
-            p.radius = Math.random() * 12.0 + 6.0; // Larger puff size for premium mist volume
+            p.radius = Math.random() * 12.0 + 6.0;
             p.vy = -(Math.random() * 0.55 + 0.25);
             p.vx = (Math.random() - 0.5) * 0.4;
             p.color = 'rgba(207, 250, 254, 0.4)';
             p.alpha = Math.random() * 0.18 + 0.08;
           } else {
-            // Tiny background star dots in the right sky
             p.extra.type = 'star';
             p.x = (waterfallWidth * 1.25) + Math.random() * (w - waterfallWidth * 1.25);
             p.y = Math.random() * (h * 0.7);
@@ -216,8 +223,8 @@ const CelestialParticles = () => {
         }
       } else if (theme === 'cherryblossom' || theme === 'cherryblossom_light') {
         p.radius = Math.random() * (isMobile ? 2.2 : 3.8) + 1.6;
-        p.vy = Math.random() * 0.75 + 0.35; // Gentle falling speed
-        p.vx = (Math.random() - 0.25) * 0.28; // Drift slightly right for wind feeling
+        p.vy = Math.random() * 0.75 + 0.35;
+        p.vx = (Math.random() - 0.25) * 0.28;
         p.color = ['rgba(244, 114, 182, 0.45)', 'rgba(251, 207, 232, 0.5)', 'rgba(244, 63, 94, 0.4)'][Math.floor(Math.random() * 3)];
         p.alpha = Math.random() * 0.4 + 0.3;
         p.extra = {
@@ -228,7 +235,6 @@ const CelestialParticles = () => {
           swayAmplitude: Math.random() * 0.8 + 0.4
         };
       } else if (theme === 'aurora') {
-        // Slow floating particles like cosmic solar sparks/wind
         p.radius = Math.random() * 1.5 + 0.4;
         p.vy = -(Math.random() * 0.35 + 0.1);
         p.vx = (Math.random() - 0.5) * 0.15;
@@ -241,31 +247,44 @@ const CelestialParticles = () => {
 
     let lastWidth = window.innerWidth;
     let lastHeight = window.innerHeight;
+    let resizeTimeout;
 
     const resizeCanvas = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
 
-      const widthChanged = Math.abs(width - lastWidth) > 8;
-      // Height changes <= 120px are typical of browser chrome (address bar) showing/hiding on mobile.
-      const heightChanged = Math.abs(height - lastHeight) > 120;
+        const widthChanged = Math.abs(width - lastWidth) > 8;
+        const heightChanged = Math.abs(height - lastHeight) > 120;
 
-      if (widthChanged || heightChanged) {
-        canvas.width = width + 8;
-        canvas.height = height + 8;
-        lastWidth = width;
-        lastHeight = height;
+        if (widthChanged || heightChanged) {
+          canvas.width = width + 8;
+          canvas.height = height + 8;
+          lastWidth = width;
+          lastHeight = height;
 
-        particles.length = 0;
-        for (let i = 0; i < particleCount; i++) {
-          particles.push(createParticle(true));
+          // Re-initialize and draw backdrop
+          backdropCanvas.width = canvas.width;
+          backdropCanvas.height = canvas.height;
+          renderStaticBackdrop();
+
+          particles.length = 0;
+          for (let i = 0; i < particleCount; i++) {
+            particles.push(createParticle(true));
+          }
         }
-      }
+      }, 150);
     };
 
     // Initial canvas dimensions setup
     canvas.width = window.innerWidth + 8;
     canvas.height = window.innerHeight + 8;
+    
+    // Set initial backdrop size
+    backdropCanvas.width = canvas.width;
+    backdropCanvas.height = canvas.height;
+
     window.addEventListener('resize', resizeCanvas);
 
     // Initialize particles across the canvas
@@ -273,354 +292,323 @@ const CelestialParticles = () => {
       particles.push(createParticle(true));
     }
 
-    // Static Backdrop drawing functions
-    const drawMoon = (cWidth, cHeight) => {
+    // Static Backdrop drawing functions (render to bCtx)
+    const drawMoon = (pCtx, cWidth, cHeight) => {
       if (!moonCanvas) return;
-      if (cWidth < 1024) return; // Hide moon on mobile/tablet to avoid container cut-off!
-      ctx.save();
+      if (cWidth < 1024) return;
+      pCtx.save();
       const moonX = cWidth - 120;
-      const moonY = 180; // Shifted down to render fully behind content cards
+      const moonY = 180;
       const radius = 35;
 
-      // Outer glow aura (drawn on main canvas, so it's smooth and has NO sharp edges!)
-      ctx.beginPath();
-      const glowGrad = ctx.createRadialGradient(moonX, moonY, 0, moonX, moonY, radius * 2.5);
+      pCtx.beginPath();
+      const glowGrad = pCtx.createRadialGradient(moonX, moonY, 0, moonX, moonY, radius * 2.5);
       glowGrad.addColorStop(0, 'rgba(254, 243, 199, 0.18)');
       glowGrad.addColorStop(0.5, 'rgba(254, 243, 199, 0.06)');
       glowGrad.addColorStop(1, 'rgba(254, 243, 199, 0)');
-      ctx.fillStyle = glowGrad;
-      ctx.arc(moonX, moonY, radius * 2.5, 0, Math.PI * 2);
-      ctx.fill();
+      pCtx.fillStyle = glowGrad;
+      pCtx.arc(moonX, moonY, radius * 2.5, 0, Math.PI * 2);
+      pCtx.fill();
 
-      // Draw the pre-rendered crescent moon from the offscreen canvas
-      ctx.drawImage(moonCanvas, moonX - 50, moonY - 50);
-
-      ctx.restore();
+      pCtx.drawImage(moonCanvas, moonX - 50, moonY - 50);
+      pCtx.restore();
     };
 
-    const drawSpacePlanet = (cWidth, cHeight) => {
-      if (cWidth < 1024) return; // Hide on mobile/tablet to avoid container cut-off!
-      ctx.save();
+    const drawSpacePlanet = (pCtx, cWidth, cHeight) => {
+      if (cWidth < 1024) return;
+      pCtx.save();
       const pX = 140;
-      const pY = 180; // Shifted down to render fully behind content cards
+      const pY = 180;
       const radius = isMobile ? 22 : 30;
 
-      // Planet glow aura
-      ctx.beginPath();
-      const glowGrad = ctx.createRadialGradient(pX, pY, 0, pX, pY, radius * 2.2);
+      pCtx.beginPath();
+      const glowGrad = pCtx.createRadialGradient(pX, pY, 0, pX, pY, radius * 2.2);
       glowGrad.addColorStop(0, 'rgba(167, 139, 250, 0.20)');
       glowGrad.addColorStop(0.5, 'rgba(192, 132, 252, 0.05)');
       glowGrad.addColorStop(1, 'rgba(167, 139, 250, 0)');
-      ctx.fillStyle = glowGrad;
-      ctx.arc(pX, pY, radius * 2.2, 0, Math.PI * 2);
-      ctx.fill();
+      pCtx.fillStyle = glowGrad;
+      pCtx.arc(pX, pY, radius * 2.2, 0, Math.PI * 2);
+      pCtx.fill();
 
-      // Ring angle (slanted)
-      const ringAngle = -Math.PI / 6; // -30 degrees
+      const ringAngle = -Math.PI / 6;
 
-      // 1. Draw back half of the ring
-      ctx.beginPath();
-      ctx.ellipse(pX, pY, radius * 1.8, radius * 0.4, ringAngle, Math.PI, 0, false);
-      ctx.strokeStyle = 'rgba(192, 132, 252, 0.50)';
-      ctx.lineWidth = isMobile ? 3 : 5;
-      ctx.stroke();
+      pCtx.beginPath();
+      pCtx.ellipse(pX, pY, radius * 1.8, radius * 0.4, ringAngle, Math.PI, 0, false);
+      pCtx.strokeStyle = 'rgba(192, 132, 252, 0.50)';
+      pCtx.lineWidth = isMobile ? 3 : 5;
+      pCtx.stroke();
 
-      // 2. Draw planet sphere
-      ctx.beginPath();
-      const planetGrad = ctx.createLinearGradient(pX - radius, pY - radius, pX + radius, pY + radius);
-      planetGrad.addColorStop(0, '#a78bfa'); // Violet/purple
+      pCtx.beginPath();
+      const planetGrad = pCtx.createLinearGradient(pX - radius, pY - radius, pX + radius, pY + radius);
+      planetGrad.addColorStop(0, '#a78bfa');
       planetGrad.addColorStop(0.5, '#7c3aed');
-      planetGrad.addColorStop(1, '#4c1d95'); // Deep dark purple
-      ctx.fillStyle = planetGrad;
-      ctx.arc(pX, pY, radius, 0, Math.PI * 2);
-      ctx.fill();
+      planetGrad.addColorStop(1, '#4c1d95');
+      pCtx.fillStyle = planetGrad;
+      pCtx.arc(pX, pY, radius, 0, Math.PI * 2);
+      pCtx.fill();
 
-      // 3. Draw front half of the ring
-      ctx.beginPath();
-      ctx.ellipse(pX, pY, radius * 1.8, radius * 0.4, ringAngle, 0, Math.PI, false);
-      ctx.strokeStyle = 'rgba(192, 132, 252, 0.85)';
-      ctx.lineWidth = isMobile ? 3 : 5;
-      ctx.stroke();
+      pCtx.beginPath();
+      pCtx.ellipse(pX, pY, radius * 1.8, radius * 0.4, ringAngle, 0, Math.PI, false);
+      pCtx.strokeStyle = 'rgba(192, 132, 252, 0.85)';
+      pCtx.lineWidth = isMobile ? 3 : 5;
+      pCtx.stroke();
 
-      ctx.restore();
+      pCtx.restore();
     };
 
-    const drawSunsetSun = (cWidth, cHeight) => {
-      ctx.save();
+    const drawSunsetSun = (pCtx, cWidth, cHeight) => {
+      pCtx.save();
       const sunX = cWidth * 0.5;
       const sunY = cHeight * 0.9;
       const radius = isMobile ? 50 : 80;
 
-      // Soft sun halo
-      ctx.beginPath();
-      const glowGrad = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, radius * 3.5);
+      pCtx.beginPath();
+      const glowGrad = pCtx.createRadialGradient(sunX, sunY, 0, sunX, sunY, radius * 3.5);
       glowGrad.addColorStop(0, 'rgba(251, 146, 60, 0.22)');
       glowGrad.addColorStop(0.3, 'rgba(239, 68, 68, 0.15)');
       glowGrad.addColorStop(1, 'rgba(251, 146, 60, 0)');
-      ctx.fillStyle = glowGrad;
-      ctx.arc(sunX, sunY, radius * 3.5, 0, Math.PI * 2);
-      ctx.fill();
+      pCtx.fillStyle = glowGrad;
+      pCtx.arc(sunX, sunY, radius * 3.5, 0, Math.PI * 2);
+      pCtx.fill();
 
-      // Sun disc
-      ctx.beginPath();
-      const sunGrad = ctx.createLinearGradient(sunX, sunY - radius, sunX, sunY + radius);
+      pCtx.beginPath();
+      const sunGrad = pCtx.createLinearGradient(sunX, sunY - radius, sunX, sunY + radius);
       sunGrad.addColorStop(0, 'rgba(253, 224, 71, 0.85)');
       sunGrad.addColorStop(1, 'rgba(249, 115, 22, 0.35)');
-      ctx.fillStyle = sunGrad;
-      ctx.arc(sunX, sunY, radius, 0, Math.PI * 2);
-      ctx.fill();
+      pCtx.fillStyle = sunGrad;
+      pCtx.arc(sunX, sunY, radius, 0, Math.PI * 2);
+      pCtx.fill();
 
-      ctx.restore();
+      pCtx.restore();
     };
 
-    const drawMountains = (cWidth, cHeight) => {
-      ctx.save();
+    const drawMountains = (pCtx, cWidth, cHeight) => {
+      pCtx.save();
       
-      // Warm morning sun disc
       const sunX = cWidth * 0.25;
       const sunY = cHeight * 0.7;
-      ctx.beginPath();
-      const sunGrad = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, 110);
+      pCtx.beginPath();
+      const sunGrad = pCtx.createRadialGradient(sunX, sunY, 0, sunX, sunY, 110);
       sunGrad.addColorStop(0, 'rgba(252, 211, 77, 0.35)');
       sunGrad.addColorStop(0.4, 'rgba(251, 191, 36, 0.1)');
       sunGrad.addColorStop(1, 'rgba(251, 191, 36, 0)');
-      ctx.fillStyle = sunGrad;
-      ctx.arc(sunX, sunY, 110, 0, Math.PI * 2);
-      ctx.fill();
+      pCtx.fillStyle = sunGrad;
+      pCtx.arc(sunX, sunY, 110, 0, Math.PI * 2);
+      pCtx.fill();
 
-      // Background Mountains (Sharp Green Peaks)
-      ctx.beginPath();
-      ctx.moveTo(0, cHeight);
-      ctx.lineTo(0, cHeight * 0.76);
-      ctx.lineTo(cWidth * 0.25, cHeight * 0.52);
-      ctx.lineTo(cWidth * 0.45, cHeight * 0.68);
-      ctx.lineTo(cWidth * 0.7, cHeight * 0.42);
-      ctx.lineTo(cWidth * 0.85, cHeight * 0.60);
-      ctx.lineTo(cWidth, cHeight * 0.35);
-      ctx.lineTo(cWidth, cHeight);
-      ctx.closePath();
+      pCtx.beginPath();
+      pCtx.moveTo(0, cHeight);
+      pCtx.lineTo(0, cHeight * 0.76);
+      pCtx.lineTo(cWidth * 0.25, cHeight * 0.52);
+      pCtx.lineTo(cWidth * 0.45, cHeight * 0.68);
+      pCtx.lineTo(cWidth * 0.7, cHeight * 0.42);
+      pCtx.lineTo(cWidth * 0.85, cHeight * 0.60);
+      pCtx.lineTo(cWidth, cHeight * 0.35);
+      pCtx.lineTo(cWidth, cHeight);
+      pCtx.closePath();
 
-      const mtGrad1 = ctx.createLinearGradient(0, cHeight * 0.35, 0, cHeight);
-      if (theme === 'mountains' || theme === 'mountains morning' || theme === 'mountain_morning') {
-        mtGrad1.addColorStop(0, 'rgba(34, 197, 94, 0.18)');  // Richer emerald/sage green
-        mtGrad1.addColorStop(1, 'rgba(21, 128, 61, 0.38)');   // Richer forest green
-      } else {
-        mtGrad1.addColorStop(0, 'rgba(255, 255, 255, 0.04)');
-        mtGrad1.addColorStop(1, 'rgba(255, 255, 255, 0.12)');
-      }
-      ctx.fillStyle = mtGrad1;
-      ctx.fill();
+      const mtGrad1 = pCtx.createLinearGradient(0, cHeight * 0.35, 0, cHeight);
+      mtGrad1.addColorStop(0, 'rgba(34, 197, 94, 0.18)');
+      mtGrad1.addColorStop(1, 'rgba(21, 128, 61, 0.38)');
+      pCtx.fillStyle = mtGrad1;
+      pCtx.fill();
 
-      // Foreground Peaks (Sharp Green Peaks)
-      ctx.beginPath();
-      ctx.moveTo(0, cHeight);
-      ctx.lineTo(0, cHeight * 0.86);
-      ctx.lineTo(cWidth * 0.15, cHeight * 0.68);
-      ctx.lineTo(cWidth * 0.38, cHeight * 0.78);
-      ctx.lineTo(cWidth * 0.55, cHeight * 0.54);
-      ctx.lineTo(cWidth * 0.75, cHeight * 0.74);
-      ctx.lineTo(cWidth * 0.9, cHeight * 0.64);
-      ctx.lineTo(cWidth, cHeight * 0.82);
-      ctx.lineTo(cWidth, cHeight);
-      ctx.closePath();
+      pCtx.beginPath();
+      pCtx.moveTo(0, cHeight);
+      pCtx.lineTo(0, cHeight * 0.86);
+      pCtx.lineTo(cWidth * 0.15, cHeight * 0.68);
+      pCtx.lineTo(cWidth * 0.38, cHeight * 0.78);
+      pCtx.lineTo(cWidth * 0.55, cHeight * 0.54);
+      pCtx.lineTo(cWidth * 0.75, cHeight * 0.74);
+      pCtx.lineTo(cWidth * 0.9, cHeight * 0.64);
+      pCtx.lineTo(cWidth, cHeight * 0.82);
+      pCtx.lineTo(cWidth, cHeight);
+      pCtx.closePath();
 
-      const mtGrad2 = ctx.createLinearGradient(0, cHeight * 0.50, 0, cHeight);
-      if (theme === 'mountains' || theme === 'mountains morning' || theme === 'mountain_morning') {
-        mtGrad2.addColorStop(0, 'rgba(21, 128, 61, 0.32)');   // More vibrant sage green
-        mtGrad2.addColorStop(1, 'rgba(20, 83, 45, 0.58)');    // Richer dark forest green
-      } else {
-        mtGrad2.addColorStop(0, 'rgba(255, 255, 255, 0.07)');
-        mtGrad2.addColorStop(1, 'rgba(255, 255, 255, 0.18)');
-      }
-      ctx.fillStyle = mtGrad2;
-      ctx.fill();
+      const mtGrad2 = pCtx.createLinearGradient(0, cHeight * 0.50, 0, cHeight);
+      mtGrad2.addColorStop(0, 'rgba(21, 128, 61, 0.32)');
+      mtGrad2.addColorStop(1, 'rgba(20, 83, 45, 0.58)');
+      pCtx.fillStyle = mtGrad2;
+      pCtx.fill();
 
-      ctx.restore();
+      pCtx.restore();
     };
 
-    const drawMountainMorning = (cWidth, cHeight) => {
-      ctx.save();
+    const drawMountainMorning = (pCtx, cWidth, cHeight) => {
+      pCtx.save();
       
-      // 1. Sunrise Sun Disc & Glow
       const sunX = cWidth * 0.35;
       const sunY = cHeight * 0.65;
       const sunRadius = isMobile ? 45 : 70;
 
-      // Soft radial morning glow
-      ctx.beginPath();
-      const glowGrad = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, sunRadius * 4);
-      glowGrad.addColorStop(0, 'rgba(253, 186, 116, 0.35)'); // Amber-gold
-      glowGrad.addColorStop(0.3, 'rgba(244, 63, 94, 0.18)');  // Rose pink
-      glowGrad.addColorStop(0.6, 'rgba(254, 243, 199, 0.08)'); // Cream
+      pCtx.beginPath();
+      const glowGrad = pCtx.createRadialGradient(sunX, sunY, 0, sunX, sunY, sunRadius * 4);
+      glowGrad.addColorStop(0, 'rgba(253, 186, 116, 0.35)');
+      glowGrad.addColorStop(0.3, 'rgba(244, 63, 94, 0.18)');
+      glowGrad.addColorStop(0.6, 'rgba(254, 243, 199, 0.08)');
       glowGrad.addColorStop(1, 'rgba(254, 243, 199, 0)');
-      ctx.fillStyle = glowGrad;
-      ctx.arc(sunX, sunY, sunRadius * 4, 0, Math.PI * 2);
-      ctx.fill();
+      pCtx.fillStyle = glowGrad;
+      pCtx.arc(sunX, sunY, sunRadius * 4, 0, Math.PI * 2);
+      pCtx.fill();
 
-      // Soft sun rays radiating outwards
       const rayCount = 8;
-      const time = Date.now() * 0.0003;
       for (let i = 0; i < rayCount; i++) {
-        const angle = (i * Math.PI * 2) / rayCount + time;
+        const angle = (i * Math.PI * 2) / rayCount;
         const startX = sunX;
         const startY = sunY;
         const endX = sunX + Math.cos(angle) * (sunRadius * 4.5);
         const endY = sunY + Math.sin(angle) * (sunRadius * 4.5);
 
-        ctx.beginPath();
-        const rayGrad = ctx.createLinearGradient(startX, startY, endX, endY);
+        pCtx.beginPath();
+        const rayGrad = pCtx.createLinearGradient(startX, startY, endX, endY);
         rayGrad.addColorStop(0, 'rgba(253, 186, 116, 0.12)');
         rayGrad.addColorStop(0.5, 'rgba(244, 63, 94, 0.04)');
         rayGrad.addColorStop(1, 'rgba(254, 243, 199, 0)');
-        ctx.strokeStyle = rayGrad;
-        ctx.lineWidth = isMobile ? 12 : 24;
-        ctx.moveTo(startX, startY);
-        ctx.lineTo(endX, endY);
-        ctx.stroke();
+        pCtx.strokeStyle = rayGrad;
+        pCtx.lineWidth = isMobile ? 12 : 24;
+        pCtx.moveTo(startX, startY);
+        pCtx.lineTo(endX, endY);
+        pCtx.stroke();
       }
 
-      // Sun core disc
-      ctx.beginPath();
-      const sunGrad = ctx.createLinearGradient(sunX, sunY - sunRadius, sunX, sunY + sunRadius);
+      pCtx.beginPath();
+      const sunGrad = pCtx.createLinearGradient(sunX, sunY - sunRadius, sunX, sunY + sunRadius);
       sunGrad.addColorStop(0, 'rgba(255, 253, 245, 0.95)');
       sunGrad.addColorStop(0.4, 'rgba(253, 224, 71, 0.85)');
       sunGrad.addColorStop(1, 'rgba(249, 115, 22, 0.4)');
-      ctx.fillStyle = sunGrad;
-      ctx.arc(sunX, sunY, sunRadius, 0, Math.PI * 2);
-      ctx.fill();
+      pCtx.fillStyle = sunGrad;
+      pCtx.arc(sunX, sunY, sunRadius, 0, Math.PI * 2);
+      pCtx.fill();
 
-      // 2. Background mountain range silhouette (distant, soft rose-gray)
-      ctx.beginPath();
-      ctx.moveTo(0, cHeight);
-      ctx.lineTo(0, cHeight * 0.72);
-      ctx.quadraticCurveTo(cWidth * 0.25, cHeight * 0.58, cWidth * 0.50, cHeight * 0.78);
-      ctx.quadraticCurveTo(cWidth * 0.72, cHeight * 0.54, cWidth * 0.90, cHeight * 0.80);
-      ctx.lineTo(cWidth, cHeight * 0.72);
-      ctx.lineTo(cWidth, cHeight);
-      ctx.closePath();
+      pCtx.beginPath();
+      pCtx.moveTo(0, cHeight);
+      pCtx.lineTo(0, cHeight * 0.72);
+      pCtx.quadraticCurveTo(cWidth * 0.25, cHeight * 0.58, cWidth * 0.50, cHeight * 0.78);
+      pCtx.quadraticCurveTo(cWidth * 0.72, cHeight * 0.54, cWidth * 0.90, cHeight * 0.80);
+      pCtx.lineTo(cWidth, cHeight * 0.72);
+      pCtx.lineTo(cWidth, cHeight);
+      pCtx.closePath();
 
-      const bgMtGrad = ctx.createLinearGradient(0, cHeight * 0.55, 0, cHeight);
+      const bgMtGrad = pCtx.createLinearGradient(0, cHeight * 0.55, 0, cHeight);
       bgMtGrad.addColorStop(0, 'rgba(224, 150, 140, 0.12)');
       bgMtGrad.addColorStop(1, 'rgba(190, 120, 115, 0.25)');
-      ctx.fillStyle = bgMtGrad;
-      ctx.fill();
+      pCtx.fillStyle = bgMtGrad;
+      pCtx.fill();
 
-      // 3. Foreground mountain range silhouette (closer, darker stone-peach)
-      ctx.beginPath();
-      ctx.moveTo(0, cHeight);
-      ctx.lineTo(0, cHeight * 0.82);
-      ctx.quadraticCurveTo(cWidth * 0.30, cHeight * 0.72, cWidth * 0.58, cHeight * 0.86);
-      ctx.quadraticCurveTo(cWidth * 0.82, cHeight * 0.66, cWidth, cHeight * 0.80);
-      ctx.lineTo(cWidth, cHeight);
-      ctx.closePath();
+      pCtx.beginPath();
+      pCtx.moveTo(0, cHeight);
+      pCtx.lineTo(0, cHeight * 0.82);
+      pCtx.quadraticCurveTo(cWidth * 0.30, cHeight * 0.72, cWidth * 0.58, cHeight * 0.86);
+      pCtx.quadraticCurveTo(cWidth * 0.82, cHeight * 0.66, cWidth, cHeight * 0.80);
+      pCtx.lineTo(cWidth, cHeight);
+      pCtx.closePath();
 
-      const fgMtGrad = ctx.createLinearGradient(0, cHeight * 0.66, 0, cHeight);
+      const fgMtGrad = pCtx.createLinearGradient(0, cHeight * 0.66, 0, cHeight);
       fgMtGrad.addColorStop(0, 'rgba(87, 74, 70, 0.20)');
       fgMtGrad.addColorStop(1, 'rgba(68, 60, 58, 0.40)');
-      ctx.fillStyle = fgMtGrad;
-      ctx.fill();
+      pCtx.fillStyle = fgMtGrad;
+      pCtx.fill();
 
-      ctx.restore();
+      pCtx.restore();
     };
 
-    const drawWaterfallBackdrop = (cWidth, cHeight) => {
-      if (cWidth < 1024) return; // Hide on mobile/tablet to keep it clean and fast!
-      ctx.save();
+    const renderStaticWaterfall = (pCtx, cWidth, cHeight) => {
+      if (cWidth < 1024) return;
+      pCtx.save();
       
       const waterfallWidth = Math.min(220, cWidth * 0.22);
-      const time = Date.now() * 0.0035;
       
-      // Sky/ambience background gradient on the right side
-      const skyGrad = ctx.createLinearGradient(waterfallWidth, 0, cWidth, cHeight);
+      const skyGrad = pCtx.createLinearGradient(waterfallWidth, 0, cWidth, cHeight);
       skyGrad.addColorStop(0, 'rgba(6, 18, 23, 0.2)');
       skyGrad.addColorStop(1, 'rgba(2, 6, 8, 0.45)');
-      ctx.fillStyle = skyGrad;
-      ctx.fillRect(waterfallWidth, 0, cWidth - waterfallWidth, cHeight);
+      pCtx.fillStyle = skyGrad;
+      pCtx.fillRect(waterfallWidth, 0, cWidth - waterfallWidth, cHeight);
 
-      // 1. Rocky Cliff silhouette on the left (semi-transparent for celestial blending)
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(waterfallWidth * 1.1, 0);
-      ctx.lineTo(waterfallWidth, cHeight * 0.15); // Waterfall starting ledge (15% height)
-      ctx.lineTo(waterfallWidth * 0.85, cHeight * 0.15);
-      
-      // Left cliff face bezier curve
-      ctx.bezierCurveTo(
+      pCtx.beginPath();
+      pCtx.moveTo(0, 0);
+      pCtx.lineTo(waterfallWidth * 1.1, 0);
+      pCtx.lineTo(waterfallWidth, cHeight * 0.15);
+      pCtx.lineTo(waterfallWidth * 0.85, cHeight * 0.15);
+      pCtx.bezierCurveTo(
         waterfallWidth * 0.75, cHeight * 0.4,
         waterfallWidth * 0.5, cHeight * 0.7,
         waterfallWidth * 0.65, cHeight
       );
-      ctx.lineTo(0, cHeight);
-      ctx.closePath();
+      pCtx.lineTo(0, cHeight);
+      pCtx.closePath();
 
-      const cliffGrad = ctx.createLinearGradient(0, 0, waterfallWidth, cHeight);
+      const cliffGrad = pCtx.createLinearGradient(0, 0, waterfallWidth, cHeight);
       cliffGrad.addColorStop(0, 'rgba(10, 29, 38, 0.45)');
       cliffGrad.addColorStop(0.5, 'rgba(7, 21, 28, 0.55)');
       cliffGrad.addColorStop(1, 'rgba(3, 10, 13, 0.65)');
-      ctx.fillStyle = cliffGrad;
-      ctx.fill();
+      pCtx.fillStyle = cliffGrad;
+      pCtx.fill();
 
-      // Rock ridge detail highlights
-      ctx.beginPath();
-      ctx.strokeStyle = 'rgba(22, 78, 99, 0.18)';
-      ctx.lineWidth = 1.6;
-      ctx.moveTo(waterfallWidth * 0.85, cHeight * 0.15);
-      ctx.bezierCurveTo(
+      pCtx.beginPath();
+      pCtx.strokeStyle = 'rgba(22, 78, 99, 0.18)';
+      pCtx.lineWidth = 1.6;
+      pCtx.moveTo(waterfallWidth * 0.85, cHeight * 0.15);
+      pCtx.bezierCurveTo(
         waterfallWidth * 0.75, cHeight * 0.4,
         waterfallWidth * 0.4, cHeight * 0.7,
         waterfallWidth * 0.55, cHeight
       );
-      ctx.stroke();
+      pCtx.stroke();
 
-      // 2. Main flowing background body of the waterfall (cylindrical fluid mass)
+      pCtx.restore();
+    };
+
+    const drawWaterfallDynamic = (pCtx, cWidth, cHeight) => {
+      if (cWidth < 1024) return;
+      pCtx.save();
+      
+      const waterfallWidth = Math.min(220, cWidth * 0.22);
+      const time = Date.now() * 0.0035;
+
       const wStart = waterfallWidth * 0.16;
       const wEnd = waterfallWidth * 0.80;
-      const wBodyGrad = ctx.createLinearGradient(wStart, 0, wEnd, 0);
+      const wBodyGrad = pCtx.createLinearGradient(wStart, 0, wEnd, 0);
       wBodyGrad.addColorStop(0, 'rgba(6, 182, 212, 0.05)');
       wBodyGrad.addColorStop(0.25, 'rgba(165, 243, 252, 0.16)');
       wBodyGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.28)');
       wBodyGrad.addColorStop(0.75, 'rgba(165, 243, 252, 0.16)');
       wBodyGrad.addColorStop(1, 'rgba(6, 182, 212, 0.04)');
       
-      ctx.fillStyle = wBodyGrad;
-      ctx.beginPath();
-      // Draw organic waving borders down to cHeight
-      ctx.moveTo(wStart, cHeight * 0.15);
+      pCtx.fillStyle = wBodyGrad;
+      pCtx.beginPath();
+      pCtx.moveTo(wStart, cHeight * 0.15);
       for (let y = cHeight * 0.15; y <= cHeight; y += 30) {
         const leftSway = Math.sin(y * 0.045 - time * 7.5) * 1.8;
-        ctx.lineTo(wStart + leftSway, y);
+        pCtx.lineTo(wStart + leftSway, y);
       }
       for (let y = cHeight; y >= cHeight * 0.15; y -= 30) {
         const rightSway = Math.sin(y * 0.035 - time * 8.5 + 2.0) * 1.8;
-        ctx.lineTo(wEnd + rightSway, y);
+        pCtx.lineTo(wEnd + rightSway, y);
       }
-      ctx.closePath();
-      ctx.fill();
+      pCtx.closePath();
+      pCtx.fill();
 
-      // 3. Layered Shimmer Streams (Veins of rushing water)
-      const streamCount = 20;
+      const streamCount = 14;
       for (let i = 0; i < streamCount; i++) {
-        // Distribute starting points evenly across the ledge width
         const startPct = 0.18 + (i / (streamCount - 1)) * 0.60;
         const startX = waterfallWidth * startPct;
         
-        ctx.beginPath();
-        // Vary colors and opacities for multi-layer depth
+        pCtx.beginPath();
         if (i % 4 === 0) {
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.42)'; // Bright foaming stream
-          ctx.lineWidth = Math.random() * 2.2 + 1.2;
+          pCtx.strokeStyle = 'rgba(255, 255, 255, 0.42)';
+          pCtx.lineWidth = Math.random() * 2.2 + 1.2;
         } else if (i % 3 === 0) {
-          ctx.strokeStyle = 'rgba(165, 243, 252, 0.32)'; // Cyan highlight
-          ctx.lineWidth = Math.random() * 2.8 + 1.0;
+          pCtx.strokeStyle = 'rgba(165, 243, 252, 0.32)';
+          pCtx.lineWidth = Math.random() * 2.8 + 1.0;
         } else if (i % 2 === 0) {
-          ctx.strokeStyle = 'rgba(34, 211, 238, 0.22)'; // Deep cyan stream
-          ctx.lineWidth = Math.random() * 2.0 + 0.8;
+          pCtx.strokeStyle = 'rgba(34, 211, 238, 0.22)';
+          pCtx.lineWidth = Math.random() * 2.0 + 0.8;
         } else {
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)'; // Translucent background strand
-          ctx.lineWidth = Math.random() * 1.2 + 0.5;
+          pCtx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
+          pCtx.lineWidth = Math.random() * 1.2 + 0.5;
         }
         
-        ctx.moveTo(startX, cHeight * 0.15);
+        pCtx.moveTo(startX, cHeight * 0.15);
         
         const freq = 0.06 + (i % 3) * 0.025;
         const speed = 16.0 + (i % 4) * 2.5;
@@ -628,23 +616,22 @@ const CelestialParticles = () => {
         
         for (let y = cHeight * 0.15; y <= cHeight; y += 40) {
           const sway = Math.sin(y * freq + time * speed + i) * amp;
-          ctx.lineTo(startX + sway, y);
+          pCtx.lineTo(startX + sway, y);
         }
-        ctx.stroke();
+        pCtx.stroke();
       }
 
-      // 4. Ledge Overflow foam crest (glowing overflow)
       const crestAlpha = 0.5 + Math.sin(time * 4.5) * 0.12;
-      const ledgeGrad = ctx.createLinearGradient(waterfallWidth * 0.15, 0, waterfallWidth * 0.85, 0);
+      const ledgeGrad = pCtx.createLinearGradient(waterfallWidth * 0.15, 0, waterfallWidth * 0.85, 0);
       ledgeGrad.addColorStop(0, 'rgba(165, 243, 252, 0)');
       ledgeGrad.addColorStop(0.3, `rgba(255, 255, 255, ${crestAlpha * 0.75})`);
       ledgeGrad.addColorStop(0.5, `rgba(207, 250, 254, ${crestAlpha * 0.95})`);
       ledgeGrad.addColorStop(0.7, `rgba(255, 255, 255, ${crestAlpha * 0.75})`);
       ledgeGrad.addColorStop(1, 'rgba(165, 243, 252, 0)');
       
-      ctx.fillStyle = ledgeGrad;
-      ctx.beginPath();
-      ctx.ellipse(
+      pCtx.fillStyle = ledgeGrad;
+      pCtx.beginPath();
+      pCtx.ellipse(
         waterfallWidth * 0.48,
         cHeight * 0.15,
         waterfallWidth * 0.34,
@@ -653,9 +640,8 @@ const CelestialParticles = () => {
         0,
         Math.PI * 2
       );
-      ctx.fill();
+      pCtx.fill();
 
-      // 5. Dynamic bottom waves churning foam layers
       const waveLayers = [
         { fill: 'rgba(207, 250, 254, 0.22)', amp: 4.0, freq: 0.045, speed: 6.0, offset: 0, height: 26 },
         { fill: 'rgba(165, 243, 252, 0.30)', amp: 2.8, freq: 0.065, speed: -7.5, offset: Math.PI / 2, height: 18 },
@@ -663,88 +649,84 @@ const CelestialParticles = () => {
       ];
       
       waveLayers.forEach((wave) => {
-        ctx.fillStyle = wave.fill;
-        ctx.beginPath();
-        ctx.moveTo(0, cHeight);
+        pCtx.fillStyle = wave.fill;
+        pCtx.beginPath();
+        pCtx.moveTo(0, cHeight);
         for (let x = 0; x <= waterfallWidth * 1.15; x += 12) {
           const waveSway = Math.sin(x * wave.freq + time * wave.speed + wave.offset) * wave.amp
                          + Math.cos(x * (wave.freq * 0.35) - time * (wave.speed * 0.25)) * (wave.amp * 0.4);
-          ctx.lineTo(x, cHeight - wave.height + waveSway);
+          pCtx.lineTo(x, cHeight - wave.height + waveSway);
         }
-        ctx.lineTo(waterfallWidth * 1.15, cHeight);
-        ctx.closePath();
-        ctx.fill();
+        pCtx.lineTo(waterfallWidth * 1.15, cHeight);
+        pCtx.closePath();
+        pCtx.fill();
       });
 
-      // 6. Soft blending mist gradient overlay
-      const mistOverlayGrad = ctx.createLinearGradient(0, cHeight - 140, waterfallWidth * 1.25, cHeight);
+      const mistOverlayGrad = pCtx.createLinearGradient(0, cHeight - 140, waterfallWidth * 1.25, cHeight);
       mistOverlayGrad.addColorStop(0, 'rgba(6, 182, 212, 0)');
       mistOverlayGrad.addColorStop(0.5, 'rgba(165, 243, 252, 0.06)');
       mistOverlayGrad.addColorStop(1, 'rgba(255, 255, 255, 0.16)');
-      ctx.fillStyle = mistOverlayGrad;
-      ctx.fillRect(0, cHeight - 140, waterfallWidth * 1.25, 140);
+      pCtx.fillStyle = mistOverlayGrad;
+      pCtx.fillRect(0, cHeight - 140, waterfallWidth * 1.25, 140);
 
-      ctx.restore();
+      pCtx.restore();
     };
 
-    const drawCherryBlossomBackdrop = (cWidth, cHeight) => {
-      ctx.save();
-      // Gentle full moon in the top right
+    const drawCherryBlossomBackdrop = (pCtx, cWidth, cHeight) => {
+      pCtx.save();
       const mX = cWidth * 0.82;
       const mY = cHeight * 0.22;
       const radius = Math.min(65, cWidth * 0.08);
       
-      ctx.beginPath();
-      const moonGlow = ctx.createRadialGradient(mX, mY, 0, mX, mY, radius * 2.5);
+      pCtx.beginPath();
+      const moonGlow = pCtx.createRadialGradient(mX, mY, 0, mX, mY, radius * 2.5);
       moonGlow.addColorStop(0, 'rgba(255, 241, 242, 0.22)');
       moonGlow.addColorStop(0.3, 'rgba(244, 114, 182, 0.08)');
       moonGlow.addColorStop(1, 'rgba(20, 10, 21, 0)');
-      ctx.fillStyle = moonGlow;
-      ctx.arc(mX, mY, radius * 2.5, 0, Math.PI * 2);
-      ctx.fill();
+      pCtx.fillStyle = moonGlow;
+      pCtx.arc(mX, mY, radius * 2.5, 0, Math.PI * 2);
+      pCtx.fill();
       
-      ctx.beginPath();
-      ctx.fillStyle = 'rgba(255, 241, 242, 0.88)';
-      ctx.shadowColor = 'rgba(244, 114, 182, 0.4)';
-      ctx.shadowBlur = 25;
-      ctx.arc(mX, mY, radius, 0, Math.PI * 2);
-      ctx.fill();
+      pCtx.beginPath();
+      pCtx.fillStyle = 'rgba(255, 241, 242, 0.88)';
+      pCtx.shadowColor = 'rgba(244, 114, 182, 0.4)';
+      pCtx.shadowBlur = 25;
+      pCtx.arc(mX, mY, radius, 0, Math.PI * 2);
+      pCtx.fill();
       
-      ctx.restore();
+      pCtx.restore();
     };
 
-    const drawCherryBlossomLightBackdrop = (cWidth, cHeight) => {
-      ctx.save();
-      // Soft daytime sun/halo in the top right
+    const drawCherryBlossomLightBackdrop = (pCtx, cWidth, cHeight) => {
+      pCtx.save();
       const mX = cWidth * 0.82;
       const mY = cHeight * 0.22;
       const radius = Math.min(65, cWidth * 0.08);
       
-      ctx.beginPath();
-      const sunGlow = ctx.createRadialGradient(mX, mY, 0, mX, mY, radius * 3.5);
+      pCtx.beginPath();
+      const sunGlow = pCtx.createRadialGradient(mX, mY, 0, mX, mY, radius * 3.5);
       sunGlow.addColorStop(0, 'rgba(255, 255, 255, 0.45)');
-      sunGlow.addColorStop(0.3, 'rgba(253, 224, 71, 0.15)'); // yellow-gold warmth
-      sunGlow.addColorStop(0.6, 'rgba(251, 207, 232, 0.08)'); // soft rose-pink glow
+      sunGlow.addColorStop(0.3, 'rgba(253, 224, 71, 0.15)');
+      sunGlow.addColorStop(0.6, 'rgba(251, 207, 232, 0.08)');
       sunGlow.addColorStop(1, 'rgba(255, 240, 243, 0)');
-      ctx.fillStyle = sunGlow;
-      ctx.arc(mX, mY, radius * 3.5, 0, Math.PI * 2);
-      ctx.fill();
+      pCtx.fillStyle = sunGlow;
+      pCtx.arc(mX, mY, radius * 3.5, 0, Math.PI * 2);
+      pCtx.fill();
       
-      ctx.beginPath();
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-      ctx.shadowColor = 'rgba(251, 207, 232, 0.5)';
-      ctx.shadowBlur = 30;
-      ctx.arc(mX, mY, radius, 0, Math.PI * 2);
-      ctx.fill();
+      pCtx.beginPath();
+      pCtx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+      pCtx.shadowColor = 'rgba(251, 207, 232, 0.5)';
+      pCtx.shadowBlur = 30;
+      pCtx.arc(mX, mY, radius, 0, Math.PI * 2);
+      pCtx.fill();
       
-      ctx.restore();
+      pCtx.restore();
     };
 
-    const drawAuroraBackdrop = (cWidth, cHeight) => {
-      ctx.save();
-      const time = Date.now() * 0.0006; // Slow shifting
+    const drawAuroraBackdrop = (pCtx, cWidth, cHeight) => {
+      pCtx.save();
+      const time = Date.now() * 0.0006;
       
-      // Draw 3 overlapping aurora curtains splayed across the sky
       const curtains = [
         { color: 'rgba(16, 185, 129, 0.09)', offset: 0, speed: 1.0, heightPct: 0.65 },
         { color: 'rgba(6, 182, 212, 0.07)', offset: Math.PI / 2, speed: 0.8, heightPct: 0.55 },
@@ -752,67 +734,65 @@ const CelestialParticles = () => {
       ];
       
       curtains.forEach((c) => {
-        ctx.beginPath();
-        // Create a vertical gradient that fades to transparent at the bottom
-        const grad = ctx.createLinearGradient(0, 0, 0, cHeight * c.heightPct);
+        pCtx.beginPath();
+        const grad = pCtx.createLinearGradient(0, 0, 0, cHeight * c.heightPct);
         grad.addColorStop(0, c.color);
         grad.addColorStop(0.5, c.color.replace('0.0', '0.04'));
         grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
         
-        ctx.fillStyle = grad;
+        pCtx.fillStyle = grad;
         
-        // Build the wavy top edge of the aurora curtain
-        ctx.moveTo(0, cHeight * c.heightPct);
-        ctx.lineTo(0, cHeight * 0.15);
+        pCtx.moveTo(0, cHeight * c.heightPct);
+        pCtx.lineTo(0, cHeight * 0.15);
         
         for (let x = 0; x <= cWidth; x += 40) {
           const waveY = cHeight * 0.25 
             + Math.sin(x * 0.004 + time * c.speed + c.offset) * 45 
             + Math.cos(x * 0.002 - time * c.speed * 0.6) * 20;
-          ctx.lineTo(x, waveY);
+          pCtx.lineTo(x, waveY);
         }
         
-        ctx.lineTo(cWidth, cHeight * c.heightPct);
-        ctx.closePath();
-        ctx.fill();
+        pCtx.lineTo(cWidth, cHeight * c.heightPct);
+        pCtx.closePath();
+        pCtx.fill();
       });
       
-      ctx.restore();
+      pCtx.restore();
     };
 
-    const drawRainyBackdrop = (cWidth, cHeight) => {
-      ctx.save();
-      const cloudGrad = ctx.createLinearGradient(0, 0, 0, cHeight * 0.35);
+    const drawRainyBackdrop = (pCtx, cWidth, cHeight) => {
+      pCtx.save();
+      const cloudGrad = pCtx.createLinearGradient(0, 0, 0, cHeight * 0.35);
       cloudGrad.addColorStop(0, 'rgba(71, 85, 105, 0.28)');
       cloudGrad.addColorStop(0.5, 'rgba(100, 116, 139, 0.12)');
       cloudGrad.addColorStop(1, 'rgba(100, 116, 139, 0)');
-      ctx.fillStyle = cloudGrad;
+      pCtx.fillStyle = cloudGrad;
       
-      ctx.beginPath();
-      ctx.arc(cWidth * 0.1, 0, cWidth * 0.22, 0, Math.PI * 2);
-      ctx.arc(cWidth * 0.35, 0, cWidth * 0.28, 0, Math.PI * 2);
-      ctx.arc(cWidth * 0.65, 0, cWidth * 0.32, 0, Math.PI * 2);
-      ctx.arc(cWidth * 0.9, 0, cWidth * 0.25, 0, Math.PI * 2);
-      ctx.closePath();
-      ctx.fill();
+      pCtx.beginPath();
+      pCtx.arc(cWidth * 0.1, 0, cWidth * 0.22, 0, Math.PI * 2);
+      pCtx.arc(cWidth * 0.35, 0, cWidth * 0.28, 0, Math.PI * 2);
+      pCtx.arc(cWidth * 0.65, 0, cWidth * 0.32, 0, Math.PI * 2);
+      pCtx.arc(cWidth * 0.9, 0, cWidth * 0.25, 0, Math.PI * 2);
+      pCtx.closePath();
+      pCtx.fill();
 
-      const cloudGrad2 = ctx.createLinearGradient(0, 0, 0, cHeight * 0.25);
+      const cloudGrad2 = pCtx.createLinearGradient(0, 0, 0, cHeight * 0.25);
       cloudGrad2.addColorStop(0, 'rgba(148, 163, 184, 0.2)');
       cloudGrad2.addColorStop(1, 'rgba(148, 163, 184, 0)');
-      ctx.fillStyle = cloudGrad2;
-      ctx.beginPath();
-      ctx.arc(cWidth * 0.2, 0, cWidth * 0.18, 0, Math.PI * 2);
-      ctx.arc(cWidth * 0.5, 0, cWidth * 0.24, 0, Math.PI * 2);
-      ctx.arc(cWidth * 0.8, 0, cWidth * 0.2, 0, Math.PI * 2);
-      ctx.closePath();
-      ctx.fill();
+      pCtx.fillStyle = cloudGrad2;
+      pCtx.beginPath();
+      pCtx.arc(cWidth * 0.2, 0, cWidth * 0.18, 0, Math.PI * 2);
+      pCtx.arc(cWidth * 0.5, 0, cWidth * 0.24, 0, Math.PI * 2);
+      pCtx.arc(cWidth * 0.8, 0, cWidth * 0.2, 0, Math.PI * 2);
+      pCtx.closePath();
+      pCtx.fill();
       
-      ctx.restore();
+      pCtx.restore();
     };
 
-    const drawForestBackdrop = (cWidth, cHeight) => {
-      ctx.save();
-      ctx.fillStyle = isLightTheme(theme) ? 'rgba(16, 185, 129, 0.08)' : 'rgba(16, 185, 129, 0.04)';
+    const drawForestBackdrop = (pCtx, cWidth, cHeight) => {
+      pCtx.save();
+      pCtx.fillStyle = isLightTheme(theme) ? 'rgba(16, 185, 129, 0.08)' : 'rgba(16, 185, 129, 0.04)';
       const bgTreeCount = isMobile ? 8 : 16;
       const bgStep = cWidth / bgTreeCount;
       for (let i = 0; i <= bgTreeCount; i++) {
@@ -821,23 +801,23 @@ const CelestialParticles = () => {
         const y = cHeight - treeHeight;
         const width = isMobile ? 35 : 60;
         
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x - width * 0.5, y + treeHeight * 0.4);
-        ctx.lineTo(x - width * 0.3, y + treeHeight * 0.4);
-        ctx.lineTo(x - width * 0.7, y + treeHeight * 0.7);
-        ctx.lineTo(x - width * 0.4, y + treeHeight * 0.7);
-        ctx.lineTo(x - width * 0.9, cHeight);
-        ctx.lineTo(x + width * 0.9, cHeight);
-        ctx.lineTo(x + width * 0.4, y + treeHeight * 0.7);
-        ctx.lineTo(x + width * 0.7, y + treeHeight * 0.7);
-        ctx.lineTo(x + width * 0.3, y + treeHeight * 0.4);
-        ctx.lineTo(x + width * 0.5, y + treeHeight * 0.4);
-        ctx.closePath();
-        ctx.fill();
+        pCtx.beginPath();
+        pCtx.moveTo(x, y);
+        pCtx.lineTo(x - width * 0.5, y + treeHeight * 0.4);
+        pCtx.lineTo(x - width * 0.3, y + treeHeight * 0.4);
+        pCtx.lineTo(x - width * 0.7, y + treeHeight * 0.7);
+        pCtx.lineTo(x - width * 0.4, y + treeHeight * 0.7);
+        pCtx.lineTo(x - width * 0.9, cHeight);
+        pCtx.lineTo(x + width * 0.9, cHeight);
+        pCtx.lineTo(x + width * 0.4, y + treeHeight * 0.7);
+        pCtx.lineTo(x + width * 0.7, y + treeHeight * 0.7);
+        pCtx.lineTo(x + width * 0.3, y + treeHeight * 0.4);
+        pCtx.lineTo(x + width * 0.5, y + treeHeight * 0.4);
+        pCtx.closePath();
+        pCtx.fill();
       }
 
-      ctx.fillStyle = isLightTheme(theme) ? 'rgba(21, 128, 61, 0.16)' : 'rgba(21, 128, 61, 0.09)';
+      pCtx.fillStyle = isLightTheme(theme) ? 'rgba(21, 128, 61, 0.16)' : 'rgba(21, 128, 61, 0.09)';
       const fgTreeCount = isMobile ? 10 : 20;
       const fgStep = cWidth / fgTreeCount;
       for (let i = 0; i <= fgTreeCount; i++) {
@@ -846,94 +826,128 @@ const CelestialParticles = () => {
         const y = cHeight - treeHeight;
         const width = isMobile ? 25 : 45;
         
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x - width * 0.5, y + treeHeight * 0.4);
-        ctx.lineTo(x - width * 0.3, y + treeHeight * 0.4);
-        ctx.lineTo(x - width * 0.7, y + treeHeight * 0.7);
-        ctx.lineTo(x - width * 0.4, y + treeHeight * 0.7);
-        ctx.lineTo(x - width * 0.9, cHeight);
-        ctx.lineTo(x + width * 0.9, cHeight);
-        ctx.lineTo(x + width * 0.4, y + treeHeight * 0.7);
-        ctx.lineTo(x + width * 0.7, y + treeHeight * 0.7);
-        ctx.lineTo(x + width * 0.3, y + treeHeight * 0.4);
-        ctx.lineTo(x + width * 0.5, y + treeHeight * 0.4);
-        ctx.closePath();
-        ctx.fill();
+        pCtx.beginPath();
+        pCtx.moveTo(x, y);
+        pCtx.lineTo(x - width * 0.5, y + treeHeight * 0.4);
+        pCtx.lineTo(x - width * 0.3, y + treeHeight * 0.4);
+        pCtx.lineTo(x - width * 0.7, y + treeHeight * 0.7);
+        pCtx.lineTo(x - width * 0.4, y + treeHeight * 0.7);
+        pCtx.lineTo(x - width * 0.9, cHeight);
+        pCtx.lineTo(x + width * 0.9, cHeight);
+        pCtx.lineTo(x + width * 0.4, y + treeHeight * 0.7);
+        pCtx.lineTo(x + width * 0.7, y + treeHeight * 0.7);
+        pCtx.lineTo(x + width * 0.3, y + treeHeight * 0.4);
+        pCtx.lineTo(x + width * 0.5, y + treeHeight * 0.4);
+        pCtx.closePath();
+        pCtx.fill();
       }
       
-      ctx.restore();
+      pCtx.restore();
     };
 
-    const drawOceanBackdrop = (cWidth, cHeight) => {
-      ctx.save();
+    const drawOceanBackdrop = (pCtx, cWidth, cHeight) => {
+      pCtx.save();
       const time = Date.now() * 0.0006;
       
-      ctx.fillStyle = isLightTheme(theme) ? 'rgba(14, 165, 233, 0.08)' : 'rgba(14, 165, 233, 0.04)';
-      ctx.beginPath();
-      ctx.moveTo(0, cHeight);
+      pCtx.fillStyle = isLightTheme(theme) ? 'rgba(14, 165, 233, 0.08)' : 'rgba(14, 165, 233, 0.04)';
+      pCtx.beginPath();
+      pCtx.moveTo(0, cHeight);
       for (let x = 0; x <= cWidth; x += 15) {
         const y = cHeight - (isMobile ? 60 : 100) + Math.sin(x * 0.003 + time) * 15;
-        ctx.lineTo(x, y);
+        pCtx.lineTo(x, y);
       }
-      ctx.lineTo(cWidth, cHeight);
-      ctx.closePath();
-      ctx.fill();
+      pCtx.lineTo(cWidth, cHeight);
+      pCtx.closePath();
+      pCtx.fill();
 
-      ctx.fillStyle = isLightTheme(theme) ? 'rgba(2, 132, 199, 0.12)' : 'rgba(2, 132, 199, 0.07)';
-      ctx.beginPath();
-      ctx.moveTo(0, cHeight);
+      pCtx.fillStyle = isLightTheme(theme) ? 'rgba(2, 132, 199, 0.12)' : 'rgba(2, 132, 199, 0.07)';
+      pCtx.beginPath();
+      pCtx.moveTo(0, cHeight);
       for (let x = 0; x <= cWidth; x += 15) {
         const y = cHeight - (isMobile ? 45 : 75) + Math.cos(x * 0.004 - time * 0.8) * 12;
-        ctx.lineTo(x, y);
+        pCtx.lineTo(x, y);
       }
-      ctx.lineTo(cWidth, cHeight);
-      ctx.closePath();
-      ctx.fill();
+      pCtx.lineTo(cWidth, cHeight);
+      pCtx.closePath();
+      pCtx.fill();
 
-      ctx.fillStyle = isLightTheme(theme) ? 'rgba(3, 105, 161, 0.16)' : 'rgba(3, 105, 161, 0.10)';
-      ctx.beginPath();
-      ctx.moveTo(0, cHeight);
+      pCtx.fillStyle = isLightTheme(theme) ? 'rgba(3, 105, 161, 0.16)' : 'rgba(3, 105, 161, 0.10)';
+      pCtx.beginPath();
+      pCtx.moveTo(0, cHeight);
       for (let x = 0; x <= cWidth; x += 15) {
         const y = cHeight - (isMobile ? 30 : 50) + Math.sin(x * 0.005 + time * 1.2) * 8;
-        ctx.lineTo(x, y);
+        pCtx.lineTo(x, y);
       }
-      ctx.lineTo(cWidth, cHeight);
-      ctx.closePath();
-      ctx.fill();
+      pCtx.lineTo(cWidth, cHeight);
+      pCtx.closePath();
+      pCtx.fill();
       
-      ctx.restore();
+      pCtx.restore();
     };
 
-    const drawVoidBackdrop = (cWidth, cHeight) => {
-      ctx.save();
+    const drawVoidBackdrop = (pCtx, cWidth, cHeight) => {
+      pCtx.save();
       const cX = cWidth * 0.5;
       const cY = cHeight * 0.45;
       const radius = isMobile ? 90 : 150;
       
-      ctx.beginPath();
-      const glowGrad = ctx.createRadialGradient(cX, cY, radius * 0.8, cX, cY, radius * 2.2);
+      pCtx.beginPath();
+      const glowGrad = pCtx.createRadialGradient(cX, cY, radius * 0.8, cX, cY, radius * 2.2);
       glowGrad.addColorStop(0, 'rgba(255, 255, 255, 0.03)');
       glowGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.01)');
       glowGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
-      ctx.fillStyle = glowGrad;
-      ctx.arc(cX, cY, radius * 2.2, 0, Math.PI * 2);
-      ctx.fill();
+      pCtx.fillStyle = glowGrad;
+      pCtx.arc(cX, cY, radius * 2.2, 0, Math.PI * 2);
+      pCtx.fill();
 
-      ctx.beginPath();
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
-      ctx.lineWidth = 1;
-      ctx.arc(cX, cY, radius, 0, Math.PI * 2);
-      ctx.stroke();
+      pCtx.beginPath();
+      pCtx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+      pCtx.lineWidth = 1;
+      pCtx.arc(cX, cY, radius, 0, Math.PI * 2);
+      pCtx.stroke();
 
-      ctx.beginPath();
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
-      ctx.lineWidth = 0.8;
-      ctx.ellipse(cX, cY, radius * 1.5, radius * 0.15, -Math.PI / 12, 0, Math.PI * 2);
-      ctx.stroke();
+      pCtx.beginPath();
+      pCtx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
+      pCtx.lineWidth = 0.8;
+      pCtx.ellipse(cX, cY, radius * 1.5, radius * 0.15, -Math.PI / 12, 0, Math.PI * 2);
+      pCtx.stroke();
       
-      ctx.restore();
+      pCtx.restore();
     };
+
+    const renderStaticBackdrop = () => {
+      const cWidth = canvas.width;
+      const cHeight = canvas.height;
+      
+      bCtx.clearRect(0, 0, cWidth, cHeight);
+      
+      if (theme === 'night') {
+        drawMoon(bCtx, cWidth, cHeight);
+      } else if (theme === 'space') {
+        drawSpacePlanet(bCtx, cWidth, cHeight);
+      } else if (theme === 'sunset') {
+        drawSunsetSun(bCtx, cWidth, cHeight);
+      } else if (theme === 'mountains' || theme === 'mountains morning') {
+        drawMountains(bCtx, cWidth, cHeight);
+      } else if (theme === 'mountain_morning') {
+        drawMountainMorning(bCtx, cWidth, cHeight);
+      } else if (theme === 'waterfall') {
+        renderStaticWaterfall(bCtx, cWidth, cHeight);
+      } else if (theme === 'rainy') {
+        drawRainyBackdrop(bCtx, cWidth, cHeight);
+      } else if (theme === 'forest') {
+        drawForestBackdrop(bCtx, cWidth, cHeight);
+      } else if (theme === 'void') {
+        drawVoidBackdrop(bCtx, cWidth, cHeight);
+      } else if (theme === 'cherryblossom') {
+        drawCherryBlossomBackdrop(bCtx, cWidth, cHeight);
+      } else if (theme === 'cherryblossom_light') {
+        drawCherryBlossomLightBackdrop(bCtx, cWidth, cHeight);
+      }
+    };
+
+    // Render initial static backdrop
+    renderStaticBackdrop();
 
     const drawLeaf = (pCtx, x, y, size, angle, color) => {
       pCtx.save();
@@ -949,40 +963,30 @@ const CelestialParticles = () => {
       pCtx.restore();
     };
 
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const time = Date.now() * 0.0035;
+    const animate = (timestamp) => {
+      animationFrameId = requestAnimationFrame(animate);
 
-      // 1. Draw static backdrops based on active theme
-      if (theme === 'night') {
-        drawMoon(canvas.width, canvas.height);
-      } else if (theme === 'space') {
-        drawSpacePlanet(canvas.width, canvas.height);
-      } else if (theme === 'sunset') {
-        drawSunsetSun(canvas.width, canvas.height);
-      } else if (theme === 'mountains' || theme === 'mountains morning') {
-        drawMountains(canvas.width, canvas.height);
-      } else if (theme === 'mountain_morning') {
-        drawMountainMorning(canvas.width, canvas.height);
-      } else if (theme === 'waterfall') {
-        drawWaterfallBackdrop(canvas.width, canvas.height);
-      } else if (theme === 'rainy') {
-        drawRainyBackdrop(canvas.width, canvas.height);
-      } else if (theme === 'forest') {
-        drawForestBackdrop(canvas.width, canvas.height);
+      const now = timestamp || performance.now();
+      const elapsed = now - lastTime;
+      if (elapsed < fpsInterval) return;
+      lastTime = now - (elapsed % fpsInterval);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const time = now * 0.0035;
+
+      // 1. Draw static backdrop cached image
+      ctx.drawImage(backdropCanvas, 0, 0);
+
+      // 2. Draw dynamic backdrop elements
+      if (theme === 'aurora') {
+        drawAuroraBackdrop(ctx, canvas.width, canvas.height);
       } else if (theme === 'ocean') {
-        drawOceanBackdrop(canvas.width, canvas.height);
-      } else if (theme === 'void') {
-        drawVoidBackdrop(canvas.width, canvas.height);
-      } else if (theme === 'cherryblossom') {
-        drawCherryBlossomBackdrop(canvas.width, canvas.height);
-      } else if (theme === 'cherryblossom_light') {
-        drawCherryBlossomLightBackdrop(canvas.width, canvas.height);
-      } else if (theme === 'aurora') {
-        drawAuroraBackdrop(canvas.width, canvas.height);
+        drawOceanBackdrop(ctx, canvas.width, canvas.height);
+      } else if (theme === 'waterfall') {
+        drawWaterfallDynamic(ctx, canvas.width, canvas.height);
       }
 
-      // 2. Render and update particles
+      // 3. Render and update particles
       particles.forEach((p, index) => {
         // Core Physics
         if (theme === 'snow' || theme === 'winter') {
@@ -1006,13 +1010,10 @@ const CelestialParticles = () => {
             p.x += p.vx;
             p.y += p.vy;
           } else if (p.extra.type === 'mist') {
-            // Mist drifts and sways gently as it floats upward
             p.x += p.vx + Math.sin(p.y * 0.025 + time) * 0.22;
             p.y += p.vy;
-            // Mist fades out faster as it climbs
             p.alpha = Math.max(0, p.alpha - 0.0025);
           } else {
-            // Stars in the sky
             p.x += p.vx;
             p.y += p.vy;
           }
@@ -1022,11 +1023,9 @@ const CelestialParticles = () => {
           p.x += p.vx + Math.sin(p.extra.swayPhase) * p.extra.swayAmplitude * 0.3;
           p.y += p.vy;
         } else if (theme === 'aurora') {
-          // Slow floating stars/solar sparks
           p.x += p.vx;
           p.y += p.vy;
         } else {
-          // Standard float upwards
           p.x += p.vx;
           p.y += p.vy;
         }
@@ -1044,35 +1043,29 @@ const CelestialParticles = () => {
           ctx.lineTo(p.x + p.vx * 0.8, p.y + p.extra.length);
           ctx.stroke();
         } else if (theme === 'forest') {
-          // Leaf shape
           drawLeaf(ctx, p.x, p.y, p.radius, p.extra.angle, p.color.substring(0, p.color.lastIndexOf(',')) + `, ${currentAlpha})`);
         } else if (theme === 'ocean') {
-          // Unfilled bubble circles
           ctx.beginPath();
           ctx.strokeStyle = p.color.substring(0, p.color.lastIndexOf(',')) + `, ${currentAlpha})`;
           ctx.lineWidth = 1;
           ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
           ctx.stroke();
           
-          // Bubble inner highlight
           ctx.beginPath();
           ctx.fillStyle = `rgba(255, 255, 255, ${currentAlpha * 0.4})`;
           ctx.arc(p.x - p.radius * 0.3, p.y - p.radius * 0.3, p.radius * 0.2, 0, Math.PI * 2);
           ctx.fill();
         } else if (theme === 'waterfall') {
           if (p.extra.type === 'droplet') {
-            // Falling water droplets drawn as rapid streaks (motion blur matching fall velocity)
             ctx.beginPath();
             ctx.strokeStyle = Math.random() < 0.5 
               ? `rgba(255, 255, 255, ${currentAlpha * 0.8})` 
               : `rgba(165, 243, 252, ${currentAlpha * 0.75})`;
             ctx.lineWidth = p.radius;
             ctx.moveTo(p.x, p.y);
-            // Draw a streak from (p.x, p.y) down to look like high-speed falling water droplets
             ctx.lineTo(p.x + p.vx * 0.6, p.y + p.vy * 1.6);
             ctx.stroke();
           } else if (p.extra.type === 'mist') {
-            // Rising water mist at pool bottom
             ctx.beginPath();
             const mistGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
             mistGrad.addColorStop(0, `rgba(207, 250, 254, ${currentAlpha * 0.35})`);
@@ -1081,7 +1074,6 @@ const CelestialParticles = () => {
             ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
             ctx.fill();
           } else {
-            // Shimmering sky stars (sharp pinprick dots)
             ctx.beginPath();
             ctx.fillStyle = p.color.substring(0, p.color.lastIndexOf(',')) + `, ${currentAlpha})`;
             ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
@@ -1090,13 +1082,11 @@ const CelestialParticles = () => {
         } else if (theme === 'cherryblossom' || theme === 'cherryblossom_light') {
           drawLeaf(ctx, p.x, p.y, p.radius, p.extra.angle, p.color.substring(0, p.color.lastIndexOf(',')) + `, ${currentAlpha})`);
         } else if (theme === 'aurora') {
-          // Shimmering solar sparks (smooth glowing circles)
           ctx.beginPath();
           ctx.fillStyle = p.color.substring(0, p.color.lastIndexOf(',')) + `, ${currentAlpha})`;
           ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
           ctx.fill();
         } else {
-          // Shimmering sky stars (sharp pinprick dots)
           ctx.beginPath();
           ctx.fillStyle = p.color.substring(0, p.color.lastIndexOf(',')) + `, ${currentAlpha})`;
           ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
@@ -1122,7 +1112,6 @@ const CelestialParticles = () => {
 
         if (isOffScreen) {
           particles[index] = createParticle(false);
-          // Set recycled falling particles/droplets at the top
           if (theme === 'snow' || theme === 'winter' || theme === 'rainy' || theme === 'forest' || theme === 'cherryblossom' || theme === 'cherryblossom_light') {
             particles[index].y = -10;
           } else if (theme === 'waterfall' && particles[index].extra.type === 'droplet') {
@@ -1131,7 +1120,7 @@ const CelestialParticles = () => {
         }
       });
 
-      // 3. Space Theme Shooting Stars
+      // 4. Space Theme Shooting Stars
       if (theme === 'space') {
         if (Math.random() < 0.006 && shootingStars.length < 2) {
           shootingStars.push({
@@ -1164,7 +1153,7 @@ const CelestialParticles = () => {
         });
       }
 
-      // 4. Mountain Theme Flying Birds
+      // 5. Mountain Theme Flying Birds
       if (theme === 'mountains' || theme === 'mountains morning' || theme === 'mountain_morning') {
         if (Math.random() < 0.005 && birds.length < 4) {
           birds.push({
@@ -1198,19 +1187,18 @@ const CelestialParticles = () => {
           }
         });
       }
-
-      animationFrameId = requestAnimationFrame(animate);
     };
 
     animate();
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
+      clearTimeout(resizeTimeout);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [theme]);
+  }, [theme, settings.enableAnimations, isMobile]);
 
-  // Completely invisible in pure light base mode to respect minimalist clean look
+  if (settings.enableAnimations === false || isMobile) return null;
   if (theme === 'light') return null;
 
   const isLight = isLightTheme(theme);

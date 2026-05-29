@@ -15,14 +15,13 @@ const ContentListPage = () => {
 
   const [content, setContent] = useState(() => {
     try {
-      const cached = localStorage.getItem('vrindopnishad_all_content_cache') || localStorage.getItem('sanctuary_content_cache');
-      if (cached) {
-        const parsed = JSON.parse(cached);
+      const memCached = apiService.getMemoryCachedItems();
+      if (memCached && memCached.length > 0) {
         if (urlCategory) {
           const targetCat = urlCategory.toLowerCase().trim();
-          return parsed.filter(item => item.category?.toLowerCase() === targetCat);
+          return memCached.filter(item => item.category?.toLowerCase() === targetCat);
         }
-        return parsed;
+        return memCached;
       }
       return [];
     } catch { return []; }
@@ -85,66 +84,23 @@ const ContentListPage = () => {
     let active = true;
 
     const fetchContent = async () => {
-      // Reset visibleCount on category change
       setVisibleCount(12);
-
-      // Try to read cache first
-      let cachedData = null;
-      try {
-        const fullCache = localStorage.getItem('vrindopnishad_all_content_cache') || localStorage.getItem('sanctuary_content_cache');
-        if (fullCache) {
-          const parsed = JSON.parse(fullCache);
-          if (selectedCategory) {
-            const targetCat = selectedCategory.toLowerCase().trim();
-            cachedData = parsed.filter(item => item.category?.toLowerCase() === targetCat);
-          } else {
-            cachedData = parsed;
-          }
-        }
-      } catch (e) {
-        console.warn('Failed to read from localStorage cache', e);
+      if (content.length === 0 && active) {
+        setLoading(true);
       }
-
-      // If cache hit, render instantly
-      if (cachedData && cachedData.length > 0) {
+      
+      try {
+        const fullData = await apiService.getAllContent(selectedCategory, 10000);
+        const cats = await apiService.getCategories();
+        
         if (active) {
-          setContent(cachedData);
-          setLoading(false);
+          setContent(fullData);
+          setCategories(cats);
         }
-        
-        // Background update categories
-        try {
-          const cats = await apiService.getCategories();
-          if (active) setCategories(cats);
-        } catch {}
-      } else {
-        // Cache miss: dual-stage loading
-        if (active) setLoading(true);
-        
-        try {
-          // Stage 1: Load first chunk (24 items)
-          const firstChunk = await apiService.getAllContent(selectedCategory, 24);
-          const cats = await apiService.getCategories();
-          
-          if (active) {
-            setContent(firstChunk);
-            setCategories(cats);
-            setLoading(false);
-          }
-
-          // Stage 2: Background load the rest of the database (up to 10000 items)
-          const fullData = await apiService.getAllContent(selectedCategory, 10000);
-          if (active) {
-            setContent(fullData);
-            if (!selectedCategory) {
-              localStorage.setItem('sanctuary_content_cache', JSON.stringify(fullData));
-            }
-          }
-        } catch (error) {
-          console.error('Error fetching content:', error);
-        } finally {
-          if (active) setLoading(false);
-        }
+      } catch (error) {
+        console.error('Error fetching content:', error);
+      } finally {
+        if (active) setLoading(false);
       }
     };
 
@@ -152,6 +108,7 @@ const ContentListPage = () => {
     return () => {
       active = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory, apiService]);
 
   const expandedTerms = useMemo(() => {
@@ -204,38 +161,11 @@ const ContentListPage = () => {
 
 
   const getCategoryColorClasses = (category) => {
-    switch (category?.toLowerCase()) {
-      case 'shloka': return { 
-        bg: 'bg-amber-500', 
-        hover: 'hover:border-amber-400/30 hover:shadow-amber-400/5',
-        text: 'text-amber-400' 
-      };
-      case 'strotra': return { 
-        bg: 'bg-sky-500', 
-        hover: 'hover:border-sky-400/30 hover:shadow-sky-400/5',
-        text: 'text-sky-400' 
-      };
-      case 'poem': return { 
-        bg: 'bg-emerald-500', 
-        hover: 'hover:border-emerald-400/30 hover:shadow-emerald-400/5',
-        text: 'text-emerald-400' 
-      };
-      case 'katha': return { 
-        bg: 'bg-orange-500', 
-        hover: 'hover:border-orange-400/30 hover:shadow-orange-400/5',
-        text: 'text-orange-400' 
-      };
-      case 'general': return {
-        bg: 'bg-indigo-500',
-        hover: 'hover:border-indigo-400/30 hover:shadow-indigo-400/5',
-        text: 'text-indigo-400'
-      };
-      default: return { 
-        bg: 'bg-slate-500',
-        hover: 'hover:border-slate-400/20 hover:shadow-slate-400/5',
-        text: 'text-slate-400' 
-      };
-    }
+    return { 
+      bg: 'bg-[var(--primary-color)]', 
+      hover: 'hover:border-[rgba(var(--primary-rgb),0.3)] hover:shadow-[rgba(var(--primary-rgb),0.05)]',
+      text: 'text-[var(--primary-color)]' 
+    };
   };
 
   const getCategoryBadgeClass = (category) => {
@@ -277,17 +207,17 @@ const ContentListPage = () => {
       </Helmet>
       <div className="flex flex-col md:flex-row md:items-start md:items-center justify-between gap-4 mb-6 md:mb-8">
         <div>
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2 tracking-tight">Spiritual Repository</h1>
-          <p className="text-white/50 text-xs md:text-sm">Explore the vast collection of sacred content</p>
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2 tracking-tight text-[var(--text-color)]">Spiritual Repository</h1>
+          <p className="text-[var(--text-color)]/60 text-xs md:text-sm">Explore the vast collection of sacred content</p>
         </div>
 
         <div className="relative w-full md:w-96 max-w-md" ref={searchRef}>
           <div className="premium-search-container flex items-center pl-4 pr-6 h-12">
-            <Search className="text-white/30 shrink-0 mr-3" size={18} />
+            <Search className="text-[var(--text-color)]/30 shrink-0 mr-3" size={18} />
             <input 
               type="text" 
               placeholder="Search in Hindi, English or Hinglish..." 
-              className="w-full bg-transparent outline-none text-white/90 placeholder:text-white/35 h-full text-sm font-light"
+              className="w-full bg-transparent outline-none text-[var(--text-color)]/90 placeholder:text-[var(--text-color)]/35 h-full text-sm font-light"
               value={searchQuery}
               onChange={(e) => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
               onFocus={() => setShowSuggestions(true)}
@@ -298,7 +228,7 @@ const ContentListPage = () => {
             <div className="absolute top-full left-0 right-0 mt-2 bg-[#1a1a24] border border-white/10 rounded-2xl shadow-2xl shadow-black/50 z-50 overflow-hidden">
               <div className="px-4 py-2 border-b border-white/5 flex items-center gap-2">
                 <Sparkles size={12} className="text-amber-400" />
-                <span className="text-[10px] uppercase tracking-widest text-white/30">Hinglish suggestions</span>
+                <span className="text-[10px] uppercase tracking-widest text-[var(--text-color)]/30">Hinglish suggestions</span>
               </div>
               {suggestions.map((s, i) => (
                 <button
@@ -309,7 +239,7 @@ const ContentListPage = () => {
                     setShowSuggestions(false);
                   }}
                 >
-                  <span className="text-white/70 group-hover:text-white transition-colors">{s.text}</span>
+                  <span className="text-[var(--text-color)]/70 group-hover:text-[var(--text-color)] transition-colors">{s.text}</span>
                   <span className="text-amber-400/60 text-sm font-headings">{s.hindi}</span>
                 </button>
               ))}
@@ -321,7 +251,7 @@ const ContentListPage = () => {
       <div className="flex gap-3 overflow-x-auto pb-6 scrollbar-hide mb-8">
         <button 
           onClick={() => setSelectedCategory(null)}
-          className={`px-6 py-2 rounded-full border transition-all duration-300 flex-none ${!selectedCategory ? 'active-gold border-transparent text-white shadow-lg shadow-amber-500/20' : 'bg-white/5 border-white/10 text-white/40 hover:border-white/20'}`}
+          className={`px-6 py-2 rounded-full border transition-all duration-300 flex-none ${!selectedCategory ? 'active-gold border-transparent text-[var(--text-color)] shadow-lg shadow-amber-500/20' : 'bg-white/5 border-white/10 text-[var(--text-color)]/40 hover:border-[var(--glass-border)]'}`}
         >
           All
         </button>
@@ -331,7 +261,7 @@ const ContentListPage = () => {
             <button 
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-6 py-2 rounded-full border transition-all duration-300 flex-none capitalize ${selectedCategory === cat ? `${colors.bg} border-transparent text-white shadow-lg shadow-amber-500/20` : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'}`}
+              className={`px-6 py-2 rounded-full border transition-all duration-300 flex-none capitalize ${selectedCategory === cat ? `${colors.bg} border-transparent text-[var(--text-color)] shadow-lg shadow-amber-500/20` : 'bg-white/5 border-white/10 text-[var(--text-color)]/60 hover:border-[var(--glass-border)]'}`}
             >
               {cat}s
             </button>
@@ -355,7 +285,7 @@ const ContentListPage = () => {
                   <div className="skeleton skeleton-text w-2/3"></div>
                 </div>
               </div>
-              <div className="pt-4 border-t border-white/5 flex gap-2">
+              <div className="pt-4 border-t border-[var(--glass-border)] flex gap-2">
                  <div className="skeleton w-16 h-5 rounded-md"></div>
                  <div className="skeleton w-16 h-5 rounded-md"></div>
               </div>
@@ -365,35 +295,35 @@ const ContentListPage = () => {
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredContent.slice(0, visibleCount).map(item => {
+          {filteredContent.slice(0, visibleCount).map((item, index) => {
             const colors = getCategoryColorClasses(item.category);
             return (
               <Link 
                 to={`/content/${item.slug || item.id}`} 
-                key={item.id} 
-                className={`glass-card group flex flex-col justify-between transition-all duration-500 border border-white/10 ${colors.hover} hover:shadow-2xl`}
+                key={`${item.slug || item.id || 'item'}-${index}`} 
+                className={`glass-card group flex flex-col justify-between transition-all duration-500 border border-[var(--glass-border)] ${colors.hover} hover:shadow-2xl`}
               >
                 <div>
                   <div className="flex justify-between items-start mb-4">
                     <span className={`badge transition-all duration-300 ${getCategoryBadgeClass(item.category)}`}>
                       {item.category}
                     </span>
-                    <div className="flex items-center gap-3 text-white/20 transition-all duration-300">
+                    <div className="flex items-center gap-3 text-[var(--text-color)]/20 transition-all duration-300">
                       <AudioPlayButton track={item} />
                       <ArrowRight size={20} className={`group-hover:translate-x-1 transition-transform duration-500`} />
                     </div>
                   </div>
-                <h3 className="text-xl font-bold mb-4 line-clamp-2 leading-snug transition-colors py-1">
+                <h3 className="text-xl font-bold mb-4 line-clamp-2 leading-snug transition-colors py-1 text-[var(--text-color)]">
                   {item.title}
                 </h3>
-                <p className="text-white/60 text-sm line-clamp-3 leading-relaxed mb-6">
+                <p className="text-[var(--text-color)]/60 text-sm line-clamp-3 leading-relaxed mb-6">
                   {item.hindi_text ? <span className="hindi-text">{item.hindi_text}</span> : item.english_translation}
                 </p>
               </div>
               
-              <div className="pt-4 border-t border-white/5 flex flex-wrap gap-2">
+              <div className="pt-4 border-t border-[var(--glass-border)] flex flex-wrap gap-2">
                 {item.tags?.slice(0, 3).map(tag => (
-                  <span key={tag} className="text-[10px] uppercase tracking-wider text-white/40 flex items-center gap-1 bg-white/5 px-2 py-1 rounded">
+                  <span key={tag} className="text-[10px] uppercase tracking-wider text-[var(--text-color)]/45 flex items-center gap-1 bg-white/5 px-2 py-1 rounded">
                     <Tag size={10} />
                     {tag}
                   </span>
@@ -415,8 +345,8 @@ const ContentListPage = () => {
 
       {!loading && filteredContent.length === 0 && (
         <div className="text-center py-24 glass-card">
-           <Search size={48} className="mx-auto text-white/20 mb-6" />
-           <p className="text-white/40">No content found matching your search.</p>
+           <Search size={48} className="mx-auto text-[var(--text-color)]/20 mb-6" />
+           <p className="text-[var(--text-color)]/50">No content found matching your search.</p>
         </div>
       )}
 
@@ -428,11 +358,11 @@ const ContentListPage = () => {
               <Brain size={20} className="text-purple-400" />
             </div>
             <div>
-              <h3 className="text-lg font-bold flex items-center gap-2">
+              <h3 className="text-lg font-bold flex items-center gap-2 text-[var(--text-color)]">
                 AI Recommendations
                 <span className="text-[9px] uppercase tracking-widest text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full">Semantic</span>
               </h3>
-              <p className="text-white/30 text-xs">Powered by multilingual AI — understands meaning across Hindi, English & Sanskrit</p>
+              <p className="text-[var(--text-color)]/30 text-xs">Powered by multilingual AI — understands meaning across Hindi, English & Sanskrit</p>
             </div>
           </div>
 
@@ -453,7 +383,7 @@ const ContentListPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {aiResults.map((item, i) => (
                 <Link
-                  key={item.id}
+                  key={item.id || item.slug || `${item.title || 'ai'}-${i}`}
                   to={`/content/${item.slug || item.id}`}
                   className="glass-card group hover:border-purple-400/30 transition-all duration-300 relative overflow-hidden"
                 >
@@ -461,9 +391,9 @@ const ContentListPage = () => {
                     <span className="text-[10px] text-purple-300 font-mono">{Math.round(item.score * 100)}%</span>
                   </div>
                   <span className="text-[10px] uppercase tracking-widest text-purple-400/60 mb-2 block">{item.category}</span>
-                  <h4 className="text-base font-bold mb-2 line-clamp-2 group-hover:text-purple-300 transition-colors">{item.title}</h4>
+                  <h4 className="text-base font-bold mb-2 line-clamp-2 group-hover:text-purple-300 transition-colors text-[var(--text-color)]">{item.title}</h4>
                   {item.author && (
-                    <p className="text-white/30 text-xs">— {item.author}</p>
+                    <p className="text-[var(--text-color)]/30 text-xs">— {item.author}</p>
                   )}
                 </Link>
               ))}
