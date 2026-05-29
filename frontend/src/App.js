@@ -225,9 +225,8 @@ function App() {
         console.warn('Failed to warm up database cache:', e);
       }
 
-      // 2. Preload major route chunks to guarantee 0ms chunk-load latency on navigation
+      // 2. Preload major route chunks sequentially on idle time to guarantee 0ms navigation latency without congesting mobile devices
       const preloadList = [
-        () => import('./pages/HomePage'),
         () => import('./pages/ContentListPage'),
         () => import('./pages/ContentDetailPage'),
         () => import('./pages/SaintsListPage'),
@@ -238,10 +237,28 @@ function App() {
         () => import('./pages/RagaDetailPage'),
         () => import('./pages/KnowledgeBasePage')
       ];
-      preloadList.forEach(importFn => {
-        try { importFn(); } catch (e) {}
-      });
-    }, 1500); // 1.5 seconds delay to prioritize critical initial render path
+
+      const loadNextChunk = (index) => {
+        if (index >= preloadList.length) return;
+
+        // Use requestIdleCallback if available, fallback to setTimeout for older mobile browsers
+        const scheduler = window.requestIdleCallback || ((cb) => setTimeout(cb, 1000));
+
+        scheduler(() => {
+          preloadList[index]()
+            .then(() => {
+              // Wait 600ms before preloading the next chunk to keep CPU/thread clear for user inputs
+              setTimeout(() => loadNextChunk(index + 1), 600);
+            })
+            .catch(() => {
+              // Continue loading subsequent chunks even if one fails
+              setTimeout(() => loadNextChunk(index + 1), 300);
+            });
+        });
+      };
+
+      loadNextChunk(0);
+    }, 4500); // 4.5 seconds delay to prioritize critical initial render path
     return () => clearTimeout(timer);
   }, []);
 

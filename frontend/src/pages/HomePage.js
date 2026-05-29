@@ -1,33 +1,26 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronRight, Music, FileText, ArrowRight, Volume2, Clock, X, Edit2, VolumeX, Sun, Sunrise, Sunset, MapPin, BookOpen } from 'lucide-react';
+import { Edit2, Sun, Sunrise, Sunset } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { ApiContext, AuthContext } from '../App';
 import { supabase } from '../lib/supabase';
 import { extractRelations } from '../utils/relations';
-import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { useSettings } from '../contexts/SettingsContext';
 import PookizDashboardView from '../components/PookizDashboardView';
 
-const THEME_SWATCHES = {
-  dark: '#09090b',
-  light: 'linear-gradient(135deg, #fdfbf7 0%, #eae5d9 100%)',
-  night: '#030712',
-  space: '#08070d',
-  void: '#000000',
-  winter: 'linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%)',
-  snow: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-  rainy: 'linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%)',
-  mountains: 'linear-gradient(135deg, #fafaf9 0%, #e7e5e4 100%)',
-  mountain_morning: 'linear-gradient(135deg, #ffedd5 0%, #fee2e2 100%)',
-  sunset: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)',
-  forest: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
-  ocean: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)',
-  waterfall: '#061217',
-  cherryblossom: '#140a15',
-  cherryblossom_light: 'linear-gradient(135deg, #fff0f3 0%, #ffe4e6 100%)',
-  aurora: '#040d1a',
-};
+// Import our new modular components
+import AtmosphereCustomizer from '../components/home/AtmosphereCustomizer';
+import BrajCalendar from '../components/home/BrajCalendar';
+import DailySwadhyaya from '../components/home/DailySwadhyaya';
+import ChantSanctuary from '../components/home/ChantSanctuary';
+import LibraryShowcase from '../components/home/LibraryShowcase';
+import SaintsSpotlight from '../components/home/SaintsSpotlight';
+import PilgrimageHub from '../components/home/PilgrimageHub';
+import LatestVersesFeed from '../components/home/LatestVersesFeed';
+import RagasIndex from '../components/home/RagasIndex';
+
+// Lazy load the PreviewDrawer for O(1) initial loading
+const PreviewDrawer = React.lazy(() => import('../components/home/PreviewDrawer'));
 
 /* ─── Daily Shloka Rotation ─── */
 const DAILY_SHLOKAS = [
@@ -78,15 +71,6 @@ const DAILY_SHLOKAS = [
   }
 ];
 
-/* ─── Gradient generator for book covers ─── */
-const getBookGradient = (name) => {
-  let h = 0;
-  for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
-  const h1 = Math.abs(h % 360);
-  const h2 = (h1 + 60) % 360;
-  return `linear-gradient(135deg, hsl(${h1}, 75%, 26%) 0%, hsl(${h2}, 60%, 8%) 100%)`;
-};
-
 /* ─── Get initials for circular avatar ─── */
 const getInitials = (name) => {
   if (!name) return 'V';
@@ -96,10 +80,6 @@ const getInitials = (name) => {
   return first.match(/[a-zA-Z]/) ? first.toUpperCase() : first;
 };
 
-
-/* ═══════════════════════════════════════════════════
-   HOMEPAGE COMPONENT
-   ═══════════════════════════════════════════════════ */
 const HomePage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -112,9 +92,8 @@ const HomePage = () => {
   const [books, setBooks] = useState([]);
   const [ragas, setRagas] = useState([]);
   const [loading, setLoading] = useState(true);
-  // Interactive Swadhyaya States
-  const [activeTab, setActiveTab] = useState('verse'); // 'verse' | 'translation' | 'breakdown'
-  const [isPlaying, setIsPlaying] = useState(false);
+
+  // Daily Swadhyaya / Sadhana Tracking States
   const [isCompleted, setIsCompleted] = useState(false);
   const [streak, setStreak] = useState(0);
   const [particles, setParticles] = useState([]);
@@ -147,22 +126,19 @@ const HomePage = () => {
     }
   });
 
-  const [isEditingCalendar, setIsEditingCalendar] = useState(false);
-  const [editCalendarForm, setEditCalendarForm] = useState({ ...calendarData });
-
-  // Sync edit form when calendarData changes
-  useEffect(() => {
-    setEditCalendarForm({ ...calendarData });
-  }, [calendarData]);
-
-  // Drawer state
+  // Drawer / Preview state
   const [selectedItem, setSelectedItem] = useState(null);
   const [previewType, setPreviewType] = useState(null);
-  const [drawerTab, setDrawerTab] = useState('bio');
 
-  // eslint-disable-next-line no-unused-vars
-  const openPreview = (item, type) => { setSelectedItem(item); setPreviewType(type); setDrawerTab('bio'); };
-  const closePreview = () => { setSelectedItem(null); setPreviewType(null); };
+  const openPreview = (item, type) => {
+    setSelectedItem(item);
+    setPreviewType(type);
+  };
+
+  const closePreview = () => {
+    setSelectedItem(null);
+    setPreviewType(null);
+  };
 
   const { settings, updateSetting } = useSettings();
   const [isEditingName, setIsEditingName] = useState(false);
@@ -172,97 +148,6 @@ const HomePage = () => {
   useEffect(() => {
     setTempName(settings.devoteeName || '');
   }, [settings.devoteeName]);
-
-  // Tanpura Synthesizer State
-  const [isTanpuraPlaying, setIsTanpuraPlaying] = useState(false);
-  const [audioCtx, setAudioCtx] = useState(null);
-  const [tanpuraTimer, setTanpuraTimer] = useState(null);
-
-  const pluckString = (ctx, frequency, pluckTime) => {
-    const fundamental = frequency;
-    const harmonics = [1, 2, 3, 4, 5, 6, 7];
-    const amplitudes = [1.0, 0.5, 0.35, 0.25, 0.15, 0.1, 0.05];
-
-    const masterGain = ctx.createGain();
-    masterGain.gain.setValueAtTime(0, pluckTime);
-    masterGain.gain.linearRampToValueAtTime(0.18, pluckTime + 0.03);
-    masterGain.gain.exponentialRampToValueAtTime(0.001, pluckTime + 4.2);
-    masterGain.connect(ctx.destination);
-
-    harmonics.forEach((h, idx) => {
-      const osc = ctx.createOscillator();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(fundamental * h, pluckTime);
-
-      const filter = ctx.createBiquadFilter();
-      filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(fundamental * h * 1.5, pluckTime);
-      filter.frequency.exponentialRampToValueAtTime(fundamental * h * 0.5 + 80, pluckTime + 2.8);
-
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(amplitudes[idx] * 0.1, pluckTime);
-
-      osc.connect(filter);
-      filter.connect(gain);
-      gain.connect(masterGain);
-
-      osc.start(pluckTime);
-      osc.stop(pluckTime + 4.5);
-    });
-  };
-
-  const toggleTanpura = () => {
-    if (isTanpuraPlaying) {
-      if (tanpuraTimer) clearInterval(tanpuraTimer);
-      if (audioCtx) {
-        try {
-          audioCtx.close();
-        } catch (e) {
-          console.warn(e);
-        }
-      }
-      setIsTanpuraPlaying(false);
-      setAudioCtx(null);
-      setTanpuraTimer(null);
-    } else {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      setAudioCtx(ctx);
-      setIsTanpuraPlaying(true);
-
-      const baseFreq = 130.81; // C3
-      const freqs = [
-        baseFreq * 1.5, // Pa (G3)
-        baseFreq * 2.0, // Sa (C4)
-        baseFreq * 2.0, // Sa (C4)
-        baseFreq        // Sa (C3)
-      ];
-
-      let pluckIdx = 0;
-      pluckString(ctx, freqs[pluckIdx], ctx.currentTime);
-      pluckIdx = (pluckIdx + 1) % 4;
-
-      const timer = setInterval(() => {
-        pluckString(ctx, freqs[pluckIdx], ctx.currentTime + 0.05);
-        pluckIdx = (pluckIdx + 1) % 4;
-      }, 1200);
-
-      setTanpuraTimer(timer);
-    }
-  };
-
-  // Clean up audio on unmount
-  useEffect(() => {
-    return () => {
-      if (tanpuraTimer) clearInterval(tanpuraTimer);
-      if (audioCtx) {
-        try {
-          audioCtx.close();
-        } catch (e) {
-          console.warn(e);
-        }
-      }
-    };
-  }, [tanpuraTimer, audioCtx]);
 
   const saveToSupabase = async (updatedFields) => {
     if (!user) return;
@@ -321,34 +206,6 @@ const HomePage = () => {
 
   const currentGreeting = useMemo(() => getGreeting(), []);
 
-  const handleChantAudio = () => {
-    if (isPlaying) {
-      window.speechSynthesis.cancel();
-      setIsPlaying(false);
-    } else {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(dailyShloka.sanskrit);
-
-      const voices = window.speechSynthesis.getVoices();
-      const hiVoice = voices.find(v => v.lang.startsWith('hi') || v.lang.startsWith('sa'));
-      if (hiVoice) {
-        utterance.voice = hiVoice;
-      }
-      utterance.rate = 0.75;
-      utterance.pitch = 0.9;
-
-      utterance.onend = () => {
-        setIsPlaying(false);
-      };
-      utterance.onerror = () => {
-        setIsPlaying(false);
-      };
-
-      window.speechSynthesis.speak(utterance);
-      setIsPlaying(true);
-    }
-  };
-
   useEffect(() => {
     const todayStr = new Date().toDateString();
     const lastCompleted = localStorage.getItem('last_swadhyaya_date');
@@ -358,10 +215,6 @@ const HomePage = () => {
       setIsCompleted(true);
     }
     setStreak(currentStreak);
-
-    return () => {
-      window.speechSynthesis.cancel();
-    };
   }, []);
 
   const handleComplete = async () => {
@@ -526,21 +379,19 @@ const HomePage = () => {
     }
   }, []);
 
-  const handleSaveCalendar = async () => {
+  const handleSaveCalendar = async (newCalendarData) => {
     if (user) {
       await saveToSupabase({
-        calendar: editCalendarForm
+        calendar: newCalendarData
       });
-      setCalendarData(editCalendarForm);
-      setIsEditingCalendar(false);
+      setCalendarData(newCalendarData);
     } else {
-      setCalendarData(editCalendarForm);
+      setCalendarData(newCalendarData);
       try {
-        localStorage.setItem('vrindopnishad_calendar_data', JSON.stringify(editCalendarForm));
+        localStorage.setItem('vrindopnishad_calendar_data', JSON.stringify(newCalendarData));
       } catch (e) {
         console.warn(e);
       }
-      setIsEditingCalendar(false);
     }
   };
 
@@ -738,14 +589,6 @@ const HomePage = () => {
         streak={streak}
         handleComplete={handleComplete}
         isCompleted={isCompleted}
-        isPlaying={isPlaying}
-        handleChantAudio={handleChantAudio}
-        isTanpuraPlaying={isTanpuraPlaying}
-        toggleTanpura={toggleTanpura}
-        dailyGoal={dailyGoal}
-        percentComplete={percentComplete}
-        rounds={rounds}
-        currentGreeting={currentGreeting}
         settings={settings}
         updateSetting={updateSetting}
         user={user}
@@ -755,7 +598,6 @@ const HomePage = () => {
 
   return (
     <div className="relative overflow-hidden animate-fade-in font-sans min-h-screen">
-
       {/* ── SEO ── */}
       <Helmet>
         <title>Vrindopnishad Paath — वृंदोपनिषद् पाठ | Sacred Shlokas, Strotras &amp; Devotional Poetry</title>
@@ -798,6 +640,7 @@ const HomePage = () => {
       {/* ── Ambient Glow Blobs ── */}
       <div className="home-theme-glow-ambient top-[-250px] left-[-200px] md:w-[800px] md:h-[800px]"
         style={{ background: `radial-gradient(circle, rgba(var(--primary-rgb), 0.03) 0%, rgba(var(--primary-rgb), 0.005) 50%, transparent 70%)` }} />
+
       <div className="home-theme-glow-ambient bottom-[20%] right-[-200px] md:w-[700px] md:h-[700px]"
         style={{ background: `radial-gradient(circle, rgba(var(--primary-rgb), 0.015) 0%, transparent 70%)` }} />
 
@@ -806,8 +649,8 @@ const HomePage = () => {
         {/* Sadhana Personalization Hub */}
         <div className="space-y-6">
           {/* Welcome Banner */}
-          <div className="glass-card !p-5 rounded-3xl border border-primary/10 flex flex-col md:flex-row justify-between items-center gap-4 text-left shadow-lg select-none">
-            <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="glass-card !p-4 sm:!p-5 rounded-3xl border border-primary/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-left shadow-lg select-none">
+            <div className="flex items-center gap-4 w-full sm:w-auto">
               <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-xl uppercase shrink-0">
                 {getInitials(settings.devoteeName || 'Seeker')}
               </div>
@@ -828,7 +671,7 @@ const HomePage = () => {
                         value={tempName}
                         onChange={(e) => setTempName(e.target.value)}
                         placeholder={isHi ? "अपना नाम लिखें..." : "Spiritual Name..."}
-                        className="bg-white/5 border border-white/10 rounded-xl px-3 py-1 text-xs text-white outline-none focus:border-primary/50 w-full"
+                        className="bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-primary/50 w-full"
                         autoFocus
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') {
@@ -845,7 +688,7 @@ const HomePage = () => {
                           updateSetting('devoteeName', tempName);
                           setIsEditingName(false);
                         }}
-                        className="bg-primary/20 hover:bg-primary/40 text-primary border border-primary/30 rounded-xl px-3 py-1 text-[10px] font-bold transition-all shrink-0"
+                        className="bg-primary/20 hover:bg-primary/40 text-primary border border-primary/30 rounded-xl px-3 py-1.5 text-[10px] font-bold transition-all shrink-0"
                       >
                         {isHi ? "सहेजें" : "Save"}
                       </button>
@@ -882,438 +725,61 @@ const HomePage = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 shrink-0 self-stretch justify-between md:justify-end border-t md:border-t-0 border-white/5 pt-3 md:pt-0">
-              <div className="text-left md:text-right">
+            <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 border-white/5 pt-3 sm:pt-0">
+              <div className="text-left sm:text-right">
                 <span className="text-[9px] uppercase tracking-wider text-white/35 block">Atmosphere</span>
                 <span className="text-xs font-bold text-primary block mt-0.5 capitalize">{settings.theme} Preset</span>
               </div>
-              <div className="h-8 w-[1px] bg-white/5 hidden md:block" />
-              <div className="text-left md:text-right">
+              <div className="h-8 w-[1px] bg-white/5 hidden sm:block" />
+              <div className="text-left sm:text-right">
                 <span className="text-[9px] uppercase tracking-wider text-white/35 block">Daily Goal</span>
                 <span className="text-xs font-bold text-white/80 block mt-0.5">{settings.dailyGoal / 108} Malas</span>
               </div>
             </div>
           </div>
 
-          {/* Home Atmosphere Portal Selector Row */}
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-[9px] uppercase tracking-[0.25em] text-primary font-bold block">Atmosphere Customizer</span>
-              <span className="text-[9px] text-white/40 block font-light">Customize your sanctuary environment</span>
-            </div>
-            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide book-shelf-row select-none">
-              {[
-                { id: 'dark', label: isHi ? 'मूल डार्क' : 'Base Dark', desc: 'Serene charcoal' },
-                { id: 'light', label: isHi ? 'मूल लाइट' : 'Base Light', desc: 'Minimalist cream' },
-                { id: 'night', label: isHi ? 'चन्द्र रात्रि' : 'Moon Night', desc: 'Twinkling stars & moon' },
-                { id: 'space', label: isHi ? 'दिव्य ब्रह्मांड' : 'Cosmic Space', desc: 'Saturn overlay' },
-                { id: 'void', label: isHi ? 'परम शून्य' : 'Deep Void', desc: 'Event horizon halo' },
-                { id: 'sunset', label: isHi ? 'स्वर्ण संध्या' : 'Sunset Glow', desc: 'Warm peach sky' },
-                { id: 'waterfall', label: isHi ? 'प्रपात संगीत' : 'Waterfall', desc: 'Cliff & rushing stream' },
-                { id: 'mountains', label: isHi ? 'मौन पर्वत' : 'Mountains', desc: 'Sage-stone peaks' }
-              ].map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => updateSetting('theme', t.id)}
-                  className={`flex-none px-4 py-3 rounded-2xl border text-left transition-all duration-300 w-44 hover:scale-[1.02] ${settings.theme === t.id
-                      ? 'border-primary bg-primary/10 text-primary shadow-lg shadow-primary/5'
-                      : 'border-white/5 bg-white/2 text-white/60 hover:border-white/10'
-                    }`}
-                >
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold truncate block">{t.label}</span>
-                    <div
-                      className="w-3 h-3 rounded-full border border-white/10 shrink-0"
-                      style={{ background: THEME_SWATCHES[t.id] }}
-                    />
-                  </div>
-                  <span className="text-[9px] text-white/35 mt-1 block font-light leading-none truncate">{t.desc}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+          {/* Atmosphere Preset Selection Customizer */}
+          <AtmosphereCustomizer
+            isHi={isHi}
+            theme={settings.theme}
+            updateSetting={updateSetting}
+          />
         </div>
 
         {/* ═══ THREE COLUMN HERO SANCTUARY ═══ */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 max-w-6xl mx-auto items-stretch">
-
           {/* Column 1: Braj Calendar (col-span-1) */}
           <div className="lg:col-span-1 h-full">
-            <div className="glass-card p-5 rounded-3xl border border-primary/10 flex flex-col justify-between h-full select-none text-left">
-              <div>
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/5">
-                  <div className="flex items-center gap-2">
-                    <Clock size={16} className="text-primary" />
-                    <span className="text-[10px] uppercase tracking-[0.2em] text-white/60 font-bold">
-                      {isHi ? "ब्रज पंचांग" : "Braj Calendar"}
-                    </span>
-                  </div>
-                  {!isEditingCalendar && (
-                    <button
-                      onClick={() => setIsEditingCalendar(true)}
-                      className="text-zinc-600 hover:text-white transition-colors"
-                      title="Edit Calendar"
-                    >
-                      <Edit2 size={12} />
-                    </button>
-                  )}
-                </div>
-
-                {isEditingCalendar ? (
-                  <div className="space-y-2.5 my-2">
-                    <div>
-                      <span className="text-[8px] uppercase tracking-wider text-white/40 block mb-0.5">Tithi (EN / HI)</span>
-                      <div className="grid grid-cols-2 gap-1">
-                        <input
-                          type="text"
-                          className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
-                          value={editCalendarForm.tithiEn}
-                          onChange={e => setEditCalendarForm(prev => ({ ...prev, tithiEn: e.target.value }))}
-                          placeholder="Tithi EN"
-                        />
-                        <input
-                          type="text"
-                          className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
-                          value={editCalendarForm.tithiHi}
-                          onChange={e => setEditCalendarForm(prev => ({ ...prev, tithiHi: e.target.value }))}
-                          placeholder="तिथि हिन्दी"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-[8px] uppercase tracking-wider text-white/40 block mb-0.5">Season (EN / HI)</span>
-                      <div className="grid grid-cols-2 gap-1">
-                        <input
-                          type="text"
-                          className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
-                          value={editCalendarForm.seasonEn}
-                          onChange={e => setEditCalendarForm(prev => ({ ...prev, seasonEn: e.target.value }))}
-                          placeholder="Season EN"
-                        />
-                        <input
-                          type="text"
-                          className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
-                          value={editCalendarForm.seasonHi}
-                          onChange={e => setEditCalendarForm(prev => ({ ...prev, seasonHi: e.target.value }))}
-                          placeholder="ऋतु हिन्दी"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-[8px] uppercase tracking-wider text-white/40 block mb-0.5">Astayama Lila (EN / HI)</span>
-                      <div className="grid grid-cols-2 gap-1">
-                        <input
-                          type="text"
-                          className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
-                          value={editCalendarForm.lilaEn}
-                          onChange={e => setEditCalendarForm(prev => ({ ...prev, lilaEn: e.target.value }))}
-                          placeholder="Lila EN"
-                        />
-                        <input
-                          type="text"
-                          className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
-                          value={editCalendarForm.lilaHi}
-                          onChange={e => setEditCalendarForm(prev => ({ ...prev, lilaHi: e.target.value }))}
-                          placeholder="लीला हिन्दी"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-[8px] uppercase tracking-wider text-white/40 block mb-0.5">Next Festival (EN / HI)</span>
-                      <div className="grid grid-cols-2 gap-1">
-                        <input
-                          type="text"
-                          className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
-                          value={editCalendarForm.festivalEn}
-                          onChange={e => setEditCalendarForm(prev => ({ ...prev, festivalEn: e.target.value }))}
-                          placeholder="Festival EN"
-                        />
-                        <input
-                          type="text"
-                          className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
-                          value={editCalendarForm.festivalHi}
-                          onChange={e => setEditCalendarForm(prev => ({ ...prev, festivalHi: e.target.value }))}
-                          placeholder="उत्सव हिन्दी"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex gap-2 justify-end pt-1">
-                      <button
-                        onClick={() => setIsEditingCalendar(false)}
-                        className="px-2 py-0.5 text-[9px] rounded border border-white/10 hover:bg-white/5 text-zinc-400 hover:text-white transition-colors"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={handleSaveCalendar}
-                        className="px-2 py-0.5 text-[9px] rounded bg-white text-zinc-950 hover:bg-zinc-200 font-semibold transition-colors"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <div className="space-y-4">
-                      <div>
-                        <span className="text-[9px] uppercase tracking-wider text-white/35 block">{isHi ? "तिथि / Lunar Day" : "Lunar Tithi"}</span>
-                        <span className="text-xs font-bold text-white/80 block mt-0.5">{isHi ? calendarData.tithiHi : calendarData.tithiEn}</span>
-                      </div>
-                      <div>
-                        <span className="text-[9px] uppercase tracking-wider text-white/35 block">{isHi ? "ऋतु / Season" : "Current Season"}</span>
-                        <span className="text-xs font-bold text-white/80 block mt-0.5">{isHi ? calendarData.seasonHi : calendarData.seasonEn}</span>
-                      </div>
-                      <div>
-                        <span className="text-[9px] uppercase tracking-wider text-white/35 block">{isHi ? "अष्टयाम लीला / Pastime" : "Aṣṭayāma Līlā"}</span>
-                        <span className="text-xs font-bold text-white/80 block mt-0.5 truncate">{isHi ? calendarData.lilaHi : calendarData.lilaEn}</span>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 pt-3 border-t border-white/5">
-                      <span className="text-[9px] uppercase tracking-wider text-primary font-bold block mb-1">
-                        🎉 {isHi ? "आगामी उत्सव" : "Next Festival"}
-                      </span>
-                      <span className="text-[11px] font-semibold text-minimal-gold block">
-                        {isHi ? calendarData.festivalHi : calendarData.festivalEn}
-                      </span>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
+            <BrajCalendar
+              isHi={isHi}
+              calendarData={calendarData}
+              onSaveCalendar={handleSaveCalendar}
+            />
           </div>
 
           {/* Column 2 & 3: Daily Swadhyaya (col-span-2) */}
           <div className="lg:col-span-2 h-full flex flex-col">
-            <div className="glass-card p-6 md:p-8 rounded-3xl border border-primary/10 shadow-2xl relative overflow-hidden h-full flex flex-col justify-between group">
-              <div className="absolute top-0 right-0 p-6 opacity-[0.02] pointer-events-none">
-                <ChevronRight size={180} className="text-primary" />
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-6 border-b border-white/5 pb-4">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-primary animate-ping" />
-                    <span className="text-xs uppercase tracking-[0.2em] text-white/60 font-bold">
-                      {isHi ? "दैनिक स्वाध्याय" : "Daily Swadhyaya"}
-                    </span>
-                  </div>
-                  <span className="text-[10px] font-bold text-primary bg-primary/5 border border-primary/10 px-2.5 py-0.5 rounded-md uppercase tracking-wider">
-                    {dailyShloka.source}
-                  </span>
-                </div>
-
-                {/* Sliding Tabs */}
-                <div className="flex bg-white/5 p-1 rounded-xl gap-1 mb-6 relative">
-                  {['verse', 'translation', 'breakdown'].map((tab) => (
-                    <button
-                      key={tab}
-                      onClick={() => {
-                        setActiveTab(tab);
-                        if (isPlaying) {
-                          window.speechSynthesis.cancel();
-                          setIsPlaying(false);
-                        }
-                      }}
-                      className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all z-10 ${activeTab === tab ? 'text-primary' : 'text-white/45 hover:text-white/70'
-                        }`}
-                    >
-                      {tab === 'verse' ? (isHi ? "श्लोक" : "Verse") : tab === 'translation' ? (isHi ? "भावार्थ" : "Translation") : (isHi ? "शब्दार्थ" : "Breakdown")}
-                    </button>
-                  ))}
-                  {/* Sliding indicator */}
-                  <div
-                    className="absolute top-1 bottom-1 bg-white/[0.04] border border-white/10 rounded-lg transition-all duration-300 ease-out z-0"
-                    style={{
-                      width: 'calc(33.33% - 4px)',
-                      left: activeTab === 'verse' ? '2px' : activeTab === 'translation' ? '33.33%' : '66.66%'
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Tab Content */}
-              <div className="min-h-[12rem] flex flex-col justify-center transition-all duration-300 flex-1">
-                {activeTab === 'verse' && (
-                  <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200 text-center">
-                    <blockquote className="text-center">
-                      <p className="text-base md:text-lg font-bold text-minimal-gold leading-loose font-headings whitespace-pre-line select-all">
-                        {dailyShloka.sanskrit}
-                      </p>
-                    </blockquote>
-
-                    <div className="flex justify-center gap-3">
-                      <button
-                        onClick={handleChantAudio}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all text-xs font-bold ${isPlaying
-                            ? 'border-primary bg-primary/10 text-primary'
-                            : 'border-white/10 hover:border-primary/30 text-white/70'
-                          }`}
-                      >
-                        <span>{isPlaying ? '⏸' : '▶'}</span>
-                        <span>{isHi ? "सुनिए" : "Listen"}</span>
-                        {isPlaying && (
-                          <div className="flex items-center gap-0.5 h-3 ml-1.5 shrink-0">
-                            <span className="w-0.5 bg-primary rounded-full animate-bar-pulse-1" style={{ height: '4px' }} />
-                            <span className="w-0.5 bg-primary rounded-full animate-bar-pulse-2" style={{ height: '8px' }} />
-                            <span className="w-0.5 bg-primary rounded-full animate-bar-pulse-3" style={{ height: '12px' }} />
-                            <span className="w-0.5 bg-primary rounded-full animate-bar-pulse-4" style={{ height: '6px' }} />
-                          </div>
-                        )}
-                      </button>
-
-                      <button
-                        onClick={handleComplete}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all text-xs font-bold relative ${isCompleted
-                            ? 'border-green-500 bg-green-500/10 text-green-500 cursor-default'
-                            : 'border-white/10 hover:border-green-500/30 text-white/70'
-                          }`}
-                      >
-                        <span>{isCompleted ? '✓' : '📿'}</span>
-                        <span>{isCompleted ? (isHi ? "पूर्ण" : "Completed") : (isHi ? "Mark Read" : "Mark Read")}</span>
-
-                        {particles.map(p => (
-                          <span
-                            key={p.id}
-                            className="absolute w-1.5 h-1.5 rounded-full pointer-events-none animate-particle"
-                            style={{
-                              background: p.color,
-                              '--particle-x': `${p.x}px`,
-                              '--particle-y': `${p.y}px`,
-                              transform: `scale(${p.scale})`
-                            }}
-                          />
-                        ))}
-                      </button>
-                    </div>
-
-                    {streak > 0 && (
-                      <div className="text-[10px] text-primary/70 font-bold uppercase tracking-widest text-center animate-in fade-in slide-in-from-bottom-2">
-                        🔥 {streak} {isHi ? "दिवसीय सिलसिला" : "Day Streak"}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {activeTab === 'translation' && (
-                  <div className="space-y-4 text-left animate-in fade-in zoom-in-95 duration-200">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 text-xs font-light leading-relaxed">
-                      <div className="space-y-1">
-                        <span className="text-[9px] uppercase tracking-wider text-primary font-bold block">भावार्थ (Hindi)</span>
-                        <p className="text-white/80 font-medium leading-relaxed whitespace-pre-line">{dailyShloka.hindi}</p>
-                      </div>
-                      <div className="border-t md:border-t-0 md:border-l lg:border-l-0 lg:border-t xl:border-t-0 xl:border-l border-white/5 pt-3 md:pt-0 md:pl-4 lg:pl-0 lg:pt-3 xl:pt-0 xl:pl-4 space-y-1">
-                        <span className="text-[9px] uppercase tracking-wider text-sky-400/80 font-bold block">English</span>
-                        <p className="text-white/70 italic leading-relaxed whitespace-pre-line">{dailyShloka.english}</p>
-                      </div>
-                    </div>
-
-                    <div className="mt-3 border-t border-white/5 pt-3">
-                      <span className="text-[9px] uppercase tracking-wider text-primary font-bold block mb-1">
-                        💡 {isHi ? "व्यावहारिक सूत्र" : "Practical Takeaway"}
-                      </span>
-                      <p className="text-white/75 text-xs italic font-medium leading-relaxed">{dailyShloka.takeaway}</p>
-                    </div>
-                  </div>
-                )}
-
-                {activeTab === 'breakdown' && (
-                  <div className="grid grid-cols-2 gap-2 text-left animate-in fade-in zoom-in-95 duration-200">
-                    {dailyShloka.breakdown.map((item, idx) => (
-                      <div key={idx} className="bg-white/[0.015] border border-white/5 rounded-xl p-2.5 flex flex-col gap-0.5 hover:border-primary/20 transition-all">
-                        <span className="text-xs font-bold text-minimal-gold">{item.sanskrit}</span>
-                        <span className="text-[10px] text-white/50">{item.meaning}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
+            <DailySwadhyaya
+              isHi={isHi}
+              dailyShloka={dailyShloka}
+              streak={streak}
+              isCompleted={isCompleted}
+              handleComplete={handleComplete}
+              particles={particles}
+            />
           </div>
 
           {/* Column 4: Chant Tracker (col-span-1) */}
           <div className="lg:col-span-1 h-full">
-            <div className="glass-card p-5 rounded-3xl border border-primary/10 flex flex-col justify-between h-full select-none text-left">
-              <div>
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/5">
-                  <div className="flex items-center gap-2">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                    </span>
-                    <span className="text-[10px] uppercase tracking-[0.2em] text-white/60 font-bold">
-                      {isHi ? "जाप साधना" : "Chant Sanctuary"}
-                    </span>
-                  </div>
-                  <span className="text-[9px] font-bold text-white/40 uppercase">
-                    Goal: {dailyGoal / 108} {dailyGoal === 108 ? 'Mala' : 'Malas'}
-                  </span>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <span className="text-[9px] uppercase tracking-wider text-white/35 block">{isHi ? "कुल जाप / Total Chants" : "Total Chants"}</span>
-                    <div className="flex items-baseline justify-between">
-                      <span className="text-xl font-extrabold text-minimal-gold block mt-0.5 font-mono">{japaCount}</span>
-                      <button
-                        onClick={toggleTanpura}
-                        className={`p-1.5 rounded-full border transition-all ${isTanpuraPlaying
-                            ? 'bg-sky-500/10 border-sky-500/40 text-sky-400 animate-pulse'
-                            : 'bg-white/5 border-white/10 text-white/40 hover:text-white'
-                          }`}
-                        title={isTanpuraPlaying ? "Stop Tanpura Drone" : "Start Tanpura Drone"}
-                      >
-                        {isTanpuraPlaying ? <Volume2 size={12} /> : <VolumeX size={12} />}
-                      </button>
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-[9px] uppercase tracking-wider text-white/35 block">{isHi ? "माला पूर्ण / Completed Mala" : "Completed Mala"}</span>
-                    <span className="text-xs font-bold text-white/80 block mt-0.5">{rounds} {isHi ? "माला" : "Rounds"} <span className="text-white/40 font-normal font-mono">({japaCount % 108}/108)</span></span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-white/5">
-                  <button
-                    onClick={() => handleUpdateJapaCount(japaCount + 1)}
-                    className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl py-2 text-center text-xs font-bold text-white/80 transition-colors"
-                  >
-                    +1
-                  </button>
-                  <button
-                    onClick={() => handleUpdateJapaCount(japaCount + 108)}
-                    className="bg-primary/10 hover:bg-primary/20 border border-primary/25 rounded-xl py-2 text-center text-xs font-bold text-primary transition-colors"
-                  >
-                    +108
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (window.confirm(isHi ? "क्या आप जाप संख्या रीसेट करना चाहते हैं?" : "Reset chant count?")) {
-                        handleUpdateJapaCount(0);
-                      }
-                    }}
-                    className="bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 hover:border-red-500/20 rounded-xl py-2 text-center text-xs font-bold text-red-400 transition-colors"
-                  >
-                    Reset
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-2 mt-4 pt-3 border-t border-white/5">
-                <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-wider">
-                  <span className="text-white/50">{isHi ? "दैनिक लक्ष्य" : "Daily Goal"}</span>
-                  <span className="text-primary">{percentComplete}%</span>
-                </div>
-                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
-                  <div
-                    className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
-                    style={{ width: `${percentComplete}%` }}
-                  />
-                </div>
-              </div>
-            </div>
+            <ChantSanctuary
+              isHi={isHi}
+              japaCount={japaCount}
+              handleUpdateJapaCount={handleUpdateJapaCount}
+              dailyGoal={dailyGoal}
+              percentComplete={percentComplete}
+              rounds={rounds}
+            />
           </div>
-
         </div>
 
         {/* ═══ CATEGORIES INHERITED GRID BLOCKS ═══ */}
@@ -1325,7 +791,7 @@ const HomePage = () => {
             { to: '/ragas', name: isHi ? 'शास्त्रीय राग' : 'Sankirtan Ragas', label: 'Melodies', count: categoryStats.raga, color: 'from-rose-500/20 to-red-600/5', border: 'border-rose-500/20', text: 'text-rose-400' }
           ].map(c => (
             <Link key={c.to} to={c.to}
-              className={`p-5 rounded-2xl bg-gradient-to-br ${c.color} border ${c.border} flex flex-col justify-between h-28 hover:scale-[1.02] transition-all group`}>
+              className={`p-5 rounded-2xl bg-gradient-to-br ${c.color} border ${c.border} flex flex-col justify-between h-28 hover:scale-[1.02] transition-all group touch-manipulation`}>
               <span className={`text-[10px] font-bold uppercase tracking-widest ${c.text}`}>{c.label}</span>
               <div>
                 <h3 className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors truncate">{c.name}</h3>
@@ -1336,256 +802,41 @@ const HomePage = () => {
         </div>
 
         {/* ═══ GRANTHAS SHOWCASE (STOREFRONT LIBRARY) ═══ */}
-        {books.length > 0 && (
-          <div className="space-y-5">
-            <div className="flex justify-between items-end">
-              <div>
-                <span className="text-[9px] uppercase tracking-[0.25em] text-primary font-bold block mb-0.5">Sacred Library Catalog</span>
-                <h2 className="text-xl md:text-2xl font-bold font-headings text-minimal-gold">{isHi ? "दिव्य ग्रन्थ एवं वाणी" : "Granthas & Scriptures"}</h2>
-              </div>
-              <Link to={isHi ? "/hi/books" : "/books"} className="text-xs text-primary hover:underline flex items-center gap-0.5 font-bold">
-                {isHi ? "सभी ग्रन्थ" : "View All Granthas"}<ChevronRight size={14} />
-              </Link>
-            </div>
-
-            <div className="flex gap-4 overflow-x-auto pb-4 pt-1 snap-x book-shelf-row">
-              {books.slice(0, 8).map((book, index) => (
-                <div key={`${book.slug || book.name || 'book'}-${index}`} onClick={() => navigate(isHi ? `/hi/book/${book.slug}` : `/book/${book.slug}`)}
-                  className="w-80 flex-none glass-card p-4 rounded-2xl hover:border-amber-500/25 transition-all snap-start flex gap-4 border border-white/5 cursor-pointer group shadow-lg">
-                  {/* CSS Designed Premium Book Cover */}
-                  <div className="book-cover-premium shrink-0 text-white select-none shadow-xl"
-                    style={{ background: getBookGradient(book.name) }}>
-                    <div className="book-cover-inner-gold">
-                      <div className="text-[8px] opacity-40 font-semibold tracking-widest">ॐ</div>
-                      <span className="text-[9px] font-bold line-clamp-3 text-center leading-tight tracking-wide uppercase px-0.5 text-white/90 font-headings">
-                        {book.name.replace(/जी की वाणी/g, '').replace(/वाणी/g, '').replace(/ग्रन्थ/g, '')}
-                      </span>
-                      <span className="text-[7px] text-white/60 uppercase tracking-widest font-headings font-bold opacity-60">SCRIPTURE</span>
-                    </div>
-                  </div>
-                  {/* Book Metadata */}
-                  <div className="flex flex-col justify-between py-1 min-w-0 flex-1">
-                    <div className="space-y-1">
-                      <h3 className="font-bold text-xs text-white/95 group-hover:text-primary transition-colors leading-snug line-clamp-2">{book.name}</h3>
-                      <span className="text-[10px] text-white/40 block truncate">By {book.author ? book.author.replace(/जी/g, '') : 'Braj Rasik'}</span>
-                    </div>
-                    <div className="space-y-2">
-                      <span className="text-[9px] text-white/30 flex items-center gap-1"><FileText size={10} />{book.verses.length} verses</span>
-                      <button className="w-full bg-white/5 hover:bg-primary/20 text-white/70 hover:text-primary font-bold text-[9px] py-1 px-2 rounded-lg transition-colors border border-white/10 hover:border-primary/20 tracking-wider uppercase">
-                        {isHi ? "वाणी पढ़ें" : "Read Now"}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <LibraryShowcase
+          isHi={isHi}
+          books={books}
+          navigate={navigate}
+        />
 
         {/* ═══ RASIK SAINTS CREATOR SPOTLIGHT ═══ */}
-        {saints.length > 0 && (
-          <div className="space-y-5">
-            <div className="flex justify-between items-end">
-              <div>
-                <span className="text-[9px] uppercase tracking-[0.25em] text-primary font-bold block mb-0.5">Divine Creators & Spiritual Guides</span>
-                <h2 className="text-xl md:text-2xl font-bold font-headings text-minimal-gold">{isHi ? "परम पावन रसिक सन्त" : "Braj Rasik Saints"}</h2>
-              </div>
-              <Link to={isHi ? "/hi/saints" : "/saints"} className="text-xs text-primary hover:underline flex items-center gap-0.5 font-bold">
-                {isHi ? "सभी सन्त" : "View All Saints"}<ChevronRight size={14} />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-              {saints.slice(0, 6).map((sant, index) => (
-                <div key={`${sant.slug || sant.cleanName || 'sant'}-${index}`} onClick={() => navigate(isHi ? `/hi/saint/${sant.slug}` : `/saint/${sant.slug}`)}
-                  className="glass-card !p-3 rounded-2xl border border-white/5 hover:border-amber-500/20 text-center cursor-pointer group transition-all flex flex-col items-center justify-between space-y-3">
-                  <div className="w-14 h-14 rounded-full bg-amber-500/5 border border-amber-500/10 group-hover:border-amber-500/40 flex items-center justify-center text-amber-500 font-bold text-lg shadow-inner group-hover:scale-105 transition-all duration-300">
-                    {getInitials(isHi ? sant.name : sant.hinglishName)}
-                  </div>
-                  <div className="min-w-0 w-full px-1">
-                    <h3 className="font-bold text-[11px] text-white/90 group-hover:text-primary transition-colors line-clamp-2 w-full leading-tight py-0.5 saint-card-title">
-                      {isHi ? sant.name : sant.hinglishName}
-                    </h3>
-                    <span className="text-[9px] text-white/35 font-light block mt-0.5">{sant.verses.length} verses</span>
-                  </div>
-                  <span className="text-[8px] bg-amber-500/10 text-primary border border-amber-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">
-                    Explore
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <SaintsSpotlight
+          isHi={isHi}
+          saints={saints}
+          navigate={navigate}
+        />
 
         {/* ═══ DIVINE KNOWLEDGE & PILGRIMAGE HUB ═══ */}
-        <div className="space-y-5">
-          <div className="text-left">
-            <span className="text-[9px] uppercase tracking-[0.25em] text-primary font-bold block mb-0.5">Spiritual Discovery & Geography</span>
-            <h2 className="text-xl md:text-2xl font-bold font-headings text-minimal-gold">
-              {isHi ? "ब्रज धाम एवं आध्यात्मिक ज्ञान" : "Divine Knowledge & Pilgrimage Hub"}
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-            {/* Card 1: Braj Dham Guide */}
-            <div
-              onClick={() => navigate(isHi ? "/hi/places" : "/places")}
-              className="glass-card p-6 rounded-3xl border border-white/5 hover:border-amber-500/20 cursor-pointer group transition-all flex flex-col justify-between space-y-4 hover:scale-[1.01]"
-            >
-              <div className="space-y-3">
-                <div className="flex justify-between items-start">
-                  <div className="w-10 h-10 rounded-2xl bg-amber-500/5 border border-amber-500/10 flex items-center justify-center text-amber-500 group-hover:border-amber-500/30 transition-all duration-300">
-                    <MapPin size={18} />
-                  </div>
-                  <span className="text-[8px] bg-amber-500/10 text-primary border border-amber-500/20 px-2.5 py-0.5 rounded-full uppercase tracking-wider font-bold">
-                    {isHi ? "तीर्थ दर्शन" : "Pilgrimage"}
-                  </span>
-                </div>
-                <div className="space-y-1">
-                  <h3 className="font-bold text-sm md:text-base text-white/95 group-hover:text-primary transition-colors leading-snug">
-                    {isHi ? "ब्रज धाम दर्शन मार्गदर्शिका" : "Braj Dham Sacred Places"}
-                  </h3>
-                  <p className="text-[11px] text-white/45 font-light leading-relaxed">
-                    {isHi
-                      ? "वृंदावन के पावन वनों, कुंडों और संतों की साधना-स्थली का अलौकिक परिचय। आध्यात्मिक इतिहास और भौगोलिक महत्व के साथ।"
-                      : "A spiritual guide to the holy groves, sacred lakes, and mystical temples of Vrindavan, complete with historical and saintly connections."
-                    }
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center justify-between border-t border-white/5 pt-3">
-                <span className="text-[9px] uppercase tracking-wider text-white/35 flex items-center gap-1 font-bold group-hover:text-primary transition-colors">
-                  {isHi ? "यात्रा प्रारंभ करें" : "Start Pilgrimage"} <ArrowRight size={10} />
-                </span>
-                <span className="text-[9px] text-white/30 font-light">10+ Sacred Sites</span>
-              </div>
-            </div>
-
-            {/* Card 2: Glossary */}
-            <div
-              onClick={() => navigate(isHi ? "/hi/glossary" : "/glossary")}
-              className="glass-card p-6 rounded-3xl border border-white/5 hover:border-amber-500/20 cursor-pointer group transition-all flex flex-col justify-between space-y-4 hover:scale-[1.01]"
-            >
-              <div className="space-y-3">
-                <div className="flex justify-between items-start">
-                  <div className="w-10 h-10 rounded-2xl bg-sky-500/5 border border-sky-500/10 flex items-center justify-center text-sky-400 group-hover:border-sky-500/30 transition-all duration-300">
-                    <BookOpen size={18} />
-                  </div>
-                  <span className="text-[8px] bg-sky-500/10 text-sky-400 border border-sky-500/20 px-2.5 py-0.5 rounded-full uppercase tracking-wider font-bold">
-                    {isHi ? "शब्दावली" : "Encyclopedia"}
-                  </span>
-                </div>
-                <div className="space-y-1">
-                  <h3 className="font-bold text-sm md:text-base text-white/95 group-hover:text-primary transition-colors leading-snug">
-                    {isHi ? "ब्रज रसिक शब्दावली" : "Braj Rasik Glossary"}
-                  </h3>
-                  <p className="text-[11px] text-white/45 font-light leading-relaxed">
-                    {isHi
-                      ? "वाणी साहित्य और रस उपासना में प्रयुक्त होने वाले गहन आध्यात्मिक शब्दों, दर्शनों और भावों का प्रामाणिक शब्दकोश।"
-                      : "Explore the meanings, etymologies, and philosophical contexts of core theological terms used in the spiritual poetry of Vrindavan."
-                    }
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center justify-between border-t border-white/5 pt-3">
-                <span className="text-[9px] uppercase tracking-wider text-white/35 flex items-center gap-1 font-bold group-hover:text-primary transition-colors">
-                  {isHi ? "शब्दकोश देखें" : "Explore Glossary"} <ArrowRight size={10} />
-                </span>
-                <span className="text-[9px] text-white/30 font-light">15+ Core Terms</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <PilgrimageHub
+          isHi={isHi}
+          navigate={navigate}
+        />
 
         {/* ═══ LATEST DEVOTIONAL FEED (BLOG STYLE GRID) ═══ */}
-        {latestVerses.length > 0 && (
-          <div className="space-y-5">
-            <div className="flex justify-between items-end">
-              <div>
-                <span className="text-[9px] uppercase tracking-[0.25em] text-primary font-bold block mb-0.5">Freshly Curated Spiritual Wisdom</span>
-                <h2 className="text-xl md:text-2xl font-bold font-headings text-minimal-gold">{isHi ? "नवीनतम वाणी एवं श्लोक" : "Latest Verse Feed"}</h2>
-              </div>
-              <Link to={isHi ? "/hi/content" : "/content"} className="text-xs text-primary hover:underline flex items-center gap-0.5 font-bold">
-                {isHi ? "सम्पूर्ण वाणियाँ" : "View Library"}<ChevronRight size={14} />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {latestVerses.map((verse, index) => {
-                const excerpt = verse.hindi_text || verse.sanskrit_text || verse.english_translation || verse.description || "";
-                const readingTime = Math.max(1, Math.ceil(excerpt.length / 120)) + " min read";
-                return (
-                  <div key={`${verse.slug || verse.id || 'verse'}-${index}`} onClick={() => navigate(isHi ? `/hi/content/${verse.slug || verse.id}` : `/content/${verse.slug || verse.id}`)}
-                    className="premium-content-card p-5 cursor-pointer flex flex-col justify-between space-y-4 group">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[9px] uppercase tracking-wider text-amber-500/80 bg-amber-500/5 px-2.5 py-0.5 rounded border border-amber-500/10 font-bold">
-                          {verse.category}
-                        </span>
-                        <span className="text-[9px] text-white/30 flex items-center gap-1 font-light">
-                          <Clock size={10} />
-                          {readingTime}
-                        </span>
-                      </div>
-                      <div className="space-y-1">
-                        <h3 className="font-bold text-sm text-white/95 group-hover:text-primary transition-colors leading-snug line-clamp-2">
-                          {verse.cleanTitle || verse.title}
-                        </h3>
-                        {verse.author && (
-                          <span className="text-[10px] text-white/40 block font-light">
-                            By {verse.author.replace(/जी/g, '')}
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-[11px] text-white/45 font-light leading-relaxed line-clamp-3 select-none">
-                        {excerpt}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center justify-between border-t border-white/5 pt-3 shrink-0">
-                      <span className="text-[9px] uppercase tracking-wider text-white/35 flex items-center gap-1 font-bold group-hover:text-primary transition-colors">
-                        Read Verse <ArrowRight size={10} />
-                      </span>
-                      {verse.audio_url && (
-                        <div onClick={(e) => e.stopPropagation()} className="relative z-20">
-                          <AudioPlayButton track={verse} className="bg-sky-500/10 text-sky-400 border border-sky-500/20 p-2 rounded-full hover:scale-105 transition-transform" size={14} />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
+        <LatestVersesFeed
+          isHi={isHi}
+          latestVerses={latestVerses}
+          navigate={navigate}
+        />
 
         {/* ═══ CLASSICAL RAGAS COMPACT INDEX ═══ */}
-        {ragas.length > 0 && (
-          <div className="glass-card p-5 rounded-2xl border border-white/5 space-y-4 max-w-4xl mx-auto shadow-md">
-            <div className="flex justify-between items-center pb-2 border-b border-white/5">
-              <h3 className="text-xs font-bold text-minimal-gold uppercase tracking-wider flex items-center gap-1.5 font-headings">
-                <Music size={12} className="text-primary" />
-                {isHi ? "राग रागिनियाँ" : "Classical Ragas"}
-              </h3>
-              <Link to={isHi ? "/hi/ragas" : "/ragas"} className="text-[10px] text-primary hover:underline font-bold">{isHi ? "सभी राग" : "View All"}</Link>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {ragas.slice(0, 10).map((raga, index) => (
-                <button key={`${raga.slug || raga.name || 'raga'}-${index}`} onClick={() => navigate(isHi ? `/hi/raga/${raga.slug}` : `/raga/${raga.slug}`)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 text-xs text-left transition-all group">
-                  <span className="font-semibold text-white/90 group-hover:text-primary transition-colors text-[11px]">{raga.name}</span>
-                  <span className="text-[9px] text-white/35 font-light bg-white/5 px-1.5 py-0.5 rounded-md flex items-center gap-0.5 shrink-0">
-                    <Volume2 size={8} />
-                    {raga.verses.length}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        <RagasIndex
+          isHi={isHi}
+          ragas={ragas}
+          navigate={navigate}
+        />
 
         {/* ═══ GOOGLE SEO CONTEXT AND FOOTER ═══ */}
-        <div className="py-8 max-w-4xl mx-auto border-t border-white/5 text-center text-xs text-white/35 leading-relaxed font-light space-y-4">
+        <div className="py-8 max-w-4xl mx-auto border-t border-white/5 text-center text-xs text-white/35 leading-relaxed font-light space-y-4 select-none">
           <p>
             <strong className="text-white/55 font-bold">Vrindopnishad Paath (वृंदोपनिषद् पाठ)</strong> online sanctuary: Engage daily with authentic Vedic Sanskrit Shlokas (श्लोक), devotional hymns (Strotras / स्तोत्र), and spiritual poetry from Braj Dham saints including Premanand Ji Maharaj, Swami Haridas, Hit Harivansh, and other Braj rasiks. Access complete Hindi भावार्थ translations, English meanings, and classical Raga notations for devotional chanting and swadhyaya.
           </p>
@@ -1601,135 +852,19 @@ const HomePage = () => {
 
       </div>
 
-      {/* ═══ PREVIEW DRAWER ═══ */}
-      <div className={`preview-drawer-backdrop ${selectedItem ? 'active' : ''}`} onClick={closePreview} />
-      <div className={`preview-drawer ${selectedItem ? 'active' : ''}`}>
-        <div className="drawer-drag-handle" />
-        {selectedItem && (
-          <div className="flex-1 flex flex-col overflow-hidden px-6 pt-4">
-            {/* Header */}
-            <div className="flex items-start justify-between gap-4 mb-4 pb-4 border-b border-white/5">
-              <div className="min-w-0">
-                <span className="text-[9px] uppercase tracking-[0.2em] text-primary font-bold block mb-1">
-                  {previewType === 'saint' ? 'Holy Biography' : previewType === 'book' ? 'Scripture' : previewType === 'raga' ? 'Raga' : 'Verse'}
-                </span>
-                <h2 className="text-xl font-bold font-headings text-minimal-gold truncate">
-                  {previewType === 'saint' ? (isHi ? selectedItem.name : selectedItem.hinglishName) :
-                    previewType === 'book' ? selectedItem.name : previewType === 'raga' ? selectedItem.name : selectedItem.title}
-                </h2>
-                {previewType === 'book' && selectedItem.author && <span className="text-xs text-white/40 block mt-1">By {selectedItem.author}</span>}
-                {previewType === 'raga' && <span className="text-xs text-white/40 block mt-0.5">{selectedItem.hinglishName}</span>}
-              </div>
-              <button onClick={closePreview} className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-white transition-colors hover:bg-white/10 shrink-0"><X size={16} /></button>
-            </div>
-
-            {/* Scrollable Content */}
-            <div className="drawer-scroll-container">
-              {/* Saint */}
-              {previewType === 'saint' && (<div>
-                <div className="drawer-tabs">
-                  {['bio', 'books', 'verses'].map(tab => (
-                    <button key={tab} onClick={() => setDrawerTab(tab)} className={`drawer-tab ${drawerTab === tab ? 'active' : ''}`}>
-                      {tab === 'bio' ? 'Biography' : tab === 'books' ? `Books (${selectedItem.books?.length || 0})` : `Verses (${selectedItem.verses?.length || 0})`}
-                    </button>
-                  ))}
-                </div>
-                {drawerTab === 'bio' && (
-                  selectedItem.biography
-                    ? <p className="text-white/70 text-xs md:text-sm leading-relaxed whitespace-pre-line bg-white/5 p-4 rounded-xl border border-white/5">{selectedItem.biography.text}</p>
-                    : <p className="text-white/40 text-center py-8 text-xs">Biography not available.</p>
-                )}
-                {drawerTab === 'books' && (<div className="grid grid-cols-1 gap-2">
-                  {selectedItem.books?.length > 0 ? selectedItem.books.map(bName => {
-                    const m = books.find(b => b.name === bName);
-                    return (<button key={bName} onClick={() => { if (m) { setSelectedItem(m); setPreviewType('book'); } }}
-                      className="p-3 text-left rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 flex items-center justify-between text-xs font-bold w-full transition-colors group">
-                      <span className="text-white/90 group-hover:text-primary transition-colors">{bName}</span>
-                      <ChevronRight size={14} className="text-white/20 group-hover:text-primary transition-colors" />
-                    </button>);
-                  }) : <p className="text-white/40 text-center py-8 text-xs">No books.</p>}
-                </div>)}
-                {drawerTab === 'verses' && (<div className="space-y-2">
-                  {selectedItem.verses?.map((v, i) => (
-                    <Link key={`${v.slug || v.id || 'verse'}-${i}`} to={isHi ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`} onClick={closePreview}
-                      className="block p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-xs font-bold text-white/85 hover:text-primary transition-colors truncate">{v.cleanTitle || v.title}</Link>
-                  ))}
-                </div>)}
-              </div>)}
-
-              {/* Book */}
-              {previewType === 'book' && (<div className="space-y-2">
-                {selectedItem.verses?.map((v, i) => (
-                  <Link key={`${v.slug || v.id || 'verse'}-${i}`} to={isHi ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`} onClick={closePreview}
-                    className="block p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-xs font-bold text-white/85 hover:text-primary transition-colors truncate">{v.cleanTitle || v.title}</Link>
-                ))}
-              </div>)}
-
-              {/* Raga */}
-              {previewType === 'raga' && (<div className="space-y-2">
-                {selectedItem.verses?.map((v, i) => (
-                  <Link key={`${v.slug || v.id || 'verse'}-${i}`} to={isHi ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`} onClick={closePreview}
-                    className="block p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-xs font-bold text-white/85 hover:text-primary transition-colors truncate">{v.cleanTitle || v.title}</Link>
-                ))}
-              </div>)}
-
-              {/* Verse */}
-              {previewType === 'verse' && (<div className="space-y-5 text-xs md:text-sm">
-                {selectedItem.audio_url && (
-                  <div className="glass-card p-4 flex items-center justify-between border border-white/5 mb-4">
-                    <span className="font-semibold text-white/80">Recitation:</span>
-                    <AudioPlayButton track={selectedItem} className="bg-primary text-white p-3 rounded-full hover:scale-105 shadow-lg shadow-primary/20" size={20} />
-                  </div>
-                )}
-                {selectedItem.sanskrit_text && (
-                  <div className="bg-white/5 p-5 rounded-2xl border border-white/5 text-center">
-                    <h5 className="text-[10px] uppercase tracking-wider text-amber-500/60 font-bold mb-3">Original Scripture</h5>
-                    <p className="font-bold text-minimal-gold leading-loose whitespace-pre-line font-headings select-all text-base text-center py-2">{selectedItem.sanskrit_text}</p>
-                  </div>
-                )}
-                {selectedItem.hindi_text && (
-                  <div className="bg-white/5 p-4 rounded-xl border border-white/5">
-                    <h5 className="text-[10px] uppercase tracking-wider text-white/40 font-bold mb-2">भावार्थ</h5>
-                    <p className="text-white/70 leading-relaxed font-light">{selectedItem.hindi_text}</p>
-                  </div>
-                )}
-                {selectedItem.english_translation && (
-                  <div className="bg-white/5 p-4 rounded-xl border border-white/5">
-                    <h5 className="text-[10px] uppercase tracking-wider text-white/40 font-bold mb-2">English</h5>
-                    <p className="text-white/60 leading-relaxed font-light italic">{selectedItem.english_translation}</p>
-                  </div>
-                )}
-                {selectedItem.description && !selectedItem.hindi_text && !selectedItem.english_translation && (
-                  <div className="bg-white/5 p-4 rounded-xl border border-white/5">
-                    <h5 className="text-[10px] uppercase tracking-wider text-white/40 font-bold mb-2">Description</h5>
-                    <p className="text-white/65 leading-relaxed font-light">{selectedItem.description}</p>
-                  </div>
-                )}
-              </div>)}
-            </div>
-
-            {/* Footer Link */}
-            <div className="py-4 border-t border-white/5 flex gap-3 shrink-0">
-              {previewType === 'saint' && (
-                <Link to={isHi ? `/hi/saint/${selectedItem.slug}` : `/saint/${selectedItem.slug}`} onClick={closePreview}
-                  className="btn-premium flex-1 text-center py-3 text-xs uppercase tracking-wider font-semibold">Open Full Page</Link>
-              )}
-              {previewType === 'book' && (
-                <Link to={isHi ? `/hi/book/${selectedItem.slug}` : `/book/${selectedItem.slug}`} onClick={closePreview}
-                  className="btn-premium flex-1 text-center py-3 text-xs uppercase tracking-wider font-semibold">Open Full Page</Link>
-              )}
-              {previewType === 'raga' && (
-                <Link to={isHi ? `/hi/raga/${selectedItem.slug}` : `/raga/${selectedItem.slug}`} onClick={closePreview}
-                  className="btn-premium flex-1 text-center py-3 text-xs uppercase tracking-wider font-semibold">Open Full Page</Link>
-              )}
-              {previewType === 'verse' && (
-                <Link to={isHi ? `/hi/content/${selectedItem.slug || selectedItem.id}` : `/content/${selectedItem.slug || selectedItem.id}`} onClick={closePreview}
-                  className="btn-premium flex-1 text-center py-3 text-xs uppercase tracking-wider font-semibold">Open Full Page</Link>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
+      {/* ═══ PREVIEW DRAWER (LAZY LOADED ON DEMAND) ─── */}
+      {selectedItem && (
+        <React.Suspense fallback={null}>
+          <PreviewDrawer
+            isHi={isHi}
+            selectedItem={selectedItem}
+            previewType={previewType}
+            closePreview={closePreview}
+            books={books}
+            onNavigatePreview={openPreview}
+          />
+        </React.Suspense>
+      )}
     </div>
   );
 };
