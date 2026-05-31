@@ -952,11 +952,19 @@ class _RecentReflectionPreviewLite extends ConsumerWidget {
 
 
 
-class _PremiumContentListLite extends ConsumerWidget {
+class _PremiumContentListLite extends ConsumerStatefulWidget {
   const _PremiumContentListLite();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_PremiumContentListLite> createState() =>
+      _PremiumContentListLiteState();
+}
+
+class _PremiumContentListLiteState extends ConsumerState<_PremiumContentListLite> {
+  int _visibleCount = 3;
+
+  @override
+  Widget build(BuildContext context) {
     final discoveryState = ref.watch(personalizedDiscoveryProvider);
     final items = discoveryState.items;
     final isLoading = discoveryState.isLoading;
@@ -975,9 +983,11 @@ class _PremiumContentListLite extends ConsumerWidget {
       );
     }
 
+    final visibleItems = items.take(_visibleCount).toList();
+
     return Column(
       children: [
-        ...items.map((item) => Padding(
+        ...visibleItems.map((item) => Padding(
           padding: const EdgeInsets.only(bottom: 16),
           child: PressableScale(
             onTap: () {
@@ -1099,6 +1109,52 @@ class _PremiumContentListLite extends ConsumerWidget {
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   color: PremiumTokens.activeAccent,
+                ),
+              ),
+            ),
+          )
+        else if (discoveryState.hasMore || _visibleCount < items.length)
+          Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 24),
+            child: PressableScale(
+              onTap: () {
+                HapticFeedback.mediumImpact();
+                setState(() {
+                  _visibleCount += 5;
+                });
+                if (_visibleCount >= items.length) {
+                  ref.read(personalizedDiscoveryProvider.notifier).loadMore();
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                decoration: BoxDecoration(
+                  color: PremiumTokens.activeAccent.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                    color: PremiumTokens.activeAccent.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Iconsax.arrow_down_1,
+                      color: PremiumTokens.activeAccent,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      "LOAD MORE WISDOM",
+                      style: PremiumTokens.sansStyle(
+                        color: PremiumTokens.activeAccent,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
