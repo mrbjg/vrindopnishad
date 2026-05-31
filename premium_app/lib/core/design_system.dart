@@ -424,7 +424,7 @@ class PremiumTokens {
   static TextStyle soulStyle({
     double fontSize = 24,
     Color? color,
-    FontWeight fontWeight = FontWeight.w300,
+    FontWeight fontWeight = FontWeight.normal,
     double? letterSpacing,
   }) {
     return GoogleFonts.newsreader(
@@ -462,8 +462,47 @@ class _CelestialBreathingCurve extends Curve {
 class EmojiToIcon {
   static IconData getIcon(String emoji) {
     switch (emoji) {
+      // Moods
       case '🌅':
         return Iconsax.sun_15;
+      case '🌑':
+        return Iconsax.moon;
+      case '☁️':
+        return Icons.cloud_outlined;
+      case '☀️':
+        return Iconsax.sun_1;
+      case '❄️':
+        return Icons.ac_unit;
+      case '🌧️':
+        return Icons.umbrella_outlined;
+      case '🌿':
+        return Icons.eco_outlined;
+      case '🌲':
+        return Icons.park_outlined;
+      case '💧':
+        return Icons.water_drop_outlined;
+      case '🏔️':
+        return Icons.terrain_outlined;
+
+      // Color Themes
+      case '🌌':
+        return Icons.nights_stay_outlined;
+      case '🪷':
+        return Icons.spa_outlined;
+      case '🌸':
+        return Icons.filter_vintage_outlined;
+      case '🍀':
+        return Icons.local_florist_outlined;
+      case '🔮':
+        return Iconsax.magicpen;
+      case '👑':
+        return Iconsax.crown;
+      case '🌊':
+        return Icons.water_outlined;
+      case '🌙':
+        return Icons.nightlight_outlined;
+
+      // General Emojis & Stats
       case '🔥':
         return Iconsax.flash_1;
       case '📿':
@@ -474,10 +513,6 @@ class EmojiToIcon {
         return Iconsax.activity;
       case '⭐':
         return Iconsax.star_1;
-      case '🏔️':
-        return Iconsax.flag;
-      case '👑':
-        return Iconsax.crown;
       case '🏆':
         return Iconsax.award;
       case '📚':
@@ -492,12 +527,12 @@ class EmojiToIcon {
         return Iconsax.star_1;
       case '💎':
         return Iconsax.status;
-      case '🌑':
-        return Iconsax.moon;
       case '✨':
         return Iconsax.magicpen;
       case '🕉️':
         return Iconsax.sun_fog;
+      case '📊':
+        return Iconsax.graph;
       default:
         return Iconsax.mask;
     }
@@ -947,68 +982,73 @@ class PremiumUI {
             clipBehavior: Clip.none,
             children: [
               // Glass Bar Container
-              Container(
-                height: 70,
-                width: effectiveWidth - 32, // Strictly bound to parent width
-                decoration: BoxDecoration(
-                  color: PremiumTokens.navBarBg,
-                  borderRadius: BorderRadius.circular(35),
-                  border: Border.all(
-                    color: PremiumTokens.borderSubtle,
-                    width: 0.5,
-                  ),
-                  boxShadow: PremiumTokens.isDark ? null : [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
-                      blurRadius: 20,
-                      offset: const Offset(0, 4),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(35),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                  child: Container(
+                    height: 70,
+                    width: effectiveWidth - 32, // Strictly bound to parent width
+                    decoration: BoxDecoration(
+                      color: (PremiumTokens.isDark
+                              ? Colors.black
+                              : Colors.white)
+                          .withValues(alpha: PremiumTokens.isDark ? 0.35 : 0.45),
+                      borderRadius: BorderRadius.circular(35),
+                      border: Border.all(
+                        color: (PremiumTokens.isDark
+                                ? Colors.white
+                                : Colors.black)
+                            .withValues(alpha: 0.12),
+                        width: 0.5,
+                      ),
                     ),
-                  ],
-                ),
-                child: Stack(
-                  children: [
-                    // Capsule Indicator
-                    AnimatedPositioned(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeOutBack,
-                      left: (selectedIndex * slotWidth) + (slotWidth - capsuleWidth) / 2,
-                      top: (70 - capsuleHeight) / 2,
-                      child: RepaintBoundary(
-                        child: Container(
-                          width: capsuleWidth,
-                          height: capsuleHeight,
-                          decoration: BoxDecoration(
-                            color: PremiumTokens.overlayFill.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(22),
+                    child: Stack(
+                      children: [
+                        // Capsule Indicator
+                        AnimatedPositioned(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeOutBack,
+                          left: (selectedIndex * slotWidth) + (slotWidth - capsuleWidth) / 2,
+                          top: (70 - capsuleHeight) / 2,
+                          child: RepaintBoundary(
+                            child: Container(
+                              width: capsuleWidth,
+                              height: capsuleHeight,
+                              decoration: BoxDecoration(
+                                color: PremiumTokens.overlayFill.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(22),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        // Navigation Icons Row
+                        SizedBox(
+                          width: double.infinity,
+                          height: 70,
+                          child: Row(
+                            children: List.generate(items.length, (index) {
+                              final item = items[index];
+                              final isSelected = selectedIndex == index;
+    
+                              if (index == 2) {
+                                return const Expanded(child: SizedBox());
+                              }
+    
+                              return Expanded(
+                                child: _PremiumAnimatedNavButton(
+                                  index: index,
+                                  isSelected: isSelected,
+                                  item: item,
+                                  onTap: onTap,
+                                ),
+                              );
+                            }),
+                          ),
+                        ),
+                      ],
                     ),
-                    // Navigation Icons Row
-                    SizedBox(
-                      width: double.infinity,
-                      height: 70,
-                      child: Row(
-                        children: List.generate(items.length, (index) {
-                          final item = items[index];
-                          final isSelected = selectedIndex == index;
-
-                          if (index == 2) {
-                            return const Expanded(child: SizedBox());
-                          }
-
-                          return Expanded(
-                            child: _PremiumAnimatedNavButton(
-                              index: index,
-                              isSelected: isSelected,
-                              item: item,
-                              onTap: onTap,
-                            ),
-                          );
-                        }),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ],
@@ -1262,6 +1302,34 @@ class PremiumUI {
       borderRadius: borderRadius,
       padding: padding,
       child: child,
+    );
+  }
+
+  /// Premium Solid Accent Button — adapts to current mood's activeAccent with scale spring feedback
+  static Widget accentButton({
+    required Widget child,
+    required VoidCallback onTap,
+    Color? color,
+    double borderRadius = 20,
+    EdgeInsets? padding,
+  }) {
+    return _DesignSystemPressableScale(
+      onTap: onTap,
+      child: Container(
+        padding: padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        decoration: BoxDecoration(
+          color: color ?? PremiumTokens.activeAccent,
+          borderRadius: BorderRadius.circular(borderRadius),
+          boxShadow: [
+            BoxShadow(
+              color: (color ?? PremiumTokens.activeAccent).withValues(alpha: 0.3),
+              blurRadius: 15,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: child,
+      ),
     );
   }
 
@@ -1870,7 +1938,7 @@ class PremiumUI {
     required VoidCallback onTap,
     IconData? icon,
   }) {
-    return GestureDetector(
+    return _DesignSystemPressableScale(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
@@ -1914,7 +1982,7 @@ class PremiumUI {
     required VoidCallback onTap,
     IconData? icon,
   }) {
-    return GestureDetector(
+    return _DesignSystemPressableScale(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
@@ -2172,7 +2240,7 @@ class PremiumUI {
     required VoidCallback onTap,
     IconData? icon,
   }) {
-    return GestureDetector(
+    return _DesignSystemPressableScale(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
@@ -2319,7 +2387,7 @@ class PremiumUI {
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
         statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
-        systemNavigationBarColor: PremiumTokens.scaffoldBg,
+        systemNavigationBarColor: Colors.transparent,
         systemNavigationBarDividerColor: Colors.transparent,
         systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
       ),
@@ -2540,6 +2608,66 @@ class _LiquidGlassButtonInternalState extends State<_LiquidGlassButtonInternal>
     );
   }
 }
+
+class _DesignSystemPressableScale extends StatefulWidget {
+  final Widget child;
+  final VoidCallback onTap;
+
+  const _DesignSystemPressableScale({
+    required this.child,
+    required this.onTap,
+  });
+
+  @override
+  State<_DesignSystemPressableScale> createState() => _DesignSystemPressableScaleState();
+}
+
+class _DesignSystemPressableScaleState extends State<_DesignSystemPressableScale>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 90),
+      reverseDuration: const Duration(milliseconds: 320),
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOut,
+        reverseCurve: Curves.elasticOut,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => _controller.forward(),
+      onTapUp: (_) {
+        _controller.reverse();
+        HapticFeedback.selectionClick();
+        widget.onTap();
+      },
+      onTapCancel: () => _controller.reverse(),
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: widget.child,
+      ),
+    );
+  }
+}
+
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// GLASS SHIMMER OVERLAY — Animated diagonal light sweep
@@ -2982,23 +3110,6 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal>
         child: Stack(
           alignment: Alignment.center,
           children: [
-            // Outer Glow Aura (Subtle Breathing)
-            Container(
-              width: 75,
-              height: 75,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: PremiumTokens.activeAccent
-                        .withValues(alpha: widget.isActive ? 0.45 : 0.25),
-                    blurRadius: widget.isActive ? 32 : 24,
-                    spreadRadius: widget.isActive ? 3 : 1,
-                  ),
-                ],
-              ),
-            ),
-
             // Main Button Body
             Container(
               width: 58,
@@ -3013,14 +3124,6 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal>
                       .withValues(alpha: widget.isActive ? 0.8 : 0.35),
                   width: 1.5,
                 ),
-                boxShadow: [
-                  if (widget.isActive)
-                    BoxShadow(
-                      color: PremiumTokens.activeAccent.withValues(alpha: 0.5),
-                      blurRadius: 15,
-                      spreadRadius: -2,
-                    ),
-                ],
               ),
               child: Center(
                 child: widget.count != null && widget.count! > 0
@@ -3161,7 +3264,7 @@ class _PremiumAnimatedNavButtonState extends State<_PremiumAnimatedNavButton>
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeOutCubic,
                       child: AnimatedOpacity(
-                        opacity: widget.isSelected ? 0.0 : 0.25,
+                        opacity: widget.isSelected ? 0.0 : 0.55,
                         duration: const Duration(milliseconds: 250),
                         child: PremiumUI.customIcon(
                           fileName: widget.item.iconSvg,
@@ -4266,13 +4369,17 @@ class _AtmosphericParticlePainter extends CustomPainter {
         case AppMoodTheme.monsoonGreen:
           // Fade out rain particles near the top (under the clouds) so they emerge realistically
           final double verticalFade = p.y < 0.15 ? (p.y / 0.15).clamp(0.0, 1.0) : 1.0;
-          paint.color = Colors.white.withValues(alpha: p.opacity * 0.5 * verticalFade);
-          paint.strokeWidth = p.size;
-          canvas.drawLine(
-            Offset(dx, dy),
-            Offset(dx + p.speedX * 25, dy + p.speedY * 25),
-            paint..style = PaintingStyle.stroke,
-          );
+          const double lengthMultiplier = 85.0; // Dynamic motion blur length
+          
+          final startPoint = Offset(dx, dy);
+          final endPoint = Offset(dx + p.speedX * lengthMultiplier, dy + p.speedY * lengthMultiplier);
+
+          paint.color = Colors.white.withValues(alpha: p.opacity * 0.18 * verticalFade);
+          paint.strokeWidth = p.size * 0.8;
+          paint.style = PaintingStyle.stroke;
+          paint.strokeCap = StrokeCap.round; // Soft rounded drops
+
+          canvas.drawLine(startPoint, endPoint, paint);
           break;
         case AppMoodTheme.coldMist:
           // Draw a stylized, premium 6-point snowflake crystal!

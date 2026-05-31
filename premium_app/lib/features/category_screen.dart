@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../core/content_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -124,6 +125,9 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                                   hintText: "${l.translate('search')}...",
                                   hintStyle: GoogleFonts.outfit(color: PremiumTokens.textMuted),
                                   border: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  filled: false,
                                   icon: Icon(Iconsax.search_normal, color: PremiumTokens.textMuted, size: 20),
                                 ),
                                 onChanged: (v) => setState(() => _searchQuery = v),
@@ -172,6 +176,22 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
               
               const SliverToBoxAdapter(child: SizedBox(height: 100)),
             ],
+          ),
+          
+          // Frosted Glass Status Bar Overlay (Notch Shield)
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                child: Container(
+                  height: MediaQuery.paddingOf(context).top,
+                  color: PremiumTokens.scaffoldBg.withValues(alpha: 0.82),
+                ),
+              ),
+            ),
           ),
         ],
       ),

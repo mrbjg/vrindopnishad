@@ -39,7 +39,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Widget build(BuildContext context) {
     final currentIndex = ref.watch(onboardingPageIndexProvider);
 
-    final List<_SlideData> slides = [
+    const List<_SlideData> slides = [
       _SlideData(
         icon: Iconsax.book_1,
         title: "Divine Wisdom",
@@ -180,40 +180,31 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Widget _buildNextButton() {
-    return ElevatedButton(
-      onPressed: () {
-        HapticFeedback.lightImpact();
+    return PremiumUI.liquidGlassButton(
+      onTap: () {
         _pageController.nextPage(
           duration: const Duration(milliseconds: 500),
           curve: Curves.easeInOutCubic,
         );
       },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: PremiumTokens.activeAccent.withValues(alpha: 0.15),
-        foregroundColor: PremiumTokens.activeAccent,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
-            color: PremiumTokens.activeAccent.withValues(alpha: 0.3),
+      borderRadius: 16,
+      child: Center(
+        child: Text(
+          "NEXT",
+          style: GoogleFonts.manrope(
+            fontSize: 14,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 3,
+            color: PremiumTokens.activeAccent,
           ),
-        ),
-      ),
-      child: Text(
-        "NEXT",
-        style: GoogleFonts.manrope(
-          fontSize: 14,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 3,
         ),
       ),
     );
   }
 
   Widget _buildJourneyButton(WidgetRef ref) {
-    return ElevatedButton(
-      onPressed: () {
-        HapticFeedback.heavyImpact();
+    return PremiumUI.accentButton(
+      onTap: () {
         final level = ref.read(selectedSpiritualityLevelProvider);
         final goal = ref.read(selectedDailyGoalProvider);
         ref
@@ -223,21 +214,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               dailyGoal: goal,
             );
       },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: PremiumTokens.activeAccent,
-        foregroundColor: PremiumTokens.onAccent,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        shadowColor: PremiumTokens.activeAccent.withValues(alpha: 0.4),
-      ),
-      child: Text(
-        "BEGIN THE JOURNEY",
-        style: GoogleFonts.manrope(
-          fontSize: 14,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 3,
+      borderRadius: 16,
+      child: Center(
+        child: Text(
+          "BEGIN THE JOURNEY",
+          style: GoogleFonts.manrope(
+            fontSize: 14,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 3,
+            color: PremiumTokens.onAccent,
+          ),
         ),
       ),
     ).animate().fade(duration: 400.ms).scale(
@@ -429,7 +415,7 @@ class _AssessmentSlide extends ConsumerWidget {
           const SizedBox(height: 40),
 
           // SECTION 1: Experience Level
-          _SectionLabel(text: "YOUR EXPERIENCE"),
+          const _SectionLabel(text: "YOUR EXPERIENCE"),
 
           const SizedBox(height: 16),
 
@@ -473,7 +459,7 @@ class _AssessmentSlide extends ConsumerWidget {
           const SizedBox(height: 40),
 
           // SECTION 2: Daily Goal
-          _SectionLabel(text: "DAILY NAAM JAP GOAL"),
+          const _SectionLabel(text: "DAILY NAAM JAP GOAL"),
 
           const SizedBox(height: 20),
 
@@ -830,7 +816,11 @@ class _MoodCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(palette.emoji, style: const TextStyle(fontSize: 24)),
+                  EmojiToIcon.getIconWidget(
+                    palette.emoji,
+                    size: 24,
+                    color: isSelected ? PremiumTokens.activeAccent : PremiumTokens.textMuted,
+                  ),
                   if (isSelected)
                     Icon(
                       Iconsax.tick_circle5,

@@ -65,6 +65,8 @@ dependencies:
   timezone: ^0.9.4
   flutter_dynamic_icon_plus: ^1.4.0
   crypto: ^3.0.3
+  video_player: ^2.11.1
+  youtube_explode_dart: ^3.1.0
 
 dev_dependencies:
   flutter_test:
@@ -128,6 +130,8 @@ flutter:
   fonts:
     - family: Poppins
       fonts:
+        - asset: google_fonts/Poppins-Light.ttf
+          weight: 300
         - asset: google_fonts/Poppins-Regular.ttf
         - asset: google_fonts/Poppins-Medium.ttf
           weight: 500
@@ -135,8 +139,17 @@ flutter:
           weight: 600
         - asset: google_fonts/Poppins-Bold.ttf
           weight: 700
+        - asset: google_fonts/Poppins-ExtraBold.ttf
+          weight: 800
+        - asset: google_fonts/Poppins-Black.ttf
+          weight: 900
     - family: Spectral
       fonts:
+        - asset: google_fonts/Spectral-ExtraLight.ttf
+          weight: 200
+        - asset: google_fonts/Spectral-LightItalic.ttf
+          weight: 300
+          style: italic
         - asset: google_fonts/Spectral-Regular.ttf
         - asset: google_fonts/Spectral-Italic.ttf
           style: italic
@@ -145,6 +158,10 @@ flutter:
         - asset: google_fonts/Spectral-SemiBold.ttf
           weight: 600
         - asset: google_fonts/Spectral-Bold.ttf
+          weight: 700
+    - family: NotoSerif
+      fonts:
+        - asset: google_fonts/NotoSerif-Bold.ttf
           weight: 700
     - family: Laila
       fonts:
@@ -175,6 +192,10 @@ flutter:
           weight: 600
         - asset: google_fonts/Manrope-Bold.ttf
           weight: 700
+        - asset: google_fonts/Manrope-ExtraBold.ttf
+          weight: 800
+        - asset: google_fonts/Manrope-Black.ttf
+          weight: 900
     - family: Outfit
       fonts:
         - asset: google_fonts/Outfit-Regular.ttf

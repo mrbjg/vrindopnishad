@@ -29,24 +29,57 @@ double calculateDwellWeight(int seconds) {
   return 5.0; // immersive reflection
 }
 
-/// Dynamic similarity index using Jaccard Similarity on tags + Category match
+/// Dynamic similarity index using Jaccard Similarity on tags + Category/Author/Book matches
 double calculateSimilarity(SacredContent a, SacredContent b) {
   if (a.id == b.id) return 1.0;
   
+  // 1. Category matching (base similarity)
   final bool categoryMatch = a.category.toLowerCase() == b.category.toLowerCase();
   
-  final tagsA = a.contentTags.map((t) => t.toLowerCase()).toSet();
-  final tagsB = b.contentTags.map((t) => t.toLowerCase()).toSet();
-  
-  if (tagsA.isEmpty && tagsB.isEmpty) {
-    return categoryMatch ? 0.5 : 0.0;
+  // 2. Author matching (high affinity for same author/saint)
+  final bool authorMatch = a.author != null && 
+      b.author != null && 
+      a.author!.isNotEmpty && 
+      a.author!.toLowerCase() == b.author!.toLowerCase();
+      
+  // 3. Book matching
+  final bool bookMatch = a.book != null && 
+      b.book != null && 
+      a.book!.isNotEmpty && 
+      a.book!.toLowerCase() == b.book!.toLowerCase();
+
+  // 4. Combined tag union/intersection (Jaccard similarity on all tag lists)
+  final tagsA = <String>{};
+  tagsA.addAll(a.contentTags.map((t) => t.toLowerCase()));
+  tagsA.addAll(a.audioTags.map((t) => t.toLowerCase()));
+  tagsA.addAll(a.videoTags.map((t) => t.toLowerCase()));
+  tagsA.addAll(a.imageTags.map((t) => t.toLowerCase()));
+
+  final tagsB = <String>{};
+  tagsB.addAll(b.contentTags.map((t) => t.toLowerCase()));
+  tagsB.addAll(b.audioTags.map((t) => t.toLowerCase()));
+  tagsB.addAll(b.videoTags.map((t) => t.toLowerCase()));
+  tagsB.addAll(b.imageTags.map((t) => t.toLowerCase()));
+
+  double jaccard = 0.0;
+  if (tagsA.isNotEmpty || tagsB.isNotEmpty) {
+    final intersection = tagsA.intersection(tagsB).length;
+    final union = tagsA.union(tagsB).length;
+    jaccard = intersection / union;
   }
+
+  // Weight distribution:
+  // - Category match: 0.25
+  // - Author match: 0.25
+  // - Book match: 0.15
+  // - Tag similarity (Jaccard): 0.35
+  double score = 0.0;
+  if (categoryMatch) score += 0.25;
+  if (authorMatch) score += 0.25;
+  if (bookMatch) score += 0.15;
+  score += jaccard * 0.35;
   
-  final intersection = tagsA.intersection(tagsB).length;
-  final union = tagsA.union(tagsB).length;
-  
-  final jaccard = intersection / union;
-  return (categoryMatch ? 0.4 : 0.0) + (jaccard * 0.6);
+  return score;
 }
 
 /// Notifier to manage user's dwell time history locally
@@ -279,22 +312,40 @@ final matchPercentageProvider = Provider.family<int, SacredContent>((ref, item) 
   return percent;
 });
 
-/// Netflix/Amazon style "More Like This" similar content provider
+/// Netflix/Amazon style "More Like This" similar content provider with robust fallback mechanisms
 final similarContentProvider = Provider.family<List<SacredContent>, SacredContent>((ref, currentItem) {
   final allContent = ref.watch(sacredContentProvider);
-  
+  if (allContent.isEmpty) return [];
+
   final scored = allContent
       .where((item) => item.id != currentItem.id)
       .map((item) {
         final similarity = calculateSimilarity(currentItem, item);
         return _ScoredContent(item, similarity);
       })
-      .where((s) => s.score > 0.1) // Minimum similarity threshold
       .toList();
       
   scored.sort((a, b) => b.score.compareTo(a.score));
   
-  return scored.map((s) => s.content).take(8).toList();
+  // Filter for items that have some similarity boost
+  final matches = scored.where((s) => s.score > 0.05).map((s) => s.content).toList();
+  
+  if (matches.isNotEmpty) {
+    return matches.take(8).toList();
+  }
+  
+  // Fallback 1: Recommend items from the same category
+  final categoryFallback = allContent
+      .where((item) => item.id != currentItem.id && item.category.toLowerCase() == currentItem.category.toLowerCase())
+      .take(8)
+      .toList();
+      
+  if (categoryFallback.isNotEmpty) {
+    return categoryFallback;
+  }
+  
+  // Fallback 2: General fallback to other items
+  return allContent.where((item) => item.id != currentItem.id).take(8).toList();
 });
 
 /// State for personalized discovery feed with loading status

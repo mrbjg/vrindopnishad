@@ -5,6 +5,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/design_system.dart';
 import '../core/auth_provider.dart';
+import '../widgets/animated_effects.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
@@ -71,6 +72,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    PremiumTokens.of(context);
     return Scaffold(
       backgroundColor: PremiumTokens.scaffoldBg,
       body: Stack(
@@ -81,12 +83,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Logo Section with Glowing Aura
-                    PremiumUI.logoAnimated(height: 100),
+                    PremiumUI.logoAnimated(height: 100, color: PremiumTokens.textPrimary),
 
                     const SizedBox(height: 24),
 
@@ -208,7 +211,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     const SizedBox(height: 48),
 
                     // Guest Login Option
-                    GestureDetector(
+                    PressableScale(
                       onTap: () async {
                         setState(() => _isLoading = true);
                         try {
@@ -293,7 +296,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   Widget _buildSocialCircle({IconData? icon, String? image, required VoidCallback onTap}) {
-    return GestureDetector(
+    return PressableScale(
       onTap: onTap,
       child: Container(
         width: 56,

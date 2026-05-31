@@ -366,7 +366,7 @@ class NotificationService {
       body: eveningMsg.$2,
     );
 
-    debugPrint('Naam Jap reminders scheduled: ${morningHour}:00 & ${eveningHour}:00');
+    debugPrint('Naam Jap reminders scheduled: $morningHour:00 & $eveningHour:00');
   }
 
   Future<void> _scheduleJapAt({

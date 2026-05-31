@@ -238,9 +238,16 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               margin: const EdgeInsets.symmetric(vertical: 4),
               decoration: BoxDecoration(
-                color: isSelected ? PremiumTokens.textMuted : Colors.transparent,
+                color: isSelected
+                    ? PremiumTokens.activeAccent.withValues(alpha: 0.15)
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(12),
-                border: isSelected ? Border.all(color: PremiumTokens.textMuted) : null,
+                border: Border.all(
+                  color: isSelected
+                      ? PremiumTokens.activeAccent.withValues(alpha: 0.3)
+                      : PremiumTokens.borderSubtle.withValues(alpha: 0.5),
+                  width: 1,
+                ),
               ),
               child: Center(
                 child: Text(
@@ -249,7 +256,7 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
                     fontSize: 11,
                     fontWeight: isSelected ? FontWeight.w900 : FontWeight.w500,
                     letterSpacing: 2,
-                    color: isSelected ? PremiumTokens.textPrimary : PremiumTokens.textMuted,
+                    color: isSelected ? PremiumTokens.activeAccent : PremiumTokens.textMuted,
                   ),
                 ),
               ),
@@ -261,7 +268,9 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
   }
 
   Widget _buildEventCard(SacredEvent event, int index) {
-    final daysUntil = event.date.difference(DateTime.now()).inDays;
+    final todayDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    final eventDate = DateTime(event.date.year, event.date.month, event.date.day);
+    final daysUntil = eventDate.difference(todayDate).inDays;
     final isToday = event.isToday;
 
     final typeColors = {

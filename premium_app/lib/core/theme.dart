@@ -423,7 +423,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMedium),
-          borderSide: const BorderSide(color: peacockBlue, width: 2),
+          borderSide: const BorderSide(color: primaryColor, width: 2),
         ),
         hintStyle: const TextStyle(color: darkTextMuted),
       ),

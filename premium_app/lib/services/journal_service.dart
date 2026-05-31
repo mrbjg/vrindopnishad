@@ -37,6 +37,16 @@ class JournalService {
     }
   }
 
+  /// Stream all public entries in real-time
+  Stream<List<JournalEntry>> getPublicEntriesStream() {
+    return _supabase
+        .from('journal_entries')
+        .stream(primaryKey: ['id'])
+        .order('created_at', ascending: false)
+        .limit(100)
+        .map((list) => list.map((e) => JournalEntry.fromJson(e)).toList());
+  }
+
   /// Create a new journal entry
   Future<JournalEntry?> createEntry(JournalEntry entry) async {
     try {

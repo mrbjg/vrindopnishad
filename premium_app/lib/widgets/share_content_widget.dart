@@ -271,11 +271,11 @@ class ShareContentWidget extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            'Vaidik Sanskriti',
+                            'vrindopnishad.in',
                             style: GoogleFonts.manrope(
-                              color: PremiumTokens.textMuted,
+                              color: PremiumTokens.activeAccent,
                               fontSize: 9,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w800,
                               letterSpacing: 0.8,
                             ),
                           ),
@@ -420,7 +420,7 @@ class ShareContentHelper {
       if (kIsWeb) {
         await Share.shareXFiles(
           [XFile.fromData(imageBytes, name: 'vrindopnishad.png', mimeType: 'image/png')],
-          text: '${content.title}\n\nShared from Vrindopnishad 🙏',
+          text: '🕉️ ${content.title} 🕉️\n\nRead more on Sant-Vaani: https://vrindopnishad.in 🙏',
           subject: content.title,
         );
       } else {
@@ -433,7 +433,7 @@ class ShareContentHelper {
         // Share the image
         await Share.shareXFiles(
           [XFile(file.path)],
-          text: '${content.title}\n\nShared from Vrindopnishad 🙏',
+          text: '🕉️ ${content.title} 🕉️\n\nRead more on Sant-Vaani: https://vrindopnishad.in 🙏',
           subject: content.title,
         );
       }
@@ -456,18 +456,14 @@ class ShareContentHelper {
 
   /// Share content as text
   static Future<void> shareAsText(SacredContent content) async {
-    final text =
-        '''
-${content.title}
-
-${content.sanskritText}
-
-${content.translation}
-
-${content.hindiMeaning}
-
-— Shared from Vrindopnishad 🙏
-''';
+    final List<String> parts = [
+      "🕉️ ${content.title} 🕉️",
+      if (content.sanskritText.isNotEmpty) content.sanskritText,
+      if (content.translation.isNotEmpty) "Translation:\n${content.translation}",
+      if (content.hindiMeaning.isNotEmpty) "Meaning:\n${content.hindiMeaning}",
+      "— Shared from Sant-Vaani (Vrindopnishad) 🙏\n📲 Experience the Divine Path & Preserves our Sanskriti: https://vrindopnishad.in"
+    ];
+    final text = parts.join("\n\n");
 
     await Share.share(text, subject: content.title);
   }

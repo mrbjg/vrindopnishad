@@ -191,7 +191,7 @@ class DailyGyaanScreen extends ConsumerWidget {
                         fontSize: 11,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2.5,
-                        color: PremiumTokens.surfaceMain,
+                        color: PremiumTokens.activeAccent,
                       ),
                     ),
                   ),

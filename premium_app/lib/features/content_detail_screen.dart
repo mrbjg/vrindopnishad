@@ -381,75 +381,6 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                       PremiumUI.sacredDivider(color: themeData.textColor.withValues(alpha: 0.1)),
                       const SizedBox(height: 48),
                       
-                      // Author Icon & Label
-                      Center(
-                        child: Text(
-                          "SACRED COMPOSITION BY",
-                          style: GoogleFonts.manrope(
-                            color: themeData.textColor.withValues(alpha: 0.3),
-                            fontSize: 9,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 3.0,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      
-                      // Author Name
-                      if (content.author != null)
-                        Center(
-                          child: Text(
-                            content.author!.toUpperCase(),
-                            style: GoogleFonts.spectral(
-                              color: PremiumTokens.saffronGlow,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.5,
-                            ),
-                          ),
-                        ),
-                      
-                      const SizedBox(height: 32),
-                      
-                      // Source Row
-                      if (content.book != null || content.chapter != null)
-                        Center(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                            decoration: BoxDecoration(
-                              color: themeData.textColor.withValues(alpha: 0.03),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: themeData.textColor.withValues(alpha: 0.08)),
-                            ),
-                            child: Column(
-                              children: [
-                                if (content.book != null)
-                                  Text(
-                                    "FROM THE SACRED TEXT: ${content.book}".toUpperCase(),
-                                    style: GoogleFonts.manrope(
-                                      color: themeData.textColor.withValues(alpha: 0.5),
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 1.0,
-                                    ),
-                                  ),
-                                if (content.book != null && (content.chapter != null || content.section != null)) const SizedBox(height: 4),
-                                if (content.chapter != null || content.section != null)
-                                  Text(
-                                    "SECTION / CHAPTER: ${content.chapter ?? content.section}".toUpperCase(),
-                                    style: GoogleFonts.manrope(
-                                      color: themeData.textColor.withValues(alpha: 0.4),
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        
-                      const SizedBox(height: 48),
-                      
                       // Tags
                       Center(
                         child: Text(
@@ -457,7 +388,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           style: GoogleFonts.manrope(
                             color: themeData.textColor.withValues(alpha: 0.2), 
                             fontSize: 8, 
-                            fontWeight: FontWeight.w900, 
+                            fontWeight: FontWeight.bold, 
                             letterSpacing: 2.0
                           )
                         ),
@@ -493,28 +424,31 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                   style: GoogleFonts.manrope(
                                     color: themeData.textColor.withValues(alpha: 0.4),
                                     fontSize: 10,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.bold,
                                     letterSpacing: 2,
                                   ),
                                 ),
                               ),
                               const SizedBox(height: 16),
                               SizedBox(
-                                height: 140,
+                                height: 124,
                                 child: ListView.builder(
                                   scrollDirection: Axis.horizontal,
                                   physics: const BouncingScrollPhysics(),
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                                   itemCount: similarList.length,
                                   itemBuilder: (context, index) {
                                     final item = similarList[index];
                                     final match = ref.watch(matchPercentageProvider(item));
+                                    
+                                    final cardImageUrl = item.displayImageUrl;
+
                                     return Padding(
                                       padding: const EdgeInsets.only(right: 12),
                                       child: GestureDetector(
                                         onTap: () {
                                           HapticFeedback.lightImpact();
-                                          Navigator.pushReplacement(
+                                          Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (_) => ContentDetailScreen(content: item),
@@ -522,74 +456,130 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                           );
                                         },
                                         child: Container(
-                                          width: 220,
-                                          padding: const EdgeInsets.all(16),
+                                          width: 300,
+                                          padding: const EdgeInsets.all(12),
                                           decoration: BoxDecoration(
                                             color: themeData.cardColor,
-                                            borderRadius: BorderRadius.circular(16),
+                                            borderRadius: BorderRadius.circular(20),
                                             border: Border.all(
-                                              color: themeData.textColor.withValues(alpha: 0.05),
-                                              width: 0.5,
+                                              color: themeData.textColor.withValues(alpha: 0.08),
+                                              width: 0.8,
                                             ),
                                           ),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.center,
+                                          child: Row(
                                             children: [
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    item.category.toUpperCase(),
-                                                    style: GoogleFonts.manrope(
-                                                      color: themeData.accentColor,
-                                                      fontSize: 8,
-                                                      fontWeight: FontWeight.w800,
-                                                    ),
+                                              // Left: Visual Thumbnail
+                                              ClipRRect(
+                                                borderRadius: BorderRadius.circular(12),
+                                                child: CachedNetworkImage(
+                                                  imageUrl: cardImageUrl,
+                                                  width: 72,
+                                                  height: 72,
+                                                  fit: BoxFit.cover,
+                                                  placeholder: (context, url) => Container(
+                                                    color: themeData.textColor.withValues(alpha: 0.05),
+                                                    child: Icon(Iconsax.image, color: themeData.textColor.withValues(alpha: 0.2), size: 20),
                                                   ),
-                                                  Container(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                                                    decoration: BoxDecoration(
-                                                      color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
-                                                      borderRadius: BorderRadius.circular(4),
+                                                  errorWidget: (context, url, error) => Container(
+                                                    color: themeData.textColor.withValues(alpha: 0.05),
+                                                    child: Icon(Iconsax.image, color: themeData.textColor.withValues(alpha: 0.2), size: 20),
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 12),
+                                              // Right: Metadata & Details
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            Container(
+                                                              width: 5,
+                                                              height: 5,
+                                                              decoration: BoxDecoration(
+                                                                shape: BoxShape.circle,
+                                                                color: themeData.accentColor,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(width: 5),
+                                                            Text(
+                                                              item.category.toUpperCase(),
+                                                              style: GoogleFonts.manrope(
+                                                                color: themeData.textColor.withValues(alpha: 0.5),
+                                                                fontSize: 8,
+                                                                fontWeight: FontWeight.bold,
+                                                                letterSpacing: 0.5,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Container(
+                                                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                                          decoration: BoxDecoration(
+                                                            color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
+                                                            borderRadius: BorderRadius.circular(12),
+                                                            border: Border.all(
+                                                              color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
+                                                              width: 0.5,
+                                                            ),
+                                                          ),
+                                                          child: Text(
+                                                            "$match% RESONANCE",
+                                                            style: GoogleFonts.manrope(
+                                                              color: PremiumTokens.activeAccent,
+                                                              fontSize: 7,
+                                                              fontWeight: FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                    child: Text(
-                                                      "$match% MATCH",
-                                                      style: GoogleFonts.manrope(
-                                                        color: PremiumTokens.activeAccent,
-                                                        fontSize: 7,
-                                                        fontWeight: FontWeight.w800,
+                                                    const SizedBox(height: 4),
+                                                    Expanded(
+                                                      child: Text(
+                                                        item.title,
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: GoogleFonts.spectral(
+                                                          color: themeData.textColor,
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 12.5,
+                                                          height: 1.25,
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Expanded(
-                                                child: Text(
-                                                  item.title,
-                                                  maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: GoogleFonts.spectral(
-                                                    color: themeData.textColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 13,
-                                                    height: 1.3,
-                                                  ),
+                                                    const SizedBox(height: 4),
+                                                    Row(
+                                                      children: [
+                                                        Icon(
+                                                          Iconsax.user,
+                                                          size: 9,
+                                                          color: themeData.textColor.withValues(alpha: 0.4),
+                                                        ),
+                                                        const SizedBox(width: 4),
+                                                        Expanded(
+                                                          child: Text(
+                                                            (item.author != null && item.author!.isNotEmpty)
+                                                                ? item.author!
+                                                                : "Sacred Tradition",
+                                                            maxLines: 1,
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: GoogleFonts.manrope(
+                                                              color: themeData.textColor.withValues(alpha: 0.4),
+                                                              fontSize: 9,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
-                                              if (item.author != null && item.author!.isNotEmpty) ...[
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  item.author!,
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: GoogleFonts.manrope(
-                                                    color: themeData.textColor.withValues(alpha: 0.4),
-                                                    fontSize: 9,
-                                                  ),
-                                                ),
-                                              ],
                                             ],
                                           ),
                                         ),
@@ -690,11 +680,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 child: Text(
                   displayCategory.toUpperCase(),
                   style: GoogleFonts.manrope(
-                    color: themeData.accentColor.withValues(alpha: 0.8),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: isHindi ? 0.5 : 3.0,
-                  ),
+                                                    color: themeData.accentColor.withValues(alpha: 0.8),
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.bold,
+                                                    letterSpacing: isHindi ? 0.5 : 3.0,
+                                                  ),
                 ),
               ),
               Container(width: 20, height: 1, decoration: BoxDecoration(gradient: LinearGradient(colors: [themeData.accentColor.withValues(alpha: 0.5), Colors.transparent]))),
@@ -709,7 +699,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: PremiumTokens.activeAccent.withValues(alpha: 0.25), width: 0.5),
                   ),
                   child: Text(
@@ -757,16 +747,23 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       ),
       decoration: BoxDecoration(
         color: showCompact
-          ? themeData.backgroundColor.withValues(alpha: isParchment ? 0.96 : 0.75) 
+          ? themeData.backgroundColor.withValues(alpha: isParchment ? 0.96 : 0.8) 
           : Colors.transparent,
-        border: Border(
-          bottom: BorderSide(
-            color: showCompact 
-              ? themeData.textColor.withValues(alpha: 0.1) 
-              : Colors.transparent,
-            width: 1,
-          ),
-        ),
+        borderRadius: showCompact
+          ? const BorderRadius.only(
+              bottomLeft: Radius.circular(24),
+              bottomRight: Radius.circular(24),
+            )
+          : BorderRadius.zero,
+        boxShadow: showCompact
+          ? [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isParchment ? 0.05 : 0.15),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ]
+          : null,
       ),
       child: Row(
         children: [
@@ -875,10 +872,16 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     bool resetAfterPlay = true,
     required _ReadingThemeData themeData,
   }) {
-    return PremiumUI.glassCard(
+    return Container(
       padding: const EdgeInsets.all(10),
-      borderRadius: 14,
-      opacity: themeData.glassOpacity * 1.5,
+      decoration: BoxDecoration(
+        color: themeData.textColor.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: themeData.textColor.withValues(alpha: 0.15),
+          width: 1,
+        ),
+      ),
       child: isAnimated 
         ? PremiumUI.animatedIcon(
             folder: animFolder!, 
@@ -952,7 +955,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             style: GoogleFonts.manrope(
                               color: themeData.accentColor, 
                               fontSize: 10, 
-                              fontWeight: FontWeight.w900, 
+                              fontWeight: FontWeight.bold, 
                               letterSpacing: isHindiLabel ? 0.5 : 2.5,
                             ),
                           ),
@@ -1017,7 +1020,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           style: GoogleFonts.manrope(
                             color: accentColor.withValues(alpha: 0.9),
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.bold,
                             letterSpacing: isHindi ? 0.5 : 2.5,
                           ),
                         );
@@ -1056,13 +1059,20 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   }
 
   Widget _buildPremiumFontControls(_ReadingThemeData themeData) {
-    return PremiumUI.glassCard(
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      borderRadius: 16,
+      decoration: BoxDecoration(
+        color: themeData.textColor.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: themeData.textColor.withValues(alpha: 0.12),
+          width: 1,
+        ),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Iconsax.text, color: themeData.textColor.withValues(alpha: 0.24), size: 16),
+          Icon(Iconsax.text, color: themeData.textColor.withValues(alpha: 0.35), size: 16),
           const SizedBox(width: 16),
           _buildFontToolButton(Iconsax.minus, () {
             if (_fontSize > 14) setState(() => _fontSize -= 2);
@@ -1087,7 +1097,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       },
       child: Container(
         padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(color: themeData.textColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+        decoration: BoxDecoration(color: themeData.textColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
         child: Icon(icon, color: themeData.textColor, size: 14),
       ),
     );
@@ -1201,7 +1211,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                               isLoading ? "PREPARING DIVINE VIBRATIONS..." : "DIVINE RECITATION",
                               style: GoogleFonts.outfit(
                                 color: themeData.textColor.withValues(alpha: 0.5),
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.bold,
                                 fontSize: 9,
                                 letterSpacing: 2,
                               ),
@@ -1399,7 +1409,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 Text("READING SETTINGS", 
                   style: GoogleFonts.manrope(
                     fontSize: 10, 
-                    fontWeight: FontWeight.w900, 
+                    fontWeight: FontWeight.bold, 
                     color: themeData.textColor.withValues(alpha: 0.5), 
                     letterSpacing: 2
                   )
@@ -1411,13 +1421,20 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     Text("Font Size", style: GoogleFonts.spectral(color: themeData.textColor, fontSize: 16)),
                     // Pass the modal state setter if needed, but since Font Controls use parent setState,
                     // we need to make sure they also trigger this modal rebuild.
-                    PremiumUI.glassCard(
+                    Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      borderRadius: 16,
+                      decoration: BoxDecoration(
+                        color: themeData.textColor.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: themeData.textColor.withValues(alpha: 0.12),
+                          width: 1,
+                        ),
+                      ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Iconsax.text, color: themeData.textColor.withValues(alpha: 0.24), size: 16),
+                          Icon(Iconsax.text, color: themeData.textColor.withValues(alpha: 0.35), size: 16),
                           const SizedBox(width: 16),
                           _buildFontToolButton(Iconsax.minus, () {
                             if (_fontSize > 14) {
@@ -1478,7 +1495,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           theme.name.replaceAll(RegExp(r'(?=[A-Z])'), ' ').toUpperCase(),
                           style: GoogleFonts.manrope(
                             fontSize: 9,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.bold,
                             color: btnText,
                             letterSpacing: 0.8,
                           ),

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../core/design_system.dart';
 import '../../core/content_provider.dart';
 import '../../core/favorites_provider.dart';
 import '../content_detail_screen.dart';
 import '../../core/color_theme_provider.dart';
+import '../../widgets/animated_effects.dart';
 
 class SavedItemsScreen extends ConsumerWidget {
   const SavedItemsScreen({super.key});
@@ -55,60 +57,100 @@ class SavedItemsScreen extends ConsumerWidget {
                         final item = savedItems[index];
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12),
-                          child: PremiumUI.voidGlassCard(
-                            padding: EdgeInsets.zero,
-                            optimized: true,
-                            child: Material(
-                              color: Colors.transparent,
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                leading: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    gradient: PremiumTokens.activeGradient,
-                                    borderRadius: BorderRadius.circular(12),
+                          child: SizedBox(
+                            height: 110,
+                            child: PressableScale(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ContentDetailScreen(
+                                      content: item,
+                                      title: item.title,
+                                      category: item.category,
+                                    ),
                                   ),
-                                  child: PremiumUI.customIcon(
-                                    fileName: 'iconsax-archive-27ilzneb-.svg',
-                                    color: PremiumTokens.textPrimary,
-                                    size: 20,
-                                  ),
-                                ),
-                                title: Text(
-                                  item.title,
-                                  style: PremiumTokens.displayStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  item.category,
-                                  style: PremiumTokens.sansStyle(
-                                    color: PremiumTokens.activeAccent,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                trailing: Icon(
-                                  Iconsax.arrow_right_3,
-                                  size: 18,
-                                  color: PremiumTokens.textHint,
-                                ),
-                                onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ContentDetailScreen(
-                                          content: item,
-                                          title: item.title,
-                                          category: item.category,
+                                );
+                              },
+                              child: PremiumUI.relicStaticCard(
+                                padding: EdgeInsets.zero,
+                                borderColor: PremiumTokens.borderSubtle,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(24),
+                                  child: Stack(
+                                    fit: StackFit.expand,
+                                    children: [
+                                      // 1. Full-bleed background artwork
+                                      Positioned.fill(
+                                        child: PremiumUI.networkImage(
+                                          url: item.displayImageUrl,
+                                          fit: BoxFit.cover,
                                         ),
                                       ),
-                                    );
-                                },
+
+                                      // 2. Adaptive gradient overlay for text readability
+                                      Positioned.fill(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                              colors: [
+                                                PremiumTokens.surfaceMain.withValues(alpha: 0.10),
+                                                PremiumTokens.surfaceMain.withValues(alpha: 0.70),
+                                                PremiumTokens.surfaceMain.withValues(alpha: 0.96),
+                                              ],
+                                              stops: const [0.0, 0.45, 0.85],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+                                      // 3. Card content
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisAlignment: MainAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                    item.title,
+                                                    style: GoogleFonts.manrope(
+                                                      color: PremiumTokens.textPrimary,
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    item.category.toUpperCase(),
+                                                    style: GoogleFonts.manrope(
+                                                      color: PremiumTokens.activeAccent,
+                                                      fontSize: 10,
+                                                      fontWeight: FontWeight.w800,
+                                                      letterSpacing: 1.5,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(width: 12),
+                                            Icon(
+                                              Iconsax.arrow_right_3,
+                                              size: 20,
+                                              color: PremiumTokens.textPrimary.withValues(alpha: 0.8),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),

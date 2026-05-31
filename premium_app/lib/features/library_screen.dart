@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import '../core/favorites_provider.dart';
 import '../core/audio_provider.dart';
 import '../core/color_theme_provider.dart';
+import '../widgets/animated_effects.dart';
 
 class LibraryScreen extends ConsumerWidget {
   const LibraryScreen({super.key});
@@ -22,6 +23,7 @@ class LibraryScreen extends ConsumerWidget {
       body: Stack(
         children: [
           SafeArea(
+            bottom: false,
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [
@@ -46,7 +48,7 @@ class LibraryScreen extends ConsumerWidget {
                     }
 
                     return SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 180),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
@@ -248,7 +250,7 @@ class LibraryScreen extends ConsumerWidget {
             separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (context, index) {
               final item = forYouItems[index];
-              return GestureDetector(
+              return PressableScale(
                 onTap: () {
                   HapticFeedback.lightImpact();
                   Navigator.push(
@@ -395,7 +397,13 @@ class LibraryScreen extends ConsumerWidget {
                     HapticFeedback.lightImpact();
                     ref.read(libraryCategoryProvider.notifier).state = "ALL";
                   },
-                  child: Icon(Iconsax.close_circle, size: 14, color: PremiumTokens.activeAccent),
+                  behavior: HitTestBehavior.opaque,
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    alignment: Alignment.center,
+                    child: Icon(Iconsax.close_circle, size: 14, color: PremiumTokens.activeAccent),
+                  ),
                 ),
               ],
             ),
@@ -422,7 +430,7 @@ class LibraryScreen extends ConsumerWidget {
               width: 48,
               height: 48,
               child: PremiumUI.networkImage(
-                url: currentTrack.imageUrl ?? 'assets/vaani_icon.png',
+                url: currentTrack.displayImageUrl,
                 width: 48,
                 height: 48,
                 borderRadius: BorderRadius.circular(8),
@@ -495,7 +503,7 @@ class LibraryScreen extends ConsumerWidget {
       height: 142,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 14),
-        child: GestureDetector(
+        child: PressableScale(
           onTap: () {
             HapticFeedback.lightImpact();
             Navigator.push(
@@ -506,223 +514,234 @@ class LibraryScreen extends ConsumerWidget {
             );
           },
           child: PremiumUI.relicStaticCard(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.zero,
             borderColor: isPlaying
                 ? PremiumTokens.activeAccent.withValues(alpha: 0.3)
                 : PremiumTokens.borderSubtle,
-            child: Row(
-              children: [
-                // Status Icon
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: isPlaying
-                        ? PremiumTokens.activeAccent.withValues(alpha: 0.1)
-                        : PremiumTokens.borderSubtle,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isPlaying
-                          ? PremiumTokens.activeAccent.withValues(alpha: 0.2)
-                          : PremiumTokens.borderSubtle,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // 1. Full-bleed background artwork
+                  Positioned.fill(
+                    child: PremiumUI.networkImage(
+                      url: item.displayImageUrl,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  child: Center(
-                    child: Icon(
-                      isPlaying
-                        ? Iconsax.music_play5
-                        : (item.audioUrl != null && item.audioUrl!.isNotEmpty
-                            ? Iconsax.music
-                            : Iconsax.book_1),
-                      color: isPlaying ? PremiumTokens.activeAccent : PremiumTokens.textMuted,
-                      size: 18,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
 
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (item.author != null || item.book != null)
-                        Row(
-                          children: [
-                            if (item.author != null)
-                              Flexible(
-                                child: Text(
-                                  item.author!,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: PremiumTokens.hindiAwareStyle(
-                                    item.author!,
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w900,
-                                    color: PremiumTokens.saffronGlow.withValues(alpha: 0.8),
-                                  ).copyWith(letterSpacing: 1.2),
+                  // 2. Adaptive gradient overlay for text readability matching current mood theme
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            PremiumTokens.surfaceMain.withValues(alpha: 0.15),
+                            PremiumTokens.surfaceMain.withValues(alpha: 0.75),
+                            PremiumTokens.surfaceMain.withValues(alpha: 0.96),
+                          ],
+                          stops: const [0.0, 0.45, 0.9],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // 3. Card Content
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        // Left/Main metadata details
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (item.author != null || item.book != null)
+                                Row(
+                                  children: [
+                                    if (item.author != null)
+                                      Flexible(
+                                        child: Text(
+                                          item.author!,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: PremiumTokens.hindiAwareStyle(
+                                            item.author!,
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.w900,
+                                            color: PremiumTokens.saffronGlow,
+                                          ).copyWith(letterSpacing: 1.2),
+                                        ),
+                                      ),
+                                    if (item.author != null && item.book != null)
+                                      Container(
+                                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                                        width: 3,
+                                        height: 3,
+                                        decoration: BoxDecoration(shape: BoxShape.circle, color: PremiumTokens.textSecondary),
+                                      ),
+                                    if (item.book != null)
+                                      Expanded(
+                                        child: Text(
+                                          item.book!,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: PremiumTokens.hindiAwareStyle(
+                                            item.book!,
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.bold,
+                                            color: PremiumTokens.textSecondary,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              const SizedBox(height: 2),
+                              Text(
+                                item.title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: PremiumTokens.hindiAwareStyle(
+                                  item.title,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: PremiumTokens.textPrimary,
+                                  isSacred: true,
                                 ),
                               ),
-                            if (item.author != null && item.book != null)
-                              Container(
-                                margin: const EdgeInsets.symmetric(horizontal: 4),
-                                width: 3,
-                                height: 3,
-                                decoration: BoxDecoration(shape: BoxShape.circle, color: PremiumTokens.textMuted),
+                              const SizedBox(height: 4),
+                              Text(
+                                item.commentary.startsWith('http') ? 'Sacred Verse Details' : item.commentary,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: PremiumTokens.hindiAwareStyle(
+                                  item.commentary,
+                                  fontSize: 11,
+                                  color: PremiumTokens.textSecondary,
+                                ),
                               ),
-                            if (item.book != null)
-                              Expanded(
-                                child: Text(
-                                  item.book!,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: PremiumTokens.hindiAwareStyle(
-                                    item.book!,
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.bold,
-                                    color: PremiumTokens.textMuted,
+                              const Spacer(),
+                              Row(
+                                children: [
+                                  if (item.audioUrl != null && item.audioUrl!.isNotEmpty) ...[
+                                    Icon(Icons.schedule, color: PremiumTokens.textSecondary, size: 10),
+                                    const SizedBox(width: 4),
+                                    Text("10:45", style: PremiumTokens.sansStyle(fontSize: 10, color: PremiumTokens.textSecondary)),
+                                    const SizedBox(width: 8),
+                                  ] else ...[
+                                    Icon(Icons.auto_stories, color: PremiumTokens.textSecondary, size: 10),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      (item.chapter ?? "READ").toUpperCase(),
+                                      style: PremiumTokens.sansStyle(fontSize: 10, color: PremiumTokens.textSecondary, letterSpacing: 1.0),
+                                    ),
+                                    const SizedBox(width: 8),
+                                  ],
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                    decoration: BoxDecoration(
+                                      color: PremiumTokens.borderSubtle.withValues(alpha: 0.3),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: PremiumTokens.borderSubtle),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(item.categoryIcon, size: 10, color: PremiumTokens.textSecondary),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          item.category.toUpperCase(),
+                                          style: PremiumTokens.sansStyle(fontSize: 8, fontWeight: FontWeight.w900, color: PremiumTokens.textSecondary, letterSpacing: 0.5),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  if (item.contentTags.isNotEmpty)
+                                    Expanded(
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        physics: const NeverScrollableScrollPhysics(),
+                                        child: Row(
+                                          children: [
+                                            const SizedBox(width: 8),
+                                            ...item.contentTags.take(2).map((tag) => Container(
+                                              margin: const EdgeInsets.only(right: 4),
+                                              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: PremiumTokens.borderSubtle.withValues(alpha: 0.3),
+                                                borderRadius: BorderRadius.circular(8),
+                                                border: Border.all(color: PremiumTokens.borderSubtle),
+                                              ),
+                                              child: Text(
+                                                tag.toUpperCase(),
+                                                style: PremiumTokens.sansStyle(fontSize: 8, fontWeight: FontWeight.bold, color: PremiumTokens.textSecondary, letterSpacing: 0.5),
+                                              ),
+                                            )),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+
+                        // Right Actions column
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            PremiumUI.animatedIcon(
+                              folder: 'Heart',
+                              fileName: 'heart.json',
+                              size: 20,
+                              color: ref.watch(isFavoriteProvider(item.id)) ? PremiumTokens.saffronGlow : PremiumTokens.textSecondary,
+                              isToggled: ref.watch(isFavoriteProvider(item.id)),
+                              resetAfterPlay: false,
+                              onTap: () {
+                                HapticFeedback.lightImpact();
+                                ref.read(favoritesProvider.notifier).toggleFavorite(item.id);
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            if (item.audioUrl != null && item.audioUrl!.isNotEmpty)
+                              GestureDetector(
+                                onTap: () {
+                                  HapticFeedback.heavyImpact();
+                                  ref.read(audioProvider.notifier).playWithPlaylist(item, playlist);
+                                },
+                                child: Container(
+                                  width: 38,
+                                  height: 38,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: isPlaying
+                                        ? PremiumTokens.activeAccent.withValues(alpha: 0.15)
+                                        : PremiumTokens.borderSubtle.withValues(alpha: 0.4),
+                                    border: Border.all(
+                                      color: isPlaying
+                                          ? PremiumTokens.activeAccent
+                                          : PremiumTokens.borderMedium,
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    isPlaying ? Iconsax.pause : Icons.play_arrow,
+                                    color: isPlaying ? PremiumTokens.activeAccent : PremiumTokens.textPrimary,
+                                    size: 18,
                                   ),
                                 ),
                               ),
                           ],
                         ),
-                      const SizedBox(height: 2),
-                      Text(
-                        item.title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: PremiumTokens.hindiAwareStyle(
-                          item.title,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: PremiumTokens.textPrimary,
-                          isSacred: true,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        item.commentary.startsWith('http') ? 'Sacred Verse Details' : item.commentary,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: PremiumTokens.hindiAwareStyle(
-                          item.commentary,
-                          fontSize: 11,
-                          color: PremiumTokens.textMuted,
-                        ),
-                      ),
-                      const Spacer(),
-                      Row(
-                        children: [
-                          if (item.audioUrl != null && item.audioUrl!.isNotEmpty) ...[
-                            Icon(Icons.schedule, color: PremiumTokens.textMuted, size: 10),
-                            const SizedBox(width: 4),
-                            Text("10:45", style: PremiumTokens.sansStyle(fontSize: 10, color: PremiumTokens.textMuted)),
-                            const SizedBox(width: 8),
-                          ] else ...[
-                            Icon(Icons.auto_stories, color: PremiumTokens.textMuted, size: 10),
-                            const SizedBox(width: 4),
-                            Text(
-                              (item.chapter ?? "READ").toUpperCase(),
-                              style: PremiumTokens.sansStyle(fontSize: 10, color: PremiumTokens.textMuted, letterSpacing: 1.0),
-                            ),
-                            const SizedBox(width: 8),
-                          ],
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: PremiumTokens.borderSubtle,
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: PremiumTokens.borderSubtle),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(item.categoryIcon, size: 10, color: PremiumTokens.textMuted),
-                                const SizedBox(width: 4),
-                                Text(
-                                  item.category.toUpperCase(),
-                                  style: PremiumTokens.sansStyle(fontSize: 8, fontWeight: FontWeight.w900, color: PremiumTokens.textMuted, letterSpacing: 0.5),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if (item.contentTags.isNotEmpty)
-                            Expanded(
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                physics: const NeverScrollableScrollPhysics(),
-                                child: Row(
-                                  children: [
-                                    const SizedBox(width: 8),
-                                    ...item.contentTags.take(3).map((tag) => Container(
-                                      margin: const EdgeInsets.only(right: 4),
-                                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                                      decoration: BoxDecoration(
-                                        color: PremiumTokens.borderSubtle,
-                                        borderRadius: BorderRadius.circular(4),
-                                        border: Border.all(color: PremiumTokens.borderSubtle),
-                                      ),
-                                      child: Text(
-                                        tag.toUpperCase(),
-                                        style: PremiumTokens.sansStyle(fontSize: 8, fontWeight: FontWeight.bold, color: PremiumTokens.textMuted, letterSpacing: 0.5),
-                                      ),
-                                    )),
-                                  ],
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Action Column
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    PremiumUI.animatedIcon(
-                      folder: 'Heart',
-                      fileName: 'heart.json',
-                      size: 20,
-                      color: ref.watch(isFavoriteProvider(item.id)) ? PremiumTokens.saffronGlow : PremiumTokens.textMuted,
-                      isToggled: ref.watch(isFavoriteProvider(item.id)),
-                      resetAfterPlay: false,
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        ref.read(favoritesProvider.notifier).toggleFavorite(item.id);
-                      },
+                      ],
                     ),
-                    const SizedBox(height: 20),
-                    if (item.audioUrl != null && item.audioUrl!.isNotEmpty)
-                      GestureDetector(
-                        onTap: () {
-                          HapticFeedback.heavyImpact();
-                          ref.read(audioProvider.notifier).playWithPlaylist(item, playlist);
-                        },
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: isPlaying
-                                ? PremiumTokens.activeAccent.withValues(alpha: 0.1)
-                                : PremiumTokens.borderSubtle,
-                            border: Border.all(
-                              color: isPlaying
-                                  ? PremiumTokens.activeAccent.withValues(alpha: 0.3)
-                                  : PremiumTokens.borderMedium,
-                            ),
-                          ),
-                          child: Icon(
-                            isPlaying ? Iconsax.pause : Icons.play_arrow,
-                            color: isPlaying ? PremiumTokens.activeAccent : PremiumTokens.textPrimary,
-                            size: 18,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

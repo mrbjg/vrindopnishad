@@ -40,10 +40,8 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setStringList(_storageKey, state.toList());
-      // Ignore local save errors
-      // Ignore local save errors
-      // Ignore local save errors
     } catch (e) {
+      // Ignore local save errors
     }
   }
 
@@ -64,11 +62,9 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
       if (favoriteIds.isNotEmpty) {
         state = {...state, ...favoriteIds};
         await _saveToLocal();
-        // Ignore Supabase sync errors
-      // Ignore Supabase sync errors
-      // Ignore Supabase sync errors
-    }
+      }
     } catch (e) {
+      // Ignore Supabase sync errors
     }
   }
 

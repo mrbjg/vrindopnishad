@@ -253,6 +253,31 @@ class StatsService {
     }
   }
 
+  /// Delete user's stats and history from Supabase
+  Future<void> deleteUserData(String uid) async {
+    try {
+      // 1. Delete reading history
+      await _supabase
+          .from('reading_history')
+          .delete()
+          .eq('firebase_uid', uid);
+          
+      // 2. Delete jap history
+      await _supabase
+          .from('jap_history')
+          .delete()
+          .eq('firebase_uid', uid);
+          
+      // 3. Delete user stats
+      await _supabase
+          .from('user_stats')
+          .delete()
+          .eq('firebase_uid', uid);
+    } catch (e) {
+      debugPrint('Error deleting user data: $e');
+    }
+  }
+
   /// Clear user's reading history
   Future<void> clearReadingHistory(String uid) async {
     try {

@@ -31,6 +31,7 @@ class RitualsScreen extends ConsumerWidget {
           const _ConstellationBackground(),
           
           SafeArea(
+            bottom: false,
             child: Column(
               children: [
                 _buildHeader(context, ref),
@@ -195,7 +196,7 @@ class RitualsScreen extends ConsumerWidget {
     
     return ListView(
       physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      padding: const EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 180),
       children: categories.map((category) {
         final categoryRituals = rituals.where((r) => r.category == category).toList();
         if (categoryRituals.isEmpty) return const SizedBox.shrink();
@@ -381,7 +382,7 @@ class RitualsScreen extends ConsumerWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
                           color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: PremiumTokens.activeAccent.withValues(alpha: 0.2)),
                         ),
                         child: Text(
@@ -398,7 +399,7 @@ class RitualsScreen extends ConsumerWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
                           color: PremiumTokens.borderSubtle,
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: PremiumTokens.borderMedium),
                         ),
                         child: Text(

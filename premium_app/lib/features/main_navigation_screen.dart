@@ -1,9 +1,8 @@
-import 'dart:ui';
+// Removed unused dart:ui import
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import '../core/design_system.dart';
-import '../core/theme.dart';
 import 'home_screen.dart';
 import 'naam_jap_screen.dart';
 import 'library_screen.dart';
@@ -106,6 +105,8 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
             ),
           ),
           
+          // Frosted Glass Status Bar Overlay removed to allow edge-to-edge top gradient flow
+          
           // Persistent Mini Player (Restored & Improved)
           if (!isKeyboardOpen)
             const Positioned(
@@ -127,41 +128,6 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                 return Stack(
                   alignment: Alignment.bottomCenter,
                   children: [
-                    // Backdrop blur layer behind the nav bar
-                    ClipRect(
-                      child: RepaintBoundary(
-                        child: AppTheme.lowPerformanceMode
-                            ? Container(
-                                height: 90,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.transparent,
-                                      PremiumTokens.surfaceMain.withValues(alpha: 0.95),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            : BackdropFilter(
-                                filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                                child: Container(
-                                  height: 90,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Colors.transparent,
-                                        PremiumTokens.surfaceMain.withValues(alpha: 0.85),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                      ),
-                    ),
                     PremiumUI.floatingNavBar(
                       selectedIndex: currentIndex == 5 ? 2 : currentIndex,
                       onTap: (index) => ref.read(navigationIndexProvider.notifier).state = index,
@@ -169,7 +135,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                         (iconSvg: 'iconsax-ai-housing-jbqdn4s3-.svg', activeIconSvg: 'iconsax-ai-housing-1etziexn-.svg', label: "Home"),
                         (iconSvg: 'iconsax-book-saved-cf2vpsqx-.svg', activeIconSvg: 'iconsax-book-saved-bg1ra9cv-.svg', label: "Library"),
                         (iconSvg: 'iconsax-archive-27ilzneb-.svg', activeIconSvg: 'iconsax-archive-27ilzneb-.svg', label: ""), // Placeholder for center
-                        (iconSvg: 'iconsax-ai-send-message-m26q6m1j-.svg', activeIconSvg: 'iconsax-ai-send-message-2njcmr24-.svg', label: "Journal"),
+                        (iconSvg: 'iconsax-chat-outline.svg', activeIconSvg: 'iconsax-chat-bold.svg', label: "Journal"),
                         (iconSvg: 'iconsax-ai-users-rcrm13gd-.svg', activeIconSvg: 'iconsax-ai-users-uj3awqug-.svg', label: "Profile"),
                       ],
                     ),

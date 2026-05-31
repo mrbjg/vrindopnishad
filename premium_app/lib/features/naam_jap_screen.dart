@@ -11,6 +11,7 @@ import '../core/design_system.dart';
 import '../core/providers.dart';
 import '../core/stats_provider.dart';
 import '../core/color_theme_provider.dart';
+import '../widgets/animated_effects.dart';
 
 class NaamJapScreen extends ConsumerStatefulWidget {
   const NaamJapScreen({super.key});
@@ -179,6 +180,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
             
             if (!_isImmersive)
               SafeArea(
+                bottom: false,
                 child: SingleChildScrollView(
                   padding: EdgeInsets.zero,
                   physics: const BouncingScrollPhysics(),
@@ -207,7 +209,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                         dailyGoal: stats?.dailyMalaGoal ?? 11,
                       ),
                       
-                      const SizedBox(height: 140), // Spacing for Navbar + MiniPlayer
+                      const SizedBox(height: 180), // Spacing for Navbar + MiniPlayer
                     ],
                   ),
                 ),
@@ -239,9 +241,8 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
               Positioned(
                 top: 50,
                 left: 24, // User asked for top corner, usually back is top left or right
-                child: GestureDetector(
+                child: PressableScale(
                   onTap: () {
-                    HapticFeedback.mediumImpact();
                     setState(() => _isImmersive = false);
                   },
                   child: PremiumUI.glassCard(
@@ -263,9 +264,8 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          GestureDetector(
+          PressableScale(
             onTap: () {
-              HapticFeedback.mediumImpact();
               if (Navigator.canPop(context)) {
                 Navigator.pop(context);
               } else {
@@ -279,9 +279,8 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
             ),
           ).animate().fadeIn(duration: 500.ms).slideX(begin: -0.2),
           
-          GestureDetector(
+          PressableScale(
             onTap: () {
-              HapticFeedback.heavyImpact();
               setState(() => _isImmersive = true);
             },
             child: Column(
@@ -311,9 +310,8 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
 
           Row(
             children: [
-              GestureDetector(
+              PressableScale(
                 onTap: () {
-                  HapticFeedback.mediumImpact();
                   setState(() => _isImmersive = true);
                 },
                 child: PremiumUI.glassCard(
@@ -323,9 +321,8 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                 ),
               ),
               const SizedBox(width: 12),
-              GestureDetector(
+              PressableScale(
                 onTap: () {
-                  HapticFeedback.mediumImpact();
                   _showAmbianceSheet(context);
                 },
                 child: PremiumUI.glassCard(
@@ -339,9 +336,8 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
                 ),
               ),
               const SizedBox(width: 12),
-              GestureDetector(
+              PressableScale(
                 onTap: () {
-                  HapticFeedback.mediumImpact();
                   _showMalaHistorySheet(context);
                 },
                 child: PremiumUI.glassCard(

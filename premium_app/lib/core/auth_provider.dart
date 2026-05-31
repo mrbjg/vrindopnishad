@@ -138,6 +138,14 @@ class AuthService {
     } catch (_) {}
     await _auth.signOut();
   }
+
+  // Delete Account
+  Future<void> deleteAccount() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      await user.delete();
+    }
+  }
 }
 
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());

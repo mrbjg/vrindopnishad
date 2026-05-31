@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import '../core/favorites_provider.dart';
 import '../core/color_theme_provider.dart';
 import '../core/personalized_feed_provider.dart';
+import '../widgets/animated_effects.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -121,6 +122,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             hintText: "Search mantras, stories, shlokas...",
             hintStyle: GoogleFonts.manrope(color: PremiumTokens.textHint, fontSize: 14),
             border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            filled: false,
             contentPadding: const EdgeInsets.symmetric(vertical: 15),
             prefixIcon: Icon(Iconsax.search_normal, color: PremiumTokens.activeAccent, size: 20),
             suffixIcon: _searchQuery.isNotEmpty
@@ -145,116 +149,123 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     );
   }
 
-  String _getCategoryPlaceholder(String category) {
-    switch (category.toUpperCase()) {
-      case 'PEACE':
-        return 'https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?auto=format&fit=crop&w=200&q=80';
-      case 'PROTECTION':
-        return 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=200&q=80';
-      case 'HEALING':
-        return 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=200&q=80';
-      case 'PROSPERITY':
-        return 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=200&q=80';
-      default:
-        return 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?auto=format&fit=crop&w=200&q=80';
-    }
-  }
+
 
   Widget _buildSacredListItem(BuildContext context, SacredContent item) {
     final match = ref.watch(matchPercentageProvider(item));
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        ref.read(recentSearchesProvider.notifier).addSearch(_searchQuery);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => ContentDetailScreen(content: item)),
-        );
-      },
-      child: PremiumUI.glassCard(
-        padding: const EdgeInsets.all(12),
-        borderRadius: 20,
-        child: Row(
-          children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: PremiumTokens.activeGradient,
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: PremiumUI.networkImage(
-                  url: item.imageUrl ?? _getCategoryPlaceholder(item.category),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.displayTitle,
-                    style: GoogleFonts.manrope(
-                      color: PremiumTokens.textPrimary,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+    return SizedBox(
+      height: 120,
+      child: PressableScale(
+        onTap: () {
+          ref.read(recentSearchesProvider.notifier).addSearch(_searchQuery);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => ContentDetailScreen(content: item)),
+          );
+        },
+        child: PremiumUI.relicStaticCard(
+          padding: EdgeInsets.zero,
+          borderColor: PremiumTokens.borderSubtle,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                // 1. Full-bleed background artwork
+                Positioned.fill(
+                  child: PremiumUI.networkImage(
+                    url: item.displayImageUrl,
+                    fit: BoxFit.cover,
                   ),
-                  const SizedBox(height: 4),
-                  Row(
+                ),
+
+                // 2. Adaptive gradient overlay for text readability
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          PremiumTokens.surfaceMain.withValues(alpha: 0.10),
+                          PremiumTokens.surfaceMain.withValues(alpha: 0.70),
+                          PremiumTokens.surfaceMain.withValues(alpha: 0.96),
+                        ],
+                        stops: const [0.0, 0.4, 0.85],
+                      ),
+                    ),
+                  ),
+                ),
+
+                // 3. Card content
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
-                        item.category.toUpperCase(),
+                        item.displayTitle,
                         style: GoogleFonts.manrope(
-                          color: PremiumTokens.activeAccent,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1,
+                          color: PremiumTokens.textPrimary,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          "$match% MATCH",
-                          style: GoogleFonts.manrope(
-                            color: PremiumTokens.activeAccent,
-                            fontSize: 7,
-                            fontWeight: FontWeight.w800,
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Text(
+                            item.category.toUpperCase(),
+                            style: GoogleFonts.manrope(
+                              color: PremiumTokens.activeAccent,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 1,
+                            ),
                           ),
-                        ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              "$match% MATCH",
+                              style: GoogleFonts.manrope(
+                                color: PremiumTokens.activeAccent,
+                                fontSize: 7,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                          // Like Button
+                          PremiumUI.animatedIcon(
+                            folder: 'Heart',
+                            fileName: 'heart.json',
+                            size: 18,
+                            color: ref.watch(isFavoriteProvider(item.id)) ? PremiumTokens.saffronGlow : PremiumTokens.textMuted,
+                            isToggled: ref.watch(isFavoriteProvider(item.id)),
+                            resetAfterPlay: false,
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              ref.read(favoritesProvider.notifier).toggleFavorite(item.id);
+                            },
+                          ),
+                          const SizedBox(width: 12),
+                          Icon(Iconsax.arrow_right_3, color: PremiumTokens.textMuted, size: 16),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-              // Like Button
-              PremiumUI.animatedIcon(
-                folder: 'Heart',
-                fileName: 'heart.json',
-                size: 20,
-                color: ref.watch(isFavoriteProvider(item.id)) ? PremiumTokens.saffronGlow : PremiumTokens.textMuted,
-                isToggled: ref.watch(isFavoriteProvider(item.id)),
-                resetAfterPlay: false,
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  ref.read(favoritesProvider.notifier).toggleFavorite(item.id);
-                },
-              ),
-              const SizedBox(width: 16),
-              Icon(Iconsax.arrow_right_3, color: PremiumTokens.textMuted, size: 20),
-          ],
+          ),
         ),
       ),
     );
@@ -292,6 +303,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     }
 
     return ListView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.all(24),
       children: [
@@ -352,7 +364,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   }
 
   Widget _buildSearchTag(String text, {bool isStatic = false}) {
-    return GestureDetector(
+    return PressableScale(
       onTap: () {
         _searchController.text = text;
         setState(() {
@@ -383,6 +395,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     if (displayItems.isEmpty) return _buildEmptyResults();
     
     return ListView.builder(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       itemCount: displayItems.length,
@@ -406,6 +419,18 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             fontWeight: FontWeight.w900,
             color: PremiumTokens.textMuted,
             letterSpacing: 2,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          child: Text(
+            "Try searching for broader spiritual topics like 'Radhe', 'Braj', or 'Nitya Vihar'.",
+            style: GoogleFonts.manrope(
+              fontSize: 12,
+              color: PremiumTokens.textHint,
+            ),
+            textAlign: TextAlign.center,
           ),
         ),
       ],

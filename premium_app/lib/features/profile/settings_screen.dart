@@ -10,6 +10,7 @@ import '../../core/auth_provider.dart';
 import '../../core/color_theme_provider.dart';
 import '../../core/mood_theme_provider.dart';
 import '../../widgets/animated_effects.dart';
+import '../../widgets/sacred_delete_account_dialog.dart';
 import 'package:flutter/services.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -229,6 +230,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   l.translate('delete_account'),
                   Iconsax.trash,
                   isDestructive: true,
+                  onTap: () => SacredDeleteAccountDialog.show(context),
                 ),
                 const SizedBox(height: 48),
 
@@ -740,6 +742,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     IconData icon, {
     bool isDestructive = false,
     List<Color>? gradientColors,
+    VoidCallback? onTap,
   }) {
     final colors = isDestructive
         ? [const Color(0xFFEF4444), const Color(0xFFF87171)]
@@ -748,12 +751,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return PressableScale(
       onTap: () {
         HapticFeedback.lightImpact();
-        PremiumUI.showNotification(
-          context, 
-          "Action: $title",
-          icon: icon,
-          color: isDestructive ? Colors.red : PremiumTokens.activeAccent,
-        );
+        if (onTap != null) {
+          onTap();
+        } else {
+          PremiumUI.showNotification(
+            context, 
+            "Action: $title",
+            icon: icon,
+            color: isDestructive ? Colors.red : PremiumTokens.activeAccent,
+          );
+        }
       },
       child: Container(
         decoration: BoxDecoration(
@@ -1245,11 +1252,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                     ],
                                   ),
                                   child: Center(
-                                    child: Text(
-                                      palette.emoji,
-                                      style: const TextStyle(fontSize: 20),
-                                    ),
+                                  child: EmojiToIcon.getIconWidget(
+                                    palette.emoji,
+                                    size: 20,
+                                    color: isSelected ? Colors.white : Colors.white70,
                                   ),
+                                ),
                                 ),
                                 const SizedBox(width: 16),
                                 Expanded(
@@ -1345,7 +1353,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(color: PremiumTokens.borderMedium),
                 ),
-                child: Text(currentPalette.emoji, style: const TextStyle(fontSize: 20)),
+                child: EmojiToIcon.getIconWidget(
+                  currentPalette.emoji,
+                  size: 20,
+                  color: PremiumTokens.activeAccent,
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -1509,7 +1521,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   child: crossAxisCount == 1
                                       ? Row(
                                           children: [
-                                            Text(palette.emoji, style: const TextStyle(fontSize: 24)),
+                                            EmojiToIcon.getIconWidget(
+                                              palette.emoji,
+                                              size: 24,
+                                              color: isSelected ? PremiumTokens.activeAccent : PremiumTokens.textMuted,
+                                            ),
                                             const SizedBox(width: 16),
                                             Expanded(
                                               child: Column(
@@ -1571,7 +1587,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
-                                                Text(palette.emoji, style: const TextStyle(fontSize: 22)),
+                                                EmojiToIcon.getIconWidget(
+                                                  palette.emoji,
+                                                  size: 24,
+                                                  color: isSelected ? PremiumTokens.activeAccent : PremiumTokens.textMuted,
+                                                ),
                                                 if (isSelected)
                                                   Container(
                                                     padding: const EdgeInsets.all(4),

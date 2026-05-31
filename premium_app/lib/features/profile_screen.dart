@@ -9,8 +9,8 @@ import 'profile/saved_items_screen.dart';
 import 'profile/reading_history_screen.dart';
 import 'profile/settings_screen.dart';
 import 'profile/about_screen.dart';
+import 'profile/find_friends_screen.dart';
 import 'journal_screen.dart';
-import 'admin_dashboard.dart';
 import '../widgets/sacred_logout_dialog.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/services.dart';
@@ -91,6 +91,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                     ),
                     const SizedBox(height: 12),
                     _buildPremiumMenuItem(
+                      icon: Iconsax.user_search,
+                      title: "Find Sangat Friends",
+                      subtitle: "Connect with similar seekers",
+                      color: PremiumTokens.activeAccent,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const FindFriendsScreen()),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildPremiumMenuItem(
                       icon: Iconsax.clock,
                       title: "Reading History",
                       subtitle: "Continue your reflections",
@@ -123,17 +134,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const AboutScreen()),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    _buildPremiumMenuItem(
-                      icon: Iconsax.shield_tick,
-                      title: "Admin Dashboard",
-                      subtitle: "Content & User Management",
-                      color: PremiumTokens.activeAccent,
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const AdminDashboard()),
                       ),
                     ),
                     const SizedBox(height: 48),
@@ -169,7 +169,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           height: 16,
           decoration: BoxDecoration(
             color: PremiumTokens.textMuted,
-            borderRadius: BorderRadius.circular(0),
+            borderRadius: BorderRadius.circular(2),
           ),
         ),
         const SizedBox(width: 12),

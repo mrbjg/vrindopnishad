@@ -8,3 +8,12 @@ When designing seamless authentication screens (e.g. unified login/register entr
 
 Cross-Device Theme Sync Rule:
 When implementing or modifying theme/preference systems (e.g. mood themes, color accents, dark mode, reading themes), always auto-persist the user's selections to Supabase when authenticated, and restore them on login. Local SharedPreferences should serve as the fast cache, with Supabase as the source of truth for cross-device consistency.
+
+# Strict Accessibility Targets
+Ensure all interactive taps, buttons, or custom gesture triggers have a hit surface area of at least 44x44px. Custom gestures must specify `behavior: HitTestBehavior.opaque`.
+
+# Zero-Latency Optimistic State Commits
+Micro-interactions mutating server state (likes, flags, deletes) must commit immediately to memory or local cache before network requests, automatically rolling back only on absolute sync failure.
+
+# Clean Separation via Design Tokens
+Never hardcode raw hex values, border-radii, or layout padding in widget files. Color and style parameters must always query semantic bindings (`PremiumTokens` / theme configs) to maintain rebrand scalability.

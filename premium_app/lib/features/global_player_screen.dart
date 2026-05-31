@@ -204,7 +204,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
                     color: PremiumTokens.textPrimary,
                     onTap: () {
                       if (content != null) {
-                        Share.share("Listen to '${content.title}' on Sant-Vaani: Sacred Wisdom for Modern Life. 🕉️");
+                        Share.share("Listen to '${content.title}' on Sant-Vaani: Sacred Wisdom for Modern Life. 🕉️\n📲 Experience the Divine Path: https://vrindopnishad.in");
                       }
                     },
                   ),
@@ -232,7 +232,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
                     onTap: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                        SnackBar(
-                          content: Text("Divine Sleep Timer coming soon! ✨"),
+                          content: const Text("Divine Sleep Timer coming soon! ✨"),
                           backgroundColor: PremiumTokens.surfaceMain,
                           behavior: SnackBarBehavior.floating,
                         ),

@@ -36,7 +36,88 @@ class SacredContent {
 
   // Computed properties for high-performance rendering
   String get displayTitle => title.replaceAll('\n', ', ');
-  
+
+  String get displayImageUrl {
+    // 1. If we have a custom, valid image URL (not empty, and not the fallback placeholder vaani_icon), use it
+    if (imageUrl != null &&
+        imageUrl!.isNotEmpty &&
+        imageUrl != 'assets/vaani_icon.png') {
+      return imageUrl!;
+    }
+
+    // 2. Curate stunning, fast-loading Unsplash URLs per category to give variety
+    final h = id.hashCode.abs();
+    final categoryClean = category.trim().toLowerCase();
+
+    // Sacred Shloka background images (ancient scriptures, sunset temples, oil lamps, holy rivers)
+    final shlokaImages = [
+      'https://images.unsplash.com/photo-1609137144813-7d7277884d20?auto=format&fit=crop&w=500&q=80', // Diya in dark
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=500&q=80', // Sunrise mountains
+      'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?auto=format&fit=crop&w=500&q=80', // Starry night river
+      'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=500&q=80', // Temple silhouette at sunset
+      'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=500&q=80', // Morning meditation
+    ];
+
+    // Devotional Bhajan images (flute, devotional instruments, peacock feather, chanting kirtan)
+    final bhajanImages = [
+      'https://images.unsplash.com/photo-1615412727883-f8a6797f883a?auto=format&fit=crop&w=500&q=80', // Indian traditional flute
+      'https://images.unsplash.com/photo-1545127398-14699f92334b?auto=format&fit=crop&w=500&q=80', // Cymbals / Kirtan
+      'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=500&q=80', // Fire ceremony / Diya light
+      'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=500&q=80', // Classical musical vibes
+    ];
+
+    // Sacred Mantra images (glowing lotus, meditation posture, holy dawn)
+    final mantraImages = [
+      'https://images.unsplash.com/photo-1520262454112-9fe481d36ec3?auto=format&fit=crop&w=500&q=80', // Floating pink lotus flower
+      'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=500&q=80', // Warm glowing light
+      'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=500&q=80', // Peaceful nature walk
+      'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=500&q=80', // Yoga / Lotus position silhouette
+    ];
+
+    // Satsang / Wisdom images (sages, holy discourse, spiritual assembly, forest trees)
+    final satsangImages = [
+      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=500&q=80', // Sage studying / teaching
+      'https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&w=500&q=80', // Peaceful sunset walk / landscape
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=500&q=80', // Sunlight through forest canopy
+    ];
+
+    // Dham / Temple images (Vrindavan, Yamuna river, ghats, ancient temples)
+    final dhamImages = [
+      'https://images.unsplash.com/photo-1590050752117-238cb0612b1b?auto=format&fit=crop&w=500&q=80', // Boats on river at sunrise
+      'https://images.unsplash.com/photo-1564507592937-25994a9015b2?auto=format&fit=crop&w=500&q=80', // Majestic temple facade
+      'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=500&q=80', // Sunrise at a holy shrine
+    ];
+
+    // Saint / Guru / Sadhu images
+    final saintImages = [
+      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=500&q=80', // Saffron monk
+      'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?auto=format&fit=crop&w=500&q=80', // Morning river prayer
+    ];
+
+    // General / Fallback images (nature, peacocks, flowers)
+    final generalImages = [
+      'https://images.unsplash.com/photo-1528319725582-ddc096101511?auto=format&fit=crop&w=500&q=80', // Vibrant peacock feathers
+      'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=500&q=80', // Mystical forest haven
+      'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=500&q=80', // Serene meditation vibe
+    ];
+
+    if (categoryClean.contains('shloka')) {
+      return shlokaImages[h % shlokaImages.length];
+    } else if (categoryClean.contains('bhajan') || categoryClean.contains('music') || categoryClean.contains('kirtan')) {
+      return bhajanImages[h % bhajanImages.length];
+    } else if (categoryClean.contains('mantra') || categoryClean.contains('japa')) {
+      return mantraImages[h % mantraImages.length];
+    } else if (categoryClean.contains('satsang') || categoryClean.contains('wisdom') || categoryClean.contains('general')) {
+      return satsangImages[h % satsangImages.length];
+    } else if (categoryClean.contains('dham') || categoryClean.contains('temple') || categoryClean.contains('mandir')) {
+      return dhamImages[h % dhamImages.length];
+    } else if (categoryClean.contains('saint') || categoryClean.contains('guru') || categoryClean.contains('sadhu')) {
+      return saintImages[h % saintImages.length];
+    }
+
+    return generalImages[h % generalImages.length];
+  }
+
   String get sanskritPreview {
     final parts = sanskritText
         .split(RegExp(r'[।॥\|!?,.\n]'))

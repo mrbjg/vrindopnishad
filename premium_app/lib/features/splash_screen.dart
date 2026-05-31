@@ -24,6 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    PremiumTokens.of(context);
     return Scaffold(
       backgroundColor: PremiumTokens.scaffoldBg,
       body: Stack(
@@ -68,7 +69,7 @@ class _SplashScreenState extends State<SplashScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Logo with elastic entrance
-                PremiumUI.logo(height: 120)
+                PremiumUI.logo(height: 120, color: PremiumTokens.textPrimary)
                 .animate()
                 .scale(
                   begin: const Offset(0.5, 0.5),
