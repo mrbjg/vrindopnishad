@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -374,6 +375,175 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
 
   Widget _buildStoriesBar() {
     final user = ref.watch(authStateProvider).value;
+    final entries = ref.watch(journalProvider).value ?? [];
+    final readStories = ref.watch(readStoriesProvider);
+    final now = DateTime.now();
+
+    // 1. Filter real-time entries for stories and recent posts (last 24 hours)
+    final recentEntries = entries.where((e) {
+      final type = e.moonPhase?.split('|').first ?? '';
+      if (type != 'story' && type != 'post') return false;
+      if (e.content.trim().isEmpty) return false;
+      return now.difference(e.createdAt).inHours < 24;
+    }).toList();
+
+    // 2. Group by user to display only one story bubble per user with their latest realization
+    final Map<String, JournalEntry> userLatestStory = {};
+    for (final entry in recentEntries.reversed) {
+      userLatestStory[entry.firebaseUid] = entry;
+    }
+
+    final sortedRealtimeStories = userLatestStory.values.toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+    // List of stories to display
+    final List<Widget> storyItems = [];
+
+    // A. "Your Voice" bubble
+    storyItems.add(
+      _buildStoryItem(
+        name: "Your Voice",
+        avatarUrl: user?.photoURL ?? "",
+        isMe: true,
+        onTap: () {
+          HapticFeedback.lightImpact();
+          _showPostDialog(context);
+        },
+      ),
+    );
+
+    // B. "LIVE" Satsang Room bubble
+    storyItems.add(
+      _buildStoryItem(
+        name: "LIVE",
+        avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
+        isLive: true,
+        onTap: () {
+          HapticFeedback.heavyImpact();
+          showModalBottomSheet(
+            context: context,
+            backgroundColor: Colors.transparent,
+            isScrollControlled: true,
+            builder: (_) => const _LiveSatsangRoomSheet(),
+          );
+        },
+      ),
+    );
+
+    // C. Real-time stories from database
+    for (final story in sortedRealtimeStories) {
+      // Skip showing yourself in this list as "Your Voice" is already present
+      if (user != null && story.firebaseUid == user.uid) continue;
+
+      final parts = story.moonPhase?.split('|') ?? [];
+      final type = parts.first;
+      String actualAvatar = "";
+      if (type == 'story') {
+        actualAvatar = parts.length > 2 ? parts[2] : (parts.length > 1 ? parts[1] : "");
+      } else {
+        actualAvatar = parts.length > 2 ? parts[2] : "";
+      }
+
+      final isRead = readStories.contains(story.id);
+
+      storyItems.add(
+        _buildStoryItem(
+          name: story.title.isEmpty ? "Seeker" : story.title,
+          avatarUrl: actualAvatar,
+          isRead: isRead,
+          onTap: () {
+            ref.read(readStoriesProvider.notifier).markAsRead(story.id);
+            final videoUrl = parts.length > 1 && parts[1].isNotEmpty ? parts[1] : null;
+            _showStoryViewer(
+              context,
+              story.title.isEmpty ? "Seeker" : story.title,
+              actualAvatar,
+              story.content,
+              false,
+              videoUrl: videoUrl,
+            );
+          },
+        ),
+      );
+    }
+
+    // D. Static mock stories as Guides (always appended so layout is rich)
+    const gopalId = "mock-gopal-das";
+    storyItems.add(
+      _buildStoryItem(
+        name: "gopal_das",
+        avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
+        isRead: readStories.contains(gopalId),
+        onTap: () {
+          ref.read(readStoriesProvider.notifier).markAsRead(gopalId);
+          _showStoryViewer(
+            context,
+            "gopal_das",
+            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
+            "“Chant the Holy Name, and the heart will mirror the sky of pure devotion.”",
+            false,
+          );
+        },
+      ),
+    );
+
+    const sitaId = "mock-sita-ram";
+    storyItems.add(
+      _buildStoryItem(
+        name: "sita_ram",
+        avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
+        isRead: readStories.contains(sitaId),
+        onTap: () {
+          ref.read(readStoriesProvider.notifier).markAsRead(sitaId);
+          _showStoryViewer(
+            context,
+            "sita_ram",
+            "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
+            "“Every breath is a sacred gift; offer it in loving remembrance at the Lotus Feet.”",
+            false,
+          );
+        },
+      ),
+    );
+
+    const gopiId = "mock-braj-gopi";
+    storyItems.add(
+      _buildStoryItem(
+        name: "braj_gopi",
+        avatarUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
+        isRead: readStories.contains(gopiId),
+        onTap: () {
+          ref.read(readStoriesProvider.notifier).markAsRead(gopiId);
+          _showStoryViewer(
+            context,
+            "braj_gopi",
+            "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
+            "“In the dust of Sri Vrindavan, find the eternal footprints of the Divine Couple.”",
+            false,
+          );
+        },
+      ),
+    );
+
+    const anandId = "mock-anand-das";
+    storyItems.add(
+      _buildStoryItem(
+        name: "anand_d",
+        avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
+        isRead: readStories.contains(anandId),
+        onTap: () {
+          ref.read(readStoriesProvider.notifier).markAsRead(anandId);
+          _showStoryViewer(
+            context,
+            "anand_d",
+            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
+            "“Humility is the vessel, devotion is the nectar. Empty yourself to be filled.”",
+            false,
+          );
+        },
+      ),
+    );
+
     return Container(
       height: 98,
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -381,86 +551,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        children: [
-          // 1. Current user / Your Voice story
-          _buildStoryItem(
-            name: "Your Voice",
-            avatarUrl: user?.photoURL ?? "",
-            isMe: true,
-            onTap: () {
-              HapticFeedback.lightImpact();
-              _showPostDialog(context);
-            },
-          ),
-          
-          // 2. LIVE Satsang
-          _buildStoryItem(
-            name: "LIVE",
-            avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
-            isLive: true,
-            onTap: () {
-              HapticFeedback.heavyImpact();
-              showModalBottomSheet(
-                context: context,
-                backgroundColor: Colors.transparent,
-                isScrollControlled: true,
-                builder: (_) => const _LiveSatsangRoomSheet(),
-              );
-            },
-          ),
-          
-          // 3. Gopal Das
-          _buildStoryItem(
-            name: "gopal_das",
-            avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
-            onTap: () => _showStoryViewer(
-              context,
-              "gopal_das",
-              "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
-              "“Chant the Holy Name, and the heart will mirror the sky of pure devotion.”",
-              false,
-            ),
-          ),
-          
-          // 5. Sita Ram
-          _buildStoryItem(
-            name: "sita_ram",
-            avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
-            onTap: () => _showStoryViewer(
-              context,
-              "sita_ram",
-              "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
-              "“Every breath is a sacred gift; offer it in loving remembrance at the Lotus Feet.”",
-              false,
-            ),
-          ),
-          
-          // 6. Braj Gopi
-          _buildStoryItem(
-            name: "braj_gopi",
-            avatarUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-            onTap: () => _showStoryViewer(
-              context,
-              "braj_gopi",
-              "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-              "“In the dust of Sri Vrindavan, find the eternal footprints of the Divine Couple.”",
-              false,
-            ),
-          ),
-          
-          // 7. Anand Das
-          _buildStoryItem(
-            name: "anand_d",
-            avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
-            onTap: () => _showStoryViewer(
-              context,
-              "anand_d",
-              "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
-              "“Humility is the vessel, devotion is the nectar. Empty yourself to be filled.”",
-              false,
-            ),
-          ),
-        ],
+        children: storyItems,
       ),
     );
   }
@@ -470,6 +561,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
     required String avatarUrl,
     bool isMe = false,
     bool isLive = false,
+    bool isRead = false,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
@@ -508,14 +600,21 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                     height: 58,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [
-                          PremiumTokens.activeAccent,
-                          PremiumTokens.activeAccent.withValues(alpha: 0.3),
-                        ],
-                      ),
+                      gradient: isRead
+                          ? LinearGradient(
+                              colors: [
+                                PremiumTokens.isDark ? Colors.white24 : Colors.black26,
+                                PremiumTokens.isDark ? Colors.white10 : Colors.black12,
+                              ],
+                            )
+                          : LinearGradient(
+                              colors: [
+                                PremiumTokens.activeAccent,
+                                PremiumTokens.activeAccent.withValues(alpha: 0.3),
+                              ],
+                            ),
                     ),
-                  )
+                  ).animate(onPlay: (c) => isRead ? c.stop() : c.repeat(reverse: true)).scale(begin: const Offset(1.0, 1.0), end: const Offset(1.03, 1.03), duration: 1500.ms, curve: Curves.easeInOutSine)
                 else
                   Container(
                     width: 58,
@@ -545,7 +644,18 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                     borderRadius: BorderRadius.circular(25),
                     child: avatarUrl.isNotEmpty
                         ? PremiumUI.networkImage(url: avatarUrl, fit: BoxFit.cover)
-                        : Icon(Iconsax.user, size: 18, color: PremiumTokens.textMuted),
+                        : Container(
+                            color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
+                            alignment: Alignment.center,
+                            child: Text(
+                              name.isNotEmpty ? name[0].toUpperCase() : "S",
+                              style: PremiumTokens.sansStyle(
+                                color: PremiumTokens.activeAccent,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
                   ),
                 ),
                 
@@ -597,7 +707,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
     );
   }
 
-  void _showStoryViewer(BuildContext context, String username, String avatarUrl, String quote, bool isLive) {
+  void _showStoryViewer(BuildContext context, String username, String avatarUrl, String quote, bool isLive, {String? videoUrl}) {
     HapticFeedback.mediumImpact();
     Navigator.of(context).push(
       PageRouteBuilder(
@@ -611,6 +721,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
             avatarUrl: avatarUrl,
             quote: quote,
             isLive: isLive,
+            videoUrl: videoUrl,
           );
         },
         transitionsBuilder: (ctx, animation, secondaryAnimation, child) {
@@ -645,14 +756,14 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
     final inlineCommentController = TextEditingController();
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 12),
       child: GestureDetector(
         onDoubleTap: () {
           HapticFeedback.heavyImpact();
           if (!isLiked) ref.read(likedPostsProvider.notifier).toggleLike(post.id);
         },
         child: PremiumUI.relicStaticCard(
-          padding: const EdgeInsets.all(18),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           borderColor: PremiumTokens.borderSubtle,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -681,7 +792,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          post.title,
+                          post.title.trim().isNotEmpty ? post.title : "Divine Seeker",
                           style: PremiumTokens.sansStyle(
                             color: PremiumTokens.textPrimary,
                             fontWeight: FontWeight.bold,
@@ -703,7 +814,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                     Icon(Iconsax.video_play5, color: PremiumTokens.activeAccent, size: 20),
                 ],
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 8),
 
               // Post Text Content
               Text(
@@ -863,9 +974,9 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
             ],
 
               // Action row (Instagram style)
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               Divider(color: PremiumTokens.borderSubtle, height: 0.5),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               Row(
                 children: [
                   // Heart Like Button
@@ -930,7 +1041,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
 
               // Likes count text
               Text(
@@ -944,7 +1055,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
               
               // Inline preview of the last 2 comments
               if (previewComments.isNotEmpty) ...[
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: previewComments.map((comment) {
@@ -971,7 +1082,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
               ],
 
               if (commentsCount > 2) ...[
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 GestureDetector(
                   onTap: () => _showCommentsSheet(post),
                   child: Text(
@@ -985,7 +1096,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                 ),
               ],
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 6),
               // Inline comment composer
               Row(
                 children: [
@@ -1327,169 +1438,16 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
   }
 
   void _showPostDialog(BuildContext context) {
-    final postTextController = TextEditingController();
-    final videoUrlController = TextEditingController();
-
-    showGeneralDialog(
+    showModalBottomSheet(
       context: context,
-      barrierDismissible: true,
-      barrierLabel: "Dismiss",
-      barrierColor: PremiumTokens.scaffoldBg.withValues(alpha: 0.85),
-      transitionDuration: const Duration(milliseconds: 350),
-      pageBuilder: (ctx, animation, secondaryAnimation) {
-        return Center(
-          child: Material(
-            color: Colors.transparent,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: PremiumUI.glassCard(
-                optimized: false,
-                blur: 20,
-                opacity: 0.12,
-                padding: const EdgeInsets.all(28),
-                borderRadius: 28,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "SHARE SATSANG REALIZATION",
-                      style: PremiumTokens.displayStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2,
-                        color: PremiumTokens.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    TextField(
-                      controller: postTextController,
-                      maxLines: 5,
-                      style: PremiumTokens.sansStyle(color: PremiumTokens.textPrimary, fontSize: 13).copyWith(height: 1.5),
-                      decoration: InputDecoration(
-                        hintText: "Write your spiritual realizations or quotes here...",
-                        hintStyle: PremiumTokens.sansStyle(
-                          color: PremiumTokens.isDark ? Colors.white38 : Colors.black38,
-                          fontSize: 12.5,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide(
-                            color: PremiumTokens.isDark ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.1),
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide(
-                            color: PremiumTokens.isDark ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.1),
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide(color: PremiumTokens.activeAccent, width: 1.5),
-                        ),
-                        filled: true,
-                        fillColor: PremiumTokens.isDark ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.02),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: videoUrlController,
-                      style: PremiumTokens.sansStyle(color: PremiumTokens.textPrimary, fontSize: 13),
-                      decoration: InputDecoration(
-                        hintText: "Devotional YouTube/Video Link (Optional)",
-                        hintStyle: PremiumTokens.sansStyle(
-                          color: PremiumTokens.isDark ? Colors.white38 : Colors.black38,
-                          fontSize: 12.5,
-                        ),
-                        prefixIcon: Icon(Iconsax.video, color: PremiumTokens.isDark ? Colors.white38 : Colors.black38, size: 16),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide(
-                            color: PremiumTokens.isDark ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.1),
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide(
-                            color: PremiumTokens.isDark ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.1),
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide(color: PremiumTokens.activeAccent, width: 1.5),
-                        ),
-                        filled: true,
-                        fillColor: PremiumTokens.isDark ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.02),
-                      ),
-                    ),
-                    const SizedBox(height: 28),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () => Navigator.pop(ctx),
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                color: PremiumTokens.isDark ? Colors.white.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.15),
-                              ),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                            ),
-                            child: Text(
-                              "CLOSE",
-                              style: PremiumTokens.sansStyle(
-                                color: PremiumTokens.textPrimary,
-                                fontSize: 11,
-                                letterSpacing: 1.5,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              final text = postTextController.text.trim();
-                              final video = videoUrlController.text.trim();
-                              if (text.isNotEmpty) {
-                                ref.read(journalProvider.notifier).addPost(text, video.isEmpty ? null : video);
-                                Navigator.pop(ctx);
-                                HapticFeedback.mediumImpact();
-                                PremiumUI.showNotification(context, "Realization posted to Live Satsang");
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: PremiumTokens.activeAccent,
-                              foregroundColor: PremiumTokens.onAccent,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              elevation: 2,
-                            ),
-                            child: Text(
-                              "SHARE",
-                              style: PremiumTokens.sansStyle(
-                                color: PremiumTokens.onAccent,
-                                fontSize: 11,
-                                letterSpacing: 1.5,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      barrierColor: Colors.black.withValues(alpha: 0.7),
+      builder: (_) => const _SatsangPostComposerSheet(),
     );
   }
 
-  void _showCommentsSheet(JournalEntry post) {
+void _showCommentsSheet(JournalEntry post) {
     final commentsController = TextEditingController();
 
     showModalBottomSheet(
@@ -1790,12 +1748,14 @@ class _StoryViewerPage extends ConsumerStatefulWidget {
   final String avatarUrl;
   final String quote;
   final bool isLive;
+  final String? videoUrl;
 
   const _StoryViewerPage({
     required this.username,
     required this.avatarUrl,
     required this.quote,
     required this.isLive,
+    this.videoUrl,
   });
 
   @override
@@ -1861,6 +1821,140 @@ class _StoryViewerPageState extends ConsumerState<_StoryViewerPage>
     );
   }
 
+  String? _getYoutubeId(String url) {
+    final regExp = RegExp(
+      r'^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*',
+      caseSensitive: false,
+      multiLine: false,
+    );
+    final match = regExp.firstMatch(url);
+    if (match != null && match.groupCount >= 2) {
+      return match.group(2);
+    }
+    return null;
+  }
+
+  Widget _buildStoryVideoCard(String url) {
+    final ytId = _getYoutubeId(url);
+    if (ytId == null) {
+      return GestureDetector(
+        onTap: () {
+          HapticFeedback.mediumImpact();
+          _pauseStory();
+          Share.share(url);
+          _resumeStory();
+        },
+        child: Container(
+          width: 260,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: Colors.white10,
+            border: Border.all(color: Colors.white24),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.link, color: Colors.white, size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  url,
+                  style: PremiumTokens.sansStyle(fontSize: 12, color: Colors.white70),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.mediumImpact();
+        _pauseStory();
+        showDialog(
+          context: context,
+          barrierColor: Colors.black.withValues(alpha: 0.9),
+          builder: (ctx) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Material(
+                color: Colors.transparent,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                        onPressed: () => Navigator.pop(ctx),
+                      ),
+                    ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: _InlineVideoPlayer(videoUrl: url, ytId: ytId),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ).then((_) => _resumeStory());
+      },
+      child: Container(
+        width: 280,
+        height: 150,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.black45,
+          border: Border.all(color: Colors.white24),
+          image: DecorationImage(
+            image: NetworkImage("https://img.youtube.com/vi/$ytId/hqdefault.jpg"),
+            fit: BoxFit.cover,
+            opacity: 0.75,
+          ),
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Colors.black87],
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.play_circle_fill,
+              color: Colors.white,
+              size: 44,
+            ).animate(onPlay: (c) => c.repeat()).shimmer(duration: 2.seconds),
+            Positioned(
+              bottom: 12,
+              left: 12,
+              right: 12,
+              child: Text(
+                "Tap to Play Devotional Video",
+                style: PremiumTokens.sansStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white70,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      ).animate().scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1), duration: 300.ms, curve: Curves.easeOutBack),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1921,6 +2015,10 @@ class _StoryViewerPageState extends ConsumerState<_StoryViewerPage>
                               ),
                               textAlign: TextAlign.center,
                             ),
+                            if (widget.videoUrl != null && widget.videoUrl!.isNotEmpty) ...[
+                              const SizedBox(height: 28),
+                              _buildStoryVideoCard(widget.videoUrl!),
+                            ],
                             const SizedBox(height: 24),
                             Icon(
                               Iconsax.sun_fog,
@@ -1993,7 +2091,18 @@ class _StoryViewerPageState extends ConsumerState<_StoryViewerPage>
                               borderRadius: BorderRadius.circular(18),
                               child: widget.avatarUrl.isNotEmpty
                                   ? PremiumUI.networkImage(url: widget.avatarUrl, fit: BoxFit.cover)
-                                  : const Icon(Icons.person, color: Colors.white70),
+                                  : Container(
+                                      color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        widget.username.isNotEmpty ? widget.username[0].toUpperCase() : "S",
+                                        style: PremiumTokens.sansStyle(
+                                          color: PremiumTokens.activeAccent,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -2203,6 +2312,7 @@ class _LiveSatsangRoomSheet extends ConsumerStatefulWidget {
 class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
   final TextEditingController _commentController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  bool _isVideoMode = true;
 
   @override
   void dispose() {
@@ -2231,7 +2341,7 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
+          0.0,
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
@@ -2249,14 +2359,14 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
         final type = e.moonPhase?.split('|').first ?? '';
         final parts = e.moonPhase?.split('|') ?? [];
         return type == 'comment' && parts.length > 1 && parts[1] == 'mock-katha-1';
-      }).toList().reversed.toList(),
+      }).toList(),
       orElse: () => <JournalEntry>[],
     );
 
     final screenHeight = MediaQuery.of(context).size.height;
     final viewInsets = MediaQuery.of(context).viewInsets;
     final availableHeight = screenHeight - viewInsets.bottom;
-    final sheetHeight = math.min(screenHeight * 0.85, availableHeight - 24);
+    final sheetHeight = math.min(screenHeight * 0.88, availableHeight - 24);
 
     return Container(
       decoration: BoxDecoration(
@@ -2304,13 +2414,32 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
                     ),
                   ],
                 ),
-                Text(
-                  "• 2.4k listening",
-                  style: PremiumTokens.sansStyle(
-                    fontSize: 10,
-                    color: PremiumTokens.textMuted,
-                    fontWeight: FontWeight.w600,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      "• 2.4k listening",
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 10,
+                        color: PremiumTokens.textMuted,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    GestureDetector(
+                      onTap: () {
+                        HapticFeedback.mediumImpact();
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.redAccent.withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.close, color: Colors.redAccent, size: 14),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -2318,140 +2447,240 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
           const SizedBox(height: 12),
           Divider(color: PremiumTokens.borderSubtle, height: 1),
 
+          // Sliding Tab Selector
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.black26,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: PremiumTokens.borderSubtle),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        setState(() => _isVideoMode = true);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: _isVideoMode
+                              ? PremiumTokens.activeAccent.withValues(alpha: 0.15)
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: _isVideoMode
+                                ? PremiumTokens.activeAccent.withValues(alpha: 0.3)
+                                : Colors.transparent,
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          "VIDEO STREAM",
+                          style: PremiumTokens.sansStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: _isVideoMode ? PremiumTokens.activeAccent : PremiumTokens.textMuted,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        setState(() => _isVideoMode = false);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: !_isVideoMode
+                              ? PremiumTokens.activeAccent.withValues(alpha: 0.15)
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: !_isVideoMode
+                                ? PremiumTokens.activeAccent.withValues(alpha: 0.3)
+                                : Colors.transparent,
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          "AUDIO SPACE",
+                          style: PremiumTokens.sansStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: !_isVideoMode ? PremiumTokens.activeAccent : PremiumTokens.textMuted,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
           Expanded(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               child: Column(
                 children: [
-                  PremiumUI.voidGlassCard(
-                    padding: const EdgeInsets.all(16),
-                    borderRadius: 20,
-                    child: Row(
-                      children: [
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              width: 64,
-                              height: 64,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
-                              ),
-                            ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
-                              begin: const Offset(1, 1),
-                              end: const Offset(1.15, 1.15),
-                              duration: 1.5.seconds,
-                            ),
-                            Container(
-                              width: 52,
-                              height: 52,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: PremiumTokens.activeAccent,
-                                  width: 2,
-                                ),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(26),
-                                child: PremiumUI.networkImage(
-                                  url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Container(
-                                padding: const EdgeInsets.all(2),
-                                decoration: const BoxDecoration(
-                                  color: Colors.redAccent,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(Icons.mic, color: Colors.white, size: 10),
-                              ),
-                            ),
-                          ],
+                  if (_isVideoMode) ...[
+                    // Live Video Stream Container
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        height: 180,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: PremiumTokens.borderSubtle),
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                        child: const _InlineVideoPlayer(
+                          videoUrl: "https://www.youtube.com/watch?v=S8Zq41S8eLw",
+                          ytId: "S8Zq41S8eLw",
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ] else ...[
+                    // Audio Mode Layout: Host Card
+                    PremiumUI.voidGlassCard(
+                      padding: const EdgeInsets.all(16),
+                      borderRadius: 20,
+                      child: Row(
+                        children: [
+                          Stack(
+                            alignment: Alignment.center,
                             children: [
-                              Text(
-                                "Gopal Das (Host)",
-                                style: PremiumTokens.sansStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: PremiumTokens.textPrimary,
+                              Container(
+                                width: 64,
+                                height: 64,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
+                                ),
+                              ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
+                                begin: const Offset(1, 1),
+                                end: const Offset(1.15, 1.15),
+                                duration: 1.5.seconds,
+                              ),
+                              Container(
+                                width: 52,
+                                height: 52,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: PremiumTokens.activeAccent,
+                                    width: 2,
+                                  ),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(26),
+                                  child: PremiumUI.networkImage(
+                                    url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                "Speaking: Sri Harinam Nectar",
-                                style: PremiumTokens.sansStyle(
-                                  fontSize: 11,
-                                  color: PremiumTokens.textSecondary,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: _LiveAudioWaveformVisualizer(
-                                  isPlaying: true,
-                                  color: PremiumTokens.activeAccent,
-                                  barCount: 16,
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.redAccent,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(Icons.mic, color: Colors.white, size: 10),
                                 ),
                               ),
                             ],
                           ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                  Text(
+                                    "Gopal Das (Host)",
+                                    style: PremiumTokens.sansStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: PremiumTokens.textPrimary,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Speaking: Sri Harinam Nectar",
+                                    style: PremiumTokens.sansStyle(
+                                      fontSize: 11,
+                                      color: PremiumTokens.textSecondary,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: _LiveAudioWaveformVisualizer(
+                                      isPlaying: true,
+                                      color: PremiumTokens.activeAccent,
+                                      barCount: 16,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "SPEAKERS",
+                          style: PremiumTokens.sansStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1,
+                            color: PremiumTokens.textMuted,
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 8),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "SPEAKERS",
-                        style: PremiumTokens.sansStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
-                          color: PremiumTokens.textMuted,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildLiveSpeakerItem(
+                          name: "Anand D",
+                          avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
+                          isMuted: true,
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildLiveSpeakerItem(
-                        name: "Anand D",
-                        avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
-                        isMuted: true,
-                      ),
-                      _buildLiveSpeakerItem(
-                        name: "sita_ram",
-                        avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
-                        isMuted: true,
-                      ),
-                      _buildLiveSpeakerItem(
-                        name: "braj_gopi",
-                        avatarUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-                        isMuted: false,
-                        isSpeaking: true,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
+                        _buildLiveSpeakerItem(
+                          name: "sita_ram",
+                          avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
+                          isMuted: true,
+                        ),
+                        _buildLiveSpeakerItem(
+                          name: "braj_gopi",
+                          avatarUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
+                          isMuted: false,
+                          isSpeaking: true,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                  ],
 
                   Row(
                     children: [
@@ -2466,81 +2695,83 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 8),
 
-                  Container(
-                    height: 180,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.black26,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: PremiumTokens.borderSubtle),
-                    ),
-                    child: comments.isEmpty
-                        ? Center(
-                            child: Text(
-                              "No chat yet. Chant Radhe Radhe!",
-                              style: PremiumTokens.sansStyle(
-                                color: PremiumTokens.textMuted,
-                                fontSize: 11,
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.black26,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: PremiumTokens.borderSubtle),
+                      ),
+                      child: comments.isEmpty
+                          ? Center(
+                              child: Text(
+                                "No chat yet. Chant Radhe Radhe!",
+                                style: PremiumTokens.sansStyle(
+                                  color: PremiumTokens.textMuted,
+                                  fontSize: 11,
+                                ),
                               ),
-                            ),
-                          )
-                        : ListView.builder(
-                            controller: _scrollController,
-                            physics: const BouncingScrollPhysics(),
-                            padding: const EdgeInsets.all(12),
-                            itemCount: comments.length,
-                            itemBuilder: (context, index) {
-                              final item = comments[index];
-                              final parts = item.moonPhase?.split('|') ?? [];
-                              final avatarUrl = parts.length > 2 ? parts[2] : null;
+                            )
+                          : ListView.builder(
+                              controller: _scrollController,
+                              reverse: true,
+                              physics: const BouncingScrollPhysics(),
+                              padding: const EdgeInsets.all(12),
+                              itemCount: comments.length,
+                              itemBuilder: (context, index) {
+                                final item = comments[index];
+                                final parts = item.moonPhase?.split('|') ?? [];
+                                final avatarUrl = parts.length > 2 ? parts[2] : null;
 
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 8),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: 22,
-                                      height: 22,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.black26,
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(11),
-                                        child: avatarUrl != null && avatarUrl.isNotEmpty
-                                            ? PremiumUI.networkImage(url: avatarUrl, fit: BoxFit.cover)
-                                            : const Icon(Icons.person, size: 10, color: Colors.white60),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: RichText(
-                                        text: TextSpan(
-                                          style: PremiumTokens.sansStyle(
-                                            fontSize: 11.5,
-                                            color: PremiumTokens.textPrimary,
-                                          ),
-                                          children: [
-                                            TextSpan(
-                                              text: "${item.title}: ",
-                                              style: const TextStyle(fontWeight: FontWeight.bold),
-                                            ),
-                                            TextSpan(
-                                              text: item.content,
-                                              style: TextStyle(color: PremiumTokens.textSecondary),
-                                            ),
-                                          ],
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: 22,
+                                        height: 22,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.black26,
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(11),
+                                          child: avatarUrl != null && avatarUrl.isNotEmpty
+                                              ? PremiumUI.networkImage(url: avatarUrl, fit: BoxFit.cover)
+                                              : const Icon(Icons.person, size: 10, color: Colors.white60),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ).animate().fadeIn(duration: 200.ms).slideY(begin: 0.1, end: 0);
-                            },
-                          ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: RichText(
+                                          text: TextSpan(
+                                            style: PremiumTokens.sansStyle(
+                                              fontSize: 11.5,
+                                              color: PremiumTokens.textPrimary,
+                                            ),
+                                            children: [
+                                              TextSpan(
+                                                text: "${item.title.trim().isNotEmpty ? item.title : "Divine Seeker"}: ",
+                                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                              ),
+                                              TextSpan(
+                                                text: item.content,
+                                                style: TextStyle(color: PremiumTokens.textSecondary),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ).animate().fadeIn(duration: 200.ms).slideY(begin: 0.1, end: 0);
+                              },
+                            ),
+                    ),
                   ),
                 ],
               ),
@@ -2551,21 +2782,21 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
           SafeArea(
             top: false,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
               child: Row(
                 children: [
                   Container(
-                    width: 34,
-                    height: 34,
+                    width: 32,
+                    height: 32,
                     decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black26),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(17),
+                      borderRadius: BorderRadius.circular(16),
                       child: user?.photoURL != null && user!.photoURL!.isNotEmpty
                           ? PremiumUI.networkImage(url: user.photoURL!, fit: BoxFit.cover)
                           : Icon(Iconsax.user, size: 14, color: PremiumTokens.activeAccent),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
                       controller: _commentController,
@@ -2575,7 +2806,7 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
                         hintStyle: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontSize: 12),
                         filled: true,
                         fillColor: Colors.black38,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                         isDense: true,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(24),
@@ -2593,36 +2824,53 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
                       onSubmitted: (_) => _sendLiveComment(),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 8),
                   GestureDetector(
                     onTap: _sendLiveComment,
-                    child: Text(
-                      "Chant",
-                      style: PremiumTokens.sansStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: PremiumTokens.activeAccent,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        gradient: PremiumTokens.activeGradient,
+                        borderRadius: BorderRadius.circular(18),
+                        boxShadow: [
+                          BoxShadow(
+                            color: PremiumTokens.activeAccent.withValues(alpha: 0.25),
+                            blurRadius: 6,
+                            offset: const Offset(0, 1.5),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        "Chant",
+                        style: PremiumTokens.sansStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: PremiumTokens.onAccent,
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: () {
+                  GestureDetector(
+                    onTap: () {
                       HapticFeedback.mediumImpact();
                       Navigator.pop(context);
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.redAccent.withValues(alpha: 0.15),
-                      side: const BorderSide(color: Colors.redAccent, width: 1),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    ),
-                    child: Text(
-                      "LEAVE",
-                      style: PremiumTokens.sansStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.redAccent,
+                      decoration: BoxDecoration(
+                        color: Colors.redAccent.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: Colors.redAccent.withValues(alpha: 0.5), width: 1),
+                      ),
+                      child: Text(
+                        "LEAVE",
+                        style: PremiumTokens.sansStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.redAccent,
+                          letterSpacing: 0.5,
+                        ),
                       ),
                     ),
                   ),
@@ -2929,20 +3177,47 @@ class _InlineVideoPlayerState extends State<_InlineVideoPlayer> {
     _initializePlayer();
   }
 
+  String? _extractYoutubeId(String url) {
+    try {
+      final uri = Uri.parse(url);
+      if (uri.host.contains('youtube.com') || uri.host.contains('youtu.be')) {
+        if (uri.path.startsWith('/shorts/')) {
+          return uri.pathSegments.last;
+        }
+        if (uri.queryParameters.containsKey('v')) {
+          return uri.queryParameters['v'];
+        }
+        if (uri.pathSegments.isNotEmpty) {
+          // e.g. youtu.be/abc
+          return uri.pathSegments.first;
+        }
+      }
+    } catch (_) {}
+    return null;
+  }
+
   Future<void> _initializePlayer() async {
     try {
       String streamUrl = widget.videoUrl;
+      final derivedYtId = widget.ytId ?? _extractYoutubeId(widget.videoUrl);
       
-      // If it's a YouTube ID, resolve the raw MP4 stream URL using YoutubeExplode
-      if (widget.ytId != null) {
-        final yt = YoutubeExplode();
-        final video = await yt.videos.get(widget.ytId!);
-        final manifest = await yt.videos.streamsClient.getManifest(video.id);
-        
-        // Find highest quality progressive/muxed stream
-        final streamInfo = manifest.muxed.withHighestBitrate();
-        streamUrl = streamInfo.url.toString();
-        yt.close();
+      if (derivedYtId != null && derivedYtId.isNotEmpty) {
+        try {
+          final yt = YoutubeExplode();
+          final video = await yt.videos.get(derivedYtId);
+          final manifest = await yt.videos.streamsClient.getManifest(video.id);
+          
+          final streamInfo = manifest.muxed.withHighestBitrate();
+          streamUrl = streamInfo.url.toString();
+          yt.close();
+        } catch (e) {
+          debugPrint("YoutubeExplode failed, using direct fallback stream: $e");
+          streamUrl = "https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4";
+        }
+      }
+      
+      if (streamUrl.contains('youtube.com') || streamUrl.contains('youtu.be')) {
+        streamUrl = "https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4";
       }
       
       final uri = Uri.parse(streamUrl);
@@ -2958,6 +3233,27 @@ class _InlineVideoPlayerState extends State<_InlineVideoPlayer> {
       }
     } catch (e) {
       debugPrint("Error initializing video: $e");
+      // Graceful fallback to serene video loop if not already using it
+      if (widget.videoUrl != "https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4") {
+        try {
+          _controller?.dispose();
+          final uri = Uri.parse("https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4");
+          _controller = VideoPlayerController.networkUrl(uri);
+          await _controller!.initialize();
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+              _isError = false;
+            });
+            _controller!.play();
+            _controller!.setLooping(true);
+          }
+          return;
+        } catch (err) {
+          debugPrint("Serene video loop fallback failed: $err");
+        }
+      }
+      
       if (mounted) {
         setState(() {
           _isError = true;
@@ -3162,3 +3458,643 @@ class _InlineVideoPlayerState extends State<_InlineVideoPlayer> {
   }
 }
 
+class _SatsangPostComposerSheet extends ConsumerStatefulWidget {
+  const _SatsangPostComposerSheet();
+
+  @override
+  ConsumerState<_SatsangPostComposerSheet> createState() => _SatsangPostComposerSheetState();
+}
+
+class _SatsangPostComposerSheetState extends ConsumerState<_SatsangPostComposerSheet> {
+  final _textController = TextEditingController();
+  final _linkController = TextEditingController();
+  bool _showLinkInput = false;
+  bool _shareToStory = true;
+  String? _youtubeId;
+  int _charCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _textController.addListener(_updateCharCount);
+    _linkController.addListener(_parseLink);
+  }
+
+  @override
+  void dispose() {
+    _textController.removeListener(_updateCharCount);
+    _linkController.removeListener(_parseLink);
+    _textController.dispose();
+    _linkController.dispose();
+    super.dispose();
+  }
+
+  void _updateCharCount() {
+    setState(() {
+      _charCount = _textController.text.length;
+    });
+  }
+
+  void _parseLink() {
+    final text = _linkController.text.trim();
+    if (text.isEmpty) {
+      if (_youtubeId != null) {
+        setState(() {
+          _youtubeId = null;
+        });
+      }
+      return;
+    }
+    final id = _extractYoutubeId(text);
+    if (id != _youtubeId) {
+      setState(() {
+        _youtubeId = id;
+      });
+    }
+  }
+
+  String? _extractYoutubeId(String url) {
+    final regExp = RegExp(
+      r'^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*',
+      caseSensitive: false,
+      multiLine: false,
+    );
+    final match = regExp.firstMatch(url);
+    if (match != null && match.groupCount >= 2) {
+      final id = match.group(2);
+      if (id != null && id.length == 11) {
+        return id;
+      }
+    }
+    return null;
+  }
+
+  void _appendTag(String tag) {
+    HapticFeedback.lightImpact();
+    final text = _textController.text;
+    final selection = _textController.selection;
+    
+    String newText;
+    int newCursorPos;
+    
+    if (selection.isValid) {
+      newText = text.replaceRange(selection.start, selection.end, tag);
+      newCursorPos = selection.start + tag.length;
+    } else {
+      newText = text + (text.isEmpty ? "" : " ") + tag;
+      newCursorPos = newText.length;
+    }
+    
+    _textController.value = TextEditingValue(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newCursorPos),
+    );
+  }
+
+  void _submit() {
+    final text = _textController.text.trim();
+    final video = _linkController.text.trim();
+    if (text.isEmpty) return;
+
+    HapticFeedback.mediumImpact();
+    
+    final notifier = ref.read(journalProvider.notifier);
+    
+    // Add to Feed Post
+    notifier.addPost(text, video.isEmpty ? null : video);
+    
+    // If shareToStory is enabled, also post as a Story
+    if (_shareToStory) {
+      notifier.addStory(text, video.isEmpty ? null : video);
+    }
+    
+    Navigator.pop(context);
+    PremiumUI.showNotification(
+      context, 
+      _shareToStory 
+        ? "Realization shared to Satsang & Stories" 
+        : "Realization posted to Live Satsang",
+      color: PremiumTokens.activeAccent,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final user = ref.watch(authStateProvider).value;
+    final bottomInsets = MediaQuery.of(context).viewInsets.bottom;
+    
+    final String displayName;
+    final String userInitial;
+    if (user != null) {
+      final name = user.displayName?.trim() ?? '';
+      if (name.isNotEmpty) {
+        displayName = name;
+        userInitial = name[0].toUpperCase();
+      } else {
+        final email = user.email?.trim() ?? '';
+        if (email.isNotEmpty) {
+          displayName = email.split('@').first;
+          userInitial = email[0].toUpperCase();
+        } else {
+          displayName = "Divine Seeker";
+          userInitial = "D";
+        }
+      }
+    } else {
+      displayName = "Divine Seeker";
+      userInitial = "D";
+    }
+    
+    // Suggestion chips list
+    final suggestions = [
+      "Radhe Radhe! 🙏",
+      "Katha realization 🕉️",
+      "Nectar Vrindavan 🌿",
+      "Bhakti Quote ✨",
+      "Harivansh! 🌸"
+    ];
+
+    return BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+      child: Container(
+        decoration: BoxDecoration(
+          color: PremiumTokens.sheetBgTop.withValues(alpha: 0.92),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          border: Border.all(color: PremiumTokens.borderSubtle),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 40,
+              spreadRadius: 10,
+            ),
+          ],
+        ),
+        padding: EdgeInsets.only(
+          left: 20,
+          right: 20,
+          bottom: math.max(20, bottomInsets + 16),
+          top: 16,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Drag handle
+              Container(
+                width: 42,
+                height: 4.5,
+                decoration: BoxDecoration(
+                  color: PremiumTokens.borderMedium.withValues(alpha: 0.8),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+              const SizedBox(height: 18),
+              
+              // Header title
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "SHARE SATSANG REALIZATION",
+                        style: PremiumTokens.displayStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.5,
+                          color: PremiumTokens.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "Broadcast in real-time to fellow seekers",
+                        style: PremiumTokens.sansStyle(
+                          fontSize: 10,
+                          color: PremiumTokens.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: PremiumTokens.isDark ? Colors.white10 : Colors.black12,
+                      ),
+                      child: Icon(Icons.close, size: 16, color: PremiumTokens.textPrimary),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              
+              // User info row
+              Row(
+                children: [
+                  Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: PremiumTokens.activeAccent.withValues(alpha: 0.4), width: 1.5),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(19),
+                      child: user?.photoURL != null && user!.photoURL!.isNotEmpty
+                          ? PremiumUI.networkImage(url: user.photoURL!, fit: BoxFit.cover)
+                          : Container(
+                              color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
+                              alignment: Alignment.center,
+                              child: Text(
+                                userInitial,
+                                style: PremiumTokens.sansStyle(
+                                  color: PremiumTokens.activeAccent,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        displayName,
+                        style: PremiumTokens.sansStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.bold,
+                          color: PremiumTokens.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 2.5),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: PremiumTokens.activeAccent.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 5,
+                              height: 5,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.greenAccent,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              "Satsang Room",
+                              style: PremiumTokens.sansStyle(
+                                fontSize: 8.5,
+                                fontWeight: FontWeight.w800,
+                                color: PremiumTokens.activeAccent,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  // Character limit counter
+                  Text(
+                    "$_charCount/300",
+                    style: PremiumTokens.sansStyle(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w600,
+                      color: _charCount > 280 ? Colors.redAccent : PremiumTokens.textMuted,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              
+              // Text Input Box (Glass Card wrapper)
+              PremiumUI.voidGlassCard(
+                borderRadius: 20,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: TextField(
+                  controller: _textController,
+                  maxLines: 5,
+                  maxLength: 300,
+                  buildCounter: (context, {required currentLength, required isFocused, maxLength}) => const SizedBox.shrink(),
+                  style: PremiumTokens.sansStyle(color: PremiumTokens.textPrimary, fontSize: 13.5).copyWith(height: 1.5),
+                  decoration: InputDecoration.collapsed(
+                    hintText: "Share your devotional quotes, realizations, or Harinam nectar...",
+                    hintStyle: PremiumTokens.sansStyle(
+                      color: PremiumTokens.textMuted,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              
+              // Horizontal suggestion chips
+              SizedBox(
+                height: 32,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: suggestions.length,
+                  itemBuilder: (context, index) {
+                    final sug = suggestions[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: GestureDetector(
+                        onTap: () => _appendTag(sug),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: PremiumTokens.isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.04),
+                            border: Border.all(color: PremiumTokens.borderSubtle),
+                          ),
+                          child: Text(
+                            sug,
+                            style: PremiumTokens.sansStyle(
+                              fontSize: 10.5,
+                              color: PremiumTokens.textSecondary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              
+              // Devotional Link button / Input area
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      setState(() {
+                        _showLinkInput = !_showLinkInput;
+                      });
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          _showLinkInput ? Iconsax.minus_cirlce : Iconsax.add_circle,
+                          color: PremiumTokens.activeAccent,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          _showLinkInput ? "Remove Devotional Link" : "Attach Devotional Link (YouTube)",
+                          style: PremiumTokens.sansStyle(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.bold,
+                            color: PremiumTokens.activeAccent,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  // Animated container to show link text field
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeInOut,
+                    child: _showLinkInput
+                        ? Column(
+                            children: [
+                              const SizedBox(height: 12),
+                              TextField(
+                                controller: _linkController,
+                                style: PremiumTokens.sansStyle(color: PremiumTokens.textPrimary, fontSize: 13),
+                                decoration: InputDecoration(
+                                  hintText: "Enter devotional YouTube or video URL...",
+                                  hintStyle: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontSize: 12),
+                                  prefixIcon: Icon(Iconsax.video, color: PremiumTokens.activeAccent, size: 16),
+                                  filled: true,
+                                  fillColor: PremiumTokens.isDark ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.02),
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide(color: PremiumTokens.borderSubtle),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide(color: PremiumTokens.activeAccent, width: 1.5),
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide(color: PremiumTokens.borderSubtle),
+                                  ),
+                                ),
+                              ),
+                              
+                              // YouTube live preview card
+                              if (_youtubeId != null) ...[
+                                const SizedBox(height: 12),
+                                Container(
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                    color: PremiumTokens.isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
+                                    border: Border.all(color: PremiumTokens.borderSubtle),
+                                  ),
+                                  padding: const EdgeInsets.all(8),
+                                  child: Row(
+                                    children: [
+                                      // Thumbnail
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Stack(
+                                          alignment: Alignment.center,
+                                          children: [
+                                            Image.network(
+                                              "https://img.youtube.com/vi/$_youtubeId/hqdefault.jpg",
+                                              width: 100,
+                                              height: 64,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (_, __, ___) => Container(
+                                                width: 100,
+                                                color: Colors.black38,
+                                                child: const Icon(Iconsax.video_slash, size: 18, color: Colors.white54),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: 100,
+                                              height: 64,
+                                              color: Colors.black26,
+                                            ),
+                                            const Icon(Icons.play_circle_fill, color: Colors.white, size: 24),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      
+                                      // Metadata
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Devotional YouTube Video",
+                                              style: PremiumTokens.sansStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: PremiumTokens.textPrimary,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            const SizedBox(height: 2.5),
+                                            Text(
+                                              "Tap Share to attach to your realization",
+                                              style: PremiumTokens.sansStyle(
+                                                fontSize: 9.5,
+                                                color: PremiumTokens.textMuted,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      
+                                      // Remove button
+                                      IconButton(
+                                        icon: const Icon(Icons.close, size: 18, color: Colors.redAccent),
+                                        onPressed: () {
+                                          _linkController.clear();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ).animate().fadeIn(duration: 250.ms).slideY(begin: 0.1, end: 0),
+                              ],
+                            ],
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              
+              // Share to story toggle row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Iconsax.clock, color: PremiumTokens.textSecondary, size: 16),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Share as active 24h Story too",
+                        style: PremiumTokens.sansStyle(
+                          fontSize: 12,
+                          color: PremiumTokens.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Switch(
+                    value: _shareToStory,
+                    activeThumbColor: PremiumTokens.activeAccent,
+                    activeTrackColor: PremiumTokens.activeAccent.withValues(alpha: 0.3),
+                    onChanged: (val) {
+                      setState(() {
+                        _shareToStory = val;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              
+              // Action buttons row
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(
+                          color: PremiumTokens.isDark ? Colors.white.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.15),
+                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: Text(
+                        "CANCEL",
+                        style: PremiumTokens.sansStyle(
+                          color: PremiumTokens.textPrimary,
+                          fontSize: 11,
+                          letterSpacing: 1.5,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ValueListenableBuilder<TextEditingValue>(
+                      valueListenable: _textController,
+                      builder: (context, value, _) {
+                        final isEnabled = value.text.trim().isNotEmpty;
+                        return Container(
+                          decoration: isEnabled
+                              ? BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: PremiumTokens.activeAccent.withValues(alpha: 0.25),
+                                      blurRadius: 12,
+                                      spreadRadius: 1,
+                                    ),
+                                  ],
+                                )
+                              : null,
+                          child: ElevatedButton(
+                            onPressed: isEnabled ? _submit : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: PremiumTokens.activeAccent,
+                              disabledBackgroundColor: PremiumTokens.isDark ? Colors.white12 : Colors.black12,
+                              disabledForegroundColor: PremiumTokens.textMuted,
+                              foregroundColor: PremiumTokens.onAccent,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              elevation: 0,
+                            ),
+                            child: Text(
+                              "SHARE",
+                              style: PremiumTokens.sansStyle(
+                                color: isEnabled ? PremiumTokens.onAccent : PremiumTokens.textMuted,
+                                fontSize: 11,
+                                letterSpacing: 1.5,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

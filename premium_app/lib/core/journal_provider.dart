@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/journal_entry.dart';
 import '../services/journal_service.dart';
 import 'auth_provider.dart';
+import 'providers.dart';
 import 'package:uuid/uuid.dart';
 
 final journalServiceProvider = Provider<JournalService>((ref) => JournalService());
@@ -11,6 +13,39 @@ final journalProvider = AsyncNotifierProvider<JournalNotifier, List<JournalEntry
 });
 
 final journalSearchProvider = StateProvider<String>((ref) => "");
+
+final readStoriesProvider = StateNotifierProvider<ReadStoriesNotifier, Set<String>>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return ReadStoriesNotifier(prefs);
+});
+
+class ReadStoriesNotifier extends StateNotifier<Set<String>> {
+  final SharedPreferences prefs;
+  static const _key = 'read_stories_ids';
+
+  ReadStoriesNotifier(this.prefs) : super({}) {
+    _load();
+  }
+
+  void _load() {
+    try {
+      final list = prefs.getStringList(_key);
+      if (list != null) {
+        state = list.toSet();
+      }
+    } catch (_) {}
+  }
+
+  void markAsRead(String id) {
+    if (!state.contains(id)) {
+      final newState = {...state, id};
+      state = newState;
+      try {
+        prefs.setStringList(_key, newState.toList());
+      } catch (_) {}
+    }
+  }
+}
 
 class JournalNotifier extends AsyncNotifier<List<JournalEntry>> {
   List<JournalEntry> _getMockEntries() {
@@ -70,25 +105,33 @@ class JournalNotifier extends AsyncNotifier<List<JournalEntry>> {
   Future<List<JournalEntry>> build() async {
     final user = ref.watch(authStateProvider).value;
     final journalService = ref.read(journalServiceProvider);
+
+    // Helper to merge database entries with mock entries to keep the Katha room and posts accessible
+    List<JournalEntry> mergeWithMocks(List<JournalEntry> dbEntries) {
+      if (user == null) return dbEntries;
+      final mockList = _getMockEntries();
+      final existingIds = dbEntries.map((e) => e.id).toSet();
+      final combined = [
+        ...dbEntries,
+        ...mockList.where((m) => !existingIds.contains(m.id)),
+      ];
+      combined.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return combined;
+    }
+
     final entries = await journalService.fetchPublicEntries();
     
     // Subscribe to real-time database stream for instant updates across all users
     final subscription = journalService.getPublicEntriesStream().listen((streamEntries) {
-      if (streamEntries.isNotEmpty) {
-        state = AsyncData(streamEntries);
-      } else if (user != null) {
-        state = AsyncData(_getMockEntries());
-      }
+      final combined = mergeWithMocks(streamEntries);
+      state = AsyncData(combined);
     });
 
     ref.onDispose(() {
       subscription.cancel();
     });
 
-    if (entries.isEmpty && user != null) {
-      return _getMockEntries();
-    }
-    return entries;
+    return mergeWithMocks(entries);
   }
 
   Future<void> addPost(String content, String? videoUrl) async {
@@ -98,6 +141,36 @@ class JournalNotifier extends AsyncNotifier<List<JournalEntry>> {
     final displayName = user.displayName ?? user.email?.split('@').first ?? "Divine Seeker";
     final photoUrl = user.photoURL ?? "";
     final moonPhase = "post|${videoUrl ?? ''}|$photoUrl";
+
+    final newEntry = JournalEntry(
+      id: const Uuid().v4(),
+      firebaseUid: user.uid,
+      title: displayName,
+      content: content,
+      createdAt: DateTime.now(),
+      moonPhase: moonPhase,
+    );
+
+    final previousState = state;
+    if (state.hasValue) {
+      state = AsyncData([newEntry, ...state.value!]);
+    }
+
+    try {
+      final journalService = ref.read(journalServiceProvider);
+      await journalService.createEntry(newEntry);
+    } catch (e) {
+      state = previousState;
+    }
+  }
+
+  Future<void> addStory(String content, String? videoUrl) async {
+    final user = ref.read(authStateProvider).value;
+    if (user == null) return;
+
+    final displayName = user.displayName ?? user.email?.split('@').first ?? "Divine Seeker";
+    final photoUrl = user.photoURL ?? "";
+    final moonPhase = "story|${videoUrl ?? ''}|$photoUrl";
 
     final newEntry = JournalEntry(
       id: const Uuid().v4(),

@@ -268,7 +268,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 ),
 
               SliverPadding(
-                padding: EdgeInsets.fromLTRB(16, isFocusMode ? 100 : 32, 16, 200),
+                padding: EdgeInsets.fromLTRB(16, isFocusMode ? 64 : 24, 16, 110),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
                     // Sanskrit Card - Always visible but styled for focus
@@ -290,9 +290,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                       ),
                     ),
                     
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 20),
                     PremiumUI.sacredDivider(color: themeData.textColor.withValues(alpha: isFocusMode ? 0.3 : 0.05)),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 20),
 
                     // Meaning Sections - Hidden/Simplified in Focus Mode
                     PremiumUI.focusContainer(
@@ -320,7 +320,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                     },
                                   ),
                                 ),
-                                const SizedBox(height: 24),
+                                const SizedBox(height: 16),
 
                                 GestureDetector(
                                   onScaleStart: (details) => _baseScale = _englishScale.value,
@@ -346,7 +346,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                       ),
                     ),
                     
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                     
                     // Commentary remains but simplified
                     Center(
@@ -374,12 +374,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 32),
 
                     if (content != null) ...[
-                      const SizedBox(height: 64),
+                      const SizedBox(height: 16),
                       PremiumUI.sacredDivider(color: themeData.textColor.withValues(alpha: 0.1)),
-                      const SizedBox(height: 48),
+                      const SizedBox(height: 16),
                       
                       // Tags
                       Center(
@@ -393,7 +392,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           )
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
                       Center(
                         child: Wrap(
                           spacing: 8,
@@ -407,7 +406,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 48),
+                      const SizedBox(height: 24),
                       // "More Like This" Shelf
                       Consumer(
                         builder: (context, ref, child) {
@@ -431,20 +430,19 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                               ),
                               const SizedBox(height: 16),
                               SizedBox(
-                                height: 124,
+                                height: 132,
                                 child: ListView.builder(
                                   scrollDirection: Axis.horizontal,
                                   physics: const BouncingScrollPhysics(),
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                   itemCount: similarList.length,
                                   itemBuilder: (context, index) {
                                     final item = similarList[index];
                                     final match = ref.watch(matchPercentageProvider(item));
-                                    
                                     final cardImageUrl = item.displayImageUrl;
 
                                     return Padding(
-                                      padding: const EdgeInsets.only(right: 12),
+                                      padding: const EdgeInsets.only(right: 14),
                                       child: GestureDetector(
                                         onTap: () {
                                           HapticFeedback.lightImpact();
@@ -455,136 +453,237 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                             ),
                                           );
                                         },
-                                        child: Container(
-                                          width: 300,
-                                          padding: const EdgeInsets.all(12),
-                                          decoration: BoxDecoration(
-                                            color: themeData.cardColor,
-                                            borderRadius: BorderRadius.circular(20),
-                                            border: Border.all(
-                                              color: themeData.textColor.withValues(alpha: 0.08),
-                                              width: 0.8,
-                                            ),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              // Left: Visual Thumbnail
-                                              ClipRRect(
-                                                borderRadius: BorderRadius.circular(12),
-                                                child: CachedNetworkImage(
-                                                  imageUrl: cardImageUrl,
-                                                  width: 72,
-                                                  height: 72,
-                                                  fit: BoxFit.cover,
-                                                  placeholder: (context, url) => Container(
-                                                    color: themeData.textColor.withValues(alpha: 0.05),
-                                                    child: Icon(Iconsax.image, color: themeData.textColor.withValues(alpha: 0.2), size: 20),
-                                                  ),
-                                                  errorWidget: (context, url, error) => Container(
-                                                    color: themeData.textColor.withValues(alpha: 0.05),
-                                                    child: Icon(Iconsax.image, color: themeData.textColor.withValues(alpha: 0.2), size: 20),
-                                                  ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(24),
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                                            child: Container(
+                                              width: 320,
+                                              height: 110,
+                                              clipBehavior: Clip.antiAlias,
+                                              padding: const EdgeInsets.all(12),
+                                              decoration: BoxDecoration(
+                                                gradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    themeData.cardColor.withValues(alpha: 0.85),
+                                                    themeData.cardColor.withValues(alpha: 0.45),
+                                                  ],
                                                 ),
+                                                borderRadius: BorderRadius.circular(24),
+                                                border: Border.all(
+                                                  color: themeData.accentColor.withValues(alpha: 0.16),
+                                                  width: 1.2,
+                                                ),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: themeData.accentColor.withValues(alpha: 0.05),
+                                                    blurRadius: 20,
+                                                    spreadRadius: 1,
+                                                    offset: const Offset(0, 6),
+                                                  ),
+                                                ],
                                               ),
-                                              const SizedBox(width: 12),
-                                              // Right: Metadata & Details
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Row(
+                                              child: Row(
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  // Left: Visual Thumbnail with glowing border frame
+                                                  Container(
+                                                    padding: const EdgeInsets.all(2.5),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(13),
+                                                      border: Border.all(
+                                                        color: themeData.accentColor.withValues(alpha: 0.25),
+                                                        width: 1.5,
+                                                      ),
+                                                    ),
+                                                    child: ClipRRect(
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      child: Stack(
+                                                        children: [
+                                                          CachedNetworkImage(
+                                                            imageUrl: cardImageUrl,
+                                                            width: 66,
+                                                            height: 66,
+                                                            fit: BoxFit.cover,
+                                                            placeholder: (context, url) => Container(
+                                                              color: themeData.textColor.withValues(alpha: 0.05),
+                                                              child: Icon(Iconsax.image, color: themeData.textColor.withValues(alpha: 0.2), size: 18),
+                                                            ),
+                                                            errorWidget: (context, url, error) => Container(
+                                                              color: themeData.textColor.withValues(alpha: 0.05),
+                                                              child: Icon(Iconsax.image, color: themeData.textColor.withValues(alpha: 0.2), size: 18),
+                                                            ),
+                                                          ),
+                                                          Positioned(
+                                                            right: 4,
+                                                            bottom: 4,
+                                                            child: Container(
+                                                              padding: const EdgeInsets.all(3.5),
+                                                              decoration: BoxDecoration(
+                                                                shape: BoxShape.circle,
+                                                                color: Colors.black.withValues(alpha: 0.45),
+                                                              ),
+                                                              child: Icon(
+                                                                item.categoryIcon,
+                                                                size: 9,
+                                                                color: Colors.white,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 12),
+                                                  
+                                                  // Right: Metadata & Details
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
                                                         Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
-                                                            Container(
-                                                              width: 5,
-                                                              height: 5,
-                                                              decoration: BoxDecoration(
-                                                                shape: BoxShape.circle,
-                                                                color: themeData.accentColor,
-                                                              ),
+                                                            Row(
+                                                              children: [
+                                                                Container(
+                                                                  width: 5,
+                                                                  height: 5,
+                                                                  decoration: BoxDecoration(
+                                                                    shape: BoxShape.circle,
+                                                                    color: themeData.accentColor,
+                                                                    boxShadow: [
+                                                                      BoxShadow(
+                                                                        color: themeData.accentColor,
+                                                                        blurRadius: 4,
+                                                                        spreadRadius: 0.5,
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(width: 6),
+                                                                Text(
+                                                                  item.category.toUpperCase(),
+                                                                  style: GoogleFonts.manrope(
+                                                                    color: themeData.textColor.withValues(alpha: 0.6),
+                                                                    fontSize: 7.5,
+                                                                    fontWeight: FontWeight.w800,
+                                                                    letterSpacing: 1.2,
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
-                                                            const SizedBox(width: 5),
-                                                            Text(
-                                                              item.category.toUpperCase(),
-                                                              style: GoogleFonts.manrope(
-                                                                color: themeData.textColor.withValues(alpha: 0.5),
-                                                                fontSize: 8,
-                                                                fontWeight: FontWeight.bold,
-                                                                letterSpacing: 0.5,
+                                                            
+                                                            // Premium Glowing Resonance Pill
+                                                            Container(
+                                                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                                                              decoration: BoxDecoration(
+                                                                gradient: LinearGradient(
+                                                                  colors: [
+                                                                    PremiumTokens.activeAccent.withValues(alpha: 0.16),
+                                                                    PremiumTokens.activeAccent.withValues(alpha: 0.04),
+                                                                  ],
+                                                                ),
+                                                                borderRadius: BorderRadius.circular(20),
+                                                                border: Border.all(
+                                                                  color: PremiumTokens.activeAccent.withValues(alpha: 0.25),
+                                                                  width: 0.6,
+                                                                ),
+                                                              ),
+                                                              child: Row(
+                                                                mainAxisSize: MainAxisSize.min,
+                                                                children: [
+                                                                  Container(
+                                                                    width: 3.5,
+                                                                    height: 3.5,
+                                                                    decoration: BoxDecoration(
+                                                                      shape: BoxShape.circle,
+                                                                      color: PremiumTokens.activeAccent,
+                                                                      boxShadow: [
+                                                                        BoxShadow(
+                                                                          color: PremiumTokens.activeAccent,
+                                                                          blurRadius: 3,
+                                                                          spreadRadius: 0.5,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(width: 4),
+                                                                  Text(
+                                                                    "$match% RESONANCE",
+                                                                    style: GoogleFonts.manrope(
+                                                                      color: PremiumTokens.activeAccent,
+                                                                      fontSize: 6.5,
+                                                                      fontWeight: FontWeight.w900,
+                                                                      letterSpacing: 0.5,
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
                                                           ],
                                                         ),
-                                                        Container(
-                                                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                                                          decoration: BoxDecoration(
-                                                            color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
-                                                            borderRadius: BorderRadius.circular(12),
-                                                            border: Border.all(
-                                                              color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
-                                                              width: 0.5,
-                                                            ),
-                                                          ),
-                                                          child: Text(
-                                                            "$match% RESONANCE",
-                                                            style: GoogleFonts.manrope(
-                                                              color: PremiumTokens.activeAccent,
-                                                              fontSize: 7,
-                                                              fontWeight: FontWeight.bold,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(height: 4),
-                                                    Expanded(
-                                                      child: Text(
-                                                        item.title,
-                                                        maxLines: 2,
-                                                        overflow: TextOverflow.ellipsis,
-                                                        style: GoogleFonts.spectral(
-                                                          color: themeData.textColor,
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: 12.5,
-                                                          height: 1.25,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 4),
-                                                    Row(
-                                                      children: [
-                                                        Icon(
-                                                          Iconsax.user,
-                                                          size: 9,
-                                                          color: themeData.textColor.withValues(alpha: 0.4),
-                                                        ),
-                                                        const SizedBox(width: 4),
+                                                        
+                                                        // Title with literary serif font
                                                         Expanded(
-                                                          child: Text(
-                                                            (item.author != null && item.author!.isNotEmpty)
-                                                                ? item.author!
-                                                                : "Sacred Tradition",
-                                                            maxLines: 1,
-                                                            overflow: TextOverflow.ellipsis,
-                                                            style: GoogleFonts.manrope(
-                                                              color: themeData.textColor.withValues(alpha: 0.4),
-                                                              fontSize: 9,
+                                                          child: Padding(
+                                                            padding: const EdgeInsets.only(top: 4, bottom: 2),
+                                                            child: Text(
+                                                              item.title,
+                                                              maxLines: 2,
+                                                              overflow: TextOverflow.ellipsis,
+                                                              style: GoogleFonts.spectral(
+                                                                color: themeData.textColor,
+                                                                fontWeight: FontWeight.bold,
+                                                                fontSize: 13,
+                                                                height: 1.25,
+                                                                letterSpacing: 0.1,
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
+                                                        
+                                                        // Author Metadata
+                                                        Row(
+                                                          children: [
+                                                            Icon(
+                                                              Iconsax.user,
+                                                              size: 9,
+                                                              color: themeData.textColor.withValues(alpha: 0.4),
+                                                            ),
+                                                            const SizedBox(width: 4),
+                                                            Expanded(
+                                                              child: Text(
+                                                                (item.author != null && item.author!.isNotEmpty)
+                                                                    ? item.author!
+                                                                    : "Sacred Tradition",
+                                                                maxLines: 1,
+                                                                overflow: TextOverflow.ellipsis,
+                                                                style: GoogleFonts.manrope(
+                                                                  color: themeData.textColor.withValues(alpha: 0.45),
+                                                                  fontSize: 9,
+                                                                  fontWeight: FontWeight.w500,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ],
                                                     ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    );
+                                    )
+                                    .animate()
+                                    .fadeIn(duration: 250.ms)
+                                    .slideX(begin: 0.03, end: 0, curve: Curves.easeOutCubic);
                                   },
                                 ),
                               ),

@@ -291,3 +291,22 @@ final trueDarkEnabledProvider = StateNotifierProvider<TrueDarkNotifier, bool>((r
   final prefs = ref.watch(sharedPreferencesProvider);
   return TrueDarkNotifier(prefs);
 });
+
+class ShareStatsNotifier extends StateNotifier<bool> {
+  final SharedPreferences prefs;
+  static const _key = 'share_stats_enabled';
+
+  ShareStatsNotifier(this.prefs) : super(true) {
+    state = prefs.getBool(_key) ?? true;
+  }
+
+  void toggle(bool value) {
+    state = value;
+    prefs.setBool(_key, value);
+  }
+}
+
+final shareStatsEnabledProvider = StateNotifierProvider<ShareStatsNotifier, bool>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return ShareStatsNotifier(prefs);
+});

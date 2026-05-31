@@ -198,6 +198,28 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 const SizedBox(height: 32),
 
+                // Privacy & Sharing Section
+                _buildSectionHeader(
+                  context,
+                  "PRIVACY & SHARING",
+                  Iconsax.security_safe,
+                ),
+                const SizedBox(height: 12),
+
+                _buildToggleCard(
+                  context,
+                  "Share My Sadhana & Jap",
+                  "Allow Sangat to see your daily chanting and reading progress",
+                  Iconsax.eye,
+                  ref.watch(shareStatsEnabledProvider),
+                  (val) {
+                    HapticFeedback.mediumImpact();
+                    ref.read(shareStatsEnabledProvider.notifier).toggle(val);
+                  },
+                  gradientColors: [PremiumTokens.activeAccent, PremiumTokens.activeAccent.withValues(alpha: 0.8)],
+                ),
+                const SizedBox(height: 32),
+
                 // Account Section
                 _buildSectionHeader(
                   context,
