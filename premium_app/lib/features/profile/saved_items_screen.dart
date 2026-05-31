@@ -58,7 +58,7 @@ class SavedItemsScreen extends ConsumerWidget {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: SizedBox(
-                            height: 110,
+                            height: 185,
                             child: PressableScale(
                               onTap: () {
                                 Navigator.push(
@@ -120,29 +120,21 @@ class SavedItemsScreen extends ConsumerWidget {
                                                     item.title,
                                                     style: GoogleFonts.manrope(
                                                       color: PremiumTokens.textPrimary,
-                                                      fontSize: 16,
+                                                      fontSize: 19,
                                                       fontWeight: FontWeight.bold,
                                                     ),
-                                                    maxLines: 1,
+                                                    maxLines: 2,
                                                     overflow: TextOverflow.ellipsis,
                                                   ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    item.category.toUpperCase(),
-                                                    style: GoogleFonts.manrope(
-                                                      color: PremiumTokens.activeAccent,
-                                                      fontSize: 10,
-                                                      fontWeight: FontWeight.w800,
-                                                      letterSpacing: 1.5,
-                                                    ),
-                                                  ),
+                                                   const SizedBox(height: 6),
+                                                   PremiumUI.categoryBadge(item.category, fontSize: 10),
                                                 ],
                                               ),
                                             ),
                                             const SizedBox(width: 12),
                                             Icon(
                                               Iconsax.arrow_right_3,
-                                              size: 20,
+                                              size: 24,
                                               color: PremiumTokens.textPrimary.withValues(alpha: 0.8),
                                             ),
                                           ],

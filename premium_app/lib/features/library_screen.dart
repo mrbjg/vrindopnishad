@@ -281,22 +281,7 @@ class LibraryScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: palette.accent.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          item.category.toUpperCase(),
-                          style: PremiumTokens.sansStyle(
-                            fontSize: 8,
-                            fontWeight: FontWeight.w900,
-                            color: palette.accent,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ),
+                      PremiumUI.categoryBadge(item.category, fontSize: 10),
                       const SizedBox(height: 8),
                       Expanded(
                         child: Text(
@@ -500,7 +485,7 @@ class LibraryScreen extends ConsumerWidget {
     ));
 
     return SizedBox(
-      height: 142,
+      height: 220,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 14),
         child: PressableScale(
@@ -570,7 +555,7 @@ class LibraryScreen extends ConsumerWidget {
                                           overflow: TextOverflow.ellipsis,
                                           style: PremiumTokens.hindiAwareStyle(
                                             item.author!,
-                                            fontSize: 9,
+                                            fontSize: 12,
                                             fontWeight: FontWeight.w900,
                                             color: PremiumTokens.saffronGlow,
                                           ).copyWith(letterSpacing: 1.2),
@@ -591,7 +576,7 @@ class LibraryScreen extends ConsumerWidget {
                                           overflow: TextOverflow.ellipsis,
                                           style: PremiumTokens.hindiAwareStyle(
                                             item.book!,
-                                            fontSize: 9,
+                                            fontSize: 12,
                                             fontWeight: FontWeight.bold,
                                             color: PremiumTokens.textSecondary,
                                           ),
@@ -602,11 +587,11 @@ class LibraryScreen extends ConsumerWidget {
                               const SizedBox(height: 2),
                               Text(
                                 item.title,
-                                maxLines: 1,
+                                maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: PremiumTokens.hindiAwareStyle(
                                   item.title,
-                                  fontSize: 16,
+                                  fontSize: 19,
                                   fontWeight: FontWeight.bold,
                                   color: PremiumTokens.textPrimary,
                                   isSacred: true,
@@ -629,14 +614,14 @@ class LibraryScreen extends ConsumerWidget {
                                   if (item.audioUrl != null && item.audioUrl!.isNotEmpty) ...[
                                     Icon(Icons.schedule, color: PremiumTokens.textSecondary, size: 10),
                                     const SizedBox(width: 4),
-                                    Text("10:45", style: PremiumTokens.sansStyle(fontSize: 10, color: PremiumTokens.textSecondary)),
+                                    Text("10:45", style: PremiumTokens.sansStyle(fontSize: 12, color: PremiumTokens.textSecondary)),
                                     const SizedBox(width: 8),
                                   ] else ...[
                                     Icon(Icons.auto_stories, color: PremiumTokens.textSecondary, size: 10),
                                     const SizedBox(width: 4),
                                     Text(
                                       (item.chapter ?? "READ").toUpperCase(),
-                                      style: PremiumTokens.sansStyle(fontSize: 10, color: PremiumTokens.textSecondary, letterSpacing: 1.0),
+                                      style: PremiumTokens.sansStyle(fontSize: 12, color: PremiumTokens.textSecondary, letterSpacing: 1.0),
                                     ),
                                     const SizedBox(width: 8),
                                   ],
@@ -654,7 +639,7 @@ class LibraryScreen extends ConsumerWidget {
                                         const SizedBox(width: 4),
                                         Text(
                                           item.category.toUpperCase(),
-                                          style: PremiumTokens.sansStyle(fontSize: 8, fontWeight: FontWeight.w900, color: PremiumTokens.textSecondary, letterSpacing: 0.5),
+                                          style: PremiumTokens.sansStyle(fontSize: 10, fontWeight: FontWeight.w900, color: PremiumTokens.textSecondary, letterSpacing: 0.5),
                                         ),
                                       ],
                                     ),
@@ -677,7 +662,7 @@ class LibraryScreen extends ConsumerWidget {
                                               ),
                                               child: Text(
                                                 tag.toUpperCase(),
-                                                style: PremiumTokens.sansStyle(fontSize: 8, fontWeight: FontWeight.bold, color: PremiumTokens.textSecondary, letterSpacing: 0.5),
+                                                style: PremiumTokens.sansStyle(fontSize: 10, fontWeight: FontWeight.bold, color: PremiumTokens.textSecondary, letterSpacing: 0.5),
                                               ),
                                             )),
                                           ],
@@ -698,7 +683,7 @@ class LibraryScreen extends ConsumerWidget {
                             PremiumUI.animatedIcon(
                               folder: 'Heart',
                               fileName: 'heart.json',
-                              size: 20,
+                              size: 24,
                               color: ref.watch(isFavoriteProvider(item.id)) ? PremiumTokens.saffronGlow : PremiumTokens.textSecondary,
                               isToggled: ref.watch(isFavoriteProvider(item.id)),
                               resetAfterPlay: false,
@@ -715,8 +700,8 @@ class LibraryScreen extends ConsumerWidget {
                                   ref.read(audioProvider.notifier).playWithPlaylist(item, playlist);
                                 },
                                 child: Container(
-                                  width: 38,
-                                  height: 38,
+                                  width: 44,
+                                  height: 44,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: isPlaying
@@ -731,7 +716,7 @@ class LibraryScreen extends ConsumerWidget {
                                   child: Icon(
                                     isPlaying ? Iconsax.pause : Icons.play_arrow,
                                     color: isPlaying ? PremiumTokens.activeAccent : PremiumTokens.textPrimary,
-                                    size: 18,
+                                    size: 22,
                                   ),
                                 ),
                               ),

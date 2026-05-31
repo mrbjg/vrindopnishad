@@ -22,6 +22,7 @@ import 'profile/find_friends_screen.dart';
 import '../core/personalized_feed_provider.dart';
 import 'content_detail_screen.dart';
 import '../widgets/animated_effects.dart';
+import '../core/ambient_audio_provider.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -79,7 +80,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
         SizedBox(
-          height: 132,
+          height: 235,
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             scrollDirection: Axis.horizontal,
@@ -100,7 +101,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     );
                   },
                   child: SizedBox(
-                    width: 220,
+                    width: 300,
                     child: PremiumUI.relicStaticCard(
                       padding: EdgeInsets.zero,
                       borderRadius: 16,
@@ -134,51 +135,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             
                             // 3. Card Content (Text & Badges)
                             Padding(
-                              padding: const EdgeInsets.all(14),
+                              padding: const EdgeInsets.all(18),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                                        decoration: BoxDecoration(
-                                          color: PremiumTokens.activeAccent.withValues(alpha: 0.8),
-                                          borderRadius: BorderRadius.circular(6),
-                                        ),
-                                        child: Text(
-                                          item.category.toUpperCase(),
-                                          style: PremiumTokens.sansStyle(
-                                            color: Colors.white,
-                                            fontSize: 8,
-                                            fontWeight: FontWeight.w900,
-                                            letterSpacing: 1,
-                                          ),
-                                        ),
-                                      ),
+                                      PremiumUI.categoryBadge(item.category, fontSize: 11, forceDarkStyle: true),
                                       Consumer(
                                         builder: (context, ref, child) {
                                           final match = ref.watch(matchPercentageProvider(item));
-                                          return Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                                            decoration: BoxDecoration(
-                                              color: Colors.black.withValues(alpha: 0.5),
-                                              borderRadius: BorderRadius.circular(6),
-                                              border: Border.all(
-                                                color: PremiumTokens.activeAccent.withValues(alpha: 0.3),
-                                                width: 0.5,
-                                              ),
-                                            ),
-                                            child: Text(
-                                              "$match% MATCH",
-                                              style: PremiumTokens.sansStyle(
-                                                color: PremiumTokens.activeAccent,
-                                                fontSize: 7,
-                                                fontWeight: FontWeight.w900,
-                                              ),
-                                            ),
-                                          );
+                                          return PremiumUI.resonanceBadge("$match% MATCH", fontSize: 10, forceDarkStyle: true);
                                         },
                                       ),
                                     ],
@@ -191,19 +159,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     style: GoogleFonts.spectral(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 13,
+                                      fontSize: 17,
                                       height: 1.3,
                                     ),
                                   ),
                                   if (item.author != null && item.author!.isNotEmpty) ...[
-                                    const SizedBox(height: 4),
+                                    const SizedBox(height: 6),
                                     Text(
                                       item.author!,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: PremiumTokens.sansStyle(
                                         color: Colors.white.withValues(alpha: 0.7),
-                                        fontSize: 10,
+                                        fontSize: 13,
                                       ),
                                     ),
                                   ],
@@ -298,6 +266,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: Column(
                   children: [
                     _DailyMotivationSection(),
+                    RepaintBoundary(child: _PeaceBreathingSection()),
                     RepaintBoundary(child: _PremiumNaamJapSection()),
                     _QuickActionsGrid(),
                   ],
@@ -488,6 +457,461 @@ class _DailyMotivationSection extends ConsumerWidget {
     );
   }
 }
+
+class _PeaceBreathingSection extends ConsumerStatefulWidget {
+  const _PeaceBreathingSection();
+
+  @override
+  ConsumerState<_PeaceBreathingSection> createState() => _PeaceBreathingSectionState();
+}
+
+class _PeaceBreathingSectionState extends ConsumerState<_PeaceBreathingSection>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _breathingController;
+  String _breathText = "Breathe In";
+  String _breathDesc = "Fill your heart with peace";
+  double _breathScale = 1.0;
+  bool _isExpanded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _breathingController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 16),
+    )..addListener(() {
+        if (!mounted || !_isExpanded) return;
+        final val = _breathingController.value;
+        if (val < 0.25) {
+          // Inhale (4s)
+          final progress = val / 0.25;
+          setState(() {
+            _breathText = "Breathe In";
+            _breathDesc = "Feel divine energy entering";
+            _breathScale = 1.0 + (progress * 0.45); // 1.0 to 1.45
+          });
+        } else if (val < 0.50) {
+          // Hold (4s)
+          setState(() {
+            _breathText = "Hold";
+            _breathDesc = "Absorb the silent tranquility";
+            _breathScale = 1.45;
+          });
+        } else if (val < 0.75) {
+          // Exhale (4s)
+          final progress = (val - 0.50) / 0.25;
+          setState(() {
+            _breathText = "Breathe Out";
+            _breathDesc = "Let go of all anxiety and stress";
+            _breathScale = 1.45 - (progress * 0.45); // 1.45 to 1.0
+          });
+        } else {
+          // Rest (4s)
+          setState(() {
+            _breathText = "Rest";
+            _breathDesc = "Surrender to the supreme peace";
+            _breathScale = 1.0;
+          });
+        }
+      });
+  }
+
+  @override
+  void dispose() {
+    _breathingController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ambientState = ref.watch(ambientAudioProvider);
+    final current = ambientState.currentSoundscape;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          color: PremiumTokens.surfaceMain.withValues(alpha: 0.5),
+          border: Border.all(color: PremiumTokens.borderSubtle),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Top Header Banner (Collapsible Header)
+            GestureDetector(
+              onTap: () {
+                HapticFeedback.lightImpact();
+                setState(() {
+                  _isExpanded = !_isExpanded;
+                  if (_isExpanded) {
+                    _breathingController.repeat();
+                  } else {
+                    _breathingController.stop();
+                  }
+                });
+              },
+              behavior: HitTestBehavior.opaque,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                color: PremiumTokens.borderSubtle.withValues(alpha: 0.15),
+                child: Row(
+                  children: [
+                    Icon(Iconsax.sun_1, size: 14, color: PremiumTokens.activeAccent),
+                    const SizedBox(width: 8),
+                    Text(
+                      'DIVINE PEACE ZONE',
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2.0,
+                        color: PremiumTokens.activeAccent,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    if (ambientState.isPlaying)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: Row(
+                          children: [
+                            _buildMiniEqualizer(),
+                            const SizedBox(width: 4),
+                            Text(
+                              'AMBIANCE ACTIVE',
+                              style: PremiumTokens.sansStyle(
+                                fontSize: 7.5,
+                                fontWeight: FontWeight.bold,
+                                color: PremiumTokens.activeAccent,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    const Spacer(),
+                    Icon(
+                      _isExpanded ? Iconsax.arrow_up_11 : Iconsax.arrow_down_12,
+                      size: 14,
+                      color: PremiumTokens.activeAccent,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            
+            // Main Body: Breathing circle & Ambiance control
+            if (_isExpanded)
+              Padding(
+                padding: const EdgeInsets.all(18),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      // Left: Animated Breathing Circle
+                      SizedBox(
+                        width: 110,
+                        height: 110,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Glowing breathing halo
+                            AnimatedScale(
+                              scale: _breathScale,
+                              duration: const Duration(milliseconds: 100),
+                              curve: Curves.easeInOut,
+                              child: Container(
+                                width: 70,
+                                height: 70,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  gradient: RadialGradient(
+                                    colors: [
+                                      PremiumTokens.activeAccent.withValues(alpha: 0.25),
+                                      PremiumTokens.activeAccent.withValues(alpha: 0.05),
+                                      Colors.transparent,
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // Core circle
+                            Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: PremiumTokens.surfaceMain,
+                                border: Border.all(
+                                  color: PremiumTokens.borderSubtle,
+                                  width: 1.5,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: PremiumTokens.activeAccent.withValues(alpha: 0.08),
+                                    blurRadius: 10,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  'ॐ',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 18),
+                      // Right: Text info
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              _breathText,
+                              style: PremiumTokens.displayStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: PremiumTokens.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              _breathDesc,
+                              style: PremiumTokens.sansStyle(
+                                fontSize: 12,
+                                color: PremiumTokens.textSecondary,
+                              ).copyWith(height: 1.35),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  
+                  const SizedBox(height: 18),
+                  const Divider(height: 1, color: Colors.transparent),
+                  const SizedBox(height: 6),
+                  
+                  // Ambient sound select chips
+                  Row(
+                    children: [
+                      Icon(Iconsax.music_playlist, size: 12, color: PremiumTokens.textMuted),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Select Meditative Soundscape',
+                        style: PremiumTokens.sansStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: PremiumTokens.textMuted,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  
+                  // Horizontal Soundscape Chips List
+                  SizedBox(
+                    height: 38,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      children: [
+                        // Off chip
+                        _buildSoundscapeChip(
+                          name: 'Silent Off',
+                          icon: '🚫',
+                          isActive: current == null,
+                          onTap: () async {
+                            HapticFeedback.lightImpact();
+                            await ref.read(ambientAudioProvider.notifier).stop();
+                          },
+                        ),
+                        ...AmbientAudioNotifier.soundscapes.map((s) => _buildSoundscapeChip(
+                          name: s.name,
+                          icon: s.icon,
+                          isActive: current?.id == s.id,
+                          onTap: () async {
+                            HapticFeedback.lightImpact();
+                            await ref.read(ambientAudioProvider.notifier).selectSoundscape(s);
+                          },
+                        )),
+                      ],
+                    ),
+                  ),
+                  
+                  // Volume controller if playing
+                  if (current != null) ...[
+                    const SizedBox(height: 14),
+                    Row(
+                      children: [
+                        Icon(
+                          ambientState.isPlaying ? Iconsax.volume_high : Iconsax.volume_cross,
+                          size: 14,
+                          color: PremiumTokens.textSecondary,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              trackHeight: 2.5,
+                              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                              overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+                              activeTrackColor: PremiumTokens.activeAccent,
+                              inactiveTrackColor: PremiumTokens.borderSubtle,
+                              thumbColor: PremiumTokens.activeAccent,
+                            ),
+                            child: Slider(
+                              value: ambientState.volume,
+                              onChanged: (val) {
+                                ref.read(ambientAudioProvider.notifier).setVolume(val);
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${(ambientState.volume * 100).toInt()}%',
+                          style: PremiumTokens.sansStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: PremiumTokens.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSoundscapeChip({
+    required String name,
+    required String icon,
+    required bool isActive,
+    required VoidCallback onTap,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
+            color: isActive
+                ? PremiumTokens.activeAccent.withValues(alpha: 0.15)
+                : PremiumTokens.surfaceMain.withValues(alpha: 0.4),
+            borderRadius: BorderRadius.circular(100),
+            border: Border.all(
+              color: isActive
+                  ? PremiumTokens.activeAccent
+                  : PremiumTokens.borderSubtle,
+              width: 1,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                icon,
+                style: const TextStyle(fontSize: 12),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                name,
+                style: PremiumTokens.sansStyle(
+                  fontSize: 11,
+                  fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                  color: isActive ? PremiumTokens.activeAccent : PremiumTokens.textPrimary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMiniEqualizer() {
+    return SizedBox(
+      width: 12,
+      height: 8,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: List.generate(3, (index) => _EqualizerBar(index: index)),
+      ),
+    );
+  }
+}
+
+class _EqualizerBar extends StatefulWidget {
+  final int index;
+  const _EqualizerBar({required this.index});
+
+  @override
+  State<_EqualizerBar> createState() => _EqualizerBarState();
+}
+
+class _EqualizerBarState extends State<_EqualizerBar>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 400 + (widget.index * 150)),
+    );
+    _animation = Tween<double>(begin: 2.0, end: 8.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+    _controller.repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Container(
+          width: 2,
+          height: _animation.value,
+          decoration: BoxDecoration(
+            color: PremiumTokens.activeAccent,
+            borderRadius: BorderRadius.circular(10),
+          ),
+        );
+      },
+    );
+  }
+}
+
 
 
 // ─── Streak & Level Bar ────────────────────────────────────
@@ -1000,7 +1424,7 @@ class _PremiumContentListLiteState extends ConsumerState<_PremiumContentListLite
               );
             },
             child: SizedBox(
-              height: 120,
+              height: 195,
               child: PremiumUI.relicStaticCard(
                 padding: EdgeInsets.zero,
                 borderColor: PremiumTokens.borderSubtle,
@@ -1037,7 +1461,7 @@ class _PremiumContentListLiteState extends ConsumerState<_PremiumContentListLite
 
                       // 3. Card content
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -1047,42 +1471,20 @@ class _PremiumContentListLiteState extends ConsumerState<_PremiumContentListLite
                               style: PremiumTokens.sansStyle(
                                 color: PremiumTokens.textPrimary,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 14,
+                                fontSize: 18,
                               ),
-                              maxLines: 1,
+                              maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 6),
                             Row(
                               children: [
-                                Text(
-                                  item.category.toUpperCase(),
-                                  style: PremiumTokens.sansStyle(
-                                    color: PremiumTokens.textMuted,
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w900,
-                                    letterSpacing: 1,
-                                  ),
-                                ),
+                                PremiumUI.categoryBadge(item.category, fontSize: 10),
                                 const SizedBox(width: 8),
                                 Consumer(
                                   builder: (context, ref, child) {
                                     final match = ref.watch(matchPercentageProvider(item));
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
-                                      decoration: BoxDecoration(
-                                        color: PremiumTokens.activeAccent.withValues(alpha: 0.12),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Text(
-                                        "$match% MATCH",
-                                        style: PremiumTokens.sansStyle(
-                                          color: PremiumTokens.activeAccent,
-                                          fontSize: 7,
-                                          fontWeight: FontWeight.w800,
-                                        ),
-                                      ),
-                                    );
+                                    return PremiumUI.resonanceBadge("$match% MATCH", fontSize: 9);
                                   },
                                 ),
                                 const Spacer(),

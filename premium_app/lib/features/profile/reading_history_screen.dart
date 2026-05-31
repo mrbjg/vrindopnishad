@@ -124,12 +124,12 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
                                 child: Row(
                                   children: [
                                     Container(
-                                      padding: const EdgeInsets.all(10),
+                                      padding: const EdgeInsets.all(12),
                                       decoration: BoxDecoration(
                                         color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
-                                      child: Icon(Iconsax.clock, color: PremiumTokens.activeAccent, size: 20),
+                                      child: Icon(Iconsax.clock, color: PremiumTokens.activeAccent, size: 24),
                                     ),
                                     const SizedBox(width: 16),
                                     Expanded(
@@ -139,7 +139,7 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
                                           Text(
                                             item.title ?? "Unknown Sacred Text",
                                             style: PremiumTokens.displayStyle(
-                                              fontSize: 16, 
+                                              fontSize: 18, 
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
@@ -148,13 +148,13 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
                                             "${item.category ?? 'Divine'} • ${_formatTime(item.readAt)}",
                                             style: PremiumTokens.sansStyle(
                                               color: PremiumTokens.textMuted, 
-                                              fontSize: 11,
+                                              fontSize: 13,
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
-                                    Icon(Iconsax.arrow_right_3, size: 18, color: PremiumTokens.borderMedium),
+                                    Icon(Iconsax.arrow_right_3, size: 20, color: PremiumTokens.borderMedium),
                                   ],
                                 ),
                               ),

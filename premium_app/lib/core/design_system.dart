@@ -588,6 +588,73 @@ class PremiumUI {
     );
   }
 
+  /// Contrast-safe category badge capsule
+  static Widget categoryBadge(String category, {double fontSize = 11, bool forceDarkStyle = false}) {
+    final isDark = PremiumTokens.isDark || forceDarkStyle;
+    final accent = PremiumTokens.activeAccent;
+    final accentLight = PremiumTokens.activeAccentLight;
+    final textColor = isDark ? accentLight : accent;
+    final bgColor = isDark 
+        ? accent.withValues(alpha: 0.20) 
+        : accent.withValues(alpha: 0.12);
+    final borderColor = isDark 
+        ? accentLight.withValues(alpha: 0.30) 
+        : accent.withValues(alpha: 0.25);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(
+          color: borderColor,
+          width: 0.8,
+        ),
+      ),
+      child: Text(
+        category.toUpperCase(),
+        style: PremiumTokens.sansStyle(
+          color: textColor,
+          fontSize: fontSize,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 1,
+        ),
+      ),
+    );
+  }
+
+  /// Contrast-safe percentage/resonance badge capsule
+  static Widget resonanceBadge(String label, {double fontSize = 10, bool forceDarkStyle = false}) {
+    final isDark = PremiumTokens.isDark || forceDarkStyle;
+    final accent = PremiumTokens.activeAccent;
+    final accentLight = PremiumTokens.activeAccentLight;
+    final textColor = isDark ? accentLight : accent;
+    final bgColor = Colors.black.withValues(alpha: 0.5);
+    final borderColor = isDark 
+        ? accentLight.withValues(alpha: 0.30) 
+        : accent.withValues(alpha: 0.25);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(
+          color: borderColor,
+          width: 0.8,
+        ),
+      ),
+      child: Text(
+        label,
+        style: PremiumTokens.sansStyle(
+          color: textColor,
+          fontSize: fontSize,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+
   /// Celestial pulsing icon for alerts
   static Widget pulsingCelestialIcon({
     required IconData icon,

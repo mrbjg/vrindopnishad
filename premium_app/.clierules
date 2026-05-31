@@ -23,3 +23,7 @@ Never hardcode raw hex values, border-radii, or layout padding in widget files. 
 - Prevent raw text emojis in interactive UI controls (tabs, filters, chips, status flags). Ensure emojis are split from labels and rendered using design-system vector icons via helper mappings.
 - When resolving platform-specific plugins, check the locked package versions to target the exact classes (e.g., using `IOSFlutterLocalNotificationsPlugin` vs `DarwinFlutterLocalNotificationsPlugin`) to avoid compile failures.
 
+- Wrap all high-frequency animated or scaling widgets (e.g. customized loaders, timers, and equalizers) in a RepaintBoundary to prevent cascading screen-wide repaints during scrolls.
+- Stop or pause AnimationControllers when their parent section is collapsed or hidden off-screen to preserve CPU cycles on budget hardware.
+- All network-fetched images must pass through a unified cache manager that restricts memory footprint (memCacheWidth/memCacheHeight scaling) to prevent out-of-memory crashes on low-performance phone viewports.
+

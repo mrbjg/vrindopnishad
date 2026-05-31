@@ -430,7 +430,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                               ),
                               const SizedBox(height: 16),
                               SizedBox(
-                                height: 132,
+                                height: 195,
                                 child: ListView.builder(
                                   scrollDirection: Axis.horizontal,
                                   physics: const BouncingScrollPhysics(),
@@ -458,8 +458,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                           child: BackdropFilter(
                                             filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                                             child: Container(
-                                              width: 320,
-                                              height: 110,
+                                              width: 350,
+                                              height: 165,
                                               clipBehavior: Clip.antiAlias,
                                               padding: const EdgeInsets.all(12),
                                               decoration: BoxDecoration(
@@ -504,8 +504,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                                         children: [
                                                           CachedNetworkImage(
                                                             imageUrl: cardImageUrl,
-                                                            width: 66,
-                                                            height: 66,
+                                                            width: 95,
+                                                            height: 95,
                                                             fit: BoxFit.cover,
                                                             placeholder: (context, url) => Container(
                                                               color: themeData.textColor.withValues(alpha: 0.05),
@@ -547,83 +547,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                                         Row(
                                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
-                                                            Row(
-                                                              children: [
-                                                                Container(
-                                                                  width: 5,
-                                                                  height: 5,
-                                                                  decoration: BoxDecoration(
-                                                                    shape: BoxShape.circle,
-                                                                    color: themeData.accentColor,
-                                                                    boxShadow: [
-                                                                      BoxShadow(
-                                                                        color: themeData.accentColor,
-                                                                        blurRadius: 4,
-                                                                        spreadRadius: 0.5,
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                                const SizedBox(width: 6),
-                                                                Text(
-                                                                  item.category.toUpperCase(),
-                                                                  style: GoogleFonts.manrope(
-                                                                    color: themeData.textColor.withValues(alpha: 0.6),
-                                                                    fontSize: 7.5,
-                                                                    fontWeight: FontWeight.w800,
-                                                                    letterSpacing: 1.2,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            
-                                                            // Premium Glowing Resonance Pill
-                                                            Container(
-                                                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                                                              decoration: BoxDecoration(
-                                                                gradient: LinearGradient(
-                                                                  colors: [
-                                                                    PremiumTokens.activeAccent.withValues(alpha: 0.16),
-                                                                    PremiumTokens.activeAccent.withValues(alpha: 0.04),
-                                                                  ],
-                                                                ),
-                                                                borderRadius: BorderRadius.circular(20),
-                                                                border: Border.all(
-                                                                  color: PremiumTokens.activeAccent.withValues(alpha: 0.25),
-                                                                  width: 0.6,
-                                                                ),
-                                                              ),
-                                                              child: Row(
-                                                                mainAxisSize: MainAxisSize.min,
-                                                                children: [
-                                                                  Container(
-                                                                    width: 3.5,
-                                                                    height: 3.5,
-                                                                    decoration: BoxDecoration(
-                                                                      shape: BoxShape.circle,
-                                                                      color: PremiumTokens.activeAccent,
-                                                                      boxShadow: [
-                                                                        BoxShadow(
-                                                                          color: PremiumTokens.activeAccent,
-                                                                          blurRadius: 3,
-                                                                          spreadRadius: 0.5,
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  const SizedBox(width: 4),
-                                                                  Text(
-                                                                    "$match% RESONANCE",
-                                                                    style: GoogleFonts.manrope(
-                                                                      color: PremiumTokens.activeAccent,
-                                                                      fontSize: 6.5,
-                                                                      fontWeight: FontWeight.w900,
-                                                                      letterSpacing: 0.5,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
+                                                            PremiumUI.categoryBadge(item.category, fontSize: 10),
+                                                            PremiumUI.resonanceBadge("$match% RESONANCE", fontSize: 9),
                                                           ],
                                                         ),
                                                         
@@ -638,7 +563,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                                               style: GoogleFonts.spectral(
                                                                 color: themeData.textColor,
                                                                 fontWeight: FontWeight.bold,
-                                                                fontSize: 13,
+                                                                fontSize: 16,
                                                                 height: 1.25,
                                                                 letterSpacing: 0.1,
                                                               ),
@@ -651,7 +576,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                                           children: [
                                                             Icon(
                                                               Iconsax.user,
-                                                              size: 9,
+                                                              size: 12,
                                                               color: themeData.textColor.withValues(alpha: 0.4),
                                                             ),
                                                             const SizedBox(width: 4),
@@ -664,7 +589,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                                                 overflow: TextOverflow.ellipsis,
                                                                 style: GoogleFonts.manrope(
                                                                   color: themeData.textColor.withValues(alpha: 0.45),
-                                                                  fontSize: 9,
+                                                                  fontSize: 12,
                                                                   fontWeight: FontWeight.w500,
                                                                 ),
                                                               ),
@@ -794,23 +719,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             Consumer(
               builder: (context, ref, child) {
                 final match = ref.watch(matchPercentageProvider(content));
-                return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: PremiumTokens.activeAccent.withValues(alpha: 0.25), width: 0.5),
-                  ),
-                  child: Text(
-                    "$match% MATCH",
-                    style: GoogleFonts.manrope(
-                      color: PremiumTokens.activeAccent,
-                      fontSize: 8,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                );
+                return PremiumUI.resonanceBadge("$match% MATCH", fontSize: 8);
               },
             ),
           ],

@@ -154,7 +154,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   Widget _buildSacredListItem(BuildContext context, SacredContent item) {
     final match = ref.watch(matchPercentageProvider(item));
     return SizedBox(
-      height: 120,
+      height: 195,
       child: PressableScale(
         onTap: () {
           ref.read(recentSearchesProvider.notifier).addSearch(_searchQuery);
@@ -208,46 +208,24 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         item.displayTitle,
                         style: GoogleFonts.manrope(
                           color: PremiumTokens.textPrimary,
-                          fontSize: 15,
+                          fontSize: 18,
                           fontWeight: FontWeight.w700,
                         ),
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 6),
                       Row(
                         children: [
-                          Text(
-                            item.category.toUpperCase(),
-                            style: GoogleFonts.manrope(
-                              color: PremiumTokens.activeAccent,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 1,
-                            ),
-                          ),
+                          PremiumUI.categoryBadge(item.category, fontSize: 11),
                           const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              "$match% MATCH",
-                              style: GoogleFonts.manrope(
-                                color: PremiumTokens.activeAccent,
-                                fontSize: 7,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ),
+                          PremiumUI.resonanceBadge("$match% MATCH", fontSize: 10),
                           const Spacer(),
                           // Like Button
                           PremiumUI.animatedIcon(
                             folder: 'Heart',
                             fileName: 'heart.json',
-                            size: 18,
+                            size: 24,
                             color: ref.watch(isFavoriteProvider(item.id)) ? PremiumTokens.saffronGlow : PremiumTokens.textMuted,
                             isToggled: ref.watch(isFavoriteProvider(item.id)),
                             resetAfterPlay: false,
@@ -257,7 +235,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             },
                           ),
                           const SizedBox(width: 12),
-                          Icon(Iconsax.arrow_right_3, color: PremiumTokens.textMuted, size: 16),
+                          Icon(Iconsax.arrow_right_3, color: PremiumTokens.textMuted, size: 20),
                         ],
                       ),
                     ],
