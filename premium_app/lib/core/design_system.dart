@@ -3542,7 +3542,7 @@ class SacredActionMenuState extends State<SacredActionMenu> {
     }
     
     if (widget.items.length == 3) return 1.6;
-    return 2.2; // Wide fan for 4+
+    return 2.4; // Wide fan for 4+ to prevent overlaps
   }
 
   Offset _getItemPosition(int index, double screenWidth, double screenHeight) {
@@ -3566,18 +3566,18 @@ class SacredActionMenuState extends State<SacredActionMenu> {
       }
     }
 
-    // Dynamic Radius: Tighter, more compact spread
-    double currentRadius = 110.0;
+    // Dynamic Radius: Expanded radius to prevent overlaps and improve visuals
+    double currentRadius = 105.0;
     if (_hoveredIndex != -1) {
-      currentRadius = (index == _hoveredIndex) ? 120.0 : 95.0;
+      currentRadius = (index == _hoveredIndex) ? 115.0 : 95.0;
     }
 
     final double rawX = widget.position.dx + currentRadius * math.cos(dynamicAngle);
     final double rawY = widget.position.dy + currentRadius * math.sin(dynamicAngle);
 
     // Strict Clamping to Screen Boundaries
-    // Padding should be at least half the container width (60.0)
-    const double padding = 60.0;
+    // Padding should be at least half the container width (45.0)
+    const double padding = 45.0;
     final double clampedX = rawX.clamp(padding, screenWidth - padding);
     final double clampedY = rawY.clamp(padding, screenHeight - padding);
 
@@ -3653,15 +3653,15 @@ class SacredActionMenuState extends State<SacredActionMenu> {
             return AnimatedPositioned(
               duration: const Duration(milliseconds: 220),
               curve: Curves.easeOutBack,
-              left: (_isVisible ? itemPos.dx : widget.position.dx) - 60,
-              top: (_isVisible ? itemPos.dy : widget.position.dy) - 60,
+              left: itemPos.dx - 60,
+              top: itemPos.dy - 60,
               child: SizedBox(
                 width: 120,
                 height: 120,
                 child: Center(
                   child: AnimatedScale(
-                    scale: _isVisible ? (index == _hoveredIndex ? 1.12 : 0.92) : 0,
-                    duration: const Duration(milliseconds: 220),
+                    scale: _isVisible ? (index == _hoveredIndex ? 1.15 : 0.90) : 0,
+                    duration: const Duration(milliseconds: 600),
                     curve: Curves.elasticOut,
                     child: AnimatedOpacity(
                       duration: const Duration(milliseconds: 150),
@@ -3705,22 +3705,28 @@ class SacredActionMenuState extends State<SacredActionMenu> {
                           ? widget.items[_hoveredIndex].color.withValues(
                               alpha: 0.25,
                             )
-                          : Colors.white.withValues(alpha: 0.1),
+                          : const Color(0xFF03030F).withValues(alpha: 0.95),
                       border: Border.all(
                         color: _hoveredIndex != -1
                             ? widget.items[_hoveredIndex].color.withValues(
                                 alpha: 0.8,
                               )
-                            : Colors.white.withValues(alpha: 0.2),
-                        width: 1.5,
+                            : PremiumTokens.activeAccent.withValues(alpha: 0.4),
+                        width: _hoveredIndex != -1 ? 2.0 : 1.5,
                       ),
                       boxShadow: [
                         if (_hoveredIndex != -1)
                           BoxShadow(
                             color: widget.items[_hoveredIndex].color
-                                .withValues(alpha: 0.5),
-                            blurRadius: 25,
-                            spreadRadius: 8,
+                                .withValues(alpha: 0.65),
+                            blurRadius: 30,
+                            spreadRadius: 6,
+                          )
+                        else
+                          BoxShadow(
+                            color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
+                            blurRadius: 18,
+                            spreadRadius: 2,
                           ),
                       ],
                     ),
@@ -3773,72 +3779,69 @@ class SacredActionMenuState extends State<SacredActionMenu> {
   }
 
   Widget _buildMenuItem(SacredMenuItem item, bool isSelected) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        AnimatedContainer(
-              duration: const Duration(milliseconds: 350),
-              curve: Curves.easeOutBack,
-              width: isSelected ? 60 : 52,
-              height: isSelected ? 60 : 52,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected
-                    ? item.color.withValues(alpha: 0.9)
-                    : PremiumTokens.voidBlack.withValues(alpha: 0.4),
-                border: Border.all(
-                  color: item.color.withValues(alpha: isSelected ? 0.8 : 0.2),
-                  width: isSelected ? 2.5 : 1.0,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: item.color.withValues(alpha: isSelected ? 0.6 : 0.2),
-                    blurRadius: isSelected ? 35 : 10,
-                    spreadRadius: isSelected ? 8 : 2,
-                  ),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      width: isSelected ? 62 : 52,
+      height: isSelected ? 62 : 52,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isSelected
+              ? [
+                  item.color,
+                  item.color.withValues(alpha: 0.7),
+                ]
+              : [
+                  Colors.white.withValues(alpha: 0.08),
+                  item.color.withValues(alpha: 0.12),
                 ],
-              ),
-              child: Center(
-                child: Icon(
-                  item.icon,
-                  color: Colors.white,
-                  size: isSelected ? 28 : 24,
-                ),
-              ),
-            )
-            .animate(target: _isVisible ? 1 : 0)
-            .scale(
-              begin: const Offset(0.3, 0.3),
-              end: const Offset(1, 1),
-              curve: Curves.elasticOut,
-              duration: 400.ms,
-            )
-            .fadeIn(duration: 150.ms),
-        if (isSelected) ...[
-          const SizedBox(height: 8),
-          Material(
-            color: Colors.transparent,
-            child: Text(
-              item.label.toUpperCase(),
-              style: GoogleFonts.spectral(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
-                color: Colors.white,
-                shadows: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.8),
-                    blurRadius: 4,
-                  ),
-                ],
-              ),
-            ),
-          )
-              .animate()
-              .fadeIn(duration: 150.ms)
-              .slideY(begin: 0.2, end: 0, curve: Curves.easeOutCubic),
+        ),
+        border: Border.all(
+          color: isSelected
+              ? item.color
+              : item.color.withValues(alpha: 0.35),
+          width: isSelected ? 2.5 : 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: item.color.withValues(alpha: isSelected ? 0.65 : 0.15),
+            blurRadius: isSelected ? 30 : 12,
+            spreadRadius: isSelected ? 6 : 1,
+          ),
+          BoxShadow(
+            color: isSelected
+                ? Colors.white.withValues(alpha: 0.25)
+                : Colors.transparent,
+            blurRadius: isSelected ? 10 : 0,
+            spreadRadius: isSelected ? 1 : 0,
+          ),
         ],
-      ],
+      ),
+      child: Center(
+        child: Icon(
+          item.icon,
+          color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.9),
+          size: isSelected ? 26 : 22,
+        ),
+      ),
+    )
+    .animate(target: _isVisible ? 1 : 0)
+    .scale(
+      begin: const Offset(0.3, 0.3),
+      end: const Offset(1, 1),
+      curve: Curves.elasticOut,
+      duration: 500.ms,
+    )
+    .fadeIn(duration: 200.ms)
+    // Add a gentle floating animation to make the menu items feel alive and dynamic!
+    .animate(onPlay: (controller) => controller.repeat(reverse: true))
+    .shimmer(
+      delay: (50 * widget.items.indexOf(item)).ms,
+      duration: 2.seconds,
+      color: item.color.withValues(alpha: 0.2),
     );
   }
 }
