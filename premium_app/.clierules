@@ -17,3 +17,9 @@ Micro-interactions mutating server state (likes, flags, deletes) must commit imm
 
 # Clean Separation via Design Tokens
 Never hardcode raw hex values, border-radii, or layout padding in widget files. Color and style parameters must always query semantic bindings (`PremiumTokens` / theme configs) to maintain rebrand scalability.
+
+# Recommended Rules:
+- Ensure all notification configurations explicitly trigger the OS runtime permission requests (such as POST_NOTIFICATIONS for Android 13+) immediately on initialization or key user flows rather than assuming setup alone grants access.
+- Prevent raw text emojis in interactive UI controls (tabs, filters, chips, status flags). Ensure emojis are split from labels and rendered using design-system vector icons via helper mappings.
+- When resolving platform-specific plugins, check the locked package versions to target the exact classes (e.g., using `IOSFlutterLocalNotificationsPlugin` vs `DarwinFlutterLocalNotificationsPlugin`) to avoid compile failures.
+

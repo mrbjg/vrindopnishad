@@ -316,12 +316,12 @@ class _FindFriendsScreenState extends ConsumerState<FindFriendsScreen> {
                         child: Row(
                           children: [
                             _buildFilterChip("All Sangat", "all"),
-                            _buildFilterChip("Vibe Matches 🌅", "match"),
-                            _buildFilterChip("Chanting Now 🟢", "online"),
-                            _buildFilterChip("Forest Haven 🌲", AppMoodTheme.forestHaven.name),
-                            _buildFilterChip("Dawn Serenity 🌅", AppMoodTheme.sereneDawn.name),
-                            _buildFilterChip("Monsoon Vibe 🌿", AppMoodTheme.monsoonGreen.name),
-                            _buildFilterChip("Midnight Space 🌑", AppMoodTheme.midnightVoid.name),
+                            _buildFilterChip("Vibe Matches", "match", emoji: "🌅"),
+                            _buildFilterChip("Chanting Now", "online", emoji: "🟢"),
+                            _buildFilterChip("Forest Haven", AppMoodTheme.forestHaven.name, emoji: "🌲"),
+                            _buildFilterChip("Dawn Serenity", AppMoodTheme.sereneDawn.name, emoji: "🌅"),
+                            _buildFilterChip("Monsoon Vibe", AppMoodTheme.monsoonGreen.name, emoji: "🌿"),
+                            _buildFilterChip("Midnight Space", AppMoodTheme.midnightVoid.name, emoji: "🌑"),
                           ],
                         ),
                       ),
@@ -680,7 +680,7 @@ class _FindFriendsScreenState extends ConsumerState<FindFriendsScreen> {
     );
   }
 
-  Widget _buildFilterChip(String label, String value) {
+  Widget _buildFilterChip(String label, String value, {String? emoji}) {
     final isSelected = _selectedMoodFilter == value;
     return Padding(
       padding: const EdgeInsets.only(right: 8),
@@ -705,13 +705,26 @@ class _FindFriendsScreenState extends ConsumerState<FindFriendsScreen> {
               width: 1,
             ),
           ),
-          child: Text(
-            label,
-            style: PremiumTokens.sansStyle(
-              fontSize: 10,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-              color: isSelected ? PremiumTokens.activeAccent : PremiumTokens.textSecondary,
-            ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (emoji != null) ...[
+                EmojiToIcon.getIconWidget(
+                  emoji,
+                  size: 14,
+                  color: isSelected ? PremiumTokens.activeAccent : PremiumTokens.textSecondary,
+                ),
+                const SizedBox(width: 6),
+              ],
+              Text(
+                label,
+                style: PremiumTokens.sansStyle(
+                  fontSize: 10,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                  color: isSelected ? PremiumTokens.activeAccent : PremiumTokens.textSecondary,
+                ),
+              ),
+            ],
           ),
         ),
       ),

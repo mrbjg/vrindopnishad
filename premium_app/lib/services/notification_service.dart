@@ -12,20 +12,47 @@ class NotificationService {
   Future<bool> requestPermissions() async {
     if (kIsWeb) return true;
     
-    final AndroidFlutterLocalNotificationsPlugin? androidPlugin = _notifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-    if (androidPlugin != null) {
-      // Request exact alarms permission if on Android
-      if (!kIsWeb && Platform.isAndroid) {
-        final allowed = await androidPlugin.requestExactAlarmsPermission();
-        if (allowed == false) {
-          debugPrint('Exact alarms not permitted.');
-          return false;
-        }
+    bool granted = true;
+    
+    if (Platform.isAndroid) {
+      final AndroidFlutterLocalNotificationsPlugin? androidPlugin =
+          _notifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+      if (androidPlugin != null) {
+        // Request notifications display permission (Android 13+)
+        final notificationsGranted = await androidPlugin.requestNotificationsPermission();
+        // Request exact alarms permission
+        final exactAlarmsGranted = await androidPlugin.requestExactAlarmsPermission();
+        
+        granted = (notificationsGranted ?? false) && (exactAlarmsGranted ?? false);
+        debugPrint('Android Notification Permission: $notificationsGranted, Exact Alarms: $exactAlarmsGranted');
+      }
+    } else if (Platform.isIOS) {
+      final IOSFlutterLocalNotificationsPlugin? iosPlugin =
+          _notifications.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+      if (iosPlugin != null) {
+        final iosGranted = await iosPlugin.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+        granted = iosGranted ?? false;
+        debugPrint('iOS Notification Permission: $iosGranted');
+      }
+    } else if (Platform.isMacOS) {
+      final MacOSFlutterLocalNotificationsPlugin? macosPlugin =
+          _notifications.resolvePlatformSpecificImplementation<MacOSFlutterLocalNotificationsPlugin>();
+      if (macosPlugin != null) {
+        final macosGranted = await macosPlugin.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+        granted = macosGranted ?? false;
+        debugPrint('macOS Notification Permission: $macosGranted');
       }
     }
-    // For iOS, permissions are requested during initialization, but we can add a check here if needed.
-    // For now, assume true if not Android or if Android permission was granted.
-    return true;
+    
+    return granted;
   }
 
   NotificationService._();
@@ -47,6 +74,9 @@ class NotificationService {
 
     // Initialize FCM
     await _initFCM();
+
+    // Request permissions at startup (Android 13+ display and alarms, and iOS confirmations)
+    await requestPermissions();
   }
 
   Future<void> _initFCM() async {

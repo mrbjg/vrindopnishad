@@ -400,9 +400,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           alignment: WrapAlignment.center,
                           children: [
                             ...(content.contentTags).map((tag) => _buildTagChip("#$tag", themeData.accentColor.withValues(alpha: 0.05))),
-                            ...(content.audioTags).map((tag) => _buildTagChip("🎧 $tag", PremiumTokens.activeAccent.withValues(alpha: 0.1))),
-                            ...(content.videoTags).map((tag) => _buildTagChip("🎬 $tag", PremiumTokens.activeAccent.withValues(alpha: 0.1))),
-                            ...(content.imageTags).map((tag) => _buildTagChip("🖼️ $tag", PremiumTokens.saffronGlow.withValues(alpha: 0.1))),
+                            ...(content.audioTags).map((tag) => _buildTagChip(tag, PremiumTokens.activeAccent.withValues(alpha: 0.1), emoji: "🎧")),
+                            ...(content.videoTags).map((tag) => _buildTagChip(tag, PremiumTokens.activeAccent.withValues(alpha: 0.1), emoji: "🎬")),
+                            ...(content.imageTags).map((tag) => _buildTagChip(tag, PremiumTokens.saffronGlow.withValues(alpha: 0.1), emoji: "🖼️")),
                           ],
                         ),
                       ),
@@ -1208,7 +1208,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   }
   */
 
-  Widget _buildTagChip(String label, Color bgColor) {
+  Widget _buildTagChip(String label, Color bgColor, {String? emoji}) {
     final themeData = _getThemeData();
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -1216,13 +1216,26 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         color: bgColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(
-        label,
-        style: GoogleFonts.inter(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: themeData.textColor.withValues(alpha: 0.7),
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (emoji != null) ...[
+            EmojiToIcon.getIconWidget(
+              emoji,
+              size: 13,
+              color: themeData.textColor.withValues(alpha: 0.7),
+            ),
+            const SizedBox(width: 6),
+          ],
+          Text(
+            label,
+            style: GoogleFonts.inter(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: themeData.textColor.withValues(alpha: 0.7),
+            ),
+          ),
+        ],
       ),
     );
   }

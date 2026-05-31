@@ -460,7 +460,7 @@ class _CelestialBreathingCurve extends Curve {
 }
 
 class EmojiToIcon {
-  static IconData getIcon(String emoji) {
+  static IconData? getIcon(String emoji) {
     switch (emoji) {
       // Moods
       case '🌅':
@@ -533,16 +533,33 @@ class EmojiToIcon {
         return Iconsax.sun_fog;
       case '📊':
         return Iconsax.graph;
+      case '🟢':
+        return Icons.circle;
+      case '🎧':
+        return Icons.headphones_outlined;
+      case '🎬':
+        return Icons.movie_creation_outlined;
+      case '🖼️':
+        return Icons.image_outlined;
       default:
-        return Iconsax.mask;
+        return null;
     }
   }
 
   static Widget getIconWidget(String emoji, {double size = 24, Color? color}) {
-    return Icon(
-      getIcon(emoji),
-      size: size,
-      color: color ?? Colors.white,
+    final iconData = getIcon(emoji);
+    if (iconData != null) {
+      return Icon(
+        iconData,
+        size: size,
+        color: color ?? Colors.white,
+      );
+    }
+    return Text(
+      emoji,
+      style: TextStyle(
+        fontSize: size * 0.85,
+      ),
     );
   }
 }
@@ -2787,12 +2804,23 @@ class _SacredNotification extends StatelessWidget {
     return Container(
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.03),
+            color: PremiumTokens.isDark
+                ? PremiumTokens.surfaceCard.withValues(alpha: 0.96)
+                : Colors.white.withValues(alpha: 0.98),
             borderRadius: BorderRadius.circular(40),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.1),
+              color: PremiumTokens.isDark
+                  ? Colors.white.withValues(alpha: 0.15)
+                  : Colors.black.withValues(alpha: 0.08),
               width: 1,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.25),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(40),
@@ -2811,7 +2839,7 @@ class _SacredNotification extends StatelessWidget {
                     ),
                   )
                 : BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                    filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 24,
@@ -2843,11 +2871,13 @@ class _SacredNotification extends StatelessWidget {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: PremiumTokens.isDark 
+                ? Colors.white.withValues(alpha: 0.08)
+                : Colors.black.withValues(alpha: 0.04),
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.2),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -2855,8 +2885,15 @@ class _SacredNotification extends StatelessWidget {
           ),
           child: Center(
             child: icon != null
-                ? Icon(icon, color: PremiumTokens.silver, size: 28)
-                : PremiumUI.logo(height: 28, color: PremiumTokens.silver),
+                ? Icon(
+                    icon, 
+                    color: PremiumTokens.isDark ? PremiumTokens.silver : PremiumTokens.activeAccent, 
+                    size: 28,
+                  )
+                : PremiumUI.logo(
+                    height: 28, 
+                    color: PremiumTokens.isDark ? PremiumTokens.silver : PremiumTokens.activeAccent,
+                  ),
           ),
         )
         .animate(onPlay: (controller) => controller.repeat())
@@ -2880,7 +2917,9 @@ class _SacredNotification extends StatelessWidget {
                 style: PremiumTokens.sansStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
-                  color: PremiumTokens.silver.withValues(alpha: 0.6),
+                  color: PremiumTokens.isDark 
+                      ? PremiumTokens.silver.withValues(alpha: 0.6)
+                      : PremiumTokens.textSecondary.withValues(alpha: 0.8),
                   letterSpacing: 2,
                 ),
               ),
@@ -2888,15 +2927,20 @@ class _SacredNotification extends StatelessWidget {
                 "now",
                 style: PremiumTokens.sansStyle(
                   fontSize: 10,
-                  color: PremiumTokens.silver.withValues(alpha: 0.4),
+                  color: PremiumTokens.isDark 
+                      ? PremiumTokens.silver.withValues(alpha: 0.4)
+                      : PremiumTokens.textMuted,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 2),
           ShaderMask(
-            shaderCallback: (bounds) =>
-                PremiumTokens.silverGradient.createShader(bounds),
+            blendMode: BlendMode.srcIn,
+            shaderCallback: (bounds) => (PremiumTokens.isDark
+                ? PremiumTokens.silverGradient
+                : LinearGradient(colors: [PremiumTokens.textPrimary, PremiumTokens.textPrimary])
+            ).createShader(bounds),
             child: Text(
               message.split('\n')[0],
               style: GoogleFonts.spectral(
@@ -2911,7 +2955,9 @@ class _SacredNotification extends StatelessWidget {
               message.split('\n').sublist(1).join(' '),
               style: PremiumTokens.sansStyle(
                 fontSize: 12,
-                color: PremiumTokens.silver.withValues(alpha: 0.6),
+                color: PremiumTokens.isDark 
+                    ? PremiumTokens.silver.withValues(alpha: 0.6)
+                    : PremiumTokens.textSecondary,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
