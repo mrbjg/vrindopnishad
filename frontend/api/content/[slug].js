@@ -129,7 +129,7 @@ export default async function handler(req, res) {
 <html lang="hi" dir="ltr">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>${title}</title>
   <meta name="description" content="${description}"/>
   <meta name="keywords" content="${escapeHtml((content?.title || '') + ', ' + (content?.author || '') + ', ' + (content?.category || '') + ', vrindopnishad, sant vaani, sacred shloka, braj rasik')}"/>
