@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ApiContext } from '../contexts/ClientProviders';
 import { Helmet } from 'react-helmet-async';
 import './PromoLanding.css';
@@ -105,6 +105,8 @@ const FAQ_ITEMS = [
 // ─── Component ────────────────────────────────────────────────
 export default function PromoLanding() {
   const { apiService } = useContext(ApiContext);
+  const location = useLocation();
+  const isHindiRoute = location.pathname.startsWith('/hi');
 
   // Loader
   const [loaderLineOn, setLoaderLineOn] = useState(false);
@@ -142,7 +144,7 @@ export default function PromoLanding() {
   const [stats, setStats] = useState({ verses: 120, sants: 12, books: 6, ragas: 8 });
 
   // Lang
-  const [lang, setLang] = useState('en');
+  const [lang, setLang] = useState(isHindiRoute ? 'hi' : 'en');
 
   // Torch
   const canvasRefs = useRef([]);
@@ -415,7 +417,7 @@ export default function PromoLanding() {
               >हिं</button>
             </div>
             <Link
-              to="/"
+              to={lang === 'hi' ? "/hi" : "/"}
               className="pm-sound-toggle"
               data-hover="true"
               onMouseEnter={() => setCursorHover(true)}
@@ -768,7 +770,7 @@ export default function PromoLanding() {
                     }
                   </p>
                   <Link
-                    to="/"
+                    to={lang === 'hi' ? "/hi" : "/"}
                     className="channel-btn"
                     onMouseEnter={() => setCursorHover(true)}
                     onMouseLeave={() => setCursorHover(false)}
@@ -793,7 +795,7 @@ export default function PromoLanding() {
                     }
                   </p>
                   <Link
-                    to="/"
+                    to={lang === 'hi' ? "/hi" : "/"}
                     className="channel-btn"
                     onMouseEnter={() => setCursorHover(true)}
                     onMouseLeave={() => setCursorHover(false)}

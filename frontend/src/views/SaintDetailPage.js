@@ -54,6 +54,7 @@ const SaintDetailPage = ({ initialSaint }) => {
     let active = true;
 
     if (initialSaint) {
+      setSant(initialSaint);
       setLoading(false);
       return;
     }
@@ -150,7 +151,7 @@ const SaintDetailPage = ({ initialSaint }) => {
       <Helmet>
         <title>{helmetTitle}</title>
         <meta name="description" content={helmetDescription} />
-        <link rel="canonical" href={isHindiRoute ? `https://path.vrindopnishad.in/hi/saint/${slug}` : `https://path.vrindopnishad.in/saint/${slug}`} />
+        <link rel="canonical" href={isHindiRoute ? `https://path.vrindopnishad.in/hi/saints/${slug}` : `https://path.vrindopnishad.in/saints/${slug}`} />
         
         
         <script type="application/ld+json">
@@ -159,11 +160,11 @@ const SaintDetailPage = ({ initialSaint }) => {
             "@graph": [
               {
                 "@type": "Person",
-                "@id": `https://path.vrindopnishad.in/saint/${slug}#person`,
+                "@id": `https://path.vrindopnishad.in/saints/${slug}#person`,
                 "name": sant.name,
                 "alternateName": sant.hinglishName !== sant.name ? sant.hinglishName : undefined,
                 "description": bioText.substring(0, 200),
-                "url": `https://path.vrindopnishad.in/saint/${slug}`,
+                "url": `https://path.vrindopnishad.in/saints/${slug}`,
                 "image": sant.image || "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png",
                 "knowsAbout": ["Vaishnavism", "Bhakti Yoga", "Braj Rasik Heritage", "Vrindavan"],
                 "affiliation": {
@@ -173,7 +174,7 @@ const SaintDetailPage = ({ initialSaint }) => {
               },
               {
                 "@type": "BreadcrumbList",
-                "@id": `https://path.vrindopnishad.in/saint/${slug}#breadcrumb`,
+                "@id": `https://path.vrindopnishad.in/saints/${slug}#breadcrumb`,
                 "itemListElement": [
                   {
                     "@type": "ListItem",
@@ -191,14 +192,14 @@ const SaintDetailPage = ({ initialSaint }) => {
                     "@type": "ListItem",
                     "position": 3,
                     "name": isHindiRoute ? sant.name : sant.hinglishName,
-                    "item": isHindiRoute ? `https://path.vrindopnishad.in/hi/saint/${slug}` : `https://path.vrindopnishad.in/saint/${slug}`
+                    "item": isHindiRoute ? `https://path.vrindopnishad.in/hi/saints/${slug}` : `https://path.vrindopnishad.in/saints/${slug}`
                   }
                 ]
               },
               ...(meta && meta.faq ? [
                 {
                   "@type": "FAQPage",
-                  "@id": `https://path.vrindopnishad.in/saint/${slug}#faq`,
+                  "@id": `https://path.vrindopnishad.in/saints/${slug}#faq`,
                   "mainEntity": meta.faq.map(f => ({
                     "@type": "Question",
                     "name": isHindiRoute ? f.qHi : f.qEn,
@@ -369,7 +370,7 @@ const SaintDetailPage = ({ initialSaint }) => {
                     return (
                       <Link 
                         key={book}
-                        to={isHindiRoute ? `/hi/book/${bookSlug}` : `/book/${bookSlug}`}
+                        to={isHindiRoute ? `/hi/granthas/${bookSlug}` : `/granthas/${bookSlug}`}
                         className="glass-card p-4 group hover:border-amber-500/20 transition-all flex justify-between items-center"
                       >
                         <div>
@@ -425,7 +426,7 @@ const SaintDetailPage = ({ initialSaint }) => {
                   {meta.relatedSaints.map(s => (
                     <Link
                       key={s.slug}
-                      to={isHindiRoute ? `/hi/saint/${s.slug}` : `/saint/${s.slug}`}
+                      to={isHindiRoute ? `/hi/saints/${s.slug}` : `/saints/${s.slug}`}
                       className="px-3 py-1.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-amber-500/30 text-xs text-white/80 hover:text-primary transition-all select-none"
                     >
                       {isHindiRoute ? s.nameHi : s.nameEn}
@@ -445,7 +446,7 @@ const SaintDetailPage = ({ initialSaint }) => {
                   {meta.relatedGranthas.map(g => (
                     <Link
                       key={g.slug}
-                      to={isHindiRoute ? `/hi/book/${g.slug}` : `/book/${g.slug}`}
+                      to={isHindiRoute ? `/hi/granthas/${g.slug}` : `/granthas/${g.slug}`}
                       className="px-3 py-1.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-sky-500/30 text-xs text-white/80 hover:text-sky-400 transition-all select-none"
                     >
                       {isHindiRoute ? g.nameHi : g.nameEn}

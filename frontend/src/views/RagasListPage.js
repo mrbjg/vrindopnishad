@@ -100,7 +100,7 @@ const RagasListPage = ({ initialRagas }) => {
 
       <div className="flex flex-col md:flex-row md:items-start md:items-center justify-between gap-4 mb-6 md:mb-8">
         <div className="flex flex-col items-start w-full md:w-auto text-left">
-          <Link to="/" className="inline-flex items-center gap-2 text-[var(--text-color)]/40 hover:text-[var(--text-color)] mb-2 md:mb-3 transition-colors text-xs uppercase tracking-wider">
+          <Link to={isHindiRoute ? "/hi" : "/"} className="inline-flex items-center gap-2 text-[var(--text-color)]/40 hover:text-[var(--text-color)] mb-2 md:mb-3 transition-colors text-xs uppercase tracking-wider">
             <ArrowLeft size={14} />
             Back to Home
           </Link>

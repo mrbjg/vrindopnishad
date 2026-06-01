@@ -780,7 +780,7 @@ const HomePage = ({ initialAllItems, initialSaints, initialBooks, initialRagas }
           "mainEntity": {
             "@type": "ItemList", "itemListElement": [
               { "@type": "ListItem", "position": 1, "name": "Rasik Sant Vaani", "url": "https://path.vrindopnishad.in/saints" },
-              { "@type": "ListItem", "position": 2, "name": "Sacred Granthas", "url": "https://path.vrindopnishad.in/books" },
+              { "@type": "ListItem", "position": 2, "name": "Sacred Granthas", "url": "https://path.vrindopnishad.in/granthas" },
               { "@type": "ListItem", "position": 3, "name": "Classical Ragas", "url": "https://path.vrindopnishad.in/ragas" },
               { "@type": "ListItem", "position": 4, "name": "Sacred Verses", "url": "https://path.vrindopnishad.in/content" }
             ]
@@ -997,13 +997,13 @@ const HomePage = ({ initialAllItems, initialSaints, initialBooks, initialRagas }
             { to: '/category/poem', name: isHi ? 'संत कविताएँ' : 'Spiritual Poetry', label: 'Poems', count: categoryStats.poem, color: 'from-emerald-500/20 to-teal-600/5', border: 'border-emerald-500/20', text: 'text-emerald-400' },
             { to: '/ragas', name: isHi ? 'शास्त्रीय राग' : 'Sankirtan Ragas', label: 'Melodies', count: categoryStats.raga, color: 'from-rose-500/20 to-red-600/5', border: 'border-rose-500/20', text: 'text-rose-400' }
           ].map(c => (
-            <Link key={c.to} to={c.to}
-              className={`p-5 rounded-2xl bg-gradient-to-br ${c.color} border ${c.border} flex flex-col justify-between h-28 hover:scale-[1.02] transition-all group touch-manipulation`}>
-              <span className={`text-[10px] font-bold uppercase tracking-widest ${c.text}`}>{c.label}</span>
+            <Link key={c.to} to={isHi ? `/hi${c.to}` : c.to}
+              className={`p-5 rounded-2xl bg-gradient-to-br ${c.color} border ${c.border} flex flex-col justify-between h-32 hover:scale-[1.02] transition-all group touch-manipulation`}>
               <div>
-                <h3 className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors truncate">{c.name}</h3>
-                <span className="text-[10px] text-white/35 mt-0.5 block font-light">{c.count} {c.count === 1 ? 'item' : 'items'} loaded</span>
+                <span className={`text-[10px] font-bold uppercase tracking-widest ${c.text} block mb-1.5`}>{c.label}</span>
+                <h3 className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors line-clamp-2 leading-snug">{c.name}</h3>
               </div>
+              <span className="text-[10px] text-white/35 mt-1 block font-light">{c.count} {c.count === 1 ? 'item' : 'items'} loaded</span>
             </Link>
           ))}
         </div>

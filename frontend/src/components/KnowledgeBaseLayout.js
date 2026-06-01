@@ -33,9 +33,12 @@ const KnowledgeBaseLayout = ({ children }) => {
 
   
   const [kbSidebarWidth, setKbSidebarWidth] = useState(() => {
-    const saved = localStorage.getItem('pookiz_kb_sidebar_width');
-    const width = saved ? parseInt(saved, 10) : 360;
-    return width < 320 ? 360 : width;
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('pookiz_kb_sidebar_width');
+      const width = saved ? parseInt(saved, 10) : 360;
+      return width < 320 ? 360 : width;
+    }
+    return 360;
   });
   const [isKbResizing, setIsKbResizing] = useState(false);
   const resizeRef = useRef({ startX: 0, startWidth: 0 });
@@ -87,13 +90,22 @@ const KnowledgeBaseLayout = ({ children }) => {
     };
   }, [isKbResizing, resizeKb, stopKbResizing]);
   const [fontSize, setFontSize] = useState(() => {
-    return localStorage.getItem('vrindopnishad_read_font_size') || 'md'; 
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('vrindopnishad_read_font_size') || 'md'; 
+    }
+    return 'md';
   });
   const [fontFamily, setFontFamily] = useState(() => {
-    return localStorage.getItem('vrindopnishad_read_font_family') || 'serif'; 
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('vrindopnishad_read_font_family') || 'serif'; 
+    }
+    return 'serif';
   });
   const [lineHeight, setLineHeight] = useState(() => {
-    return localStorage.getItem('vrindopnishad_read_line_height') || 'normal'; 
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('vrindopnishad_read_line_height') || 'normal'; 
+    }
+    return 'normal';
   });
 
   const settingsRef = useRef(null);

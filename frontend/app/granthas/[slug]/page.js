@@ -103,7 +103,7 @@ export default function BookRoute({ params }) {
       </div>
 
       <Layout>
-        <BookDetailPage initialBook={book} />
+        <BookDetailPage key={book.slug || decodedSlug} initialBook={book} />
       </Layout>
     </>
   );

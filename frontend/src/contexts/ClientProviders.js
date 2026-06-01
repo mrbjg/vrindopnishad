@@ -1,14 +1,44 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { SettingsProvider } from './SettingsContext';
+import { SettingsProvider, useSettings } from './SettingsContext';
 import { ThemeProvider } from './ThemeContext';
 import { AudioProvider } from './AudioContext';
 import { LoadingProvider } from './LoadingContext';
 import { apiService } from '../services/api';
+import { usePathname } from 'next/navigation';
+import CelestialParticles from '../components/CelestialParticles';
 
 export const AuthContext = React.createContext();
 export const ApiContext = React.createContext();
+
+function PersistentBackground() {
+  const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
+  const { settings } = useSettings();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  const isPromoOrLanding = pathname === '/promo' || 
+                           pathname === '/landing' || 
+                           pathname === '/hi/promo' || 
+                           pathname === '/hi/landing';
+
+  if (isPromoOrLanding) return null;
+  if (settings.layoutMode === 'pookiz') return null;
+
+  return (
+    <div className="celestial-bg">
+      <div className="stars"></div>
+      <div className="nebula"></div>
+      <CelestialParticles />
+    </div>
+  );
+}
 
 export function ClientProviders({ children }) {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -79,7 +109,8 @@ export function ClientProviders({ children }) {
     
   };
 
-  if (loading) {
+  const isAdminRoute = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
+  if (loading && isAdminRoute) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#09090b]">
         <div className="flex flex-col items-center gap-8 animate-pulse">
@@ -97,6 +128,7 @@ export function ClientProviders({ children }) {
           <LoadingProvider>
             <AuthContext.Provider value={{ isAdmin, user, token, login, logout, refreshUser }}>
               <ApiContext.Provider value={{ apiService, isDemoMode: false }}>
+                <PersistentBackground />
                 {children}
               </ApiContext.Provider>
             </AuthContext.Provider>

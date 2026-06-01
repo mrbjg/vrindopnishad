@@ -29,6 +29,8 @@ import ThemeOnboardingModal from './ThemeOnboardingModal';
 import CelestialParticles from './CelestialParticles';
 import PookizLayout from './PookizLayout';
 
+let hasLayoutMounted = false;
+
 const Layout = ({ children }) => {
   const { isDark } = useTheme();
   const { settings } = useSettings();
@@ -38,10 +40,17 @@ const Layout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const isActive = (path) => location.pathname === path;
-  const isCategoryActive = (category) => location.pathname === `/category/${category}`;
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/admin-old/login';
   const isHiRoute = location.pathname.startsWith('/hi');
+  const isActive = (path) => {
+    const localizedPath = isHiRoute ? (path === '/' ? '/hi' : `/hi${path}`) : path;
+    return location.pathname === localizedPath;
+  };
+  const isCategoryActive = (category) => {
+    const path = `/category/${category}`;
+    const localizedPath = isHiRoute ? `/hi${path}` : path;
+    return location.pathname === localizedPath;
+  };
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/hi/login' || location.pathname === '/admin-old/login';
 
   const isKbRoute = useMemo(() => {
     return location.pathname.includes('/knowledge-base') ||
@@ -61,6 +70,7 @@ const Layout = ({ children }) => {
 
   
   useEffect(() => {
+    hasLayoutMounted = true;
     try {
       const savedCount = localStorage.getItem('vrindopnishad_japa_count');
       if (savedCount) {
@@ -150,13 +160,7 @@ const Layout = ({ children }) => {
     if (dataLoaded || loadingSearchData) return;
     setLoadingSearchData(true);
     try {
-      const cached = localStorage.getItem('vrindopnishad_all_content_cache');
-      let items = [];
-      if (cached) {
-        items = JSON.parse(cached);
-      } else {
-        items = await apiService.getAllContent(null, 10000);
-      }
+      const items = await apiService.getAllContent(null, 10000);
       const rel = extractRelations(items);
       setSearchData({
         sants: rel.sants || [],
@@ -218,8 +222,8 @@ const Layout = ({ children }) => {
   };
 
   const hideHeaderSearch = [
-    '/content', '/saints', '/books', '/ragas',
-    '/hi/content', '/hi/saints', '/hi/books', '/hi/ragas'
+    '/content', '/saints', '/granthas', '/ragas',
+    '/hi/content', '/hi/saints', '/hi/granthas', '/hi/ragas'
   ].includes(location.pathname);
 
   
@@ -230,18 +234,14 @@ const Layout = ({ children }) => {
   return (
     <div className={`min-h-screen relative text-foreground ${hideHeaderSearch ? 'layout-no-header-search' : ''} ${isKbRoute ? 'lg:h-screen lg:min-h-0 lg:overflow-hidden' : ''}`}>
       
-      <div className="celestial-bg">
-        <div className="stars"></div>
-        <div className="nebula"></div>
-        <CelestialParticles />
-      </div>
+      
 
       
       {!isAuthPage && (
-        <header className="app-header animate-fade-in-down flex flex-col md:flex-row md:items-center justify-between px-4 sm:px-6 py-2.5 md:py-3 gap-2.5 md:gap-0">
+        <header className={`app-header ${!hasLayoutMounted ? 'animate-fade-in-down' : ''} flex flex-col md:flex-row md:items-center justify-between px-4 sm:px-6 py-2.5 md:py-3 gap-2.5 md:gap-0`}>
           <div className="flex items-center justify-between w-full md:w-auto">
             <div className="logo-container flex items-center gap-2 shrink-0">
-              <Link to="/">
+              <Link to={isHiRoute ? "/hi" : "/"}>
                 <img
                   src={isDark ? '/official-logo-dark.svg' : '/official-logo.svg'}
                   alt="Vrindopnishad Logo"
@@ -313,7 +313,7 @@ const Layout = ({ children }) => {
                   <span className="text-[10px] font-bold uppercase">{(settings.devoteeName || 'G')[0]}</span>
                 </div>
               ) : (
-                <Link to="/login" className="header-control-btn shrink-0 w-8 h-8" title="Devotee Sign In">
+                <Link to={isHiRoute ? "/hi/login" : "/login"} className="header-control-btn shrink-0 w-8 h-8" title="Devotee Sign In">
                   <User size={15} className="w-[15px] h-[15px] text-white/70" />
                 </Link>
               )}
@@ -369,7 +369,7 @@ const Layout = ({ children }) => {
                           <h4 className="text-[9px] uppercase tracking-widest text-primary font-bold mb-1.5">Saints / रसिक सन्त</h4>
                           <div className="grid grid-cols-1 gap-1">
                             {filteredResults.sants.map(s => (
-                              <Link key={s.cleanName} to={isHiRoute ? `/hi/saint/${s.slug}` : `/saint/${s.slug}`} onClick={() => setSearchFocused(false)}
+                              <Link key={s.cleanName} to={isHiRoute ? `/hi/saints/${s.slug}` : `/saints/${s.slug}`} onClick={() => setSearchFocused(false)}
                                 className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 transition-colors text-[11px] font-medium text-white/90">
                                 <span className="w-5 h-5 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 text-[9px] font-bold">{s.cleanName.charAt(0)}</span>
                                 <span className="truncate">{s.name}</span>
@@ -383,7 +383,7 @@ const Layout = ({ children }) => {
                           <h4 className="text-[9px] uppercase tracking-widest text-primary font-bold mb-1.5">Granthas / ग्रन्थ</h4>
                           <div className="grid grid-cols-1 gap-1">
                             {filteredResults.books.map(b => (
-                              <Link key={b.name} to={isHiRoute ? `/hi/book/${b.slug}` : `/book/${b.slug}`} onClick={() => setSearchFocused(false)}
+                              <Link key={b.name} to={isHiRoute ? `/hi/granthas/${b.slug}` : `/granthas/${b.slug}`} onClick={() => setSearchFocused(false)}
                                 className="flex items-center justify-between p-1.5 rounded-lg hover:bg-white/5 transition-colors text-[11px] font-medium text-white/90">
                                 <span className="truncate">{b.name}</span>
                                 <span className="text-[9px] text-white/30 font-light">{b.author}</span>
@@ -430,25 +430,25 @@ const Layout = ({ children }) => {
           
           <div className="hidden md:flex items-center gap-4">
             <nav className="hidden lg:flex items-center gap-1.5 xl:gap-3">
-              <Link to="/" className={`header-nav-link text-xs xl:text-sm ${isActive('/') ? 'active' : ''}`}>
+              <Link to={isHiRoute ? "/hi" : "/"} className={`header-nav-link text-xs xl:text-sm ${isActive('/') ? 'active' : ''}`}>
                 {isHiRoute ? "मुख्य" : "Home"}
               </Link>
-              <Link to="/saints" className={`header-nav-link text-xs xl:text-sm ${isActive('/saints') ? 'active' : ''}`}>
+              <Link to={isHiRoute ? "/hi/saints" : "/saints"} className={`header-nav-link text-xs xl:text-sm ${isActive('/saints') ? 'active' : ''}`}>
                 {isHiRoute ? "सन्त" : "Saints"}
               </Link>
-              <Link to="/books" className={`header-nav-link text-xs xl:text-sm ${isActive('/books') ? 'active' : ''}`}>
+              <Link to={isHiRoute ? "/hi/granthas" : "/granthas"} className={`header-nav-link text-xs xl:text-sm ${isActive('/granthas') ? 'active' : ''}`}>
                 {isHiRoute ? "ग्रन्थ" : "Books"}
               </Link>
-              <Link to="/ragas" className={`header-nav-link text-xs xl:text-sm ${isActive('/ragas') ? 'active' : ''}`}>
+              <Link to={isHiRoute ? "/hi/ragas" : "/ragas"} className={`header-nav-link text-xs xl:text-sm ${isActive('/ragas') ? 'active' : ''}`}>
                 {isHiRoute ? "राग" : "Ragas"}
               </Link>
-              <Link to="/category/shloka" className={`header-nav-link text-xs xl:text-sm ${isCategoryActive('shloka') ? 'active' : ''}`}>
+              <Link to={isHiRoute ? "/hi/category/shloka" : "/category/shloka"} className={`header-nav-link text-xs xl:text-sm ${isCategoryActive('shloka') ? 'active' : ''}`}>
                 {isHiRoute ? "श्लोक" : "Shlokas"}
               </Link>
-              <Link to="/category/strotra" className={`header-nav-link text-xs xl:text-sm ${isCategoryActive('strotra') ? 'active' : ''}`}>
+              <Link to={isHiRoute ? "/hi/category/strotra" : "/category/strotra"} className={`header-nav-link text-xs xl:text-sm ${isCategoryActive('strotra') ? 'active' : ''}`}>
                 {isHiRoute ? "स्तोत्र" : "Strotras"}
               </Link>
-              <Link to="/category/poem" className={`header-nav-link text-xs xl:text-sm ${isCategoryActive('poem') ? 'active' : ''}`}>
+              <Link to={isHiRoute ? "/hi/category/poem" : "/category/poem"} className={`header-nav-link text-xs xl:text-sm ${isCategoryActive('poem') ? 'active' : ''}`}>
                 {isHiRoute ? "कविता" : "Poems"}
               </Link>
             </nav>
@@ -534,7 +534,7 @@ const Layout = ({ children }) => {
                   </div>
                 </div>
               ) : (
-                <Link to="/login" className="header-control-btn shrink-0" title="Devotee Sign In">
+                <Link to={isHiRoute ? "/hi/login" : "/login"} className="header-control-btn shrink-0" title="Devotee Sign In">
                   <User size={18} className="w-[16px] h-[16px] sm:w-[18px] sm:h-[18px] text-white/70" />
                 </Link>
               )}
@@ -551,12 +551,12 @@ const Layout = ({ children }) => {
 
       
       {!isAuthPage && (
-        <aside className="sidebar-dock-minimal animate-fade-in-left">
-          <Link to="/" className={`dock-item-minimal ${isActive('/') ? 'active' : ''}`} title="Home">
+        <aside className={`sidebar-dock-minimal ${!hasLayoutMounted ? 'animate-fade-in' : ''}`}>
+          <Link to={isHiRoute ? "/hi" : "/"} className={`dock-item-minimal ${isActive('/') ? 'active' : ''}`} title="Home">
             <Home size={22} />
             <span className="dock-tooltip-minimal">Home Sanctuary</span>
           </Link>
-          <Link to="/content" className={`dock-item-minimal ${isActive('/content') ? 'active' : ''}`} title="All Content">
+          <Link to={isHiRoute ? "/hi/content" : "/content"} className={`dock-item-minimal ${isActive('/content') ? 'active' : ''}`} title="All Content">
             <Compass size={22} />
             <span className="dock-tooltip-minimal">Sanctuary Library</span>
           </Link>
@@ -569,15 +569,15 @@ const Layout = ({ children }) => {
             <span className="dock-tooltip-minimal">{isHiRoute ? "मेरी पाठ सूची" : "My Bookmarks"}</span>
           </Link>
           <div className="w-8 h-[1px] bg-white/10 my-1"></div>
-          <Link to="/category/shloka" className={`dock-item-minimal ${isCategoryActive('shloka') ? 'active' : ''}`} title="Shlokas">
+          <Link to={isHiRoute ? "/hi/category/shloka" : "/category/shloka"} className={`dock-item-minimal ${isCategoryActive('shloka') ? 'active' : ''}`} title="Shlokas">
             <Sparkle size={22} />
             <span className="dock-tooltip-minimal">Sacred Shlokas</span>
           </Link>
-          <Link to="/category/strotra" className={`dock-item-minimal ${isCategoryActive('strotra') ? 'active' : ''}`} title="Strotras">
+          <Link to={isHiRoute ? "/hi/category/strotra" : "/category/strotra"} className={`dock-item-minimal ${isCategoryActive('strotra') ? 'active' : ''}`} title="Strotras">
             <Waves size={22} />
             <span className="dock-tooltip-minimal">Devotional Strotras</span>
           </Link>
-          <Link to="/category/poem" className={`dock-item-minimal ${isCategoryActive('poem') ? 'active' : ''}`} title="Poems">
+          <Link to={isHiRoute ? "/hi/category/poem" : "/category/poem"} className={`dock-item-minimal ${isCategoryActive('poem') ? 'active' : ''}`} title="Poems">
             <Feather size={22} />
             <span className="dock-tooltip-minimal">Spiritual Poetry</span>
           </Link>
@@ -587,22 +587,22 @@ const Layout = ({ children }) => {
       
       {!isAuthPage && (
         <div className="lg:hidden flex items-center gap-2 overflow-x-auto px-4 py-2 header-sub-bar border-b scrollbar-hide fixed top-[112px] md:top-[80px] left-0 right-0 z-[999] h-10">
-          <Link to="/saints" className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all ${isActive('/saints') ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-white/5 text-white/60 border border-white/5'}`}>
+          <Link to={isHiRoute ? "/hi/saints" : "/saints"} className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all ${isActive('/saints') ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-white/5 text-white/60 border border-white/5'}`}>
             {isHiRoute ? "सन्त" : "Saints"}
           </Link>
-          <Link to="/books" className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all ${isActive('/books') ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-white/5 text-white/60 border border-white/5'}`}>
+          <Link to={isHiRoute ? "/hi/granthas" : "/granthas"} className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all ${isActive('/granthas') ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-white/5 text-white/60 border border-white/5'}`}>
             {isHiRoute ? "ग्रन्थ" : "Books"}
           </Link>
-          <Link to="/ragas" className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all ${isActive('/ragas') ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-white/5 text-white/60 border border-white/5'}`}>
+          <Link to={isHiRoute ? "/hi/ragas" : "/ragas"} className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all ${isActive('/ragas') ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-white/5 text-white/60 border border-white/5'}`}>
             {isHiRoute ? "राग" : "Ragas"}
           </Link>
-          <Link to="/category/shloka" className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all ${isCategoryActive('shloka') ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-white/5 text-white/60 border border-white/5'}`}>
+          <Link to={isHiRoute ? "/hi/category/shloka" : "/category/shloka"} className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all ${isCategoryActive('shloka') ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-white/5 text-white/60 border border-white/5'}`}>
             {isHiRoute ? "श्लोक" : "Shlokas"}
           </Link>
-          <Link to="/category/strotra" className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all ${isCategoryActive('strotra') ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-white/5 text-white/60 border border-white/5'}`}>
+          <Link to={isHiRoute ? "/hi/category/strotra" : "/category/strotra"} className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all ${isCategoryActive('strotra') ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-white/5 text-white/60 border border-white/5'}`}>
             {isHiRoute ? "स्तोत्र" : "Strotras"}
           </Link>
-          <Link to="/category/poem" className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all ${isCategoryActive('poem') ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-white/5 text-white/60 border border-white/5'}`}>
+          <Link to={isHiRoute ? "/hi/category/poem" : "/category/poem"} className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all ${isCategoryActive('poem') ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-white/5 text-white/60 border border-white/5'}`}>
             {isHiRoute ? "कविता" : "Poems"}
           </Link>
         </div>
@@ -618,16 +618,16 @@ const Layout = ({ children }) => {
       
       {!isAuthPage && (
         <div className="mobile-bottom-nav">
-          <Link to="/" className={`mobile-nav-item ${isActive('/') ? 'active' : ''}`} title="Home">
+          <Link to={isHiRoute ? "/hi" : "/"} className={`mobile-nav-item ${isActive('/') ? 'active' : ''}`} title="Home">
             <Home size={24} />
           </Link>
-          <Link to="/content" className={`mobile-nav-item ${isActive('/content') ? 'active' : ''}`} title="All Content">
+          <Link to={isHiRoute ? "/hi/content" : "/content"} className={`mobile-nav-item ${isActive('/content') ? 'active' : ''}`} title="All Content">
             <Compass size={24} />
           </Link>
-          <Link to="/category/shloka" className={`mobile-nav-item ${isCategoryActive('shloka') ? 'active' : ''}`} title="Shlokas">
+          <Link to={isHiRoute ? "/hi/category/shloka" : "/category/shloka"} className={`mobile-nav-item ${isCategoryActive('shloka') ? 'active' : ''}`} title="Shlokas">
             <Sparkle size={24} />
           </Link>
-          <Link to="/category/strotra" className={`mobile-nav-item ${isCategoryActive('strotra') ? 'active' : ''}`} title="Strotras">
+          <Link to={isHiRoute ? "/hi/category/strotra" : "/category/strotra"} className={`mobile-nav-item ${isCategoryActive('strotra') ? 'active' : ''}`} title="Strotras">
             <Waves size={24} />
           </Link>
           <Link to={isHiRoute ? "/hi/bookmarks" : "/bookmarks"} className={`mobile-nav-item ${location.pathname.includes('/bookmarks') ? 'active' : ''}`} title="Bookmarks">

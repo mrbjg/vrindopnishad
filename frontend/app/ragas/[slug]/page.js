@@ -100,7 +100,7 @@ export default function RagaRoute({ params }) {
       </div>
 
       <Layout>
-        <RagaDetailPage initialRaga={raga} />
+        <RagaDetailPage key={raga.slug || decodedSlug} initialRaga={raga} />
       </Layout>
     </>
   );

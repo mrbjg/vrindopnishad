@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useLocation } from 'react-router-dom';
 import { ApiContext } from '../contexts/ClientProviders';
 import { Search, ArrowRight, Tag, Sparkles, Brain } from 'lucide-react';
 import AudioPlayButton from '../components/ui/AudioPlayButton';
@@ -10,6 +10,8 @@ import { getSearchSuggestions, hinglishMatch } from '../utils/hinglishSearch';
 import { semanticSearch } from '../utils/semanticSearch';
 
 const ContentListPage = ({ initialContent, initialCategories }) => {
+  const location = useLocation();
+  const isHindiRoute = location.pathname.startsWith('/hi');
   const { apiService } = useContext(ApiContext);
   const [searchParams] = useSearchParams();
   const urlQuery = searchParams.get('q') || '';
@@ -292,7 +294,7 @@ const ContentListPage = ({ initialContent, initialCategories }) => {
             const colors = getCategoryColorClasses(item.category);
             return (
               <Link 
-                to={`/content/${item.slug || item.id}`} 
+                to={isHindiRoute ? `/hi/content/${item.slug || item.id}` : `/content/${item.slug || item.id}`} 
                 key={`${item.slug || item.id || 'item'}-${index}`} 
                 className={`glass-card group flex flex-col justify-between transition-all duration-500 border border-[var(--glass-border)] ${colors.hover} hover:shadow-2xl`}
               >
@@ -377,7 +379,7 @@ const ContentListPage = ({ initialContent, initialCategories }) => {
               {aiResults.map((item, i) => (
                 <Link
                   key={item.id || item.slug || `${item.title || 'ai'}-${i}`}
-                  to={`/content/${item.slug || item.id}`}
+                  to={isHindiRoute ? `/hi/content/${item.slug || item.id}` : `/content/${item.slug || item.id}`}
                   className="glass-card group hover:border-purple-400/30 transition-all duration-300 relative overflow-hidden"
                 >
                   <div className="absolute top-0 right-0 px-3 py-1 bg-purple-500/10 rounded-bl-xl">

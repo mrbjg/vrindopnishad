@@ -97,7 +97,7 @@ export default function HindiSaintRoute({ params }) {
       </div>
 
       <Layout>
-        <SaintDetailPage initialSaint={saint} />
+        <SaintDetailPage key={saint.slug || decodedSlug} initialSaint={saint} />
       </Layout>
     </>
   );

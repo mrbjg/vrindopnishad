@@ -43,7 +43,12 @@ const BookDetailPage = ({ initialBook }) => {
   useEffect(() => {
     let active = true;
 
-    
+    if (initialBook) {
+      setBook(initialBook);
+      setLoading(false);
+      return;
+    }
+
     const getInitialBook = () => {
       try {
         const memCached = apiService.getMemoryCachedItems();
@@ -57,9 +62,9 @@ const BookDetailPage = ({ initialBook }) => {
       return null;
     };
 
-    const initialBook = getInitialBook();
-    setBook(initialBook);
-    setLoading(initialBook === null);
+    const cachedBook = getInitialBook();
+    setBook(cachedBook);
+    setLoading(cachedBook === null);
 
     const load = async () => {
       try {
@@ -77,7 +82,7 @@ const BookDetailPage = ({ initialBook }) => {
     };
     load();
     return () => { active = false; };
-  }, [slug, apiService]);
+  }, [slug, apiService, initialBook]);
 
   const [isBookmarked, setIsBookmarked] = useState(false);
 
@@ -135,7 +140,7 @@ const BookDetailPage = ({ initialBook }) => {
       <div className="max-w-4xl mx-auto px-4 py-24 text-center">
         <h2 className="text-3xl font-bold mb-4 font-headings">Book not found</h2>
         <p className="text-white/40 mb-8">The scripture you are looking for does not exist in our library.</p>
-        <Link to={isHindiRoute ? "/hi/books" : "/books"} className="btn-premium px-8 py-3">
+        <Link to={isHindiRoute ? "/hi/granthas" : "/granthas"} className="btn-premium px-8 py-3">
           Explore All Books
         </Link>
       </div>
@@ -147,7 +152,7 @@ const BookDetailPage = ({ initialBook }) => {
       <Helmet>
         <title>{isHindiRoute ? `${book.name} ग्रन्थ पाठ एवं अनुवाद | Vrindopnishad` : `${book.hinglishName} Texts & Translation | Vrindopnishad`}</title>
         <meta name="description" content={`Read the sacred verses from ${book.hinglishName} with Hindi explanation, translation and audio chanting.`} />
-        <link rel="canonical" href={isHindiRoute ? `https://path.vrindopnishad.in/hi/book/${slug}` : `https://path.vrindopnishad.in/book/${slug}`} />
+        <link rel="canonical" href={isHindiRoute ? `https://path.vrindopnishad.in/hi/granthas/${slug}` : `https://path.vrindopnishad.in/granthas/${slug}`} />
         
         
         <script type="application/ld+json">
@@ -156,21 +161,21 @@ const BookDetailPage = ({ initialBook }) => {
             "@graph": [
               {
                 "@type": "Book",
-                "@id": `https://path.vrindopnishad.in/book/${slug}#book`,
+                "@id": `https://path.vrindopnishad.in/granthas/${slug}#book`,
                 "name": book.name,
                 "alternateName": book.hinglishName,
                 "author": book.author ? {
                   "@type": "Person",
                   "name": book.author,
-                  "url": book.authorSlug ? `https://path.vrindopnishad.in/saint/${book.authorSlug}` : undefined
+                  "url": book.authorSlug ? `https://path.vrindopnishad.in/saints/${book.authorSlug}` : undefined
                 } : undefined,
-                "url": `https://path.vrindopnishad.in/book/${slug}`,
+                "url": `https://path.vrindopnishad.in/granthas/${slug}`,
                 "inLanguage": isHindiRoute ? ["hi", "sa"] : ["en", "hi-Latn", "sa"],
                 "description": `Read the sacred verses from ${book.hinglishName} with translations, commentaries and audio chanting.`
               },
               {
                 "@type": "BreadcrumbList",
-                "@id": `https://path.vrindopnishad.in/book/${slug}#breadcrumb`,
+                "@id": `https://path.vrindopnishad.in/granthas/${slug}#breadcrumb`,
                 "itemListElement": [
                   {
                     "@type": "ListItem",
@@ -182,13 +187,13 @@ const BookDetailPage = ({ initialBook }) => {
                     "@type": "ListItem",
                     "position": 2,
                     "name": isHindiRoute ? "ग्रन्थ" : "Books",
-                    "item": isHindiRoute ? "https://path.vrindopnishad.in/hi/books" : "https://path.vrindopnishad.in/books"
+                    "item": isHindiRoute ? "https://path.vrindopnishad.in/hi/granthas" : "https://path.vrindopnishad.in/granthas"
                   },
                   {
                     "@type": "ListItem",
                     "position": 3,
                     "name": isHindiRoute ? book.name : book.hinglishName,
-                    "item": isHindiRoute ? `https://path.vrindopnishad.in/hi/book/${slug}` : `https://path.vrindopnishad.in/book/${slug}`
+                    "item": isHindiRoute ? `https://path.vrindopnishad.in/hi/granthas/${slug}` : `https://path.vrindopnishad.in/granthas/${slug}`
                   }
                 ]
               }
@@ -198,7 +203,7 @@ const BookDetailPage = ({ initialBook }) => {
       </Helmet>
 
       <Link 
-        to={isHindiRoute ? "/hi/books" : "/books"} 
+        to={isHindiRoute ? "/hi/granthas" : "/granthas"} 
         className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-8 transition-colors text-xs uppercase tracking-wider"
       >
         <ArrowLeft size={14} />
@@ -216,7 +221,7 @@ const BookDetailPage = ({ initialBook }) => {
               <User size={14} className="text-primary" />
               <span>Author:</span>
               {book.authorSlug ? (
-                <Link to={isHindiRoute ? `/hi/saint/${book.authorSlug}` : `/saint/${book.authorSlug}`} className="text-primary hover:underline font-medium">
+                <Link to={isHindiRoute ? `/hi/saints/${book.authorSlug}` : `/saints/${book.authorSlug}`} className="text-primary hover:underline font-medium">
                   {book.author}
                 </Link>
               ) : (

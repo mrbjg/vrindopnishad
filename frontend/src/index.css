@@ -807,7 +807,6 @@ html.light-mode .skeleton {
     align-items: center;
     z-index: 100;
     transition: background 0.4s ease, border-color 0.4s ease;
-    animation: fade-in-left-sidebar 0.5s ease-out both;
 }
 
 @media (min-width: 768px) {
@@ -1579,6 +1578,17 @@ html.light-mode .app-logo {
 html.light-mode .shooting-star {
     display: none !important;
 }
+html.light-mode .btn-premium {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-gold) 100%);
+    color: white;
+    box-shadow: 0 10px 25px -5px rgba(var(--primary-rgb), 0.2);
+    border-color: rgba(var(--primary-rgb), 0.1);
+}
+html.light-mode .btn-premium:hover {
+    box-shadow:
+        0 15px 35px rgba(var(--primary-rgb), 0.3),
+        0 0 20px rgba(var(--primary-rgb), 0.1);
+}
 
 .logo-container {
     display: flex;
@@ -1671,8 +1681,8 @@ h6 {
 
 
 @keyframes fade-in {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
 @keyframes fade-in-down {
@@ -1696,7 +1706,8 @@ h6 {
 }
 
 .animate-fade-in {
-    animation: fade-in 0.2s ease-out both;
+    animation: fade-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+    will-change: opacity;
 }
 
 .animate-fade-in-down {
@@ -3350,7 +3361,6 @@ html.light-mode .minimal-card:hover {
     z-index: 100;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    animation: fade-in-left-sidebar 0.5s ease-out both;
 }
 
 html.light-mode .sidebar-dock-minimal {

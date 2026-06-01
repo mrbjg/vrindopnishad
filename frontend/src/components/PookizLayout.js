@@ -33,7 +33,10 @@ const PookizLayout = ({ children }) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
-    return localStorage.getItem('pookiz_sidebar_collapsed') === 'true';
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('pookiz_sidebar_collapsed') === 'true';
+    }
+    return false;
   });
 
   const [isCollapsing, setIsCollapsing] = useState(false);
@@ -50,8 +53,11 @@ const PookizLayout = ({ children }) => {
   };
 
   const [sidebarWidth, setSidebarWidth] = useState(() => {
-    const saved = localStorage.getItem('pookiz_sidebar_width');
-    return saved ? parseInt(saved, 10) : 240;
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('pookiz_sidebar_width');
+      return saved ? parseInt(saved, 10) : 240;
+    }
+    return 240;
   });
   const [isResizing, setIsResizing] = useState(false);
 
@@ -121,13 +127,13 @@ const PookizLayout = ({ children }) => {
       label: isHiRoute ? 'रसिक सन्त' : 'Rasik Saints',
       path: isHiRoute ? '/hi/saints' : '/saints',
       icon: <Users size={18} />,
-      isActive: isActive('/saint')
+      isActive: isActive('/saints') || isActive('/hi/saints')
     },
     {
       label: isHiRoute ? 'वाणी ग्रन्थ' : 'Scriptures',
-      path: isHiRoute ? '/hi/books' : '/books',
+      path: isHiRoute ? '/hi/granthas' : '/granthas',
       icon: <MessageSquare size={18} />,
-      isActive: isActive('/book')
+      isActive: isActive('/granthas') || isActive('/hi/granthas')
     },
     {
       label: isHiRoute ? 'ज्ञान कोष' : 'Knowledge Base',

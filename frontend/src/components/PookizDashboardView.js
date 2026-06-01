@@ -360,7 +360,7 @@ const PookizDashboardView = ({
                               {isHi ? 'जीवनी' : 'Read Bio'}
                             </button>
                             <Link
-                              to={isHi ? `/hi/saint/${sant.slug}` : `/saint/${sant.slug}`}
+                              to={isHi ? `/hi/saints/${sant.slug}` : `/saints/${sant.slug}`}
                               className="bg-white hover:bg-zinc-200 text-zinc-950 rounded-full px-3 py-1.5 font-bold text-[10px] whitespace-nowrap transition-all"
                             >
                               {isHi ? 'वाणी देखें' : 'Explore Vaani'}
@@ -979,7 +979,7 @@ const PookizDashboardView = ({
               <span className="text-[10px] text-zinc-600">{isHi ? 'ब्रज रसिक परम्परा' : 'Braj Rasik Tradition'}</span>
               <div className="flex gap-2">
                 <Link
-                  to={isHi ? `/hi/saint/${auditingSaint.slug}` : `/saint/${auditingSaint.slug}`}
+                  to={isHi ? `/hi/saints/${auditingSaint.slug}` : `/saints/${auditingSaint.slug}`}
                   onClick={() => setAuditingSaint(null)}
                   className="bg-white hover:bg-zinc-200 text-zinc-950 px-4 py-1.5 rounded-full font-bold text-xs transition-all"
                 >

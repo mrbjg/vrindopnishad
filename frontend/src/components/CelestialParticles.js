@@ -5,6 +5,8 @@ const CelestialParticles = () => {
   const { settings } = useSettings();
   const canvasRef = useRef(null);
 
+  if (typeof window === 'undefined') return null;
+
   const settingsTheme = settings.theme || 'light';
   const isAuthPage = window.location.pathname.includes('/login');
   const theme = isAuthPage ? 'space' : settingsTheme;

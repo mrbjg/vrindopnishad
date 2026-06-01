@@ -16,6 +16,7 @@ export const slugify = (text) => {
 
 let lastItemsRef = null;
 let lastResult = null;
+let globalRelationsCache = null;
 
 
 export function extractRelations(items) {
@@ -39,17 +40,21 @@ export function extractRelations(items) {
   const cacheKey = 'sv_extracted_relations_cache';
   if (typeof window !== 'undefined') {
     try {
-      const localCached = localStorage.getItem(cacheKey);
-      if (localCached) {
-        const parsed = JSON.parse(localCached);
+      if (!globalRelationsCache) {
+        const localCached = localStorage.getItem(cacheKey);
+        if (localCached) {
+          globalRelationsCache = JSON.parse(localCached);
+        }
+      }
+      if (globalRelationsCache) {
         if (
-          parsed.itemsLength === items.length &&
-          parsed.firstId === items[0]?.id &&
-          parsed.lastId === items[items.length - 1]?.id
+          globalRelationsCache.itemsLength === items.length &&
+          globalRelationsCache.firstId === items[0]?.id &&
+          globalRelationsCache.lastId === items[items.length - 1]?.id
         ) {
           lastItemsRef = items;
-          lastResult = parsed.data;
-          return parsed.data;
+          lastResult = globalRelationsCache.data;
+          return globalRelationsCache.data;
         }
       }
     } catch (e) {
@@ -239,12 +244,14 @@ export function extractRelations(items) {
   
   if (typeof window !== 'undefined') {
     try {
-      localStorage.setItem('sv_extracted_relations_cache', JSON.stringify({
+      const cacheData = {
         itemsLength: items.length,
         firstId: items[0]?.id,
         lastId: items[items.length - 1]?.id,
         data: result
-      }));
+      };
+      globalRelationsCache = cacheData;
+      localStorage.setItem('sv_extracted_relations_cache', JSON.stringify(cacheData));
     } catch (e) {}
   }
 

@@ -117,6 +117,52 @@ export const sanitizeSlug = (slug) => {
     .trim();
 };
 
+function classifyItemCategory(item) {
+  if (!item) return 'poem';
+  const rawCat = (item.category || '').toLowerCase().trim();
+  
+  if (rawCat === 'saint' || rawCat === 'dham') {
+    return rawCat;
+  }
+  
+  if (rawCat === 'strotra' || rawCat === 'strotras' || rawCat === 'stotra' || rawCat === 'stotras') {
+    return 'strotra';
+  }
+  if (rawCat === 'poem' || rawCat === 'poems' || rawCat === 'poetry') {
+    return 'poem';
+  }
+
+  const title = (item.title || '').toLowerCase();
+  const sanskrit = (item.sanskrit_text || '').toLowerCase();
+  
+  if (
+    title.includes('स्तोत्र') || title.includes('strotra') || title.includes('stotra') ||
+    title.includes('शतक') || title.includes('shatak') ||
+    title.includes('अष्टक') || title.includes('ashtak') ||
+    title.includes('महिमामृत') || title.includes('mahimamrit') ||
+    title.includes('सुधानिधि') || title.includes('sudhanidhi') ||
+    title.includes('सहस्रनाम') || title.includes('sahasranam') ||
+    sanskrit.includes('स्तोत्र') || sanskrit.includes('strotra') || sanskrit.includes('stotra')
+  ) {
+    return 'strotra';
+  }
+  
+  const hasSanskritText = sanskrit.trim().length > 10 && 
+    (sanskrit.includes('॥') || sanskrit.includes('।') || sanskrit.includes('ॐ') || !/[a-z]{5,}/.test(sanskrit));
+  
+  const isScriptureBook = title.includes('gita') || title.includes('गीता') || 
+    title.includes('upnishad') || title.includes('उपनिषद') || 
+    title.includes('samhita') || title.includes('संहिता') || 
+    title.includes('purana') || title.includes('पुराण') ||
+    title.includes('shloka') || title.includes('श्लोक');
+
+  if (isScriptureBook || hasSanskritText || rawCat === 'shloka' || rawCat === 'shlokas') {
+    return 'shloka';
+  }
+  
+  return 'poem';
+}
+
 let contentCache = null;
 
 function loadRawData() {
@@ -137,11 +183,15 @@ function loadRawData() {
     let allContentItems = [];
     if (fs.existsSync(contentPath)) {
       const rawContent = fs.readFileSync(contentPath, 'utf8');
-      allContentItems = JSON.parse(rawContent).map((item, idx) => ({
-        id: item.id || `local-${idx}`,
-        ...item,
-        slug: item.slug || generateSlug(item.title)
-      }));
+      allContentItems = JSON.parse(rawContent).map((item, idx) => {
+        const cleanCategory = classifyItemCategory(item);
+        return {
+          id: item.id || `local-${idx}`,
+          ...item,
+          category: cleanCategory,
+          slug: item.slug || generateSlug(item.title)
+        };
+      });
     }
 
     let rawSaints = [];

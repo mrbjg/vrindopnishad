@@ -180,6 +180,7 @@ export default function VerseRoute({ params }) {
 
       <Layout>
         <ContentDetailPage
+          key={verse.id || decodedSlug}
           initialContent={verse}
           initialRelatedSaint={matchedSaint}
           initialRelatedBook={matchedBook}

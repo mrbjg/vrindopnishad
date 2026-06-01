@@ -16,6 +16,7 @@ import {
   Share2
 } from 'lucide-react';
 import { useSettings } from '../contexts/SettingsContext';
+import { useTheme } from '../contexts/ThemeContext';
 import FontWheel from '../components/FontWheel';
 import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { Helmet } from 'react-helmet-async';
@@ -30,6 +31,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
   const isHindiRoute = location.pathname.startsWith('/hi');
   const { apiService } = useContext(ApiContext);
   const { settings, updateSetting } = useSettings();
+  const { isDark } = useTheme();
   const sizeLevel = settings.fontSize || 2;
 
   const [content, setContent] = useState(initialContent || (() => {
@@ -81,6 +83,12 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
   const [paathTheme, setPaathTheme] = useState('sepia'); // 'sepia' or 'dark'
 
   useEffect(() => {
+    if (isPaathMode) {
+      setPaathTheme(isDark ? 'dark' : 'sepia');
+    }
+  }, [isPaathMode, isDark]);
+
+  useEffect(() => {
     if (content) {
       try {
         const saved = localStorage.getItem('vrindopnishad_bookmarks');
@@ -120,6 +128,11 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
     let active = true;
 
     if (initialContent) {
+      setContent(initialContent);
+      setRelatedSaint(initialRelatedSaint || null);
+      setRelatedBook(initialRelatedBook || null);
+      setRelatedRaga(initialRelatedRaga || null);
+      setRelatedVerses(initialRelatedVerses || []);
       setLoading(false);
       return;
     }
@@ -218,47 +231,60 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
     return () => {
       active = false;
     };
-  }, [id, apiService, initialContent]);
+  }, [id, apiService, initialContent, initialRelatedSaint, initialRelatedBook, initialRelatedRaga, initialRelatedVerses]);
 
   const formatVerseText = (text) => {
     if (!text) return null;
 
-    
+    const rawLines = text.split(/\r?\n/);
+
     if (!settings.lineByLine) {
-      return <div>{text}</div>;
+      return (
+        <div style={{ whiteSpace: 'pre-wrap' }}>
+          {text}
+        </div>
+      );
     }
 
+    const finalLines = [];
     
-    const parts = text.split(/([।॥]\s*(?:\[\d+\]|\(?\d+\)?)?|,\s)/g);
+    for (const rawLine of rawLines) {
+      if (!rawLine.trim()) {
+        finalLines.push("");
+        continue;
+      }
 
-    const lines = [];
-    let currentLine = "";
-
-    for (let i = 0; i < parts.length; i++) {
-      if (i % 2 === 0) {
-        currentLine = parts[i];
-      } else {
-        currentLine += parts[i];
-        if (currentLine.trim()) {
-          lines.push(currentLine.trim());
+      const parts = rawLine.split(/([।॥|]+\s*(?:\[\d+\]|\(?\d+\)?)?|,\s*)/g);
+      
+      let currentLine = "";
+      for (let i = 0; i < parts.length; i++) {
+        if (i % 2 === 0) {
+          currentLine = parts[i];
+        } else {
+          currentLine += parts[i];
+          if (currentLine.trim()) {
+            finalLines.push(currentLine.trim());
+          }
+          currentLine = "";
         }
-        currentLine = "";
+      }
+      if (currentLine.trim()) {
+        finalLines.push(currentLine.trim());
       }
     }
 
-    
-    if (currentLine.trim()) {
-      lines.push(currentLine.trim());
-    }
+    if (finalLines.length === 0) return <div style={{ whiteSpace: 'pre-wrap' }}>{text}</div>;
 
-    
-    if (lines.length === 0) return <div>{text}</div>;
-
-    return lines.map((line, idx) => (
-      <div key={idx} className="mb-3 last:mb-0">
-        {line}
-      </div>
-    ));
+    return finalLines.map((line, idx) => {
+      if (line === "") {
+        return <div key={idx} className="h-4" />;
+      }
+      return (
+        <div key={idx} className="mb-3 last:mb-0">
+          {line}
+        </div>
+      );
+    });
   };
 
   const getCategoryBadgeClass = (category) => {
@@ -309,14 +335,14 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
   if (!loading && !content) {
     return (
       <div className="animate-fade-in">
-        <Link to="/content" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-8 transition-colors">
+        <Link to={isHindiRoute ? "/hi/content" : "/content"} className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-8 transition-colors">
           <ArrowLeft size={18} />
           Back to Collection
         </Link>
         <div className="glass-card text-center py-24">
           <h2 className="text-3xl font-bold mb-6">Content not found</h2>
           <p className="text-white/40 mb-10 text-lg">The verse or poem you are looking for does not exist in our library.</p>
-          <Link to="/content" className="btn-sacred-gold px-10 py-3">
+          <Link to={isHindiRoute ? "/hi/content" : "/content"} className="btn-sacred-gold px-10 py-3">
             Explore All Content
           </Link>
         </div>
@@ -410,8 +436,9 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
     : `Read and explore ${content.title} by ${cleanSaint} from the grantha ${cleanGranth}. Completely free online access with meaning, translation, and commentary. Available in Hindi, Sanskrit, Braj Bhasha, and English transliteration (with meaning, complete collection).`;
 
   return (
-    <div className="animate-fade-in max-w-4xl mx-auto">
-      <Helmet>
+    <>
+      <div className="animate-fade-in max-w-4xl mx-auto">
+        <Helmet>
         <html lang={isHindiRoute ? "hi" : "en"} />
         <title>{helmetTitle}</title>
         <meta name="description" content={helmetDescription} />
@@ -499,7 +526,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
       </Helmet>
 
       <article>
-        <Link to="/content" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-8 transition-colors">
+        <Link to={isHindiRoute ? "/hi/content" : "/content"} className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-8 transition-colors">
           <ArrowLeft size={18} />
           Back to Collection
         </Link>
@@ -530,7 +557,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
             <div className="hidden lg:flex items-center gap-4">
               <button
                 onClick={toggleBookmark}
-                className={`flex items-center justify-center w-10 h-10 rounded-full border transition-all ${
+                className={`flex items-center justify-center w-10 h-10 shrink-0 aspect-square rounded-full border transition-all ${
                   isBookmarked 
                     ? 'bg-primary/20 border-primary text-primary' 
                     : 'bg-white/5 border-white/10 hover:border-white/20 text-white/60 hover:text-white'
@@ -541,7 +568,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
               </button>
               <button
                 onClick={() => shareVerseCard(content, isHindiRoute)}
-                className="flex items-center justify-center w-10 h-10 rounded-full border bg-white/5 border-white/10 hover:border-white/20 text-white/60 hover:text-white transition-all"
+                className="flex items-center justify-center w-10 h-10 shrink-0 aspect-square rounded-full border bg-white/5 border-white/10 hover:border-white/20 text-white/60 hover:text-white transition-all"
                 title={isHindiRoute ? "सुंदर छवि साझा करें" : "Share Image Card"}
               >
                 <Share2 size={16} />
@@ -555,7 +582,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                     }
                   } catch (e) {}
                 }}
-                className="flex items-center justify-center w-10 h-10 rounded-full border bg-white/5 border-white/10 hover:border-white/20 text-white/60 hover:text-white transition-all"
+                className="flex items-center justify-center w-10 h-10 shrink-0 aspect-square rounded-full border bg-white/5 border-white/10 hover:border-white/20 text-white/60 hover:text-white transition-all"
                 title={isHindiRoute ? "पाठ मोड (एकाग्रता)" : "Paath Mode (Distraction-Free)"}
               >
                 <Maximize2 size={16} />
@@ -747,7 +774,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
               <div className="flex items-center gap-4">
                 <button
                   onClick={toggleBookmark}
-                  className={`flex items-center justify-center w-11 h-11 rounded-full border transition-all ${
+                  className={`flex items-center justify-center w-11 h-11 shrink-0 aspect-square rounded-full border transition-all ${
                     isBookmarked 
                       ? 'bg-primary/20 border-primary text-primary' 
                       : 'bg-white/5 border-white/10 text-white/60'
@@ -757,7 +784,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 </button>
                 <button
                   onClick={() => shareVerseCard(content, isHindiRoute)}
-                  className="flex items-center justify-center w-11 h-11 rounded-full border bg-white/5 border-white/10 text-white/60"
+                  className="flex items-center justify-center w-11 h-11 shrink-0 aspect-square rounded-full border bg-white/5 border-white/10 text-white/60"
                 >
                   <Share2 size={18} />
                 </button>
@@ -770,7 +797,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                       }
                     } catch (e) {}
                   }}
-                  className="flex items-center justify-center w-11 h-11 rounded-full border bg-white/5 border-white/10 text-white/60"
+                  className="flex items-center justify-center w-11 h-11 shrink-0 aspect-square rounded-full border bg-white/5 border-white/10 text-white/60"
                 >
                   <Maximize2 size={18} />
                 </button>
@@ -798,7 +825,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {relatedSaint && (
-            <Link to={isHindiRoute ? `/hi/saint/${relatedSaint.slug}` : `/saint/${relatedSaint.slug}`} className="glass-card p-6 group hover:border-amber-500/30 transition-all flex flex-col justify-between">
+            <Link to={isHindiRoute ? `/hi/saints/${relatedSaint.slug}` : `/saints/${relatedSaint.slug}`} className="glass-card p-6 group hover:border-amber-500/30 transition-all flex flex-col justify-between">
               <div>
                 <span className="text-[10px] uppercase tracking-widest text-amber-500 mb-3 block">
                   {isHindiRoute ? "रसिक सन्त" : "Saint Biography"}
@@ -815,7 +842,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
           )}
 
           {relatedBook && (
-            <Link to={isHindiRoute ? `/hi/book/${relatedBook.slug}` : `/book/${relatedBook.slug}`} className="glass-card p-6 group hover:border-amber-500/30 transition-all flex flex-col justify-between">
+            <Link to={isHindiRoute ? `/hi/granthas/${relatedBook.slug}` : `/granthas/${relatedBook.slug}`} className="glass-card p-6 group hover:border-amber-500/30 transition-all flex flex-col justify-between">
               <div>
                 <span className="text-[10px] uppercase tracking-widest text-amber-500 mb-3 block">
                   {isHindiRoute ? "पवित्र ग्रन्थ" : "Sacred Granth"}
@@ -867,6 +894,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
           ))}
         </div>
       </section>
+
+      </div>
 
       {isPaathMode && (
         <div 
@@ -1043,8 +1072,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 onChange={(size) => updateSetting('fontSize', size)} 
               />
             </div>
-            
-            <div className="mt-24 mb-12 flex items-center gap-2 opacity-20">
+            <div className="mt-24 mb-12 flex items-center gap-2 opacity-20 justify-center">
               <span className="text-xl">ॐ</span>
               <span className="text-xs tracking-[0.4em] uppercase">वृंदोपनिषद्</span>
               <span className="text-xl">ॐ</span>
@@ -1052,7 +1080,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

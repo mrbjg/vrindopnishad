@@ -1,3 +1,4 @@
+import React, { Suspense } from 'react';
 import '../src/index.css';
 import '../src/App.css';
 import { ClientProviders } from '../src/contexts/ClientProviders';
@@ -20,7 +21,9 @@ export default function RootLayout({ children }) {
     <html lang="en" className="dark">
       <body className="antialiased">
         <ClientProviders>
-          {children}
+          <Suspense fallback={null}>
+            {children}
+          </Suspense>
         </ClientProviders>
       </body>
     </html>

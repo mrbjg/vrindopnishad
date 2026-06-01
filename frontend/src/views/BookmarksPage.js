@@ -201,7 +201,7 @@ const BookmarksPage = () => {
                     className="glass-card p-5 flex items-center justify-between gap-6 group hover:border-amber-500/20 transition-all"
                   >
                     <Link 
-                      to={isHindiRoute ? `/hi/book/${book.slug}` : `/book/${book.slug}`}
+                      to={isHindiRoute ? `/hi/granthas/${book.slug}` : `/granthas/${book.slug}`}
                       className="flex-1 min-w-0"
                     >
                       <span className="text-[9px] uppercase tracking-wider text-amber-500 mb-1.5 block">

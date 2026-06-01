@@ -230,7 +230,7 @@ const PreviewDrawer = ({
           <div className="py-4 border-t border-white/5 flex gap-3 shrink-0">
             {previewType === 'saint' && (
               <Link
-                to={isHi ? `/hi/saint/${selectedItem.slug}` : `/saint/${selectedItem.slug}`}
+                to={isHi ? `/hi/saints/${selectedItem.slug}` : `/saints/${selectedItem.slug}`}
                 onClick={closePreview}
                 className="btn-premium flex-1 text-center py-3 text-xs uppercase tracking-wider font-semibold min-h-[44px] flex items-center justify-center"
               >
@@ -239,7 +239,7 @@ const PreviewDrawer = ({
             )}
             {previewType === 'book' && (
               <Link
-                to={isHi ? `/hi/book/${selectedItem.slug}` : `/book/${selectedItem.slug}`}
+                to={isHi ? `/hi/granthas/${selectedItem.slug}` : `/granthas/${selectedItem.slug}`}
                 onClick={closePreview}
                 className="btn-premium flex-1 text-center py-3 text-xs uppercase tracking-wider font-semibold min-h-[44px] flex items-center justify-center"
               >

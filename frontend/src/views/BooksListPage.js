@@ -96,12 +96,12 @@ const BooksListPage = ({ initialBooks }) => {
       <Helmet>
         <title>{isHindiRoute ? "प्रमुख ग्रन्थ एवं रस शास्त्र | Vrindopnishad" : "Sacred Granthas & Books | Vrindopnishad"}</title>
         <meta name="description" content={isHindiRoute ? "ब्रज रस के प्रमुख ग्रन्थों, वाणियों और शास्त्रों का संग्रह।" : "Read and browse the sacred books, granthas and vanis written by the saints of Vrindavan."} />
-        <link rel="canonical" href={isHindiRoute ? "https://path.vrindopnishad.in/hi/books" : "https://path.vrindopnishad.in/books"} />
+        <link rel="canonical" href={isHindiRoute ? "https://path.vrindopnishad.in/hi/granthas" : "https://path.vrindopnishad.in/granthas"} />
       </Helmet>
 
       <div className="flex flex-col md:flex-row md:items-start md:items-center justify-between gap-4 mb-6 md:mb-8">
         <div className="flex flex-col items-start w-full md:w-auto text-left">
-          <Link to="/" className="inline-flex items-center gap-2 text-[var(--text-color)]/40 hover:text-[var(--text-color)] mb-2 md:mb-3 transition-colors text-xs uppercase tracking-wider">
+          <Link to={isHindiRoute ? "/hi" : "/"} className="inline-flex items-center gap-2 text-[var(--text-color)]/40 hover:text-[var(--text-color)] mb-2 md:mb-3 transition-colors text-xs uppercase tracking-wider">
             <ArrowLeft size={14} />
             Back to Home
           </Link>
@@ -154,7 +154,7 @@ const BooksListPage = ({ initialBooks }) => {
             {filteredBooks.slice(0, visibleCount).map(book => (
               <Link 
                 key={book.name} 
-                to={isHindiRoute ? `/hi/book/${book.slug}` : `/book/${book.slug}`}
+                to={isHindiRoute ? `/hi/granthas/${book.slug}` : `/granthas/${book.slug}`}
                 className="glass-card group hover:border-[rgba(var(--primary-rgb),0.3)] transition-all duration-300 flex flex-col justify-between hover:shadow-2xl"
               >
                 <div>

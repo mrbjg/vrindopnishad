@@ -168,7 +168,7 @@ const CategoryPage = () => {
         <link rel="canonical" href={isHindiRoute ? `https://path.vrindopnishad.in/hi/category/${(category || "").toLowerCase()}` : `https://path.vrindopnishad.in/category/${(category || "").toLowerCase()}`} />
       </Helmet>
       <div className="mb-12">
-        <Link to="/" className="inline-flex items-center gap-2 text-[var(--text-color)]/40 hover:text-[var(--text-color)] mb-8 transition-colors">
+        <Link to={isHindiRoute ? "/hi" : "/"} className="inline-flex items-center gap-2 text-[var(--text-color)]/40 hover:text-[var(--text-color)] mb-8 transition-colors">
           <ArrowLeft size={18} />
           Back to Home
         </Link>
@@ -212,7 +212,7 @@ const CategoryPage = () => {
           </div>
           <h3 className="text-2xl font-bold mb-4 text-[var(--text-color)]">No {info.name.toLowerCase()} available yet</h3>
           <p className="text-[var(--text-color)]/50 mb-10 text-lg">Please check back later or explore other categories.</p>
-          <Link to="/" className="btn-premium px-10 py-3">
+          <Link to={isHindiRoute ? "/hi" : "/"} className="btn-premium px-10 py-3">
              Back to Home
           </Link>
         </div>
@@ -226,7 +226,7 @@ const CategoryPage = () => {
               return (
                 <Link 
                   key={`${item.id || item.slug || 'item'}-${index}`} 
-                  to={`/content/${item.slug || item.id}`} 
+                  to={isHindiRoute ? `/hi/content/${item.slug || item.id}` : `/content/${item.slug || item.id}`} 
                   className={`glass-card group flex flex-col justify-between transition-all duration-500 border border-[var(--glass-border)] ${colors.hover} hover:shadow-2xl`}
                 >
                   <div>

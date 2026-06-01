@@ -37,7 +37,7 @@ const SaintsSpotlight = ({ isHi, saints, navigate }) => {
         {saints.slice(0, 6).map((sant, index) => (
           <div
             key={`${sant.slug || sant.cleanName || 'sant'}-${index}`}
-            onClick={() => navigate(isHi ? `/hi/saint/${sant.slug}` : `/saint/${sant.slug}`)}
+            onClick={() => navigate(isHi ? `/hi/saints/${sant.slug}` : `/saints/${sant.slug}`)}
             className="glass-card !p-3 rounded-2xl border border-white/5 hover:border-amber-500/20 text-center cursor-pointer group transition-all flex flex-col items-center justify-between space-y-2.5 touch-manipulation hover:scale-[1.02]"
           >
             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-amber-500/5 border border-amber-500/10 group-hover:border-amber-500/40 flex items-center justify-center text-amber-500 font-bold text-base sm:text-lg shadow-inner group-hover:scale-105 transition-all duration-300 select-none">

@@ -180,7 +180,7 @@ const GlossaryDetailPage = () => {
                     {termData.relatedSaints.map(s => (
                       <Link 
                         key={s.slug} 
-                        to={isHindiRoute ? `/hi/saint/${s.slug}` : `/saint/${s.slug}`}
+                        to={isHindiRoute ? `/hi/saints/${s.slug}` : `/saints/${s.slug}`}
                         className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.02] border border-white/5 hover:border-amber-500/20 text-xs text-white/70 hover:text-primary transition-all"
                       >
                         <User size={12} className="text-amber-500/60" />
@@ -198,7 +198,7 @@ const GlossaryDetailPage = () => {
                     {termData.relatedGranthas.map(g => (
                       <Link 
                         key={g.slug} 
-                        to={isHindiRoute ? `/hi/book/${g.slug}` : `/book/${g.slug}`}
+                        to={isHindiRoute ? `/hi/granthas/${g.slug}` : `/granthas/${g.slug}`}
                         className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.02] border border-white/5 hover:border-sky-500/20 text-xs text-white/70 hover:text-sky-400 transition-all"
                       >
                         <Book size={12} className="text-sky-400/60" />

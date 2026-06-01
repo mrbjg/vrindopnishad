@@ -42,6 +42,7 @@ const RagaDetailPage = ({ initialRaga }) => {
   useEffect(() => {
     let active = true;
     if (initialRaga) {
+      setRaga(initialRaga);
       setLoading(false);
       return;
     }

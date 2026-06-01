@@ -2,7 +2,7 @@
 
 import React from 'react';
 import NextLink from 'next/link';
-import { usePathname, useRouter, useSearchParams as useNextSearchParams, useParams as useNextParams } from 'next/navigation';
+import { usePathname, useRouter, useParams as useNextParams } from 'next/navigation';
 
 export const Link = React.forwardRef(({ to, href, children, ...props }, ref) => {
   const destination = to || href || '#';
@@ -29,19 +29,33 @@ Link.displayName = 'Link';
 
 export function useLocation() {
   const pathname = usePathname() || '';
-  const searchParams = useNextSearchParams();
+  const [search, setSearch] = React.useState('');
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setSearch(window.location.search || '');
+    }
+  }, [pathname]);
+
   return {
     pathname,
-    search: searchParams ? `?${searchParams.toString()}` : '',
+    search,
     hash: '',
     state: null
   };
 }
 
 export function useSearchParams() {
-  const searchParams = useNextSearchParams();
-  const setSearchParams = () => {};
-  return [searchParams, setSearchParams];
+  const [searchParams, setSearchParams] = React.useState(null);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setSearchParams(new URLSearchParams(window.location.search));
+    }
+  }, []);
+
+  const setParams = () => {};
+  return [searchParams || new URLSearchParams(), setParams];
 }
 
 export function useNavigate() {

@@ -1,5 +1,5 @@
 import { mockApiService } from './mockData';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
@@ -9,15 +9,20 @@ import {
   signOut,
   sendPasswordResetEmail
 } from 'firebase/auth';
+import { 
+  collection, 
+  doc, 
+  getDocs, 
+  getDoc, 
+  setDoc, 
+  updateDoc, 
+  deleteDoc, 
+  query, 
+  where, 
+  limit 
+} from 'firebase/firestore';
 import { supabase } from '../lib/supabase';
 import { transliterate } from '../utils/transliterate';
-import { 
-  getContentById as dcGetContentById, 
-  getContentBySlug as dcGetContentBySlug, 
-  syncContentUpdates, 
-  upsertContent, 
-  deleteContent 
-} from '../lib/dataconnect';
 
 const DB_PROVIDER = process.env.REACT_APP_DATABASE_PROVIDER || 'firebase';
 
@@ -32,6 +37,32 @@ let memoryLastUpdated = '1970-01-01T00:00:00.000Z';
 let memoryCategoryCache = {};
 let lastSyncTime = 0;
 
+const contentMapById = new Map();
+const contentMapBySlug = new Map();
+
+const updateMemoryCache = (items) => {
+  memoryCachedItems = items;
+  contentMapById.clear();
+  contentMapBySlug.clear();
+  if (!items) return;
+  items.forEach(item => {
+    if (!item) return;
+    item.category = classifyItemCategory(item);
+    
+    const titleSlug = generateSlug(item.title);
+    if (!item.slug && titleSlug) {
+      item.slug = titleSlug;
+    }
+    
+    if (item.id) {
+      contentMapById.set(item.id.toString(), item);
+    }
+    if (item.slug) {
+      contentMapBySlug.set(item.slug, item);
+      contentMapBySlug.set(decodeURIComponent(item.slug), item);
+    }
+  });
+};
 
 const ensureSorted = (items) => {
   if (!items || !Array.isArray(items)) return [];
@@ -47,12 +78,17 @@ if (typeof window !== 'undefined') {
   window.addEventListener('storage', (e) => {
     if (e.key === 'vrindopnishad_all_content_cache') {
       try {
-        memoryCachedItems = e.newValue ? ensureSorted(JSON.parse(e.newValue)) : null;
+        const parsed = e.newValue ? ensureSorted(JSON.parse(e.newValue)) : null;
+        if (parsed) {
+          updateMemoryCache(parsed);
+        } else {
+          updateMemoryCache(null);
+        }
         memoryCategoryCache = {}; 
         const time = localStorage.getItem('vrindopnishad_all_content_last_updated');
         if (time) memoryLastUpdated = time;
       } catch (err) {
-        memoryCachedItems = null;
+        updateMemoryCache(null);
       }
     }
   });
@@ -96,7 +132,7 @@ const getCache = (key) => {
 };
 
 
-const classifyItemCategory = (item) => {
+function classifyItemCategory(item) {
   if (!item) return 'poem';
   const rawCat = (item.category || '').toLowerCase().trim();
   
@@ -104,9 +140,6 @@ const classifyItemCategory = (item) => {
     return rawCat;
   }
   
-  if (rawCat === 'shloka' || rawCat === 'shlokas') {
-    return 'shloka';
-  }
   if (rawCat === 'strotra' || rawCat === 'strotras' || rawCat === 'stotra' || rawCat === 'stotras') {
     return 'strotra';
   }
@@ -140,13 +173,12 @@ const classifyItemCategory = (item) => {
     title.includes('purana') || title.includes('पुराण') ||
     title.includes('shloka') || title.includes('श्लोक');
 
-  if (isScriptureBook || hasSanskritText) {
+  if (isScriptureBook || hasSanskritText || rawCat === 'shloka' || rawCat === 'shlokas') {
     return 'shloka';
   }
   
-  
   return 'poem';
-};
+}
 
 const mapToAppModel = (item) => {
   if (!item) return null;
@@ -213,7 +245,7 @@ export const apiService = {
         const cachedTime = localStorage.getItem('vrindopnishad_all_content_last_updated');
         if (localCached) {
           cachedItems = ensureSorted(JSON.parse(localCached));
-          memoryCachedItems = cachedItems;
+          updateMemoryCache(cachedItems);
         }
         if (cachedTime) {
           lastUpdated = cachedTime;
@@ -245,7 +277,7 @@ export const apiService = {
           localStorage.setItem('vrindopnishad_all_content_last_updated', lastUpdated);
         } catch (e) {}
       }
-      memoryCachedItems = cachedItems;
+      updateMemoryCache(cachedItems);
       memoryLastUpdated = lastUpdated;
       memoryCategoryCache = {}; 
     }
@@ -270,9 +302,21 @@ export const apiService = {
               if (error) throw error;
               updates = (rawUpdates || []).map(mapToAppModel).filter(Boolean);
             } else {
-              console.log(`[Delta-Sync] Fetching updates since: ${lastUpdated}...`);
-              const res = await syncContentUpdates({ lastUpdated });
-              const rawUpdates = res.data?.contents || [];
+              console.log(`[Delta-Sync/Firestore] Fetching updates since: ${lastUpdated}...`);
+              const contentRef = collection(db, 'content');
+              let q = query(contentRef);
+              if (lastUpdated && lastUpdated !== '1970-01-01T00:00:00.000Z') {
+                q = query(contentRef, where('updated_at', '>', lastUpdated));
+              }
+              const querySnapshot = await getDocs(q);
+              const rawUpdates = [];
+              querySnapshot.forEach((doc) => {
+                const docData = doc.data();
+                if (docData && !docData.id) {
+                  docData.id = doc.id;
+                }
+                rawUpdates.push(docData);
+              });
               updates = rawUpdates.map(mapToAppModel).filter(Boolean);
             }
             
@@ -303,7 +347,7 @@ export const apiService = {
                 }
               });
               
-              memoryCachedItems = newCachedItems;
+              updateMemoryCache(newCachedItems);
               memoryLastUpdated = maxTime.toISOString();
               memoryCategoryCache = {}; 
               
@@ -349,35 +393,36 @@ export const apiService = {
 
     
     try {
-      let items = memoryCachedItems;
-      if (!items) {
+      const decodedId = decodeURIComponent(id);
+      
+      let matched = contentMapById.get(id.toString()) || 
+                    contentMapById.get(decodedId.toString()) ||
+                    contentMapBySlug.get(id) ||
+                    contentMapBySlug.get(decodedId);
+      
+      if (!matched && !memoryCachedItems) {
         const localCached = localStorage.getItem('vrindopnishad_all_content_cache');
         if (localCached) {
-          items = JSON.parse(localCached);
-          memoryCachedItems = items;
+          const items = ensureSorted(JSON.parse(localCached));
+          updateMemoryCache(items);
+          
+          matched = contentMapById.get(id.toString()) || 
+                    contentMapById.get(decodedId.toString()) ||
+                    contentMapBySlug.get(id) ||
+                    contentMapBySlug.get(decodedId);
         }
       }
-      if (items) {
-        const decodedId = decodeURIComponent(id);
-        const matched = items.find(item => 
-          item.id?.toString() === id.toString() ||
-          item.id?.toString() === decodedId.toString() ||
-          item.slug === id ||
-          item.slug === decodedId ||
-          generateSlug(item.title) === id || 
-          generateSlug(item.title) === decodedId
-        );
-        if (matched) {
-          console.log(`[Cache-Hit] getContentById matched item ${id} in global in-memory cache.`);
-          const cleanCategory = classifyItemCategory(matched);
-          const data = { 
-            ...matched, 
-            category: cleanCategory,
-            slug: matched.slug || generateSlug(matched.title) 
-          };
-          setCache(cacheKey, data);
-          return data;
-        }
+      
+      if (matched) {
+        console.log(`[Cache-Hit] getContentById matched item ${id} in global O(1) map.`);
+        const cleanCategory = classifyItemCategory(matched);
+        const data = { 
+          ...matched, 
+          category: cleanCategory,
+          slug: matched.slug || generateSlug(matched.title) 
+        };
+        setCache(cacheKey, data);
+        return data;
       }
     } catch (e) {
       console.warn('Failed to check global cache for getContentById:', e);
@@ -405,15 +450,28 @@ export const apiService = {
         if (error) throw error;
         rawData = data;
       } else {
-        let res;
         if (isUuid) {
-          console.log('[Data-Connect] Fetching content by ID:', decodedId);
-          res = await dcGetContentById({ id: decodedId });
-          rawData = res.data?.content || null;
+          console.log('[Firestore] Fetching content by ID:', decodedId);
+          const docRef = doc(db, 'content', decodedId);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            rawData = docSnap.data();
+            if (rawData && !rawData.id) {
+              rawData.id = docSnap.id;
+            }
+          }
         } else {
-          console.log('[Data-Connect] Fetching content by Slug:', decodedId);
-          res = await dcGetContentBySlug({ slug: decodedId });
-          rawData = res.data?.content || null;
+          console.log('[Firestore] Fetching content by Slug:', decodedId);
+          const contentRef = collection(db, 'content');
+          const q = query(contentRef, where('slug', '==', decodedId), limit(1));
+          const querySnapshot = await getDocs(q);
+          if (!querySnapshot.empty) {
+            const matchedDoc = querySnapshot.docs[0];
+            rawData = matchedDoc.data();
+            if (rawData && !rawData.id) {
+              rawData.id = matchedDoc.id;
+            }
+          }
         }
       }
       
@@ -471,27 +529,35 @@ export const apiService = {
         if (error) throw error;
         return mapToAppModel(data);
       } else {
-        const vars = {
+        const payload = {
           id: id,
-          title: contentData.title,
-          sanskritText: contentData.sanskrit_text,
-          hindiText: contentData.hindi_text,
-          englishText: contentData.english_text,
-          englishTranslation: contentData.english_translation,
-          category: contentData.category,
-          description: contentData.description,
-          contentText: contentData.content_text,
+          title: contentData.title || '',
+          sanskrit_text: contentData.sanskrit_text || '',
+          hindi_text: contentData.hindi_text || '',
+          english_text: contentData.english_text || '',
+          english_translation: contentData.english_translation || '',
+          category: contentData.category || '',
+          description: contentData.description || '',
+          content_text: contentData.content_text || '',
           tags: contentData.tags || [],
-          status: (contentData.status || 'PUBLISHED').toUpperCase(),
-          author: contentData.author,
-          mediaLinks: contentData.media_links || [],
-          audioUrl: contentData.audio_url,
-          imageUrls: contentData.image_urls || [],
-          videoUrls: contentData.video_urls || [],
-          slug: slug
+          status: (contentData.status || 'published').toLowerCase(),
+          author: contentData.author || '',
+          media_links: contentData.media_links || [],
+          audio_url: contentData.audio_url || '',
+          image_urls: contentData.image_urls || [],
+          video_urls: contentData.video_urls || [],
+          slug: slug,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         };
-        await upsertContent(vars);
-        return { ...contentData, id, slug };
+        // Clean up undefined properties to avoid Firestore errors
+        Object.keys(payload).forEach(key => {
+          if (payload[key] === undefined) {
+            delete payload[key];
+          }
+        });
+        await setDoc(doc(db, 'content', id), payload);
+        return payload;
       }
     } catch (error) {
       console.error('Error creating content:', error);
@@ -526,26 +592,32 @@ export const apiService = {
         if (error) throw error;
         return mapToAppModel(data);
       } else {
-        const vars = {
-          id: id,
+        const payload = {
           title: contentData.title,
-          sanskritText: contentData.sanskrit_text,
-          hindiText: contentData.hindi_text,
-          englishText: contentData.english_text,
-          englishTranslation: contentData.english_translation,
+          sanskrit_text: contentData.sanskrit_text || '',
+          hindi_text: contentData.hindi_text || '',
+          english_text: contentData.english_text || '',
+          english_translation: contentData.english_translation || '',
           category: contentData.category,
-          description: contentData.description,
-          contentText: contentData.content_text,
+          description: contentData.description || '',
+          content_text: contentData.content_text || '',
           tags: contentData.tags || [],
-          status: (contentData.status || 'PUBLISHED').toUpperCase(),
-          author: contentData.author,
-          mediaLinks: contentData.media_links || [],
-          audioUrl: contentData.audio_url,
-          imageUrls: contentData.image_urls || [],
-          videoUrls: contentData.video_urls || [],
-          slug: slug
+          status: (contentData.status || 'published').toLowerCase(),
+          author: contentData.author || '',
+          media_links: contentData.media_links || [],
+          audio_url: contentData.audio_url || '',
+          image_urls: contentData.image_urls || [],
+          video_urls: contentData.video_urls || [],
+          slug: slug,
+          updated_at: new Date().toISOString()
         };
-        await upsertContent(vars);
+        // Clean up undefined properties to avoid Firestore errors
+        Object.keys(payload).forEach(key => {
+          if (payload[key] === undefined) {
+            delete payload[key];
+          }
+        });
+        await updateDoc(doc(db, 'content', id), payload);
         return { ...contentData, id, slug };
       }
     } catch (error) {
@@ -561,7 +633,7 @@ export const apiService = {
         if (error) throw error;
         return true;
       } else {
-        await deleteContent({ id });
+        await deleteDoc(doc(db, 'content', id));
         return true;
       }
     } catch (error) {

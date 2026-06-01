@@ -25,7 +25,7 @@ const LibraryShowcase = ({ isHi, books, navigate }) => {
           </h2>
         </div>
         <Link
-          to={isHi ? "/hi/books" : "/books"}
+          to={isHi ? "/hi/granthas" : "/granthas"}
           className="text-xs text-primary hover:underline flex items-center gap-0.5 font-bold min-h-[30px] flex items-center"
         >
           {isHi ? "सभी ग्रन्थ" : "View All Granthas"}
@@ -38,7 +38,7 @@ const LibraryShowcase = ({ isHi, books, navigate }) => {
         {books.slice(0, 8).map((book, index) => (
           <div
             key={`${book.slug || book.name || 'book'}-${index}`}
-            onClick={() => navigate(isHi ? `/hi/book/${book.slug}` : `/book/${book.slug}`)}
+            onClick={() => navigate(isHi ? `/hi/granthas/${book.slug}` : `/granthas/${book.slug}`)}
             className="w-[280px] sm:w-80 flex-none glass-card p-4 rounded-2xl hover:border-amber-500/25 transition-all snap-start flex gap-4 border border-white/5 cursor-pointer group shadow-lg touch-manipulation"
           >
             

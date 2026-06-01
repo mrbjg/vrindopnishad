@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useContext, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../contexts/ClientProviders';
 import { apiService } from '../services/api';
 import { Mail, Lock, LogIn, ArrowLeft, UserPlus, Info, User } from 'lucide-react';
@@ -9,6 +9,8 @@ import { Mail, Lock, LogIn, ArrowLeft, UserPlus, Info, User } from 'lucide-react
 const LoginPage = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isHindiRoute = location.pathname.startsWith('/hi');
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
@@ -86,7 +88,7 @@ const LoginPage = () => {
         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-[60px] rounded-full -mr-16 -mt-16 pointer-events-none"></div>
         
         <div className="text-center mb-10 relative z-10">
-           <Link to="/" className="login-back-link inline-flex items-center gap-2 mb-6 transition-all duration-300 hover:-translate-x-1">
+           <Link to={isHindiRoute ? "/hi" : "/"} className="login-back-link inline-flex items-center gap-2 mb-6 transition-all duration-300 hover:-translate-x-1">
              <ArrowLeft size={16} />
              Back to Home
            </Link>
