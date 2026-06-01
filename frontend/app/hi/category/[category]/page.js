@@ -35,7 +35,7 @@ export default function HindiCategoryRoute({ params }) {
   const decodedCategory = params ? decodeURIComponent(params.category || '') : '';
   return (
     <Layout>
-      <CategoryPage key={decodedCategory} />
+      <CategoryPage key={decodedCategory} category={decodedCategory} />
     </Layout>
   );
 }

@@ -1,6 +1,5 @@
 import { transliterate } from './transliterate';
 
-
 export const slugify = (text) => {
   if (!text) return '';
   return text
@@ -14,17 +13,92 @@ export const slugify = (text) => {
     .replace(/-+$/, '');
 };
 
+export function getNormalizedSaintSlug(name) {
+  if (!name) return '';
+  const clean = name.toLowerCase();
+  if (clean.includes('haridas') || clean.includes('हरिदास')) return 'swami-haridas';
+  if (clean.includes('harivansh') || clean.includes('हरिवंश')) return 'hit-harivansh';
+  if (clean.includes('vyas') || clean.includes('व्यास')) return 'hariram-vyas';
+  if (clean.includes('dhruv') || clean.includes('ध्रुव')) return 'dhruvdas';
+  if (clean.includes('premanand') || clean.includes('प्रेमानंद')) return 'premanand-ji-maharaj';
+  return slugify(transliterate(name));
+}
+
+export function getNormalizedBookSlug(name) {
+  if (!name) return '';
+  const clean = name.toLowerCase();
+  if (
+    clean.includes('सुधानिधि') || 
+    clean.includes('sudhanidhi') || 
+    clean.includes('sudha-nidhi') || 
+    clean.includes('sudha_nidhi') ||
+    (clean.includes('सुधा') && clean.includes('निधि')) ||
+    (clean.includes('sudha') && clean.includes('nidhi'))
+  ) return 'radha-sudha-nidhi';
+  if (clean.includes('चौरासी') || clean.includes('चतुरासी') || clean.includes('chaurasi') || clean.includes('chaturasi')) return 'hit-chaurasi';
+  if (clean.includes('केलिमाल') || clean.includes('केलीमाल') || clean.includes('kelimal')) return 'kelimal';
+  if (clean.includes('सिद्धान्त के पद') || clean.includes('सिद्धांत के पद') || clean.includes('सिद्धान्त की पद') || clean.includes('siddhanta-pada') || clean.includes('siddhant-pada')) return 'siddhanta-pada';
+  if (clean.includes('बयालीस लीला') || clean.includes('ब्यालीस लीला') || clean.includes('bayalees') || clean.includes('byalees')) return 'bayalees-leela';
+  if (clean.includes('व्यास वाणी') || clean.includes('vyas-vani') || clean.includes('vyas vani')) return 'vyas-vani';
+  if (clean.includes('seva-kunj-texts') || clean.includes('seva-kunj') || clean.includes('सेवा कुंज') || clean.includes('सेवा कुञ्ज')) return 'seva-kunj-texts';
+  return slugify(transliterate(name));
+}
+
+export function getNormalizedBookName(name) {
+  if (!name) return '';
+  const clean = name.toLowerCase();
+  if (
+    clean.includes('सुधानिधि') || 
+    clean.includes('sudhanidhi') || 
+    clean.includes('sudha-nidhi') ||
+    (clean.includes('सुधा') && clean.includes('निधि')) ||
+    (clean.includes('sudha') && clean.includes('nidhi'))
+  ) return 'श्री राधा सुधा निधि';
+  if (clean.includes('चौरासी') || clean.includes('चतुरासी') || clean.includes('chaurasi')) return 'श्री हित चौरासी';
+  if (clean.includes('केलिमाल') || clean.includes('केलीमाल') || clean.includes('kelimal')) return 'केलिमाल';
+  if (clean.includes('सिद्धान्त के पद') || clean.includes('सिद्धांत के पद') || clean.includes('सिद्धान्त की पद')) return 'सिद्धान्त के पद';
+  if (clean.includes('बयालीस लीला') || clean.includes('ब्यालीस लीला')) return 'बयालीस लीला';
+  if (clean.includes('व्यास वाणी')) return 'व्यास वाणी';
+  if (clean.includes('seva-kunj-texts') || clean.includes('seva-kunj') || clean.includes('सेवा कुंज') || clean.includes('सेवा कुञ्ज')) return 'सेवा कुंज साहित्य';
+  return name;
+}
+
+export function parseAuthorField(authorStr) {
+  if (!authorStr || authorStr === 'Braj Rasik Heritage') {
+    return { saintName: null, bookName: null, verseNum: null };
+  }
+
+  let saintName = null;
+  let bookName = null;
+  let verseNum = null;
+
+  const verseMatch = authorStr.match(/\(([^)]+)\)$/);
+  let cleanAuthor = authorStr;
+  if (verseMatch) {
+    verseNum = verseMatch[1].trim();
+    cleanAuthor = authorStr.replace(/\s*\([^)]+\)\s*$/, '').trim();
+  }
+
+  const parts = cleanAuthor.split(/\s*,\s*|\s{2,}/);
+  if (parts.length >= 2) {
+    saintName = parts[0].trim();
+    bookName = parts[1].trim();
+  } else {
+    saintName = parts[0].trim();
+  }
+
+  return { saintName, bookName, verseNum };
+}
+
 let lastItemsRef = null;
 let lastResult = null;
 let globalRelationsCache = null;
-
 
 export function extractRelations(items) {
   if (!items || !items.length) {
     return { sants: [], books: [], ragas: [], biographies: [] };
   }
 
-  
   if (items === lastItemsRef && lastResult) {
     return lastResult;
   }
@@ -36,7 +110,6 @@ export function extractRelations(items) {
     }
   }
 
-  
   const cacheKey = 'sv_extracted_relations_cache';
   if (typeof window !== 'undefined') {
     try {
@@ -67,16 +140,16 @@ export function extractRelations(items) {
   const ragasMap = {};
   const biographies = [];
 
-  
   items.forEach(item => {
     if (item.category?.toLowerCase() === 'saint') {
       const title = item.title || '';
       const cleanName = title.replace(/\([^)]+\)/g, '').replace(/महाप्रभु/g, '').trim();
       const transliteratedName = transliterate(cleanName);
+      const saintSlug = getNormalizedSaintSlug(cleanName);
       
       biographies.push({
         id: item.id,
-        slug: item.slug || slugify(transliteratedName),
+        slug: saintSlug,
         originalTitle: title,
         name: cleanName,
         hinglishName: transliteratedName,
@@ -88,7 +161,6 @@ export function extractRelations(items) {
     }
   });
 
-  
   items.forEach(item => {
     if (item.category?.toLowerCase() === 'saint') return; 
 
@@ -98,40 +170,34 @@ export function extractRelations(items) {
     let bookName = null;
     let verseNum = null;
 
-    
     const parts = title.split(/\s+-\s+/);
     if (parts.length >= 2) {
       cleanTitle = parts[0].trim();
       const relationText = parts[1].trim();
-
-      
       const verseMatch = relationText.match(/\(([^)]+)\)$/);
       if (verseMatch) {
         verseNum = verseMatch[1].trim();
         const textWithoutVerse = relationText.replace(/\(([^)]+)\)$/, '').trim();
-        
-        
         const relParts = textWithoutVerse.split(/\s*,\s*/);
         if (relParts.length >= 2) {
           saintName = relParts[0].trim();
           bookName = relParts[1].trim();
         } else if (relParts.length === 1) {
           const val = relParts[0].trim();
-          if (val.includes('वाणी') || val.includes('सागर') || val.includes('शतक') || val.includes('महिमामृत') || val.includes('दोहे') || val.includes('ग्रंथावली') || val.includes('पदावली') || val.includes('शत')) {
+          if (val.includes('वाणी') || val.includes('सागर') || val.includes('शतक') || val.includes('महिमामृत') || val.includes('दोहे') || val.includes('ग्रंथावली') || val.includes('पदावली') || val.includes('शत') || val.includes('केलिमाल') || val.includes('चौरासी') || val.includes('सुधानिधि')) {
             bookName = val;
           } else {
             saintName = val;
           }
         }
       } else {
-        
         const relParts = relationText.split(/\s*,\s*/);
         if (relParts.length >= 2) {
           saintName = relParts[0].trim();
           bookName = relParts[1].trim();
         } else if (relParts.length === 1) {
           const val = relParts[0].trim();
-          if (val.includes('वाणी') || val.includes('सागर') || val.includes('शतक') || val.includes('महिमामृत') || val.includes('दोहे')) {
+          if (val.includes('वाणी') || val.includes('सागर') || val.includes('शतक') || val.includes('महिमामृत') || val.includes('दोहे') || val.includes('केलिमाल') || val.includes('चौरासी') || val.includes('सुधानिधि')) {
             bookName = val;
           } else {
             saintName = val;
@@ -140,14 +206,19 @@ export function extractRelations(items) {
       }
     }
 
-    
+    if (!saintName && item.author) {
+      const parsedAuthor = parseAuthorField(item.author);
+      saintName = parsedAuthor.saintName;
+      bookName = parsedAuthor.bookName || bookName;
+      verseNum = parsedAuthor.verseNum || verseNum;
+    }
+
     if (!saintName && item.author && item.author !== 'Braj Rasik Heritage') {
       saintName = item.author;
     }
 
-    
     let ragaName = null;
-    const ragaRegex = /(राग\s+[^\s,;()-]+)/;
+    const ragaRegex = /(राग\s+[^\s,;()\-]+)/;
     const matchTitle = title.match(ragaRegex);
     const matchSanskrit = item.sanskrit_text?.match(ragaRegex);
     const matchHindi = item.hindi_text?.match(ragaRegex);
@@ -157,11 +228,9 @@ export function extractRelations(items) {
     else if (matchHindi) ragaName = matchHindi[1];
 
     if (ragaName) {
-      
       ragaName = ragaName.split(/[,]/)[0].trim();
     }
 
-    
     const enrichedItem = {
       ...item,
       cleanTitle,
@@ -172,48 +241,55 @@ export function extractRelations(items) {
       slug: item.slug || slugify(transliterate(cleanTitle))
     };
 
-    
     if (saintName) {
       const cleanSantKey = saintName.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim();
-      const santSlug = slugify(transliterate(cleanSantKey));
+      const santSlug = getNormalizedSaintSlug(cleanSantKey);
       
-      if (!santsMap[cleanSantKey]) {
-        
+      if (!santsMap[santSlug]) {
         const matchedBio = biographies.find(bio => 
-          bio.name.includes(cleanSantKey) || cleanSantKey.includes(bio.name)
+          bio.name.includes(cleanSantKey) || cleanSantKey.includes(bio.name) ||
+          (cleanSantKey.includes('हरिदास') && bio.name.includes('हरिदास')) ||
+          (cleanSantKey.includes('हरिवंश') && bio.name.includes('हरिवंश'))
         );
 
-        santsMap[cleanSantKey] = {
-          name: saintName,
+        santsMap[santSlug] = {
+          name: matchedBio ? matchedBio.name : saintName,
           cleanName: cleanSantKey,
           slug: santSlug,
-          hinglishName: transliterate(saintName),
+          hinglishName: transliterate(matchedBio ? matchedBio.name : saintName),
           verses: [],
           books: new Set(),
           biography: matchedBio || null
         };
       }
-      santsMap[cleanSantKey].verses.push(enrichedItem);
-      if (bookName) santsMap[cleanSantKey].books.add(bookName);
+      santsMap[santSlug].verses.push(enrichedItem);
+      if (bookName) {
+        const normalizedBName = getNormalizedBookName(bookName);
+        santsMap[santSlug].books.add(normalizedBName);
+      }
     }
 
-    
     if (bookName) {
-      const bookSlug = slugify(transliterate(bookName));
-      if (!booksMap[bookName]) {
-        booksMap[bookName] = {
-          name: bookName,
+      const bookSlug = getNormalizedBookSlug(bookName);
+      const normalizedBName = getNormalizedBookName(bookName);
+      if (!booksMap[bookSlug]) {
+        booksMap[bookSlug] = {
+          name: normalizedBName,
           slug: bookSlug,
-          hinglishName: transliterate(bookName),
+          hinglishName: transliterate(normalizedBName),
           author: saintName || 'Unknown',
-          authorSlug: saintName ? slugify(transliterate(saintName.replace(/जी/g, '').trim())) : null,
+          authorSlug: saintName ? getNormalizedSaintSlug(saintName) : null,
           verses: []
         };
+      } else {
+        if (saintName && booksMap[bookSlug].author === 'Unknown') {
+          booksMap[bookSlug].author = saintName;
+          booksMap[bookSlug].authorSlug = getNormalizedSaintSlug(saintName);
+        }
       }
-      booksMap[bookName].verses.push(enrichedItem);
+      booksMap[bookSlug].verses.push(enrichedItem);
     }
 
-    
     if (ragaName) {
       const ragaSlug = slugify(transliterate(ragaName));
       if (!ragasMap[ragaName]) {
@@ -228,7 +304,54 @@ export function extractRelations(items) {
     }
   });
 
+  const sevaKunjSlug = 'seva-kunj-texts';
+  const sevaKunjVerses = [];
   
+  items.forEach(item => {
+    if (item.category?.toLowerCase() === 'saint') return;
+    const textToScan = [
+      item.title,
+      item.author,
+      item.hindi_text,
+      item.sanskrit_text,
+      item.english_translation,
+      item.description
+    ].filter(Boolean).join(' ').toLowerCase();
+    
+    const isSevaKunj = textToScan.includes('सेवा कुंज') || 
+                       textToScan.includes('सेवाकुंज') || 
+                       textToScan.includes('seva kunj') || 
+                       textToScan.includes('sewakunj') || 
+                       textToScan.includes('seva-kunj') || 
+                       textToScan.includes('सेवा सुख') ||
+                       (item.tags && item.tags.some(t => t.toLowerCase().includes('seva') || t.toLowerCase().includes('kunj')));
+                       
+    if (isSevaKunj) {
+      let enriched = item;
+      for (const b of Object.values(booksMap)) {
+        const found = b.verses.find(v => v.id === item.id);
+        if (found) {
+          enriched = found;
+          break;
+        }
+      }
+      if (!sevaKunjVerses.some(v => v.id === enriched.id)) {
+        sevaKunjVerses.push(enriched);
+      }
+    }
+  });
+
+  if (sevaKunjVerses.length > 0) {
+    booksMap[sevaKunjSlug] = {
+      name: 'सेवा कुंज साहित्य',
+      slug: sevaKunjSlug,
+      hinglishName: 'Seva Kunj Texts',
+      author: 'रसिक संत / Rasik Saints',
+      authorSlug: 'hit-harivansh',
+      verses: sevaKunjVerses
+    };
+  }
+
   const sants = Object.values(santsMap).map(s => ({
     ...s,
     books: Array.from(s.books)
@@ -241,7 +364,6 @@ export function extractRelations(items) {
   lastItemsRef = items;
   lastResult = result;
 
-  
   if (typeof window !== 'undefined') {
     try {
       const cacheData = {
@@ -257,3 +379,4 @@ export function extractRelations(items) {
 
   return result;
 }
+

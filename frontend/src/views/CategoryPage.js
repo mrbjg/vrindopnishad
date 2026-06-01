@@ -6,10 +6,14 @@ import { ApiContext } from '../contexts/ClientProviders';
 import { Scroll, Music, FileText, BookOpen, Music as MusicIcon, Image as ImageIcon, Video, ArrowLeft, ArrowRight, MapPin, Users, Book } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 
-const CategoryPage = () => {
-  const { category } = useParams();
-  const location = useLocation();
-  const isHindiRoute = location.pathname.startsWith('/hi');
+const CategoryPage = ({ category: propCategory }) => {
+  const params = useParams();
+  const category = propCategory || params.category;
+  let location = null;
+  try {
+    location = useLocation();
+  } catch (e) {}
+  const isHindiRoute = location ? location.pathname.startsWith('/hi') : (typeof window !== 'undefined' ? window.location.pathname.startsWith('/hi') : false);
   const { apiService } = useContext(ApiContext);
   const cacheKey = `all_${category}_10000`;
   

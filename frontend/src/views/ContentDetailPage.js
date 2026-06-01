@@ -21,7 +21,8 @@ import FontWheel from '../components/FontWheel';
 import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { Helmet } from 'react-helmet-async';
 import { transliterate } from '../utils/transliterate';
-import { extractRelations } from '../utils/relations';
+import { extractRelations, parseAuthorField, getNormalizedSaintSlug, getNormalizedBookSlug, getNormalizedBookName } from '../utils/relations';
+import { GLOSSARY_TERMS } from '../utils/glossaryTerms';
 import { shareVerseCard } from '../utils/shareCard';
 
 const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelatedBook, initialRelatedRaga, initialRelatedVerses }) => {
@@ -77,6 +78,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
   const [relatedBook, setRelatedBook] = useState(initialRelatedBook || null);
   const [relatedRaga, setRelatedRaga] = useState(initialRelatedRaga || null);
   const [relatedVerses, setRelatedVerses] = useState(initialRelatedVerses || []);
+  const [detectedConcepts, setDetectedConcepts] = useState([]);
 
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isPaathMode, setIsPaathMode] = useState(false);
@@ -127,12 +129,34 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
   useEffect(() => {
     let active = true;
 
+    const performConceptScan = (itemData) => {
+      if (!itemData) return;
+      const scannedText = [
+        itemData.title,
+        itemData.sanskrit_text,
+        itemData.hindi_text,
+        itemData.english_translation,
+        itemData.description
+      ].filter(Boolean).join(' ').toLowerCase();
+
+      const matchedConcepts = GLOSSARY_TERMS.filter(term => {
+        const engName = (term.term || '').toLowerCase();
+        const devName = (term.devanagari || '').toLowerCase();
+        const wordRegexEng = new RegExp('\\b' + engName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '\\b', 'i');
+        const hasEngMatch = wordRegexEng.test(scannedText);
+        const hasDevMatch = devName && scannedText.includes(devName);
+        return hasEngMatch || hasDevMatch;
+      });
+      setDetectedConcepts(matchedConcepts);
+    };
+
     if (initialContent) {
       setContent(initialContent);
       setRelatedSaint(initialRelatedSaint || null);
       setRelatedBook(initialRelatedBook || null);
       setRelatedRaga(initialRelatedRaga || null);
       setRelatedVerses(initialRelatedVerses || []);
+      performConceptScan(initialContent);
       setLoading(false);
       return;
     }
@@ -157,6 +181,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
     const cachedContent = getInitialContent();
     setContent(cachedContent);
+    performConceptScan(cachedContent);
     setLoading(cachedContent === null);
 
     const fetchContentData = async () => {
@@ -165,38 +190,48 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
         const data = await apiService.getContentById(decodedId);
         if (active) {
           setContent(data);
+          performConceptScan(data);
           
           const allItems = await apiService.getAllContent(null, 10000);
           const relations = extractRelations(allItems);
           
-          const currentAuthor = data.author;
+          const authorInfo = parseAuthorField(data.author || "");
           let matchedSaint = null;
-          if (currentAuthor) {
-            const cleanAuthorKey = currentAuthor.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim();
-            matchedSaint = relations.sants.find(s => s.cleanName === cleanAuthorKey || s.name.includes(cleanAuthorKey));
+          if (authorInfo.saintName) {
+            const saintSlug = getNormalizedSaintSlug(authorInfo.saintName);
+            matchedSaint = relations.sants.find(s => s.slug === saintSlug);
           }
           
-          const cleanTitle = data.title || "";
-          let bookName = null;
-          const parts = cleanTitle.split(/\s+-\s+/);
-          if (parts.length >= 2) {
-            const relationText = parts[1].trim();
-            const verseMatch = relationText.match(/\(([^)]+)\)$/);
-            const textWithoutVerse = verseMatch ? relationText.replace(/\(([^)]+)\)$/, '').trim() : relationText;
-            const relParts = textWithoutVerse.split(/\s*,\s*/);
-            if (relParts.length >= 2) {
-              bookName = relParts[1].trim();
-            } else if (relParts.length === 1) {
-              const val = relParts[0].trim();
-              if (val.includes('वाणी') || val.includes('सागर') || val.includes('शतक') || val.includes('महिमामृत') || val.includes('दोहे')) {
-                bookName = val;
-              }
-            }
+          let matchedBook = null;
+          if (authorInfo.bookName) {
+            const bookSlug = getNormalizedBookSlug(authorInfo.bookName);
+            matchedBook = relations.books.find(b => b.slug === bookSlug);
           }
-          const matchedBook = bookName ? relations.books.find(b => b.name === bookName) : null;
+
+          const textToScan = [
+            data.title,
+            data.author,
+            data.hindi_text,
+            data.sanskrit_text,
+            data.english_translation,
+            data.description
+          ].filter(Boolean).join(' ').toLowerCase();
+          
+          const isSevaKunj = textToScan.includes('सेवा कुंज') || 
+                             textToScan.includes('सेवाकुंज') || 
+                             textToScan.includes('seva kunj') || 
+                             textToScan.includes('sewakunj') || 
+                             textToScan.includes('seva-kunj') || 
+                             textToScan.includes('सेवा सुख') ||
+                             (data.tags && data.tags.some(t => t.toLowerCase().includes('seva') || t.toLowerCase().includes('kunj')));
+          
+          if (isSevaKunj) {
+            matchedBook = relations.books.find(b => b.slug === 'seva-kunj-texts') || matchedBook;
+          }
           
           let ragaName = null;
           const ragaRegex = /(राग\s+[^\s,;()-]+)/;
+          const cleanTitle = data.title || "";
           const matchTitle = cleanTitle.match(ragaRegex);
           const matchSanskrit = data.sanskrit_text?.match(ragaRegex);
           const matchHindi = data.hindi_text?.match(ragaRegex);
@@ -254,7 +289,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
         continue;
       }
 
-      const parts = rawLine.split(/([।॥|]+\s*(?:\[\d+\]|\(?\d+\)?)?|,\s*)/g);
+      const parts = rawLine.split(/([।॥|]+\s*(?:\[\d+\]|\(?\d+\)?)?|\.{1,2}\s*(?:\[\d+\]|\(?\d+\)?)?)/g);
       
       let currentLine = "";
       for (let i = 0; i < parts.length; i++) {
@@ -814,84 +849,118 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
       </article>
 
       
-      <section className="mt-24 mb-12 animate-fade-in">
+      {/* Knowledge Graph Connections */}
+      <section className="mt-24 mb-12 animate-fade-in text-left">
         <div className="flex items-center gap-4 mb-10">
           <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/10"></div>
-          <h2 className="text-xl font-bold text-sacred-gradient px-4">
-            {isHindiRoute ? "सम्बंधित ब्रज रस" : "Related Braj Devotion"}
+          <h2 className="text-xl font-bold text-sacred-gradient px-4 font-headings">
+            {isHindiRoute ? "ज्ञान सम्बन्ध चित्र" : "Knowledge Graph Connections"}
           </h2>
           <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/10"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {relatedSaint && (
-            <Link to={isHindiRoute ? `/hi/saints/${relatedSaint.slug}` : `/saints/${relatedSaint.slug}`} className="glass-card p-6 group hover:border-amber-500/30 transition-all flex flex-col justify-between">
-              <div>
-                <span className="text-[10px] uppercase tracking-widest text-amber-500 mb-3 block">
-                  {isHindiRoute ? "रसिक सन्त" : "Saint Biography"}
-                </span>
-                <h4 className="text-lg font-bold mb-2 group-hover:text-amber-400 transition-colors">
-                  {isHindiRoute ? relatedSaint.name : relatedSaint.hinglishName}
-                </h4>
-                <p className="text-white/40 text-xs line-clamp-2">
-                  {relatedSaint.biography?.text ? relatedSaint.biography.text : (isHindiRoute ? "संत चरित्र और उनके दिव्य पद।" : "Learn about the life and teachings of this Saint.")}
-                </p>
-              </div>
-              <span className="text-[10px] text-primary font-bold mt-4 block">{isHindiRoute ? "जीवन चरित पढ़ें →" : "Read Biography →"}</span>
-            </Link>
-          )}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Related Saint */}
+          <div className="glass-card p-5 rounded-2xl border border-white/5 space-y-3 flex flex-col justify-between">
+            <div>
+              <span className="text-[9px] uppercase tracking-wider text-amber-500/80 font-bold block mb-2">
+                {isHindiRoute ? "सम्बन्धित सन्त" : "Related Saint"}
+              </span>
+              {relatedSaint ? (
+                <>
+                  <h3 className="font-bold text-sm text-white/90 mb-1.5 line-clamp-1">
+                    {isHindiRoute ? relatedSaint.name : relatedSaint.hinglishName}
+                  </h3>
+                  <p className="text-[11px] text-white/40 line-clamp-3 leading-relaxed">
+                    {relatedSaint.biography ? relatedSaint.biography.substring(0, 120) + '...' : (isHindiRoute ? 'संत का जीवन चरित्र और विवरण।' : 'Learn about the saint\'s life and legacy.')}
+                  </p>
+                </>
+              ) : (
+                <p className="text-[11px] text-white/30 italic">{isHindiRoute ? 'कोई सन्त सम्बन्धित नहीं' : 'No related saint found'}</p>
+              )}
+            </div>
+            {relatedSaint && (
+              <Link
+                to={isHindiRoute ? `/hi/saints/${relatedSaint.slug}` : `/saints/${relatedSaint.slug}`}
+                className="text-[10px] text-primary font-bold hover:underline mt-4 block"
+              >
+                {isHindiRoute ? "जीवनी पढ़ें →" : "Read Biography →"}
+              </Link>
+            )}
+          </div>
 
-          {relatedBook && (
-            <Link to={isHindiRoute ? `/hi/granthas/${relatedBook.slug}` : `/granthas/${relatedBook.slug}`} className="glass-card p-6 group hover:border-amber-500/30 transition-all flex flex-col justify-between">
-              <div>
-                <span className="text-[10px] uppercase tracking-widest text-amber-500 mb-3 block">
-                  {isHindiRoute ? "पवित्र ग्रन्थ" : "Sacred Granth"}
-                </span>
-                <h4 className="text-lg font-bold mb-2 group-hover:text-amber-400 transition-colors font-headings">
-                  {relatedBook.name}
-                </h4>
-                <p className="text-white/40 text-xs line-clamp-2">
-                  {isHindiRoute ? `ग्रन्थ के सभी संकलित पद और अनुवाद।` : `Read all verses compiled from the book ${relatedBook.hinglishName || relatedBook.name}.`}
-                </p>
-              </div>
-              <span className="text-[10px] text-primary font-bold mt-4 block">{isHindiRoute ? "ग्रन्थ संग्रह →" : "Browse Book →"}</span>
-            </Link>
-          )}
+          {/* Related Grantha */}
+          <div className="glass-card p-5 rounded-2xl border border-white/5 space-y-3 flex flex-col justify-between">
+            <div>
+              <span className="text-[9px] uppercase tracking-wider text-sky-400 font-bold block mb-2">
+                {isHindiRoute ? "सम्बन्धित ग्रन्थ" : "Related Scripture"}
+              </span>
+              {relatedBook ? (
+                <>
+                  <h3 className="font-bold text-sm text-white/90 mb-1.5 line-clamp-1">
+                    {relatedBook.name}
+                  </h3>
+                  <p className="text-[11px] text-white/40 line-clamp-3 leading-relaxed">
+                    {isHindiRoute ? 'इस ग्रन्थ के संकलित पद और पद्यावली।' : `Collected verses and passages from ${relatedBook.name}.`}
+                  </p>
+                </>
+              ) : (
+                <p className="text-[11px] text-white/30 italic">{isHindiRoute ? 'कोई ग्रन्थ सम्बन्धित नहीं' : 'No related grantha'}</p>
+              )}
+            </div>
+            {relatedBook && (
+              <Link
+                to={isHindiRoute ? `/hi/granthas/${relatedBook.slug}` : `/granthas/${relatedBook.slug}`}
+                className="text-[10px] text-sky-400 font-bold hover:underline mt-4 block"
+              >
+                {isHindiRoute ? "ग्रन्थ पाठ →" : "Read scripture →"}
+              </Link>
+            )}
+          </div>
 
-          {relatedRaga && (
-            <Link to={isHindiRoute ? `/hi/raga/${relatedRaga.slug}` : `/raga/${relatedRaga.slug}`} className="glass-card p-6 group hover:border-amber-500/30 transition-all flex flex-col justify-between">
-              <div>
-                <span className="text-[10px] uppercase tracking-widest text-amber-500 mb-3 block">
-                  {isHindiRoute ? "शास्त्रीय राग" : "Classical Melody"}
-                </span>
-                <h4 className="text-lg font-bold mb-2 group-hover:text-amber-400 transition-colors font-headings">
-                  {relatedRaga.name}
-                </h4>
-                <p className="text-white/40 text-xs line-clamp-2">
-                  {isHindiRoute ? `राग ${relatedRaga.name} में निबद्ध सभी भजन और पद।` : `Explore other compositions set in Raga ${relatedRaga.hinglishName || relatedRaga.name}.`}
-                </p>
+          {/* Related Concepts */}
+          <div className="glass-card p-5 rounded-2xl border border-white/5 space-y-3">
+            <span className="text-[9px] uppercase tracking-wider text-indigo-400 font-bold block mb-2">
+              {isHindiRoute ? "प्रमुख अवधारणाएँ" : "Core Concepts"}
+            </span>
+            {detectedConcepts && detectedConcepts.length > 0 ? (
+              <div className="flex flex-wrap gap-2 pt-1">
+                {detectedConcepts.map(c => (
+                  <Link
+                    key={c.slug}
+                    to={isHindiRoute ? `/hi/glossary/${c.slug}` : `/glossary/${c.slug}`}
+                    className="px-2 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-indigo-500/30 text-[10px] text-white/80 hover:text-indigo-400 transition-all select-none"
+                  >
+                    {isHindiRoute ? c.devanagari || c.term : c.term}
+                  </Link>
+                ))}
               </div>
-              <span className="text-[10px] text-primary font-bold mt-4 block">{isHindiRoute ? "राग संग्रह →" : "Explore Melody →"}</span>
-            </Link>
-          )}
+            ) : (
+              <p className="text-[11px] text-white/30 italic">{isHindiRoute ? 'कोई अवधारणा नहीं पाई गई' : 'No core concepts detected'}</p>
+            )}
+          </div>
 
-          
-          {(!relatedSaint || !relatedBook || !relatedRaga) && relatedVerses.slice(0, 3 - (relatedSaint ? 1 : 0) - (relatedBook ? 1 : 0) - (relatedRaga ? 1 : 0)).map(verse => (
-            <Link key={verse.id} to={isHindiRoute ? `/hi/content/${verse.slug || verse.id}` : `/content/${verse.slug || verse.id}`} className="glass-card p-6 group hover:border-amber-500/30 transition-all flex flex-col justify-between">
-              <div>
-                <span className="text-[10px] uppercase tracking-widest text-white/30 mb-3 block">
-                  {isHindiRoute ? "सम्बंधित पाठ" : "Related Verse"}
-                </span>
-                <h4 className="text-lg font-bold mb-2 group-hover:text-amber-400 transition-colors line-clamp-1 py-1 font-headings">
-                  {verse.cleanTitle || verse.title}
-                </h4>
-                <p className="text-white/40 text-xs line-clamp-2">
-                  {verse.hindi_text || verse.english_translation || verse.description}
-                </p>
+          {/* Related Verses */}
+          <div className="glass-card p-5 rounded-2xl border border-white/5 space-y-3">
+            <span className="text-[9px] uppercase tracking-wider text-emerald-400 font-bold block mb-2">
+              {isHindiRoute ? "सम्बन्धित पद" : "Related Verses"}
+            </span>
+            {relatedVerses && relatedVerses.length > 0 ? (
+              <div className="space-y-2">
+                {relatedVerses.map(v => (
+                  <Link
+                    key={v.id}
+                    to={isHindiRoute ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`}
+                    className="block text-[11px] text-white/70 hover:text-emerald-400 transition-colors line-clamp-1 py-0.5"
+                  >
+                    • {v.cleanTitle || v.title}
+                  </Link>
+                ))}
               </div>
-              <span className="text-[10px] text-primary font-bold mt-4 block">{isHindiRoute ? "पाठ पढ़ें →" : "Read Verse →"}</span>
-            </Link>
-          ))}
+            ) : (
+              <p className="text-[11px] text-white/30 italic">{isHindiRoute ? 'कोई पद सम्बन्धित नहीं' : 'No related verses'}</p>
+            )}
+          </div>
         </div>
       </section>
 

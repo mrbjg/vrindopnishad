@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { ApiContext } from '../contexts/ClientProviders';
-import { extractRelations, slugify } from '../utils/relations';
+import { extractRelations, slugify, getNormalizedBookSlug } from '../utils/relations';
 import { ArrowLeft, Music, FileText, Tag, BookOpen, Star, HelpCircle, GitCommit } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { getSaintMetadata } from '../utils/saintMetadata';
@@ -366,7 +366,7 @@ const SaintDetailPage = ({ initialSaint }) => {
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {sant.books.map(book => {
-                    const bookSlug = slugify(book);
+                    const bookSlug = getNormalizedBookSlug(book);
                     return (
                       <Link 
                         key={book}

@@ -1,5 +1,5 @@
 import { mockApiService } from './mockData';
-import { auth, db } from '../firebase';
+import { auth, db, contentDb } from '../firebase';
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
@@ -21,6 +21,7 @@ import {
   where, 
   limit 
 } from 'firebase/firestore';
+import { ref, get, child, set as dbSet, update as dbUpdate, remove as dbRemove } from 'firebase/database';
 import { supabase } from '../lib/supabase';
 import { transliterate } from '../utils/transliterate';
 
@@ -302,21 +303,32 @@ export const apiService = {
               if (error) throw error;
               updates = (rawUpdates || []).map(mapToAppModel).filter(Boolean);
             } else {
-              console.log(`[Delta-Sync/Firestore] Fetching updates since: ${lastUpdated}...`);
-              const contentRef = collection(db, 'content');
-              let q = query(contentRef);
-              if (lastUpdated && lastUpdated !== '1970-01-01T00:00:00.000Z') {
-                q = query(contentRef, where('updated_at', '>', lastUpdated));
-              }
-              const querySnapshot = await getDocs(q);
-              const rawUpdates = [];
-              querySnapshot.forEach((doc) => {
-                const docData = doc.data();
-                if (docData && !docData.id) {
-                  docData.id = doc.id;
+              console.log(`[Delta-Sync/RTDB] Fetching content from Realtime Database...`);
+              const dbRef = ref(contentDb);
+              const snapshot = await get(child(dbRef, 'content'));
+              let rawUpdates = [];
+              if (snapshot.exists()) {
+                const val = snapshot.val();
+                if (Array.isArray(val)) {
+                  rawUpdates = val.filter(Boolean);
+                } else if (typeof val === 'object') {
+                  rawUpdates = Object.entries(val).map(([key, item]) => {
+                    if (item && typeof item === 'object') {
+                      return { id: item.id || key, ...item };
+                    }
+                    return null;
+                  }).filter(Boolean);
                 }
-                rawUpdates.push(docData);
-              });
+              }
+              
+              if (lastUpdated && lastUpdated !== '1970-01-01T00:00:00.000Z') {
+                const lastTime = new Date(lastUpdated).getTime();
+                rawUpdates = rawUpdates.filter(item => {
+                  const itemTime = item.updated_at ? new Date(item.updated_at).getTime() : 0;
+                  return itemTime > lastTime;
+                });
+              }
+              
               updates = rawUpdates.map(mapToAppModel).filter(Boolean);
             }
             
@@ -449,44 +461,47 @@ export const apiService = {
         const { data, error } = await query.maybeSingle();
         if (error) throw error;
         rawData = data;
+        
+        if (rawData) {
+          const data = mapToAppModel(rawData);
+          const cleanCategory = classifyItemCategory(data);
+          const contentData = { 
+            ...data, 
+            category: cleanCategory,
+            slug: data.slug || generateSlug(data.title) 
+          };
+          setCache(cacheKey, contentData);
+          return contentData;
+        }
+        throw new Error("Content not found in Supabase database");
       } else {
-        if (isUuid) {
-          console.log('[Firestore] Fetching content by ID:', decodedId);
-          const docRef = doc(db, 'content', decodedId);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            rawData = docSnap.data();
-            if (rawData && !rawData.id) {
-              rawData.id = docSnap.id;
-            }
-          }
-        } else {
-          console.log('[Firestore] Fetching content by Slug:', decodedId);
-          const contentRef = collection(db, 'content');
-          const q = query(contentRef, where('slug', '==', decodedId), limit(1));
-          const querySnapshot = await getDocs(q);
-          if (!querySnapshot.empty) {
-            const matchedDoc = querySnapshot.docs[0];
-            rawData = matchedDoc.data();
-            if (rawData && !rawData.id) {
-              rawData.id = matchedDoc.id;
-            }
+        console.log('[RTDB] Resolving content from local cache or full sync:', decodedId);
+        
+        // Try to get from local memory maps first
+        const decodedSlug = decodedId.toLowerCase();
+        let found = contentMapById.get(decodedId) || contentMapBySlug.get(decodedId) || contentMapBySlug.get(decodedSlug);
+        
+        if (!found) {
+          // Cache miss: sync the entire content node from Realtime Database
+          console.log(`[Cache-Miss] getContentById for ${decodedId}, fetching RTDB...`);
+          const allItems = await apiService.getAllContent();
+          found = contentMapById.get(decodedId) || contentMapBySlug.get(decodedId) || contentMapBySlug.get(decodedSlug);
+          
+          if (!found) {
+            // Slower fallback if maps are not fully indexed yet
+            found = allItems.find(item => 
+              item.id?.toString() === decodedId || 
+              item.slug?.toLowerCase() === decodedSlug
+            );
           }
         }
+
+        if (found) {
+          setCache(cacheKey, found);
+          return found;
+        }
+        throw new Error("Content not found in Realtime Database");
       }
-      
-      if (rawData) {
-        const data = mapToAppModel(rawData);
-        const cleanCategory = classifyItemCategory(data);
-        const contentData = { 
-          ...data, 
-          category: cleanCategory,
-          slug: data.slug || generateSlug(data.title) 
-        };
-        setCache(cacheKey, contentData);
-        return contentData;
-      }
-      throw new Error("Content not found in database");
     } catch (error) {
       console.error('Error fetching content:', error);
       throw error;
@@ -550,13 +565,13 @@ export const apiService = {
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         };
-        // Clean up undefined properties to avoid Firestore errors
+        // Clean up undefined properties to avoid RTDB errors
         Object.keys(payload).forEach(key => {
           if (payload[key] === undefined) {
             delete payload[key];
           }
         });
-        await setDoc(doc(db, 'content', id), payload);
+        await dbSet(ref(contentDb, `content/${id}`), payload);
         return payload;
       }
     } catch (error) {
@@ -611,13 +626,13 @@ export const apiService = {
           slug: slug,
           updated_at: new Date().toISOString()
         };
-        // Clean up undefined properties to avoid Firestore errors
+        // Clean up undefined properties to avoid RTDB errors
         Object.keys(payload).forEach(key => {
           if (payload[key] === undefined) {
             delete payload[key];
           }
         });
-        await updateDoc(doc(db, 'content', id), payload);
+        await dbUpdate(ref(contentDb, `content/${id}`), payload);
         return { ...contentData, id, slug };
       }
     } catch (error) {
@@ -633,7 +648,7 @@ export const apiService = {
         if (error) throw error;
         return true;
       } else {
-        await deleteDoc(doc(db, 'content', id));
+        await dbRemove(ref(contentDb, `content/${id}`));
         return true;
       }
     } catch (error) {

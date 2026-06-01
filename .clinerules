@@ -64,3 +64,13 @@ When serverless functions need to read compiled assets (such as index.html or as
 - **Payload Compression & Transfer Optimization**: Keep responses returned by serverless handlers as lightweight as possible. Trim redundant whitespace, compress JSON data, and leverage pagination to minimize Origin Transfer and Data Transfer bandwidth.
 - **Local DB Fallbacks & Memory Caching**: Use local JSON files or in-memory caches in API handlers for static/semi-static data (like saints biographies, book metadata) to prevent redundant remote database queries that increase CPU runtimes and database API usage.
 
+optimize_build_times
+When building Next.js apps with large datasets (1000+ pages), only pre-render high-value landing pages and SEO hubs in generateStaticParams. Allow long-tail content (e.g., individual verses) to render on-demand at runtime and cache them, saving Vercel build minutes.
+
+Automated Data Integrity Validation:
+
+When making data modifications or database updates, always run a diagnostic validation script to verify that no numeric slugs, empty titles, or duplicate primary keys are created, ensuring data stays 100% clean before committing files.
+
+Incremental Validation Builds:
+
+When updating content data or layout configurations, always trigger an offline compilation check to confirm that no new dynamic routes trigger compilation warnings or break static page pre-rendering (SSG).
