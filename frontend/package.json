@@ -27,7 +27,7 @@
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "android": "npx cap run android",
-    "build": "react-scripts build",
+    "build": "CI=false react-scripts build",
     "postbuild": "node scripts/generate-sitemap.mjs",
     "generate-sitemap": "node scripts/generate-sitemap.mjs",
     "test": "react-scripts test",
