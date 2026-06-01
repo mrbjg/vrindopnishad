@@ -1698,7 +1698,7 @@ export default async function handler(req, res) {
   const hiUrl = DOMAIN + '/hi' + (cleanPath === '/' ? '' : cleanPath);
 
   
-  const html = `<!doctype html>
+  let html = `<!doctype html>
 <html lang="hi" dir="ltr">
 <head>
   <meta charset="utf-8"/>
@@ -1740,6 +1740,66 @@ export default async function handler(req, res) {
   <div id="root"></div>
 </body>
 </html>`;
+
+  try {
+    let indexPath = path.join(process.cwd(), 'build/index.html');
+    if (!fs.existsSync(indexPath)) {
+      indexPath = path.join(process.cwd(), 'frontend/build/index.html');
+    }
+    if (!fs.existsSync(indexPath)) {
+      indexPath = path.join(process.cwd(), 'index.html');
+    }
+    if (fs.existsSync(indexPath)) {
+      let indexHtml = fs.readFileSync(indexPath, 'utf8');
+      
+      // Replace title and description
+      indexHtml = indexHtml.replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`);
+      indexHtml = indexHtml.replace(/<meta name="description" content="[^"]*"\s*\/?>/, `<meta name="description" content="${description}"/>`);
+      
+      // Add extra tags in head
+      const extraHead = `
+  <link rel="canonical" href="${pageUrl}"/>
+  <link rel="alternate" hreflang="en" href="${enUrl}"/>
+  <link rel="alternate" hreflang="hi" href="${hiUrl}"/>
+  <link rel="alternate" hreflang="x-default" href="${enUrl}"/>
+  <meta property="og:type" content="article"/>
+  <meta property="og:title" content="${title}"/>
+  <meta property="og:description" content="${description}"/>
+  <meta property="og:url" content="${pageUrl}"/>
+  <meta property="og:image" content="${ogImageUrl}"/>
+  <meta property="og:site_name" content="Vrindopnishad Paath — वृंदोपनिषद् पाठ"/>
+  <meta property="og:locale" content="hi_IN"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="${title}"/>
+  <meta name="twitter:description" content="${description}"/>
+  <meta name="twitter:image" content="${ogImageUrl}"/>
+  ${jsonLd ? `<script type="application/ld+json">${jsonLd}</script>` : ''}
+  <meta name="theme-color" content="#0D0D12"/>
+  <meta name="robots" content="index, follow"/>
+`;
+      indexHtml = indexHtml.replace('</head>', `${extraHead}</head>`);
+      
+      // Replace noscript
+      const newNoscript = `<noscript>
+  <div style="max-width: 800px; margin: 0 auto; background: #ffffff; padding: 30px 40px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #eae6df; font-family: sans-serif; line-height: 1.6;">
+    <header style="margin-bottom: 30px; border-bottom: 2px solid #f2a60d; padding-bottom: 15px;">
+      <a href="${getRouteLink('/')}" style="text-decoration: none; color: #f2a60d; font-size: 1.5rem; font-weight: bold;">ॐ Vrindopnishad — वृंदोपनिषद्</a>
+    </header>
+    <main>
+      ${mainBodyHtml}
+    </main>
+    <footer style="margin-top: 40px; border-top: 1px solid #eae6df; padding-top: 15px; font-size: 0.8rem; color: #8c857b; text-align: center;">
+      <p>© ${new Date().getFullYear()} Vrindopnishad. Serving the spiritual heritage of Vrindavan.</p>
+    </footer>
+  </div>
+</noscript>`;
+      indexHtml = indexHtml.replace(/<noscript>[\s\S]*?<\/noscript>/, newNoscript);
+      
+      html = indexHtml;
+    }
+  } catch (err) {
+    console.error('Failed to load and inject index.html template:', err);
+  }
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');

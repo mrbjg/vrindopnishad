@@ -38,156 +38,58 @@
     },
     {
       "source": "/:slug(what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|what-is-radha-snata|nitya-vihar-vs-nikunj-vihar|glossary|places|saints|books|ragas|content|who-is-harirae-ji|what-is-madhurya-and-sakhi-bhava|radhavallabh-vs-gaudiya-sampradaya|vrindavan-parikrama-guide|history-of-radhavallabh-sampradaya|major-rasik-saints-of-braj)",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman).*"
-        }
-      ],
       "destination": "/api/seo-handler?type=static&slug=:slug"
     },
     {
       "source": "/hi/:slug(what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|what-is-radha-snata|nitya-vihar-vs-nikunj-vihar|glossary|places|saints|books|ragas|content|who-is-harirae-ji|what-is-madhurya-and-sakhi-bhava|radhavallabh-vs-gaudiya-sampradaya|vrindavan-parikrama-guide|history-of-radhavallabh-sampradaya|major-rasik-saints-of-braj)",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman).*"
-        }
-      ],
       "destination": "/api/seo-handler?type=static&slug=:slug&lang=hi"
     },
     {
       "source": "/content/:slug",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman).*"
-        }
-      ],
       "destination": "/api/seo-handler?type=content&slug=:slug"
     },
     {
       "source": "/hi/content/:slug",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman).*"
-        }
-      ],
       "destination": "/api/seo-handler?type=content&slug=:slug&lang=hi"
     },
     {
       "source": "/saint/:slug",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman).*"
-        }
-      ],
       "destination": "/api/seo-handler?type=saint&slug=:slug"
     },
     {
       "source": "/hi/saint/:slug",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman).*"
-        }
-      ],
       "destination": "/api/seo-handler?type=saint&slug=:slug&lang=hi"
     },
     {
       "source": "/book/:slug",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman).*"
-        }
-      ],
       "destination": "/api/seo-handler?type=book&slug=:slug"
     },
     {
       "source": "/hi/book/:slug",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman).*"
-        }
-      ],
       "destination": "/api/seo-handler?type=book&slug=:slug&lang=hi"
     },
     {
       "source": "/raga/:slug",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman).*"
-        }
-      ],
       "destination": "/api/seo-handler?type=raga&slug=:slug"
     },
     {
       "source": "/hi/raga/:slug",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman).*"
-        }
-      ],
       "destination": "/api/seo-handler?type=raga&slug=:slug&lang=hi"
     },
     {
       "source": "/category/:slug",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman).*"
-        }
-      ],
       "destination": "/api/seo-handler?type=category&slug=:slug"
     },
     {
       "source": "/hi/category/:slug",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman).*"
-        }
-      ],
       "destination": "/api/seo-handler?type=category&slug=:slug&lang=hi"
     },
     {
       "source": "/glossary/:slug",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman).*"
-        }
-      ],
       "destination": "/api/seo-handler?type=glossary&slug=:slug"
     },
     {
       "source": "/hi/glossary/:slug",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman).*"
-        }
-      ],
       "destination": "/api/seo-handler?type=glossary&slug=:slug&lang=hi"
     },
     {
@@ -248,5 +150,10 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/seo-handler.js": {
+      "includeFiles": "build/index.html"
+    }
+  }
 }
