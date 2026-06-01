@@ -40,3 +40,18 @@ This file documents the strict guidelines, constraints, and professional standar
 - **Unified Data Seeding Checklists**: Keep a centralized SQL directory representing the unified database state to make sure schema alterations and seeding are run as cohesive operations across backend and client repos.
 
 - * **PostgreSQL Field Normalization**: When integrating GraphQL-based relational databases (like Firebase SQL Connect or Hasura), always isolate database-to-UI field mapping via a central mapper function (e.g. camelCase to snake_case) to protect client components from backend schema naming drifts.
+
+Config Regex Case-Insensitivity Rule:
+Always specify configuration-level regular expressions (such as user-agent matching in routing files) using case-insensitive classes (e.g., [gG]ooglebot) or explicit flags, ensuring case mismatches do not cause silent fallback/routing errors on external crawlers.
+
+Dynamic Route Verification Rule:
+When modifying or implementing Server-Side Rendering (SSR) routing handlers, always write and run a localized unit test runner to mock requests (representing both desktop browsers and search engines) to verify that unique titles, meta descriptions, and body payloads are returned before pushing changes.
+
+Accessibility Viewport Compliance Rule:
+Never include zoom constraints (maximum-scale or user-scalable=0) in viewport meta tags in any file, including templates, static HTML files, dynamically injected React components, or serverless script handlers.
+
+SPA Server-Side Pre-Rendering Injection Rule:
+For Single Page Applications (SPAs) requiring SEO indexation on deep routes, avoid conditional routing based on User-Agent sniffing. Instead, route all page requests to the serverless handler, load the compiled index.html template, inject dynamic metadata/tags, and replace the generic <noscript> section with the page's actual, fully-rendered article content before returning it.
+
+Lambda Static Asset Bundling Rule:
+When serverless functions need to read compiled assets (such as index.html or asset-manifest.json) dynamically, always configure Vercel's functions mapping to explicitly bundle those compiled directories (includeFiles: "build/index.html"), ensuring files are resolved during runtime execution.
