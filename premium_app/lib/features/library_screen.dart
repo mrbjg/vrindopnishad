@@ -12,6 +12,7 @@ import '../core/favorites_provider.dart';
 import '../core/audio_provider.dart';
 import '../core/color_theme_provider.dart';
 import '../widgets/animated_effects.dart';
+import '../core/personalized_feed_provider.dart';
 
 class LibraryScreen extends ConsumerWidget {
   const LibraryScreen({super.key});
@@ -169,36 +170,18 @@ class LibraryScreen extends ConsumerWidget {
   }
 
   /// Personalized "For You" horizontal scroll section.
-  /// Shows content from categories the user has favorited.
+  /// Shows content from categories the user has interacted with or favorited.
   Widget _buildForYouSection(BuildContext context, WidgetRef ref) {
-    final allContent = ref.watch(sacredContentProvider);
-    final favorites = ref.watch(favoritesProvider); // Set<String> of IDs
+    final forYouItems = ref.watch(categoryRecommendationsProvider);
+    final affinity = ref.watch(userAffinityProvider);
+    final favorites = ref.watch(favoritesProvider);
     final palette = ref.watch(colorPaletteProvider);
     final query = ref.watch(libraryCategoryProvider);
 
     // Don't show when a filter/search is active
-    if (query != "ALL" || allContent.isEmpty) return const SizedBox.shrink();
+    if (query != "ALL" || forYouItems.isEmpty) return const SizedBox.shrink();
 
-    // Determine top categories from favorites, fallback to first 2 categories
-    final favoriteItems = allContent.where((c) => favorites.contains(c.id)).toList();
-    final Set<String> preferredCategories = favoriteItems
-        .map((c) => c.category)
-        .toSet()
-        .take(3)
-        .toSet();
-
-    // If no favorites yet, pick the top 2 categories by count
-    final List<SacredContent> forYouItems;
-    if (preferredCategories.isEmpty) {
-      forYouItems = allContent.take(8).toList();
-    } else {
-      forYouItems = allContent
-          .where((c) => preferredCategories.contains(c.category))
-          .take(8)
-          .toList();
-    }
-
-    if (forYouItems.isEmpty) return const SizedBox.shrink();
+    final bool hasAffinity = favorites.isNotEmpty || affinity.readContentIds.isNotEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,7 +204,7 @@ class LibraryScreen extends ConsumerWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                favorites.isEmpty ? "DISCOVER" : "FOR YOU",
+                !hasAffinity ? "DISCOVER" : "FOR YOU",
                 style: PremiumTokens.sansStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w900,
@@ -231,7 +214,7 @@ class LibraryScreen extends ConsumerWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                favorites.isEmpty ? "Popular picks" : "Based on your favorites",
+                !hasAffinity ? "Popular picks" : "Based on your preferences",
                 style: PremiumTokens.sansStyle(
                   fontSize: 10,
                   color: PremiumTokens.textMuted,

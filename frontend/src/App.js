@@ -75,6 +75,8 @@ const MajorRasikSaints = lazyWithRetry(() => import('./pages/seo/MajorRasikSaint
 const KnowledgeBasePage = lazyWithRetry(() => import('./pages/KnowledgeBasePage'));
 const HistoryOfRadhavallabh = lazyWithRetry(() => import('./pages/seo/HistoryOfRadhavallabh'));
 const KnowledgeBaseLayout = lazyWithRetry(() => import('./components/KnowledgeBaseLayout'));
+const PromoLanding = lazyWithRetry(() => import('./pages/PromoLanding'));
+
 
 
 
@@ -386,36 +388,59 @@ function App() {
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
               <ScrollToTop />
               <LenisScroll />
-              <Layout>
-                <React.Suspense fallback={<PageSkeleton variant="grid" count={6} />}>
-                  <Routes>
-                    
-                    {mainRoutes.flatMap(({ path, element }) => [
-                      <Route key={path} path={path} element={element} />,
-                      <Route key={`hi-${path}`} path={path === '/' ? '/hi' : `/hi${path}`} element={element} />
-                    ])}
-                    
-                    
-                    <Route element={<KnowledgeBaseLayout />}>
-                      {kbRoutes.flatMap(({ path, element }) => [
-                        <Route key={path} path={`/${path}`} element={element} />,
-                        <Route key={`hi-${path}`} path={`/hi/${path}`} element={element} />
-                      ])}
-                    </Route>
-                    
-                    
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/admin-old/login" element={<AdminLoginPage />} />
-                    <Route
-                      path="/admin-old/dashboard"
-                      element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin-old/login" />}
-                    />
-                    
-                    
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                  </Routes>
-                </React.Suspense>
-              </Layout>
+              <Routes>
+                {/* Promo/Landing — full-screen, NO Layout wrapper */}
+                <Route path="/promo" element={
+                  <React.Suspense fallback={null}>
+                    <PromoLanding />
+                  </React.Suspense>
+                } />
+                <Route path="/landing" element={
+                  <React.Suspense fallback={null}>
+                    <PromoLanding />
+                  </React.Suspense>
+                } />
+                <Route path="/hi/promo" element={
+                  <React.Suspense fallback={null}>
+                    <PromoLanding />
+                  </React.Suspense>
+                } />
+                <Route path="/hi/landing" element={
+                  <React.Suspense fallback={null}>
+                    <PromoLanding />
+                  </React.Suspense>
+                } />
+
+                {/* All other routes — wrapped in Layout */}
+                <Route path="*" element={
+                  <Layout>
+                    <React.Suspense fallback={<PageSkeleton variant="grid" count={6} />}>
+                      <Routes>
+                        {mainRoutes.flatMap(({ path, element }) => [
+                          <Route key={path} path={path} element={element} />,
+                          <Route key={`hi-${path}`} path={path === '/' ? '/hi' : `/hi${path}`} element={element} />
+                        ])}
+
+                        <Route element={<KnowledgeBaseLayout />}>
+                          {kbRoutes.flatMap(({ path, element }) => [
+                            <Route key={path} path={`/${path}`} element={element} />,
+                            <Route key={`hi-${path}`} path={`/hi/${path}`} element={element} />
+                          ])}
+                        </Route>
+
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/admin-old/login" element={<AdminLoginPage />} />
+                        <Route
+                          path="/admin-old/dashboard"
+                          element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin-old/login" />}
+                        />
+
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                      </Routes>
+                    </React.Suspense>
+                  </Layout>
+                } />
+              </Routes>
             </BrowserRouter>
           </ApiContext.Provider>
         </AuthContext.Provider>

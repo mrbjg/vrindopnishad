@@ -298,24 +298,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       },
                     ),
 
-                    // Netflix-style Category affinity
+                    // Dynamic Categories shelves (Distribute by multiple categories)
                     Consumer(
                       builder: (context, ref, child) {
-                        final list = ref.watch(categoryRecommendationsProvider);
-                        final affinity = ref.watch(userAffinityProvider);
-                        String favCat = 'Bhajans';
-                        double maxWeight = -1.0;
-                        affinity.categoryWeights.forEach((cat, weight) {
-                          if (weight > maxWeight) {
-                            maxWeight = weight;
-                            favCat = cat;
-                          }
-                        });
-                        return _buildHorizontalShelf(
-                          title: 'More in $favCat',
-                          items: list,
-                          ref: ref,
-                          context: context,
+                        final categories = ref.watch(personalizedCategoriesProvider);
+                        if (categories.isEmpty) return const SizedBox.shrink();
+                        
+                        return Column(
+                          children: categories.map((catInfo) {
+                            final list = ref.watch(filteredContentProvider(catInfo.name));
+                            if (list.isEmpty) return const SizedBox.shrink();
+                            
+                            return _buildHorizontalShelf(
+                              title: 'More in ${catInfo.name}',
+                              items: list,
+                              ref: ref,
+                              context: context,
+                            );
+                          }).toList(),
                         );
                       },
                     ),
@@ -1244,7 +1244,7 @@ class _CategoriesGridLite extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categories = ref.watch(sacredCategoriesProvider);
+    final categories = ref.watch(personalizedCategoriesProvider);
     final displayCategories = categories.take(4).toList();
 
     if (displayCategories.isEmpty) {

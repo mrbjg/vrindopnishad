@@ -433,32 +433,85 @@ final trendingContentProvider = Provider<List<SacredContent>>((ref) {
   return trendingItems.take(8).toList();
 });
 
-/// "Because you liked [Category]" recommendations
+/// Dynamically sorted categories based on user affinity (highest preference first)
+final personalizedCategoriesProvider = Provider<List<CategoryInfo>>((ref) {
+  final categories = ref.watch(sacredCategoriesProvider);
+  final affinity = ref.watch(userAffinityProvider);
+  if (categories.isEmpty) return [];
+
+  final sorted = List<CategoryInfo>.from(categories);
+  sorted.sort((a, b) {
+    final aWeight = affinity.categoryWeights[a.name] ?? 0.0;
+    final bWeight = affinity.categoryWeights[b.name] ?? 0.0;
+    if (aWeight != bWeight) {
+      return bWeight.compareTo(aWeight); // Highest weight first
+    }
+    // Fallback to item count
+    return b.count.compareTo(a.count);
+  });
+  return sorted;
+});
+
+/// Recommended items across the user's top categories, weighted by affinity
 final categoryRecommendationsProvider = Provider<List<SacredContent>>((ref) {
   final affinity = ref.watch(userAffinityProvider);
   final allContent = ref.watch(sacredContentProvider);
 
   if (allContent.isEmpty) return [];
 
-  String? favoriteCategory;
-  double maxWeight = -1.0;
-  affinity.categoryWeights.forEach((cat, weight) {
-    if (weight > maxWeight) {
-      maxWeight = weight;
-      favoriteCategory = cat;
-    }
+  // Sort categories by user affinity
+  final sortedCategories = affinity.categoryWeights.entries
+      .where((e) => e.value > 0)
+      .toList();
+  sortedCategories.sort((a, b) => b.value.compareTo(a.value));
+
+  // If user has no affinity, fallback to general categories
+  if (sortedCategories.isEmpty) {
+    // Default to the first category available in content
+    final defaultCat = allContent.firstOrNull?.category ?? 'Bhajans';
+    final list = allContent.where((item) => item.category.toLowerCase() == defaultCat.toLowerCase()).toList();
+    return list.take(8).toList();
+  }
+
+  // Get content grouped by category
+  final result = <SacredContent>[];
+  final categoriesToPull = sortedCategories.take(3).toList(); // Look at top 3 categories
+
+  // Pull items from each category, prioritizing unread items
+  for (final entry in categoriesToPull) {
+    final categoryName = entry.key;
+    final catItems = allContent.where((item) => item.category.toLowerCase() == categoryName.toLowerCase()).toList();
+    
+    // Sort so unread is first
+    catItems.sort((a, b) {
+      final aRead = affinity.readContentIds.contains(a.id) ? 1 : 0;
+      final bRead = affinity.readContentIds.contains(b.id) ? 1 : 0;
+      return aRead.compareTo(bRead);
+    });
+
+    // Add up to 4 items from this top category
+    result.addAll(catItems.take(4));
+  }
+
+  // Deduplicate and return up to 8 recommendations
+  final uniqueItems = <String, SacredContent>{};
+  for (final item in result) {
+    uniqueItems[item.id] = item;
+  }
+  
+  // Sort the final selection based on the overall ranked score for consistency
+  final ranked = ref.read(rankedContentProvider);
+  final finalItems = uniqueItems.values.toList();
+  finalItems.sort((a, b) {
+    final aIdx = ranked.indexWhere((item) => item.id == a.id);
+    final bIdx = ranked.indexWhere((item) => item.id == b.id);
+    // If not found in ranked list, put at the end
+    final aVal = aIdx == -1 ? 9999 : aIdx;
+    final bVal = bIdx == -1 ? 9999 : bIdx;
+    return aVal.compareTo(bVal);
   });
 
-  favoriteCategory ??= allContent.firstOrNull?.category ?? 'Bhajans';
-
-  final list = allContent.where((item) => item.category.toLowerCase() == favoriteCategory!.toLowerCase()).toList();
-  list.sort((a, b) {
-    final aRead = affinity.readContentIds.contains(a.id) ? 1 : 0;
-    final bRead = affinity.readContentIds.contains(b.id) ? 1 : 0;
-    return aRead.compareTo(bRead);
-  });
-
-  return list.take(8).toList();
+  return finalItems.take(8).toList();
 });
 
 /// "Continue Reading" recently accessed content items

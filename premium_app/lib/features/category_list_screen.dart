@@ -7,6 +7,7 @@ import '../core/design_system.dart';
 import '../core/content_provider.dart';
 import '../core/providers.dart';
 import '../widgets/animated_effects.dart';
+import '../core/personalized_feed_provider.dart';
 
 class CategoryListScreen extends ConsumerStatefulWidget {
   const CategoryListScreen({super.key});
@@ -30,7 +31,7 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
     // Sync system status and navigation bar overlay style
     PremiumUI.setSacredStatus();
 
-    final allCategories = ref.watch(sacredCategoriesProvider);
+    final allCategories = ref.watch(personalizedCategoriesProvider);
     final filteredCategories = allCategories.where((cat) {
       return cat.name.toLowerCase().contains(_searchQuery.toLowerCase());
     }).toList();
