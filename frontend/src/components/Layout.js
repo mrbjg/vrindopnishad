@@ -1,6 +1,8 @@
+'use client';
+
 import React, { useState, useEffect, useMemo, useRef, useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { AuthContext, ApiContext } from '../App';
+import { AuthContext, ApiContext } from '../contexts/ClientProviders';
 import { useTheme } from '../contexts/ThemeContext';
 import { useSettings } from '../contexts/SettingsContext';
 import { extractRelations } from '../utils/relations';

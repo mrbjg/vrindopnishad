@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useSettings, isLightTheme } from '../contexts/SettingsContext';
@@ -8,7 +10,7 @@ import {
   Award, Heart, Sparkles, MapPin
 } from 'lucide-react';
 
-const KnowledgeBaseLayout = () => {
+const KnowledgeBaseLayout = ({ children }) => {
   const { settings } = useSettings();
   const location = useLocation();
   const navigate = useNavigate();
@@ -692,7 +694,7 @@ const KnowledgeBaseLayout = () => {
           >
             
             <div className={getReadingClasses()}>
-              <Outlet />
+              {children || <Outlet />}
             </div>
 
             

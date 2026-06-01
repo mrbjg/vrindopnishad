@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../App';
+import { AuthContext } from '../contexts/ClientProviders';
 import { Home, BookOpen, Scroll, Music, FileText, LayoutDashboard, LogIn, LogOut } from 'lucide-react';
 
 import VLogo from '../assets/VLogo.png';

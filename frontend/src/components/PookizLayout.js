@@ -1,6 +1,8 @@
+'use client';
+
 import React, { useState, useContext, useEffect, useCallback, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../App';
+import { AuthContext } from '../contexts/ClientProviders';
 import { useSettings } from '../contexts/SettingsContext';
 import { 
   LayoutDashboard, 

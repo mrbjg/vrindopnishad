@@ -7,6 +7,10 @@
       "destination": "/api/sitemap"
     },
     {
+      "source": "/sitemaps/:sub.xml",
+      "destination": "/api/sitemap?sub=:sub"
+    },
+    {
       "source": "/robots.txt",
       "destination": "/robots.txt"
     },
@@ -37,11 +41,11 @@
       "destination": "/api/seo-handler?type=static&lang=hi"
     },
     {
-      "source": "/:slug(what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|what-is-radha-snata|nitya-vihar-vs-nikunj-vihar|glossary|places|saints|books|ragas|content|who-is-harirae-ji|what-is-madhurya-and-sakhi-bhava|radhavallabh-vs-gaudiya-sampradaya|vrindavan-parikrama-guide|history-of-radhavallabh-sampradaya|major-rasik-saints-of-braj)",
+      "source": "/:slug(about|editorial-policy|sources|contact|search|granthas|what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|what-is-radha-snata|nitya-vihar-vs-nikunj-vihar|glossary|places|saints|books|ragas|content|who-is-harirae-ji|what-is-madhurya-and-sakhi-bhava|radhavallabh-vs-gaudiya-sampradaya|vrindavan-parikrama-guide|history-of-radhavallabh-sampradaya|major-rasik-saints-of-braj)",
       "destination": "/api/seo-handler?type=static&slug=:slug"
     },
     {
-      "source": "/hi/:slug(what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|what-is-radha-snata|nitya-vihar-vs-nikunj-vihar|glossary|places|saints|books|ragas|content|who-is-harirae-ji|what-is-madhurya-and-sakhi-bhava|radhavallabh-vs-gaudiya-sampradaya|vrindavan-parikrama-guide|history-of-radhavallabh-sampradaya|major-rasik-saints-of-braj)",
+      "source": "/hi/:slug(about|editorial-policy|sources|contact|search|granthas|what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|what-is-radha-snata|nitya-vihar-vs-nikunj-vihar|glossary|places|saints|books|ragas|content|who-is-harirae-ji|what-is-madhurya-and-sakhi-bhava|radhavallabh-vs-gaudiya-sampradaya|vrindavan-parikrama-guide|history-of-radhavallabh-sampradaya|major-rasik-saints-of-braj)",
       "destination": "/api/seo-handler?type=static&slug=:slug&lang=hi"
     },
     {
@@ -61,11 +65,27 @@
       "destination": "/api/seo-handler?type=saint&slug=:slug&lang=hi"
     },
     {
+      "source": "/saints/:slug",
+      "destination": "/api/seo-handler?type=saint&slug=:slug"
+    },
+    {
+      "source": "/hi/saints/:slug",
+      "destination": "/api/seo-handler?type=saint&slug=:slug&lang=hi"
+    },
+    {
       "source": "/book/:slug",
       "destination": "/api/seo-handler?type=book&slug=:slug"
     },
     {
       "source": "/hi/book/:slug",
+      "destination": "/api/seo-handler?type=book&slug=:slug&lang=hi"
+    },
+    {
+      "source": "/granthas/:slug",
+      "destination": "/api/seo-handler?type=book&slug=:slug"
+    },
+    {
+      "source": "/hi/granthas/:slug",
       "destination": "/api/seo-handler?type=book&slug=:slug&lang=hi"
     },
     {
@@ -91,6 +111,14 @@
     {
       "source": "/hi/glossary/:slug",
       "destination": "/api/seo-handler?type=glossary&slug=:slug&lang=hi"
+    },
+    {
+      "source": "/teachings/:slug",
+      "destination": "/api/seo-handler?type=static&slug=:slug"
+    },
+    {
+      "source": "/hi/teachings/:slug",
+      "destination": "/api/seo-handler?type=static&slug=:slug&lang=hi"
     },
     {
       "source": "/((?!api|sitemap\\.xml|robots\\.txt|google27b1a7fc60901288\\.html|static|manifest\\.json|favicon).*)",

@@ -3,7 +3,8 @@ export const categories = [
   { id: 'philosophy', labelEn: 'Philosophy & Doctrine', labelHi: 'दर्शन और सिद्धांत' },
   { id: 'traditions', labelEn: 'Saints & Traditions', labelHi: 'सन्त और सम्प्रदाय' },
   { id: 'concepts', labelEn: 'Divine Concepts', labelHi: 'आध्यात्मिक अवधारणाएं' },
-  { id: 'guides', labelEn: 'Seeker Guides', labelHi: 'साधक मार्गदर्शिका' }
+  { id: 'guides', labelEn: 'Seeker Guides', labelHi: 'साधक मार्गदर्शिका' },
+  { id: 'policies', labelEn: 'About & Policies', labelHi: 'हमारे बारे में और नीतियां' }
 ];
 
 export const articles = [
@@ -195,5 +196,41 @@ export const articles = [
     descHi: 'सेवा कुंज, निधिवन, श्री राधा कुण्ड और बरसाना धाम का आध्यात्मिक महत्त्व।',
     category: 'guides',
     readTime: '5 min'
+  },
+  {
+    slug: 'about',
+    titleEn: 'About Vrindopnishad',
+    titleHi: 'परियोजना परिचय (About)',
+    descEn: 'Our mission, team, and digital ashram preservation vision.',
+    descHi: 'वृंदोपनिषद् परियोजना का दृष्टिकोण, टीम और डिजिटल संरक्षण का उद्देश्य।',
+    category: 'policies',
+    readTime: '4 min'
+  },
+  {
+    slug: 'editorial-policy',
+    titleEn: 'Editorial & Verification',
+    titleHi: 'सम्पादन एवं सत्यापन नीति',
+    descEn: 'Verification process, scholar oversight, and error reporting guides.',
+    descHi: 'श्लोकों के शुद्धि सत्यापन की प्रक्रिया, आचार्यों की भूमिका और सुधार मार्गदर्शिका।',
+    category: 'policies',
+    readTime: '4 min'
+  },
+  {
+    slug: 'sources',
+    titleEn: 'Sources & Citations',
+    titleHi: 'शास्त्र स्रोत एवं प्रमाण ग्रन्थ',
+    descEn: 'Primary scriptures bibliography and academic reference metadata.',
+    descHi: 'वाणी साहित्य के मूल स्रोतों की ग्रंथ सूची, संदर्भ संकलन और उद्धरण पद्धति।',
+    category: 'policies',
+    readTime: '3 min'
+  },
+  {
+    slug: 'contact',
+    titleEn: 'Contact Editorial Team',
+    titleHi: 'सम्पर्क एवं लेखक परिचय (Contact)',
+    descEn: 'Reach out for feedback, collaborations, or text corrections.',
+    descHi: 'सुधार रिपोर्ट, संकलन सहयोग या किसी अन्य शंका के लिए सम्पर्क करें।',
+    category: 'policies',
+    readTime: '3 min'
   }
 ];

@@ -75,6 +75,10 @@ const GlossaryDetailPage = lazyWithRetry(() => import('./pages/seo/GlossaryDetai
 const MajorRasikSaints = lazyWithRetry(() => import('./pages/seo/MajorRasikSaints'));
 const KnowledgeBasePage = lazyWithRetry(() => import('./pages/KnowledgeBasePage'));
 const HistoryOfRadhavallabh = lazyWithRetry(() => import('./pages/seo/HistoryOfRadhavallabh'));
+const AboutPage = lazyWithRetry(() => import('./pages/seo/AboutPage'));
+const EditorialPolicyPage = lazyWithRetry(() => import('./pages/seo/EditorialPolicyPage'));
+const SourcesPage = lazyWithRetry(() => import('./pages/seo/SourcesPage'));
+const ContactPage = lazyWithRetry(() => import('./pages/seo/ContactPage'));
 const KnowledgeBaseLayout = lazyWithRetry(() => import('./components/KnowledgeBaseLayout'));
 const PromoLanding = lazyWithRetry(() => import('./pages/PromoLanding'));
 
@@ -349,8 +353,11 @@ function App() {
     { path: '/loader-demo', element: <LoaderDemo /> },
     { path: '/saints', element: <SaintsListPage /> },
     { path: '/saint/:slug', element: <SaintDetailPage /> },
+    { path: '/saints/:slug', element: <SaintDetailPage /> },
     { path: '/books', element: <BooksListPage /> },
     { path: '/book/:slug', element: <BookDetailPage /> },
+    { path: '/granthas', element: <BooksListPage /> },
+    { path: '/granthas/:slug', element: <BookDetailPage /> },
     { path: '/ragas', element: <RagasListPage /> },
     { path: '/raga/:slug', element: <RagaDetailPage /> },
     { path: '/bookmarks', element: <BookmarksPage /> }
@@ -379,7 +386,11 @@ function App() {
     { path: 'who-is-harirae-ji', element: <HariraeJiPage /> },
     { path: 'what-is-madhurya-and-sakhi-bhava', element: <MadhuryaBhavaPage /> },
     { path: 'radhavallabh-vs-gaudiya-sampradaya', element: <RadhavallabhVsGaudiya /> },
-    { path: 'vrindavan-parikrama-guide', element: <ParikramaGuide /> }
+    { path: 'vrindavan-parikrama-guide', element: <ParikramaGuide /> },
+    { path: 'about', element: <AboutPage /> },
+    { path: 'editorial-policy', element: <EditorialPolicyPage /> },
+    { path: 'sources', element: <SourcesPage /> },
+    { path: 'contact', element: <ContactPage /> }
   ];
 
   return (

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { createContext, useState, useEffect, useContext } from 'react';
 
 const SettingsContext = createContext();
@@ -29,50 +31,53 @@ const DARK_THEMES = ['dark', 'night', 'space', 'void', 'waterfall', 'cherrybloss
 export const isLightTheme = (themeId) => !DARK_THEMES.includes(themeId);
 
 export const SettingsProvider = ({ children }) => {
-  const [settings, setSettings] = useState(() => {
-    const saved = localStorage.getItem('user_settings');
-    let initial = saved ? JSON.parse(saved) : {
-      fontSize: 2,
-      fontStyle: 'Serif',
-      lineByLine: true,
-      smoothScroll: false,
-      theme: 'light',
-      devoteeName: '',
-      dailyGoal: 432,
-      layoutMode: 'sanctuary',
-      enableAnimations: true
-    };
-    
-    
-    if (typeof initial.fontSize === 'string') {
-      const mapping = { 'normal': 2, 'large': 3, 'xlarge': 4 };
-      initial.fontSize = mapping[initial.fontSize] || 2;
-    }
-
-    
-    if (!initial.theme) initial.theme = 'light';
-    
-    
-    if (initial.devoteeName === undefined) initial.devoteeName = '';
-    if (initial.dailyGoal === undefined) initial.dailyGoal = 432;
-    if (initial.layoutMode === undefined) initial.layoutMode = 'sanctuary';
-    if (initial.enableAnimations === undefined) initial.enableAnimations = true;
-    
-    return initial;
+  const [settings, setSettings] = useState({
+    fontSize: 2,
+    fontStyle: 'Serif',
+    lineByLine: true,
+    smoothScroll: false,
+    theme: 'light',
+    devoteeName: '',
+    dailyGoal: 432,
+    layoutMode: 'sanctuary',
+    enableAnimations: true
   });
 
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('user_settings') : null;
+    if (saved) {
+      try {
+        let parsed = JSON.parse(saved);
+        if (typeof parsed.fontSize === 'string') {
+          const mapping = { 'normal': 2, 'large': 3, 'xlarge': 4 };
+          parsed.fontSize = mapping[parsed.fontSize] || 2;
+        }
+        if (!parsed.theme) parsed.theme = 'light';
+        if (parsed.devoteeName === undefined) parsed.devoteeName = '';
+        if (parsed.dailyGoal === undefined) parsed.dailyGoal = 432;
+        if (parsed.layoutMode === undefined) parsed.layoutMode = 'sanctuary';
+        if (parsed.enableAnimations === undefined) parsed.enableAnimations = true;
+        setSettings(parsed);
+      } catch (e) {
+        console.warn('Failed to parse settings', e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     localStorage.setItem('user_settings', JSON.stringify(settings));
     
     document.documentElement.setAttribute('data-font-size', settings.fontSize);
     document.documentElement.setAttribute('data-font-style', settings.fontStyle);
     document.documentElement.setAttribute('data-layout-mode', settings.layoutMode || 'sanctuary');
 
-    
     const theme = settings.theme || 'light';
     document.documentElement.setAttribute('data-theme', theme);
 
-    
     if (isLightTheme(theme)) {
       document.documentElement.classList.remove('dark');
       document.documentElement.classList.add('light-mode');
@@ -80,7 +85,7 @@ export const SettingsProvider = ({ children }) => {
       document.documentElement.classList.add('dark');
       document.documentElement.classList.remove('light-mode');
     }
-  }, [settings]);
+  }, [settings, mounted]);
 
   const updateSetting = (key, value) => {
     setSettings(prev => ({ ...prev, [key]: value }));

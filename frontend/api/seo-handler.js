@@ -138,6 +138,20 @@ function escapeHtml(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
 
+function getBreadcrumbsHtml(isHi, items) {
+  const arrow = '<span style="color: #a8a29e; margin: 0 8px;">&rarr;</span>';
+  const listItems = items.map((item, idx) => {
+    const isLast = idx === items.length - 1;
+    if (isLast) {
+      return `<span style="color: #78716c; font-weight: 500;">${escapeHtml(item.name)}</span>`;
+    }
+    return `<a href="${item.url}" style="color: #f2a60d; text-decoration: none; font-weight: 500;">${escapeHtml(item.name)}</a>`;
+  });
+  return `<nav aria-label="Breadcrumb" style="font-size: 0.85rem; color: #a8a29e; margin-bottom: 24px; font-family: sans-serif;">
+    ${listItems.join(arrow)}
+  </nav>`;
+}
+
 // Dynamic relations extractor
 function extractRelations(items) {
   if (!items || !items.length) {
@@ -324,12 +338,12 @@ const STATIC_SEO_PAGES = {
     en: {
       title: 'Teachings of Vrindopnishad — Wisdom from Rasik Saints',
       description: 'Discover the core teachings and spiritual guidelines of Vrindopnishad. Practical wisdom and guidance for daily devotion and inner peace.',
-      body: '<h1>Core Teachings of Vrindopnishad</h1><p>The teachings of Vrindopnishad offer a practical roadmap for spiritual awakening in the modern world. The foremost teaching is the cultivation of Nama Japa (chanting the holy names of God) as the most effective means of purification and mental stabilization. The teachings instruct seekers to practice humility, respect all living beings, and avoid the pride of material acquisition.</p><p>A key teaching is Sadhu Sanga — keeping the company of saintly, selfless individuals whose presence naturally elevates one\'s consciousness. Seekers are encouraged to perform Swadhyaya (daily reading of sacred verses), dedicate their work to the divine, and live a life of simple, mindful devotion. The teachings emphasize that the divine is accessed not through wealth or power, but through a clean, loving heart.</p><p>By reading the commentary provided on the platform, seekers learn to recognize the presence of the divine in all of creation. This awareness fosters compassion, inner peace, and a sense of responsibility toward the environment and society. The teachings are not passive doctrines but living invitations to transform one\'s character and experience the bliss of divine connection.</p>'
+      body: '<h1>Core Teachings of Braj Rasik Tradition</h1><p>The teachings preserved in Vrindopnishad offer a practical, heart-centered roadmap for spiritual awakening in the modern world. Unlike paths based on dry philosophical speculation or rigorous physical asceticism, the Rasik saints of Vrindavan emphasize that the highest goal of human life is to cultivate unconditional, selfless divine love (Prema) and enter into the eternal service (Seva) of the Divine Couple, Shri Radha and Shri Krishna, in the sacred bower of Nikunj. Below are the six fundamental teachings that form the core of this devotional path:</p><h2>1. The Power of Nama Japa & Kirtan</h2><p>The foremost practice recommended by all Rasik acharyas is the constant chanting and singing of the holy names of God (Nama Japa and Kirtan). In this current age of distraction (Kali Yuga), formal sacrifices, complex yoga postures, and silent meditation are difficult to perform successfully due to mental agitation. The holy name is understood to be non-different from the Lord Himself. Chanting the name of "Radha" or the Hare Krishna mahamantra acts as a powerful purifying agent, clearing the heart of negative emotions, stabilizing the mind, and gradually awakening the soul\'s innate spiritual love.</p><h2>2. Humility, Tolerance & Respect (Trina-dapi Suni-chena)</h2><p>A seeker cannot progress on the path of devotion without cultivating genuine humility. Following the instructions of Sri Chaitanya Mahaprabhu, a devotee should consider themselves lower than a blade of grass (trina-dapi suni-chena), be more tolerant than a tree, offer all respect to others without desiring any honor in return, and constantly chant the holy names. True humility means recognizing that every living entity is a part of the divine family, which naturally leads to compassion, non-violence, and the reduction of egotistical pride.</p><h2>3. The Association of Saintly Persons (Sadhu Sanga)</h2><p>The company we keep has a profound impact on our consciousness. <em>Sadhu Sanga</em>—associating with saintly, selfless individuals who are dedicated to the spiritual path—is described as the catalyst for spiritual growth. Just as a mirror reflects whatever is placed before it, our minds absorb the desires and qualities of those we associate with. Being in the presence of advanced devotees naturally elevates our thoughts, inspires us to practice daily sadhana, and helps resolve doubts that arise on our spiritual journey.</p><h2>4. Daily Study of Saintly Literature (Vani Swadhyaya)</h2><p>Reciting and studying the written teachings of the saints (Vani Swadhyaya) is considered a form of direct satsang. The compositions of Swami Haridas, Hit Harivansh, and other Rasik saints are not mere poetry; they are direct records of their spiritual realizations. When we read their words daily, we are tuning our minds to their frequency. Vrindopnishad encourages seekers to make the reading of the daily verse a regular part of their morning routine to establish a peaceful, meditative anchor for the rest of the day.</p><h2>5. Spontaneous Love over Rigid Rituals (Raganuga Bhakti)</h2><p>Braj devotion is characterized by its emphasis on <em>Raganuga Bhakti</em>—devotion that follows the spontaneous, intense love felt by the eternal residents of Vrindavan. While initial stages of devotion may rely on rules and regulations (Vaidhi Bhakti) to build discipline, the ultimate goal is to transition into a state of natural, unforced attraction to the Divine. Here, worship is not performed out of fear of punishment or desire for material rewards, but out of pure affection and a desire to bring happiness to the Divine Couple.</p><h2>6. Deep Reverence for Braj Dham & Braj Raj</h2><p>The physical landscape of Vrindavan, Govardhan, and Barsana is not considered ordinary material land, but the earthly manifestation of the spiritual world. The dust of this land (Braj Raj) is highly venerated because it has been touched by the feet of Shri Radha, Krishna, and countless saints. Walking through the Dham, performing the circumambulation (Parikrama), and maintaining an attitude of reverence toward the sacred environment are essential aspects of the practice, helping the seeker connect with the divine energy that permeates the region.</p>'
     },
     hi: {
       title: 'वृंदोपनिषद् की मुख्य शिक्षाएँ — जीवन बदलने वाले उपदेश',
       description: 'ब्रज के रसिक आचार्यों और संतों के मुख्य उपदेश। मन की शुद्धि, दैनिक साधना और आध्यात्मिक जीवन जीने के व्यावहारिक नियम।',
-      body: '<h1>महत्वपूर्ण शिक्षाएँ</h1><p>वृंदोपनिषद् की शिक्षाएँ हमें आधुनिक जीवन के तनावों के बीच आंतरिक शांति और आनंद से जीने का व्यावहारिक मार्ग दिखाती हैं। इन शिक्षाओं का मूल केंद्र मन की शुद्धि और भगवान के प्रति अनन्य प्रेम है।</p><p>मुख्य शिक्षाओं में सर्वोपरि है — "नाम जप" और "संकीर्तन"। संतों का कथन है कि कलयुग में भगवान का नाम ही सबसे बड़ा सहारा है। इसके अतिरिक्त, साधक को अपने आचरण में परम विनम्रता (तृणादपि सुनीचेन) और सहनशीलता धारण करनी चाहिए। किसी भी जीव को कष्ट न देना और सभी का सम्मान करना साधना की पहली सीढ़ी है।</p><p>"साधु संग" अर्थात सत्संगति को सबसे अधिक बल दिया गया है, क्योंकि संतों के विचारों के प्रभाव से ही मन में अच्छे संस्कार जाग्रत होते हैं। प्रतिदिन पवित्र ग्रंथों का स्वाध्याय (स्वाध्याय) करना और अपने दैनिक कार्यों को निष्काम भाव से भगवान को समर्पित करना इसकी प्रमुख व्यावहारिक शिक्षाएँ हैं।</p>'
+      body: '<h1>ब्रज रसिक परंपरा की मुख्य शिक्षाएँ</h1><p>वृंदोपनिषद् में संरक्षित संतों की शिक्षाएँ आधुनिक जीवन के कोलाहल और तनाव के बीच आंतरिक शांति, शुद्धि और दिव्य आनंद प्राप्त करने का एक अत्यंत सरल व व्यावहारिक मार्ग प्रशस्त करती हैं। शुष्क बौद्धिक तर्कों या अत्यंत कठिन शारीरिक तपस्या के विपरीत, ब्रज के रसिक आचार्य यह सिखाते हैं कि मानव जीवन का चरम लक्ष्य हृदय में निस्वार्थ दिव्य प्रेम (प्रेमा भक्ति) को जाग्रत करना और वृंदावन निकुंज के अंतर्गत युगल सरकार (श्री राधा कृष्ण) की नित्य सेवा में लीन होना है। इस भक्ति मार्ग के छह मुख्य स्तंभ निम्नलिखित हैं:</p><h2>१. नाम जप एवं संकीर्तन की शक्ति</h2><p>सभी रसिक आचार्यों द्वारा बताई गई साधनाओं में सर्वोपरि साधना है — भगवान के पवित्र नामों का निरंतर जप और कीर्तन। कलयुग के इस अशांत वातावरण में जटिल यज्ञ, कठिन योग और एकांत ध्यान लगाना अत्यंत कठिन है क्योंकि मन सदैव चंचल रहता है। ऐसी स्थिति में भगवान का नाम ही साक्षात् भगवान का स्वरूप है। "राधा" नाम या हरे कृष्ण महामंत्र का श्रद्धापूर्वक जप करने से चित्त के समस्त विकार दूर होते हैं, मानसिक शांति मिलती है और आत्मा का ईश्वर के प्रति सहज प्रेम जाग्रत होता है।</p><h2>२. परम विनम्रता, सहनशीलता एवं सर्व-आदर (दीनता)</h2><p>भक्ति मार्ग में प्रगति तब तक संभव नहीं है जब तक हृदय में सच्ची दीनता और विनम्रता न हो। चैतन्य महाप्रभु के उपदेशों के अनुसार, साधक को स्वयं को तिनके से भी अधिक छोटा (तृणादपि सुनीचेन) समझना चाहिए, वृक्ष के समान सहनशील होना चाहिए, स्वयं के लिए किसी मान-सम्मान की इच्छा न रखते हुए दूसरों को आदर देना चाहिए और निरंतर हरिनाम का संकीर्तन करना चाहिए। जब हम प्रत्येक जीव में ईश्वर का अंश देखने लगते हैं, तो हमारे भीतर स्वतः ही करुणा और अहिंसा का भाव आ जाता है।</p><h2>३. संतों की संगति (साधु संग)</h2><p>हम जिन लोगों के बीच रहते हैं, उनके विचारों का हमारे अवचेतन मन पर गहरा प्रभाव पड़ता है। <em>साधु संग</em> अर्थात उन निस्वार्थ भक्तों की संगति करना जो ईश्वर के मार्ग पर आगे बढ़ चुके हैं, हमारी आध्यात्मिक उन्नति को तीव्र कर देता है। जैसे दर्पण अपने सामने रखी वस्तु को प्रतिबिंबित करता है, वैसे ही हमारा मन भी संतों के दिव्य विचारों और गुणों को ग्रहण करने लगता है। सत्संग से हमारे संशय दूर होते हैं और साधना के प्रति निष्ठा दृढ़ होती है।</p><h2>४. वाणी साहित्य का दैनिक स्वाध्याय (वाणी पाठ)</h2><p>संतों के लिखे पदों और वाणियों का नित्य पाठ करना भी साक्षात् सत्संग का ही रूप माना जाता है। स्वामी हरिदास, हित हरिवंश और अन्य महान संतों की रचनाएँ कोई साधारण काव्य नहीं हैं, बल्कि उनके प्रत्यक्ष आध्यात्मिक अनुभवों के दिव्य शब्दचित्र हैं। प्रतिदिन इनके पाठ से हमारा मन संतों के भाव से जुड़ता है। वृंदोपनिषद् साधकों को प्रेरित करता है कि वे प्रतिदिन एक श्लोक या पद का पाठ अवश्य करें ताकि पूरा दिन सकारात्मक और शांतिमय बना रहे।</p><h2>५. विधि-विधानों से ऊपर प्रेम (रागानुगा भक्ति)</h2><p>ब्रज की भक्ति की सबसे बड़ी विशेषता है — <em>रागानुगा भक्ति</em>। इसका अर्थ है वह भक्ति जो नियमों के डर या किसी सांसारिक लालच से नहीं, बल्कि भगवान के प्रति स्वाभाविक आकर्षण और स्नेह से उत्पन्न होती है। यद्यपि प्रारंभिक अवस्था में अनुशासन बनाने के लिए नियमों (वैधी भक्ति) की आवश्यकता होती है, परंतु अंतिम लक्ष्य भगवान को अपने प्रियतम, मित्र या बालक के रूप में मानकर उनसे निःस्वार्थ प्रेम करना है।</p><h2>६. ब्रज धाम और ब्रज रज के प्रति श्रद्धा</h2><p>वृंदावन, गोवर्धन और बरसाना की भूमि को सामान्य भौतिक भूमि नहीं, बल्कि गोलोक धाम का भूतल पर साक्षात् स्वरूप माना गया है। यहाँ की धूलि (ब्रज रज) को संतों ने सिर पर धारण किया है क्योंकि इस रज में श्री राधा कृष्ण के चरणों की दिव्य छाप है। धाम का आदर करना, यमुना जी की वंदना करना, और ब्रज के पर्यावरण को स्वच्छ व पवित्र रखना भी इस साधना का एक महत्वपूर्ण अंग है, जो साधक को यहाँ की दिव्य ऊर्जा से जोड़ता है।</p>'
     }
   },
   'importance': {
@@ -523,6 +537,54 @@ const STATIC_SEO_PAGES = {
       description: 'वृंदावन के महान रसिक संतों — स्वामी हरिदास, श्री हित हरिवंश, हरीराम व्यास, ध्रुवदास आदि का जीवन चरित्र एवं गुरु परंपरा इतिहास।',
       body: '<h1>ब्रज के प्रमुख रसिक संत</h1><p>वृंदावन की आध्यात्मिक विरासत यहाँ के <strong>रसिक संतों</strong> द्वारा रची गई है, जो युगल सरकार की निकुंज लीलाओं में मग्न रहते थे। उन्होंने कर्मकांडों और शुष्क ज्ञान को छोड़कर केवल प्रेम मार्ग को अपनाया।</p><p>इस परंपरा के मूल आधार <strong>हरित्रयी</strong> कहे जाने वाले तीन संत हैं: <strong>स्वामी हरिदास जी</strong> (निधिवन में बिहारी जी को प्रकट करने वाले), <strong>श्री हित हरिवंश महाप्रभु</strong> (राधावल्लभ संप्रदाय के प्रवर्तक), और व्यास घेरा के <strong>श्री हरिराम व्यास जी</strong>। 17वीं शताब्दी में <strong>श्री ध्रुवदास जी</strong> ने <em>बयालीस लीला</em> की रचना कर इस परंपरा के सिद्धांतों को लिपिबद्ध किया। वर्तमान समय में पूज्य <strong>श्री प्रेमानंद जी महाराज</strong> इस रसमय धारा का प्रचार कर रहे हैं।</p>'
     }
+  },
+  'about': {
+    en: {
+      title: 'About Vrindopnishad — Archiving Sacred Braj Literature',
+      description: 'Learn about the mission, vision, and team behind Vrindopnishad. We digitally preserve ancient Sanskrit shlokas and teachings of Vrindavan rasik saints.',
+      body: '<h1>About Vrindopnishad Project</h1><p>The Vrindopnishad Project is a scholarly digital archiving and publication platform dedicated to preserving the rich devotional literature of the Braj region. We collect, cross-reference, and publish the original verses (Sanskrit shlokas, Braj Bhasha poetry) from manuscript collections and printed publications, translating them into Hindi and English with detailed annotations and audio chanting. Our mission is to make these sacred works universally accessible without financial barriers, operating under the guidance of manuscript editors and traditional scholars.</p>'
+    },
+    hi: {
+      title: 'परियोजना परिचय (About) — वृंदोपनिषद् ग्रंथालय संरक्षण',
+      description: 'वृंदोपनिषद् परियोजना के बारे में जानें। हमारा उद्देश्य प्राचीन पांडुलिपियों, भजनों और संस्कृत श्लोकों का डिजिटल संरक्षण और निःशुल्क प्रकाशन करना है।',
+      body: '<h1>परियोजना परिचय (About Us)</h1><p>वृंदोपनिषद् परियोजना एक डिजिटल आध्यात्मिक पुस्तकालय है जो ब्रजमंडल के प्राचीन और दुर्लभ वाणी साहित्य के संरक्षण के लिए समर्पित है। हमारा प्रमुख उद्देश्य मध्यकालीन रसिक संतों (जैसे स्वामी हरिदास, श्री हित हरिवंश, ध्रुवदास आदि) की रचनाओं और संस्कृत ग्रंथों को पांडुलिपियों व प्रामाणिक संस्करणों से संकलित करना है। इन्हें हम मूल पाठ, रोमन लिप्यंतरण, हिंदी अनुवाद और विस्तृत व्याख्या के साथ उपलब्ध कराते हैं। यह संपूर्ण सेवा संस्कृत विद्वानों और manuscript आचार्यों के मार्गदर्शन में संचालित है तथा सभी के लिए पूर्णतः निःशुल्क उपलब्ध है।</p>'
+    }
+  },
+  'editorial-policy': {
+    en: {
+      title: 'Editorial & Verification Policy — Vrindopnishad',
+      description: 'Read the editorial standards of Vrindopnishad. Learn how we verify Sanskrit shlokas, Braj Bhasha poetry, and translations for scriptural accuracy.',
+      body: '<h1>Editorial & Verification Policy</h1><p>Every text published on Vrindopnishad undergoes a meticulous verification process. We crosscheck all Devanagari texts against multiple printed editions from established publishers (like Gita Press, Gorakhpur and Radhavallabh Temple Publications) to correct typographical errors. Translations are reviewed by traditional scholars to ensure fidelity to historical commentaries, and transliterations conform strictly to standard Roman IAST guidelines. We encourage readers to report any discrepancies for immediate review and correction.</p>'
+    },
+    hi: {
+      title: 'सम्पादन एवं सत्यापन नीति (Editorial Policy) — वृंदोपनिषद्',
+      description: 'वृंदोपनिषद् की सम्पादन और सत्यापन नीति। जानें कि श्लोकों, पदों और अनुवादों की प्रामाणिकता की जाँच कैसे की जाती है।',
+      body: '<h1>सम्पादन एवं सत्यापन नीति</h1><p>वृंदोपनिषद् पर प्रकाशित प्रत्येक पद, श्लोक और स्तोत्र को अत्यंत कठोर सत्यापन प्रक्रिया से गुजरना पड़ता है। हम केवल मान्यता प्राप्त संस्थानों (जैसे गीता प्रेस, वृंदावन शोध संस्थान और विभिन्न मंदिरों के प्रामाणिक प्रकाशनों) द्वारा मुद्रित ग्रंथों से पाठ संकलित करते हैं। पाठ के हिज्जे (वर्तनी) की शुद्धि के लिए कम से कम तीन संस्करणों का मिलान किया जाता है। अनुवादों को संस्कृत विद्वानों द्वारा जांचा जाता है ताकि मूल दार्शनिक सिद्धांतों और रसोपासना के सिद्धांतों में कोई अंतर न आए। यदि किसी पद में कोई त्रुटि मिलती है, तो उसे तुरंत संकलित व शोधित किया जाता है।</p>'
+    }
+  },
+  'sources': {
+    en: {
+      title: 'Sources & Bibliography — Authentic Vaishnava Literature',
+      description: 'Explore the source bibliography of Vrindopnishad. Learn about the medieval manuscripts, printed editions, and citation methodology for our content.',
+      body: '<h1>Sources & Citation Bibliography</h1><p>Our database compiles verses from authoritative published editions, including: Siddhanta Pada (Swami Haridas, Nidhivan publications); Chaurasi Pada (Shri Hit Harivansh, edited by Goswami Lalitacharan Ji); Bayaalaas Leela (Shri Dhruvdas Ji, edited by Baba Krishnadas); and Sanskrit scriptures (Bhagavad Gita and Upanishads, published by Gita Press). Each entry includes detailed disciplic metadata referencing the author, source grantha, and historical citation number to allow users to verify content against printed publications.</p>'
+    },
+    hi: {
+      title: 'शास्त्र स्रोत एवं प्रमाण ग्रन्थ (Sources & Bibliography) — वृंदोपनिषद्',
+      description: 'वृंदोपनिषद् के प्राथमिक स्रोतों और प्रमाण ग्रंथों की ग्रंथ सूची। मूल पांडुलिपियों और प्रामाणिक प्रकाशनों की सूची।',
+      body: '<h1>शास्त्र स्रोत एवं प्रमाण ग्रंथ सूची</h1><p>वृंदोपनिषद् ग्रंथालय में संकलित सभी पदों का संकलन प्रामाणिक प्रकाशनों और पांडुलिपियों से किया गया है। मुख्य स्रोतों में शामिल हैं: स्वामी हरिदास जी रचित सिद्धांत के पद व केलिमाल (बाबा प्रेमलाल जी द्वारा संपादित); श्री हित हरिवंश महाप्रभु रचित हित चौरासी व स्फुट पद (श्री राधावल्लभ मंदिर प्रकाशन); श्री ध्रुवदास कृत बयालीस लीला (बाबा कृष्णदास द्वारा संपादित); और संस्कृत श्लोक व स्तोत्र (गीता प्रेस, गोरखपुर)। प्रत्येक पद के साथ उसके रचनाकार, मूल ग्रंथ और संदर्भ क्रमांक की जानकारी दी गई है ताकि शोधकर्ता और साधक मूल मुद्रित पुस्तकों से इसका मिलान कर सकें।</p>'
+    }
+  },
+  'contact': {
+    en: {
+      title: 'Contact Us — Get in touch with Vrindopnishad Team',
+      description: 'Reach out to the editors, Sanskrit scholars, and developers of Vrindopnishad. Submit feedback, correct scriptural text, or collaborate with us.',
+      body: '<h1>Contact the Editorial Team</h1><p>For scriptural corrections, translation queries, permission requests, or collaborative archive projects, please contact us. Our email coordinates are <strong>info@vrindopnishad.in</strong>. Our review office is located at Lohia Bazar Road, Near Radhavallabh Temple, Vrindavan, Uttar Pradesh, 281121, India. We review all feedback within 48 hours to preserve database integrity.</p>'
+    },
+    hi: {
+      title: 'सम्पर्क करें (Contact Us) — वृंदोपनिषद् सम्पादकीय टीम',
+      description: 'वृंदोपनिषद् की सम्पादकीय टीम से संपर्क करें। किसी भी पद में वर्तनी सुधार, सुझाव या सहयोग के लिए संदेश भेजें।',
+      body: '<h1>सम्पादकीय टीम से संपर्क करें</h1><p>पदों में वर्तनी सुधार, अनुवाद में शंका समाधान, पांडुलिपि डिजिटलीकरण सहयोग या अन्य किसी भी सुझाव के लिए आप हमसे संपर्क कर सकते हैं। हमारी ईमेल आईडी <strong>info@vrindopnishad.in</strong> है। हमारा सम्पादकीय कार्यालय लोहिया बाजार मार्ग, राधावल्लभ मंदिर के समीप, वृंदावन, उत्तर प्रदेश, 281121, भारत में स्थित है। हम आपके सभी संदेशों और संशोधनों पर 48 घंटे के भीतर विचार करते हैं।</p>'
+    }
   }
 };
 
@@ -540,7 +602,11 @@ export default async function handler(req, res) {
   let mainBodyHtml = '';
   let ogImageUrl = 'https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png';
 
-  
+  const visibleBreadcrumbItems = [
+    { name: isHindiRoute ? "होम" : "Home", url: getRouteLink('/') },
+    { name: isHindiRoute ? "पाठ/सामग्री" : "Content/Resources", url: getRouteLink('/content') }
+  ];
+
   const faqDataEn = [
     { question: "What is Vrindopnishad?", answer: "Vrindopnishad is a sacred digital platform dedicated to preserving and sharing authentic spiritual and Vedic knowledge. It hosts sacred Sanskrit shlokas, devotional strotras, spiritual poetry, and the teachings of Vrindavan saints in Hindi, Sanskrit, and English." },
     { question: "What does the word Vrindopnishad mean?", answer: "Vrindopnishad combines 'Vrinda' (the sacred groves of Vrindavan) and 'Upanishad' (sacred, esoteric knowledge transmitted from teacher to student). Together it means 'the sacred knowledge flowing from Vrindavan.'" },
@@ -782,11 +848,54 @@ export default async function handler(req, res) {
         ogImageUrl = fullContent.image_url;
       }
 
+      // Build Breadcrumb List
+      const bookSlug = parsedGranth ? slugify(transliterate(parsedGranth)) : '';
+      const bookUrl = bookSlug ? getRouteLink(`/book/${bookSlug}`) : '';
+
+      const breadcrumbListElements = [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": isHindiRoute ? "होम" : "Home",
+          "item": getRouteLink('/')
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": isHindiRoute ? "ग्रन्थ" : "Granthas",
+          "item": getRouteLink('/books')
+        }
+      ];
+
+      const visibleBreadcrumbItems = [
+        { name: isHindiRoute ? "होम" : "Home", url: getRouteLink('/') },
+        { name: isHindiRoute ? "ग्रन्थ" : "Granthas", url: getRouteLink('/books') }
+      ];
+
+      if (cleanGranth && bookUrl) {
+        breadcrumbListElements.push({
+          "@type": "ListItem",
+          "position": 3,
+          "name": cleanGranth,
+          "item": bookUrl
+        });
+        visibleBreadcrumbItems.push({ name: cleanGranth, url: bookUrl });
+      }
+
+      const currentPosition = breadcrumbListElements.length + 1;
+      breadcrumbListElements.push({
+        "@type": "ListItem",
+        "position": currentPosition,
+        "name": formattedPad,
+        "item": pageUrl
+      });
+      visibleBreadcrumbItems.push({ name: formattedPad, url: pageUrl });
+
       jsonLd = JSON.stringify({
         "@context": "https://schema.org",
         "@graph": [
           {
-            "@type": "CreativeWork",
+            "@type": "Article",
             "@id": `${pageUrl}/#verse`,
             "name": fullContent.title,
             "headline": fullContent.title,
@@ -812,26 +921,7 @@ export default async function handler(req, res) {
           {
             "@type": "BreadcrumbList",
             "@id": `${pageUrl}/#breadcrumb`,
-            "itemListElement": [
-              {
-                "@type": "ListItem",
-                "position": 1,
-                "name": isHindiRoute ? "होम" : "Home",
-                "item": getRouteLink('/')
-              },
-              {
-                "@type": "ListItem",
-                "position": 2,
-                "name": isHindiRoute ? "सभी पाठ" : "All Content",
-                "item": getRouteLink('/content')
-              },
-              {
-                "@type": "ListItem",
-                "position": 3,
-                "name": fullContent.title,
-                "item": pageUrl
-              }
-            ]
+            "itemListElement": breadcrumbListElements
           }
         ]
       });
@@ -839,7 +929,35 @@ export default async function handler(req, res) {
       const transliteratedSanskrit = fullContent.sanskrit_text ? transliterate(fullContent.sanskrit_text) : "";
       const transliteratedHindi = fullContent.hindi_text ? transliterate(fullContent.hindi_text) : "";
 
+      // Find previous and next verse in the same book/grantha
+      let prevNextHtml = '';
+      const bookCandidate = parsedGranth;
+      if (bookCandidate) {
+        const bookSlug = slugify(transliterate(bookCandidate));
+        const matchedBook = books.find(b => b.slug === bookSlug);
+        if (matchedBook && matchedBook.verses) {
+          const sortedVerses = [...matchedBook.verses].sort((a, b) => {
+            const numA = parseInt((a.title || '').match(/\d+/) || 0);
+            const numB = parseInt((b.title || '').match(/\d+/) || 0);
+            return numA - numB;
+          });
+          const currentIndex = sortedVerses.findIndex(v => v.id === fullContent.id);
+          if (currentIndex !== -1) {
+            const prevVerse = sortedVerses[currentIndex - 1];
+            const nextVerse = sortedVerses[currentIndex + 1];
+            
+            prevNextHtml = `
+              <div style="display: flex; justify-content: space-between; align-items: center; margin: 35px 0; padding: 15px 0; border-top: 1px solid #eae6df; border-bottom: 1px solid #eae6df; font-family: sans-serif; font-size: 0.9rem;">
+                ${prevVerse ? `<a href="${getRouteLink(`/content/${prevVerse.slug || prevVerse.id}`)}" style="color: #f2a60d; text-decoration: none; font-weight: 500;">&larr; ${escapeHtml(prevVerse.title)}</a>` : '<span style="color: #a8a29e;">&larr; Beginning</span>'}
+                ${nextVerse ? `<a href="${getRouteLink(`/content/${nextVerse.slug || nextVerse.id}`)}" style="color: #f2a60d; text-decoration: none; font-weight: 500;">${escapeHtml(nextVerse.title)} &rarr;</a>` : '<span style="color: #a8a29e;">End &rarr;</span>'}
+              </div>
+            `;
+          }
+        }
+      }
+
       mainBodyHtml = `
+        ${getBreadcrumbsHtml(isHindiRoute, visibleBreadcrumbItems)}
         <article>
           <h1>${escapeHtml(fullContent.title)}</h1>
           <p><strong>${isHindiRoute ? 'श्रेणी' : 'Category'}:</strong> ${escapeHtml(fullContent.category || (isHindiRoute ? 'पवित्र साहित्य' : 'Sacred Literature'))}</p>
@@ -856,6 +974,7 @@ export default async function handler(req, res) {
           ${fullContent.english_translation ? `<div lang="en" style="margin: 20px 0;"><h2>${isHindiRoute ? 'अंग्रेजी अनुवाद' : 'English Translation'}</h2><p style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(fullContent.english_translation)}</p></div>` : ''}
           ${fullContent.commentary ? `<div lang="en" style="margin: 20px 0;"><h2>${isHindiRoute ? 'टीका / व्याख्या' : 'Commentary'}</h2><p style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(fullContent.commentary)}</p></div>` : ''}
           ${fullContent.description ? `<div lang="en" style="margin: 20px 0;"><h2>${isHindiRoute ? 'विवरण' : 'Explanation'}</h2><p>${escapeHtml(fullContent.description)}</p></div>` : ''}
+          ${prevNextHtml}
         </article>
         ${(() => {
           // Build dynamic semantic cross-links
@@ -1026,7 +1145,14 @@ export default async function handler(req, res) {
         ]
       });
 
+      const visibleBreadcrumbItems = [
+        { name: isHindiRoute ? "होम" : "Home", url: getRouteLink('/') },
+        { name: isHindiRoute ? "संत" : "Saints", url: getRouteLink('/saints') },
+        { name: santName, url: pageUrl }
+      ];
+
       mainBodyHtml = `
+        ${getBreadcrumbsHtml(isHindiRoute, visibleBreadcrumbItems)}
         <h1>${escapeHtml(santName)}</h1>
         <p><strong>${isHindiRoute ? 'परंपरा' : 'Lineage'}:</strong> ${escapeHtml(lineage)} | <strong>${isHindiRoute ? 'काल' : 'Era'}:</strong> ${escapeHtml(timeline)} | <strong>${isHindiRoute ? 'साधना स्थल' : 'Place'}:</strong> ${escapeHtml(places)}</p>
         ${meta ? `
@@ -1174,7 +1300,14 @@ export default async function handler(req, res) {
         ]
       });
 
+      const visibleBreadcrumbItems = [
+        { name: isHindiRoute ? "होम" : "Home", url: getRouteLink('/') },
+        { name: isHindiRoute ? "शब्दकोश" : "Glossary", url: getRouteLink('/glossary') },
+        { name: termData.term, url: pageUrl }
+      ];
+
       mainBodyHtml = `
+        ${getBreadcrumbsHtml(isHindiRoute, visibleBreadcrumbItems)}
         <h1>${escapeHtml(termData.term)} (${escapeHtml(termData.devanagari)})</h1>
         <p><strong>${isHindiRoute ? 'श्रेणी' : 'Category'}:</strong> ${escapeHtml(termData.category)} | <strong>${isHindiRoute ? 'व्युत्पत्ति' : 'Etymology'}:</strong> ${escapeHtml(termData.etymology)}</p>
         
@@ -1286,7 +1419,14 @@ export default async function handler(req, res) {
         ]
       });
 
+      const visibleBreadcrumbItems = [
+        { name: isHindiRoute ? "होम" : "Home", url: getRouteLink('/') },
+        { name: isHindiRoute ? "ग्रन्थ" : "Books", url: getRouteLink('/books') },
+        { name: book.name, url: pageUrl }
+      ];
+
       mainBodyHtml = `
+        ${getBreadcrumbsHtml(isHindiRoute, visibleBreadcrumbItems)}
         <h1>${escapeHtml(book.name)}</h1>
         <p><strong>${isHindiRoute ? 'लेखक / मूल स्रोत' : 'Author/Authoritative Source'}:</strong> <a href="${getRouteLink(`/saint/${slugify(transliterate(book.author))}`)}">${escapeHtml(book.author)}</a></p>
         <h2>${isHindiRoute ? 'इस ग्रन्थ के अंतर्गत पद' : 'Verses under this Grantha'} (${book.verses.length})</h2>
@@ -1376,7 +1516,14 @@ export default async function handler(req, res) {
         ]
       });
 
+      const visibleBreadcrumbItems = [
+        { name: isHindiRoute ? "होम" : "Home", url: getRouteLink('/') },
+        { name: isHindiRoute ? "राग" : "Ragas", url: getRouteLink('/ragas') },
+        { name: raga.name, url: pageUrl }
+      ];
+
       mainBodyHtml = `
+        ${getBreadcrumbsHtml(isHindiRoute, visibleBreadcrumbItems)}
         <h1>${isHindiRoute ? `राग ${escapeHtml(raga.name)}` : `Raga ${escapeHtml(raga.name)}`}</h1>
         <p>${isHindiRoute ? `राग ${escapeHtml(raga.name)} में निबद्ध पद एवं संकीर्तन भजन।` : `Classical melody and sankirtan hymns set in Raga ${escapeHtml(raga.name)}.`}</p>
         <h2>${isHindiRoute ? 'इस राग में संकलित पद' : 'Verses set in this Raga'} (${raga.verses.length})</h2>
@@ -1414,7 +1561,6 @@ export default async function handler(req, res) {
     `;
 
   } else if (type === 'static' && slug) {
-    
     const decodedSlug = decodeURIComponent(slug);
     const staticPageData = STATIC_SEO_PAGES[decodedSlug];
 
@@ -1424,13 +1570,19 @@ export default async function handler(req, res) {
       description = staticPage.description;
       pageUrl = getRouteLink(`/${decodedSlug}`);
 
+      const pageName = title.split('—')[0].trim();
+      const visibleBreadcrumbItems = [
+        { name: isHindiRoute ? "होम" : "Home", url: getRouteLink('/') },
+        { name: pageName, url: pageUrl }
+      ];
+
       mainBodyHtml = `
+        ${getBreadcrumbsHtml(isHindiRoute, visibleBreadcrumbItems)}
         <article>
           ${staticPage.body}
         </article>
       `;
 
-      
       if (decodedSlug === 'faq') {
         const faqList = isHindiRoute ? faqDataHi : faqDataEn;
         jsonLd = JSON.stringify({
@@ -1469,7 +1621,6 @@ export default async function handler(req, res) {
           ]
         });
       } else {
-        const pageName = title.split('—')[0].trim();
         jsonLd = JSON.stringify({
           "@context": "https://schema.org",
           "@graph": [
@@ -1521,28 +1672,112 @@ export default async function handler(req, res) {
         });
       }
     } else {
-      
       let listName = "";
-      if (decodedSlug === 'saints') {
+      
+      if (decodedSlug === 'search') {
+        title = isHindiRoute ? `खोज (Search) — वृंदोपनिषद् लाइब्रेरी` : `Search Sacred Verses & Saints | Vrindopnishad`;
+        description = isHindiRoute
+          ? `वृंदोपनिषद् पर संकलित श्लोक, स्तोत्र, संत जीवनियाँ और ग्रंथ खोजें।`
+          : `Search the complete archive of Vrindavan saint biographies, sacred verses, shlokas, and granthas on Vrindopnishad.`;
+        pageUrl = getRouteLink('/search');
+        listName = isHindiRoute ? "खोज" : "Search";
+        
+        const popularTags = [
+          { name: 'राधा', query: 'राधा' },
+          { name: 'कृष्ण', query: 'कृष्ण' },
+          { name: 'कृपा', query: 'कृपा' },
+          { name: 'वृंदावन', query: 'वृंदावन' },
+          { name: 'Radha', query: 'Radha' },
+          { name: 'Krishna', query: 'Krishna' },
+          { name: 'Raga', query: 'राग' },
+          { name: 'Swami Haridas', query: 'स्वामी हरिदास' },
+          { name: 'Hit Harivansh', query: 'हरिवंश' }
+        ];
+
+        const breadcrumbItems = [
+          { name: isHindiRoute ? "होम" : "Home", url: getRouteLink('/') },
+          { name: isHindiRoute ? "खोज" : "Search", url: pageUrl }
+        ];
+
+        mainBodyHtml = `
+          ${getBreadcrumbsHtml(isHindiRoute, breadcrumbItems)}
+          <h1>${isHindiRoute ? 'आध्यात्मिक लाइब्रेरी खोज' : 'Search Sacred Archive'}</h1>
+          <p>${isHindiRoute ? 'वृंदोपनिषद् के संपूर्ण संग्रह में श्लोक, पद, संत, राग या व्याख्या खोजें।' : 'Search across all shlokas, verses, saints, ragas, and commentaries in Vrindopnishad.'}</p>
+          
+          <div style="margin: 30px 0; background: #faf9f6; padding: 25px; border-radius: 8px; border: 1px solid #eae6df;">
+            <form action="${getRouteLink('/content')}" method="GET" style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <input type="text" name="q" placeholder="${isHindiRoute ? 'यहाँ खोजें (जैसे: राधा, कृपा, यमुना)...' : 'Type search terms (e.g. Radha, Kripa, Yamuna)...'}" style="flex: 1; min-width: 250px; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 1.1rem;" required autofocus/>
+              <button type="submit" style="background: #f2a60d; color: #fff; border: none; padding: 12px 30px; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer;">
+                ${isHindiRoute ? 'खोजें' : 'Search'}
+              </button>
+            </form>
+          </div>
+
+          <h3>${isHindiRoute ? 'लोकप्रिय खोज शब्द (Popular Tags)' : 'Popular Search Tags'}</h3>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+            ${popularTags.map(tag => `
+              <a href="${getRouteLink(`/content?q=${encodeURIComponent(tag.query)}`)}" style="background: #f5f5f4; color: #44403c; padding: 8px 16px; border-radius: 20px; text-decoration: none; border: 1px solid #e7e5e4; font-size: 0.9rem; font-weight: 500;">
+                # ${escapeHtml(tag.name)}
+              </a>
+            `).join('')}
+          </div>
+        `;
+      } else if (decodedSlug === 'saints') {
         title = isHindiRoute ? `रसिक सन्त एवं चरित्र (Rasik Saints & Biographies) | Vrindopnishad` : `Vaishnava Rasik Saints & Biographies | Vrindopnishad`;
         description = isHindiRoute ? `ब्रज के महान रसिक संतों की जीवनी, इतिहास और उनके वाणी पदों का संग्रह पढ़ें।` : `Learn about the lives, teachings, and spiritual literature of the Rasik saints of Vrindavan, Barsana, and Braj.`;
         pageUrl = getRouteLink('/saints');
         listName = isHindiRoute ? "वैष्णव रसिक संत" : "Vaishnava Rasik Saints";
+
+        const visibleBreadcrumbItems = [
+          { name: isHindiRoute ? "होम" : "Home", url: getRouteLink('/') },
+          { name: listName, url: pageUrl }
+        ];
+
         mainBodyHtml = `
+          ${getBreadcrumbsHtml(isHindiRoute, visibleBreadcrumbItems)}
           <h1>${isHindiRoute ? 'वैष्णव रसिक संत' : 'Vaishnava Rasik Saints'}</h1>
-          <p>${isHindiRoute ? 'वृंदावन और ब्रज के संतों की विस्तृत जीवनी और उनके पद।' : 'Read detailed biographies and collected works of Vrindavan saints.'}</p>
+          ${isHindiRoute ? `
+            <p>वृंदावन और संपूर्ण ब्रजमंडल पिछले पाँच सौ से अधिक वर्षों से भक्ति और रहस्यवाद का केंद्र रहा है। इस पावन भूमि को समय-समय पर अनेक <strong>रसिक संतों</strong> के चरण-कमलों का स्पर्श प्राप्त हुआ है। इन संतों ने शुष्क कर्मकांडों और बौद्धिक दर्शन के स्थान पर हृदय के सहज अनुराग और स्वतःस्फूर्त दिव्य प्रेम (रागानुगा भक्ति) को अपनाया। <em>रसिक</em> शब्द का अर्थ उस साधक से है जो श्री राधा-कृष्ण की नित्य निकुंज क्रीड़ाओं के मधुर दिव्य रस (ब्रज रस) का आस्वादन करने में समर्थ हो चुका है।</p>
+            <p>इन संतों का इतिहास विभिन्न संप्रदायों और गुरु-शिष्य परंपराओं में विभाजित है, जिनमें से प्रत्येक संप्रदाय प्रेम के एक अनूठे पहलू पर बल देता है। <strong>हरिदासी संप्रदाय</strong> (या सखी संप्रदाय) की स्थापना संगीत और साधना के शिखर पुरुष <strong>स्वामी हरिदास जी</strong> ने की थी। यह परंपरा 'नित्य विहार' की उपासना करती है, जहाँ सखियाँ युगल के अखंड प्रेम-विलास का दर्शन करती हैं। स्वामी हरिदास जी ने ही अपनी संगीत साधना के बल पर निधिवन में श्री बांके बिहारी जी के विग्रह को प्रकट किया था।</p>
+            <p><strong>राधावल्लभ संप्रदाय</strong> की स्थापना <strong>गोस्वामी हित हरिवंश महाप्रभु</strong> द्वारा की गई थी। इस संप्रदाय में श्री राधा रानी को उपासना के केंद्र बिंदु में रखा गया है। हित हरिवंश जी ने <em>राधा दास्य</em> (श्री राधा की अनन्य दासी बनना) के सिद्धांत को प्रतिपादित किया, जहाँ स्वयं भगवान कृष्ण श्रीजी के चरणों की सेवा करते हैं। श्री राधा जी को वृंदावन की एकमात्र स्वामिनी और साम्राज्य के रूप में पूजा जाता है, और इस मार्ग में विरह (वियोग) का पूर्णतः निषेध है।</p>
+            <p><strong>गौड़ीय वैष्णव संप्रदाय</strong>, जिसे <strong>श्रीमन् महाप्रभु चैतन्य देव</strong> ने नवजीवन दिया और जिसे वृंदावन के <strong>षड गोस्वामियों</strong> ने दार्शनिक रूप से सुदृढ़ किया, 'अचिन्त्य भेदाभेद' दर्शन और 'मंजरी भाव' की उपासना सिखाता है। इसके अतिरिक्त <strong>निम्बार्क संप्रदाय</strong> और <strong>पुष्टिमार्ग (वल्लभ संप्रदाय)</strong> ने भी ब्रज की रसमय उपासना पद्धति में अतुलनीय योगदान दिया है।</p>
+            <p>इन संतों का साहित्यिक योगदान अद्भुत है। उन्होंने <strong>ब्रजभाषा</strong> में हजारों पदों और वाणियों की रचना की। ये रचनाएँ केवल साधारण कविताएँ नहीं हैं, बल्कि उनके गहरे आध्यात्मिक अनुभवों की ध्वन्यात्मक अभिव्यक्ति हैं, जिन्हें आज भी वृंदावन के मंदिरों में <em>समाज गायन</em> के रूप में गाया जाता है। संतों के चरित्र और वाणियों का अनुशीलन करने से हृदय निर्मल होता है और ईश्वर के प्रति वास्तविक भक्ति जाग्रत होती है।</p>
+          ` : `
+            <p>Vrindavan and the surrounding Braj Dham have been the epicenters of devotional mysticism for over five centuries. This sacred landscape has been blessed by the physical presence of the <strong>Rasik saints</strong>—devotees who chose the path of spontaneous, intimate divine love (Raganuga Bhakti) over formal rituals or intellectual philosophies. The term <em>Rasik</em> refers to one who has cultivated the subtle spiritual capacity to taste the divine nectar (Ras) of the pastimes of Shri Radha and Shri Krishna in the eternal, transcendental bowers (Nikunj) of Nitya Vrindavan.</p>
+            <p>The history of these saints is categorized by their respective lineages (sampradayas), each emphasizing a unique facet of this divine love. The <strong>Haridasi Sampradaya</strong> (or Sakhi Sampradaya), established by the legendary musician-saint <strong>Swami Haridas</strong>, focuses on Nitya Vihar—the continuous, uninterrupted love-play of the Divine Couple observed by their intimate companions (Sakhis). Swami Haridas is famous for manifesting the deity of Bankey Bihari Ji in Nidhivan through the power of his musical devotion.</p>
+            <p>The <strong>Radhavallabh Sampradaya</strong>, founded by <strong>Goswami Hit Harivansh Mahaprabhu</strong>, places Srimati Radharani at the absolute center of devotion. Hit Harivansh pioneered the concept of <em>Radha Dasya</em> (the servitude of Shri Radha), holding that Krishna Himself serves Her feet in the highest state of love. Srimati Radharani is worshiped as the sovereign queen of Vrindavan, and the path is celebrated for its sheer sweetness (madhurya) and exclusion of any mood of separation.</p>
+            <p>The <strong>Gaudiya Vaishnava Sampradaya</strong>, revitalized by <strong>Sri Chaitanya Mahaprabhu</strong> and systematically codified by the <strong>Six Goswamis of Vrindavan</strong> (Sanatana, Rupa, Raghunatha Bhatta, Raghunatha Das, Jiva, and Gopala Bhatta), provides a solid philosophical foundation (Achintya Bheda Abheda) alongside the confidential practice of <em>Manjari Bhava</em>—servitude as a young maidservant of Shri Radha. Other lineages, including the <strong>Nimbarka Sampradaya</strong> and the <strong>Vallabha Sampradaya (Pushtimarg)</strong>, have also contributed immensely to the rich tapestry of Braj devotion.</p>
+            <p>The literary contributions of these saints are unparalleled. They composed thousands of devotional songs (padas) in the sweet, musical dialect of <strong>Braj Bhasha</strong>. These compositions are not merely poetry; they are sonic maps of spiritual experiences, sung daily in the temples of Vrindavan in a traditional style known as <em>Samaj Gayan</em>. Exploring their biographies and songs is a transformative journey that purifies the heart and awakens the soul's innate capacity for divine love.</p>
+          `}
+          <h2 style="margin-top: 30px;">${isHindiRoute ? 'संतों की सूची' : 'Saint Biographies'}</h2>
           <ul>
             ${sants.map(s => `<li><a href="${getRouteLink(`/saint/${s.slug}`)}">${escapeHtml(s.name)}</a></li>`).join('')}
           </ul>
         `;
-      } else if (decodedSlug === 'books') {
+      } else if (decodedSlug === 'books' || decodedSlug === 'granthas') {
         title = isHindiRoute ? `पवित्र ग्रन्थ एवं वाणी साहित्य (Sacred Scriptures & Literature) | Vrindopnishad` : `Sacred Scriptures & Literature | Vrindopnishad`;
         description = isHindiRoute ? `पवित्र वैष्णव ग्रंथों, वाणियों और साहित्यों के डिजिटल संस्करण पढ़ें।` : `Browse and read the digital editions of sacred Vaishnava granthas, vanis, and spiritual scriptures.`;
         pageUrl = getRouteLink('/books');
         listName = isHindiRoute ? "पवित्र ग्रन्थ" : "Sacred Granthas";
+
+        const visibleBreadcrumbItems = [
+          { name: isHindiRoute ? "होम" : "Home", url: getRouteLink('/') },
+          { name: listName, url: pageUrl }
+        ];
+
         mainBodyHtml = `
+          ${getBreadcrumbsHtml(isHindiRoute, visibleBreadcrumbItems)}
           <h1>${isHindiRoute ? 'पवित्र ग्रन्थ साहित्य' : 'Sacred Granthas'}</h1>
-          <p>${isHindiRoute ? 'वैष्णव संप्रदाय के पवित्र शास्त्रों और ग्रंथों के भावार्थ।' : 'Browse digital editions of Vaishnava sacred scriptures.'}</p>
+          ${isHindiRoute ? `
+            <p>ब्रज रसिक परंपरा का संपूर्ण आध्यात्मिक ज्ञान जिस विशाल साहित्य में सुरक्षित है, उसे <strong>वाणी साहित्य</strong> या ग्रन्थ कहा जाता है। सामान्य वैदिक ग्रंथों के विपरीत, जो नैतिक नियमों, सृष्टि विज्ञान या अमूर्त अद्वैतवाद पर ध्यान केंद्रित करते हैं, रसिकों का वाणी साहित्य पूरी तरह से प्रेम रस (भक्ति रस) और वृंदावन निकुंज के अंतर्गत होने वाली युगल सरकार की अंतरंग लीलाओं पर आधारित है। ये ग्रंथ साधक के लिए मार्गदर्शिका का कार्य करते हैं, जो मन को दैनिक ध्यान और स्मरण की दिशा में मोड़ने में सहायक होते हैं।</p>
+            <p>इस परंपरा के साहित्य में दो भाषाओं का अद्भुत समन्वय दिखाई देता है: <strong>संस्कृत</strong> और <strong>ब्रजभाषा</strong>। आचार्यों ने संस्कृत का उपयोग गंभीर दार्शनिक सिद्धांतों, उपनिषदों पर टीकाओं और जटिल भक्ति स्तोत्रों की रचना के लिए किया। <em>श्री राधा सुधा निधि</em> और श्रील जीव गोस्वामी के ग्रंथ इसके प्रत्यक्ष उदाहरण हैं, जिन्होंने भक्ति मार्ग को अकाट्य तर्कों से सिद्ध किया। दूसरी ओर, ब्रजभाषा—जो पश्चिमी हिंदी की एक अत्यंत मधुर बोली है—संतों के हृदय की भाषा बनी। स्वामी हरिदास जी ने <em>केलिमाल</em> और हित हरिवंश जी ने <em>हित चौरासी</em> के माध्यम से अपने प्रेममय आध्यात्मिक अनुभवों को ब्रजभाषा में पिरोया, ताकि संगीत के माध्यम से यह रस जन-साधारण तक पहुँच सके।</p>
+            <p>एक साधक के दैनिक जीवन में इन पवित्र ग्रंथों का पाठ (जिसे <strong>वाणी स्वाध्याय</strong> कहते हैं) साक्षात् संतों के संग के समान माना जाता है। मान्यता है कि संतों के शब्द और उनका अस्तित्व एक ही हैं; जब हम इन वाणियों का पाठ करते हैं, तो हमारा मन संसार के कोलाहल से दूर होकर वृंदावन के पावन दिव्य भाव में स्थित होने लगता है। वृंदोपनिषद् परियोजना इस अमूल्य वाणी धरोहर के डिजिटल संरक्षण के लिए समर्पित है, ताकि प्राचीन आश्रमों की दुर्लभ पांडुलिपियों को आधुनिक पीढ़ी के लिए सहेजकर प्रस्तुत किया जा सके।</p>
+          ` : `
+            <p>The spiritual knowledge of the Braj Rasik tradition is preserved in a vast body of literature collectively known as <strong>Vani Sahitya</strong> or scriptural granthas. Unlike mainstream Vedic scriptures that focus on general ethics, cosmology, or abstract monism, the literature of the Rasik saints is highly specialized, focusing on the aesthetics of divine love (Bhakti Rasa) and the confidential pastimes of the Divine Couple in Nikunj Vrindavan. These texts serve as essential guidebooks for practitioners, directing their minds toward daily contemplation and meditation (Smarana).</p>
+            <p>The bibliography of this tradition features an organic integration of two languages: <strong>Sanskrit</strong> and <strong>Braj Bhasha</strong>. Sanskrit was utilized by the early acharyas to write formal theological treatises, commentaries on the Upanishads and Vedanta, and intricate devotional hymns. Masterpieces like the <em>Radha Sudha Nidhi</em> (credited to Hit Harivansh or Prabodhananda Sarasvati) and the commentaries of Srila Jiva Goswami are written in classical Sanskrit, establishing the philosophical validity of the path of devotion. On the other hand, Braj Bhasha—a sweet, musical dialect of western Hindi—was the language of the heart. Saints like Swami Haridas in his <em>Kelimal</em> and Hit Harivansh in his <em>Hit Chaurasi</em> composed their direct, ecstatic realizations in Braj Bhasha, making the deepest spiritual nectar accessible to everyone through song.</p>
+            <p>In the daily life of a practitioner, reading these scriptures (known as <strong>Vani Swadhyaya</strong>) is considered a form of direct association (Satsanga) with the saints themselves. It is believed that the words of the saints are non-different from their presence; by reciting and contemplating these verses, the mind is purified of mundane desires and aligned with the transcendental mood of Vrindavan. Vrindopnishad is dedicated to the digital preservation of this invaluable heritage, collecting rare manuscripts from ancient ashrams and temples, and presenting them with structured translations, annotations, and clear definitions for modern seekers.</p>
+          `}
+          <h2 style="margin-top: 30px;">${isHindiRoute ? 'ग्रन्थ सूची' : 'Sacred Scriptures'}</h2>
           <ul>
             ${books.map(b => `<li><a href="${getRouteLink(`/book/${b.slug}`)}">${escapeHtml(b.name)}</a></li>`).join('')}
           </ul>
@@ -1552,24 +1787,94 @@ export default async function handler(req, res) {
         description = isHindiRoute ? `शास्त्रीय रागों में रचित संकीर्तन पद और भजनों का राग-अनुसार संग्रह।` : `Explore devotional songs and verses organized by their classical raag melodies.`;
         pageUrl = getRouteLink('/ragas');
         listName = isHindiRoute ? "शास्त्रीय देवभक्ति राग" : "Vaishnava Ragas";
+
+        const visibleBreadcrumbItems = [
+          { name: isHindiRoute ? "होम" : "Home", url: getRouteLink('/') },
+          { name: listName, url: pageUrl }
+        ];
+
         mainBodyHtml = `
+          ${getBreadcrumbsHtml(isHindiRoute, visibleBreadcrumbItems)}
           <h1>${isHindiRoute ? 'देवभक्ति शास्त्रीय राग' : 'Devotional Classical Ragas'}</h1>
-          <p>${isHindiRoute ? 'रागों के आधार पर वर्गीकृत पद और संकीर्तन संग्रह।' : 'Explore verses and hymns classified by raag.'}</p>
+          <p>${isHindiRoute ? 'शास्त्रीय संगीत के रागों के आधार पर वर्गीकृत पदों और संकीर्तन का संग्रह। यहाँ प्रत्येक पद के संगीतबद्ध राग की जानकारी दी गई है।' : 'Explore holy verses and kirtan hymns classified by traditional Indian classical ragas.'}</p>
+          <h2 style="margin-top: 30px;">${isHindiRoute ? 'राग सूची' : 'Classical Ragas'}</h2>
           <ul>
             ${ragas.map(r => `<li><a href="${getRouteLink(`/raga/${r.slug}`)}">${escapeHtml(r.name)}</a></li>`).join('')}
           </ul>
         `;
       } else if (decodedSlug === 'content') {
-        title = isHindiRoute ? `वृंदोपनिषद् पाठ लाइब्रेरी (Browse All Sacred Content) | Vrindopnishad` : `Vrindopnishad Paath Library (Browse All Sacred Content) | Vrindopnishad`;
-        description = isHindiRoute ? `संस्कृत श्लोकों, स्तोत्रों, भजनों, और आध्यात्मिक कविताओं की संपूर्ण लाइब्रेरी।` : `Access the complete index of shlokas, strotras, bhajans, kirtans, and spiritual poetry.`;
-        pageUrl = getRouteLink('/content');
-        listName = isHindiRoute ? "सभी संकलित पाठ" : "All Sacred Verses";
-        mainBodyHtml = `
-          <h1>${isHindiRoute ? 'सभी संकलित पाठ एवं श्लोक' : 'All Sacred Verses & Content'}</h1>
-          <ul>
-            ${allContentItems.map(item => `<li><a href="${getRouteLink(`/content/${item.slug || item.id}`)}">${escapeHtml(item.title)}</a></li>`).join('')}
-          </ul>
-        `;
+        const searchQuery = req.query.q ? req.query.q.toString().trim() : '';
+        if (searchQuery) {
+          const lowerQuery = searchQuery.toLowerCase();
+          const filtered = allContentItems.filter(item => {
+            return (item.title && item.title.toLowerCase().includes(lowerQuery)) ||
+                   (item.author && item.author.toLowerCase().includes(lowerQuery)) ||
+                   (item.hindi_text && item.hindi_text.toLowerCase().includes(lowerQuery)) ||
+                   (item.sanskrit_text && item.sanskrit_text.toLowerCase().includes(lowerQuery));
+          });
+          
+          title = isHindiRoute
+            ? `खोज परिणाम: "${escapeHtml(searchQuery)}" | वृंदोपनिषद्`
+            : `Search Results for "${escapeHtml(searchQuery)}" | Vrindopnishad`;
+          description = isHindiRoute
+            ? `वृंदोपनिषद् पर "${escapeHtml(searchQuery)}" के खोज परिणाम। संकलित श्लोक, पद और भजनों की सूची।`
+            : `Browse search results for "${escapeHtml(searchQuery)}" on Vrindopnishad. Access matching verses and spiritual scriptures.`;
+          pageUrl = getRouteLink(`/content?q=${encodeURIComponent(searchQuery)}`);
+          listName = isHindiRoute ? "खोज परिणाम" : "Search Results";
+
+          const visibleBreadcrumbItems = [
+            { name: isHindiRoute ? "होम" : "Home", url: getRouteLink('/') },
+            { name: isHindiRoute ? "खोज" : "Search", url: getRouteLink('/search') },
+            { name: `"${searchQuery}"`, url: pageUrl }
+          ];
+
+          mainBodyHtml = `
+            ${getBreadcrumbsHtml(isHindiRoute, visibleBreadcrumbItems)}
+            <h1>${isHindiRoute ? `खोज परिणाम: "${escapeHtml(searchQuery)}"` : `Search Results for "${escapeHtml(searchQuery)}"`}</h1>
+            <p>${isHindiRoute ? `"${escapeHtml(searchQuery)}" से मेल खाते ${filtered.length} परिणाम मिले:` : `Found ${filtered.length} matching results for "${escapeHtml(searchQuery)}":`}</p>
+            ${filtered.length > 0 ? `
+              <ul style="margin-top: 20px;">
+                ${filtered.map(v => `<li><a href="${getRouteLink(`/content/${v.slug || v.id}`)}">${escapeHtml(v.title)}</a></li>`).join('')}
+              </ul>
+            ` : `
+              <p style="margin: 20px 0; color: #888;">${isHindiRoute ? 'कोई परिणाम नहीं मिला। कृपया अन्य शब्दों का प्रयोग करें।' : 'No results found. Please try with different keywords.'}</p>
+            `}
+            <div style="margin-top: 30px;">
+              <form action="${getRouteLink('/content')}" method="GET" style="display: flex; gap: 10px; max-width: 500px;">
+                <input type="text" name="q" value="${escapeHtml(searchQuery)}" placeholder="${isHindiRoute ? 'अन्य पद या संत खोजें...' : 'Search other verses or saints...'}" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem;"/>
+                <button type="submit" style="background: #f2a60d; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer;">${isHindiRoute ? 'खोजें' : 'Search'}</button>
+              </form>
+            </div>
+          `;
+        } else {
+          title = isHindiRoute ? `वृंदोपनिषद् पाठ लाइब्रेरी (Browse All Sacred Content) | Vrindopnishad` : `Vrindopnishad Paath Library (Browse All Sacred Content) | Vrindopnishad`;
+          description = isHindiRoute ? `संस्कृत श्लोकों, स्तोत्रों, भजनों, और आध्यात्मिक कविताओं की संपूर्ण लाइब्रेरी।` : `Access the complete index of shlokas, strotras, bhajans, kirtans, and spiritual poetry.`;
+          pageUrl = getRouteLink('/content');
+          listName = isHindiRoute ? "सभी संकलित पाठ" : "All Sacred Verses";
+
+          const visibleBreadcrumbItems = [
+            { name: isHindiRoute ? "होम" : "Home", url: getRouteLink('/') },
+            { name: listName, url: pageUrl }
+          ];
+
+          mainBodyHtml = `
+            ${getBreadcrumbsHtml(isHindiRoute, visibleBreadcrumbItems)}
+            <h1>${isHindiRoute ? 'सभी संकलित पाठ एवं श्लोक' : 'All Sacred Verses & Content'}</h1>
+            ${isHindiRoute ? `
+              <p><strong>वृंदोपनिषद् पाठ पुस्तकालय</strong> के पावन डिजिटल संग्रह में स्वागत है। यह पुस्तकालय हमारे संरक्षण कार्य का हृदय है, जिसमें सैकड़ों संस्कृत श्लोक, स्तुति स्तोत्र और रसिक संतों के ब्रजभाषा पद संकलित हैं। <em>पाठ</em> का अर्थ है शास्त्रों का नियमपूर्वक और सस्वर वाचन करना। वैदिक और वैष्णव परंपरा में ध्वनि को केवल अर्थ समझाने का साधन नहीं, बल्कि एक दिव्य आध्यात्मिक ऊर्जा माना गया है। श्रद्धापूर्वक इन पवित्र वाणियों का पाठ करने से एक सूक्ष्म, पवित्र कंपन उत्पन्न होता है, जो मन के तनाव को दूर कर आंतरिक शांति प्रदान करता है।</p>
+              <p>इस पुस्तकालय की सामग्री को इस प्रकार व्यवस्थित किया गया है कि यह शोधकर्ताओं और दैनिक साधकों दोनों के लिए समान रूप से उपयोगी सिद्ध हो। प्रत्येक पद के पृष्ठ पर देवनागरी मूल पाठ, शुद्ध उच्चारण में सहायक रोमन लिप्यंतरण (Hinglish), और हिंदी-अंग्रेजी अनुवाद के साथ विस्तृत व्याख्या दी गई है। हिंग्लिश की उपलब्धता के कारण विश्व भर के जिज्ञासु, जिन्हें देवनागरी लिपि का अभ्यास नहीं है, वे भी सुगमता से इन पदों का पाठ कर सकते हैं। यह पुस्तकालय विभिन्न श्रेणियों में विभाजित है, जैसे श्री राधा रानी की महिमा, भगवान कृष्ण की लीलाएँ, वृंदावन धाम का महात्म्य और संतों के उपदेशपरक दोहे।</p>
+              <p>हम साधकों से अनुरोध करते हैं कि वे इस पुस्तकालय का उपयोग अपनी दैनिक साधना में अवश्य करें। प्रतिदिन कुछ मिनटों के लिए पवित्र वाणियों का स्वाध्याय करने से अशांत जीवन में स्थिरता और एकाग्रता आती है। हमारी उन्नत खोज प्रणाली और रसिक लिंक रजिस्ट्री के माध्यम से आप किसी भी पद के लेखक, राग, संबंधित ग्रंथ और दार्शनिक अवधारणाओं के बीच के संबंधों को आसानी से समझ सकते हैं, जिससे इस अमूल्य आध्यात्मिक धरोहर की गहरी समझ प्राप्त होती है।</p>
+            ` : `
+              <p>Welcome to the digital sanctuary of the <strong>Vrindopnishad Paath Library</strong>. This repository represents the heart of our archiving mission, containing hundreds of sacred Sanskrit shlokas, devotional stotras, and Braj Bhasha poetry from the Rasik saints. The word <em>Paath</em> refers to the traditional practice of systematic, vocal recitation of scriptural texts. In the Vedic and Vaishnava traditions, sound is understood not merely as a medium for conveying semantic meaning, but as a dynamic spiritual energy. Reciting these verses with devotion creates a subtle, purifying vibration that clears the mind of stress and establishes a deep sense of inner peace.</p>
+              <p>The content in this library is carefully organized to facilitate both academic research and daily spiritual practice. Each verse page is designed to return fully rendered HTML, featuring the original Devanagari text, a clear romanized transliteration (Hinglish) to assist with pronunciation, and a detailed translation with historical commentary. The inclusion of Hinglish ensures that seekers from across the globe, regardless of their familiarity with the Devanagari script, can participate in the chanting. The library is categorized into distinct spiritual domains, including verses dedicated to the glory of Shri Radha, the pastimes of Lord Krishna, the sacred landscape of Vrindavan Dham, and the instructions of the saints.</p>
+              <p>We encourage users to make this library a part of their daily routine. Engaging in scriptural contemplation—even for a few minutes each day—helps to establish a meditative anchor in our fast-paced lives. By utilizing our advanced search filters and internal linking registry, you can easily trace the connections between different verses, their authors, their respective classical ragas, and their underlying theological concepts, unlocking the deeper layers of this profound heritage.</p>
+            `}
+            <h2 style="margin-top: 30px;">${isHindiRoute ? 'सभी संकलित पदों की सूची' : 'Collected Verses'}</h2>
+            <ul>
+              ${allContentItems.map(item => `<li><a href="${getRouteLink(`/content/${item.slug || item.id}`)}">${escapeHtml(item.title)}</a></li>`).join('')}
+            </ul>
+          `;
+        }
       } else {
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
         res.status(404).send(`<!doctype html><html lang="hi"><head><meta charset="utf-8"/><title>Page Not Found — Vrindopnishad</title><meta name="robots" content="noindex"/></head><body style="font-family:sans-serif;text-align:center;padding:60px 20px;"><h1>404 — Page Not Found</h1><p><a href="${DOMAIN}/">Go Home →</a></p></body></html>`);
@@ -1609,6 +1914,7 @@ export default async function handler(req, res) {
         });
       }
     }
+  }
 
   } else {
     

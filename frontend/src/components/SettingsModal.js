@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { X, Type, Layout, AlignLeft, User, Check, AlertCircle, Palette } from 'lucide-react';
 import { useSettings, THEMES } from '../contexts/SettingsContext';
-import { AuthContext } from '../App';
+import { AuthContext } from '../contexts/ClientProviders';
 import { updateProfile } from 'firebase/auth';
 import ThemeIcon from './ThemeIcon';
 

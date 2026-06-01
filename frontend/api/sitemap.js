@@ -261,7 +261,13 @@ const SEO_PAGES = [
   { path: '/radhavallabh-vs-gaudiya-sampradaya', priority: '0.9', changefreq: 'weekly' },
   { path: '/vrindavan-parikrama-guide', priority: '0.9', changefreq: 'weekly' },
   { path: '/history-of-radhavallabh-sampradaya', priority: '0.9', changefreq: 'weekly' },
-  { path: '/major-rasik-saints-of-braj', priority: '0.9', changefreq: 'weekly' }
+  { path: '/major-rasik-saints-of-braj', priority: '0.9', changefreq: 'weekly' },
+  { path: '/about', priority: '0.8', changefreq: 'monthly' },
+  { path: '/editorial-policy', priority: '0.8', changefreq: 'monthly' },
+  { path: '/sources', priority: '0.8', changefreq: 'monthly' },
+  { path: '/contact', priority: '0.8', changefreq: 'monthly' },
+  { path: '/search', priority: '0.7', changefreq: 'weekly' },
+  { path: '/granthas', priority: '0.9', changefreq: 'weekly' }
 ];
 
 export default async function handler(req, res) {
@@ -433,16 +439,53 @@ export default async function handler(req, res) {
     .filter(Boolean)
     .join('\n');
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+  const sub = req.query.sub;
+  let xml = '';
+
+  if (!sub) {
+    xml = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>${DOMAIN}/sitemaps/content.xml</loc>
+    <lastmod>${today}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${DOMAIN}/sitemaps/saints.xml</loc>
+    <lastmod>${today}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${DOMAIN}/sitemaps/granthas.xml</loc>
+    <lastmod>${today}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${DOMAIN}/sitemaps/teachings.xml</loc>
+    <lastmod>${today}</lastmod>
+  </sitemap>
+</sitemapindex>`;
+    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+    res.status(200).send(xml);
+    return;
+  }
+
+  let urls = '';
+  if (sub === 'saints') {
+    urls = santUrls;
+  } else if (sub === 'granthas') {
+    urls = `${bookUrls}\n${ragaUrls}\n${catUrls}`;
+  } else if (sub === 'teachings') {
+    urls = `${staticUrls}\n${glossaryUrls}`;
+  } else if (sub === 'content') {
+    urls = contentUrls;
+  } else {
+    res.status(404).send('Sitemap not found');
+    return;
+  }
+
+  xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
-${staticUrls}
-${catUrls}
-${santUrls}
-${bookUrls}
-${ragaUrls}
-${glossaryUrls}
-${contentUrls}
+${urls}
 </urlset>`;
 
   res.setHeader('Content-Type', 'application/xml; charset=utf-8');

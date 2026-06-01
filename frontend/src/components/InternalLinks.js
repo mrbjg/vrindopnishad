@@ -24,6 +24,10 @@ const ALL_SEO_PAGES = [
   { path: '/vrindavan-parikrama-guide', title: 'Vrindavan Parikrama Guide', desc: 'Route, ghats, and spiritual rules' },
   { path: '/history-of-radhavallabh-sampradaya', title: 'Radhavallabh Sampradaya History', desc: 'Complete history, founder and teachings' },
   { path: '/major-rasik-saints-of-braj', title: 'Major Rasik Saints of Braj', desc: 'Biographies, lineages and contributions' },
+  { path: '/about', title: 'About Us', desc: 'Our mission, team and archival vision' },
+  { path: '/editorial-policy', title: 'Editorial Policy', desc: 'Content verification and manuscript accuracy' },
+  { path: '/sources', title: 'Sources & Citations', desc: 'Our scriptural references bibliography' },
+  { path: '/contact', title: 'Contact Us', desc: 'Get in touch with the editorial team' },
 ];
 
 const InternalLinks = ({ exclude = [], count = 4 }) => {

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { createContext, useState, useEffect, useRef, useContext } from 'react';
 
 const AudioContext = createContext();
@@ -15,17 +17,20 @@ export const AudioProvider = ({ children }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [progress, setProgress] = useState(0);
     const [duration, setDuration] = useState(0);
-    const [volume, setVolume] = useState(() => {
-        const savedVolume = localStorage.getItem('sv_audio_volume');
-        return savedVolume ? parseFloat(savedVolume) : 0.8;
-    });
+    const [volume, setVolume] = useState(0.8);
     const [isMuted, setIsMuted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const audioRef = useRef(new Audio());
+    const audioRef = useRef(null);
 
     useEffect(() => {
-        const audio = audioRef.current;
+        const savedVolume = typeof window !== 'undefined' ? localStorage.getItem('sv_audio_volume') : null;
+        if (savedVolume) {
+            setVolume(parseFloat(savedVolume));
+        }
+
+        const audio = new Audio();
+        audioRef.current = audio;
 
         const updateProgress = () => {
             if (audio.duration) {
@@ -64,16 +69,19 @@ export const AudioProvider = ({ children }) => {
             audio.removeEventListener('waiting', onWaiting);
             audio.removeEventListener('playing', onPlaying);
             audio.removeEventListener('error', onError);
+            audio.pause();
         };
     }, []);
 
     useEffect(() => {
-        audioRef.current.volume = isMuted ? 0 : volume;
-        localStorage.setItem('sv_audio_volume', volume.toString());
+        if (audioRef.current) {
+            audioRef.current.volume = isMuted ? 0 : volume;
+            localStorage.setItem('sv_audio_volume', volume.toString());
+        }
     }, [volume, isMuted]);
 
     const play = (track) => {
-        if (!track || !track.audio_url) return;
+        if (!track || !track.audio_url || !audioRef.current) return;
 
         if (currentTrack?.id === track.id) {
             if (!isPlaying) {
@@ -95,11 +103,14 @@ export const AudioProvider = ({ children }) => {
     };
 
     const pause = () => {
-        audioRef.current.pause();
+        if (audioRef.current) {
+            audioRef.current.pause();
+        }
         setIsPlaying(false);
     };
 
     const toggle = () => {
+        if (!audioRef.current) return;
         if (isPlaying) {
             pause();
         } else if (currentTrack) {
@@ -109,7 +120,7 @@ export const AudioProvider = ({ children }) => {
     };
 
     const seek = (percentage) => {
-        if (audioRef.current.duration) {
+        if (audioRef.current && audioRef.current.duration) {
             const newTime = (percentage / 100) * audioRef.current.duration;
             audioRef.current.currentTime = newTime;
             setProgress(percentage);

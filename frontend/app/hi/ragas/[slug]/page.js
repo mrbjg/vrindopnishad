@@ -1,0 +1,108 @@
+import React from 'react';
+import RagaDetailPage from '../../../../src/views/RagaDetailPage';
+import Layout from '../../../../src/components/Layout';
+import { getRagaBySlug, getAllRagas } from '../../../../src/lib/contentData';
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+
+export async function generateStaticParams() {
+  const ragas = getAllRagas();
+  return ragas.map(r => ({
+    slug: encodeURIComponent(r.slug),
+  }));
+}
+
+export async function generateMetadata({ params }) {
+  const decodedSlug = decodeURIComponent(params.slug);
+  const raga = getRagaBySlug(decodedSlug);
+  if (!raga) return {};
+
+  const title = `${raga.name} आधारित वाणी पद एवं संकीर्तन | Vrindopnishad`;
+  const description = `राग ${raga.name} में रचित दिव्य वाणी पदों एवं संकीर्तन का संग्रह। शास्त्रीय रागों में निबंध ब्रज रस के पद अर्थ सहित पढ़ें।`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `https://path.vrindopnishad.in/hi/ragas/${params.slug}`,
+    },
+    openGraph: {
+      title,
+      description,
+      url: `https://path.vrindopnishad.in/hi/ragas/${params.slug}`,
+      type: 'music.playlist',
+    }
+  };
+}
+
+export default function HindiRagaRoute({ params }) {
+  const decodedSlug = decodeURIComponent(params.slug);
+  const raga = getRagaBySlug(decodedSlug);
+  if (!raga) {
+    notFound();
+  }
+
+  const listSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": raga.name,
+    "description": `राग ${raga.name} में रचित पदों की सूची`,
+    "numberOfItems": raga.verses ? raga.verses.length : 0,
+    "itemListElement": raga.verses ? raga.verses.slice(0, 10).map((v, idx) => ({
+      "@type": "ListItem",
+      "position": idx + 1,
+      "url": `https://path.vrindopnishad.in/hi/content/${v.slug || v.id}`
+    })) : []
+  };
+
+  const breadcrumbsSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "मुख्यपृष्ठ",
+        "item": "https://path.vrindopnishad.in/hi"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "राग",
+        "item": "https://path.vrindopnishad.in/hi/ragas"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": raga.name,
+        "item": `https://path.vrindopnishad.in/hi/ragas/${raga.slug}`
+      }
+    ]
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(listSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsSchema) }}
+      />
+      
+      <div className="max-w-4xl mx-auto px-4 pt-4 mb-2 flex items-center gap-1.5 text-xs text-white/50 select-none">
+        <Link href="/hi" className="hover:text-amber-400 transition-colors">मुख्यपृष्ठ</Link>
+        <span>→</span>
+        <Link href="/hi/ragas" className="hover:text-amber-400 transition-colors">राग</Link>
+        <span>→</span>
+        <span className="text-white/80 font-medium truncate">{raga.name}</span>
+      </div>
+
+      <Layout>
+        <RagaDetailPage initialRaga={raga} />
+      </Layout>
+    </>
+  );
+}
+export const revalidate = 86400;
