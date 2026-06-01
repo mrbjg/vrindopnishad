@@ -12,11 +12,14 @@ const SCENES = [
     subtitle: 'Sacred verses, delivered at dawn',
     poem: 'Each morning a verse arrives — a mirror held up to the soul. Read, reflect, absorb. The words of the saints are not instructions; they are invitations to stillness.',
     poemSignature: '— from the tradition of Pushti Marg',
+    poemTitle: 'Stillness,\nas a practice.',
     meta: {
       type: 'Scripture',
-      period: 'Daily Practice',
-      medium: 'Text & Audio',
-      origin: 'Vaishnava Tradition'
+      author: 'Mahaprabhu Vallabhacharya',
+      work: 'Swadhyaya Collection',
+      date: 'Daily · Dawn',
+      origin: 'Pushti Marg Tradition',
+      movement: 'Vaishnava · Bhakti'
     },
     image: 'https://images.unsplash.com/photo-1532375810709-75b1da00537c?auto=format&fit=crop&w=1280&q=80',
     hotspots: [
@@ -31,11 +34,14 @@ const SCENES = [
     subtitle: 'A digital Japa Mala for the modern devotee',
     poem: 'The mala turns, bead by bead. Each name uttered is a step closer to the divine. In silence, in motion, in the rhythm of breath — the sanctuary is always open.',
     poemSignature: '— the practice of Naam Jap',
+    poemTitle: 'Breath,\nas a prayer.',
     meta: {
       type: 'Meditation',
-      period: 'Timeless',
-      medium: 'Interactive',
-      origin: 'Bhakti Yoga'
+      author: 'Bhakti Yoga Tradition',
+      work: 'Japa Mala · 108 Beads',
+      date: 'Timeless',
+      origin: 'Naam Jap Parampara',
+      movement: 'Bhakti · Dhyana'
     },
     image: 'https://images.unsplash.com/photo-1600618528240-fb9fc964b853?auto=format&fit=crop&w=1280&q=80',
     hotspots: [
@@ -50,11 +56,14 @@ const SCENES = [
     subtitle: 'Live the divine Lilas as they unfold',
     poem: 'Time in Braj is not linear — it spirals. Each season, each tithi, each festival carries the fragrance of Shri Krishna\'s eternal play. The calendar is a portal.',
     poemSignature: '— the cycle of Braj',
+    poemTitle: 'Time,\nas a spiral.',
     meta: {
       type: 'Calendar',
-      period: 'Vikram Samvat',
-      medium: 'Interactive Map',
-      origin: 'Braj Mandal'
+      author: 'Braj Mandal Traditions',
+      work: 'Vikram Samvat Panchang',
+      date: 'Vikram Samvat Era',
+      origin: 'Braj · Vrindavan',
+      movement: 'Lila · Utsav'
     },
     image: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1280&q=80',
     hotspots: [
@@ -68,12 +77,34 @@ const SCENES = [
 const BRAND_NAME = 'SANT VAANI';
 const BRAND_TAGLINE = 'Where Silence Speaks';
 
+const FAQ_ITEMS = [
+  {
+    q: "What is the core purpose of VrindaVaani?",
+    a: "VrindaVaani is a digital sanctuary created to preserve and share the sacred literature, traditional Ragas, and calendar of Braj, with a special focus on the teachings of Vaishnava saints."
+  },
+  {
+    q: "How does the Japa Mala / Chant Sanctuary function?",
+    a: "It features an interactive 108-bead Japa Mala with haptic feedback, custom meditation timers, and a library of traditional mantras with audio and pronunciation guides."
+  },
+  {
+    q: "Where does the scriptural content come from?",
+    a: "Every verse, Sanskrit shloka, and translation is sourced directly from canonical Vaishnava texts and validated with traditional commentary for absolute authenticity."
+  },
+  {
+    q: "Is VrindaVaani free to use?",
+    a: "Yes. VrindaVaani is entirely non-commercial and run as a devotional service. There are no advertisements, subscriptions, or hidden charges."
+  },
+  {
+    q: "How can I participate or contribute?",
+    a: "You can contribute by translating verses, reporting corrections, or recording audio recitations. Please reach out via the feedback portal in the main application."
+  }
+];
+
 // ─── Component ────────────────────────────────────────────────
 export default function PromoLanding() {
   const { apiService } = useContext(ApiContext);
 
   // Loader
-  const [loaderReady, setLoaderReady] = useState(false);
   const [loaderLineOn, setLoaderLineOn] = useState(false);
   const [lettersOn, setLettersOn] = useState([]);
   const [taglineOn, setTaglineOn] = useState(false);
@@ -81,10 +112,10 @@ export default function PromoLanding() {
   const [loaderGone, setLoaderGone] = useState(false);
 
   // Scenes
-  const [currentScene, setCurrentScene] = useState(0); // 0 = threshold, 1-3 = works, 4 = exit
+  const [currentScene, setCurrentScene] = useState(0); // 0=threshold, 1-3=works, 4=faq, 5=connect, 6=exit
   const [sceneDirection, setSceneDirection] = useState('next');
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const totalScenes = SCENES.length + 2; // threshold + works + exit
+  const totalScenes = SCENES.length + 4; // threshold + works + faq + connect + exit
 
   // Cursor
   const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
@@ -97,6 +128,13 @@ export default function PromoLanding() {
   // Panel
   const [panelOpen, setPanelOpen] = useState(false);
   const [panelData, setPanelData] = useState(null);
+
+  // FAQ Accordion State
+  const [openFaq, setOpenFaq] = useState(null);
+
+  const toggleFaq = (idx) => {
+    setOpenFaq(prev => prev === idx ? null : idx);
+  };
 
   // Stats
   const [stats, setStats] = useState({ verses: 120, sants: 12, books: 6, ragas: 8 });
@@ -201,6 +239,20 @@ export default function PromoLanding() {
     return () => cancelAnimationFrame(auraAnimRef.current);
   }, [mousePos]);
 
+  // ─── Scene Navigation ──────────────────────────────────────
+  const goToScene = useCallback((target, dir) => {
+    if (isTransitioning) return;
+    if (target < 0 || target >= totalScenes) return;
+
+    setIsTransitioning(true);
+    setSceneDirection(dir);
+    setPanelOpen(false);
+    setOpenFaq(null); // Reset FAQ state on scene change
+    setCurrentScene(target);
+
+    setTimeout(() => setIsTransitioning(false), 1400);
+  }, [isTransitioning, totalScenes]);
+
   // ─── Keyboard Navigation ───────────────────────────────────
   useEffect(() => {
     const handleKey = (e) => {
@@ -219,22 +271,9 @@ export default function PromoLanding() {
 
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [currentScene, panelOpen]);
+  }, [currentScene, panelOpen, goToScene]);
 
-  // ─── Scene Navigation ──────────────────────────────────────
-  const goToScene = useCallback((target, dir) => {
-    if (isTransitioning) return;
-    if (target < 0 || target >= totalScenes) return;
-
-    setIsTransitioning(true);
-    setSceneDirection(dir);
-    setPanelOpen(false);
-    setCurrentScene(target);
-
-    setTimeout(() => setIsTransitioning(false), 1400);
-  }, [isTransitioning, totalScenes]);
-
-  // ─── Torch Effect ──────────────────────────────────────────
+  // ─── Torch & 3D Parallax Tilt Effect ──────────────────────
   const handleCanvasMouseMove = useCallback((e, idx) => {
     const canvas = canvasRefs.current[idx];
     if (!canvas) return;
@@ -243,6 +282,12 @@ export default function PromoLanding() {
     const my = ((e.clientY - rect.top) / rect.height * 100).toFixed(1) + '%';
     canvas.style.setProperty('--mx', mx);
     canvas.style.setProperty('--my', my);
+
+    // Subtle 3D Tilt calculations
+    const px = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
+    const py = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 to 0.5
+    canvas.style.setProperty('--rx', `${py * -10}deg`);
+    canvas.style.setProperty('--ry', `${px * 10}deg`);
   }, []);
 
   const handleCanvasEnter = useCallback((idx) => {
@@ -252,7 +297,21 @@ export default function PromoLanding() {
 
   const handleCanvasLeave = useCallback((idx) => {
     const canvas = canvasRefs.current[idx];
-    if (canvas) canvas.classList.remove('torch-active');
+    if (canvas) {
+      canvas.classList.remove('torch-active');
+      canvas.style.setProperty('--rx', '0deg');
+      canvas.style.setProperty('--ry', '0deg');
+    }
+  }, []);
+
+  // Card Mouse Move spotlight tracking
+  const handleCardMouseMove = useCallback((e) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    card.style.setProperty('--c-mx', `${x}px`);
+    card.style.setProperty('--c-my', `${y}px`);
   }, []);
 
   // ─── Hotspot Click ─────────────────────────────────────────
@@ -364,6 +423,10 @@ export default function PromoLanding() {
               <span className="dot" style={{ background: 'var(--or)' }} />
             </Link>
           </div>
+          <div 
+            className="pm-header-progress-line" 
+            style={{ width: `${(currentScene / (totalScenes - 1)) * 100}%` }}
+          />
         </div>
 
         {/* ═══ CHROME BOTTOM ═══ */}
@@ -417,9 +480,9 @@ export default function PromoLanding() {
 
               <h1 className="pm-threshold-title">
                 {lang === 'en' ? (
-                  <>Where <em>Silence</em> Speaks</>
+                  <><span className="title-line title-line-where">Where</span><span className="title-line title-line-silence"><em>Silence</em></span><span className="title-line title-line-speaks">Speaks</span></>
                 ) : (
-                  <>जहाँ <em>मौन</em> बोलता है</>
+                  <><span className="title-line title-line-where">जहाँ</span><span className="title-line title-line-silence"><em>मौन</em></span><span className="title-line title-line-speaks">बोलता है</span></>
                 )}
               </h1>
 
@@ -494,20 +557,28 @@ export default function PromoLanding() {
                 </div>
 
                 <div className="pm-scene-work">
-                  {/* Left: Meta */}
+                  {/* Left: Meta — lunchlab.fr structured labels */}
                   <div className="pm-work-meta">
                     <span className="type-tag">{scene.meta.type}</span>
-                    <div className="pm-numbered-item">
-                      <span className="num">01</span>
-                      <span className="item-text">{scene.meta.period}</span>
+                    <div className="pm-meta-field">
+                      <span className="meta-label">Author</span>
+                      <span className="meta-value">{scene.meta.author}</span>
                     </div>
-                    <div className="pm-numbered-item">
-                      <span className="num">02</span>
-                      <span className="item-text">{scene.meta.medium}</span>
+                    <div className="pm-meta-field">
+                      <span className="meta-label">Work</span>
+                      <span className="meta-value">{scene.meta.work}</span>
                     </div>
-                    <div className="pm-numbered-item">
-                      <span className="num">03</span>
-                      <span className="item-text">{scene.meta.origin}</span>
+                    <div className="pm-meta-field">
+                      <span className="meta-label">Date</span>
+                      <span className="meta-value">{scene.meta.date}</span>
+                    </div>
+                    <div className="pm-meta-field">
+                      <span className="meta-label">Origin</span>
+                      <span className="meta-value">{scene.meta.origin}</span>
+                    </div>
+                    <div className="pm-meta-field">
+                      <span className="meta-label">Movement</span>
+                      <span className="meta-value">{scene.meta.movement}</span>
                     </div>
                   </div>
 
@@ -546,7 +617,7 @@ export default function PromoLanding() {
                         />
                       ))}
 
-                      {/* Canvas tools */}
+                      {/* lunchlab.fr-style canvas tools: / WORK + REVEAL */}
                       <div className="pm-canvas-tools">
                         <button
                           className="pm-canvas-btn"
@@ -560,7 +631,21 @@ export default function PromoLanding() {
                           onMouseEnter={() => setCursorHover(true)}
                           onMouseLeave={() => setCursorHover(false)}
                         >
-                          Context
+                          / Work
+                        </button>
+                        <button
+                          className="pm-canvas-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openHotspot(scene, {
+                              label: 'Explore ' + scene.title,
+                              desc: scene.subtitle + '. ' + scene.poem
+                            });
+                          }}
+                          onMouseEnter={() => setCursorHover(true)}
+                          onMouseLeave={() => setCursorHover(false)}
+                        >
+                          Reveal
                         </button>
                       </div>
                     </div>
@@ -570,9 +655,11 @@ export default function PromoLanding() {
                     </div>
                   </div>
 
-                  {/* Right: Poem */}
+                  {/* Right: Poem — lunchlab.fr style */}
                   <div className="pm-work-poem">
-                    <h2>{scene.title}</h2>
+                    <h2 className="poem-title-lunchlab">{scene.poemTitle.split('\n').map((line, i) => (
+                      <span key={i}>{line}<br /></span>
+                    ))}</h2>
                     <p>{scene.poem}</p>
                     <span className="signature">{scene.poemSignature}</span>
                   </div>
@@ -581,7 +668,142 @@ export default function PromoLanding() {
             );
           })}
 
-          {/* ── Scene 4: Exit ── */}
+          {/* ── Scene 4: FAQ (Got Questions?) ── */}
+          <div className={`${getSceneClass(totalScenes - 2)} pm-scene-faq`} data-scene={totalScenes - 2}>
+            <div className="pm-faq-inner">
+              <div className="pm-faq-header">
+                <div className="pm-faq-eyebrow">
+                  STAGE 04 - FAQ
+                </div>
+                <div className="pm-faq-status">
+                  <span className="status-dot">◆</span> Query resolved.
+                </div>
+              </div>
+
+              <div className="pm-faq-layout">
+                {/* Left side: Monospace pixelated style layout */}
+                <div className="pm-faq-left">
+                  <h2 className="pm-faq-title">
+                    GOT<br />QUESTIONS?
+                  </h2>
+                  <p className="pm-faq-quote">
+                    "Checking the codex..."
+                  </p>
+                </div>
+
+                {/* Right side: Accordion list */}
+                <div className="pm-faq-right">
+                  <div className="pm-faq-list">
+                    {FAQ_ITEMS.map((item, idx) => (
+                      <div 
+                        key={idx} 
+                        className={`pm-faq-item${openFaq === idx ? ' is-open' : ''}`}
+                      >
+                        <button
+                          className="pm-faq-trigger"
+                          onClick={() => toggleFaq(idx)}
+                          onMouseEnter={() => setCursorHover(true)}
+                          onMouseLeave={() => setCursorHover(false)}
+                          aria-expanded={openFaq === idx}
+                          aria-controls={`faq-answer-${idx}`}
+                        >
+                          <span className="faq-num">{String(idx + 1).padStart(2, '0')}</span>
+                          <span className="faq-q">{item.q}</span>
+                          <span className="faq-icon">◆</span>
+                        </button>
+                        <div 
+                          id={`faq-answer-${idx}`}
+                          className={`faq-answer-wrap${openFaq === idx ? ' is-open' : ''}`}
+                        >
+                          <div className="faq-answer-inner">
+                            <p className="faq-a">{item.a}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="pm-faq-footer">
+                MORE QUESTIONS? REACH OUT DIRECTLY <span className="footer-dots">◆ ◆ ◆</span>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Scene 5: Connect (Shakanksh-inspired CTA) ── */}
+          <div className={`${getSceneClass(totalScenes - 2)} pm-scene-connect`} data-scene={totalScenes - 2}>
+            <div className="pm-connect-inner">
+              <div className="pm-connect-left">
+                <div className="pm-connect-available">
+                  <span className="avail-dot" /> Available for devotees
+                </div>
+                <h2 className="pm-connect-title">
+                  {lang === 'en' ? (<>LET'S BEGIN<br/>TOGETHER.</>) : (<>आइए साथ<br/>आरम्भ करें।</>)}
+                </h2>
+                <p className="pm-connect-sub">
+                  {lang === 'en'
+                    ? 'Choose how you\'d like to connect. Pick the channel that fits you best.'
+                    : 'कैसे जुड़ना चाहते हैं चुनें। अपनी सुविधानुसार माध्यम चुनें।'
+                  }
+                </p>
+              </div>
+              <div className="pm-connect-right">
+                {/* Channel 01 — LIVE */}
+                <div 
+                  className="pm-channel-card"
+                  onMouseMove={handleCardMouseMove}
+                >
+                  <div className="channel-tags">
+                    <span className="channel-tag tag-live">Live</span>
+                    <span className="channel-num">Channel 01</span>
+                  </div>
+                  <h3 className="channel-title">{lang === 'en' ? 'Enter the App' : 'ऐप में प्रवेश करें'}</h3>
+                  <p className="channel-desc">
+                    {lang === 'en'
+                      ? 'Explore the full sanctuary. Browse sacred verses, chant with the Japa Mala, and follow the living Braj Calendar.'
+                      : 'पूर्ण मंदिर का अन्वेषण करें। पवित्र श्लोक पढ़ें, जपमाला से जप करें, और ब्रज पंचांग देखें।'
+                    }
+                  </p>
+                  <Link
+                    to="/"
+                    className="channel-btn"
+                    onMouseEnter={() => setCursorHover(true)}
+                    onMouseLeave={() => setCursorHover(false)}
+                  >
+                    {lang === 'en' ? 'Enter Sanctuary' : 'मंदिर में प्रवेश करें'}
+                  </Link>
+                </div>
+                {/* Channel 02 — ASYNC */}
+                <div 
+                  className="pm-channel-card"
+                  onMouseMove={handleCardMouseMove}
+                >
+                  <div className="channel-tags">
+                    <span className="channel-tag tag-async">Async</span>
+                    <span className="channel-num">Channel 02</span>
+                  </div>
+                  <h3 className="channel-title">{lang === 'en' ? 'Daily Swadhyaya' : 'दैनिक स्वाध्याय'}</h3>
+                  <p className="channel-desc">
+                    {lang === 'en'
+                      ? 'Receive a sacred verse every morning. No apps, no scheduling. Pure devotion delivered to your notification.'
+                      : 'हर सुबह एक पवित्र श्लोक प्राप्त करें। बिना ऐप, बिना अनुसूची। शुद्ध भक्ति सीधे आपके पास।'
+                    }
+                  </p>
+                  <Link
+                    to="/"
+                    className="channel-btn"
+                    onMouseEnter={() => setCursorHover(true)}
+                    onMouseLeave={() => setCursorHover(false)}
+                  >
+                    {lang === 'en' ? 'Start Now' : 'अभी आरम्भ करें'}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Scene 6: Exit ── */}
           <div className={`${getSceneClass(totalScenes - 1)} pm-scene-exit`} data-scene={totalScenes - 1}>
             <div className="pm-exit-inner">
               <div className="pm-exit-line">
@@ -597,23 +819,13 @@ export default function PromoLanding() {
                   : 'संत वाणी के साथ अपनी साधना आरम्भ करें'
                 }
               </div>
-              <Link
-                to="/"
-                className="pm-exit-restart"
-                onMouseEnter={() => setCursorHover(true)}
-                onMouseLeave={() => setCursorHover(false)}
-              >
-                {lang === 'en' ? 'Enter the Sanctuary' : 'मंदिर में प्रवेश करें'}
-              </Link>
-              <br />
               <button
                 className="pm-exit-restart"
                 onClick={() => goToScene(0, 'prev')}
                 onMouseEnter={() => setCursorHover(true)}
                 onMouseLeave={() => setCursorHover(false)}
-                style={{ marginTop: 16 }}
               >
-                {lang === 'en' ? 'Revisit' : 'पुनः देखें'}
+                {lang === 'en' ? 'Revisit the Journey' : 'यात्रा पुनः देखें'}
               </button>
             </div>
           </div>
