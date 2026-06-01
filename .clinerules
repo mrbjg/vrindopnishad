@@ -55,3 +55,12 @@ For Single Page Applications (SPAs) requiring SEO indexation on deep routes, avo
 
 Lambda Static Asset Bundling Rule:
 When serverless functions need to read compiled assets (such as index.html or asset-manifest.json) dynamically, always configure Vercel's functions mapping to explicitly bundle those compiled directories (includeFiles: "build/index.html"), ensuring files are resolved during runtime execution.
+
+---
+
+## 6. Free-Tier Serverless & Edge Optimization Rules
+- **Aggressive CDN Edge Caching**: Always configure cache headers (`Cache-Control: public, s-maxage=86400, stale-while-revalidate=604800`) on all serverless/edge functions that serve dynamic content. This minimizes Edge function invocations and active CPU duration, preventing free-tier limit exhaustions.
+- **Static Sitemap Compilation**: Avoid generating XML sitemaps dynamically on every request. Execute sitemap generation once during postbuild compilation to create static files (`sitemap.xml`) served directly from Vercel's CDN, protecting function invocation quotas.
+- **Payload Compression & Transfer Optimization**: Keep responses returned by serverless handlers as lightweight as possible. Trim redundant whitespace, compress JSON data, and leverage pagination to minimize Origin Transfer and Data Transfer bandwidth.
+- **Local DB Fallbacks & Memory Caching**: Use local JSON files or in-memory caches in API handlers for static/semi-static data (like saints biographies, book metadata) to prevent redundant remote database queries that increase CPU runtimes and database API usage.
+
