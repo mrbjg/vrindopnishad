@@ -1,26 +1,26 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Provider for managing favorites with Supabase sync
+/// Provider for managing favorites with Cloud Firestore sync
 class FavoritesNotifier extends StateNotifier<Set<String>> {
-  final SupabaseClient _supabase = Supabase.instance.client;
   static const String _storageKey = 'saved_sacred_content_ids';
 
   FavoritesNotifier() : super({}) {
     _initAndLoad();
   }
 
-  User? get _currentUser => _supabase.auth.currentUser;
+  User? get _currentUser => FirebaseAuth.instance.currentUser;
 
   /// Initialize and load favorites with multi-tier priority
   Future<void> _initAndLoad() async {
     // 1. FAST: Load from local storage immediately
     await _loadFromLocal();
     
-    // 2. SYNC: Load from Supabase in background
+    // 2. SYNC: Load from Firestore in background
     if (_currentUser != null) {
-      _loadFromSupabase();
+      _loadFromFirestore();
     }
   }
 
@@ -45,18 +45,18 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
     }
   }
 
-  /// Load favorites from Supabase for the current user
-  Future<void> _loadFromSupabase() async {
+  /// Load favorites from Firestore for the current user
+  Future<void> _loadFromFirestore() async {
     if (_currentUser == null) return;
 
     try {
-      final response = await _supabase
-          .from('favorites')
-          .select('content_id')
-          .eq('user_id', _currentUser!.id);
+      final response = await FirebaseFirestore.instance
+          .collection('favorites')
+          .where('user_id', isEqualTo: _currentUser!.uid)
+          .get();
 
-      final favoriteIds = (response as List)
-          .map((item) => item['content_id'] as String)
+      final favoriteIds = response.docs
+          .map((item) => item.data()['content_id'] as String)
           .toSet();
 
       if (favoriteIds.isNotEmpty) {
@@ -64,7 +64,7 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
         await _saveToLocal();
       }
     } catch (e) {
-      // Ignore Supabase sync errors
+      // Ignore Firestore sync errors
     }
   }
 
@@ -88,12 +88,14 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
     state = {...state, contentId};
     await _saveToLocal();
 
-    // Sync with Supabase only if authenticated
+    // Sync with Firestore only if authenticated
     if (_currentUser != null) {
       try {
-        await _supabase.from('favorites').insert({
-          'user_id': _currentUser!.id,
+        final favId = '${_currentUser!.uid}_$contentId';
+        await FirebaseFirestore.instance.collection('favorites').doc(favId).set({
+          'user_id': _currentUser!.uid,
           'content_id': contentId,
+          'created_at': DateTime.now().toUtc().toIso8601String(),
         });
       } catch (e) {
         // Log error but keep local state
@@ -109,14 +111,14 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
     state = newState;
     await _saveToLocal();
 
-    // Sync with Supabase only if authenticated
+    // Sync with Firestore only if authenticated
     if (_currentUser != null) {
       try {
-        await _supabase
-            .from('favorites')
-            .delete()
-            .eq('user_id', _currentUser!.id)
-            .eq('content_id', contentId);
+        final favId = '${_currentUser!.uid}_$contentId';
+        await FirebaseFirestore.instance
+            .collection('favorites')
+            .doc(favId)
+            .delete();
       } catch (e) {
         // Log error
       }
@@ -125,7 +127,7 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
 
   /// Refresh favorites from server
   Future<void> refresh() async {
-    await _loadFromSupabase();
+    await _loadFromFirestore();
   }
 
   /// Get all favorite content IDs

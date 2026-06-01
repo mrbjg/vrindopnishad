@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Edit2, Sun, Sunrise, Sunset } from 'lucide-react';
+import { Edit2, Sun, Sunrise, Sunset, Share2 } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { ApiContext, AuthContext } from '../App';
 import { supabase } from '../lib/supabase';
+import { db } from '../firebase';
+import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import { extractRelations } from '../utils/relations';
+import { shareVerseCard } from '../utils/shareCard';
+
 import { useSettings } from '../contexts/SettingsContext';
 import PookizDashboardView from '../components/PookizDashboardView';
 
@@ -22,6 +26,7 @@ import RagasIndex from '../components/home/RagasIndex';
 
 const PreviewDrawer = React.lazy(() => import('../components/home/PreviewDrawer'));
 
+const isSupabase = process.env.REACT_APP_DATABASE_PROVIDER === 'supabase';
 
 const DAILY_SHLOKAS = [
   {
@@ -151,17 +156,28 @@ const HomePage = () => {
 
   const saveToSupabase = async (updatedFields) => {
     if (!user) return;
-    try {
-      const { error } = await supabase
-        .from('users_sadhana')
-        .upsert({
-          id: user.uid,
+    if (isSupabase) {
+      try {
+        const { error } = await supabase
+          .from('users_sadhana')
+          .upsert({
+            id: user.uid,
+            ...updatedFields,
+            updated_at: new Date().toISOString()
+          });
+        if (error) throw error;
+      } catch (e) {
+        console.warn("Failed to save to Supabase:", e);
+      }
+    } else {
+      try {
+        await setDoc(doc(db, 'users_sadhana', user.uid), {
           ...updatedFields,
           updated_at: new Date().toISOString()
-        });
-      if (error) throw error;
-    } catch (e) {
-      console.warn("Failed to save to Supabase:", e);
+        }, { merge: true });
+      } catch (e) {
+        console.warn("Failed to save sadhana to Firestore:", e);
+      }
     }
   };
 
@@ -262,80 +278,165 @@ const HomePage = () => {
     if (!user) return;
 
     let active = true;
+    let unsubscribe = () => {};
 
-    const syncUserSadhana = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('users_sadhana')
-          .select('*')
-          .eq('id', user.uid)
-          .maybeSingle();
+    if (isSupabase) {
+      const syncUserSadhana = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('users_sadhana')
+            .select('*')
+            .eq('id', user.uid)
+            .maybeSingle();
 
-        if (error) throw error;
+          if (error) throw error;
 
-        if (data) {
+          if (data) {
+            if (!active) return;
+            if (data.japa_count !== undefined) {
+              setJapaCount(data.japa_count);
+              localStorage.setItem('vrindopnishad_japa_count', data.japa_count.toString());
+            }
+            if (data.swadhyaya_streak !== undefined) {
+              setStreak(data.swadhyaya_streak);
+              localStorage.setItem('swadhyaya_streak', data.swadhyaya_streak.toString());
+            }
+            if (data.last_swadhyaya_date !== undefined) {
+              localStorage.setItem('last_swadhyaya_date', data.last_swadhyaya_date);
+              if (data.last_swadhyaya_date === new Date().toDateString()) {
+                setIsCompleted(true);
+              } else {
+                setIsCompleted(false);
+              }
+            }
+            if (data.calendar) {
+              setCalendarData(data.calendar);
+              localStorage.setItem('vrindopnishad_calendar_data', JSON.stringify(data.calendar));
+            }
+          } else {
+            const initialCalendar = {
+              tithiEn: "Ekadashi (Shukla)",
+              tithiHi: "एकादशी (शुक्ल पक्ष)",
+              seasonEn: "Grishma Ritu (Summer)",
+              seasonHi: "ग्रीष्म ऋतु (Summer)",
+              lilaEn: "Madhyāhna (Radha Kund)",
+              lilaHi: "मध्याह्न लीला (राधा कुण्ड)",
+              festivalEn: "Nirjala Ekadashi (in 3 Days)",
+              festivalHi: "निर्जला एकादशी (3 दिन में)"
+            };
+
+            await supabase.from('users_sadhana').insert({
+              id: user.uid,
+              japa_count: japaCount,
+              swadhyaya_streak: streak,
+              last_swadhyaya_date: localStorage.getItem('last_swadhyaya_date') || '',
+              calendar: calendarData || initialCalendar,
+              updated_at: new Date().toISOString()
+            });
+          }
+        } catch (err) {
+          console.warn("Failed to initialize or sync sadhana from Supabase:", err);
+        }
+      };
+
+      syncUserSadhana();
+
+      const channel = supabase
+        .channel(`public:users_sadhana:id=eq.${user.uid}`)
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'users_sadhana',
+          filter: `id=eq.${user.uid}`
+        }, (payload) => {
           if (!active) return;
-          if (data.japa_count !== undefined) {
-            setJapaCount(data.japa_count);
-            localStorage.setItem('vrindopnishad_japa_count', data.japa_count.toString());
-          }
-          if (data.swadhyaya_streak !== undefined) {
-            setStreak(data.swadhyaya_streak);
-            localStorage.setItem('swadhyaya_streak', data.swadhyaya_streak.toString());
-          }
-          if (data.last_swadhyaya_date !== undefined) {
-            localStorage.setItem('last_swadhyaya_date', data.last_swadhyaya_date);
-            if (data.last_swadhyaya_date === new Date().toDateString()) {
-              setIsCompleted(true);
-            } else {
-              setIsCompleted(false);
+          const data = payload.new;
+          if (data) {
+            if (data.japa_count !== undefined) {
+              setJapaCount(data.japa_count);
+              localStorage.setItem('vrindopnishad_japa_count', data.japa_count.toString());
+            }
+            if (data.swadhyaya_streak !== undefined) {
+              setStreak(data.swadhyaya_streak);
+              localStorage.setItem('swadhyaya_streak', data.swadhyaya_streak.toString());
+            }
+            if (data.last_swadhyaya_date !== undefined) {
+              localStorage.setItem('last_swadhyaya_date', data.last_swadhyaya_date);
+              if (data.last_swadhyaya_date === new Date().toDateString()) {
+                setIsCompleted(true);
+              } else {
+                setIsCompleted(false);
+              }
+            }
+            if (data.calendar) {
+              setCalendarData(data.calendar);
+              localStorage.setItem('vrindopnishad_calendar_data', JSON.stringify(data.calendar));
             }
           }
-          if (data.calendar) {
-            setCalendarData(data.calendar);
-            localStorage.setItem('vrindopnishad_calendar_data', JSON.stringify(data.calendar));
+        })
+        .subscribe();
+
+      unsubscribe = () => {
+        supabase.removeChannel(channel);
+      };
+    } else {
+      const syncUserSadhanaFirestore = async () => {
+        try {
+          const docSnap = await getDoc(doc(db, 'users_sadhana', user.uid));
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (!active) return;
+            if (data.japa_count !== undefined) {
+              setJapaCount(data.japa_count);
+              localStorage.setItem('vrindopnishad_japa_count', data.japa_count.toString());
+            }
+            if (data.swadhyaya_streak !== undefined) {
+              setStreak(data.swadhyaya_streak);
+              localStorage.setItem('swadhyaya_streak', data.swadhyaya_streak.toString());
+            }
+            if (data.last_swadhyaya_date !== undefined) {
+              localStorage.setItem('last_swadhyaya_date', data.last_swadhyaya_date);
+              if (data.last_swadhyaya_date === new Date().toDateString()) {
+                setIsCompleted(true);
+              } else {
+                setIsCompleted(false);
+              }
+            }
+            if (data.calendar) {
+              setCalendarData(data.calendar);
+              localStorage.setItem('vrindopnishad_calendar_data', JSON.stringify(data.calendar));
+            }
+          } else {
+            const initialCalendar = {
+              tithiEn: "Ekadashi (Shukla)",
+              tithiHi: "एकादशी (शुक्ल पक्ष)",
+              seasonEn: "Grishma Ritu (Summer)",
+              seasonHi: "ग्रीष्म ऋतु (Summer)",
+              lilaEn: "Madhyāhna (Radha Kund)",
+              lilaHi: "मध्याह्न लीला (राधा कुण्ड)",
+              festivalEn: "Nirjala Ekadashi (in 3 Days)",
+              festivalHi: "निर्जला एकादशी (3 दिन में)"
+            };
+
+            await setDoc(doc(db, 'users_sadhana', user.uid), {
+              japa_count: japaCount,
+              swadhyaya_streak: streak,
+              last_swadhyaya_date: localStorage.getItem('last_swadhyaya_date') || '',
+              calendar: calendarData || initialCalendar,
+              updated_at: new Date().toISOString()
+            });
           }
-        } else {
-          
-          const initialCalendar = {
-            tithiEn: "Ekadashi (Shukla)",
-            tithiHi: "एकादशी (शुक्ल पक्ष)",
-            seasonEn: "Grishma Ritu (Summer)",
-            seasonHi: "ग्रीष्म ऋतु (Summer)",
-            lilaEn: "Madhyāhna (Radha Kund)",
-            lilaHi: "मध्याह्न लीला (राधा कुण्ड)",
-            festivalEn: "Nirjala Ekadashi (in 3 Days)",
-            festivalHi: "निर्जला एकादशी (3 दिन में)"
-          };
-
-          await supabase.from('users_sadhana').insert({
-            id: user.uid,
-            japa_count: japaCount,
-            swadhyaya_streak: streak,
-            last_swadhyaya_date: localStorage.getItem('last_swadhyaya_date') || '',
-            calendar: calendarData || initialCalendar,
-            updated_at: new Date().toISOString()
-          });
+        } catch (err) {
+          console.warn("Failed to initialize or sync sadhana from Firestore:", err);
         }
-      } catch (err) {
-        console.warn("Failed to initialize or sync sadhana from Supabase:", err);
-      }
-    };
+      };
 
-    syncUserSadhana();
+      syncUserSadhanaFirestore();
 
-    
-    const channel = supabase
-      .channel(`public:users_sadhana:id=eq.${user.uid}`)
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'users_sadhana',
-        filter: `id=eq.${user.uid}`
-      }, (payload) => {
+      const unsubSnap = onSnapshot(doc(db, 'users_sadhana', user.uid), (docSnap) => {
         if (!active) return;
-        const data = payload.new;
-        if (data) {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
           if (data.japa_count !== undefined) {
             setJapaCount(data.japa_count);
             localStorage.setItem('vrindopnishad_japa_count', data.japa_count.toString());
@@ -357,14 +458,15 @@ const HomePage = () => {
             localStorage.setItem('vrindopnishad_calendar_data', JSON.stringify(data.calendar));
           }
         }
-      })
-      .subscribe();
+      });
+
+      unsubscribe = unsubSnap;
+    }
 
     return () => {
       active = false;
-      supabase.removeChannel(channel);
+      unsubscribe();
     };
-    
   }, [user]);
 
   
@@ -448,6 +550,49 @@ const HomePage = () => {
   }, [apiService]);
 
   const latestVerses = useMemo(() => allItems.filter(i => i.category?.toLowerCase() !== 'saint').slice(0, 6), [allItems]);
+
+  const aajKaPad = useMemo(() => {
+    if (!allItems || allItems.length === 0) return null;
+    const verses = allItems.filter(i => i.category?.toLowerCase() !== 'saint');
+    if (verses.length === 0) return null;
+
+    let matched = null;
+    if (calendarData) {
+      const keywords = [
+        calendarData.festivalEn,
+        calendarData.festivalHi,
+        calendarData.lilaEn,
+        calendarData.lilaHi,
+        calendarData.tithiEn,
+        calendarData.tithiHi
+      ].filter(Boolean).map(k => k.toLowerCase());
+
+      for (const keyword of keywords) {
+        if (keyword.length > 3) {
+          const cleanKeyword = keyword.replace(/ekadashi/gi, 'एकादशी').replace(/gopashtami/gi, 'गोपाष्टमी').trim();
+          const match = verses.find(v => 
+            (v.title && v.title.toLowerCase().includes(cleanKeyword)) ||
+            (v.title && v.title.toLowerCase().includes(keyword)) ||
+            (v.description && v.description.toLowerCase().includes(keyword)) ||
+            (v.hindi_text && v.hindi_text.toLowerCase().includes(keyword))
+          );
+          if (match) {
+            matched = match;
+            break;
+          }
+        }
+      }
+    }
+
+    if (!matched) {
+      const today = new Date();
+      const hash = (today.getFullYear() * 37) + (today.getMonth() * 19) + today.getDate();
+      matched = verses[hash % verses.length];
+    }
+
+    return matched;
+  }, [allItems, calendarData]);
+
   const dailyShloka = DAILY_SHLOKAS[new Date().getDate() % DAILY_SHLOKAS.length];
 
   
@@ -781,6 +926,62 @@ const HomePage = () => {
             />
           </div>
         </div>
+
+        {/* Aaj ka Pad section */}
+        {aajKaPad && (
+          <div className="max-w-6xl mx-auto w-full my-8">
+            <div className="glass-card p-6 md:p-8 relative overflow-hidden group border border-white/5 hover:border-primary/20 transition-all rounded-3xl bg-gradient-to-br from-white/[0.02] to-transparent text-left">
+              <div className="absolute top-0 right-0 p-8 opacity-[0.03] text-9xl font-serif pointer-events-none text-primary">ॐ</div>
+              
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-white/5 pb-4">
+                <div>
+                  <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-bold block mb-1">
+                    {isHi ? "दैनिक रस प्रसाद" : "Today's Sacred Nectar"}
+                  </span>
+                  <h2 className="text-2xl font-bold font-headings text-minimal-gold">
+                    {isHi ? "आज का पद" : "Aaj Ka Pad"}
+                  </h2>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => shareVerseCard(aajKaPad, isHi)}
+                    className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 hover:border-white/20 bg-white/5 text-white/70 hover:text-white transition-all text-xs font-semibold"
+                    title={isHi ? "कार्ड शेयर करें" : "Share Card"}
+                  >
+                    <Share2 size={13} />
+                    <span>{isHi ? "साझा करें" : "Share Card"}</span>
+                  </button>
+                  <Link
+                    to={isHi ? `/hi/content/${aajKaPad.slug || aajKaPad.id}` : `/content/${aajKaPad.slug || aajKaPad.id}`}
+                    className="btn-premium px-5 py-2 text-xs"
+                  >
+                    {isHi ? "पूर्ण पाठ पढ़ें" : "Read Full"}
+                  </Link>
+                </div>
+              </div>
+
+              <div className="text-center py-4">
+                {aajKaPad.author && (
+                  <span className="text-xs uppercase tracking-widest text-primary/80 font-bold block mb-4">
+                    {aajKaPad.author}
+                  </span>
+                )}
+                
+                <div 
+                  className="font-headings text-lg md:text-2xl leading-relaxed text-white/95 max-w-3xl mx-auto hindi-text"
+                  style={{ whiteSpace: 'pre-line' }}
+                >
+                  {(aajKaPad.sanskrit_text || aajKaPad.hindi_text || aajKaPad.english_translation || "")
+                    .split('\n')
+                    .slice(0, 4)
+                    .join('\n')}
+                  {(aajKaPad.sanskrit_text || aajKaPad.hindi_text || "").split('\n').length > 4 ? "\n..." : ""}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

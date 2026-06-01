@@ -1,41 +1,33 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:async';
 
 class RealtimeService {
   static final RealtimeService instance = RealtimeService._init();
   RealtimeService._init();
 
-  RealtimeChannel? _contentChannel;
+  StreamSubscription? _contentSubscription;
 
-  /// Subscribe to changes in the 'content' table
+  /// Subscribe to changes in the 'content' collection in Firestore
   void subscribeToContentChanges(Function() onUpdate) {
-    if (_contentChannel != null) return;
+    if (_contentSubscription != null) return;
 
-    _contentChannel = Supabase.instance.client
-        .channel('public:content')
-        .onPostgresChanges(
-          event: PostgresChangeEvent.all,
-          schema: 'public',
-          table: 'content',
-          callback: (payload) {
-            debugPrint('Realtime Change Detected: ${payload.toString()}');
-            onUpdate();
-          },
-        )
-        .subscribe((status, [error]) {
-          if (error != null) {
-            debugPrint('Realtime Subscription Error: $error');
-          } else {
-            debugPrint('Realtime Subscription Status: $status');
-          }
+    _contentSubscription = FirebaseFirestore.instance
+        .collection('content')
+        .snapshots()
+        .listen((snapshot) {
+          debugPrint('Realtime Firestore Change Detected');
+          onUpdate();
+        }, onError: (error) {
+          debugPrint('Realtime Subscription Error: $error');
         });
   }
 
   /// Unsubscribe from changes
   void unsubscribe() {
-    if (_contentChannel != null) {
-      Supabase.instance.client.removeChannel(_contentChannel!);
-      _contentChannel = null;
+    if (_contentSubscription != null) {
+      _contentSubscription!.cancel();
+      _contentSubscription = null;
     }
   }
 }

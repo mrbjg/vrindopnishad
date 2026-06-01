@@ -37,8 +37,7 @@ export default async function handler(req, res) {
   } catch (e) {
     console.error('Supabase fetch failed:', e.message);
   }
-
-  // If no content found by slug, try by title match
+  // If no content found by slug, try by title match from Supabase
   if (!content) {
     try {
       const decodedSlug = decodeURIComponent(slug);
@@ -55,7 +54,36 @@ export default async function handler(req, res) {
       if (Array.isArray(data) && data.length > 0) {
         content = data[0];
       }
-    } catch (e) 
+    } catch (e) {
+      console.error('Supabase title match failed:', e.message);
+    }
+  }
+
+  if (!content) {
+    try {
+      const fs = require('fs');
+      const decodedSlug = decodeURIComponent(slug).toLowerCase();
+      let localFilePath = join(process.cwd(), 'data/brajrasik_hi_full.json');
+      
+      if (!fs.existsSync(localFilePath)) {
+        localFilePath = join(process.cwd(), 'frontend/data/brajrasik_hi_full.json');
+      }
+      if (!fs.existsSync(localFilePath)) {
+        localFilePath = join(process.cwd(), 'admin/data/brajrasik_hi_full.json');
+      }
+
+      if (fs.existsSync(localFilePath)) {
+        const fileContent = fs.readFileSync(localFilePath, 'utf8');
+        const localData = JSON.parse(fileContent);
+        
+        content = localData.find(item => 
+          (item.slug && item.slug.toLowerCase() === decodedSlug) ||
+          (item.title && item.title.toLowerCase().replace(/\s+/g, '-') === decodedSlug)
+        );
+      }
+    } catch (fallbackError) {
+      console.error('Fallback fetch failed in content slug handler:', fallbackError.message);
+    }
   }
 
   // Build the meta tags

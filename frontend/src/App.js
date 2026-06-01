@@ -41,6 +41,7 @@ const LoginPage = lazyWithRetry(() => import('./pages/LoginPage'));
 const AdminLoginPage = lazyWithRetry(() => import('./pages/AdminLoginPage'));
 const AdminDashboard = lazyWithRetry(() => import('./pages/AdminDashboard'));
 const LoaderDemo = lazyWithRetry(() => import('./pages/LoaderDemo'));
+const BookmarksPage = lazyWithRetry(() => import('./pages/BookmarksPage'));
 
 
 const SaintsListPage = lazyWithRetry(() => import('./pages/SaintsListPage'));
@@ -81,7 +82,7 @@ const PromoLanding = lazyWithRetry(() => import('./pages/PromoLanding'));
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const USE_SUPABASE = process.env.REACT_APP_SUPABASE_URL && process.env.REACT_APP_SUPABASE_ANON_KEY;
+const USE_SUPABASE = process.env.REACT_APP_DATABASE_PROVIDER === 'supabase' && process.env.REACT_APP_SUPABASE_URL && process.env.REACT_APP_SUPABASE_ANON_KEY;
 const USE_MOCK_DATA = process.env.REACT_APP_DEMO_MODE === 'true';
 
 export const API = USE_SUPABASE ? 'supabase' : (USE_MOCK_DATA ? null : `${BACKEND_URL}/api`);
@@ -351,7 +352,8 @@ function App() {
     { path: '/books', element: <BooksListPage /> },
     { path: '/book/:slug', element: <BookDetailPage /> },
     { path: '/ragas', element: <RagasListPage /> },
-    { path: '/raga/:slug', element: <RagaDetailPage /> }
+    { path: '/raga/:slug', element: <RagaDetailPage /> },
+    { path: '/bookmarks', element: <BookmarksPage /> }
   ];
 
   const kbRoutes = [

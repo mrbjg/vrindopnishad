@@ -5,7 +5,13 @@ import {
   ArrowLeft,
   Music,
   Image as ImageIcon,
-  Video
+  Video,
+  Bookmark,
+  Maximize2,
+  Minimize2,
+  Sun,
+  Moon,
+  Share2
 } from 'lucide-react';
 import { useSettings } from '../contexts/SettingsContext';
 import FontWheel from '../components/FontWheel';
@@ -13,6 +19,7 @@ import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { Helmet } from 'react-helmet-async';
 import { transliterate } from '../utils/transliterate';
 import { extractRelations } from '../utils/relations';
+import { shareVerseCard } from '../utils/shareCard';
 
 const ContentDetailPage = () => {
   const { id } = useParams();
@@ -20,6 +27,8 @@ const ContentDetailPage = () => {
   const isHindiRoute = location.pathname.startsWith('/hi');
   const { apiService } = useContext(ApiContext);
   const { settings, updateSetting } = useSettings();
+  const sizeLevel = settings.fontSize || 2;
+
   const [content, setContent] = useState(() => {
     const sessionCached = apiService.getCachedData(`id_${id}`);
     if (sessionCached) return sessionCached;
@@ -60,6 +69,46 @@ const ContentDetailPage = () => {
   const [relatedBook, setRelatedBook] = useState(null);
   const [relatedRaga, setRelatedRaga] = useState(null);
   const [relatedVerses, setRelatedVerses] = useState([]);
+
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isPaathMode, setIsPaathMode] = useState(false);
+  const [paathTheme, setPaathTheme] = useState('sepia'); // 'sepia' or 'dark'
+
+  useEffect(() => {
+    if (content) {
+      try {
+        const saved = localStorage.getItem('vrindopnishad_bookmarks');
+        const bookmarks = saved ? JSON.parse(saved) : [];
+        const found = bookmarks.some(b => b.type === 'verse' && b.id?.toString() === content.id?.toString());
+        setIsBookmarked(found);
+      } catch (e) {}
+    }
+  }, [content]);
+
+  const toggleBookmark = () => {
+    try {
+      const saved = localStorage.getItem('vrindopnishad_bookmarks');
+      let bookmarks = saved ? JSON.parse(saved) : [];
+      if (isBookmarked) {
+        bookmarks = bookmarks.filter(b => !(b.type === 'verse' && b.id?.toString() === content.id?.toString()));
+        setIsBookmarked(false);
+      } else {
+        bookmarks.push({
+          type: 'verse',
+          id: content.id,
+          slug: content.slug,
+          title: content.title,
+          author: content.author,
+          category: content.category,
+          addedAt: new Date().toISOString()
+        });
+        setIsBookmarked(true);
+      }
+      localStorage.setItem('vrindopnishad_bookmarks', JSON.stringify(bookmarks));
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   useEffect(() => {
     let active = true;
@@ -297,14 +346,70 @@ const ContentDetailPage = () => {
     ? `https://path.vrindopnishad.in/hi/content/${content.slug || id}`
     : `https://path.vrindopnishad.in/content/${content.slug || id}`;
 
-  const sizeLevel = parseInt(settings.fontSize, 10) || 3;
+  // Parse Granth, Pad, and Saint for title
+  let parsedSaintName = "";
+  let parsedGranthName = "";
+  let padNumber = "";
+  
+  const titleVal = content.title || "";
+  const tParts = titleVal.split(/\s+-\s+/);
+  if (tParts.length >= 2) {
+    padNumber = tParts[0].trim();
+    const relText = tParts[1].trim();
+    const bracketMatch = relText.match(/\(([^)]+)\)$/);
+    const bracketContent = bracketMatch ? bracketMatch[1].trim() : "";
+    const cleanRelText = bracketMatch ? relText.replace(/\(([^)]+)\)$/, '').trim() : relText;
+    const relSplit = cleanRelText.split(/\s*,\s*/);
+    
+    if (relSplit.length >= 2) {
+      parsedSaintName = relSplit[0].trim();
+      parsedGranthName = relSplit[1].trim();
+    } else if (relSplit.length === 1) {
+      const val = relSplit[0].trim();
+      if (val.includes('वाणी') || val.includes('सागर') || val.includes('शतक') || val.includes('महिमामृत') || val.includes('दोहे') || val.includes('ग्रंथावली') || val.includes('पदावली') || val.includes('शत') || val.includes('केलिमाल') || val.includes('चौरासी')) {
+        parsedGranthName = val;
+      } else {
+        parsedSaintName = val;
+      }
+    }
+    
+    if (!parsedGranthName && bracketContent) {
+      parsedGranthName = bracketContent.replace(/\d+/g, '').replace(/[१२३४५६७८९०]+/g, '').trim();
+    }
+  } else {
+    padNumber = titleVal;
+  }
+
+  if (!parsedSaintName) {
+    parsedSaintName = content.author && content.author !== 'Braj Rasik Heritage' ? content.author : '';
+  }
+
+  const cleanSaint = parsedSaintName ? parsedSaintName.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim() : (isHindiRoute ? 'वैष्णव संत' : 'Vaishnava Saint');
+  const cleanGranth = parsedGranthName ? parsedGranthName.trim() : (isHindiRoute ? 'वृंदोपनिषद् ग्रन्थ' : 'Vrindopnishad Granth');
+  
+  let formattedPad = padNumber;
+  if (!isHindiRoute) {
+    formattedPad = formattedPad
+      .replace(/पद्/g, 'Pad')
+      .replace(/पद/g, 'Pad')
+      .replace(/श्लोक/g, 'Shloka')
+      .replace(/१/g, '1').replace(/२/g, '2').replace(/३/g, '3').replace(/४/g, '4')
+      .replace(/५/g, '5').replace(/६/g, '6').replace(/७/g, '7').replace(/८/g, '8')
+      .replace(/९/g, '9').replace(/०/g, '0');
+  }
+
+  const helmetTitle = `${cleanGranth} — ${formattedPad} | ${cleanSaint} | Vrindopnishad`;
+  
+  const helmetDescription = isHindiRoute
+    ? `${cleanSaint} द्वारा रचित ${content.title} (ग्रन्थ: ${cleanGranth})। हिन्दी, संस्कृत, ब्रजभाषा और अंग्रेजी रोमन अनुवाद (with meaning, commentary) में बिल्कुल निःशुल्क (completely free) पढ़ें।`
+    : `Read and explore ${content.title} by ${cleanSaint} from the grantha ${cleanGranth}. Completely free online access with meaning, translation, and commentary. Available in Hindi, Sanskrit, Braj Bhasha, and English transliteration (with meaning, complete collection).`;
 
   return (
     <div className="animate-fade-in max-w-4xl mx-auto">
       <Helmet>
         <html lang={isHindiRoute ? "hi" : "en"} />
-        <title>{`${displayTitle} — ${content.category} | ${displayAuthor || 'Sant Vaani'} | Vrindopnishad`}</title>
-        <meta name="description" content={`${displayTitle} — ${content.category} by ${displayAuthor || 'Sant Vaani'}. ${isHindiRoute && content.hindi_text ? content.hindi_text.substring(0, 150) + '...' : transliteratedHindi ? transliteratedHindi.substring(0, 150) + '...' : content.sanskrit_text ? content.sanskrit_text.substring(0, 150) + '...' : content.description?.substring(0, 150) + '...'}`} />
+        <title>{helmetTitle}</title>
+        <meta name="description" content={helmetDescription} />
         <meta name="keywords" content={`${content.title}, ${titleHing}, ${content.author || 'Sant Vaani'}, ${authorHing}, ${content.category}, Sanskrit Shloka, Hindi meaning, English translation, Vrindopnishad, Sant Vaani, sacred verse, devotional, spiritual wisdom, Hinglish transliteration, roman hindi lyrics, ${titleHing} bhajan lyrics`} />
 
         
@@ -313,15 +418,15 @@ const ContentDetailPage = () => {
         
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Sant-Vaani | Sacred Digital Sanctuary" />
-        <meta property="og:title" content={`${displayTitle} - ${content.category}`} />
-        <meta property="og:description" content={content.description?.substring(0, 160) || `Experience the divine ${content.category}: ${displayTitle} in the Sant-Vaani Sanctuary.`} />
+        <meta property="og:title" content={helmetTitle} />
+        <meta property="og:description" content={helmetDescription} />
         {content.image_url && <meta property="og:image" content={content.image_url} />}
         <meta property="article:section" content={content.category} />
         {content.author && <meta property="article:author" content={content.author} />}
 
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={displayTitle} />
-        <meta name="twitter:description" content={content.description?.substring(0, 160)} />
+        <meta name="twitter:title" content={helmetTitle} />
+        <meta name="twitter:description" content={helmetDescription} />
 
         
         <script type="application/ld+json">
@@ -356,16 +461,17 @@ const ContentDetailPage = () => {
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "ScholarlyArticle",
-            "headline": displayTitle,
+            "@type": "CreativeWork",
+            "name": content.title,
+            "headline": content.title,
             "alternativeHeadline": titleHing !== titleDeva ? (isHindiRoute ? titleHing : titleDeva) : undefined,
-            "description": content.description || `A sacred ${content.category || 'text'} from the Vrindopnishad Sant-Vaani repository.`,
+            "description": helmetDescription,
             "author": {
               "@type": "Person",
-              "name": displayAuthor
+              "name": cleanSaint
             },
             "genre": content.category || "Sacred Literature",
-            "inLanguage": isHindiRoute ? ["hi", "sa"] : ["en", "hi-Latn", "sa"],
+            "inLanguage": ["sa", "hi", "braj"],
             "keywords": `${content.title || ''}, ${titleHing}, ${content.category || ''}, ${content.author || ''}, ${authorHing}, Spiritual, Sanskrit, Divine Verses, Vrindopnishad`,
             "articleBody": fullArticleBody,
             "datePublished": content.created_at || new Date().toISOString(),
@@ -416,7 +522,39 @@ const ContentDetailPage = () => {
             </div>
 
             
-            <div className="hidden lg:flex flex-col items-center lg:items-end w-full lg:w-auto">
+            <div className="hidden lg:flex items-center gap-4">
+              <button
+                onClick={toggleBookmark}
+                className={`flex items-center justify-center w-10 h-10 rounded-full border transition-all ${
+                  isBookmarked 
+                    ? 'bg-primary/20 border-primary text-primary' 
+                    : 'bg-white/5 border-white/10 hover:border-white/20 text-white/60 hover:text-white'
+                }`}
+                title={isBookmarked ? (isHindiRoute ? "सहेजा गया" : "Saved Bookmark") : (isHindiRoute ? "बुकमार्क करें" : "Add Bookmark")}
+              >
+                <Bookmark size={16} className={isBookmarked ? "fill-current" : ""} />
+              </button>
+              <button
+                onClick={() => shareVerseCard(content, isHindiRoute)}
+                className="flex items-center justify-center w-10 h-10 rounded-full border bg-white/5 border-white/10 hover:border-white/20 text-white/60 hover:text-white transition-all"
+                title={isHindiRoute ? "सुंदर छवि साझा करें" : "Share Image Card"}
+              >
+                <Share2 size={16} />
+              </button>
+              <button
+                onClick={() => {
+                  setIsPaathMode(true);
+                  try {
+                    if (!document.fullscreenElement) {
+                      document.documentElement.requestFullscreen().catch(() => {});
+                    }
+                  } catch (e) {}
+                }}
+                className="flex items-center justify-center w-10 h-10 rounded-full border bg-white/5 border-white/10 hover:border-white/20 text-white/60 hover:text-white transition-all"
+                title={isHindiRoute ? "पाठ मोड (एकाग्रता)" : "Paath Mode (Distraction-Free)"}
+              >
+                <Maximize2 size={16} />
+              </button>
               <FontWheel 
                 value={settings.fontSize} 
                 onChange={(size) => updateSetting('fontSize', size)} 
@@ -601,6 +739,37 @@ const ContentDetailPage = () => {
             
             <div className="lg:hidden mt-20 pt-10 border-t border-white/5 flex flex-col items-center gap-6">
               <span className="content-section-label text-[10px] uppercase tracking-[0.3em] font-bold">Reading Settings</span>
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={toggleBookmark}
+                  className={`flex items-center justify-center w-11 h-11 rounded-full border transition-all ${
+                    isBookmarked 
+                      ? 'bg-primary/20 border-primary text-primary' 
+                      : 'bg-white/5 border-white/10 text-white/60'
+                  }`}
+                >
+                  <Bookmark size={18} className={isBookmarked ? "fill-current" : ""} />
+                </button>
+                <button
+                  onClick={() => shareVerseCard(content, isHindiRoute)}
+                  className="flex items-center justify-center w-11 h-11 rounded-full border bg-white/5 border-white/10 text-white/60"
+                >
+                  <Share2 size={18} />
+                </button>
+                <button
+                  onClick={() => {
+                    setIsPaathMode(true);
+                    try {
+                      if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen().catch(() => {});
+                      }
+                    } catch (e) {}
+                  }}
+                  className="flex items-center justify-center w-11 h-11 rounded-full border bg-white/5 border-white/10 text-white/60"
+                >
+                  <Maximize2 size={18} />
+                </button>
+              </div>
               <div className="w-full max-w-[320px]">
                 <FontWheel 
                   value={settings.fontSize} 
@@ -693,6 +862,191 @@ const ContentDetailPage = () => {
           ))}
         </div>
       </section>
+
+      {isPaathMode && (
+        <div 
+          className={`fixed inset-0 z-[9999] overflow-y-auto transition-all duration-300 ${
+            paathTheme === 'sepia' 
+              ? 'bg-[#f5ebd6] text-[#2c2212]' 
+              : 'bg-[#09090b] text-[#e3ded0]'
+          }`}
+          style={{ fontFamily: "'Noto Serif Devanagari', 'Tiro Devanagari Sanskrit', serif" }}
+        >
+          {/* Controls Header */}
+          <div className={`sticky top-0 z-[10000] w-full px-6 py-4 flex items-center justify-between backdrop-blur-md border-b ${
+            paathTheme === 'sepia' 
+              ? 'bg-[#f5ebd6]/90 border-[#2c2212]/10' 
+              : 'bg-[#09090b]/90 border-[#e3ded0]/10'
+          }`}>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  setIsPaathMode(false);
+                  try {
+                    if (document.fullscreenElement) {
+                      document.exitFullscreen().catch(() => {});
+                    }
+                  } catch (e) {}
+                }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-semibold ${
+                  paathTheme === 'sepia'
+                    ? 'border-[#2c2212]/20 hover:bg-[#2c2212]/5 text-[#2c2212]'
+                    : 'border-[#e3ded0]/20 hover:bg-[#e3ded0]/5 text-[#e3ded0]'
+                }`}
+              >
+                <Minimize2 size={14} />
+                <span>{isHindiRoute ? 'सामान्य मोड' : 'Exit Paath Mode'}</span>
+              </button>
+            </div>
+
+            <div className="flex items-center gap-6">
+              {/* Theme Switcher */}
+              <div className="flex items-center gap-1 rounded-full border p-0.5 border-current/10">
+                <button
+                  onClick={() => setPaathTheme('sepia')}
+                  className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 transition-all ${
+                    paathTheme === 'sepia'
+                      ? 'bg-[#2c2212] text-[#f5ebd6]'
+                      : 'opacity-50'
+                  }`}
+                >
+                  <Sun size={12} />
+                  <span>{isHindiRoute ? 'पीताम्बर' : 'Sepia'}</span>
+                </button>
+                <button
+                  onClick={() => setPaathTheme('dark')}
+                  className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 transition-all ${
+                    paathTheme === 'dark'
+                      ? 'bg-[#e3ded0] text-[#09090b]'
+                      : 'opacity-50'
+                  }`}
+                >
+                  <Moon size={12} />
+                  <span>{isHindiRoute ? 'श्यामल' : 'Dark'}</span>
+                </button>
+              </div>
+
+              {/* Font Size controls */}
+              <div className="hidden sm:block">
+                <FontWheel 
+                  value={settings.fontSize} 
+                  onChange={(size) => updateSetting('fontSize', size)} 
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Reading Area */}
+          <div className="max-w-3xl mx-auto px-6 py-12 md:py-24 flex flex-col items-center text-center">
+            {/* Header metadata */}
+            <div className="mb-12 flex flex-col items-center gap-3">
+              <span className={`text-[11px] uppercase tracking-[0.2em] font-semibold border px-3 py-1 rounded-full ${
+                paathTheme === 'sepia' ? 'border-[#2c2212]/20' : 'border-[#e3ded0]/20'
+              }`}>
+                {content.category}
+              </span>
+              {content.author && (
+                <div className="text-center mt-2">
+                  <span className="text-[10px] uppercase tracking-[0.25em] font-bold block opacity-40 mb-1">रचयिता / Author</span>
+                  <span className="text-xl md:text-2xl font-bold tracking-wide">
+                    {content.author}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Title */}
+            <h1 className="text-3xl md:text-5xl font-bold mb-16 leading-[1.3]">
+              {content.title}
+            </h1>
+
+            {/* Verse Texts */}
+            <div className="w-full space-y-20">
+              {content.sanskrit_text && (
+                <div className="space-y-6">
+                  <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">मूल पाठ (Sanskrit)</div>
+                  <div 
+                    className="leading-[1.8] font-medium"
+                    style={{
+                      fontSize: sizeLevel === 1 ? '1.5rem' :
+                                sizeLevel === 2 ? '1.9rem' :
+                                sizeLevel === 3 ? '2.4rem' :
+                                sizeLevel === 4 ? '3.0rem' : '3.6rem'
+                    }}
+                  >
+                    {formatVerseText(content.sanskrit_text)}
+                  </div>
+                </div>
+              )}
+
+              {content.hindi_text && (
+                <div className="space-y-6 pt-10 border-t border-current/5">
+                  <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">भावार्थ (Hindi)</div>
+                  <div 
+                    className="leading-[1.8] font-medium"
+                    style={{
+                      fontSize: sizeLevel === 1 ? '1.3rem' :
+                                sizeLevel === 2 ? '1.7rem' :
+                                sizeLevel === 3 ? '2.1rem' :
+                                sizeLevel === 4 ? '2.6rem' : '3.1rem'
+                    }}
+                  >
+                    {formatVerseText(content.hindi_text)}
+                  </div>
+                </div>
+              )}
+
+              {(transliteratedSanskrit || transliteratedHindi) && (
+                <div className="space-y-6 pt-10 border-t border-current/5">
+                  <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">रोमन पाठ (Romanized)</div>
+                  <div 
+                    className="leading-[1.8] font-sans opacity-95 tracking-wide"
+                    style={{
+                      fontSize: sizeLevel === 1 ? '1.2rem' :
+                                sizeLevel === 2 ? '1.5rem' :
+                                sizeLevel === 3 ? '1.9rem' :
+                                sizeLevel === 4 ? '2.3rem' : '2.8rem'
+                    }}
+                  >
+                    {transliteratedSanskrit ? formatVerseText(transliteratedSanskrit) : formatVerseText(transliteratedHindi)}
+                  </div>
+                </div>
+              )}
+
+              {content.english_translation && (
+                <div className="space-y-6 pt-10 border-t border-current/5">
+                  <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">Translation (English)</div>
+                  <div 
+                    className="leading-[1.8] font-light opacity-95"
+                    style={{
+                      fontSize: sizeLevel === 1 ? '1.25rem' :
+                                sizeLevel === 2 ? '1.6rem' :
+                                sizeLevel === 3 ? '2.0rem' :
+                                sizeLevel === 4 ? '2.4rem' : '2.8rem'
+                    }}
+                  >
+                    {content.english_translation}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="sm:hidden mt-20 pt-8 border-t border-current/5 w-full flex flex-col items-center gap-4">
+              <span className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-40">अक्षर आकार / Text Size</span>
+              <FontWheel 
+                value={settings.fontSize} 
+                onChange={(size) => updateSetting('fontSize', size)} 
+              />
+            </div>
+            
+            <div className="mt-24 mb-12 flex items-center gap-2 opacity-20">
+              <span className="text-xl">ॐ</span>
+              <span className="text-xs tracking-[0.4em] uppercase">वृंदोपनिषद्</span>
+              <span className="text-xl">ॐ</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

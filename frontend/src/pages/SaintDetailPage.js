@@ -132,11 +132,16 @@ const SaintDetailPage = () => {
     ? (isHindiRoute ? meta.biographyHi : meta.biographyEn)
     : (sant.biography?.text || (isHindiRoute ? "ब्रज परंपरा के वैष्णव संत।" : "Vaishnava saint of the Braj tradition."));
 
+  const helmetTitle = `${isHindiRoute ? sant.name : sant.hinglishName} — [भजन/वाणियाँ] | Vrindopnishad`;
+  const helmetDescription = isHindiRoute
+    ? `महान रसिक संत ${sant.name} (परंपरा: ${lineage}, काल: ${timeline}) का जीवन चरित्र, इतिहास, ग्रन्थ और वाणी संग्रह। हिन्दी, संस्कृत, ब्रजभाषा और अंग्रेजी रोमन अनुवाद (with meaning) में बिल्कुल निःशुल्क (completely free) उपलब्ध।`
+    : `Explore the biography of ${sant.hinglishName} (Lineage: ${lineage}, Era: ${timeline}), including spiritual teachings and complete verses. Available in Hindi, Sanskrit, Braj Bhasha, and English transliteration. Completely free online with meaning, biography, and complete collection.`;
+
   return (
     <div className="animate-fade-in max-w-4xl mx-auto px-4 py-8">
       <Helmet>
-        <title>{isHindiRoute ? `${sant.name} जीवनी एवं वाणी संग्रह | Vrindopnishad` : `${sant.hinglishName} Biography & Vaanis | Vrindopnishad`}</title>
-        <meta name="description" content={bioText.substring(0, 160)} />
+        <title>{helmetTitle}</title>
+        <meta name="description" content={helmetDescription} />
         <link rel="canonical" href={isHindiRoute ? `https://path.vrindopnishad.in/hi/saint/${slug}` : `https://path.vrindopnishad.in/saint/${slug}`} />
         
         

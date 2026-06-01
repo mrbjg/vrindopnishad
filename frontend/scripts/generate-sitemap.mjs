@@ -366,8 +366,13 @@ async function generateSitemap() {
   if (allContentItems.length === 0) {
     console.log('⚠️ Both database fetches failed (offline/sandboxed). Loading from local backups...');
     try {
-      const localFilePath = join(__dirname, '../../admin/data/brajrasik_hi_full.json');
-      const localSaintsPath = join(__dirname, '../../admin/data/saints_formatted.json');
+      let localFilePath = join(__dirname, '../data/brajrasik_hi_full.json');
+      let localSaintsPath = join(__dirname, '../data/saints_formatted.json');
+      
+      if (!fs.existsSync(localFilePath)) {
+        localFilePath = join(__dirname, '../../admin/data/brajrasik_hi_full.json');
+        localSaintsPath = join(__dirname, '../../admin/data/saints_formatted.json');
+      }
       
       if (fs.existsSync(localFilePath)) {
         console.log(`📡 Reading backup from ${localFilePath}...`);

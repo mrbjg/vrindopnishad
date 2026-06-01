@@ -298,6 +298,54 @@ export default async function handler(req, res) {
     console.error('Supabase fetch failed:', e.message);
   }
 
+  if (contentItems.length === 0) {
+    console.log('⚠️ Both database fetches failed (offline/sandboxed). Loading from local backups...');
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      let localFilePath = path.join(process.cwd(), 'data/brajrasik_hi_full.json');
+      let localSaintsPath = path.join(process.cwd(), 'data/saints_formatted.json');
+      
+      if (!fs.existsSync(localFilePath)) {
+        localFilePath = path.join(process.cwd(), 'frontend/data/brajrasik_hi_full.json');
+        localSaintsPath = path.join(process.cwd(), 'frontend/data/saints_formatted.json');
+      }
+      if (!fs.existsSync(localFilePath)) {
+        localFilePath = path.join(process.cwd(), 'admin/data/brajrasik_hi_full.json');
+        localSaintsPath = path.join(process.cwd(), 'admin/data/saints_formatted.json');
+      }
+
+      if (fs.existsSync(localFilePath)) {
+        console.log(`📡 Reading backup from ${localFilePath}...`);
+        const fileContent = fs.readFileSync(localFilePath, 'utf8');
+        const localData = JSON.parse(fileContent);
+        console.log(`✅ Loaded ${localData.length} items from local backup.`);
+        
+        const sanitizedData = localData.map((item, index) => ({
+          id: item.id || `local-${index}`,
+          ...item
+        }));
+        contentItems = contentItems.concat(sanitizedData);
+      }
+      
+      if (fs.existsSync(localSaintsPath)) {
+        console.log(`📡 Reading saints backup from ${localSaintsPath}...`);
+        const saintsContent = fs.readFileSync(localSaintsPath, 'utf8');
+        const localSaints = JSON.parse(saintsContent);
+        console.log(`✅ Loaded ${localSaints.length} saints from local backup.`);
+        
+        const formattedSaints = localSaints.map((s, index) => ({
+          id: s.id || `local-saint-${index}`,
+          ...s,
+          category: 'saint'
+        }));
+        contentItems = contentItems.concat(formattedSaints);
+      }
+    } catch (fallbackError) {
+      console.error('❌ Failed to load local backups in sitemap handler:', fallbackError.message);
+    }
+  }
+
   
   const categoriesSet = new Set();
   const categories = [];

@@ -5,6 +5,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useSettings } from '../contexts/SettingsContext';
 import { extractRelations } from '../utils/relations';
 import { articles } from '../utils/kbArticles';
+import { hinglishMatch } from '../utils/hinglishSearch';
 import {
   Home,
   Compass,
@@ -17,7 +18,8 @@ import {
   Search,
   X,
   User,
-  BookOpen
+  BookOpen,
+  Bookmark
 } from 'lucide-react';
 import GlobalAudioPlayer from './GlobalAudioPlayer';
 import SettingsModal from './SettingsModal';
@@ -189,21 +191,16 @@ const Layout = ({ children }) => {
 
     return {
       sants: (showAll || searchFilter === 'saint')
-        ? searchData.sants.filter(s => s.name?.toLowerCase().includes(q) || s.hinglishName?.toLowerCase().includes(q)).slice(0, 4)
+        ? searchData.sants.filter(s => hinglishMatch(s, q)).slice(0, 4)
         : [],
       books: (showAll || searchFilter === 'book')
-        ? searchData.books.filter(b => b.name?.toLowerCase().includes(q) || (b.author && b.author.toLowerCase().includes(q))).slice(0, 4)
+        ? searchData.books.filter(b => hinglishMatch(b, q)).slice(0, 4)
         : [],
       ragas: (showAll || searchFilter === 'raga')
-        ? searchData.ragas.filter(r => r.name?.toLowerCase().includes(q) || r.hinglishName?.toLowerCase().includes(q)).slice(0, 4)
+        ? searchData.ragas.filter(r => hinglishMatch(r, q)).slice(0, 4)
         : [],
       verses: (showAll || searchFilter === 'verse')
-        ? searchData.verses.filter(v =>
-          v.title?.toLowerCase().includes(q) ||
-          v.sanskrit_text?.toLowerCase().includes(q) ||
-          v.hindi_text?.toLowerCase().includes(q) ||
-          v.english_translation?.toLowerCase().includes(q)
-        ).slice(0, 6)
+        ? searchData.verses.filter(v => hinglishMatch(v, q)).slice(0, 6)
         : [],
     };
   }, [searchQuery, searchFilter, searchData, dataLoaded]);
@@ -565,6 +562,10 @@ const Layout = ({ children }) => {
             <BookOpen size={22} />
             <span className="dock-tooltip-minimal">{isHiRoute ? "ज्ञान कोष" : "Knowledge Base"}</span>
           </Link>
+          <Link to={isHiRoute ? "/hi/bookmarks" : "/bookmarks"} className={`dock-item-minimal ${location.pathname.includes('/bookmarks') ? 'active' : ''}`} title="Bookmarks">
+            <Bookmark size={22} />
+            <span className="dock-tooltip-minimal">{isHiRoute ? "मेरी पाठ सूची" : "My Bookmarks"}</span>
+          </Link>
           <div className="w-8 h-[1px] bg-white/10 my-1"></div>
           <Link to="/category/shloka" className={`dock-item-minimal ${isCategoryActive('shloka') ? 'active' : ''}`} title="Shlokas">
             <Sparkle size={22} />
@@ -626,6 +627,9 @@ const Layout = ({ children }) => {
           </Link>
           <Link to="/category/strotra" className={`mobile-nav-item ${isCategoryActive('strotra') ? 'active' : ''}`} title="Strotras">
             <Waves size={24} />
+          </Link>
+          <Link to={isHiRoute ? "/hi/bookmarks" : "/bookmarks"} className={`mobile-nav-item ${location.pathname.includes('/bookmarks') ? 'active' : ''}`} title="Bookmarks">
+            <Bookmark size={24} />
           </Link>
         </div>
       )}

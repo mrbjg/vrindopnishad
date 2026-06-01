@@ -4,7 +4,7 @@ import { ApiContext } from '../App';
 import { Search, ArrowRight, Tag, Sparkles, Brain } from 'lucide-react';
 import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { Helmet } from 'react-helmet-async';
-import { getSearchSuggestions, expandHinglishQuery } from '../utils/hinglishSearch';
+import { getSearchSuggestions, hinglishMatch } from '../utils/hinglishSearch';
 import { semanticSearch } from '../utils/semanticSearch';
 
 const ContentListPage = () => {
@@ -111,28 +111,11 @@ const ContentListPage = () => {
     
   }, [selectedCategory, apiService]);
 
-  const expandedTerms = useMemo(() => {
-    return expandHinglishQuery(debouncedSearch);
-  }, [debouncedSearch]);
-
   const filteredContent = useMemo(() => {
     if (!debouncedSearch) return content;
-    return content.filter(item => {
-      const searchableText = [
-        item.title,
-        item.hindi_text,
-        item.english_translation,
-        item.english_text,
-        item.description,
-        item.author,
-        item.category,
-        item.slug,
-        ...(item.tags || [])
-      ].filter(Boolean).join(' ').toLowerCase();
-
-      return expandedTerms.some(term => searchableText.includes(term.toLowerCase()));
-    });
-  }, [content, debouncedSearch, expandedTerms]);
+    const q = debouncedSearch.trim().toLowerCase();
+    return content.filter(item => hinglishMatch(item, q));
+  }, [content, debouncedSearch]);
 
   
   useEffect(() => {

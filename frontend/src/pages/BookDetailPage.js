@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { ApiContext } from '../App';
 import { extractRelations } from '../utils/relations';
-import { ArrowLeft, FileText, Music, User } from 'lucide-react';
+import { ArrowLeft, FileText, Music, User, Bookmark } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 
 const BookDetailPage = () => {
@@ -74,6 +74,42 @@ const BookDetailPage = () => {
     load();
     return () => { active = false; };
   }, [slug, apiService]);
+
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
+  useEffect(() => {
+    if (book) {
+      try {
+        const saved = localStorage.getItem('vrindopnishad_bookmarks');
+        const bookmarks = saved ? JSON.parse(saved) : [];
+        const found = bookmarks.some(b => b.type === 'book' && b.slug === book.slug);
+        setIsBookmarked(found);
+      } catch (e) {}
+    }
+  }, [book]);
+
+  const toggleBookmark = () => {
+    try {
+      const saved = localStorage.getItem('vrindopnishad_bookmarks');
+      let bookmarks = saved ? JSON.parse(saved) : [];
+      if (isBookmarked) {
+        bookmarks = bookmarks.filter(b => !(b.type === 'book' && b.slug === book.slug));
+        setIsBookmarked(false);
+      } else {
+        bookmarks.push({
+          type: 'book',
+          slug: book.slug,
+          name: book.name,
+          author: book.author,
+          addedAt: new Date().toISOString()
+        });
+        setIsBookmarked(true);
+      }
+      localStorage.setItem('vrindopnishad_bookmarks', JSON.stringify(bookmarks));
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   if (loading) {
     return (
@@ -165,24 +201,38 @@ const BookDetailPage = () => {
         {isHindiRoute ? "सभी ग्रन्थ" : "All Books"}
       </Link>
 
-      <div className="mb-10 pb-8 border-b border-white/5">
-        <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-bold block mb-2">Sacred Scripture</span>
-        <h1 className="text-3xl md:text-5xl font-bold font-headings text-sacred-gradient mb-3">
-          {book.name}
-        </h1>
-        {book.author && (
-          <div className="flex items-center gap-2 mt-3 text-white/60 text-sm">
-            <User size={14} className="text-primary" />
-            <span>Author:</span>
-            {book.authorSlug ? (
-              <Link to={isHindiRoute ? `/hi/saint/${book.authorSlug}` : `/saint/${book.authorSlug}`} className="text-primary hover:underline font-medium">
-                {book.author}
-              </Link>
-            ) : (
-              <span className="font-medium text-white/80">{book.author}</span>
-            )}
-          </div>
-        )}
+      <div className="mb-10 pb-8 border-b border-white/5 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-bold block mb-2">Sacred Scripture</span>
+          <h1 className="text-3xl md:text-5xl font-bold font-headings text-sacred-gradient mb-3">
+            {book.name}
+          </h1>
+          {book.author && (
+            <div className="flex items-center gap-2 mt-3 text-white/60 text-sm">
+              <User size={14} className="text-primary" />
+              <span>Author:</span>
+              {book.authorSlug ? (
+                <Link to={isHindiRoute ? `/hi/saint/${book.authorSlug}` : `/saint/${book.authorSlug}`} className="text-primary hover:underline font-medium">
+                  {book.author}
+                </Link>
+              ) : (
+                <span className="font-medium text-white/80">{book.author}</span>
+              )}
+            </div>
+          )}
+        </div>
+
+        <button
+          onClick={toggleBookmark}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full border transition-all text-xs font-semibold shrink-0 self-start md:self-auto ${
+            isBookmarked 
+              ? 'bg-primary/10 border-primary/30 text-primary' 
+              : 'bg-white/5 border-white/10 hover:border-white/20 text-white/85 hover:text-white'
+          }`}
+        >
+          <Bookmark size={14} className={isBookmarked ? 'fill-current' : ''} />
+          <span>{isBookmarked ? (isHindiRoute ? 'सूची में सहेजा गया' : 'Saved to List') : (isHindiRoute ? 'पाठ सूची में जोड़ें' : 'Add to Bookmarks')}</span>
+        </button>
       </div>
 
       <section>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Laila:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Laila:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Noto+Serif+Devanagari:wght@400;500;700&family=Tiro+Devanagari+Sanskrit&display=swap');
 
 @import "tailwindcss/base";
 @import "tailwindcss/components";
@@ -394,6 +394,7 @@ body {
 
 .hindi-text,
 .sanskrit-text {
+    font-family: 'Noto Serif Devanagari', 'Tiro Devanagari Sanskrit', 'Laila', serif !important;
     display: block;
     line-height: 2;
     padding-top: 0.8em;

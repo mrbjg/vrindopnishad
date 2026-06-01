@@ -18,7 +18,6 @@ import 'features/splash_screen.dart';
 import 'core/cache_service.dart';
 import 'services/notification_service.dart';
 
-import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -48,11 +47,6 @@ void main() async {
 
   // 2. Initialize other services in parallel
   await Future.wait([
-    sb.Supabase.initialize(
-      url: 'https://tilimltxgeucefxzerqi.supabase.co',
-      anonKey: 'sb_publishable_0YiM-Q8itRORUDdToracaQ_vzcrjUlC',
-    ),
-    
     JustAudioBackground.init(
       androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
       androidNotificationChannelName: 'Audio playback',

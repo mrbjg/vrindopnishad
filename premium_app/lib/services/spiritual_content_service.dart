@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' as sb;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/daily_motivation.dart';
 import '../models/daily_gyaan.dart';
 import '../models/sacred_event.dart';
@@ -8,8 +8,6 @@ import '../models/daily_challenge.dart';
 import '../core/cache_service.dart';
 
 class SpiritualContentService {
-  final sb.SupabaseClient _supabase = sb.Supabase.instance.client;
-
   // ─── Daily Motivation ───────────────────────────────────────
 
   /// Fetch a motivation appropriate for user's level
@@ -21,14 +19,20 @@ class SpiritualContentService {
         return cached;
       }
 
-      final response = await _supabase
-          .from('daily_motivations')
-          .select()
-          .lte('min_level', userLevel)
-          .gte('max_level', userLevel)
-          .limit(10);
+      final snapshot = await FirebaseFirestore.instance
+          .collection('daily_motivations')
+          .get();
 
-      final list = (response as List).cast<Map<String, dynamic>>();
+      final list = snapshot.docs.map((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        return data;
+      }).where((data) {
+        final minLevel = data['min_level'] as int? ?? 1;
+        final maxLevel = data['max_level'] as int? ?? 99;
+        return userLevel >= minLevel && userLevel <= maxLevel;
+      }).toList();
+
       if (list.isEmpty) return null;
 
       // Pick a pseudo-random one based on today's date for consistency
@@ -48,19 +52,29 @@ class SpiritualContentService {
   Future<List<DailyMotivation>> getMotivationsByCategory(
       String category, int userLevel) async {
     try {
-      final response = await _supabase
-          .from('daily_motivations')
-          .select()
-          .eq('category', category)
-          .lte('min_level', userLevel)
-          .gte('max_level', userLevel)
-          .order('created_at', ascending: false)
-          .limit(20);
+      final snapshot = await FirebaseFirestore.instance
+          .collection('daily_motivations')
+          .where('category', isEqualTo: category)
+          .get();
 
-      return (response as List)
-          .cast<Map<String, dynamic>>()
-          .map((e) => DailyMotivation.fromJson(e))
-          .toList();
+      final list = snapshot.docs.map((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        return data;
+      }).where((data) {
+        final minLevel = data['min_level'] as int? ?? 1;
+        final maxLevel = data['max_level'] as int? ?? 99;
+        return userLevel >= minLevel && userLevel <= maxLevel;
+      }).toList();
+
+      // Sort by created_at desc in-memory
+      list.sort((a, b) {
+        final aTime = DateTime.tryParse(a['created_at']?.toString() ?? '') ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final bTime = DateTime.tryParse(b['created_at']?.toString() ?? '') ?? DateTime.fromMillisecondsSinceEpoch(0);
+        return bTime.compareTo(aTime);
+      });
+
+      return list.map((e) => DailyMotivation.fromJson(e)).take(20).toList();
     } catch (e) {
       debugPrint('Error fetching motivations by category: $e');
       return [];
@@ -86,15 +100,26 @@ class SpiritualContentService {
         difficulty = 2;
       }
 
-      final response = await _supabase
-          .from('daily_gyaan')
-          .select()
-          .lte('difficulty', difficulty)
-          .order('created_at', ascending: false)
-          .limit(10);
+      final snapshot = await FirebaseFirestore.instance
+          .collection('daily_gyaan')
+          .get();
 
-      final list = (response as List).cast<Map<String, dynamic>>();
-      
+      final list = snapshot.docs.map((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        return data;
+      }).where((data) {
+        final diff = data['difficulty'] as int? ?? 1;
+        return diff <= difficulty;
+      }).toList();
+
+      // Sort by created_at desc
+      list.sort((a, b) {
+        final aTime = DateTime.tryParse(a['created_at']?.toString() ?? '') ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final bTime = DateTime.tryParse(b['created_at']?.toString() ?? '') ?? DateTime.fromMillisecondsSinceEpoch(0);
+        return bTime.compareTo(aTime);
+      });
+
       DailyGyaan? todayGyaan;
       // Pick a pseudo-random one based on today's date for consistency
       if (list.isNotEmpty) {
@@ -134,14 +159,18 @@ class SpiritualContentService {
       if (cached != null) {
         list = cached;
       } else {
-        var query = _supabase.from('daily_gyaan').select();
-        final response =
-            await query.order('created_at', ascending: false).limit(50);
+        final snapshot = await FirebaseFirestore.instance
+            .collection('daily_gyaan')
+            .get();
 
-        final apiList = (response as List)
-            .cast<Map<String, dynamic>>()
-            .map((e) => DailyGyaan.fromJson(e))
-            .toList();
+        final apiList = snapshot.docs.map((doc) {
+          final data = doc.data();
+          data['id'] = doc.id;
+          return DailyGyaan.fromJson(data);
+        }).toList();
+
+        // Sort by created_at desc
+        apiList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
         list = apiList;
         await CacheService.instance.cacheAllGyaan(list);
@@ -192,17 +221,22 @@ class SpiritualContentService {
       }
 
       final today = DateTime.now().toIso8601String().split('T')[0];
-      final response = await _supabase
-          .from('sacred_calendar')
-          .select()
-          .gte('date', today)
-          .order('date', ascending: true)
-          .limit(limit);
+      
+      final snapshot = await FirebaseFirestore.instance
+          .collection('sacred_calendar')
+          .get();
 
-      final apiList = (response as List)
-          .cast<Map<String, dynamic>>()
-          .map((e) => SacredEvent.fromJson(e))
-          .toList();
+      final apiList = snapshot.docs.map((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        return SacredEvent.fromJson(data);
+      }).where((e) {
+        final dateStr = e.date.toIso8601String().split('T')[0];
+        return dateStr.compareTo(today) >= 0;
+      }).toList();
+
+      // Sort by date ascending
+      apiList.sort((a, b) => a.date.compareTo(b.date));
 
       final resultList = [
         SacredEvent(
@@ -226,7 +260,7 @@ class SpiritualContentService {
 
       // Save to cache
       await CacheService.instance.cacheUpcomingEvents(resultList);
-      return resultList;
+      return resultList.take(limit).toList();
     } catch (e) {
       debugPrint('Error fetching events: $e');
       return [];
@@ -242,26 +276,24 @@ class SpiritualContentService {
         return cached;
       }
 
-      final startDate = '$year-${month.toString().padLeft(2, '0')}-01';
-      final endMonth = month == 12 ? 1 : month + 1;
-      final endYear = month == 12 ? year + 1 : year;
-      final endDate = '$endYear-${endMonth.toString().padLeft(2, '0')}-01';
+      final snapshot = await FirebaseFirestore.instance
+          .collection('sacred_calendar')
+          .get();
 
-      final response = await _supabase
-          .from('sacred_calendar')
-          .select()
-          .gte('date', startDate)
-          .lt('date', endDate)
-          .order('date', ascending: true);
-
-      var resultList = (response as List)
-          .cast<Map<String, dynamic>>()
-          .map((e) => SacredEvent.fromJson(e))
-          .toList();
+      var resultList = snapshot.docs.map((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        return SacredEvent.fromJson(data);
+      }).where((e) {
+        return e.date.year == year && e.date.month == month;
+      }).toList();
 
       if (resultList.isEmpty) {
         resultList = _generateMockEventsForMonth(year, month);
       }
+
+      // Sort ascending by date
+      resultList.sort((a, b) => a.date.compareTo(b.date));
 
       // Save to cache
       await CacheService.instance.cacheMonthlyEvents(year, month, resultList);
@@ -389,15 +421,19 @@ class SpiritualContentService {
       }
 
       final today = DateTime.now().toIso8601String().split('T')[0];
-      final response = await _supabase
-          .from('sacred_calendar')
-          .select()
-          .eq('date', today);
+      
+      final snapshot = await FirebaseFirestore.instance
+          .collection('sacred_calendar')
+          .get();
 
-      final apiList = (response as List)
-          .cast<Map<String, dynamic>>()
-          .map((e) => SacredEvent.fromJson(e))
-          .toList();
+      final apiList = snapshot.docs.map((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        return SacredEvent.fromJson(data);
+      }).where((e) {
+        final dateStr = e.date.toIso8601String().split('T')[0];
+        return dateStr == today;
+      }).toList();
           
       List<SacredEvent> resultList = apiList;
       // Ensure Today has an event for UI Demo
@@ -437,14 +473,17 @@ class SpiritualContentService {
   /// Fetch user's unlocked achievements
   Future<List<UserAchievement>> getUserAchievements(String uid) async {
     try {
-      final response = await _supabase
-          .from('user_achievements')
-          .select()
-          .eq('firebase_uid', uid);
+      final snapshot = await FirebaseFirestore.instance
+          .collection('user_achievements')
+          .where('firebase_uid', isEqualTo: uid)
+          .get();
 
-      return (response as List)
-          .cast<Map<String, dynamic>>()
-          .map((e) => UserAchievement.fromJson(e))
+      return snapshot.docs
+          .map((doc) {
+            final data = doc.data();
+            data['id'] = doc.id;
+            return UserAchievement.fromJson(data);
+          })
           .toList();
     } catch (e) {
       debugPrint('Error fetching achievements: $e');
@@ -455,7 +494,8 @@ class SpiritualContentService {
   /// Unlock an achievement
   Future<bool> unlockAchievement(String uid, String achievementId) async {
     try {
-      await _supabase.from('user_achievements').upsert({
+      final id = '${uid}_$achievementId';
+      await FirebaseFirestore.instance.collection('user_achievements').doc(id).set({
         'firebase_uid': uid,
         'achievement_id': achievementId,
         'unlocked_at': DateTime.now().toUtc().toIso8601String(),
@@ -480,30 +520,32 @@ class SpiritualContentService {
       }
 
       // Get challenges matching user level
-      final response = await _supabase
-          .from('daily_challenges')
-          .select()
-          .lte('min_level', userLevel)
-          .limit(3);
+      final snapshot = await FirebaseFirestore.instance
+          .collection('daily_challenges')
+          .get();
 
-      final challenges = (response as List)
-          .cast<Map<String, dynamic>>()
-          .map((e) => DailyChallenge.fromJson(e))
-          .toList();
+      final challenges = snapshot.docs.map((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        return DailyChallenge.fromJson(data);
+      }).where((c) => c.minLevel <= userLevel).take(3).toList();
 
-      // Fetch user progress for these challenges
       if (challenges.isEmpty) return [];
 
-      final progressResponse = await _supabase
-          .from('user_challenge_progress')
-          .select()
-          .eq('firebase_uid', uid)
-          .inFilter(
-              'challenge_id', challenges.map((c) => c.id).toList());
+      // Fetch user progress for these challenges
+      final progressSnapshot = await FirebaseFirestore.instance
+          .collection('user_challenge_progress')
+          .where('firebase_uid', isEqualTo: uid)
+          .get();
 
       final progressMap = <String, Map<String, dynamic>>{};
-      for (var p in (progressResponse as List).cast<Map<String, dynamic>>()) {
-        progressMap[p['challenge_id']] = p;
+      for (var doc in progressSnapshot.docs) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        final challengeId = data['challenge_id']?.toString();
+        if (challengeId != null) {
+          progressMap[challengeId] = data;
+        }
       }
 
       // Merge progress into challenges
@@ -553,16 +595,21 @@ class SpiritualContentService {
       debugPrint('Error updating local challenge cache: $e');
     }
 
-    // Sync with Supabase in background
+    // Sync with Firestore in background
     try {
-      await _supabase.from('user_challenge_progress').upsert({
-        'firebase_uid': uid,
-        'challenge_id': challengeId,
-        'current_value': newValue,
-        'is_completed': completed,
-        if (completed)
-          'completed_at': DateTime.now().toUtc().toIso8601String(),
-      });
+      final progressId = '${uid}_$challengeId';
+      await FirebaseFirestore.instance
+          .collection('user_challenge_progress')
+          .doc(progressId)
+          .set({
+            'firebase_uid': uid,
+            'challenge_id': challengeId,
+            'current_value': newValue,
+            'is_completed': completed,
+            if (completed)
+              'completed_at': DateTime.now().toUtc().toIso8601String(),
+            'updated_at': DateTime.now().toUtc().toIso8601String(),
+          }, SetOptions(merge: true));
     } catch (e) {
       debugPrint('Error updating challenge progress: $e');
     }

@@ -36,17 +36,37 @@ async function getEmbeddings(texts) {
 
 
 async function fetchContent() {
-  const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/content?select=id,title,slug,category,author,hindi_text,description&order=created_at.desc`,
-    {
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-      },
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/content?select=id,title,slug,category,author,hindi_text,description&order=created_at.desc`,
+      {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+        },
+      }
+    );
+    if (res.ok) return await res.json();
+    throw new Error(`Supabase error status: ${res.status}`);
+  } catch (err) {
+    console.warn('Supabase fetch failed in semantic search, loading from local backups...', err.message);
+    const fs = require('fs');
+    const path = require('path');
+    
+    let localFilePath = path.join(process.cwd(), 'data/brajrasik_hi_full.json');
+    if (!fs.existsSync(localFilePath)) {
+      localFilePath = path.join(process.cwd(), 'frontend/data/brajrasik_hi_full.json');
     }
-  );
-  if (!res.ok) throw new Error(`Supabase error: ${res.status}`);
-  return res.json();
+    if (!fs.existsSync(localFilePath)) {
+      localFilePath = path.join(process.cwd(), 'admin/data/brajrasik_hi_full.json');
+    }
+
+    if (fs.existsSync(localFilePath)) {
+      const fileContent = fs.readFileSync(localFilePath, 'utf8');
+      return JSON.parse(fileContent);
+    }
+    throw err;
+  }
 }
 
 

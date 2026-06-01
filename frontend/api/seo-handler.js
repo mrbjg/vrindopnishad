@@ -618,10 +618,18 @@ export default async function handler(req, res) {
   } catch (e) {
     console.error('Supabase fetch failed, trying local backups fallback:', e.message);
     
-    
     try {
-      const localFilePath = path.join(process.cwd(), 'admin/data/brajrasik_hi_full.json');
-      const localSaintsPath = path.join(process.cwd(), 'admin/data/saints_formatted.json');
+      let localFilePath = path.join(process.cwd(), 'data/brajrasik_hi_full.json');
+      let localSaintsPath = path.join(process.cwd(), 'data/saints_formatted.json');
+      
+      if (!fs.existsSync(localFilePath)) {
+        localFilePath = path.join(process.cwd(), 'frontend/data/brajrasik_hi_full.json');
+        localSaintsPath = path.join(process.cwd(), 'frontend/data/saints_formatted.json');
+      }
+      if (!fs.existsSync(localFilePath)) {
+        localFilePath = path.join(process.cwd(), 'admin/data/brajrasik_hi_full.json');
+        localSaintsPath = path.join(process.cwd(), 'admin/data/saints_formatted.json');
+      }
       
       let backupItems = [];
       if (fs.existsSync(localFilePath)) {
@@ -709,17 +717,64 @@ export default async function handler(req, res) {
         console.error('Error fetching content detail from Supabase:', err);
       }
 
+      // Parse Granth Name, Pad [N], and Saint Name from title
+      let padName = "";
+      let parsedSaint = "";
+      let parsedGranth = "";
+
+      const titleVal = fullContent.title || "";
+      const tParts = titleVal.split(/\s+-\s+/);
+      if (tParts.length >= 2) {
+        padName = tParts[0].trim();
+        const relText = tParts[1].trim();
+        const bracketMatch = relText.match(/\(([^)]+)\)$/);
+        const bracketContent = bracketMatch ? bracketMatch[1].trim() : "";
+        const cleanRelText = bracketMatch ? relText.replace(/\(([^)]+)\)$/, '').trim() : relText;
+        const relSplit = cleanRelText.split(/\s*,\s*/);
+        
+        if (relSplit.length >= 2) {
+          parsedSaint = relSplit[0].trim();
+          parsedGranth = relSplit[1].trim();
+        } else if (relSplit.length === 1) {
+          const val = relSplit[0].trim();
+          if (val.includes('वाणी') || val.includes('सागर') || val.includes('शतक') || val.includes('मिहामामृत') || val.includes('दोहे') || val.includes('ग्रंथावली') || val.includes('पदावली') || val.includes('शत') || val.includes('केलिमाल') || val.includes('चौरासी')) {
+            parsedGranth = val;
+          } else {
+            parsedSaint = val;
+          }
+        }
+        
+        if (!parsedGranth && bracketContent) {
+          parsedGranth = bracketContent.replace(/\d+/g, '').replace(/[१२३४५६७८९०]+/g, '').trim();
+        }
+      } else {
+        padName = titleVal;
+      }
+
+      if (!parsedSaint) {
+        parsedSaint = fullContent.author && fullContent.author !== 'Braj Rasik Heritage' ? fullContent.author : '';
+      }
+      
+      const cleanSaint = parsedSaint ? parsedSaint.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim() : (isHindiRoute ? 'वैष्णव संत' : 'Vaishnava Saint');
+      const cleanGranth = parsedGranth ? parsedGranth.trim() : (isHindiRoute ? 'वृंदोपनिषद् ग्रन्थ' : 'Vrindopnishad Granth');
+      
+      let formattedPad = padName;
+      if (!isHindiRoute) {
+        formattedPad = formattedPad
+          .replace(/पद्/g, 'Pad')
+          .replace(/पद/g, 'Pad')
+          .replace(/श्लोक/g, 'Shloka')
+          .replace(/१/g, '1').replace(/२/g, '2').replace(/३/g, '3').replace(/४/g, '4')
+          .replace(/५/g, '5').replace(/६/g, '6').replace(/७/g, '7').replace(/८/g, '8')
+          .replace(/९/g, '9').replace(/०/g, '0');
+      }
+
       const canonicalSlug = encodeURIComponent(fullContent.slug || fullContent.id);
-      title = isHindiRoute
-        ? `${fullContent.title} — ${fullContent.category || 'पवित्र पाठ'} | ${fullContent.author || 'वृंदोपनिषद्'}`
-        : `${fullContent.title} — ${fullContent.category || 'Sacred Verse'} | ${fullContent.author || 'Vrindopnishad'}`;
-      
-      const categoryLabel = isHindiRoute ? (fullContent.category || 'पवित्र पाठ') : (fullContent.category || 'Sacred Verse');
-      const authorLabel = fullContent.author && fullContent.author !== 'Braj Rasik Heritage' ? fullContent.author : (isHindiRoute ? 'वैष्णव संत' : 'Vaishnava Saint');
-      
+      title = `${cleanGranth} — ${formattedPad} | ${cleanSaint} | Vrindopnishad`;
+
       description = isHindiRoute
-        ? `पढ़ें और समझें ${fullContent.title}, एक पवित्र ${categoryLabel} जो कि ${authorLabel} द्वारा रचित है। इसका संस्कृत मूल पाठ, हिंदी भावार्थ और व्याख्या यहाँ उपलब्ध है।`
-        : `Read and explore ${fullContent.title}, a sacred ${categoryLabel} written by ${authorLabel}. Access the original Sanskrit shloka, Hindi translation, and English commentary.`;
+        ? `${cleanSaint} द्वारा रचित ${fullContent.title} (ग्रन्थ: ${cleanGranth})। हिन्दी, संस्कृत, ब्रजभाषा और अंग्रेजी रोमन अनुवाद (with meaning, commentary) में बिल्कुल निःशुल्क (completely free) पढ़ें।`
+        : `Read and explore ${fullContent.title} by ${cleanSaint} from the grantha ${cleanGranth}. Completely free online access with meaning, translation, and commentary. Available in Hindi, Sanskrit, Braj Bhasha, and English transliteration (with meaning, complete collection).`;
       
       pageUrl = getRouteLink(`/content/${canonicalSlug}`);
 
@@ -731,14 +786,15 @@ export default async function handler(req, res) {
         "@context": "https://schema.org",
         "@graph": [
           {
-            "@type": "ScholarlyArticle",
-            "@id": `${pageUrl}/#article`,
+            "@type": "CreativeWork",
+            "@id": `${pageUrl}/#verse`,
+            "name": fullContent.title,
             "headline": fullContent.title,
             "description": description,
             "image": ogImageUrl,
             "author": { 
               "@type": "Person", 
-              "name": authorLabel 
+              "name": cleanSaint 
             },
             "publisher": {
               "@type": "Organization",
@@ -749,7 +805,7 @@ export default async function handler(req, res) {
               }
             },
             "mainEntityOfPage": { "@type": "WebPage", "@id": pageUrl },
-            "inLanguage": ["sa", "hi", "en"],
+            "inLanguage": ["sa", "hi", "braj"],
             "genre": fullContent.category || "Sacred Literature",
             "datePublished": fullContent.created_at || today
           },
@@ -902,13 +958,11 @@ export default async function handler(req, res) {
         ? (isHindiRoute ? meta.biographyHi : meta.biographyEn)
         : (sant.biography?.text || (isHindiRoute ? "ब्रज परंपरा के वैष्णव संत।" : "Vaishnava saint of the Braj tradition."));
 
-      title = isHindiRoute
-        ? `${santName} की जीवनी, ग्रन्थ एवं सम्पूर्ण वाणी संग्रह | वृंदोपनिषद्`
-        : `${santHinglish} Biography, Granthas & Complete Vaanis | Vrindopnishad`;
+      title = `${santName} — [भजन/वाणियाँ] | Vrindopnishad`;
         
       description = isHindiRoute
-        ? `महान रसिक संत ${santName} (परंपरा: ${lineage}, काल: ${timeline}) का जीवन चरित्र, इतिहास, ग्रन्थ और वाणी संग्रह। ${bioText.substring(0, 140)}`
-        : `Explore the biography of ${santHinglish} (Lineage: ${lineage}, Era: ${timeline}), including spiritual teachings and complete verses. ${bioText.substring(0, 140)}`;
+        ? `महान रसिक संत ${santName} (परंपरा: ${lineage}, काल: ${timeline}) का जीवन चरित्र, इतिहास, ग्रन्थ और वाणी संग्रह। हिन्दी, संस्कृत, ब्रजभाषा और अंग्रेजी रोमन अनुवाद (with meaning) में बिल्कुल निःशुल्क (completely free) उपलब्ध।`
+        : `Explore the biography of ${santHinglish} (Lineage: ${lineage}, Era: ${timeline}), including spiritual teachings and complete verses. Available in Hindi, Sanskrit, Braj Bhasha, and English transliteration. Completely free online with meaning, biography, and complete collection.`;
       
       pageUrl = getRouteLink(`/saint/${encodeURIComponent(sant.slug || slug)}`);
 
@@ -1648,7 +1702,7 @@ export default async function handler(req, res) {
 <html lang="hi" dir="ltr">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>${title}</title>
   <meta name="description" content="${description}"/>
   <link rel="canonical" href="${pageUrl}"/>

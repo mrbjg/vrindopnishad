@@ -1,31 +1,35 @@
 import 'package:flutter/foundation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' as sb;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../core/content_provider.dart';
 
-/// API Service that fetches data directly from Supabase
+/// API Service that fetches data directly from Cloud Firestore
 class ApiService {
-  static sb.SupabaseClient get _supabase => sb.Supabase.instance.client;
-
-  /// Fetch all content from the Supabase 'content' table
+  /// Fetch all content from the Firestore 'content' collection
   static Future<List<SacredContent>> fetchAllContent({String? category}) async {
     try {
-      var query = _supabase
-          .from('content')
-          .select()
-          .order('created_at', ascending: false);
+      Query query = FirebaseFirestore.instance.collection('content');
 
       if (category != null && category.isNotEmpty) {
-        query = _supabase
-            .from('content')
-            .select()
-            .eq('category', category)
-            .order('created_at', ascending: false);
+        query = query.where('category', isEqualTo: category);
       }
 
-      final List<dynamic> data = await query;
-      return data.map((json) => _mapJsonToContent(json)).toList();
+      QuerySnapshot snapshot;
+      try {
+        snapshot = await query.orderBy('created_at', descending: true).get();
+      } catch (e) {
+        debugPrint('Firestore orderBy created_at failed (likely missing index): $e. Querying without order.');
+        snapshot = await query.get();
+      }
+
+      final List<SacredContent> contentList = snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id;
+        return _mapJsonToContent(data);
+      }).toList();
+
+      return contentList;
     } catch (e) {
-      debugPrint('Error fetching content from Supabase: $e');
+      debugPrint('Error fetching content from Firestore: $e');
       return [];
     }
   }
@@ -33,12 +37,14 @@ class ApiService {
   /// Fetch a single content item by ID
   static Future<SacredContent?> fetchContentById(String id) async {
     try {
-      final data = await _supabase
-          .from('content')
-          .select()
-          .eq('id', id)
-          .single();
+      final doc = await FirebaseFirestore.instance
+          .collection('content')
+          .doc(id)
+          .get();
 
+      if (!doc.exists) return null;
+      final data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
       return _mapJsonToContent(data);
     } catch (e) {
       debugPrint('Error fetching content by ID: $e');
@@ -49,15 +55,15 @@ class ApiService {
   /// Fetch all unique categories from the content table
   static Future<List<String>> fetchCategories() async {
     try {
-      final List<dynamic> data = await _supabase
-          .from('content')
-          .select('category');
+      final snapshot = await FirebaseFirestore.instance
+          .collection('content')
+          .get();
 
-      final categories = data
-          .map((item) => item['category'] as String?)
+      final categories = snapshot.docs
+          .map((doc) => doc.data()['category'] as String?)
           .where((cat) => cat != null && cat.isNotEmpty)
+          .map((cat) => cat!)
           .toSet()
-          .cast<String>()
           .toList();
 
       return categories;
@@ -68,25 +74,39 @@ class ApiService {
   }
 
   /// Search content by title or description
-  static Future<List<SacredContent>> searchContent(String query) async {
+  static Future<List<SacredContent>> searchContent(String queryStr) async {
     try {
-      if (query.trim().isEmpty) return [];
+      if (queryStr.trim().isEmpty) return [];
 
-      final List<dynamic> data = await _supabase
-          .from('content')
-          .select()
-          .or('title.ilike.%$query%,sanskrit_text.ilike.%$query%,hindi_text.ilike.%$query%,english_translation.ilike.%$query%')
-          .order('created_at', ascending: false)
-          .limit(50);
+      final snapshot = await FirebaseFirestore.instance
+          .collection('content')
+          .get();
 
-      return data.map((json) => _mapJsonToContent(json)).toList();
+      final lowerQuery = queryStr.toLowerCase();
+      final List<SacredContent> results = [];
+
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        final content = _mapJsonToContent(data);
+
+        if (content.title.toLowerCase().contains(lowerQuery) ||
+            content.sanskritText.toLowerCase().contains(lowerQuery) ||
+            content.hindiMeaning.toLowerCase().contains(lowerQuery) ||
+            content.translation.toLowerCase().contains(lowerQuery) ||
+            content.commentary.toLowerCase().contains(lowerQuery)) {
+          results.add(content);
+        }
+      }
+
+      return results.take(50).toList();
     } catch (e) {
       debugPrint('Error searching content: $e');
       return [];
     }
   }
 
-  /// Map Supabase JSON to SacredContent model
+  /// Map Firestore JSON to SacredContent model
   static SacredContent _mapJsonToContent(Map<String, dynamic> json) {
     // Handle image_url (single) or image_urls (array)
     String? imageUrl;

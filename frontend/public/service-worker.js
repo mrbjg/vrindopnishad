@@ -2,7 +2,8 @@ const CACHE_NAME = 'vrindopnishad-fast-v4';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
-    '/manifest.json'
+    '/manifest.json',
+    '/data/content_backup.json'
 ];
 
 self.addEventListener('install', event => {

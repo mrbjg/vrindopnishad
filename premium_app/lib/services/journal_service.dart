@@ -1,20 +1,25 @@
 import 'package:flutter/foundation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' as sb;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/journal_entry.dart';
 
 class JournalService {
-  final sb.SupabaseClient _supabase = sb.Supabase.instance.client;
-
   /// Fetch all journal entries for a user
   Future<List<JournalEntry>> fetchEntries(String uid) async {
     try {
-      final response = await _supabase
-          .from('journal_entries')
-          .select()
-          .eq('firebase_uid', uid)
-          .order('created_at', ascending: false);
+      final snapshot = await FirebaseFirestore.instance
+          .collection('journal_entries')
+          .where('firebase_uid', isEqualTo: uid)
+          .get();
           
-      return (response as List).map((e) => JournalEntry.fromJson(e)).toList();
+      final entries = snapshot.docs.map((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        return JournalEntry.fromJson(data);
+      }).toList();
+
+      // Sort in-memory to avoid needing index
+      entries.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return entries;
     } catch (e) {
       debugPrint('Error fetching journal entries: $e');
       return [];
@@ -24,13 +29,20 @@ class JournalService {
   /// Fetch all public entries (feed & chat)
   Future<List<JournalEntry>> fetchPublicEntries() async {
     try {
-      final response = await _supabase
-          .from('journal_entries')
-          .select()
-          .order('created_at', ascending: false)
-          .limit(100);
+      final snapshot = await FirebaseFirestore.instance
+          .collection('journal_entries')
+          .limit(100)
+          .get();
           
-      return (response as List).map((e) => JournalEntry.fromJson(e)).toList();
+      final entries = snapshot.docs.map((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        return JournalEntry.fromJson(data);
+      }).toList();
+
+      // Sort in-memory
+      entries.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return entries;
     } catch (e) {
       debugPrint('Error fetching public entries: $e');
       return [];
@@ -39,24 +51,34 @@ class JournalService {
 
   /// Stream all public entries in real-time
   Stream<List<JournalEntry>> getPublicEntriesStream() {
-    return _supabase
-        .from('journal_entries')
-        .stream(primaryKey: ['id'])
-        .order('created_at', ascending: false)
-        .limit(100)
-        .map((list) => list.map((e) => JournalEntry.fromJson(e)).toList());
+    return FirebaseFirestore.instance
+        .collection('journal_entries')
+        .snapshots()
+        .map((snapshot) {
+          final entries = snapshot.docs.map((doc) {
+            final data = doc.data();
+            data['id'] = doc.id;
+            return JournalEntry.fromJson(data);
+          }).toList();
+
+          // Sort in-memory
+          entries.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+          return entries.take(100).toList();
+        });
   }
 
   /// Create a new journal entry
   Future<JournalEntry?> createEntry(JournalEntry entry) async {
     try {
-      final response = await _supabase
-          .from('journal_entries')
-          .insert(entry.toJson())
-          .select()
-          .single();
+      final docRef = await FirebaseFirestore.instance
+          .collection('journal_entries')
+          .add(entry.toJson());
           
-      return JournalEntry.fromJson(response);
+      final doc = await docRef.get();
+      final data = doc.data()!;
+      data['id'] = doc.id;
+      
+      return JournalEntry.fromJson(data);
     } catch (e) {
       debugPrint('Error creating journal entry: $e');
       return null;
@@ -66,10 +88,10 @@ class JournalService {
   /// Update an existing journal entry
   Future<void> updateEntry(String id, Map<String, dynamic> updates) async {
     try {
-      await _supabase
-          .from('journal_entries')
-          .update(updates)
-          .eq('id', id);
+      await FirebaseFirestore.instance
+          .collection('journal_entries')
+          .doc(id)
+          .update(updates);
     } catch (e) {
       debugPrint('Error updating journal entry: $e');
     }
@@ -78,10 +100,10 @@ class JournalService {
   /// Delete a journal entry
   Future<void> deleteEntry(String id) async {
     try {
-      await _supabase
-          .from('journal_entries')
-          .delete()
-          .eq('id', id);
+      await FirebaseFirestore.instance
+          .collection('journal_entries')
+          .doc(id)
+          .delete();
     } catch (e) {
       debugPrint('Error deleting journal entry: $e');
     }
