@@ -1,17 +1,18 @@
 import React from 'react';
 import HomePage from '../src/views/HomePage';
 import Layout from '../src/components/Layout';
-import { getAllVerses, getAllSaints, getAllGranthas, getAllRagas } from '../src/lib/contentData';
+import { getAllVerses, getAllSaints, getAllGranthas, getAllRagas, ensureDataLoaded } from '../src/lib/contentData';
 
 export const metadata = {
-  title: 'Vrindopnishad Paath — वृंदोपनिषद् पाठ | Sacred Digital Sanctuary',
-  description: 'Vrindopnishad Paath (वृंदोपनिषद् पाठ) — Read and listen to authentic sacred Sanskrit shlokas, devotional strotras, spiritual poetry & Vedic wisdom from Vrindavan saints.',
+  title: 'वृंदोपनिषद् पाठ - Braj Rasik Vani, Shlokas & Daily Chanting Sanctuary',
+  description: 'Explore authentic Vedic Shlokas, Devotional Strotras, and Braj Rasik Vani with complete Hindi translations. Track your daily Chanting Malas and connect with Vrindavan wisdom.',
   alternates: {
     canonical: 'https://path.vrindopnishad.in',
   },
 };
 
-export default function HomeRoute() {
+export default async function HomeRoute() {
+  await ensureDataLoaded();
   const verses = getAllVerses();
   const saints = getAllSaints();
   const books = getAllGranthas();

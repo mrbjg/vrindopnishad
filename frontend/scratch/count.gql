@@ -1,0 +1,6 @@
+query CountContent {
+  contents(limit: 5) {
+    id
+    title
+  }
+}

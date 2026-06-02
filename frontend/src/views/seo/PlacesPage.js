@@ -173,6 +173,30 @@ const PlacesPage = () => {
     return matchesSearch && matchesCategory;
   });
 
+  const placesSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Sacred Places of Braj Dham and Vrindavan",
+    "description": "A comprehensive spiritual guide to the holy places, sacred lakes, and mystical groves of Braj Dham and Vrindavan.",
+    "url": pageUrl,
+    "itemListElement": SACRED_PLACES.map((place, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "item": {
+        "@type": "Landmark",
+        "name": place.name,
+        "alternateName": place.devanagari,
+        "description": place.description,
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": place.locationHint || "Vrindavan",
+          "addressRegion": "Uttar Pradesh",
+          "addressCountry": "IN"
+        }
+      }
+    }))
+  };
+
   return (
     <div className="animate-fade-in max-w-5xl mx-auto px-4 py-8">
       <Helmet>
@@ -183,7 +207,7 @@ const PlacesPage = () => {
         <meta property="og:description" content={description} />
         <meta property="og:url" content={pageUrl} />
         <meta property="og:type" content="article" />
-        <script type="application/ld+json">{JSON.stringify(generateArticleSchema(title, description, pageUrl))}</script>
+        <script type="application/ld+json">{JSON.stringify(placesSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(generateBreadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Sacred Places', path: '/places' }]))}</script>
       </Helmet>
 

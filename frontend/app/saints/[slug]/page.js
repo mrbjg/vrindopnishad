@@ -1,18 +1,17 @@
 import React from 'react';
 import SaintDetailPage from '../../../src/views/SaintDetailPage';
 import Layout from '../../../src/components/Layout';
-import { getSaintBySlug, getAllSaints } from '../../../src/lib/contentData';
+import { getSaintBySlug, getAllSaints, ensureDataLoaded } from '../../../src/lib/contentData';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 
 export async function generateStaticParams() {
-  const saints = getAllSaints();
-  return saints.map(s => ({
-    slug: encodeURIComponent(s.slug),
-  }));
+  // Generate pages on-demand (ISR/SSR) to save Vercel build time.
+  return [];
 }
 
 export async function generateMetadata({ params }) {
+  await ensureDataLoaded();
   const decodedSlug = decodeURIComponent(params.slug);
   const saint = getSaintBySlug(decodedSlug);
   if (!saint) return {};
@@ -35,21 +34,25 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default function SaintRoute({ params }) {
+export default async function SaintRoute({ params }) {
+  await ensureDataLoaded();
   const decodedSlug = decodeURIComponent(params.slug);
   const saint = getSaintBySlug(decodedSlug);
   if (!saint) {
     notFound();
   }
 
-  const personSchema = {
+  const profilePageSchema = {
     "@context": "https://schema.org",
-    "@type": "Person",
-    "name": saint.name,
-    "alternateName": saint.hinglishName !== saint.name ? saint.hinglishName : undefined,
-    "description": saint.biography || `Vaishnava saint of the Braj tradition.`,
-    "url": `https://path.vrindopnishad.in/saints/${saint.slug}`,
-    "knowsAbout": ["Vaishnavism", "Bhakti Yoga", "Braj Rasik Heritage", "Vrindavan"]
+    "@type": "ProfilePage",
+    "mainEntity": {
+      "@type": "Person",
+      "name": saint.name,
+      "alternateName": saint.hinglishName !== saint.name ? saint.hinglishName : undefined,
+      "description": saint.biography || `Vaishnava saint of the Braj tradition.`,
+      "url": `https://path.vrindopnishad.in/saints/${saint.slug}`,
+      "knowsAbout": ["Vaishnavism", "Bhakti Yoga", "Braj Rasik Heritage", "Vrindavan"]
+    }
   };
 
   const breadcrumbsSchema = {
@@ -81,7 +84,7 @@ export default function SaintRoute({ params }) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePageSchema) }}
       />
       <script
         type="application/ld+json"

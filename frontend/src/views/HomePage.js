@@ -1050,11 +1050,7 @@ const HomePage = ({ initialAllItems, initialSaints, initialBooks, initialRagas }
           <p>
             वृंदोपनिषद् पाठ: रस उपासना और ब्रज रसिक संतों की वाणी का एक पवित्र डिजिटल संग्रह। हमारा उद्देश्य संस्कृत ग्रंथों, स्तोत्रों, और कविताओं के अमूल्य ज्ञान को सुगम और सुंदर रूप में जिज्ञासुओं तक पहुँचाना है।
           </p>
-          <div className="flex flex-wrap justify-center gap-2 pt-2">
-            {['vrindopnishad', 'vrindopnishad paath', 'वृंदोपनिषद्', 'श्लोक', 'स्तोत्र', 'रसिक वाणी', 'radha krishna', 'premanand ji', 'vrindavan', 'classical ragas', 'bhagavad gita'].map(tag => (
-              <span key={tag} className="px-2.5 py-0.5 rounded-full border border-white/5 text-white/30 text-[9px] font-light">#{tag}</span>
-            ))}
-          </div>
+
         </div>
 
       </div>

@@ -41,10 +41,29 @@ export default function GlossaryRoute({ params }) {
     notFound();
   }
 
+  const definedTermSchema = {
+    "@context": "https://schema.org",
+    "@type": "DefinedTerm",
+    "name": term.term,
+    "alternateName": term.devanagari,
+    "description": term.definition,
+    "inDefinedTermSet": {
+      "@type": "DefinedTermSet",
+      "name": "Vrindopnishad Glossary of Braj Rasik Theology",
+      "url": "https://path.vrindopnishad.in/glossary"
+    }
+  };
+
   return (
-    <Layout>
-      <GlossaryDetailPage />
-    </Layout>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(definedTermSchema) }}
+      />
+      <Layout>
+        <GlossaryDetailPage />
+      </Layout>
+    </>
   );
 }
 export const revalidate = 86400;

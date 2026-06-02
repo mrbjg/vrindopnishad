@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import { SAINT_METADATA, getSaintMetadata } from '../data/saintMetadata';
 import { GLOSSARY_TERMS } from '../data/glossaryTerms';
+import { listAllContent } from './dataconnect';
+import { dataConnect } from '../firebase';
 
 const DevanagariToHinglishMap = {
   'अ': 'a', 'आ': 'aa', 'इ': 'i', 'ई': 'ee', 'उ': 'u', 'ऊ': 'oo', 'ऋ': 'ri',
@@ -164,13 +166,53 @@ function classifyItemCategory(item) {
 }
 
 let contentCache = null;
+let initializationPromise = null;
 
-function loadRawData() {
-  if (contentCache) return contentCache;
+async function fetchAllFromDataConnect() {
+  try {
+    console.log("[DataConnect] Fetching all content items from Firebase Data Connect (limit 25000)...");
+    const result = await listAllContent(dataConnect, { limit: 25000 });
+    if (result && result.data && result.data.contents) {
+      console.log(`[DataConnect] Successfully fetched ${result.data.contents.length} items.`);
+      return result.data.contents.map(item => {
+        let slug = item.slug;
+        if (!slug || /[^\x00-\x7F]/.test(slug)) {
+          slug = generateSlug(item.title || slug);
+        }
+        if (slug.length > 100) {
+          slug = slug.substring(0, 100).replace(/-+$/, '');
+        }
+        return {
+          id: item.id,
+          title: item.title,
+          sanskrit_text: item.sanskritText || '',
+          hindi_text: item.hindiText || '',
+          english_text: item.englishText || '',
+          english_translation: item.englishTranslation || '',
+          category: item.category,
+          description: item.description || '',
+          content_text: item.contentText || '',
+          tags: item.tags || [],
+          status: (item.status || 'PUBLISHED').toLowerCase(),
+          author: item.author || '',
+          media_links: item.mediaLinks || [],
+          audio_url: item.audioUrl || '',
+          image_urls: item.imageUrls || [],
+          video_urls: item.videoUrls || [],
+          slug: slug,
+          created_at: item.createdAt,
+          updated_at: item.updatedAt
+        };
+      });
+    }
+  } catch (error) {
+    console.error("[DataConnect] Query failed:", error);
+  }
+  return [];
+}
 
+function loadLocalJSONFallback() {
   const appDirectory = process.cwd();
-  
-  
   let contentPath = path.join(appDirectory, 'data/brajrasik_hi_full.json');
   let saintsPath = path.join(appDirectory, 'data/saints_formatted.json');
 
@@ -185,11 +227,18 @@ function loadRawData() {
       const rawContent = fs.readFileSync(contentPath, 'utf8');
       allContentItems = JSON.parse(rawContent).map((item, idx) => {
         const cleanCategory = classifyItemCategory(item);
+        let slug = item.slug;
+        if (!slug || /[^\x00-\x7F]/.test(slug)) {
+          slug = generateSlug(item.title || slug);
+        }
+        if (slug.length > 100) {
+          slug = slug.substring(0, 100).replace(/-+$/, '');
+        }
         return {
           id: item.id || `local-${idx}`,
           ...item,
           category: cleanCategory,
-          slug: item.slug || generateSlug(item.title)
+          slug: slug
         };
       });
     }
@@ -205,23 +254,79 @@ function loadRawData() {
       }));
     }
 
-    
     const combined = [...allContentItems, ...rawSaints];
     const relations = buildRelations(combined);
 
-    contentCache = {
+    return {
       items: combined,
       verses: allContentItems,
       saints: relations.saints,
       books: relations.books,
       ragas: relations.ragas
     };
-
-    return contentCache;
   } catch (error) {
     console.error("Failed to load local JSON files:", error);
     return { items: [], verses: [], saints: [], books: [], ragas: [] };
   }
+}
+
+export function loadRawData() {
+  if (contentCache) return contentCache;
+  return loadLocalJSONFallback();
+}
+
+export async function ensureDataLoaded() {
+  if (contentCache) return contentCache;
+  if (initializationPromise) return initializationPromise;
+
+  initializationPromise = (async () => {
+    console.log("[DataCache] Initializing memory cache...");
+    const localData = loadLocalJSONFallback();
+    
+    if (typeof window === 'undefined') {
+      try {
+        const remoteItems = await fetchAllFromDataConnect();
+        if (remoteItems && remoteItems.length > 0) {
+          const appDirectory = process.cwd();
+          let saintsPath = path.join(appDirectory, 'data/saints_formatted.json');
+          if (!fs.existsSync(saintsPath)) {
+            saintsPath = path.join(appDirectory, 'frontend/data/saints_formatted.json');
+          }
+          let rawSaints = [];
+          if (fs.existsSync(saintsPath)) {
+            const rawSaintsData = fs.readFileSync(saintsPath, 'utf8');
+            rawSaints = JSON.parse(rawSaintsData).map((saint, idx) => ({
+              id: saint.id || `saint-local-${idx}`,
+              ...saint,
+              category: 'saint',
+              slug: saint.slug || generateSlug(saint.title)
+            }));
+          }
+
+          const combined = [...remoteItems, ...rawSaints];
+          const relations = buildRelations(combined);
+
+          contentCache = {
+            items: combined,
+            verses: remoteItems,
+            saints: relations.saints,
+            books: relations.books,
+            ragas: relations.ragas
+          };
+          console.log(`[DataCache] Cache successfully initialized with ${remoteItems.length} database items!`);
+          return contentCache;
+        }
+      } catch (err) {
+        console.warn("[DataCache] Remote load failed, falling back to local dataset:", err);
+      }
+    }
+    
+    contentCache = localData;
+    console.log(`[DataCache] Cache initialized with local fallback of ${localData.verses.length} items.`);
+    return contentCache;
+  })();
+
+  return initializationPromise;
 }
 
 export function getNormalizedSaintSlug(name) {

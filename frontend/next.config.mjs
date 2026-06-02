@@ -59,6 +59,26 @@ const nextConfig = {
         destination: '/hi/granthas',
         permanent: true,
       },
+      {
+        source: '/shlokas',
+        destination: '/content',
+        permanent: true,
+      },
+      {
+        source: '/pilgrimage',
+        destination: '/places',
+        permanent: true,
+      },
+      {
+        source: '/hi/shlokas',
+        destination: '/hi/content',
+        permanent: true,
+      },
+      {
+        source: '/hi/pilgrimage',
+        destination: '/hi/places',
+        permanent: true,
+      },
     ];
   },
 };

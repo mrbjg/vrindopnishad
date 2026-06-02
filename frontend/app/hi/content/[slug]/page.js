@@ -1,18 +1,18 @@
 import React from 'react';
 import ContentDetailPage from '../../../../src/views/ContentDetailPage';
 import Layout from '../../../../src/components/Layout';
-import { getVerseBySlug, getAllVerses, getAllSaints, getAllGranthas, getAllRagas } from '../../../../src/lib/contentData';
+import { getVerseBySlug, getAllVerses, getAllSaints, getAllGranthas, getAllRagas, ensureDataLoaded } from '../../../../src/lib/contentData';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 
 export async function generateStaticParams() {
-  const verses = getAllVerses();
-  return verses.map(v => ({
-    slug: encodeURIComponent(v.slug || v.id?.toString() || ''),
-  }));
+  // Return empty array to generate pages on-demand (ISR/SSR).
+  // This reduces Vercel compilation time from 15+ minutes to under 1 minute.
+  return [];
 }
 
 export async function generateMetadata({ params }) {
+  await ensureDataLoaded();
   const decodedSlug = decodeURIComponent(params.slug);
   const verse = getVerseBySlug(decodedSlug);
   if (!verse) return {};
@@ -51,7 +51,8 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default function HindiVerseRoute({ params }) {
+export default async function HindiVerseRoute({ params }) {
+  await ensureDataLoaded();
   const decodedSlug = decodeURIComponent(params.slug);
   const verse = getVerseBySlug(decodedSlug);
   if (!verse) {
@@ -114,6 +115,7 @@ export default function HindiVerseRoute({ params }) {
     "headline": verse.title,
     "description": verse.description || verse.hindi_text || verse.english_translation,
     "articleBody": `${verse.sanskrit_text || ''}\n${verse.hindi_text || ''}\n${verse.english_translation || ''}`,
+    "inLanguage": "hi",
     "author": {
       "@type": "Person",
       "name": verse.author || "ब्रज रसिक धरोहर"

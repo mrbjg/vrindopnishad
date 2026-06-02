@@ -1,18 +1,17 @@
 import React from 'react';
 import BookDetailPage from '../../../../src/views/BookDetailPage';
 import Layout from '../../../../src/components/Layout';
-import { getGranthaBySlug, getAllGranthas } from '../../../../src/lib/contentData';
+import { getGranthaBySlug, getAllGranthas, ensureDataLoaded } from '../../../../src/lib/contentData';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 
 export async function generateStaticParams() {
-  const books = getAllGranthas();
-  return books.map(b => ({
-    slug: encodeURIComponent(b.slug),
-  }));
+  // Generate pages on-demand (ISR/SSR) to save Vercel build time.
+  return [];
 }
 
 export async function generateMetadata({ params }) {
+  await ensureDataLoaded();
   const decodedSlug = decodeURIComponent(params.slug);
   const book = getGranthaBySlug(decodedSlug);
   if (!book) return {};
@@ -35,7 +34,8 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default function HindiBookRoute({ params }) {
+export default async function HindiBookRoute({ params }) {
+  await ensureDataLoaded();
   const decodedSlug = decodeURIComponent(params.slug);
   const book = getGranthaBySlug(decodedSlug);
   if (!book) {

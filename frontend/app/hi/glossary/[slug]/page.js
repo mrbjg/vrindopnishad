@@ -41,10 +41,29 @@ export default function HindiGlossaryRoute({ params }) {
     notFound();
   }
 
+  const definedTermSchema = {
+    "@context": "https://schema.org",
+    "@type": "DefinedTerm",
+    "name": term.term,
+    "alternateName": term.devanagari,
+    "description": term.definition,
+    "inDefinedTermSet": {
+      "@type": "DefinedTermSet",
+      "name": "वृंदोपनिषद् ब्रज रसिक शब्दावली",
+      "url": "https://path.vrindopnishad.in/hi/glossary"
+    }
+  };
+
   return (
-    <Layout>
-      <GlossaryDetailPage />
-    </Layout>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(definedTermSchema) }}
+      />
+      <Layout>
+        <GlossaryDetailPage />
+      </Layout>
+    </>
   );
 }
 export const revalidate = 86400;

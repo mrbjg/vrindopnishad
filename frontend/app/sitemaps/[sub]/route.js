@@ -3,7 +3,8 @@ import {
   getAllSaints, 
   getAllGranthas, 
   getAllRagas, 
-  getGlossaryTerms 
+  getGlossaryTerms,
+  ensureDataLoaded
 } from '../../../src/lib/contentData';
 import { STATIC_SEO_PAGES } from '../../../src/data/staticPagesData';
 
@@ -19,6 +20,7 @@ export async function generateStaticParams() {
 }
 
 export async function GET(request, { params }) {
+  await ensureDataLoaded();
   const sub = params.sub || '';
   const type = sub.replace('.xml', '');
 

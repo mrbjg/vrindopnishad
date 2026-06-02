@@ -1,7 +1,7 @@
 import React from 'react';
 import HomePage from '../../src/views/HomePage';
 import Layout from '../../src/components/Layout';
-import { getAllVerses, getAllSaints, getAllGranthas, getAllRagas } from '../../src/lib/contentData';
+import { getAllVerses, getAllSaints, getAllGranthas, getAllRagas, ensureDataLoaded } from '../../src/lib/contentData';
 
 export const metadata = {
   title: 'वृंदोपनिषद् पाठ | श्री वृन्दावन धाम सन्त वाणी',
@@ -11,7 +11,8 @@ export const metadata = {
   },
 };
 
-export default function HindiHomeRoute() {
+export default async function HindiHomeRoute() {
+  await ensureDataLoaded();
   const verses = getAllVerses();
   const saints = getAllSaints();
   const books = getAllGranthas();

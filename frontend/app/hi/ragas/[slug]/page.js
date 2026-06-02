@@ -1,18 +1,17 @@
 import React from 'react';
 import RagaDetailPage from '../../../../src/views/RagaDetailPage';
 import Layout from '../../../../src/components/Layout';
-import { getRagaBySlug, getAllRagas } from '../../../../src/lib/contentData';
+import { getRagaBySlug, getAllRagas, ensureDataLoaded } from '../../../../src/lib/contentData';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 
 export async function generateStaticParams() {
-  const ragas = getAllRagas();
-  return ragas.map(r => ({
-    slug: encodeURIComponent(r.slug),
-  }));
+  // Generate pages on-demand (ISR/SSR) to save Vercel build time.
+  return [];
 }
 
 export async function generateMetadata({ params }) {
+  await ensureDataLoaded();
   const decodedSlug = decodeURIComponent(params.slug);
   const raga = getRagaBySlug(decodedSlug);
   if (!raga) return {};
@@ -35,7 +34,8 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default function HindiRagaRoute({ params }) {
+export default async function HindiRagaRoute({ params }) {
+  await ensureDataLoaded();
   const decodedSlug = decodeURIComponent(params.slug);
   const raga = getRagaBySlug(decodedSlug);
   if (!raga) {
