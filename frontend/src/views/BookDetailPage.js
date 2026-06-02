@@ -21,7 +21,12 @@ const BookDetailPage = ({ initialBook }) => {
       if (memCached) {
         const relations = extractRelations(memCached);
         if (relations && relations.books.length > 0) {
-          return relations.books.find(b => b.slug === slug) || null;
+          const found = relations.books.find(b => b.slug === slug) || null;
+          if (found && found.verseIds && !found.verses) {
+            const contentMap = new Map(memCached.map(item => [item.id ? item.id.toString() : '', item]));
+            found.verses = found.verseIds.map(id => contentMap.get(id?.toString())).filter(Boolean);
+          }
+          return found;
         }
       }
     } catch (e) {}
@@ -56,7 +61,12 @@ const BookDetailPage = ({ initialBook }) => {
         if (memCached) {
           const relations = extractRelations(memCached);
           if (relations && relations.books.length > 0) {
-            return relations.books.find(b => b.slug === slug) || null;
+            const found = relations.books.find(b => b.slug === slug) || null;
+            if (found && found.verseIds && !found.verses) {
+              const contentMap = new Map(memCached.map(item => [item.id ? item.id.toString() : '', item]));
+              found.verses = found.verseIds.map(id => contentMap.get(id?.toString())).filter(Boolean);
+            }
+            return found;
           }
         }
       } catch (e) {}
@@ -69,9 +79,15 @@ const BookDetailPage = ({ initialBook }) => {
 
     const load = async () => {
       try {
-        const allItems = await apiService.getAllContent(null, 10000);
-        const relations = extractRelations(allItems);
+        const relations = await apiService.getRelations();
         const foundBook = relations.books.find(b => b.slug === slug);
+        if (foundBook) {
+          const allContent = await apiService.getAllContent(null, 5000);
+          const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
+          foundBook.verses = (foundBook.verseIds || [])
+            .map(id => contentMap.get(id?.toString()))
+            .filter(Boolean);
+        }
         if (active) {
           setBook(foundBook || null);
         }
@@ -243,12 +259,12 @@ const BookDetailPage = ({ initialBook }) => {
             {isHindiRoute ? "ग्रन्थ के पद एवं श्लोक" : "Verses & Passages"}
           </h2>
           <span className="text-xs text-white/30">
-            {book.verses.length} {book.verses.length === 1 ? 'item' : 'items'}
+            {(book.verses || book.verseIds || []).length} {(book.verses || book.verseIds || []).length === 1 ? 'item' : 'items'}
           </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {book.verses.map((verse) => (
+          {(book.verses || []).map((verse) => (
             <Link
               key={verse.id}
               to={isHindiRoute ? `/hi/content/${verse.slug || verse.id}` : `/content/${verse.slug || verse.id}`}

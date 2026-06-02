@@ -247,48 +247,48 @@ function App() {
 
   
   useEffect(() => {
+    // Warm up database cache using requestIdleCallback to avoid blocking main thread rendering
     const timer = setTimeout(() => {
+      const scheduler = window.requestIdleCallback || ((cb) => setTimeout(cb, 1000));
       
-      try {
-        apiService.getAllContent(null, 10000);
-      } catch (e) {
-        console.warn('Failed to warm up database cache:', e);
-      }
+      scheduler(() => {
+        try {
+          console.log('[Cache] Warming up relations cache dynamically when thread is idle...');
+          apiService.getRelations();
+        } catch (e) {
+          console.warn('Failed to warm up database cache:', e);
+        }
 
-      
-      const preloadList = [
-        () => import('./pages/ContentListPage'),
-        () => import('./pages/ContentDetailPage'),
-        () => import('./pages/SaintsListPage'),
-        () => import('./pages/SaintDetailPage'),
-        () => import('./pages/BooksListPage'),
-        () => import('./pages/BookDetailPage'),
-        () => import('./pages/RagasListPage'),
-        () => import('./pages/RagaDetailPage'),
-        () => import('./pages/KnowledgeBasePage')
-      ];
+        // Defer preloading chunk resources progressively to avoid CPU spikes
+        const preloadList = [
+          () => import('./pages/ContentListPage'),
+          () => import('./pages/ContentDetailPage'),
+          () => import('./pages/SaintsListPage'),
+          () => import('./pages/SaintDetailPage'),
+          () => import('./pages/BooksListPage'),
+          () => import('./pages/BookDetailPage'),
+          () => import('./pages/RagasListPage'),
+          () => import('./pages/RagaDetailPage'),
+          () => import('./pages/KnowledgeBasePage')
+        ];
 
-      const loadNextChunk = (index) => {
-        if (index >= preloadList.length) return;
+        const loadNextChunk = (index) => {
+          if (index >= preloadList.length) return;
 
-        
-        const scheduler = window.requestIdleCallback || ((cb) => setTimeout(cb, 1000));
+          scheduler(() => {
+            preloadList[index]()
+              .then(() => {
+                setTimeout(() => loadNextChunk(index + 1), 800);
+              })
+              .catch(() => {
+                setTimeout(() => loadNextChunk(index + 1), 400);
+              });
+          });
+        };
 
-        scheduler(() => {
-          preloadList[index]()
-            .then(() => {
-              
-              setTimeout(() => loadNextChunk(index + 1), 600);
-            })
-            .catch(() => {
-              
-              setTimeout(() => loadNextChunk(index + 1), 300);
-            });
-        });
-      };
-
-      loadNextChunk(0);
-    }, 4500); 
+        loadNextChunk(0);
+      });
+    }, 800); 
     return () => clearTimeout(timer);
   }, []);
 

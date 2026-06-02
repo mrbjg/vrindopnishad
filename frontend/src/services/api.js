@@ -22,9 +22,10 @@ import {
   where, 
   limit 
 } from 'firebase/firestore';
-import { ref, get, child, set as dbSet, update as dbUpdate, remove as dbRemove } from 'firebase/database';
+import { ref, get, child, set as dbSet, update as dbUpdate, remove as dbRemove, query as rtdbQuery, orderByChild, startAt } from 'firebase/database';
 import { supabase } from '../lib/supabase';
 import { transliterate } from '../utils/transliterate';
+import { normalizeForFuzzy } from '../utils/hinglishSearch';
 
 const DB_PROVIDER = process.env.REACT_APP_DATABASE_PROVIDER || 'firebase';
 
@@ -42,18 +43,34 @@ let lastSyncTime = 0;
 const contentMapById = new Map();
 const contentMapBySlug = new Map();
 
-const updateMemoryCache = (items) => {
-  memoryCachedItems = items;
+const rebuildMemoryMaps = () => {
+  const mergedItems = [];
+  const categories = ['shloka', 'strotra', 'poem', 'saint', 'dham'];
+  
+  categories.forEach(cat => {
+    const catItems = memoryCategoryCache[cat];
+    if (catItems && Array.isArray(catItems)) {
+      mergedItems.push(...catItems);
+    }
+  });
+
+  memoryCachedItems = ensureSorted(mergedItems);
+  
   contentMapById.clear();
   contentMapBySlug.clear();
-  if (!items) return;
-  items.forEach(item => {
+  
+  memoryCachedItems.forEach(item => {
     if (!item) return;
-    item.category = classifyItemCategory(item);
     
-    const titleSlug = generateSlug(item.title);
-    if ((!item.slug || item.slug.startsWith('untitled')) && titleSlug) {
-      item.slug = titleSlug;
+    if (!item.category) {
+      item.category = classifyItemCategory(item);
+    }
+    
+    if (!item.slug || item.slug.startsWith('untitled')) {
+      const titleSlug = generateSlug(item.title);
+      if (titleSlug) {
+        item.slug = titleSlug;
+      }
     }
     
     if (item.id) {
@@ -64,6 +81,76 @@ const updateMemoryCache = (items) => {
       contentMapBySlug.set(decodeURIComponent(item.slug), item);
     }
   });
+
+  // Background Search Index Warming
+  if (typeof window !== 'undefined') {
+    const processQueue = (startIndex = 0) => {
+      if (!memoryCachedItems) return;
+      const batchSize = 30; // Keep frame times under 5ms to prevent UI stutters
+      const endIndex = Math.min(startIndex + batchSize, memoryCachedItems.length);
+      for (let i = startIndex; i < endIndex; i++) {
+        const item = memoryCachedItems[i];
+        if (item && !item._textHinglish) {
+          try {
+            const sansFirstLine = item.sanskrit_text ? item.sanskrit_text.split(/[\n।॥]/).map(l => l.trim()).filter(Boolean)[0] || '' : '';
+            const hindiFirstLine = item.hindi_text ? item.hindi_text.split(/[\n।॥]/).map(l => l.trim()).filter(Boolean)[0] || '' : '';
+
+            item._textDevanagari = [
+              item.title,
+              item.name,
+              item.hindi_text,
+              item.sanskrit_text,
+              item.author,
+              item.description,
+              item.category,
+              sansFirstLine,
+              hindiFirstLine
+            ].filter(Boolean).join(' ').toLowerCase();
+
+            item._textHinglish = [
+              item.hinglishName,
+              transliterate(item.title || ''),
+              transliterate(item.name || ''),
+              transliterate(item.author || ''),
+              transliterate(item.description || ''),
+              transliterate(sansFirstLine),
+              transliterate(hindiFirstLine),
+              item.english_translation,
+              item.english_text,
+              item.slug,
+              ...(item.tags || [])
+            ].filter(Boolean).join(' ').toLowerCase();
+
+            item._normalizedHinglish = normalizeForFuzzy(item._textHinglish);
+          } catch (e) {
+            console.error('Error precomputing search index:', e);
+          }
+        }
+      }
+      if (endIndex < memoryCachedItems.length) {
+        const scheduler = window.requestIdleCallback || ((cb) => setTimeout(cb, 25));
+        scheduler(() => processQueue(endIndex));
+      }
+    };
+    
+    // Defer start of warming slightly to let UI rendering complete
+    setTimeout(() => processQueue(0), 150);
+  }
+};
+
+const updateMemoryCache = (items) => {
+  if (!items) return;
+  // Backward compatibility helper
+  const grouped = {};
+  items.forEach(item => {
+    const cat = classifyItemCategory(item);
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(item);
+  });
+  Object.entries(grouped).forEach(([cat, catItems]) => {
+    memoryCategoryCache[cat] = ensureSorted(catItems);
+  });
+  rebuildMemoryMaps();
 };
 
 const ensureSorted = (items) => {
@@ -78,19 +165,18 @@ const ensureSorted = (items) => {
 
 if (typeof window !== 'undefined') {
   window.addEventListener('storage', (e) => {
-    if (e.key === 'vrindopnishad_all_content_cache') {
+    if (e.key && e.key.startsWith('vrindopnishad_cache_')) {
+      const category = e.key.replace('vrindopnishad_cache_', '');
       try {
         const parsed = e.newValue ? ensureSorted(JSON.parse(e.newValue)) : null;
         if (parsed) {
-          updateMemoryCache(parsed);
+          memoryCategoryCache[category] = parsed;
         } else {
-          updateMemoryCache(null);
+          delete memoryCategoryCache[category];
         }
-        memoryCategoryCache = {}; 
-        const time = localStorage.getItem('vrindopnishad_all_content_last_updated');
-        if (time) memoryLastUpdated = time;
+        rebuildMemoryMaps();
       } catch (err) {
-        updateMemoryCache(null);
+        console.warn('Failed to parse segmented storage update:', err);
       }
     }
   });
@@ -226,14 +312,25 @@ const mapToAppModel = (item) => {
   };
 };
 
-const fetchStaticBackup = async () => {
+const fetchCategoryBackup = async (category) => {
   try {
-    const res = await fetch('/data/content_backup.json');
+    const res = await fetch(`/data/content_backup_${category}.json`);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
   } catch (e) {
-    console.warn("Failed to fetch static backup content, using empty array:", e);
+    console.warn(`Failed to fetch category backup for ${category}:`, e);
     return [];
+  }
+};
+
+const fetchRelationsBackup = async () => {
+  try {
+    const res = await fetch('/data/relations_backup.json');
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    return await res.json();
+  } catch (e) {
+    console.warn("Failed to fetch relations backup:", e);
+    return { sants: [], books: [], ragas: [], biographies: [] };
   }
 };
 
@@ -241,160 +338,255 @@ export const apiService = {
   getCachedData: (key) => getCache(key),
   getMemoryCachedItems: () => memoryCachedItems,
   getMemoryCachedCategoryItems: (category) => {
-    if (!category || !memoryCachedItems) return [];
+    if (!category) return [];
     const targetCat = category.toLowerCase().trim();
-    if (!memoryCategoryCache[targetCat]) {
-      memoryCategoryCache[targetCat] = memoryCachedItems.filter(
-        item => item.category?.toLowerCase() === targetCat
-      );
-    }
-    return memoryCategoryCache[targetCat];
+    return memoryCategoryCache[targetCat] || [];
   },
 
-  
+  getRelations: async () => {
+    if (typeof window === 'undefined') {
+      return { sants: [], books: [], ragas: [], biographies: [] };
+    }
+    
+    try {
+      const cached = localStorage.getItem('vrindopnishad_relations_cache');
+      if (cached) {
+        return JSON.parse(cached);
+      }
+    } catch (e) {
+      console.warn('Failed to parse relations cache:', e);
+    }
+    
+    console.log('[Relations-Cache-Miss] Loading relations from backup file...');
+    const relations = await fetchRelationsBackup();
+    try {
+      localStorage.setItem('vrindopnishad_relations_cache', JSON.stringify(relations));
+    } catch (e) {
+      console.warn('Failed to write relations to LocalStorage:', e);
+    }
+    return relations;
+  },
+
   getAllContent: async (category = null, limit = 50) => {
-    
-    let cachedItems = [];
-    let lastUpdated = '1970-01-01T00:00:00.000Z';
-    
-    if (memoryCachedItems && memoryCachedItems.length > 0) {
-      cachedItems = memoryCachedItems;
-      lastUpdated = memoryLastUpdated;
-    } else {
-      try {
-        const localCached = localStorage.getItem('vrindopnishad_all_content_cache');
-        const cachedTime = localStorage.getItem('vrindopnishad_all_content_last_updated');
-        if (localCached) {
-          const parsed = JSON.parse(localCached);
-          if (parsed && parsed.length >= 7000) {
-            cachedItems = ensureSorted(parsed);
-            updateMemoryCache(cachedItems);
-          } else {
-            console.log('[Cache-Stale] Discarding truncated client-side cache:', parsed ? parsed.length : 0);
-            localStorage.removeItem('vrindopnishad_all_content_cache');
-            localStorage.removeItem('vrindopnishad_all_content_last_updated');
-          }
-        }
-        if (cachedTime && cachedItems.length > 0) {
-          lastUpdated = cachedTime;
-          memoryLastUpdated = cachedTime;
-        }
-      } catch (e) {
-        console.warn('Failed to parse global cache:', e);
-      }
-    }
+    const targetCategories = category 
+      ? [category.toLowerCase().trim()] 
+      : ['shloka', 'strotra', 'poem', 'saint', 'dham'];
+      
+    let cacheUpdated = false;
 
-    
-    if (!cachedItems || cachedItems.length === 0) {
-      console.log('[Cache-Miss] Loading initial dataset from local static backup (0 egress)...');
-      cachedItems = ensureSorted(await fetchStaticBackup());
-      
-      
-      if (cachedItems && cachedItems.length > 0) {
-        let maxTime = new Date('1970-01-01T00:00:00Z');
-        cachedItems.forEach(item => {
-          if (item.updated_at) {
-            const t = new Date(item.updated_at);
-            if (t > maxTime) maxTime = t;
-          }
-        });
-        lastUpdated = maxTime.toISOString();
-        
+    for (const cat of targetCategories) {
+      if (!memoryCategoryCache[cat] || memoryCategoryCache[cat].length === 0) {
+        // Try reading from LocalStorage
         try {
-          localStorage.setItem('vrindopnishad_all_content_cache', JSON.stringify(cachedItems));
-          localStorage.setItem('vrindopnishad_all_content_last_updated', lastUpdated);
-        } catch (e) {}
+          const localCached = localStorage.getItem(`vrindopnishad_cache_${cat}`);
+          if (localCached) {
+            const parsed = JSON.parse(localCached);
+            if (parsed && Array.isArray(parsed) && parsed.length > 0) {
+              memoryCategoryCache[cat] = ensureSorted(parsed);
+              cacheUpdated = true;
+            }
+          }
+        } catch (e) {
+          console.warn(`Failed to parse cache for ${cat}:`, e);
+        }
+
+        // If still not loaded, fetch backup file
+        if (!memoryCategoryCache[cat] || memoryCategoryCache[cat].length === 0) {
+          console.log(`[Cache-Miss] Loading initial dataset for [${cat}] from local backup...`);
+          const backupItems = await fetchCategoryBackup(cat);
+          if (backupItems && backupItems.length > 0) {
+            memoryCategoryCache[cat] = ensureSorted(backupItems);
+            cacheUpdated = true;
+            
+            // Determine last updated time for this category
+            let maxTime = new Date('1970-01-01T00:00:00Z');
+            backupItems.forEach(item => {
+              if (item.updated_at) {
+                const t = new Date(item.updated_at);
+                if (t > maxTime) maxTime = t;
+              }
+            });
+            
+            try {
+              localStorage.setItem(`vrindopnishad_cache_${cat}`, JSON.stringify(backupItems));
+              localStorage.setItem(`vrindopnishad_last_updated_${cat}`, maxTime.toISOString());
+            } catch (e) {
+              console.warn(`Failed to save cache for category ${cat}:`, e);
+            }
+          }
+        }
       }
-      updateMemoryCache(cachedItems);
-      memoryLastUpdated = lastUpdated;
-      memoryCategoryCache = {}; 
     }
 
-    
+    if (cacheUpdated) {
+      rebuildMemoryMaps();
+    }
+
+    // Prepare result array
+    let resultItems = [];
+    if (category) {
+      resultItems = memoryCategoryCache[category.toLowerCase().trim()] || [];
+    } else {
+      resultItems = memoryCachedItems || [];
+    }
+
+    // Background Delta Sync
     if (!USE_MOCK && typeof window !== 'undefined') {
       const now = Date.now();
-      
       if (now - lastSyncTime > 5 * 60 * 1000) {
         lastSyncTime = now;
         
         setTimeout(async () => {
           try {
+            // Determine maximum updated timestamp among loaded categories
+            let currentLastUpdated = '1970-01-01T00:00:00.000Z';
+            targetCategories.forEach(cat => {
+              const time = localStorage.getItem(`vrindopnishad_last_updated_${cat}`);
+              if (time && time > currentLastUpdated) {
+                currentLastUpdated = time;
+              }
+            });
+
             let updates = [];
             if (DB_PROVIDER === 'supabase') {
-              console.log(`[Supabase-Sync] Fetching updates since: ${lastUpdated}...`);
+              console.log(`[Supabase-Sync] Fetching updates since: ${currentLastUpdated}...`);
               const { data: rawUpdates, error } = await supabase
                 .from('content')
                 .select('*')
-                .gt('updated_at', lastUpdated);
+                .gt('updated_at', currentLastUpdated);
               
               if (error) throw error;
               updates = (rawUpdates || []).map(mapToAppModel).filter(Boolean);
             } else {
-              console.log(`[Delta-Sync/RTDB] Fetching content from Realtime Database...`);
-              const dbRef = ref(contentDb);
-              const snapshot = await get(child(dbRef, 'content'));
-              let rawUpdates = [];
-              if (snapshot.exists()) {
-                const val = snapshot.val();
-                if (Array.isArray(val)) {
-                  rawUpdates = val.filter(Boolean);
-                } else if (typeof val === 'object') {
-                  rawUpdates = Object.entries(val).map(([key, item]) => {
-                    if (item && typeof item === 'object') {
-                      return { id: item.id || key, ...item };
-                    }
-                    return null;
-                  }).filter(Boolean);
+              let hasUpdates = true;
+              try {
+                const metaRef = ref(contentDb, 'metadata/last_updated');
+                const metaSnapshot = await get(metaRef);
+                if (metaSnapshot.exists()) {
+                  const serverLastUpdated = metaSnapshot.val();
+                  if (serverLastUpdated && currentLastUpdated && serverLastUpdated <= currentLastUpdated) {
+                    hasUpdates = false;
+                  }
                 }
+              } catch (metaErr) {
+                console.warn('[Delta-Sync/RTDB] Failed to read metadata last_updated:', metaErr);
               }
-              
-              if (lastUpdated && lastUpdated !== '1970-01-01T00:00:00.000Z') {
-                const lastTime = new Date(lastUpdated).getTime();
-                rawUpdates = rawUpdates.filter(item => {
-                  const itemTime = item.updated_at ? new Date(item.updated_at).getTime() : 0;
-                  return itemTime > lastTime;
-                });
+
+              if (!hasUpdates) {
+                console.log('[Delta-Sync] Database is up to date (Checked via Metadata). 0 new items fetched.');
+              } else {
+                console.log(`[Delta-Sync/RTDB] Fetching content updates since ${currentLastUpdated}...`);
+                const dbRef = ref(contentDb, 'content');
+                let rawUpdates = [];
+                
+                try {
+                  const q = rtdbQuery(dbRef, orderByChild('updated_at'), startAt(currentLastUpdated));
+                  const snapshot = await get(q);
+                  if (snapshot.exists()) {
+                    const val = snapshot.val();
+                    if (typeof val === 'object' && val !== null) {
+                      rawUpdates = Object.entries(val).map(([key, item]) => {
+                        if (item && typeof item === 'object') {
+                          return { id: item.id || key, ...item };
+                        }
+                        return null;
+                      }).filter(Boolean);
+                    }
+                  }
+                } catch (queryErr) {
+                  console.warn('[Delta-Sync/RTDB] Query failed, falling back to full download:', queryErr);
+                  const snapshot = await get(dbRef);
+                  if (snapshot.exists()) {
+                    const val = snapshot.val();
+                    if (Array.isArray(val)) {
+                      rawUpdates = val.filter(Boolean);
+                    } else if (typeof val === 'object') {
+                      rawUpdates = Object.entries(val).map(([key, item]) => {
+                        if (item && typeof item === 'object') {
+                          return { id: item.id || key, ...item };
+                        }
+                        return null;
+                      }).filter(Boolean);
+                    }
+                  }
+                }
+
+                if (currentLastUpdated && currentLastUpdated !== '1970-01-01T00:00:00.000Z') {
+                  const lastTime = new Date(currentLastUpdated).getTime();
+                  rawUpdates = rawUpdates.filter(item => {
+                    const itemTime = item.updated_at ? new Date(item.updated_at).getTime() : 0;
+                    return itemTime > lastTime;
+                  });
+                }
+                
+                updates = rawUpdates.map(mapToAppModel).filter(Boolean);
               }
-              
-              updates = rawUpdates.map(mapToAppModel).filter(Boolean);
             }
-            
+
             if (updates.length > 0) {
               console.log(`[Delta-Sync] Found ${updates.length} new or updated items!`);
               
-              
-              const itemMap = new Map(cachedItems.map(item => [item.id, item]));
-              
+              // Group updates by category and distribute them
+              const updatesByCat = {};
               updates.forEach(upd => {
-                const cleanCategory = classifyItemCategory(upd);
-                const processed = {
+                const cat = classifyItemCategory(upd);
+                if (!updatesByCat[cat]) updatesByCat[cat] = [];
+                updatesByCat[cat].push({
                   ...upd,
-                  category: cleanCategory,
+                  category: cat,
                   slug: upd.slug || generateSlug(upd.title)
-                };
-                itemMap.set(upd.id, processed);
+                });
               });
-              
-              const newCachedItems = ensureSorted(Array.from(itemMap.values()));
-              
-              
-              let maxTime = new Date(lastUpdated);
-              updates.forEach(upd => {
-                if (upd.updated_at) {
-                  const t = new Date(upd.updated_at);
-                  if (t > maxTime) maxTime = t;
+
+              let anyUpdates = false;
+
+              for (const [cat, catUpdates] of Object.entries(updatesByCat)) {
+                // Only merge updates into categories that have been loaded
+                if (memoryCategoryCache[cat]) {
+                  const catItemsMap = new Map(memoryCategoryCache[cat].map(item => [item.id, item]));
+                  catUpdates.forEach(upd => {
+                    catItemsMap.set(upd.id, upd);
+                  });
+
+                  const updatedCatItems = ensureSorted(Array.from(catItemsMap.values()));
+                  memoryCategoryCache[cat] = updatedCatItems;
+                  anyUpdates = true;
+
+                  let maxTime = new Date('1970-01-01T00:00:00Z');
+                  const storedTime = localStorage.getItem(`vrindopnishad_last_updated_${cat}`);
+                  if (storedTime) maxTime = new Date(storedTime);
+
+                  catUpdates.forEach(upd => {
+                    if (upd.updated_at) {
+                      const t = new Date(upd.updated_at);
+                      if (t > maxTime) maxTime = t;
+                    }
+                  });
+
+                  try {
+                    localStorage.setItem(`vrindopnishad_cache_${cat}`, JSON.stringify(updatedCatItems));
+                    localStorage.setItem(`vrindopnishad_last_updated_${cat}`, maxTime.toISOString());
+                  } catch (e) {
+                    console.warn(`Failed to update cache for ${cat} in delta sync:`, e);
+                  }
                 }
-              });
-              
-              updateMemoryCache(newCachedItems);
-              memoryLastUpdated = maxTime.toISOString();
-              memoryCategoryCache = {}; 
-              
-              localStorage.setItem('vrindopnishad_all_content_cache', JSON.stringify(newCachedItems));
-              localStorage.setItem('vrindopnishad_all_content_last_updated', maxTime.toISOString());
-              
-              
-              window.dispatchEvent(new Event('storage'));
+              }
+
+              if (anyUpdates) {
+                rebuildMemoryMaps();
+                // Dynamically update relations_backup cache in LocalStorage if it exists
+                try {
+                  const cachedRelations = localStorage.getItem('vrindopnishad_relations_cache');
+                  if (cachedRelations && memoryCachedItems) {
+                    const freshRelations = extractRelations(memoryCachedItems);
+                    localStorage.setItem('vrindopnishad_relations_cache', JSON.stringify(freshRelations));
+                  }
+                } catch (relErr) {
+                  console.warn('Failed to update relations cache in delta sync:', relErr);
+                }
+                
+                window.dispatchEvent(new Event('storage'));
+              }
             } else {
               console.log('[Delta-Sync] Database is up to date. 0 new items fetched.');
             }
@@ -405,24 +597,10 @@ export const apiService = {
       }
     }
 
-    
-    let filtered = cachedItems;
-    if (category) {
-      const targetCat = category.toLowerCase().trim();
-      if (memoryCategoryCache[targetCat]) {
-        filtered = memoryCategoryCache[targetCat];
-      } else {
-        filtered = filtered.filter(item => item.category?.toLowerCase() === targetCat);
-        memoryCategoryCache[targetCat] = filtered;
-      }
+    if (limit && limit < resultItems.length) {
+      return resultItems.slice(0, limit);
     }
-    
-    
-    if (limit && limit < filtered.length) {
-      filtered = filtered.slice(0, limit);
-    }
-    
-    return filtered;
+    return resultItems;
   },
 
   getContentById: async (id) => {
@@ -430,41 +608,25 @@ export const apiService = {
     let cached = getCache(cacheKey);
     if (cached) return cached;
 
+    const decodedId = decodeURIComponent(id);
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decodedId);
     
-    try {
-      const decodedId = decodeURIComponent(id);
-      
-      let matched = contentMapById.get(id.toString()) || 
-                    contentMapById.get(decodedId.toString()) ||
-                    contentMapBySlug.get(id) ||
-                    contentMapBySlug.get(decodedId);
-      
-      if (!matched && !memoryCachedItems) {
-        const localCached = localStorage.getItem('vrindopnishad_all_content_cache');
-        if (localCached) {
-          const items = ensureSorted(JSON.parse(localCached));
-          updateMemoryCache(items);
-          
-          matched = contentMapById.get(id.toString()) || 
-                    contentMapById.get(decodedId.toString()) ||
-                    contentMapBySlug.get(id) ||
-                    contentMapBySlug.get(decodedId);
-        }
-      }
-      
-      if (matched) {
-        console.log(`[Cache-Hit] getContentById matched item ${id} in global O(1) map.`);
-        const cleanCategory = classifyItemCategory(matched);
-        const data = { 
-          ...matched, 
-          category: cleanCategory,
-          slug: matched.slug || generateSlug(matched.title) 
-        };
-        setCache(cacheKey, data);
-        return data;
-      }
-    } catch (e) {
-      console.warn('Failed to check global cache for getContentById:', e);
+    // 1. Try memory map first
+    let matched = contentMapById.get(id.toString()) || 
+                  contentMapById.get(decodedId.toString()) ||
+                  contentMapBySlug.get(id) ||
+                  contentMapBySlug.get(decodedId);
+
+    if (matched) {
+      console.log(`[Cache-Hit] getContentById matched item ${id} in memory map.`);
+      const cleanCategory = classifyItemCategory(matched);
+      const data = { 
+        ...matched, 
+        category: cleanCategory,
+        slug: matched.slug || generateSlug(matched.title) 
+      };
+      setCache(cacheKey, data);
+      return data;
     }
 
     if (USE_MOCK) {
@@ -472,11 +634,10 @@ export const apiService = {
       setCache(cacheKey, data);
       return data;
     }
+
+    // 2. Try fetching from live DB asynchronously
+    let rawData = null;
     try {
-      const decodedId = decodeURIComponent(id);
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decodedId);
-      
-      let rawData = null;
       if (DB_PROVIDER === 'supabase') {
         console.log('[Supabase] Fetching content by ID/Slug:', decodedId);
         let query = supabase.from('content').select('*');
@@ -486,105 +647,117 @@ export const apiService = {
           query = query.eq('slug', decodedId);
         }
         const { data, error } = await query.maybeSingle();
-        if (error) throw error;
-        rawData = data;
-        
-        if (rawData) {
-          const data = mapToAppModel(rawData);
-          const cleanCategory = classifyItemCategory(data);
+        if (!error && data) {
+          rawData = data;
+          const dataObj = mapToAppModel(rawData);
+          const cleanCategory = classifyItemCategory(dataObj);
           const contentData = { 
-            ...data, 
+            ...dataObj, 
             category: cleanCategory,
-            slug: data.slug || generateSlug(data.title) 
+            slug: dataObj.slug || generateSlug(dataObj.title) 
           };
           setCache(cacheKey, contentData);
           return contentData;
         }
-        throw new Error("Content not found in Supabase database");
       } else {
-        console.log('[RTDB] Resolving content from local cache or full sync:', decodedId);
-        
-        // Try to get from local memory maps first
-        const decodedSlug = decodedId.toLowerCase();
-        let found = contentMapById.get(decodedId) || contentMapBySlug.get(decodedId) || contentMapBySlug.get(decodedSlug);
-        
-        if (!found) {
-          // 1. Try to fetch directly from Firebase Data Connect over network
-          try {
-            console.log(`[DataConnect-Client] Fetching live content for ${decodedId} from Data Connect...`);
-            let result;
-            if (isUuid) {
-              result = await getDcContentById(dataConnect, { id: decodedId });
-            } else {
-              result = await getDcContentBySlug(dataConnect, { slug: decodedId });
-            }
-            if (result && result.data && result.data.content) {
-              const mapped = mapToAppModel(result.data.content);
-              const cleanCategory = classifyItemCategory(mapped);
-              found = {
-                ...mapped,
-                category: cleanCategory,
-                slug: (mapped.slug && !mapped.slug.startsWith('untitled')) ? mapped.slug : generateSlug(mapped.title)
-              };
-              
-              if (found.id) {
-                contentMapById.set(found.id.toString(), found);
-              }
-              if (found.slug) {
-                contentMapBySlug.set(found.slug, found);
-                contentMapBySlug.set(decodeURIComponent(found.slug), found);
-              }
-              if (memoryCachedItems) {
-                memoryCachedItems.push(found);
-                try {
-                  localStorage.setItem('vrindopnishad_all_content_cache', JSON.stringify(memoryCachedItems));
-                } catch (e) {}
-              }
-              console.log(`[DataConnect-Client] Successfully resolved live item: ${found.title}`);
-            }
-          } catch (dcError) {
-            console.error('[DataConnect-Client] Failed to fetch live item from Data Connect:', dcError);
+        console.log('[DataConnect-Client] Fetching live content for', decodedId);
+        let result;
+        if (isUuid) {
+          result = await getDcContentById(dataConnect, { id: decodedId });
+        } else {
+          result = await getDcContentBySlug(dataConnect, { slug: decodedId });
+        }
+        if (result && result.data && result.data.content) {
+          const mapped = mapToAppModel(result.data.content);
+          const cleanCategory = classifyItemCategory(mapped);
+          const found = {
+            ...mapped,
+            category: cleanCategory,
+            slug: (mapped.slug && !mapped.slug.startsWith('untitled')) ? mapped.slug : generateSlug(mapped.title)
+          };
+          
+          if (found.id) {
+            contentMapById.set(found.id.toString(), found);
+          }
+          if (found.slug) {
+            contentMapBySlug.set(found.slug, found);
+            contentMapBySlug.set(decodeURIComponent(found.slug), found);
+          }
+          
+          if (!memoryCategoryCache[found.category]) {
+            memoryCategoryCache[found.category] = [];
+          }
+          if (!memoryCategoryCache[found.category].some(x => x.id === found.id)) {
+            memoryCategoryCache[found.category].push(found);
+            memoryCategoryCache[found.category] = ensureSorted(memoryCategoryCache[found.category]);
+            try {
+              localStorage.setItem(`vrindopnishad_cache_${found.category}`, JSON.stringify(memoryCategoryCache[found.category]));
+            } catch (e) {}
+          }
+          
+          setCache(cacheKey, found);
+          return found;
+        }
+      }
+    } catch (networkErr) {
+      console.warn('[Cache-Miss] Live fetch failed, will try local cache:', networkErr);
+    }
+
+    // 3. Fallback to searching all LocalStorage category caches on-demand
+    try {
+      const categories = ['shloka', 'strotra', 'poem', 'saint', 'dham'];
+      const decodedSlug = decodedId.toLowerCase();
+      
+      for (const cat of categories) {
+        let catItems = memoryCategoryCache[cat];
+        if (!catItems || catItems.length === 0) {
+          const localCached = localStorage.getItem(`vrindopnishad_cache_${cat}`);
+          if (localCached) {
+            catItems = ensureSorted(JSON.parse(localCached));
+            memoryCategoryCache[cat] = catItems;
           }
         }
-
-        if (!found) {
-          // Cache miss fallback: sync from Realtime Database / backup
-          console.log(`[Cache-Miss] getContentById for ${decodedId}, fetching RTDB...`);
-          const allItems = await apiService.getAllContent();
-          found = contentMapById.get(decodedId) || contentMapBySlug.get(decodedId) || contentMapBySlug.get(decodedSlug);
+        
+        if (catItems && catItems.length > 0) {
+          catItems.forEach(item => {
+            if (item.id) contentMapById.set(item.id.toString(), item);
+            if (item.slug) {
+              contentMapBySlug.set(item.slug, item);
+              contentMapBySlug.set(decodeURIComponent(item.slug), item);
+            }
+          });
           
+          let found = contentMapById.get(decodedId) || contentMapBySlug.get(decodedId) || contentMapBySlug.get(decodedSlug);
           if (!found) {
-            // Slower fallback if maps are not fully indexed yet
-            found = allItems.find(item => 
-              item.id?.toString() === decodedId || 
-              item.slug?.toLowerCase() === decodedSlug
-            );
-          }
-          
-          if (!found) {
-            // Fuzzy match fallback to match suffix/prefix differences in slugs (e.g. spelling variations and titles in slugs)
             const normDecoded = normalizeFuzzyText(decodedSlug);
-            found = allItems.find(item => {
+            found = catItems.find(item => {
               if (!item.slug) return false;
               const normItem = normalizeFuzzyText(item.slug);
               return normItem === normDecoded || 
                      normItem.startsWith(normDecoded) || 
-                     normDecoded.startsWith(normItem) ||
-                     (normDecoded.length > 6 && (normItem.includes(normDecoded) || normDecoded.includes(normItem)));
+                     normDecoded.startsWith(normItem);
             });
           }
+          
+          if (found) {
+            setCache(cacheKey, found);
+            return found;
+          }
         }
-
-        if (found) {
-          setCache(cacheKey, found);
-          return found;
-        }
-        throw new Error("Content not found in Realtime Database / Data Connect");
       }
-    } catch (error) {
-      console.error('Error fetching content:', error);
-      throw error;
+      
+      // 4. Final resort: Load all content
+      const allItems = await apiService.getAllContent();
+      let found = contentMapById.get(decodedId) || contentMapBySlug.get(decodedId) || contentMapBySlug.get(decodedSlug);
+      if (found) {
+        setCache(cacheKey, found);
+        return found;
+      }
+    } catch (fallbackErr) {
+      console.error('Fallback content resolution failed:', fallbackErr);
     }
+
+    throw new Error("Content not found in local cache or live database");
   },
 
   
@@ -651,6 +824,11 @@ export const apiService = {
           }
         });
         await dbSet(ref(contentDb, `content/${id}`), payload);
+        try {
+          await dbSet(ref(contentDb, 'metadata/last_updated'), payload.updated_at);
+        } catch (metaErr) {
+          console.warn('Failed to write metadata/last_updated:', metaErr);
+        }
         return payload;
       }
     } catch (error) {
@@ -712,6 +890,11 @@ export const apiService = {
           }
         });
         await dbUpdate(ref(contentDb, `content/${id}`), payload);
+        try {
+          await dbSet(ref(contentDb, 'metadata/last_updated'), payload.updated_at);
+        } catch (metaErr) {
+          console.warn('Failed to write metadata/last_updated:', metaErr);
+        }
         return { ...contentData, id, slug };
       }
     } catch (error) {
@@ -728,6 +911,11 @@ export const apiService = {
         return true;
       } else {
         await dbRemove(ref(contentDb, `content/${id}`));
+        try {
+          await dbSet(ref(contentDb, 'metadata/last_updated'), new Date().toISOString());
+        } catch (metaErr) {
+          console.warn('Failed to write metadata/last_updated during deletion:', metaErr);
+        }
         return true;
       }
     } catch (error) {

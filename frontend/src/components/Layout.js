@@ -28,14 +28,17 @@ import SettingsModal from './SettingsModal';
 import ThemeOnboardingModal from './ThemeOnboardingModal';
 import CelestialParticles from './CelestialParticles';
 import PookizLayout from './PookizLayout';
+import PageSkeleton from './ui/PageSkeleton';
 
 let hasLayoutMounted = false;
 
-const Layout = ({ children }) => {
+export const LayoutContext = React.createContext(false);
+
+const LayoutInner = ({ children }) => {
   const { isDark } = useTheme();
   const { settings } = useSettings();
   const { isAdmin, user, logout } = useContext(AuthContext);
-  const { apiService } = useContext(ApiContext);
+  const { apiService, transition } = useContext(ApiContext);
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -611,7 +614,11 @@ const Layout = ({ children }) => {
       
       <main className={`${isAuthPage ? 'pt-0 pl-0' : `${isKbRoute ? 'pl-0 md:pl-[88px] lg:h-screen lg:pt-20 lg:pb-0 lg:overflow-hidden' : 'pl-0 md:pl-28'} pt-[152px] md:pt-[120px] lg:pt-20 pb-36 md:pb-12`}`}>
         <div className={`${isAuthPage ? 'w-full min-h-screen flex items-center justify-center' : 'w-full px-4 md:px-6'} ${isKbRoute ? 'lg:h-full lg:px-6 lg:pb-4' : ''}`}>
-          {children}
+          {transition ? (
+            <div className="min-h-[60vh] flex flex-col justify-start py-8 animate-pulse">
+              <PageSkeleton variant={transition.variant} />
+            </div>
+          ) : children}
         </div>
       </main>
 
@@ -647,6 +654,18 @@ const Layout = ({ children }) => {
       
       <ThemeOnboardingModal />
     </div>
+  );
+};
+
+const Layout = ({ children }) => {
+  const isNested = useContext(LayoutContext);
+  if (isNested) {
+    return <>{children}</>;
+  }
+  return (
+    <LayoutContext.Provider value={true}>
+      <LayoutInner>{children}</LayoutInner>
+    </LayoutContext.Provider>
   );
 };
 

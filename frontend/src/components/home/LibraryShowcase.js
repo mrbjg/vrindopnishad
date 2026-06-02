@@ -70,7 +70,7 @@ const LibraryShowcase = ({ isHi, books, navigate }) => {
               <div className="space-y-2">
                 <span className="text-[9px] text-white/30 flex items-center gap-1">
                   <FileText size={10} />
-                  {book.verses.length} verses
+                  {book.verses ? book.verses.length : (book.verseIds ? book.verseIds.length : 0)} verses
                 </span>
                 <button className="w-full bg-white/5 hover:bg-primary/20 text-white/70 hover:text-primary font-bold text-[9px] py-1.5 px-2 rounded-lg transition-colors border border-white/10 hover:border-primary/20 tracking-wider uppercase min-h-[28px] flex items-center justify-center">
                   {isHi ? "वाणी पढ़ें" : "Read Now"}

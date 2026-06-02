@@ -47,8 +47,7 @@ const BooksListPage = ({ initialBooks }) => {
     }
     const load = async () => {
       try {
-        const allItems = await apiService.getAllContent(null, 10000);
-        const relations = extractRelations(allItems);
+        const relations = await apiService.getRelations();
         if (active) {
           setBooks(relations.books);
         }
@@ -157,7 +156,7 @@ const BooksListPage = ({ initialBooks }) => {
                 <div className="pt-4 mt-6 border-t border-[var(--glass-border)] flex justify-between items-center text-xs">
                   <span className="text-[var(--text-color)]/40 flex items-center gap-1">
                     <FileText size={12} />
-                    {book.verses.length} {book.verses.length === 1 ? 'Verse' : 'Verses'}
+                    {book.verses ? book.verses.length : (book.verseIds ? book.verseIds.length : 0)} {((book.verses ? book.verses.length : (book.verseIds ? book.verseIds.length : 0)) === 1) ? 'Verse' : 'Verses'}
                   </span>
                   <span className="text-[var(--primary-color)] font-medium group-hover:translate-x-1 transition-transform">
                     {isHindiRoute ? "पाठ खोलें →" : "Read Book →"}

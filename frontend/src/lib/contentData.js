@@ -4,6 +4,7 @@ import { SAINT_METADATA, getSaintMetadata } from '../data/saintMetadata';
 import { GLOSSARY_TERMS } from '../data/glossaryTerms';
 import { listAllContent } from './dataconnect';
 import { dataConnect } from '../firebase';
+import { extractRelations } from '../utils/relations';
 
 const DevanagariToHinglishMap = {
   'अ': 'a', 'आ': 'aa', 'इ': 'i', 'ई': 'ee', 'उ': 'u', 'ऊ': 'oo', 'ऋ': 'ri',
@@ -326,25 +327,47 @@ function writeBackupFile(verses, force = false) {
     if (!fs.existsSync(dataDir)) {
       dataDir = path.join(appDirectory, 'frontend/public/data');
     }
-    const backupFile = path.join(dataDir, 'content_backup.json');
-    if (!force && fs.existsSync(backupFile)) {
-      // Skip writing to save IO overhead
-      return;
-    }
     if (!fs.existsSync(dataDir)) {
       try {
         fs.mkdirSync(dataDir, { recursive: true });
       } catch (e) {}
     }
-    console.log(`[DataCache] Saving backup data file to: ${backupFile}...`);
-    // Use async file write to prevent blocking main thread
-    fs.writeFile(backupFile, JSON.stringify(verses), 'utf8', (err) => {
-      if (err) {
-        console.warn("[DataCache] Async backup write failed:", err);
-      } else {
-        console.log(`[DataCache] Successfully wrote ${verses.length} items to backup: ${backupFile} (async)`);
+
+    const backupFile = path.join(dataDir, 'content_backup.json');
+    const writeFull = force || !fs.existsSync(backupFile);
+    if (writeFull) {
+      console.log(`[DataCache] Saving backup data file to: ${backupFile}...`);
+      fs.writeFile(backupFile, JSON.stringify(verses), 'utf8', (err) => {
+        if (err) console.warn("[DataCache] Async backup write failed:", err);
+      });
+    }
+
+    // Split and write category-specific files
+    const categories = ['shloka', 'strotra', 'poem', 'saint', 'dham'];
+    categories.forEach(cat => {
+      const catFile = path.join(dataDir, `content_backup_${cat}.json`);
+      if (force || !fs.existsSync(catFile)) {
+        const catVerses = verses.filter(v => {
+          const itemCat = classifyItemCategory(v);
+          return itemCat === cat;
+        });
+        console.log(`[DataCache] Saving category backup [${cat}] to: ${catFile}...`);
+        fs.writeFile(catFile, JSON.stringify(catVerses), 'utf8', (err) => {
+          if (err) console.warn(`[DataCache] Async backup write failed for ${cat}:`, err);
+        });
       }
     });
+
+    // Pre-compute and save relations
+    const relationsFile = path.join(dataDir, 'relations_backup.json');
+    if (force || !fs.existsSync(relationsFile)) {
+      console.log(`[DataCache] Pre-computing and saving relations backup to: ${relationsFile}...`);
+      const relations = extractRelations(verses);
+      fs.writeFile(relationsFile, JSON.stringify(relations), 'utf8', (err) => {
+        if (err) console.warn("[DataCache] Async relations backup write failed:", err);
+      });
+    }
+
   } catch (err) {
     console.warn("[DataCache] Could not start content backup write:", err);
   }

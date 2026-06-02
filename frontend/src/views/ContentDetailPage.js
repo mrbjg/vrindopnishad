@@ -196,67 +196,76 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
         if (active) {
           setContent(data);
           performConceptScan(data);
-          
-          const allItems = await apiService.getAllContent(null, 10000);
-          const relations = extractRelations(allItems);
-          
-          const authorInfo = parseAuthorField(data.author || "");
-          let matchedSaint = null;
-          if (authorInfo.saintName) {
-            const saintSlug = getNormalizedSaintSlug(authorInfo.saintName);
-            matchedSaint = relations.sants.find(s => s.slug === saintSlug);
-          }
-          
-          let matchedBook = null;
-          if (authorInfo.bookName) {
-            const bookSlug = getNormalizedBookSlug(authorInfo.bookName);
-            matchedBook = relations.books.find(b => b.slug === bookSlug);
-          }
+          setLoading(false); // Render the main content on screen IMMEDIATELY
 
-          const textToScan = [
-            data.title,
-            data.author,
-            data.hindi_text,
-            data.sanskrit_text,
-            data.english_translation,
-            data.description
-          ].filter(Boolean).join(' ').toLowerCase();
-          
-          const isSevaKunj = textToScan.includes('सेवा कुंज') || 
-                             textToScan.includes('सेवाकुंज') || 
-                             textToScan.includes('seva kunj') || 
-                             textToScan.includes('sewakunj') || 
-                             textToScan.includes('seva-kunj') || 
-                             textToScan.includes('सेवा सुख') ||
-                             (data.tags && data.tags.some(t => t.toLowerCase().includes('seva') || t.toLowerCase().includes('kunj')));
-          
-          if (isSevaKunj) {
-            matchedBook = relations.books.find(b => b.slug === 'seva-kunj-texts') || matchedBook;
-          }
-          
-          let ragaName = null;
-          const ragaRegex = /(राग\s+[^\s,;()-]+)/;
-          const cleanTitle = data.title || "";
-          const matchTitle = cleanTitle.match(ragaRegex);
-          const matchSanskrit = data.sanskrit_text?.match(ragaRegex);
-          const matchHindi = data.hindi_text?.match(ragaRegex);
-          if (matchTitle) ragaName = matchTitle[1];
-          else if (matchSanskrit) ragaName = matchSanskrit[1];
-          else if (matchHindi) ragaName = matchHindi[1];
-          if (ragaName) ragaName = ragaName.split(/[,]/)[0].trim();
-          
-          const matchedRaga = ragaName ? relations.ragas.find(r => r.name === ragaName) : null;
-          
-          const categoryVerses = allItems.filter(item => 
-            item.category === data.category && 
-            item.id?.toString() !== data.id?.toString() &&
-            item.category?.toLowerCase() !== 'saint'
-          ).slice(0, 3);
-          
-          setRelatedSaint(matchedSaint || null);
-          setRelatedBook(matchedBook || null);
-          setRelatedRaga(matchedRaga || null);
-          setRelatedVerses(categoryVerses);
+          // Defer the extraction of relations to avoid blocking UI rendering
+          setTimeout(async () => {
+            if (!active) return;
+            try {
+              const allItems = await apiService.getAllContent(null, 10000);
+              const relations = extractRelations(allItems);
+              
+              const authorInfo = parseAuthorField(data.author || "");
+              let matchedSaint = null;
+              if (authorInfo.saintName) {
+                const saintSlug = getNormalizedSaintSlug(authorInfo.saintName);
+                matchedSaint = relations.sants.find(s => s.slug === saintSlug);
+              }
+              
+              let matchedBook = null;
+              if (authorInfo.bookName) {
+                const bookSlug = getNormalizedBookSlug(authorInfo.bookName);
+                matchedBook = relations.books.find(b => b.slug === bookSlug);
+              }
+
+              const textToScan = [
+                data.title,
+                data.author,
+                data.hindi_text,
+                data.sanskrit_text,
+                data.english_translation,
+                data.description
+              ].filter(Boolean).join(' ').toLowerCase();
+              
+              const isSevaKunj = textToScan.includes('सेवा कुंज') || 
+                                 textToScan.includes('सेवाकुंज') || 
+                                 textToScan.includes('seva kunj') || 
+                                 textToScan.includes('sewakunj') || 
+                                 textToScan.includes('seva-kunj') || 
+                                 textToScan.includes('सेवा सुख') ||
+                                 (data.tags && data.tags.some(t => t.toLowerCase().includes('seva') || t.toLowerCase().includes('kunj')));
+              
+              if (isSevaKunj) {
+                matchedBook = relations.books.find(b => b.slug === 'seva-kunj-texts') || matchedBook;
+              }
+              
+              let ragaName = null;
+              const ragaRegex = /(राग\s+[^\s,;()-]+)/;
+              const cleanTitle = data.title || "";
+              const matchTitle = cleanTitle.match(ragaRegex);
+              const matchSanskrit = data.sanskrit_text?.match(ragaRegex);
+              const matchHindi = data.hindi_text?.match(ragaRegex);
+              if (matchTitle) ragaName = matchTitle[1];
+              else if (matchSanskrit) ragaName = matchSanskrit[1];
+              else if (matchHindi) ragaName = matchHindi[1];
+              if (ragaName) ragaName = ragaName.split(/[,]/)[0].trim();
+              
+              const matchedRaga = ragaName ? relations.ragas.find(r => r.name === ragaName) : null;
+              
+              const categoryVerses = allItems.filter(item => 
+                item.category === data.category && 
+                item.id?.toString() !== data.id?.toString() &&
+                item.category?.toLowerCase() !== 'saint'
+              ).slice(0, 3);
+              
+              setRelatedSaint(matchedSaint || null);
+              setRelatedBook(matchedBook || null);
+              setRelatedRaga(matchedRaga || null);
+              setRelatedVerses(categoryVerses);
+            } catch (err) {
+              console.warn('Deferred relations loading failed:', err);
+            }
+          }, 60);
         }
       } catch (error) {
         console.error('Error fetching content:', error);

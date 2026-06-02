@@ -96,7 +96,7 @@ let globalRelationsCache = null;
 
 export function extractRelations(items) {
   if (!items || !items.length) {
-    return { sants: [], books: [], ragas: [], biographies: [] };
+    return { sants: [], books: [], ragas: [] };
   }
 
   if (items === lastItemsRef && lastResult) {
@@ -155,8 +155,7 @@ export function extractRelations(items) {
         hinglishName: transliteratedName,
         text: item.hindi_text || item.description || '',
         tags: item.tags || [],
-        image: item.image_url || null,
-        rawItem: item
+        image: item.image_url || null
       });
     }
   });
@@ -231,16 +230,6 @@ export function extractRelations(items) {
       ragaName = ragaName.split(/[,]/)[0].trim();
     }
 
-    const enrichedItem = {
-      ...item,
-      cleanTitle,
-      parsedSaint: saintName,
-      parsedBook: bookName,
-      parsedVerse: verseNum,
-      parsedRaga: ragaName,
-      slug: item.slug || slugify(transliterate(cleanTitle))
-    };
-
     if (saintName) {
       const cleanSantKey = saintName.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim();
       const santSlug = getNormalizedSaintSlug(cleanSantKey);
@@ -257,12 +246,12 @@ export function extractRelations(items) {
           cleanName: cleanSantKey,
           slug: santSlug,
           hinglishName: transliterate(matchedBio ? matchedBio.name : saintName),
-          verses: [],
+          verseIds: [],
           books: new Set(),
           biography: matchedBio || null
         };
       }
-      santsMap[santSlug].verses.push(enrichedItem);
+      santsMap[santSlug].verseIds.push(item.id);
       if (bookName) {
         const normalizedBName = getNormalizedBookName(bookName);
         santsMap[santSlug].books.add(normalizedBName);
@@ -279,7 +268,7 @@ export function extractRelations(items) {
           hinglishName: transliterate(normalizedBName),
           author: saintName || 'Unknown',
           authorSlug: saintName ? getNormalizedSaintSlug(saintName) : null,
-          verses: []
+          verseIds: []
         };
       } else {
         if (saintName && booksMap[bookSlug].author === 'Unknown') {
@@ -287,7 +276,7 @@ export function extractRelations(items) {
           booksMap[bookSlug].authorSlug = getNormalizedSaintSlug(saintName);
         }
       }
-      booksMap[bookSlug].verses.push(enrichedItem);
+      booksMap[bookSlug].verseIds.push(item.id);
     }
 
     if (ragaName) {
@@ -297,15 +286,15 @@ export function extractRelations(items) {
           name: ragaName,
           slug: ragaSlug,
           hinglishName: transliterate(ragaName),
-          verses: []
+          verseIds: []
         };
       }
-      ragasMap[ragaName].verses.push(enrichedItem);
+      ragasMap[ragaName].verseIds.push(item.id);
     }
   });
 
   const sevaKunjSlug = 'seva-kunj-texts';
-  const sevaKunjVerses = [];
+  const sevaKunjVerseIds = [];
   
   items.forEach(item => {
     if (item.category?.toLowerCase() === 'saint') return;
@@ -327,40 +316,32 @@ export function extractRelations(items) {
                        (item.tags && item.tags.some(t => t.toLowerCase().includes('seva') || t.toLowerCase().includes('kunj')));
                        
     if (isSevaKunj) {
-      let enriched = item;
-      for (const b of Object.values(booksMap)) {
-        const found = b.verses.find(v => v.id === item.id);
-        if (found) {
-          enriched = found;
-          break;
-        }
-      }
-      if (!sevaKunjVerses.some(v => v.id === enriched.id)) {
-        sevaKunjVerses.push(enriched);
+      if (!sevaKunjVerseIds.includes(item.id)) {
+        sevaKunjVerseIds.push(item.id);
       }
     }
   });
 
-  if (sevaKunjVerses.length > 0) {
+  if (sevaKunjVerseIds.length > 0) {
     booksMap[sevaKunjSlug] = {
       name: 'सेवा कुंज साहित्य',
       slug: sevaKunjSlug,
       hinglishName: 'Seva Kunj Texts',
       author: 'रसिक संत / Rasik Saints',
       authorSlug: 'hit-harivansh',
-      verses: sevaKunjVerses
+      verseIds: sevaKunjVerseIds
     };
   }
 
   const sants = Object.values(santsMap).map(s => ({
     ...s,
     books: Array.from(s.books)
-  })).sort((a, b) => b.verses.length - a.verses.length);
+  })).sort((a, b) => b.verseIds.length - a.verseIds.length);
 
-  const books = Object.values(booksMap).sort((a, b) => b.verses.length - a.verses.length);
-  const ragas = Object.values(ragasMap).sort((a, b) => b.verses.length - a.verses.length);
+  const books = Object.values(booksMap).sort((a, b) => b.verseIds.length - a.verseIds.length);
+  const ragas = Object.values(ragasMap).sort((a, b) => b.verseIds.length - a.verseIds.length);
 
-  const result = { sants, books, ragas, biographies };
+  const result = { sants, books, ragas };
   lastItemsRef = items;
   lastResult = result;
 

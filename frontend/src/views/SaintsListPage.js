@@ -64,8 +64,7 @@ const SaintsListPage = ({ initialSaints }) => {
     }
     const load = async () => {
       try {
-        const allItems = await apiService.getAllContent(null, 10000);
-        const relations = extractRelations(allItems);
+        const relations = await apiService.getRelations();
         if (active) {
           setSaints(relations.sants);
         }
@@ -159,9 +158,10 @@ const SaintsListPage = ({ initialSaints }) => {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredSaints.slice(0, visibleCount).map(sant => {
+              const verseCount = sant.verses?.length || sant.verseIds?.length || 0;
               const bioText = sant.biography?.text 
                 ? (sant.biography.text.substring(0, 100) + '...')
-                : `${sant.verses.length} verses available in library.`;
+                : `${verseCount} verses available in library.`;
 
               return (
                 <Link 
@@ -191,7 +191,7 @@ const SaintsListPage = ({ initialSaints }) => {
                   <div className="pt-4 mt-4 border-t border-[var(--glass-border)] flex justify-between items-center text-xs">
                     <span className="text-[var(--text-color)]/40 flex items-center gap-1">
                       <FileText size={12} />
-                      {sant.verses.length} {sant.verses.length === 1 ? 'Verse' : 'Verses'}
+                      {verseCount} {verseCount === 1 ? 'Verse' : 'Verses'}
                     </span>
                     <span className="text-[var(--primary-color)] font-medium group-hover:translate-x-1 transition-transform">
                       {isHindiRoute ? "वाणी संग्रह →" : "View Vaanis →"}

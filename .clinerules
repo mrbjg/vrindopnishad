@@ -105,3 +105,15 @@ Rule for Author Page and E-E-A-T Signals: Every content writer, editor, or revie
 
 Rule for Schema Validation: Whenever updating schema generators (in seoSchemas.js) or adding new JSON-LD metadata fields to routes, run a local compile test (npm run build) and cross-check the generated HTML tags against Google Rich Result schema specs to ensure sitemap configurations do not throw warnings.
 
+[perf_cooperative_rendering]: "Always execute large-dataset modifications (e.g. array filtering, text transliteration, database parses above 1MB) asynchronously or chunked inside requestIdleCallback or deferred timers to maintain high responsiveness and prevent frame drops (jank) in mobile environments."
+[perf_state_minimization]: "Never initialize React state synchronously with heavy operations (like reading local storage or parsing complex JSON files) unless they are tiny (<10KB) or strictly required for initial render. Wrap fallback reads inside initialization functions or fetch asynchronously after mount."
+
+Rule [performance_frame_budget]:
+Defer heavy parsing operations, secondary React effect checks, and offscreen asset loading using requestIdleCallback or progressive preloading lists, keeping initial JS execution under 100ms on low-performance cores.
+
+Rule [layout_stability_cls]:
+Ensure all static elements (headers, sidebars, hero grids) have fixed heights or predefined aspect ratios so that loading content or mounting components does not cause Cumulative Layout Shift (CLS) above 0.1.
+
+Rule [accessible_navigation_a11y]:
+Equip all touch controls and action buttons (e.g., chanting bead counter, theme buttons, profile avatar links) with clear aria-label tags and visible interactive states for screen readers and keyboard access.
+

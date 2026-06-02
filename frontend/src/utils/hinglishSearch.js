@@ -180,6 +180,40 @@ export function expandHinglishQuery(query) {
 export function hinglishMatch(item, query) {
   if (!query || !item) return true;
 
+  // Lazily compute search indices if not pre-computed by background queue
+  if (!item._textHinglish) {
+    const sansFirstLine = item.sanskrit_text ? item.sanskrit_text.split(/[\n।॥]/).map(l => l.trim()).filter(Boolean)[0] || '' : '';
+    const hindiFirstLine = item.hindi_text ? item.hindi_text.split(/[\n।॥]/).map(l => l.trim()).filter(Boolean)[0] || '' : '';
+
+    item._textDevanagari = [
+      item.title,
+      item.name,
+      item.hindi_text,
+      item.sanskrit_text,
+      item.author,
+      item.description,
+      item.category,
+      sansFirstLine,
+      hindiFirstLine
+    ].filter(Boolean).join(' ').toLowerCase();
+
+    item._textHinglish = [
+      item.hinglishName,
+      transliterate(item.title || ''),
+      transliterate(item.name || ''),
+      transliterate(item.author || ''),
+      transliterate(item.description || ''),
+      transliterate(sansFirstLine),
+      transliterate(hindiFirstLine),
+      item.english_translation,
+      item.english_text,
+      item.slug,
+      ...(item.tags || [])
+    ].filter(Boolean).join(' ').toLowerCase();
+
+    item._normalizedHinglish = normalizeForFuzzy(item._textHinglish);
+  }
+
   const originalQuery = query.trim().toLowerCase();
   
   // 1. Check if query contains Devanagari
@@ -189,51 +223,19 @@ export function hinglishMatch(item, query) {
   const queryHinglish = isDevanagariQuery ? transliterate(originalQuery) : originalQuery;
   const normalizedQuery = normalizeForFuzzy(queryHinglish);
 
-  // 3. Extract first lines of text fields if present
-  const sansFirstLine = item.sanskrit_text ? item.sanskrit_text.split(/[\n।॥]/).map(l => l.trim()).filter(Boolean)[0] || '' : '';
-  const hindiFirstLine = item.hindi_text ? item.hindi_text.split(/[\n।॥]/).map(l => l.trim()).filter(Boolean)[0] || '' : '';
-
-  // 4. Construct search indices
-  const textDevanagari = [
-    item.title,
-    item.name,
-    item.hindi_text,
-    item.sanskrit_text,
-    item.author,
-    item.description,
-    item.category,
-    sansFirstLine,
-    hindiFirstLine
-  ].filter(Boolean).join(' ').toLowerCase();
-
-  const textHinglish = [
-    item.hinglishName,
-    transliterate(item.title || ''),
-    transliterate(item.name || ''),
-    transliterate(item.author || ''),
-    transliterate(item.description || ''),
-    transliterate(sansFirstLine),
-    transliterate(hindiFirstLine),
-    item.english_translation,
-    item.english_text,
-    item.slug,
-    ...(item.tags || [])
-  ].filter(Boolean).join(' ').toLowerCase();
-
-  // 5. Match Check
+  // 3. Match Check
   // A. Direct Devanagari check (if query is Devanagari)
-  if (isDevanagariQuery && textDevanagari.includes(originalQuery)) {
+  if (isDevanagariQuery && item._textDevanagari.includes(originalQuery)) {
     return true;
   }
 
   // B. Standard Hinglish substring check
-  if (textHinglish.includes(queryHinglish)) {
+  if (item._textHinglish.includes(queryHinglish)) {
     return true;
   }
 
   // C. Fuzzy match check
-  const normalizedIndex = normalizeForFuzzy(textHinglish);
-  if (normalizedIndex.includes(normalizedQuery)) {
+  if (item._normalizedHinglish.includes(normalizedQuery)) {
     return true;
   }
 
@@ -241,7 +243,7 @@ export function hinglishMatch(item, query) {
   const expanded = expandHinglishQuery(queryHinglish);
   const matchExpanded = expanded.some(term => {
     const termHing = transliterate(term);
-    return textHinglish.includes(termHing) || normalizeForFuzzy(textHinglish).includes(normalizeForFuzzy(termHing));
+    return item._textHinglish.includes(termHing) || item._normalizedHinglish.includes(normalizeForFuzzy(termHing));
   });
 
   return matchExpanded;

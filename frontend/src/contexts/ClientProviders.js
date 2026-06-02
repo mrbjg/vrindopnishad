@@ -9,6 +9,10 @@ import { apiService } from '../services/api';
 import { usePathname } from 'next/navigation';
 import CelestialParticles from '../components/CelestialParticles';
 import PageSkeleton from '../components/ui/PageSkeleton';
+import ScrollToTop from '../components/ScrollToTop';
+import Layout from '../components/Layout';
+import Lenis from 'lenis';
+import 'lenis/dist/lenis.css';
 
 export const AuthContext = React.createContext();
 export const ApiContext = React.createContext();
@@ -40,6 +44,112 @@ function PersistentBackground() {
     </div>
   );
 }
+
+const LenisScroll = () => {
+  const { settings } = useSettings();
+  const pathname = usePathname();
+  const [containerType, setContainerType] = useState('window');
+
+  const isMobile = typeof window !== 'undefined' && (
+    window.matchMedia('(max-width: 1023px)').matches || 
+    ('ontouchstart' in window) || 
+    (navigator.maxTouchPoints > 0)
+  );
+
+  useEffect(() => {
+    const checkContainer = () => {
+      const pookizContainer = document.getElementById('pookiz-main-scroll-container');
+      const kbClassicContainer = document.getElementById('kb-classic-content-container');
+      
+      let detectedType = 'window';
+      if (settings.layoutMode === 'pookiz' && pookizContainer) {
+        detectedType = 'pookiz';
+      } else if (kbClassicContainer) {
+        detectedType = 'kb';
+      }
+
+      if (detectedType !== containerType) {
+        setContainerType(detectedType);
+      }
+    };
+
+    const frameId = requestAnimationFrame(checkContainer);
+    return () => cancelAnimationFrame(frameId);
+  }, [pathname, settings.layoutMode, containerType]);
+
+  useEffect(() => {
+    if (isMobile) return;
+
+    if (!settings.smoothScroll) {
+      document.documentElement.style.removeProperty('overflow');
+      document.body.style.removeProperty('overflow');
+      document.documentElement.classList.remove('lenis');
+      return;
+    }
+
+    const pookizContainer = document.getElementById('pookiz-main-scroll-container');
+    const kbClassicContainer = document.getElementById('kb-classic-content-container');
+
+    const lenisOptions = {
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      smoothTouch: false,
+      infinite: false,
+    };
+
+    if (containerType === 'pookiz' && pookizContainer) {
+      lenisOptions.wrapper = pookizContainer;
+      lenisOptions.content = pookizContainer.firstElementChild || pookizContainer;
+    } else if (containerType === 'kb' && kbClassicContainer) {
+      lenisOptions.wrapper = kbClassicContainer;
+      lenisOptions.content = kbClassicContainer.firstElementChild || kbClassicContainer;
+    }
+
+    const lenis = new Lenis(lenisOptions);
+    window.lenis = lenis;
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    const rafId = requestAnimationFrame(raf);
+
+    const resizeObserver = new ResizeObserver(() => {
+      lenis.resize();
+    });
+
+    const target = containerType === 'pookiz' && pookizContainer ? pookizContainer :
+                   containerType === 'kb' && kbClassicContainer ? kbClassicContainer :
+                   document.body;
+
+    if (target) {
+      resizeObserver.observe(target);
+    }
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      resizeObserver.disconnect();
+      lenis.destroy();
+      window.lenis = null;
+      document.documentElement.style.removeProperty('overflow');
+      document.body.style.removeProperty('overflow');
+      
+      if (pookizContainer) {
+        pookizContainer.style.removeProperty('overflow');
+      }
+      if (kbClassicContainer) {
+        kbClassicContainer.style.removeProperty('overflow');
+      }
+    };
+  }, [settings.smoothScroll, containerType, isMobile]);
+
+  return null;
+};
 
 export function ClientProviders({ children }) {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -156,13 +266,13 @@ export function ClientProviders({ children }) {
         <AudioProvider>
           <LoadingProvider>
             <AuthContext.Provider value={{ isAdmin, user, token, login, logout, refreshUser }}>
-              <ApiContext.Provider value={{ apiService, isDemoMode: false }}>
+              <ApiContext.Provider value={{ apiService, isDemoMode: false, transition }}>
                 <PersistentBackground />
-                {transition ? (
-                  <div className="min-h-[80vh] flex flex-col justify-start py-8">
-                    <PageSkeleton variant={transition.variant} />
-                  </div>
-                ) : children}
+                <ScrollToTop />
+                <LenisScroll />
+                <Layout>
+                  {children}
+                </Layout>
               </ApiContext.Provider>
             </AuthContext.Provider>
           </LoadingProvider>

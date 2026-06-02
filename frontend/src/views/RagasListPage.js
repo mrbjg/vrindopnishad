@@ -47,8 +47,7 @@ const RagasListPage = ({ initialRagas }) => {
     }
     const load = async () => {
       try {
-        const allItems = await apiService.getAllContent(null, 10000);
-        const relations = extractRelations(allItems);
+        const relations = await apiService.getRelations();
         if (active) {
           setRagas(relations.ragas);
         }
@@ -156,7 +155,7 @@ const RagasListPage = ({ initialRagas }) => {
                 <div className="pt-4 mt-6 border-t border-[var(--glass-border)] flex justify-between items-center text-xs">
                   <span className="text-[var(--text-color)]/40 flex items-center gap-1">
                     <FileText size={12} />
-                    {raga.verses.length} {raga.verses.length === 1 ? 'Song' : 'Songs'}
+                    {raga.verses ? raga.verses.length : (raga.verseIds ? raga.verseIds.length : 0)} {((raga.verses ? raga.verses.length : (raga.verseIds ? raga.verseIds.length : 0)) === 1) ? 'Song' : 'Songs'}
                   </span>
                   <span className="text-[var(--primary-color)] font-medium group-hover:translate-x-1 transition-transform">
                     {isHindiRoute ? "गीत संग्रह खोलें →" : "Listen Songs →"}

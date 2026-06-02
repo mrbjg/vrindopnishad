@@ -30,7 +30,12 @@ const SaintDetailPage = ({ initialSaint }) => {
       if (memCached) {
         const relations = extractRelations(memCached);
         if (relations && relations.sants.length > 0) {
-          return relations.sants.find(s => s.slug === slug) || null;
+          const found = relations.sants.find(s => s.slug === slug) || null;
+          if (found && found.verseIds && !found.verses) {
+            const contentMap = new Map(memCached.map(item => [item.id ? item.id.toString() : '', item]));
+            found.verses = found.verseIds.map(id => contentMap.get(id?.toString())).filter(Boolean);
+          }
+          return found;
         }
       }
     } catch (e) {}
@@ -66,7 +71,12 @@ const SaintDetailPage = ({ initialSaint }) => {
         if (memCached) {
           const relations = extractRelations(memCached);
           if (relations && relations.sants.length > 0) {
-            return relations.sants.find(s => s.slug === slug) || null;
+            const found = relations.sants.find(s => s.slug === slug) || null;
+            if (found && found.verseIds && !found.verses) {
+              const contentMap = new Map(memCached.map(item => [item.id ? item.id.toString() : '', item]));
+              found.verses = found.verseIds.map(id => contentMap.get(id?.toString())).filter(Boolean);
+            }
+            return found;
           }
         }
       } catch (e) {}
@@ -79,9 +89,15 @@ const SaintDetailPage = ({ initialSaint }) => {
 
     const load = async () => {
       try {
-        const allItems = await apiService.getAllContent(null, 10000);
-        const relations = extractRelations(allItems);
+        const relations = await apiService.getRelations();
         const foundSant = relations.sants.find(s => s.slug === slug);
+        if (foundSant) {
+          const allContent = await apiService.getAllContent(null, 5000);
+          const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
+          foundSant.verses = (foundSant.verseIds || [])
+            .map(id => contentMap.get(id?.toString()))
+            .filter(Boolean);
+        }
         if (active) {
           setSant(foundSant || null);
         }
@@ -475,7 +491,7 @@ const SaintDetailPage = ({ initialSaint }) => {
           {isHindiRoute ? `श्री ${sant.name} वाणी संग्रह` : `${sant.hinglishName} Collected Verses`}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {sant.verses.map((verse) => (
+          {(sant.verses || []).map((verse) => (
             <Link
               key={verse.id}
               to={isHindiRoute ? `/hi/content/${verse.slug || verse.id}` : `/content/${verse.slug || verse.id}`}

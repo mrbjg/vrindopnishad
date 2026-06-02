@@ -20,7 +20,12 @@ const RagaDetailPage = ({ initialRaga }) => {
       if (memCached) {
         const relations = extractRelations(memCached);
         if (relations && relations.ragas.length > 0) {
-          return relations.ragas.find(r => r.slug === slug) || null;
+          const found = relations.ragas.find(r => r.slug === slug) || null;
+          if (found && found.verseIds && !found.verses) {
+            const contentMap = new Map(memCached.map(item => [item.id ? item.id.toString() : '', item]));
+            found.verses = found.verseIds.map(id => contentMap.get(id?.toString())).filter(Boolean);
+          }
+          return found;
         }
       }
     } catch (e) {}
@@ -54,7 +59,12 @@ const RagaDetailPage = ({ initialRaga }) => {
         if (memCached) {
           const relations = extractRelations(memCached);
           if (relations && relations.ragas.length > 0) {
-            return relations.ragas.find(r => r.slug === slug) || null;
+            const found = relations.ragas.find(r => r.slug === slug) || null;
+            if (found && found.verseIds && !found.verses) {
+              const contentMap = new Map(memCached.map(item => [item.id ? item.id.toString() : '', item]));
+              found.verses = found.verseIds.map(id => contentMap.get(id?.toString())).filter(Boolean);
+            }
+            return found;
           }
         }
       } catch (e) {}
@@ -67,9 +77,15 @@ const RagaDetailPage = ({ initialRaga }) => {
 
     const load = async () => {
       try {
-        const allItems = await apiService.getAllContent(null, 10000);
-        const relations = extractRelations(allItems);
+        const relations = await apiService.getRelations();
         const foundRaga = relations.ragas.find(r => r.slug === slug);
+        if (foundRaga) {
+          const allContent = await apiService.getAllContent(null, 5000);
+          const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
+          foundRaga.verses = (foundRaga.verseIds || [])
+            .map(id => contentMap.get(id?.toString()))
+            .filter(Boolean);
+        }
         if (active) {
           setRaga(foundRaga || null);
         }
@@ -132,12 +148,12 @@ const RagaDetailPage = ({ initialRaga }) => {
             {isHindiRoute ? "राग में रचित पद" : "Songs Composed in this Raga"}
           </h2>
           <span className="text-xs text-white/30">
-            {raga.verses.length} {raga.verses.length === 1 ? 'song' : 'songs'}
+            {(raga.verses || raga.verseIds || []).length} {(raga.verses || raga.verseIds || []).length === 1 ? 'song' : 'songs'}
           </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {raga.verses.map((verse) => (
+          {(raga.verses || []).map((verse) => (
             <Link
               key={verse.id}
               to={isHindiRoute ? `/hi/content/${verse.slug || verse.id}` : `/content/${verse.slug || verse.id}`}

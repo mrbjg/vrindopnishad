@@ -31,7 +31,7 @@ const RagasIndex = ({ isHi, ragas, navigate }) => {
             </span>
             <span className="text-[9px] text-white/35 font-light bg-white/5 px-1.5 py-0.5 rounded-md flex items-center gap-0.5 shrink-0 select-none">
               <Volume2 size={8} />
-              {raga.verses.length}
+              {raga.verses ? raga.verses.length : (raga.verseIds ? raga.verseIds.length : 0)}
             </span>
           </button>
         ))}

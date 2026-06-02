@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { X, ChevronRight } from 'lucide-react';
 import AudioPlayButton from '../ui/AudioPlayButton';
+import { ApiContext } from '../../contexts/ClientProviders';
 
 const PreviewDrawer = ({
   isHi,
@@ -11,12 +12,42 @@ const PreviewDrawer = ({
   books,
   onNavigatePreview,
 }) => {
+  const { apiService } = useContext(ApiContext);
   const [drawerTab, setDrawerTab] = useState('bio');
+  const [resolvedVerses, setResolvedVerses] = useState([]);
 
-  
   useEffect(() => {
     setDrawerTab('bio');
-  }, [selectedItem]);
+    
+    let active = true;
+    if (!selectedItem || !selectedItem.verseIds) {
+      setResolvedVerses(selectedItem?.verses || []);
+      return;
+    }
+    
+    if (selectedItem.verses && selectedItem.verses.length > 0) {
+      setResolvedVerses(selectedItem.verses);
+      return;
+    }
+
+    const resolve = async () => {
+      try {
+        const allContent = await apiService.getAllContent(null, 5000);
+        if (active) {
+          const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
+          const mapped = (selectedItem.verseIds || [])
+            .map(id => contentMap.get(id?.toString()))
+            .filter(Boolean);
+          setResolvedVerses(mapped);
+        }
+      } catch (e) {
+        console.warn('Failed to resolve verses for preview:', e);
+      }
+    };
+    
+    resolve();
+    return () => { active = false; };
+  }, [selectedItem, apiService]);
 
   if (!selectedItem) return null;
 
@@ -83,7 +114,7 @@ const PreviewDrawer = ({
                         ? 'Biography'
                         : tab === 'books'
                         ? `Books (${selectedItem.books?.length || 0})`
-                        : `Verses (${selectedItem.verses?.length || 0})`}
+                        : `Verses (${resolvedVerses?.length || 0})`}
                     </button>
                   ))}
                 </div>
@@ -126,7 +157,7 @@ const PreviewDrawer = ({
                 )}
                 {drawerTab === 'verses' && (
                   <div className="space-y-2">
-                    {selectedItem.verses?.map((v, i) => (
+                    {resolvedVerses.map((v, i) => (
                       <Link
                         key={`${v.slug || v.id || 'verse'}-${i}`}
                         to={isHi ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`}
@@ -144,7 +175,7 @@ const PreviewDrawer = ({
             
             {previewType === 'book' && (
               <div className="space-y-2">
-                {selectedItem.verses?.map((v, i) => (
+                {resolvedVerses.map((v, i) => (
                   <Link
                     key={`${v.slug || v.id || 'verse'}-${i}`}
                     to={isHi ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`}
@@ -160,7 +191,7 @@ const PreviewDrawer = ({
             
             {previewType === 'raga' && (
               <div className="space-y-2">
-                {selectedItem.verses?.map((v, i) => (
+                {resolvedVerses.map((v, i) => (
                   <Link
                     key={`${v.slug || v.id || 'verse'}-${i}`}
                     to={isHi ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`}

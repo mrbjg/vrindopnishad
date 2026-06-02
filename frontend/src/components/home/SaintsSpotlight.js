@@ -48,7 +48,7 @@ const SaintsSpotlight = ({ isHi, saints, navigate }) => {
                 {isHi ? sant.name : sant.hinglishName}
               </h3>
               <span className="text-[9px] text-white/35 font-light block mt-0.5">
-                {sant.verses.length} verses
+                {sant.verses ? sant.verses.length : (sant.verseIds ? sant.verseIds.length : 0)} verses
               </span>
             </div>
             <span className="text-[8px] bg-amber-500/10 text-primary border border-amber-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider font-bold select-none">
