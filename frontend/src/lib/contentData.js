@@ -509,6 +509,17 @@ function buildRelations(items) {
       slug: item.slug || slugify(transliterate(cleanTitle))
     };
 
+    const lightweightItem = {
+      id: enrichedItem.id,
+      slug: enrichedItem.slug,
+      category: enrichedItem.category || 'poem',
+      audio_url: enrichedItem.audio_url || '',
+      cleanTitle: enrichedItem.cleanTitle || '',
+      hindi_text: enrichedItem.hindi_text ? enrichedItem.hindi_text.substring(0, 150) + (enrichedItem.hindi_text.length > 150 ? '...' : '') : '',
+      english_translation: enrichedItem.english_translation ? enrichedItem.english_translation.substring(0, 150) + (enrichedItem.english_translation.length > 150 ? '...' : '') : '',
+      description: enrichedItem.description ? enrichedItem.description.substring(0, 150) + (enrichedItem.description.length > 150 ? '...' : '') : ''
+    };
+
     if (saintName) {
       const cleanSantKey = saintName.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim();
       const santSlug = getNormalizedSaintSlug(cleanSantKey);
@@ -530,7 +541,7 @@ function buildRelations(items) {
           rawItem: matchedBio ? matchedBio.rawItem : null
         };
       }
-      santsMap[santSlug].verses.push(enrichedItem);
+      santsMap[santSlug].verses.push(lightweightItem);
       if (bookName) {
         const normalizedBName = getNormalizedBookName(bookName);
         santsMap[santSlug].books.add(normalizedBName);
@@ -558,7 +569,7 @@ function buildRelations(items) {
           booksMap[bookSlug].authorSlug = getNormalizedSaintSlug(saintName);
         }
       }
-      booksMap[bookSlug].verses.push(enrichedItem);
+      booksMap[bookSlug].verses.push(lightweightItem);
     }
 
     if (ragaName) {
@@ -574,7 +585,7 @@ function buildRelations(items) {
       } else if (!ragasMap[ragaName].imageUrl && item.image_url) {
         ragasMap[ragaName].imageUrl = item.image_url;
       }
-      ragasMap[ragaName].verses.push(enrichedItem);
+      ragasMap[ragaName].verses.push(lightweightItem);
     }
   });
 

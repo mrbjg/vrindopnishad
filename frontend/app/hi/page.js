@@ -18,8 +18,43 @@ export default async function HindiHomeRoute() {
   const books = getAllGranthas();
   const ragas = getAllRagas();
 
-  const rawSaints = saints.map(s => s.rawItem).filter(Boolean);
-  const initialAllItems = [...verses, ...rawSaints];
+  // Create lightweight versions of latest verses (only needs 6 items)
+  const latestVerses = verses.slice(0, 6).map(v => ({
+    id: v.id,
+    slug: v.slug,
+    category: v.category || 'poem',
+    audio_url: v.audio_url || '',
+    cleanTitle: v.cleanTitle || v.title || '',
+    hindi_text: v.hindi_text ? v.hindi_text.substring(0, 150) + (v.hindi_text.length > 150 ? '...' : '') : '',
+    english_translation: v.english_translation ? v.english_translation.substring(0, 150) + (v.english_translation.length > 150 ? '...' : '') : '',
+    description: v.description ? v.description.substring(0, 150) + (v.description.length > 150 ? '...' : '') : ''
+  }));
+
+  // Select Aaj Ka Pad
+  const today = new Date();
+  const hash = (today.getFullYear() * 37) + (today.getMonth() * 19) + today.getDate();
+  const rawAajKaPad = verses[hash % verses.length];
+  const aajKaPad = rawAajKaPad ? {
+    id: rawAajKaPad.id,
+    slug: rawAajKaPad.slug,
+    category: rawAajKaPad.category || 'poem',
+    audio_url: rawAajKaPad.audio_url || '',
+    cleanTitle: rawAajKaPad.cleanTitle || rawAajKaPad.title || '',
+    hindi_text: rawAajKaPad.hindi_text || '',
+    sanskrit_text: rawAajKaPad.sanskrit_text || '',
+    english_translation: rawAajKaPad.english_translation || '',
+    description: rawAajKaPad.description || '',
+    author: rawAajKaPad.author || ''
+  } : null;
+
+  // Compute category stats
+  const categoryStats = { shloka: 0, strotra: 0, poem: 0, raga: ragas.length };
+  verses.forEach(item => {
+    const cat = item.category?.toLowerCase();
+    if (categoryStats[cat] !== undefined) {
+      categoryStats[cat]++;
+    }
+  });
 
   const websiteSchema = {
     "@context": "https://schema.org",
@@ -53,7 +88,9 @@ export default async function HindiHomeRoute() {
       />
       <Layout>
         <HomePage
-          initialAllItems={initialAllItems}
+          initialLatestVerses={latestVerses}
+          initialAajKaPad={aajKaPad}
+          initialCategoryStats={categoryStats}
           initialSaints={saints}
           initialBooks={books}
           initialRagas={ragas}

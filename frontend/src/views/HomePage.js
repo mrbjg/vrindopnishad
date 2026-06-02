@@ -87,7 +87,15 @@ const getInitials = (name) => {
   return first.match(/[a-zA-Z]/) ? first.toUpperCase() : first;
 };
 
-const HomePage = ({ initialAllItems, initialSaints, initialBooks, initialRagas }) => {
+const HomePage = ({ 
+  initialAllItems, 
+  initialSaints, 
+  initialBooks, 
+  initialRagas,
+  initialLatestVerses,
+  initialAajKaPad,
+  initialCategoryStats
+}) => {
   const location = useLocation();
   const navigate = useNavigate();
   const isHi = location.pathname.startsWith('/hi');
@@ -98,7 +106,7 @@ const HomePage = ({ initialAllItems, initialSaints, initialBooks, initialRagas }
   const [saints, setSaints] = useState(initialSaints || []);
   const [books, setBooks] = useState(initialBooks || []);
   const [ragas, setRagas] = useState(initialRagas || []);
-  const [loading, setLoading] = useState(!initialAllItems);
+  const [loading, setLoading] = useState(!initialAllItems && !(initialLatestVerses && initialAajKaPad && initialCategoryStats));
 
   
   const [isCompleted, setIsCompleted] = useState(false);
@@ -530,11 +538,11 @@ const HomePage = ({ initialAllItems, initialSaints, initialBooks, initialRagas }
   const rounds = Math.floor(japaCount / 108);
 
   useEffect(() => {
-    let active = true;
-    if (initialAllItems) {
+    if (initialAllItems || (initialLatestVerses && initialAajKaPad && initialCategoryStats)) {
       setLoading(false);
       return;
     }
+    let active = true;
     const load = async () => {
       try {
         const items = await apiService.getAllContent(null, 10000);
@@ -553,11 +561,15 @@ const HomePage = ({ initialAllItems, initialSaints, initialBooks, initialRagas }
     };
     load();
     return () => { active = false; };
-  }, [apiService, initialAllItems]);
+  }, [apiService, initialAllItems, initialLatestVerses, initialAajKaPad, initialCategoryStats]);
 
-  const latestVerses = useMemo(() => allItems.filter(i => i.category?.toLowerCase() !== 'saint').slice(0, 6), [allItems]);
+  const latestVerses = useMemo(() => {
+    if (initialLatestVerses) return initialLatestVerses;
+    return allItems.filter(i => i.category?.toLowerCase() !== 'saint').slice(0, 6);
+  }, [allItems, initialLatestVerses]);
 
   const aajKaPad = useMemo(() => {
+    if (initialAajKaPad) return initialAajKaPad;
     if (!allItems || allItems.length === 0) return null;
     const verses = allItems.filter(i => i.category?.toLowerCase() !== 'saint');
     if (verses.length === 0) return null;
@@ -597,12 +609,13 @@ const HomePage = ({ initialAllItems, initialSaints, initialBooks, initialRagas }
     }
 
     return matched;
-  }, [allItems, calendarData]);
+  }, [allItems, calendarData, initialAajKaPad]);
 
   const dailyShloka = DAILY_SHLOKAS[new Date().getDate() % DAILY_SHLOKAS.length];
 
   
   const categoryStats = useMemo(() => {
+    if (initialCategoryStats) return initialCategoryStats;
     const counts = { shloka: 0, strotra: 0, poem: 0, raga: ragas.length };
     allItems.forEach(item => {
       const cat = item.category?.toLowerCase();
@@ -611,7 +624,7 @@ const HomePage = ({ initialAllItems, initialSaints, initialBooks, initialRagas }
       }
     });
     return counts;
-  }, [allItems, ragas]);
+  }, [allItems, ragas, initialCategoryStats]);
 
   
   if (loading) {
