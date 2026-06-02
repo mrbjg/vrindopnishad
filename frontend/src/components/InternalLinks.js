@@ -28,6 +28,7 @@ const ALL_SEO_PAGES = [
   { path: '/editorial-policy', title: 'Editorial Policy', desc: 'Content verification and manuscript accuracy' },
   { path: '/sources', title: 'Sources & Citations', desc: 'Our scriptural references bibliography' },
   { path: '/contact', title: 'Contact Us', desc: 'Get in touch with the editorial team' },
+  { path: '/author', title: 'Authors & Scholars', desc: 'Meet the manuscript editors and Sanskrit scholars' },
 ];
 
 const InternalLinks = ({ exclude = [], count = 4 }) => {

@@ -232,5 +232,59 @@ export const articles = [
     descHi: 'सुधार रिपोर्ट, संकलन सहयोग या किसी अन्य शंका के लिए सम्पर्क करें।',
     category: 'policies',
     readTime: '3 min'
+  },
+  {
+    slug: 'author',
+    titleEn: 'Authors & Scholars',
+    titleHi: 'लेखक और संपादक मण्डल',
+    descEn: 'Meet the manuscript conservationists and Sanskrit scholars behind Vrindopnishad.',
+    descHi: 'वृंदोपनिषद् के पीछे के लेखकों, पांडुलिपि संरक्षकों और संस्कृत विद्वानों से मिलें।',
+    category: 'policies',
+    readTime: '3 min'
+  },
+  {
+    slug: 'shri-hit-harivansh-mahaprabhu',
+    titleEn: 'Shri Hit Harivansh Mahaprabhu',
+    titleHi: 'श्री हित हरिवंश महाप्रभु',
+    descEn: 'Life, teachings, and Radha Dasya philosophy of the founder of Radhavallabh lineage.',
+    descHi: 'हित संप्रदाय के प्रवर्तक श्री हरिवंश महाप्रभु का जीवन चरित्र और रसोपासना सिद्धांत।',
+    category: 'traditions',
+    readTime: '5 min'
+  },
+  {
+    slug: 'shri-harirae-ji',
+    titleEn: 'Shri Harirae Ji',
+    titleHi: 'श्री हरिराय जी',
+    descEn: 'Biography, Pushtimarg teachings, and commentaries of Goswami Harirae Ji.',
+    descHi: 'पुष्टिमार्ग के महान आचार्य गोस्वामी श्री हरिराय जी का जीवन और शिक्षाएं।',
+    category: 'traditions',
+    readTime: '4 min'
+  },
+  {
+    slug: 'vrindavan',
+    titleEn: 'Sacred Vrindavan',
+    titleHi: 'पवित्र वृंदावन धाम',
+    descEn: 'The spiritual landscape, forests, and temples of Vrindavan.',
+    descHi: 'वृंदावन धाम का अलौकिक रहस्य, प्रमुख कुंज और लीला स्थलों का दार्शनिक परिचय।',
+    category: 'guides',
+    readTime: '5 min'
+  },
+  {
+    slug: 'barsana',
+    titleEn: 'Barsana Dham',
+    titleHi: 'बरसाना धाम',
+    descEn: 'Spiritual significance of Srimati Radharanis birthplace and hills.',
+    descHi: 'श्री लाड़ली जी की प्राकट्य स्थली बरसाना धाम के पावन पर्वत और लीला रहस्य।',
+    category: 'guides',
+    readTime: '4 min'
+  },
+  {
+    slug: 'hit-chaurasi',
+    titleEn: 'Hit Chaurasi',
+    titleHi: 'श्री हित चौरासी',
+    descEn: 'Overview of the canonical 84 verses of divine love in Braj Bhasha.',
+    descHi: 'राधावल्लभ संप्रदाय के प्राण ग्रंथ श्री हित चौरासी जी के ८४ पदों का संक्षिप्त परिचय।',
+    category: 'concepts',
+    readTime: '5 min'
   }
 ];

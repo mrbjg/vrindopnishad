@@ -98,3 +98,10 @@ When implementing skeleton loaders in Next.js, always align the structure, layou
 Always process batched API calls (e.g. LLM inferences, vector embeddings, external network lookups) using a concurrency-controlled parallel execution pool (pMap) instead of sequential loops, ensuring maximum throughput without hitting rate limits.
 
 To avoid navigation lag on client-side routing, intercept Link onClick events in custom router shims to dispatch instant transition events and swap the active layout with a matching PageSkeleton immediately, running dynamic page fetching in the background.
+
+Rule for Next.js Server/Client Boundaries: Always separate raw static data structures (like FAQ arrays, page list configurations, or metadata arrays) from Client Components (files marked with 'use client';). Place them in dedicated data files (e.g., in a src/data/ folder) to prevent Next.js from proxying them as client boundaries, which causes runtime and build-time prerendering errors when imported by Server Components.
+
+Rule for Author Page and E-E-A-T Signals: Every content writer, editor, or reviewer mentioned in our article schemas must have a corresponding profile entry on the /author page detailing their qualifications, academic credentials, and manuscript/study background in Sanskrit/Braj literature to establish authority and trust with search engines.
+
+Rule for Schema Validation: Whenever updating schema generators (in seoSchemas.js) or adding new JSON-LD metadata fields to routes, run a local compile test (npm run build) and cross-check the generated HTML tags against Google Rich Result schema specs to ensure sitemap configurations do not throw warnings.
+

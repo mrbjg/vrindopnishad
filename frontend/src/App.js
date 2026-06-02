@@ -82,6 +82,13 @@ const ContactPage = lazyWithRetry(() => import('./pages/seo/ContactPage'));
 const KnowledgeBaseLayout = lazyWithRetry(() => import('./components/KnowledgeBaseLayout'));
 const PromoLanding = lazyWithRetry(() => import('./pages/PromoLanding'));
 
+const ShriHitHarivansh = lazyWithRetry(() => import('./views/seo/ShriHitHarivansh'));
+const ShriHariraeJi = lazyWithRetry(() => import('./views/seo/ShriHariraeJi'));
+const Vrindavan = lazyWithRetry(() => import('./views/seo/Vrindavan'));
+const Barsana = lazyWithRetry(() => import('./views/seo/Barsana'));
+const HitChaurasi = lazyWithRetry(() => import('./views/seo/HitChaurasi'));
+const AuthorPage = lazyWithRetry(() => import('./views/seo/AuthorPage'));
+
 
 
 
@@ -391,7 +398,13 @@ function App() {
     { path: 'about', element: <AboutPage /> },
     { path: 'editorial-policy', element: <EditorialPolicyPage /> },
     { path: 'sources', element: <SourcesPage /> },
-    { path: 'contact', element: <ContactPage /> }
+    { path: 'contact', element: <ContactPage /> },
+    { path: 'author', element: <AuthorPage /> },
+    { path: 'shri-hit-harivansh-mahaprabhu', element: <ShriHitHarivansh /> },
+    { path: 'shri-harirae-ji', element: <ShriHariraeJi /> },
+    { path: 'vrindavan', element: <Vrindavan /> },
+    { path: 'barsana', element: <Barsana /> },
+    { path: 'hit-chaurasi', element: <HitChaurasi /> }
   ];
 
   return (
