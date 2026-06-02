@@ -1,7 +1,7 @@
 import React from 'react';
 import ContentListPage from '../../src/views/ContentListPage';
 import Layout from '../../src/components/Layout';
-import { getAllVerses } from '../../src/lib/contentData';
+import { getAllVersesLightweight } from '../../src/lib/contentData';
 
 export const metadata = {
   title: 'Spiritual Library — All Sacred Verses, Shlokas & Strotras | Vrindopnishad',
@@ -12,7 +12,7 @@ export const metadata = {
 };
 
 export default function ContentListRoute() {
-  const verses = getAllVerses();
+  const verses = getAllVersesLightweight();
   const categories = ['shloka', 'strotra', 'poem'];
 
   return (

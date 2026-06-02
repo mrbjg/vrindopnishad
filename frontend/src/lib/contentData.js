@@ -649,6 +649,22 @@ export function getAllVerses() {
   return verses;
 }
 
+export function getAllVersesLightweight() {
+  const { verses } = loadRawData();
+  return verses.map(v => ({
+    id: v.id,
+    slug: v.slug,
+    category: v.category || 'poem',
+    audio_url: v.audio_url || '',
+    title: v.title || '',
+    author: v.author || '',
+    hindi_text: v.hindi_text ? v.hindi_text.substring(0, 200) + (v.hindi_text.length > 200 ? '...' : '') : '',
+    sanskrit_text: v.sanskrit_text ? v.sanskrit_text.substring(0, 200) + (v.sanskrit_text.length > 200 ? '...' : '') : '',
+    english_translation: v.english_translation ? v.english_translation.substring(0, 200) + (v.english_translation.length > 200 ? '...' : '') : '',
+    description: v.description ? v.description.substring(0, 200) + (v.description.length > 200 ? '...' : '') : ''
+  }));
+}
+
 export function getVerseBySlug(slug) {
   const { verses } = loadRawData();
   const decodedSlug = decodeURIComponent(slug).toLowerCase();
