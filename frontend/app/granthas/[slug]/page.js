@@ -16,7 +16,12 @@ export async function generateMetadata({ params }) {
   const book = getGranthaBySlug(decodedSlug);
   if (!book) return {};
 
-  const title = `${book.name} — Text, Author & Translation | Vrindopnishad`;
+  const brand = "Vrindopnishad";
+  const mainPart = `${book.name} Scripture`;
+  let title = `${mainPart} | ${brand}`;
+  if (title.length > 60) {
+    title = mainPart.substring(0, 41) + `... | ${brand}`;
+  }
   const description = `Read the sacred verses, chapters, and translation of the classic scripture ${book.name} written by ${book.author}. Complete verse list.`;
 
   return {

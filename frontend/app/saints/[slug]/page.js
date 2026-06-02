@@ -16,7 +16,12 @@ export async function generateMetadata({ params }) {
   const saint = getSaintBySlug(decodedSlug);
   if (!saint) return {};
   
-  const title = `${saint.hinglishName} Biography & Collected Verses | Vrindopnishad`;
+  const brand = "Vrindopnishad";
+  const mainPart = `${saint.hinglishName} Biography`;
+  let title = `${mainPart} | ${brand}`;
+  if (title.length > 60) {
+    title = mainPart.substring(0, 41) + `... | ${brand}`;
+  }
   const description = `Read the biography, teachings, and complete verses (vani pad) of Shri ${saint.hinglishName}. Verified Vaishnava history and spiritual legacy.`;
 
   return {

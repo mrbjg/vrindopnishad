@@ -16,7 +16,12 @@ export async function generateMetadata({ params }) {
   const saint = getSaintBySlug(decodedSlug);
   if (!saint) return {};
   
-  const title = `संत ${saint.name} जीवनी एवं वाणी संग्रह | वृंदोपनिषद्`;
+  const brand = "वृंदोपनिषद्";
+  const mainPart = `संत ${saint.name} जीवनी`;
+  let title = `${mainPart} | ${brand}`;
+  if (title.length > 60) {
+    title = mainPart.substring(0, 43) + `... | ${brand}`;
+  }
   const description = `महान रसिक संत ${saint.name} का जीवन चरित्र, आध्यात्मिक दर्शन, रचित ग्रन्थ और वाणी संग्रह। हिन्दी और ब्रजभाषा में व्याख्या सहित पढ़ें।`;
 
   return {

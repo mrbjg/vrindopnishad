@@ -18,7 +18,11 @@ export async function generateMetadata({ params }) {
   if (!verse) return {};
 
   const cleanTitle = verse.title || "";
-  const title = `${cleanTitle} | Vrindopnishad`;
+  const brand = "Vrindopnishad";
+  let title = `${cleanTitle} | ${brand}`;
+  if (title.length > 60) {
+    title = cleanTitle.substring(0, 41) + `... | ${brand}`;
+  }
   const textSummary = verse.hindi_text || verse.english_translation || verse.description || '';
   const description = textSummary.substring(0, 155) + (textSummary.length > 155 ? '...' : '');
 

@@ -16,7 +16,12 @@ export async function generateMetadata({ params }) {
   const raga = getRagaBySlug(decodedSlug);
   if (!raga) return {};
 
-  const title = `${raga.hinglishName} Devotional Songs | Vrindopnishad`;
+  const brand = "Vrindopnishad";
+  const mainPart = `${raga.hinglishName} Songs`;
+  let title = `${mainPart} | ${brand}`;
+  if (title.length > 60) {
+    title = mainPart.substring(0, 41) + `... | ${brand}`;
+  }
   const description = `Read and listen to the sacred spiritual verses composed in ${raga.hinglishName} with translations. Complete listing.`;
 
   return {

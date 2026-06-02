@@ -16,7 +16,12 @@ export async function generateMetadata({ params }) {
   const raga = getRagaBySlug(decodedSlug);
   if (!raga) return {};
 
-  const title = `${raga.name} आधारित वाणी पद एवं संकीर्तन | Vrindopnishad`;
+  const brand = "वृंदोपनिषद्";
+  const mainPart = `${raga.name} आधारित पद`;
+  let title = `${mainPart} | ${brand}`;
+  if (title.length > 60) {
+    title = mainPart.substring(0, 43) + `... | ${brand}`;
+  }
   const description = `राग ${raga.name} में रचित दिव्य वाणी पदों एवं संकीर्तन का संग्रह। शास्त्रीय रागों में निबंध ब्रज रस के पद अर्थ सहित पढ़ें।`;
 
   return {

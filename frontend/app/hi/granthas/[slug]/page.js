@@ -16,7 +16,12 @@ export async function generateMetadata({ params }) {
   const book = getGranthaBySlug(decodedSlug);
   if (!book) return {};
 
-  const title = `ग्रन्थ ${book.name} — अर्थ, श्लोक, अनुवाद एवं विवेचन | Vrindopnishad`;
+  const brand = "वृंदोपनिषद्";
+  const mainPart = `ग्रन्थ ${book.name}`;
+  let title = `${mainPart} | ${brand}`;
+  if (title.length > 60) {
+    title = mainPart.substring(0, 43) + `... | ${brand}`;
+  }
   const description = `रसिक संत ${book.author} द्वारा रचित ${book.name} के समस्त श्लोक, दोहे एवं पद हिंदी अनुवाद और व्याख्या के साथ पढ़ें।`;
 
   return {
