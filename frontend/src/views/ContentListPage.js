@@ -8,6 +8,7 @@ import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { Helmet } from 'react-helmet-async';
 import { getSearchSuggestions, hinglishMatch } from '../utils/hinglishSearch';
 import { semanticSearch } from '../utils/semanticSearch';
+import PageSkeleton from '../components/ui/PageSkeleton';
 
 const ContentListPage = ({ initialContent, initialCategories }) => {
   const location = useLocation();
@@ -265,28 +266,7 @@ const ContentListPage = ({ initialContent, initialCategories }) => {
       </div>
 
       {showSkeleton ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[1,2,3,4,5,6].map(i => (
-            <div key={i} className="skeleton-card flex flex-col justify-between h-72">
-              <div>
-                <div className="flex justify-between items-start mb-4">
-                  <div className="skeleton w-20 h-6 rounded-full"></div>
-                  <div className="skeleton w-6 h-6 rounded-full"></div>
-                </div>
-                <div className="skeleton skeleton-title w-3/4 mb-4"></div>
-                <div className="space-y-2">
-                  <div className="skeleton skeleton-text w-full"></div>
-                  <div className="skeleton skeleton-text w-full"></div>
-                  <div className="skeleton skeleton-text w-2/3"></div>
-                </div>
-              </div>
-              <div className="pt-4 border-t border-[var(--glass-border)] flex gap-2">
-                 <div className="skeleton w-16 h-5 rounded-md"></div>
-                 <div className="skeleton w-16 h-5 rounded-md"></div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <PageSkeleton variant="grid-only" count={6} />
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

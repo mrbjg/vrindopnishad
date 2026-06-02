@@ -6,6 +6,7 @@ import { ApiContext } from '../contexts/ClientProviders';
 import { extractRelations } from '../utils/relations';
 import { Book, ArrowLeft, Search, FileText } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
+import PageSkeleton from '../components/ui/PageSkeleton';
 
 const BooksListPage = ({ initialBooks }) => {
   const location = useLocation();
@@ -128,21 +129,7 @@ const BooksListPage = ({ initialBooks }) => {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map(i => (
-            <div key={i} className="skeleton-card h-40">
-              <div>
-                <div className="skeleton w-24 h-4 rounded-full mb-3"></div>
-                <div className="skeleton skeleton-title w-3/4 mb-3"></div>
-                <div className="skeleton skeleton-text w-1/2 mb-0"></div>
-              </div>
-              <div className="pt-3 border-t border-[var(--glass-border)] flex justify-between items-center mt-4 w-full">
-                <div className="skeleton w-16 h-4 rounded"></div>
-                <div className="skeleton w-20 h-4 rounded"></div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <PageSkeleton variant="grid-only" count={6} />
       ) : filteredBooks.length === 0 ? (
         <div className="text-center py-20 glass-card">
           <Book size={48} className="mx-auto text-[var(--text-color)]/20 mb-4" />

@@ -7,6 +7,7 @@ import { extractRelations, slugify, getNormalizedBookSlug } from '../utils/relat
 import { ArrowLeft, Music, FileText, Tag, BookOpen, Star, HelpCircle, GitCommit } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { getSaintMetadata } from '../utils/saintMetadata';
+import PageSkeleton from '../components/ui/PageSkeleton';
 
 const getInitials = (name) => {
   if (!name) return 'V';
@@ -95,19 +96,7 @@ const SaintDetailPage = ({ initialSaint }) => {
   }, [slug, apiService, initialSaint]);
 
   if (loading) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-12 animate-pulse space-y-8">
-        <div className="h-6 bg-white/10 rounded w-24" />
-        <div className="flex items-center gap-6">
-          <div className="w-20 h-20 rounded-full bg-white/10" />
-          <div className="space-y-3 flex-1">
-            <div className="h-8 bg-white/10 rounded w-1/3" />
-            <div className="h-4 bg-white/5 rounded w-1/4" />
-          </div>
-        </div>
-        <div className="h-32 bg-white/5 rounded-2xl w-full" />
-      </div>
-    );
+    return <PageSkeleton variant="saint" />;
   }
 
   if (!sant) {

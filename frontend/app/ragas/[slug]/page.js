@@ -3,7 +3,7 @@ import RagaDetailPage from '../../../src/views/RagaDetailPage';
 import Layout from '../../../src/components/Layout';
 import { getRagaBySlug, getAllRagas, ensureDataLoaded } from '../../../src/lib/contentData';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
+import { Link } from '../../../src/lib/router-compat';
 
 export async function generateStaticParams() {
   // Generate pages on-demand (ISR/SSR) to save Vercel build time.

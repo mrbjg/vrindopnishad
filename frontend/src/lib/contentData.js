@@ -674,7 +674,8 @@ function buildRelations(items) {
       cleanTitle: enrichedItem.cleanTitle || '',
       hindi_text: enrichedItem.hindi_text ? enrichedItem.hindi_text.substring(0, 150) + (enrichedItem.hindi_text.length > 150 ? '...' : '') : '',
       english_translation: enrichedItem.english_translation ? enrichedItem.english_translation.substring(0, 150) + (enrichedItem.english_translation.length > 150 ? '...' : '') : '',
-      description: enrichedItem.description ? enrichedItem.description.substring(0, 150) + (enrichedItem.description.length > 150 ? '...' : '') : ''
+      description: enrichedItem.description ? enrichedItem.description.substring(0, 150) + (enrichedItem.description.length > 150 ? '...' : '') : '',
+      isLightweight: true
     };
 
     if (saintName) {

@@ -50,14 +50,23 @@ export function ClientProviders({ children }) {
   const pathname = usePathname();
 
   useEffect(() => {
+    console.log(`[InstantNavigate] Pathname changed to: "${pathname}". Resetting transition skeleton.`);
     setTransition(null);
   }, [pathname]);
 
   useEffect(() => {
     const handleInstantNavigate = (e) => {
       const { variant, path } = e.detail;
-      if (path !== window.location.pathname) {
+      const currentClean = window.location.pathname.toLowerCase().replace(/\/$/, '');
+      const targetClean = path.split('?')[0].split('#')[0].toLowerCase().replace(/\/$/, '');
+      
+      console.log(`[InstantNavigate] Event received: variant="${variant}", path="${path}" (normalized: "${targetClean}"), currentPathname="${window.location.pathname}" (normalized: "${currentClean}")`);
+      
+      if (targetClean !== currentClean) {
+        console.log(`[InstantNavigate] Path mismatch detected. Triggering instant skeleton swap: variant="${variant}"`);
         setTransition({ variant, path });
+      } else {
+        console.log(`[InstantNavigate] Same path clicked. Bypassing skeleton swap.`);
       }
     };
     window.addEventListener('instant-navigate', handleInstantNavigate);

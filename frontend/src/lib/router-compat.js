@@ -4,6 +4,45 @@ import React from 'react';
 import NextLink from 'next/link';
 import { usePathname, useRouter, useParams as useNextParams } from 'next/navigation';
 
+export function getSkeletonVariant(destination) {
+  if (typeof destination !== 'string') return 'grid';
+  const path = destination.toLowerCase().trim();
+  const cleanPath = path.split('?')[0].split('#')[0].replace(/\/$/, '');
+
+  // Detail views (must have a slug after the path prefix)
+  if (/\/content\/.+/.test(cleanPath)) {
+    return 'detail';
+  }
+  if (/\/saints?\/.+/.test(cleanPath)) {
+    return 'saint';
+  }
+  if (/\/(granthas|books|ragas|raga)\/.+/.test(cleanPath)) {
+    return 'granth';
+  }
+
+  // Grid/List index views
+  const gridPaths = [
+    '',
+    '/hi',
+    '/content',
+    '/hi/content',
+    '/saints',
+    '/hi/saints',
+    '/granthas',
+    '/hi/granthas',
+    '/books',
+    '/hi/books',
+    '/ragas',
+    '/hi/ragas',
+  ];
+  
+  if (gridPaths.includes(cleanPath) || /\/category\/.+/.test(cleanPath)) {
+    return 'grid';
+  }
+
+  return 'list';
+}
+
 export const Link = React.forwardRef(({ to, href, children, onClick, ...props }, ref) => {
   const destination = to || href || '#';
   const router = useRouter();
@@ -25,19 +64,7 @@ export const Link = React.forwardRef(({ to, href, children, onClick, ...props },
     
     e.preventDefault();
     
-    let variant = 'grid';
-    const path = destination.toLowerCase();
-    if (path.includes('/content/')) {
-      variant = 'detail';
-    } else if (path.includes('/saints/')) {
-      variant = 'saint';
-    } else if (path.includes('/granthas/') || path.includes('/ragas/')) {
-      variant = 'granth';
-    } else if (path === '/' || path === '/hi' || path === '/hi/') {
-      variant = 'grid';
-    } else {
-      variant = 'list';
-    }
+    const variant = getSkeletonVariant(destination);
     
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('instant-navigate', { detail: { variant, path: destination } }));

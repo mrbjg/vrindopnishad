@@ -6,6 +6,7 @@ import { ApiContext } from '../contexts/ClientProviders';
 import { extractRelations } from '../utils/relations';
 import { ArrowLeft, Music, FileText } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
+import PageSkeleton from '../components/ui/PageSkeleton';
 
 const RagaDetailPage = ({ initialRaga }) => {
   const { slug } = useParams();
@@ -83,17 +84,7 @@ const RagaDetailPage = ({ initialRaga }) => {
   }, [slug, apiService, initialRaga]);
 
   if (loading) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-12 animate-pulse space-y-6">
-        <div className="h-6 bg-white/10 rounded w-24" />
-        <div className="h-10 bg-white/10 rounded w-1/3" />
-        <div className="space-y-4 pt-8">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="h-24 bg-white/5 rounded-xl w-full" />
-          ))}
-        </div>
-      </div>
-    );
+    return <PageSkeleton variant="granth" />;
   }
 
   if (!raga) {

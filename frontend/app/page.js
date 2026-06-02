@@ -27,7 +27,8 @@ export default async function HomeRoute() {
     cleanTitle: v.cleanTitle || v.title || '',
     hindi_text: v.hindi_text ? v.hindi_text.substring(0, 150) + (v.hindi_text.length > 150 ? '...' : '') : '',
     english_translation: v.english_translation ? v.english_translation.substring(0, 150) + (v.english_translation.length > 150 ? '...' : '') : '',
-    description: v.description ? v.description.substring(0, 150) + (v.description.length > 150 ? '...' : '') : ''
+    description: v.description ? v.description.substring(0, 150) + (v.description.length > 150 ? '...' : '') : '',
+    isLightweight: true
   }));
 
   // Select Aaj Ka Pad

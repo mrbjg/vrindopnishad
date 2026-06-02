@@ -1214,7 +1214,7 @@ const CelestialParticles = () => {
         left: '-4px',
         right: '-4px',
         bottom: '-4px',
-        mixBlendMode: isLight ? 'normal' : 'screen',
+        mixBlendMode: 'normal',
         opacity: isLight ? 0.75 : 0.85,
         display: 'block',
       }}

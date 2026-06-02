@@ -3,7 +3,7 @@ import ContentDetailPage from '../../../src/views/ContentDetailPage';
 import Layout from '../../../src/components/Layout';
 import { getVerseBySlug, getAllVerses, getAllSaints, getAllGranthas, getAllRagas, ensureDataLoaded } from '../../../src/lib/contentData';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
+import { Link } from '../../../src/lib/router-compat';
 
 export async function generateStaticParams() {
   // Return empty array to generate pages on-demand (ISR/SSR).

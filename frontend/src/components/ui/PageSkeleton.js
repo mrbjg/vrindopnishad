@@ -233,6 +233,34 @@ const PageSkeleton = ({ variant = 'grid', count = 6 }) => {
     );
   }
 
+  // 4.5. Cards Grid Only (without headers/pills)
+  if (variant === 'grid-only') {
+    return (
+      <div className="animate-fade-in grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Array.from({ length: count }, (_, i) => (
+          <div key={i} className="skeleton-card flex flex-col justify-between h-52">
+            <div>
+              <div className="flex justify-between items-start mb-4">
+                <div className="skeleton w-20 h-6 rounded-full" />
+                <div className="skeleton w-6 h-6 rounded-full" />
+              </div>
+              <div className="skeleton skeleton-title w-3/4 mb-4" />
+              <div className="space-y-2">
+                <div className="skeleton skeleton-text w-full" />
+                <div className="skeleton skeleton-text w-full" />
+                <div className="skeleton skeleton-text w-2/3" />
+              </div>
+            </div>
+            <div className="pt-4 border-t border-white/5 flex gap-2">
+              <div className="skeleton w-16 h-5 rounded-md" />
+              <div className="skeleton w-16 h-5 rounded-md" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   // 5. Default Grid Layout Showcase (Search items, Collections index)
   return (
     <div className="animate-fade-in">

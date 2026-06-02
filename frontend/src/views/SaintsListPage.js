@@ -6,6 +6,7 @@ import { ApiContext } from '../contexts/ClientProviders';
 import { extractRelations } from '../utils/relations';
 import { Users, ArrowLeft, Search, FileText } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
+import PageSkeleton from '../components/ui/PageSkeleton';
 
 const getInitials = (name) => {
   if (!name) return 'V';
@@ -148,23 +149,7 @@ const SaintsListPage = ({ initialSaints }) => {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map(i => (
-            <div key={i} className="skeleton-card h-44 flex flex-col justify-between">
-              <div className="flex items-center gap-4">
-                <div className="skeleton w-14 h-14 rounded-full shrink-0"></div>
-                <div className="flex-1 space-y-2.5">
-                  <div className="skeleton skeleton-title w-3/4 mb-0"></div>
-                  <div className="skeleton skeleton-text w-1/2 mb-0"></div>
-                </div>
-              </div>
-              <div className="pt-3 border-t border-[var(--glass-border)] flex justify-between items-center mt-4 w-full">
-                <div className="skeleton w-20 h-4 rounded"></div>
-                <div className="skeleton w-16 h-4 rounded"></div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <PageSkeleton variant="grid-only" count={6} />
       ) : filteredSaints.length === 0 ? (
         <div className="text-center py-20 glass-card">
           <Users size={48} className="mx-auto text-[var(--text-color)]/20 mb-4" />
