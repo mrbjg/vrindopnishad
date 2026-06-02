@@ -169,6 +169,17 @@ let contentCache = null;
 let initializationPromise = null;
 
 async function fetchAllFromDataConnect() {
+  const originalFetch = global.fetch;
+  if (typeof global.fetch === 'function') {
+    global.fetch = function (url, init) {
+      if (url && url.toString().includes('firebasedataconnect.googleapis.com')) {
+        const newInit = { ...init, cache: 'no-store' };
+        return originalFetch(url, newInit);
+      }
+      return originalFetch(url, init);
+    };
+  }
+
   try {
     console.log("[DataConnect] Fetching all content items from Firebase Data Connect (limit 25000)...");
     const result = await listAllContent(dataConnect, { limit: 25000 });
@@ -207,6 +218,10 @@ async function fetchAllFromDataConnect() {
     }
   } catch (error) {
     console.error("[DataConnect] Query failed:", error);
+  } finally {
+    if (typeof global.fetch === 'function') {
+      global.fetch = originalFetch;
+    }
   }
   return [];
 }

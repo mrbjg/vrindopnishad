@@ -73,8 +73,8 @@ export async function GET(request, { params }) {
     const items = getAllRagas();
     items.forEach(r => {
       const slug = encodeURIComponent(r.slug);
-      urls.push(`${base}/ragas/${slug}`);
-      urls.push(`${base}/hi/ragas/${slug}`);
+      urls.push(`${base}/raga/${slug}`);
+      urls.push(`${base}/hi/raga/${slug}`);
     });
   } else if (type === 'glossary') {
     const items = getGlossaryTerms();
