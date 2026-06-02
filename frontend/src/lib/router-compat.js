@@ -4,24 +4,60 @@ import React from 'react';
 import NextLink from 'next/link';
 import { usePathname, useRouter, useParams as useNextParams } from 'next/navigation';
 
-export const Link = React.forwardRef(({ to, href, children, ...props }, ref) => {
+export const Link = React.forwardRef(({ to, href, children, onClick, ...props }, ref) => {
   const destination = to || href || '#';
+  const router = useRouter();
   
+  const isHashOrExternal = typeof destination === 'string' && (
+    destination.startsWith('#') || 
+    destination.startsWith('http') || 
+    destination.startsWith('mailto:') ||
+    destination.startsWith('tel:')
+  );
   
-  const isHashOrExternal = typeof destination === 'string' && (destination.startsWith('#') || destination.startsWith('http') || destination.startsWith('mailto:'));
-  
+  const handleClick = (e) => {
+    if (onClick) onClick(e);
+    if (e.defaultPrevented) return;
+    
+    if (isHashOrExternal || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+      return;
+    }
+    
+    e.preventDefault();
+    
+    let variant = 'grid';
+    const path = destination.toLowerCase();
+    if (path.includes('/content/')) {
+      variant = 'detail';
+    } else if (path.includes('/saints/')) {
+      variant = 'saint';
+    } else if (path.includes('/granthas/') || path.includes('/ragas/')) {
+      variant = 'granth';
+    } else if (path === '/' || path === '/hi' || path === '/hi/') {
+      variant = 'grid';
+    } else {
+      variant = 'list';
+    }
+    
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('instant-navigate', { detail: { variant, path: destination } }));
+    }
+    
+    router.push(destination);
+  };
+
   if (isHashOrExternal) {
     return (
-      <a href={destination} ref={ref} {...props}>
+      <a href={destination} ref={ref} onClick={onClick} {...props}>
         {children}
       </a>
     );
   }
 
   return (
-    <NextLink href={destination} ref={ref} {...props}>
+    <a href={destination} ref={ref} onClick={handleClick} {...props}>
       {children}
-    </NextLink>
+    </a>
   );
 });
 

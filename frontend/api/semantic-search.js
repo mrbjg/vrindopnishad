@@ -118,14 +118,43 @@ export default async function handler(req, res) {
       console.log('Cache miss — fetching content from Supabase...');
       cachedContent = await fetchContent();
 
-      
       const titles = cachedContent.map(
         (c) => `${c.title || ''} ${c.author || ''} ${c.category || ''}`
       );
-      const embeddings = [];
+      
+      const chunks = [];
       for (let i = 0; i < titles.length; i += 64) {
-        const chunk = titles.slice(i, i + 64);
-        const chunkEmb = await getEmbeddings(chunk);
+        chunks.push(titles.slice(i, i + 64));
+      }
+
+      console.log(`[SemanticSearch] Fetching embeddings for ${chunks.length} chunks in parallel (concurrency: 8)...`);
+      
+      // Concurrency-limited parallel execution pool
+      const pMap = async (items, mapper, concurrency) => {
+        const results = [];
+        const promises = [];
+        let index = 0;
+        
+        async function run() {
+          if (index >= items.length) return;
+          const curIdx = index++;
+          results[curIdx] = await mapper(items[curIdx], curIdx);
+          await run();
+        }
+        
+        for (let i = 0; i < Math.min(concurrency, items.length); i++) {
+          promises.push(run());
+        }
+        await Promise.all(promises);
+        return results;
+      };
+
+      const chunksEmbeddings = await pMap(chunks, async (chunk) => {
+        return getEmbeddings(chunk);
+      }, 8);
+
+      const embeddings = [];
+      for (const chunkEmb of chunksEmbeddings) {
         embeddings.push(...chunkEmb.map(meanPool));
       }
 

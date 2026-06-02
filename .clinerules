@@ -74,3 +74,27 @@ When making data modifications or database updates, always run a diagnostic vali
 Incremental Validation Builds:
 
 When updating content data or layout configurations, always trigger an offline compilation check to confirm that no new dynamic routes trigger compilation warnings or break static page pre-rendering (SSG).
+
+# Recommended Rules
+
+1. [performance] Whenever performing heavy remote API fetches or database queries (such as Firebase Data Connect, Supabase, or external REST endpoints) during Next.js Server Side Rendering (SSR/SSG), always implement local filesystem-based caching (with configurable TTLs in development and persistent build-time assets in production) to keep build times under 1 minute and prevent Vercel execution timeouts.
+2. [compiler-cleanliness] If Next.js prerendering or build-phase compilation issues (e.g., "Cannot find module './chunks/...'") occur due to state drift, always delete the `.next` compiler directory cache (`rm -rf .next`) before attempting a rebuild.
+3. [slug-limits] Cap dynamic route slugs and local filename generations to 100 characters max and automatically sanitize Devanagari/UTF-8 strings into ASCII/Hinglish to prevent macOS/Linux filesystem ENAMETOOLONG errors.
+
+Keep build caches and serialized caches synchronized by automatically checking for shape/property changes when parsing pre-built JSON cache layers.
+
+Define cache thresholds (e.g., IndexedDB or lightweight gzip backups) whenever bundle or assets size on client-side routing exceeds 15MB, ensuring low-end mobile devices can parse local cache instantly.
+
+When migrating client-side data providers, always ensure the client-side cache miss fallback matches the new server-side provider syntax, using direct SDK fetches over the network instead of stale RTDB sync blocks.
+
+- Cache large datasets flat on disk; avoid serializing nested relationship maps to prevent file footprint explosion.
+- Reconstruct relational links in-memory dynamically on start (in-memory parsing is always faster than reading/parsing duplicated JSON objects).
+- Avoid synchronous disk writes (`fs.writeFileSync`) in route initialization or component render pathways; always prefer async `fs.writeFile` to keep the Event Loop non-blocking.
+
+- For every dynamic route directory (especially database-linked routes), always create a sibling loading.js file containing an instantly-rendering skeleton loader to eliminate page navigation transition lag.
+
+When implementing skeleton loaders in Next.js, always align the structure, layouts, spacing, and grids of the loading placeholders (loading.js) with their target page components (page.js) to provide a seamless visual transition on client-side routing.
+
+Always process batched API calls (e.g. LLM inferences, vector embeddings, external network lookups) using a concurrency-controlled parallel execution pool (pMap) instead of sequential loops, ensuring maximum throughput without hitting rate limits.
+
+To avoid navigation lag on client-side routing, intercept Link onClick events in custom router shims to dispatch instant transition events and swap the active layout with a matching PageSkeleton immediately, running dynamic page fetching in the background.

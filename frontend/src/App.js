@@ -360,6 +360,7 @@ function App() {
     { path: '/granthas/:slug', element: <BookDetailPage /> },
     { path: '/ragas', element: <RagasListPage /> },
     { path: '/raga/:slug', element: <RagaDetailPage /> },
+    { path: '/ragas/:slug', element: <RagaDetailPage /> },
     { path: '/bookmarks', element: <BookmarksPage /> }
   ];
 

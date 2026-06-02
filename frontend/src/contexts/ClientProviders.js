@@ -8,6 +8,7 @@ import { LoadingProvider } from './LoadingContext';
 import { apiService } from '../services/api';
 import { usePathname } from 'next/navigation';
 import CelestialParticles from '../components/CelestialParticles';
+import PageSkeleton from '../components/ui/PageSkeleton';
 
 export const AuthContext = React.createContext();
 export const ApiContext = React.createContext();
@@ -45,6 +46,25 @@ export function ClientProviders({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [transition, setTransition] = useState(null);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setTransition(null);
+  }, [pathname]);
+
+  useEffect(() => {
+    const handleInstantNavigate = (e) => {
+      const { variant, path } = e.detail;
+      if (path !== window.location.pathname) {
+        setTransition({ variant, path });
+      }
+    };
+    window.addEventListener('instant-navigate', handleInstantNavigate);
+    return () => {
+      window.removeEventListener('instant-navigate', handleInstantNavigate);
+    };
+  }, []);
 
   useEffect(() => {
     const storedToken = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
@@ -129,7 +149,11 @@ export function ClientProviders({ children }) {
             <AuthContext.Provider value={{ isAdmin, user, token, login, logout, refreshUser }}>
               <ApiContext.Provider value={{ apiService, isDemoMode: false }}>
                 <PersistentBackground />
-                {children}
+                {transition ? (
+                  <div className="min-h-[80vh] flex flex-col justify-start py-8">
+                    <PageSkeleton variant={transition.variant} />
+                  </div>
+                ) : children}
               </ApiContext.Provider>
             </AuthContext.Provider>
           </LoadingProvider>

@@ -40,6 +40,16 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/raga/:slug',
+        destination: '/ragas/:slug',
+        permanent: true,
+      },
+      {
+        source: '/hi/raga/:slug',
+        destination: '/hi/ragas/:slug',
+        permanent: true,
+      },
+      {
         source: '/books',
         destination: '/granthas',
         permanent: true,

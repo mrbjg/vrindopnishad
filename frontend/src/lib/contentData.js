@@ -165,8 +165,9 @@ function classifyItemCategory(item) {
   return 'poem';
 }
 
-let contentCache = null;
-let initializationPromise = null;
+let contentCache = typeof global !== 'undefined' ? (global.contentCache || null) : null;
+let localFallbackCache = typeof global !== 'undefined' ? (global.localFallbackCache || null) : null;
+let initializationPromise = typeof global !== 'undefined' ? (global.initializationPromise || null) : null;
 
 async function fetchAllFromDataConnect() {
   const originalFetch = global.fetch;
@@ -187,8 +188,10 @@ async function fetchAllFromDataConnect() {
       console.log(`[DataConnect] Successfully fetched ${result.data.contents.length} items.`);
       return result.data.contents.map(item => {
         let slug = item.slug;
-        if (!slug || /[^\x00-\x7F]/.test(slug)) {
-          slug = generateSlug(item.title || slug);
+        if (!slug || slug.startsWith('untitled')) {
+          slug = generateSlug(item.title);
+        } else {
+          slug = slugify(slug);
         }
         if (slug.length > 100) {
           slug = slug.substring(0, 100).replace(/-+$/, '');
@@ -243,8 +246,10 @@ function loadLocalJSONFallback() {
       allContentItems = JSON.parse(rawContent).map((item, idx) => {
         const cleanCategory = classifyItemCategory(item);
         let slug = item.slug;
-        if (!slug || /[^\x00-\x7F]/.test(slug)) {
-          slug = generateSlug(item.title || slug);
+        if (!slug || slug.startsWith('untitled')) {
+          slug = generateSlug(item.title);
+        } else {
+          slug = slugify(slug);
         }
         if (slug.length > 100) {
           slug = slug.substring(0, 100).replace(/-+$/, '');
@@ -287,20 +292,135 @@ function loadLocalJSONFallback() {
 
 export function loadRawData() {
   if (contentCache) return contentCache;
-  return loadLocalJSONFallback();
+  if (localFallbackCache) return localFallbackCache;
+  const data = loadLocalJSONFallback();
+  localFallbackCache = data;
+  if (typeof global !== 'undefined') {
+    global.localFallbackCache = data;
+  }
+  return data;
+}
+
+const CACHE_TTL_DEV = 15 * 60 * 1000; // 15 minutes in development
+const CACHE_TTL_PROD = 24 * 60 * 60 * 1000; // 24 hours in production
+
+function getProcessedCacheFilePath() {
+  const appDirectory = process.cwd();
+  let cacheDir = path.join(appDirectory, 'data');
+  if (!fs.existsSync(cacheDir)) {
+    cacheDir = path.join(appDirectory, 'frontend/data');
+  }
+  if (!fs.existsSync(cacheDir)) {
+    try {
+      fs.mkdirSync(cacheDir, { recursive: true });
+    } catch (e) {}
+  }
+  return path.join(cacheDir, 'processed_cache.json');
+}
+
+function writeBackupFile(verses, force = false) {
+  if (!verses || verses.length === 0) return;
+  try {
+    const appDirectory = process.cwd();
+    let dataDir = path.join(appDirectory, 'public/data');
+    if (!fs.existsSync(dataDir)) {
+      dataDir = path.join(appDirectory, 'frontend/public/data');
+    }
+    const backupFile = path.join(dataDir, 'content_backup.json');
+    if (!force && fs.existsSync(backupFile)) {
+      // Skip writing to save IO overhead
+      return;
+    }
+    if (!fs.existsSync(dataDir)) {
+      try {
+        fs.mkdirSync(dataDir, { recursive: true });
+      } catch (e) {}
+    }
+    console.log(`[DataCache] Saving backup data file to: ${backupFile}...`);
+    // Use async file write to prevent blocking main thread
+    fs.writeFile(backupFile, JSON.stringify(verses), 'utf8', (err) => {
+      if (err) {
+        console.warn("[DataCache] Async backup write failed:", err);
+      } else {
+        console.log(`[DataCache] Successfully wrote ${verses.length} items to backup: ${backupFile} (async)`);
+      }
+    });
+  } catch (err) {
+    console.warn("[DataCache] Could not start content backup write:", err);
+  }
 }
 
 export async function ensureDataLoaded() {
+  if (typeof global !== 'undefined' && global.contentCache) {
+    contentCache = global.contentCache;
+    return contentCache;
+  }
   if (contentCache) return contentCache;
+  if (typeof global !== 'undefined' && global.initializationPromise) {
+    initializationPromise = global.initializationPromise;
+    return initializationPromise;
+  }
   if (initializationPromise) return initializationPromise;
 
   initializationPromise = (async () => {
     console.log("[DataCache] Initializing memory cache...");
-    const localData = loadLocalJSONFallback();
     
     if (typeof window === 'undefined') {
       try {
-        const remoteItems = await fetchAllFromDataConnect();
+        const cacheFile = getProcessedCacheFilePath();
+        let loadedFromCache = false;
+
+        if (fs.existsSync(cacheFile)) {
+          try {
+            const stat = fs.statSync(cacheFile);
+            const now = Date.now();
+            const age = now - stat.mtimeMs;
+            const isDev = process.env.NODE_ENV === 'development';
+            const ttl = isDev ? CACHE_TTL_DEV : CACHE_TTL_PROD;
+
+            if (age < ttl || !isDev) {
+              console.log(`[DataCache] Loading flat processed cache from file: ${cacheFile} (Age: ${Math.round(age / 1000)}s)...`);
+              const startTime = Date.now();
+              const rawCache = fs.readFileSync(cacheFile, 'utf8');
+              const cachePayload = JSON.parse(rawCache);
+              
+              if (!cachePayload.saintsRaw && cachePayload.saints) {
+                console.log("[DataCache] Old nested cache structure detected. Upgrading to flat cache format...");
+                throw new Error("Old cache format forcing rebuild.");
+              }
+
+              const verses = cachePayload.verses || [];
+              const saintsRaw = cachePayload.saintsRaw || [];
+              const combined = [...verses, ...saintsRaw];
+              
+              const relations = buildRelations(combined);
+              
+              contentCache = {
+                items: combined,
+                verses: verses,
+                saints: relations.saints,
+                books: relations.books,
+                ragas: relations.ragas
+              };
+              
+              loadedFromCache = true;
+              console.log(`[DataCache] Successfully loaded and mapped flat cache in ${Date.now() - startTime}ms.`);
+              writeBackupFile(contentCache.verses, false);
+              if (typeof global !== 'undefined') global.contentCache = contentCache;
+              return contentCache;
+            } else {
+              console.log(`[DataCache] Processed cache is stale (Age: ${Math.round(age / 1000)}s, TTL: ${ttl / 1000}s). Rebuilding...`);
+            }
+          } catch (readErr) {
+            console.warn("[DataCache] Cache loading bypassed or failed, rebuilding:", readErr.message || readErr);
+          }
+        }
+
+        console.log("[DataCache] Rebuilding data graph from scratch...");
+        const startTime = Date.now();
+        const localData = loadLocalJSONFallback();
+        let remoteItems = await fetchAllFromDataConnect();
+        
         if (remoteItems && remoteItems.length > 0) {
           const appDirectory = process.cwd();
           let saintsPath = path.join(appDirectory, 'data/saints_formatted.json');
@@ -328,19 +448,41 @@ export async function ensureDataLoaded() {
             books: relations.books,
             ragas: relations.ragas
           };
-          console.log(`[DataCache] Cache successfully initialized with ${remoteItems.length} database items!`);
+          
+          try {
+            console.log(`[DataCache] Saving flat cache layout to: ${cacheFile}...`);
+            const cachePayload = {
+              verses: remoteItems,
+              saintsRaw: rawSaints
+            };
+            fs.writeFileSync(cacheFile, JSON.stringify(cachePayload), 'utf8');
+            writeBackupFile(remoteItems, true); // Force update backup when cache is completely rebuilt
+          } catch (writeErr) {
+            console.warn("[DataCache] Could not write processed cache file:", writeErr);
+          }
+
+          console.log(`[DataCache] Cache built from scratch in ${Date.now() - startTime}ms.`);
+          if (typeof global !== 'undefined') global.contentCache = contentCache;
+          return contentCache;
+        } else {
+          contentCache = localData;
+          writeBackupFile(localData.verses, true);
+          console.log(`[DataCache] Falling back to local data. Cache built in ${Date.now() - startTime}ms.`);
+          if (typeof global !== 'undefined') global.contentCache = contentCache;
           return contentCache;
         }
       } catch (err) {
-        console.warn("[DataCache] Remote load failed, falling back to local dataset:", err);
+        console.warn("[DataCache] Load failed, falling back to local dataset:", err);
       }
     }
     
+    const localData = loadLocalJSONFallback();
     contentCache = localData;
-    console.log(`[DataCache] Cache initialized with local fallback of ${localData.verses.length} items.`);
+    if (typeof global !== 'undefined') global.contentCache = contentCache;
     return contentCache;
   })();
 
+  if (typeof global !== 'undefined') global.initializationPromise = initializationPromise;
   return initializationPromise;
 }
 
@@ -521,7 +663,7 @@ function buildRelations(items) {
       parsedBook: bookName,
       parsedVerse: verseNum,
       parsedRaga: ragaName,
-      slug: item.slug || slugify(transliterate(cleanTitle))
+      slug: (item.slug && !item.slug.startsWith('untitled')) ? item.slug : slugify(transliterate(cleanTitle))
     };
 
     const lightweightItem = {
@@ -569,6 +711,7 @@ function buildRelations(items) {
       if (!booksMap[bookSlug]) {
         booksMap[bookSlug] = {
           name: normalizedBName,
+          hinglishName: transliterate(normalizedBName),
           slug: bookSlug,
           author: saintName || 'Unknown Rasik',
           authorSlug: saintName ? getNormalizedSaintSlug(saintName) : null,
@@ -644,6 +787,7 @@ function buildRelations(items) {
   if (sevaKunjVerses.length > 0) {
     booksMap[sevaKunjSlug] = {
       name: 'सेवा कुंज साहित्य',
+      hinglishName: 'Seva Kunj Literature',
       slug: sevaKunjSlug,
       author: 'रसिक संत / Rasik Saints',
       authorSlug: 'hit-harivansh',
@@ -680,15 +824,54 @@ export function getAllVersesLightweight() {
   }));
 }
 
+function normalizeFuzzyText(text) {
+  if (!text) return '';
+  return text.toLowerCase()
+    .replace(/[^a-z0-9]/g, '')
+    .replace(/aa/g, 'a')
+    .replace(/ee/g, 'i')
+    .replace(/oo/g, 'u')
+    .replace(/w/g, 'v')
+    .replace(/th/g, 't')
+    .replace(/dh/g, 'd')
+    .replace(/bh/g, 'b')
+    .replace(/sh/g, 's')
+    .replace(/kh/g, 'k')
+    .replace(/gh/g, 'g')
+    .replace(/jh/g, 'j')
+    .replace(/ph/g, 'p')
+    .replace(/ch/g, 'c');
+}
+
 export function getVerseBySlug(slug) {
   const { verses } = loadRawData();
   const decodedSlug = decodeURIComponent(slug).toLowerCase();
   const cleanSlug = sanitizeSlug(decodedSlug);
-  return verses.find(item => 
+  
+  // 1. Try exact match
+  let matched = verses.find(item => 
     (item.slug && item.slug.toLowerCase() === decodedSlug) ||
     (item.slug && item.slug.toLowerCase() === cleanSlug) ||
     (item.id?.toString() === decodedSlug)
-  ) || null;
+  );
+  if (matched) return matched;
+
+  // 2. Try spelling-insensitive normalized fuzzy match
+  const normDecoded = normalizeFuzzyText(decodedSlug);
+  const normClean = normalizeFuzzyText(cleanSlug);
+  
+  matched = verses.find(item => {
+    if (!item.slug) return false;
+    const normItem = normalizeFuzzyText(item.slug);
+    return normItem === normDecoded || 
+           normItem === normClean ||
+           normItem.startsWith(normDecoded) || 
+           normDecoded.startsWith(normItem) ||
+           normItem.startsWith(normClean) ||
+           normClean.startsWith(normItem) ||
+           (normDecoded.length > 6 && (normItem.includes(normDecoded) || normDecoded.includes(normItem)));
+  });
+  return matched || null;
 }
 
 export function getAllSaints() {
@@ -701,11 +884,23 @@ export function getSaintBySlug(slug) {
   const decodedSlug = decodeURIComponent(slug).toLowerCase();
   
   let matched = saints.find(s => s.slug.toLowerCase() === decodedSlug);
+  if (matched) return matched;
   
-  if (!matched) {
-    const cleanSlug = decodedSlug.replace(/-maharaj$/, '');
-    matched = saints.find(s => s.slug.toLowerCase().includes(cleanSlug) || cleanSlug.includes(s.slug.toLowerCase()));
-  }
+  const cleanSlug = decodedSlug.replace(/-maharaj$/, '');
+  
+  // Try spelling-insensitive normalized match
+  const normDecoded = normalizeFuzzyText(decodedSlug);
+  const normClean = normalizeFuzzyText(cleanSlug);
+  
+  matched = saints.find(s => {
+    const normItem = normalizeFuzzyText(s.slug);
+    return normItem === normDecoded || 
+           normItem === normClean || 
+           normItem.startsWith(normDecoded) || 
+           normDecoded.startsWith(normItem) ||
+           normItem.includes(normClean) ||
+           normClean.includes(normItem);
+  });
   return matched || null;
 }
 
@@ -717,7 +912,22 @@ export function getAllGranthas() {
 export function getGranthaBySlug(slug) {
   const { books } = loadRawData();
   const decodedSlug = decodeURIComponent(slug).toLowerCase();
-  return books.find(b => b.slug.toLowerCase() === decodedSlug) || null;
+  
+  // 1. Try exact match
+  let matched = books.find(b => b.slug.toLowerCase() === decodedSlug);
+  if (matched) return matched;
+
+  // 2. Try spelling-insensitive normalized match
+  const normDecoded = normalizeFuzzyText(decodedSlug);
+  matched = books.find(b => {
+    if (!b.slug) return false;
+    const normItem = normalizeFuzzyText(b.slug);
+    return normItem === normDecoded || 
+           normItem.startsWith(normDecoded) || 
+           normDecoded.startsWith(normItem) ||
+           (normDecoded.length > 5 && (normItem.includes(normDecoded) || normDecoded.includes(normItem)));
+  });
+  return matched || null;
 }
 
 export function getAllRagas() {
@@ -728,7 +938,22 @@ export function getAllRagas() {
 export function getRagaBySlug(slug) {
   const { ragas } = loadRawData();
   const decodedSlug = decodeURIComponent(slug).toLowerCase();
-  return ragas.find(r => r.slug.toLowerCase() === decodedSlug) || null;
+  
+  // 1. Try exact match
+  let matched = ragas.find(r => r.slug.toLowerCase() === decodedSlug);
+  if (matched) return matched;
+
+  // 2. Try spelling-insensitive normalized match
+  const normDecoded = normalizeFuzzyText(decodedSlug);
+  matched = ragas.find(r => {
+    if (!r.slug) return false;
+    const normItem = normalizeFuzzyText(r.slug);
+    return normItem === normDecoded || 
+           normItem.startsWith(normDecoded) || 
+           normDecoded.startsWith(normItem) ||
+           (normDecoded.length > 5 && (normItem.includes(normDecoded) || normDecoded.includes(normItem)));
+  });
+  return matched || null;
 }
 
 export function getGlossaryTerms() {

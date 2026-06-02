@@ -26,3 +26,7 @@ yarn-error.log*
 public/sitemap.xml
 .vercel
 .next/
+
+# Data Cache
+*remote_cache.json
+*processed_cache.json

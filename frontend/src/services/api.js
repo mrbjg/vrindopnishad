@@ -1,5 +1,6 @@
 import { mockApiService } from './mockData';
-import { auth, db, contentDb } from '../firebase';
+import { auth, db, contentDb, dataConnect } from '../firebase';
+import { getContentById as getDcContentById, getContentBySlug as getDcContentBySlug } from '../lib/dataconnect';
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
@@ -51,7 +52,7 @@ const updateMemoryCache = (items) => {
     item.category = classifyItemCategory(item);
     
     const titleSlug = generateSlug(item.title);
-    if (!item.slug && titleSlug) {
+    if ((!item.slug || item.slug.startsWith('untitled')) && titleSlug) {
       item.slug = titleSlug;
     }
     
@@ -108,6 +109,25 @@ const generateSlug = (text) => {
     .replace(/--+/g, '-')         
     .replace(/^-+/, '')            
     .replace(/-+$/, '');           
+};
+
+const normalizeFuzzyText = (text) => {
+  if (!text) return '';
+  return text.toLowerCase()
+    .replace(/[^a-z0-9]/g, '')
+    .replace(/aa/g, 'a')
+    .replace(/ee/g, 'i')
+    .replace(/oo/g, 'u')
+    .replace(/w/g, 'v')
+    .replace(/th/g, 't')
+    .replace(/dh/g, 'd')
+    .replace(/bh/g, 'b')
+    .replace(/sh/g, 's')
+    .replace(/kh/g, 'k')
+    .replace(/gh/g, 'g')
+    .replace(/jh/g, 'j')
+    .replace(/ph/g, 'p')
+    .replace(/ch/g, 'c');
 };
 
 const setCache = (key, data) => {
@@ -245,10 +265,17 @@ export const apiService = {
         const localCached = localStorage.getItem('vrindopnishad_all_content_cache');
         const cachedTime = localStorage.getItem('vrindopnishad_all_content_last_updated');
         if (localCached) {
-          cachedItems = ensureSorted(JSON.parse(localCached));
-          updateMemoryCache(cachedItems);
+          const parsed = JSON.parse(localCached);
+          if (parsed && parsed.length >= 7000) {
+            cachedItems = ensureSorted(parsed);
+            updateMemoryCache(cachedItems);
+          } else {
+            console.log('[Cache-Stale] Discarding truncated client-side cache:', parsed ? parsed.length : 0);
+            localStorage.removeItem('vrindopnishad_all_content_cache');
+            localStorage.removeItem('vrindopnishad_all_content_last_updated');
+          }
         }
-        if (cachedTime) {
+        if (cachedTime && cachedItems.length > 0) {
           lastUpdated = cachedTime;
           memoryLastUpdated = cachedTime;
         }
@@ -482,7 +509,46 @@ export const apiService = {
         let found = contentMapById.get(decodedId) || contentMapBySlug.get(decodedId) || contentMapBySlug.get(decodedSlug);
         
         if (!found) {
-          // Cache miss: sync the entire content node from Realtime Database
+          // 1. Try to fetch directly from Firebase Data Connect over network
+          try {
+            console.log(`[DataConnect-Client] Fetching live content for ${decodedId} from Data Connect...`);
+            let result;
+            if (isUuid) {
+              result = await getDcContentById(dataConnect, { id: decodedId });
+            } else {
+              result = await getDcContentBySlug(dataConnect, { slug: decodedId });
+            }
+            if (result && result.data && result.data.content) {
+              const mapped = mapToAppModel(result.data.content);
+              const cleanCategory = classifyItemCategory(mapped);
+              found = {
+                ...mapped,
+                category: cleanCategory,
+                slug: (mapped.slug && !mapped.slug.startsWith('untitled')) ? mapped.slug : generateSlug(mapped.title)
+              };
+              
+              if (found.id) {
+                contentMapById.set(found.id.toString(), found);
+              }
+              if (found.slug) {
+                contentMapBySlug.set(found.slug, found);
+                contentMapBySlug.set(decodeURIComponent(found.slug), found);
+              }
+              if (memoryCachedItems) {
+                memoryCachedItems.push(found);
+                try {
+                  localStorage.setItem('vrindopnishad_all_content_cache', JSON.stringify(memoryCachedItems));
+                } catch (e) {}
+              }
+              console.log(`[DataConnect-Client] Successfully resolved live item: ${found.title}`);
+            }
+          } catch (dcError) {
+            console.error('[DataConnect-Client] Failed to fetch live item from Data Connect:', dcError);
+          }
+        }
+
+        if (!found) {
+          // Cache miss fallback: sync from Realtime Database / backup
           console.log(`[Cache-Miss] getContentById for ${decodedId}, fetching RTDB...`);
           const allItems = await apiService.getAllContent();
           found = contentMapById.get(decodedId) || contentMapBySlug.get(decodedId) || contentMapBySlug.get(decodedSlug);
@@ -494,13 +560,26 @@ export const apiService = {
               item.slug?.toLowerCase() === decodedSlug
             );
           }
+          
+          if (!found) {
+            // Fuzzy match fallback to match suffix/prefix differences in slugs (e.g. spelling variations and titles in slugs)
+            const normDecoded = normalizeFuzzyText(decodedSlug);
+            found = allItems.find(item => {
+              if (!item.slug) return false;
+              const normItem = normalizeFuzzyText(item.slug);
+              return normItem === normDecoded || 
+                     normItem.startsWith(normDecoded) || 
+                     normDecoded.startsWith(normItem) ||
+                     (normDecoded.length > 6 && (normItem.includes(normDecoded) || normDecoded.includes(normItem)));
+            });
+          }
         }
 
         if (found) {
           setCache(cacheKey, found);
           return found;
         }
-        throw new Error("Content not found in Realtime Database");
+        throw new Error("Content not found in Realtime Database / Data Connect");
       }
     } catch (error) {
       console.error('Error fetching content:', error);

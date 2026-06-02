@@ -147,11 +147,13 @@ const BookDetailPage = ({ initialBook }) => {
     );
   }
 
+  const bookHinglishName = book.hinglishName || book.name;
+
   return (
     <div className="animate-fade-in max-w-4xl mx-auto px-4 py-8">
       <Helmet>
-        <title>{isHindiRoute ? `${book.name} ग्रन्थ पाठ एवं अनुवाद | Vrindopnishad` : `${book.hinglishName} Texts & Translation | Vrindopnishad`}</title>
-        <meta name="description" content={`Read the sacred verses from ${book.hinglishName} with Hindi explanation, translation and audio chanting.`} />
+        <title>{isHindiRoute ? `${book.name} ग्रन्थ पाठ एवं अनुवाद | Vrindopnishad` : `${bookHinglishName} Texts & Translation | Vrindopnishad`}</title>
+        <meta name="description" content={`Read the sacred verses from ${bookHinglishName} with Hindi explanation, translation and audio chanting.`} />
         <link rel="canonical" href={isHindiRoute ? `https://path.vrindopnishad.in/hi/granthas/${slug}` : `https://path.vrindopnishad.in/granthas/${slug}`} />
         
         
@@ -163,7 +165,7 @@ const BookDetailPage = ({ initialBook }) => {
                 "@type": "Book",
                 "@id": `https://path.vrindopnishad.in/granthas/${slug}#book`,
                 "name": book.name,
-                "alternateName": book.hinglishName,
+                "alternateName": bookHinglishName,
                 "author": book.author ? {
                   "@type": "Person",
                   "name": book.author,
@@ -171,7 +173,7 @@ const BookDetailPage = ({ initialBook }) => {
                 } : undefined,
                 "url": `https://path.vrindopnishad.in/granthas/${slug}`,
                 "inLanguage": isHindiRoute ? ["hi", "sa"] : ["en", "hi-Latn", "sa"],
-                "description": `Read the sacred verses from ${book.hinglishName} with translations, commentaries and audio chanting.`
+                "description": `Read the sacred verses from ${bookHinglishName} with translations, commentaries and audio chanting.`
               },
               {
                 "@type": "BreadcrumbList",
@@ -192,7 +194,7 @@ const BookDetailPage = ({ initialBook }) => {
                   {
                     "@type": "ListItem",
                     "position": 3,
-                    "name": isHindiRoute ? book.name : book.hinglishName,
+                    "name": isHindiRoute ? book.name : bookHinglishName,
                     "item": isHindiRoute ? `https://path.vrindopnishad.in/hi/granthas/${slug}` : `https://path.vrindopnishad.in/granthas/${slug}`
                   }
                 ]

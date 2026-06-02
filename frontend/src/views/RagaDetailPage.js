@@ -113,7 +113,7 @@ const RagaDetailPage = ({ initialRaga }) => {
       <Helmet>
         <title>{isHindiRoute ? `${raga.name} आधारित वाणी पद एवं संकीर्तन | Vrindopnishad` : `${raga.hinglishName} Devotional Songs | Vrindopnishad`}</title>
         <meta name="description" content={`Read and listen to the sacred spiritual verses composed in ${raga.hinglishName} with translations.`} />
-        <link rel="canonical" href={isHindiRoute ? `https://path.vrindopnishad.in/hi/raga/${slug}` : `https://path.vrindopnishad.in/raga/${slug}`} />
+        <link rel="canonical" href={isHindiRoute ? `https://path.vrindopnishad.in/hi/ragas/${slug}` : `https://path.vrindopnishad.in/ragas/${slug}`} />
       </Helmet>
 
       <Link 
