@@ -85,3 +85,6 @@ android-sdk/ -e
 # Firebase debug logs
 firebase-debug.log
 
+.env
+.env.local
+.env.production
