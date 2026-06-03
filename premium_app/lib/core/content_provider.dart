@@ -34,6 +34,39 @@ class SacredContent {
   List<String> get videoTags => _videoTags ?? const [];
   List<String> get imageTags => _imageTags ?? const [];
 
+  String? get raga {
+    final allTags = [...contentTags, ...audioTags, ...videoTags, ...imageTags];
+    for (final tag in allTags) {
+      final lower = tag.toLowerCase().trim();
+      if (lower.startsWith('raga:')) {
+        return _capitalizeRaga(lower.substring(5).trim());
+      } else if (lower.startsWith('raga-')) {
+        return _capitalizeRaga(lower.substring(5).trim());
+      } else if (lower.startsWith('raga ')) {
+        return _capitalizeRaga(lower.substring(5).trim());
+      } else if (lower == 'raga') {
+        continue;
+      } else if (_knownRagas.contains(lower)) {
+        return _capitalizeRaga(lower);
+      }
+    }
+    return null;
+  }
+
+  static const Set<String> _knownRagas = {
+    'yaman', 'bhairavi', 'bilaval', 'darbari', 'bhairav', 'kalyan', 
+    'sarang', 'brindavani sarang', 'desh', 'bhimpalasi', 'malkauns', 
+    'vrindavani', 'bageshri', 'khamaj', 'kafi', 'pilu', 'lalit', 'todi'
+  };
+
+  static String _capitalizeRaga(String s) {
+    if (s.isEmpty) return s;
+    return s.split(' ').map((word) {
+      if (word.isEmpty) return '';
+      return word[0].toUpperCase() + word.substring(1);
+    }).join(' ');
+  }
+
   // Computed properties for high-performance rendering
   String get displayTitle => title.replaceAll('\n', ', ');
 
@@ -51,7 +84,7 @@ class SacredContent {
 
     // Sacred Shloka background images (ancient scriptures, sunset temples, oil lamps, holy rivers)
     final shlokaImages = [
-      'https://images.unsplash.com/photo-1609137144813-7d7277884d20?auto=format&fit=crop&w=500&q=80', // Diya in dark
+      'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=500&q=80', // Warm glowing light
       'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=500&q=80', // Sunrise mountains
       'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?auto=format&fit=crop&w=500&q=80', // Starry night river
       'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=500&q=80', // Temple silhouette at sunset
@@ -83,9 +116,9 @@ class SacredContent {
 
     // Dham / Temple images (Vrindavan, Yamuna river, ghats, ancient temples)
     final dhamImages = [
-      'https://images.unsplash.com/photo-1590050752117-238cb0612b1b?auto=format&fit=crop&w=500&q=80', // Boats on river at sunrise
-      'https://images.unsplash.com/photo-1564507592937-25994a9015b2?auto=format&fit=crop&w=500&q=80', // Majestic temple facade
+      'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?auto=format&fit=crop&w=500&q=80', // Morning river prayer
       'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=500&q=80', // Sunrise at a holy shrine
+      'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=500&q=80', // Serene meditation vibe
     ];
 
     // Saint / Guru / Sadhu images
@@ -379,42 +412,57 @@ class ContentNotifier extends StateNotifier<List<SacredContent>> {
     _isLoading = false;
   }
 
-  /// Fetch content filtered by category (with caching)
+  /// Fetch content filtered by category (local-first, API fallback)
   Future<List<SacredContent>> fetchByCategory(String category) async {
-    // Check cache first
+    // 1. Check memory cache
     final cached = _cache.getCachedByCategory(category);
     if (cached != null && cached.isNotEmpty) {
       return cached;
     }
 
+    // 2. Filter from local state (already loaded) — avoids API call
+    final localFiltered = state
+        .where((item) => item.category.toLowerCase() == category.toLowerCase())
+        .toList();
+    if (localFiltered.isNotEmpty) {
+      return localFiltered;
+    }
+
+    // 3. Only hit API if truly nothing found locally
     try {
       return await ApiService.fetchAllContent(category: category);
     } catch (e) {
-      // Fallback to filtering local state
-      return state
-          .where(
-            (item) => item.category.toLowerCase() == category.toLowerCase(),
-          )
-          .toList();
+      return [];
     }
   }
 
-  /// Search content
+  /// Search content (local-first to avoid unnecessary Firestore reads)
   Future<List<SacredContent>> search(String query) async {
+    if (query.trim().isEmpty) return [];
+    final lowerQuery = query.toLowerCase();
+
+    // 1. Always search locally first — all content is already in state
+    final localResults = state
+        .where(
+          (item) =>
+              item.title.toLowerCase().contains(lowerQuery) ||
+              item.sanskritText.toLowerCase().contains(lowerQuery) ||
+              item.hindiMeaning.toLowerCase().contains(lowerQuery) ||
+              item.translation.toLowerCase().contains(lowerQuery) ||
+              item.commentary.toLowerCase().contains(lowerQuery),
+        )
+        .toList();
+
+    // 2. If local search has results, return them — no API call needed
+    if (localResults.isNotEmpty) {
+      return localResults;
+    }
+
+    // 3. Only hit API as last resort (e.g. content not yet loaded)
     try {
       return await ApiService.searchContent(query);
     } catch (e) {
-      // Fallback to local search
-      final lowerQuery = query.toLowerCase();
-      return state
-          .where(
-            (item) =>
-                item.title.toLowerCase().contains(lowerQuery) ||
-                item.sanskritText.toLowerCase().contains(lowerQuery) ||
-                item.hindiMeaning.toLowerCase().contains(lowerQuery) ||
-                item.translation.toLowerCase().contains(lowerQuery),
-          )
-          .toList();
+      return [];
     }
   }
 
@@ -523,7 +571,7 @@ final sacredCategoriesProvider = Provider<List<CategoryInfo>>((ref) {
     'Stories': 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=400&q=80',
     'General': 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=400&q=80',
     'Saint': 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80',
-    'Dham': 'https://images.unsplash.com/photo-1590050752117-238cb0612b1b?auto=format&fit=crop&w=400&q=80',
+    'Dham': 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=400&q=80',
   };
 
   return categoriesMap.entries.map((e) {
@@ -571,4 +619,59 @@ final searchedContentProvider = Provider.family<List<SacredContent>, String>((
             item.category.toLowerCase().contains(lowerQuery),
       )
       .toList();
+});
+
+/// Provider for unique, sorted saints (authors)
+final saintsProvider = Provider<List<String>>((ref) {
+  final content = ref.watch(sacredContentProvider);
+  final Set<String> saints = {};
+  for (final item in content) {
+    if (item.author != null && item.author!.trim().isNotEmpty) {
+      saints.add(item.author!.trim());
+    }
+  }
+  return saints.toList()..sort();
+});
+
+/// Provider for unique, sorted books (granthas)
+final booksProvider = Provider<List<String>>((ref) {
+  final content = ref.watch(sacredContentProvider);
+  final Set<String> books = {};
+  for (final item in content) {
+    if (item.book != null && item.book!.trim().isNotEmpty) {
+      books.add(item.book!.trim());
+    }
+  }
+  return books.toList()..sort();
+});
+
+/// Provider for unique, sorted ragas
+final ragasProvider = Provider<List<String>>((ref) {
+  final content = ref.watch(sacredContentProvider);
+  final Set<String> ragas = {};
+  for (final item in content) {
+    final raga = item.raga;
+    if (raga != null && raga.isNotEmpty) {
+      ragas.add(raga);
+    }
+  }
+  return ragas.toList()..sort();
+});
+
+/// Provider for content filtered by saint
+final contentBySaintProvider = Provider.family<List<SacredContent>, String>((ref, saintName) {
+  final content = ref.watch(sacredContentProvider);
+  return content.where((item) => item.author?.trim().toLowerCase() == saintName.trim().toLowerCase()).toList();
+});
+
+/// Provider for content filtered by book
+final contentByBookProvider = Provider.family<List<SacredContent>, String>((ref, bookName) {
+  final content = ref.watch(sacredContentProvider);
+  return content.where((item) => item.book?.trim().toLowerCase() == bookName.trim().toLowerCase()).toList();
+});
+
+/// Provider for content filtered by raga
+final contentByRagaProvider = Provider.family<List<SacredContent>, String>((ref, ragaName) {
+  final content = ref.watch(sacredContentProvider);
+  return content.where((item) => item.raga?.trim().toLowerCase() == ragaName.trim().toLowerCase()).toList();
 });

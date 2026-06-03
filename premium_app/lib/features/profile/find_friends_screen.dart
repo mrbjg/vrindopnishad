@@ -1151,27 +1151,9 @@ class _FindFriendsScreenState extends ConsumerState<FindFriendsScreen> {
                     ),
 
                     const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: PremiumTokens.activeAccent,
-                          foregroundColor: PremiumTokens.onAccent,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                        child: Text(
-                          "CLOSE SADHANA CARD",
-                          style: PremiumTokens.sansStyle(
-                            fontSize: 11,
-                            letterSpacing: 1.5,
-                            fontWeight: FontWeight.bold,
-                            color: PremiumTokens.onAccent,
-                          ),
-                        ),
-                      ),
-                    ),
+
+                    // Add Friend + Close Actions
+                    _SadhanaCardActions(seeker: seeker),
                   ],
                 ],
               ),
@@ -1220,6 +1202,105 @@ class _FindFriendsScreenState extends ConsumerState<FindFriendsScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Stateful action row for the Sadhana Card sheet — "Add Friend" toggle + "Close"
+class _SadhanaCardActions extends StatefulWidget {
+  final SeekerUser seeker;
+  const _SadhanaCardActions({required this.seeker});
+
+  @override
+  State<_SadhanaCardActions> createState() => _SadhanaCardActionsState();
+}
+
+class _SadhanaCardActionsState extends State<_SadhanaCardActions> {
+  bool _requested = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        // Add Friend Button
+        Expanded(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: _requested
+                ? OutlinedButton.icon(
+                    key: const ValueKey('sent'),
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      setState(() => _requested = false);
+                      PremiumUI.showNotification(
+                        context,
+                        "Friend request to ${widget.seeker.displayName} withdrawn.",
+                        icon: Iconsax.user_remove,
+                      );
+                    },
+                    icon: Icon(Iconsax.tick_circle5, size: 16, color: PremiumTokens.activeAccent),
+                    label: Text(
+                      "REQUEST SENT",
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 10,
+                        letterSpacing: 1,
+                        fontWeight: FontWeight.bold,
+                        color: PremiumTokens.activeAccent,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: PremiumTokens.activeAccent.withValues(alpha: 0.4)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                  )
+                : ElevatedButton.icon(
+                    key: const ValueKey('add'),
+                    onPressed: () {
+                      HapticFeedback.mediumImpact();
+                      setState(() => _requested = true);
+                      PremiumUI.showNotification(
+                        context,
+                        "Friend request sent to ${widget.seeker.displayName}! 🙏",
+                        icon: Iconsax.user_add,
+                      );
+                    },
+                    icon: Icon(Iconsax.user_add, size: 16, color: PremiumTokens.onAccent),
+                    label: Text(
+                      "ADD FRIEND",
+                      style: PremiumTokens.sansStyle(
+                        fontSize: 10,
+                        letterSpacing: 1,
+                        fontWeight: FontWeight.bold,
+                        color: PremiumTokens.onAccent,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: PremiumTokens.activeAccent,
+                      foregroundColor: PremiumTokens.onAccent,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                  ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        // Close Button
+        SizedBox(
+          width: 56,
+          height: 48,
+          child: OutlinedButton(
+            onPressed: () => Navigator.pop(context),
+            style: OutlinedButton.styleFrom(
+              side: BorderSide(color: PremiumTokens.borderMedium),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              padding: EdgeInsets.zero,
+            ),
+            child: Icon(Iconsax.close_circle, size: 18, color: PremiumTokens.textMuted),
+          ),
+        ),
+      ],
     );
   }
 }

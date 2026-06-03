@@ -154,7 +154,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   Widget _buildSacredListItem(BuildContext context, SacredContent item) {
     final match = ref.watch(matchPercentageProvider(item));
     return SizedBox(
-      height: 195,
+      height: 250, // Proportional split height
       child: PressableScale(
         onTap: () {
           ref.read(recentSearchesProvider.notifier).addSearch(_searchQuery);
@@ -168,77 +168,130 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           borderColor: PremiumTokens.borderSubtle,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(24),
-            child: Stack(
-              fit: StackFit.expand,
+            child: Column(
               children: [
-                // 1. Full-bleed background artwork
-                Positioned.fill(
-                  child: PremiumUI.networkImage(
-                    url: item.displayImageUrl,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-
-                // 2. Adaptive gradient overlay for text readability
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          PremiumTokens.surfaceMain.withValues(alpha: 0.10),
-                          PremiumTokens.surfaceMain.withValues(alpha: 0.70),
-                          PremiumTokens.surfaceMain.withValues(alpha: 0.96),
-                        ],
-                        stops: const [0.0, 0.4, 0.85],
-                      ),
-                    ),
-                  ),
-                ),
-
-                // 3. Card content
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
+                // 1. Cover image (top portion)
+                SizedBox(
+                  height: 120,
+                  width: double.infinity,
+                  child: Stack(
+                    fit: StackFit.expand,
                     children: [
-                      Text(
-                        item.displayTitle,
-                        style: GoogleFonts.manrope(
-                          color: PremiumTokens.textPrimary,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                      PremiumUI.networkImage(
+                        url: item.displayImageUrl,
+                        fit: BoxFit.cover,
                       ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          PremiumUI.categoryBadge(item.category, fontSize: 11),
-                          const SizedBox(width: 8),
-                          PremiumUI.resonanceBadge("$match% MATCH", fontSize: 10),
-                          const Spacer(),
-                          // Like Button
-                          PremiumUI.animatedIcon(
-                            folder: 'Heart',
-                            fileName: 'heart.json',
-                            size: 24,
-                            color: ref.watch(isFavoriteProvider(item.id)) ? PremiumTokens.saffronGlow : PremiumTokens.textMuted,
-                            isToggled: ref.watch(isFavoriteProvider(item.id)),
-                            resetAfterPlay: false,
-                            onTap: () {
-                              HapticFeedback.lightImpact();
-                              ref.read(favoritesProvider.notifier).toggleFavorite(item.id);
-                            },
+                      // Vignette overlay
+                      Positioned.fill(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.black.withValues(alpha: 0.15),
+                                Colors.transparent,
+                                Colors.black.withValues(alpha: 0.35),
+                              ],
+                            ),
                           ),
-                          const SizedBox(width: 12),
-                          Icon(Iconsax.arrow_right_3, color: PremiumTokens.textMuted, size: 20),
-                        ],
+                        ),
+                      ),
+                      // Match percentage / resonance badge overlay
+                      Positioned(
+                        right: 12,
+                        top: 12,
+                        child: PremiumUI.resonanceBadge("$match% MATCH", fontSize: 8),
                       ),
                     ],
+                  ),
+                ),
+
+                // 2. Metadata details panel (bottom portion)
+                Expanded(
+                  child: Container(
+                    color: PremiumTokens.surfaceMain.withValues(alpha: 0.95),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    child: Row(
+                      children: [
+                        // Left Details Column
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (item.author != null)
+                                Text(
+                                  item.author!.toUpperCase(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: PremiumTokens.sansStyle(
+                                    color: PremiumTokens.saffronGlow,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 1.0,
+                                  ),
+                                ),
+                              const SizedBox(height: 4),
+                              Text(
+                                item.displayTitle,
+                                style: PremiumTokens.hindiAwareStyle(
+                                  item.displayTitle,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: PremiumTokens.textPrimary,
+                                  isSacred: true,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 6),
+                              Row(
+                                children: [
+                                  PremiumUI.categoryBadge(item.category, fontSize: 10),
+                                  if (item.contentTags.isNotEmpty) ...[
+                                    const SizedBox(width: 6),
+                                    ...item.contentTags.take(1).map((tag) => Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: PremiumTokens.borderSubtle.withValues(alpha: 0.3),
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(color: PremiumTokens.borderSubtle),
+                                      ),
+                                      child: Text(
+                                        tag.toUpperCase(),
+                                        style: PremiumTokens.sansStyle(fontSize: 9, fontWeight: FontWeight.bold, color: PremiumTokens.textSecondary, letterSpacing: 0.5),
+                                      ),
+                                    )),
+                                  ],
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        // Right Actions column (Heart and Arrow Right)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            PremiumUI.animatedIcon(
+                              folder: 'Heart',
+                              fileName: 'heart.json',
+                              size: 24,
+                              color: ref.watch(isFavoriteProvider(item.id)) ? PremiumTokens.saffronGlow : PremiumTokens.textMuted,
+                              isToggled: ref.watch(isFavoriteProvider(item.id)),
+                              resetAfterPlay: false,
+                              onTap: () {
+                                HapticFeedback.lightImpact();
+                                ref.read(favoritesProvider.notifier).toggleFavorite(item.id);
+                              },
+                            ),
+                            const SizedBox(width: 8),
+                            Icon(Iconsax.arrow_right_3, color: PremiumTokens.textMuted, size: 20),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

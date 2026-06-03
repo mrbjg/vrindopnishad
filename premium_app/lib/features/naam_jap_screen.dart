@@ -20,7 +20,8 @@ class NaamJapScreen extends ConsumerStatefulWidget {
   ConsumerState<NaamJapScreen> createState() => _NaamJapScreenState();
 }
 
-class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
+class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
+    with AutomaticKeepAliveClientMixin {
   bool _isImmersive = false;
   late final AudioPlayer _ambiencePlayer;
   bool _isAudioPlaying = false;
@@ -32,6 +33,9 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
     'Flowing Ganges': 'https://actions.google.com/sounds/v1/ambiences/river_flowing.ogg',
     'Temple Chimes': 'https://actions.google.com/sounds/v1/ambiences/morning_birds.ogg',
   };
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -146,6 +150,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     final japState = ref.watch(naamJapStateProvider);
     final stats = ref.watch(userStatsProvider).value;
     final isFocusMode = ref.watch(focusModeProvider);
@@ -501,54 +506,43 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen> {
       child: Column(
         children: [
           // Glowing gradient chant button
-          GestureDetector(
+          PressableScale(
             onTap: () {
               HapticFeedback.mediumImpact();
               ref.read(naamJapStateProvider.notifier).increment(context);
             },
-            child: Animate(
-              key: ValueKey(count),
-              effects: [
-                ScaleEffect(
-                  begin: const Offset(1.0, 1.0),
-                  end: const Offset(0.93, 0.93),
-                  duration: 120.ms,
-                  curve: Curves.easeOutCubic,
+            child: Container(
+              width: 108,
+              height: 108,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [palette.accent, palette.accentDark],
                 ),
-              ],
-              child: Container(
-                width: 108,
-                height: 108,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [palette.accent, palette.accentDark],
+                boxShadow: [
+                  BoxShadow(
+                    color: palette.glow.withValues(alpha: 0.55),
+                    blurRadius: 28,
+                    spreadRadius: 2,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: palette.glow.withValues(alpha: 0.55),
-                      blurRadius: 28,
-                      spreadRadius: 2,
-                    ),
-                    BoxShadow(
-                      color: palette.glow.withValues(alpha: 0.20),
-                      blurRadius: 60,
-                      spreadRadius: 10,
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: RepaintBoundary(
-                    child: SvgPicture.asset(
-                      'assets/shriJiMukut.svg',
-                      width: 52,
-                      height: 52,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcIn,
-                      ),
+                  BoxShadow(
+                    color: palette.glow.withValues(alpha: 0.20),
+                    blurRadius: 60,
+                    spreadRadius: 10,
+                  ),
+                ],
+              ),
+              child: Center(
+                child: RepaintBoundary(
+                  child: SvgPicture.asset(
+                    'assets/shriJiMukut.svg',
+                    width: 52,
+                    height: 52,
+                    colorFilter: const ColorFilter.mode(
+                      Colors.white,
+                      BlendMode.srcIn,
                     ),
                   ),
                 ),

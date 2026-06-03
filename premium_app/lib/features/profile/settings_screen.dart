@@ -495,6 +495,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   // Optimized language tile without BackdropFilter
   Widget _buildLanguageTile(BuildContext context, AppLocalization l) {
+    final colorPalette = ref.watch(colorPaletteProvider);
     return PressableScale(
       onTap: () => _showLanguageDialog(context, l),
       child: Container(
@@ -513,11 +514,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  gradient: PremiumTokens.activeGradient,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: colorPalette.gradient,
+                  ),
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
-                      color: PremiumTokens.activeAccent.withValues(alpha: 0.4),
+                      color: colorPalette.accent.withValues(alpha: 0.4),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                       spreadRadius: -4,
@@ -526,7 +531,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 child: Icon(
                   Iconsax.language_circle,
-                  color: PremiumTokens.textPrimary,
+                  color: colorPalette.accent.computeLuminance() > 0.4
+                      ? const Color(0xFF1A1A2E)
+                      : Colors.white,
                   size: 20,
                 ),
               ),
@@ -573,6 +580,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   void _showLanguageDialog(BuildContext context, AppLocalization l) {
+    final colorPalette = ref.read(colorPaletteProvider);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -608,12 +616,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        gradient: PremiumTokens.activeGradient,
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: colorPalette.gradient,
+                        ),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: Icon(
                         Iconsax.global,
-                        color: PremiumTokens.textPrimary,
+                        color: colorPalette.accent.computeLuminance() > 0.4
+                            ? const Color(0xFF1A1A2E)
+                            : Colors.white,
                         size: 22,
                       ),
                     ),
@@ -900,7 +914,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     Color accentColor,
   ) {
     return Expanded(
-      child: GestureDetector(
+      child: PressableScale(
         onTap: () {
           HapticFeedback.mediumImpact();
           ref.read(readerThemeProvider.notifier).state = theme;
@@ -910,7 +924,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: isSelected ? accentColor.withValues(alpha: 0.15) : Colors.transparent,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(100),
             border: Border.all(
               color: isSelected ? accentColor.withValues(alpha: 0.3) : PremiumTokens.borderSubtle,
               width: 1.5,
@@ -984,7 +998,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(100),
             ),
             child: Icon(icon, color: color, size: 24),
           ),
@@ -1051,7 +1065,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         end: Alignment.bottomRight,
                         colors: [currentPalette.accent, currentPalette.accentDark],
                       ),
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(100),
                       boxShadow: [
                         BoxShadow(
                           color: currentPalette.glow.withValues(alpha: 0.4),
@@ -1372,7 +1386,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     end: Alignment.bottomRight,
                     colors: currentPalette.backgroundGradient,
                   ),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(100),
                   border: Border.all(color: PremiumTokens.borderMedium),
                 ),
                 child: EmojiToIcon.getIconWidget(

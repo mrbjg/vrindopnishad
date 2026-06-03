@@ -45,35 +45,35 @@ class SpiritualityEngine {
   }) {
     // Streak-based messages
     if (streakCount == 0) {
-      return 'आज नई शुरुआत करें! एक छोटा कदम बड़ी यात्रा की शुरुआत है। 🌱';
+      return 'आज नई शुरुआत करें! एक छोटा कदम बड़ी यात्रा की शुरुआत है।';
     }
     if (streakCount >= 30) {
-      return '🔥 $streakCount दिन! आप सच्चे तपस्वी हैं। आपकी साधना प्रेरणादायक है!';
+      return '$streakCount दिन! आप सच्चे तपस्वी हैं। आपकी साधना प्रेरणादायक है!';
     }
     if (streakCount >= 7) {
-      return '🔥 $streakCount दिनों से लगातार! अद्भुत! रुकना मत!';
+      return '$streakCount दिनों से लगातार! अद्भुत! रुकना मत!';
     }
 
     // Daily progress messages
     final goalPercent = dailyGoal > 0 ? (todayJapCount / (dailyGoal * 108)) : 0.0;
     if (goalPercent >= 1.0) {
-      return '🎉 आज का लक्ष्य पूरा! आप अद्भुत हैं! और जाप करें या ज्ञान पढ़ें।';
+      return 'आज का लक्ष्य पूरा! आप अद्भुत हैं! और जाप करें या ज्ञान पढ़ें।';
     }
     if (goalPercent >= 0.5) {
-      return '💪 आधा लक्ष्य पूरा! बस थोड़ा और। हर जाप आपको करीब ला रहा है।';
+      return 'आधा लक्ष्य पूरा! बस थोड़ा और। हर जाप आपको करीब ला रहा है।';
     }
 
     // Level-based messages
     final tier = detectLevel(level);
     switch (tier) {
       case SpiritualityLevel.seeker:
-        return '🌅 साधना का सफर शुरू करें। छोटी शुरुआत ही बड़ी सफलता का आधार है।';
+        return 'साधना का सफर शुरू करें। छोटी शुरुआत ही बड़ी सफलता का आधार है।';
       case SpiritualityLevel.sadhak:
-        return '📿 आपकी साधना गहरी हो रही है। नियमित अभ्यास से सिद्धि मिलती है।';
+        return 'आपकी साधना गहरी हो रही है। नियमित अभ्यास से सिद्धि मिलती है।';
       case SpiritualityLevel.tapasvi:
-        return '⭐ तपस्वी, आपका तप अब फल दे रहा है। और ऊंचा उड़ें!';
+        return 'तपस्वी, आपका तप अब फल दे रहा है। और ऊंचा उड़ें!';
       case SpiritualityLevel.siddha:
-        return '🏔️ सिद्ध भक्त, आपकी साधना अनुपम है। अब दूसरों को मार्ग दिखाएं।';
+        return 'सिद्ध भक्त, आपकी साधना अनुपम है। अब दूसरों को मार्ग दिखाएं।';
     }
   }
 

@@ -69,13 +69,19 @@ class ShareContentWidget extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(28),
           border: Border.all(
-            color: PremiumTokens.borderSubtle,
-            width: 1.5,
+            color: PremiumTokens.activeAccent.withValues(alpha: 0.45),
+            width: 2.0,
           ),
           boxShadow: [
             BoxShadow(
-              color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
-              blurRadius: 30,
+              color: Colors.black.withValues(alpha: 0.25),
+              blurRadius: 24,
+              spreadRadius: 1,
+              offset: const Offset(0, 4),
+            ),
+            BoxShadow(
+              color: PremiumTokens.activeAccent.withValues(alpha: 0.10),
+              blurRadius: 40,
               spreadRadius: 2,
             ),
           ],
@@ -125,7 +131,7 @@ class ShareContentWidget extends StatelessWidget {
                 style: GoogleFonts.laila(
                   color: PremiumTokens.textPrimary,
                   fontSize: sanskritFontSize,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                   height: 1.6,
                 ),
               ),
@@ -150,13 +156,12 @@ class ShareContentWidget extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Text(
-                    'ॐ',
-                    style: GoogleFonts.spectral(
-                      color: PremiumTokens.activeAccent,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Image.asset(
+                    'assets/vaani.png',
+                    width: 18,
+                    height: 18,
+                    color: PremiumTokens.activeAccent,
+                    colorBlendMode: BlendMode.srcIn,
                   ),
                 ),
                 Container(
@@ -222,7 +227,7 @@ class ShareContentWidget extends StatelessWidget {
                     : Colors.black.withValues(alpha: 0.02),
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(
-                  color: PremiumTokens.borderSubtle,
+                  color: PremiumTokens.activeAccent.withValues(alpha: 0.20),
                   width: 1,
                 ),
               ),
@@ -246,14 +251,13 @@ class ShareContentWidget extends StatelessWidget {
                             ),
                           ],
                         ),
-                        child: Center(
-                          child: Text(
-                            'ॐ',
-                            style: GoogleFonts.spectral(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.asset(
+                            'assets/vaani_icon.png',
+                            width: 36,
+                            height: 36,
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
@@ -418,10 +422,12 @@ class ShareContentHelper {
 
       // Share logic
       if (kIsWeb) {
-        await Share.shareXFiles(
-          [XFile.fromData(imageBytes, name: 'vrindopnishad.png', mimeType: 'image/png')],
-          text: '🕉️ ${content.title} 🕉️\n\nRead more on Sant-Vaani: https://vrindopnishad.in 🙏',
-          subject: content.title,
+        await SharePlus.instance.share(
+          ShareParams(
+            text: '${content.title}\n\nRead more on Sant-Vaani: https://vrindopnishad.in',
+            subject: content.title,
+            files: [XFile.fromData(imageBytes, name: 'vrindopnishad.png', mimeType: 'image/png')],
+          ),
         );
       } else {
         // Save to temp file for mobile/desktop
@@ -431,10 +437,12 @@ class ShareContentHelper {
         await file.writeAsBytes(imageBytes);
 
         // Share the image
-        await Share.shareXFiles(
-          [XFile(file.path)],
-          text: '🕉️ ${content.title} 🕉️\n\nRead more on Sant-Vaani: https://vrindopnishad.in 🙏',
-          subject: content.title,
+        await SharePlus.instance.share(
+          ShareParams(
+            text: '${content.title}\n\nRead more on Sant-Vaani: https://vrindopnishad.in',
+            subject: content.title,
+            files: [XFile(file.path)],
+          ),
         );
       }
     } catch (e) {
@@ -457,14 +465,14 @@ class ShareContentHelper {
   /// Share content as text
   static Future<void> shareAsText(SacredContent content) async {
     final List<String> parts = [
-      "🕉️ ${content.title} 🕉️",
+      content.title,
       if (content.sanskritText.isNotEmpty) content.sanskritText,
       if (content.translation.isNotEmpty) "Translation:\n${content.translation}",
       if (content.hindiMeaning.isNotEmpty) "Meaning:\n${content.hindiMeaning}",
-      "— Shared from Sant-Vaani (Vrindopnishad) 🙏\n📲 Experience the Divine Path & Preserves our Sanskriti: https://vrindopnishad.in"
+      "— Shared from Sant-Vaani (Vrindopnishad)\nExperience the Divine Path & Preserve our Sanskriti: https://vrindopnishad.in"
     ];
     final text = parts.join("\n\n");
 
-    await Share.share(text, subject: content.title);
+    await SharePlus.instance.share(ShareParams(text: text, subject: content.title));
   }
 }

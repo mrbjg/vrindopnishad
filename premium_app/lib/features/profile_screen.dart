@@ -12,6 +12,7 @@ import 'profile/about_screen.dart';
 import 'profile/find_friends_screen.dart';
 import 'journal_screen.dart';
 import '../widgets/sacred_logout_dialog.dart';
+import '../widgets/animated_effects.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/services.dart';
 import '../core/stats_provider.dart';
@@ -194,21 +195,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     required Color color,
     required VoidCallback onTap,
   }) {
-    return PremiumUI.voidCard(
-      padding: EdgeInsets.zero,
-      child: Material(
-        color: Colors.transparent,
+    return PressableScale(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
+      child: PremiumUI.voidCard(
+        padding: EdgeInsets.zero,
         child: ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          onTap: () {
-            HapticFeedback.lightImpact();
-            onTap();
-          },
           leading: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(100),
             ),
             child: customIconFile != null
                 ? PremiumUI.customIcon(fileName: customIconFile, color: color, size: 22)
@@ -303,7 +303,7 @@ class _PremiumProfileHeader extends ConsumerWidget {
                     ? PremiumUI.networkImage(
                         url: user!.photoURL!,
                         fit: BoxFit.cover,
-                        borderRadius: BorderRadius.circular(60),
+                        borderRadius: BorderRadius.circular(100),
                       )
                     : Icon(Iconsax.user, color: PremiumTokens.textMuted, size: 48),
               ),

@@ -82,10 +82,10 @@ class AppTheme {
   // ═══════════════════════════════════════════════════════════════════════════
   // BORDER RADIUS
   // ═══════════════════════════════════════════════════════════════════════════
-  static const double radiusSmall = 8;
-  static const double radiusMedium = 12;
-  static const double radiusLarge = 16;
-  static const double radiusXL = 24;
+  static const double radiusSmall = 12;
+  static const double radiusMedium = 18;
+  static const double radiusLarge = 24;
+  static const double radiusXL = 32;
   static const double radiusFull = 100;
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -568,18 +568,18 @@ class SacredStyles {
     height: 1.6,
   );
 
-  // Functional Hindi styles (Poppins for UI/Modern feel)
-  static final hindiUI = GoogleFonts.poppins(
+  // Functional Hindi styles (Hind for UI/Modern feel)
+  static final hindiUI = GoogleFonts.hind(
     fontSize: 14,
     height: 1.6,
     fontWeight: FontWeight.w500,
     letterSpacing: 0.2,
   );
 
-  static final hindiUILabel = GoogleFonts.poppins(
+  static final hindiUILabel = GoogleFonts.hind(
     fontSize: 12,
     height: 1.4,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
   );
 
   // Spectral display styles

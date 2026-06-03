@@ -1,59 +1,54 @@
 const fs = require('fs');
 const path = require('path');
 
-const cachePath = './data/processed_cache.json';
-
+const cachePath = path.join(__dirname, '../data/processed_cache.json');
 if (!fs.existsSync(cachePath)) {
-  console.log('Cache file does not exist at:', cachePath);
+  console.log('Cache file not found:', cachePath);
   process.exit(1);
 }
 
-try {
-  const cache = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
-  console.log('Cache Keys:', Object.keys(cache));
+const cacheData = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
+const verses = cacheData.verses || [];
+console.log('Total verses in cache:', verses.length);
+
+const testSlugs = [
+  'sambhu-sur-dhyaavain-sada-ses-gun-gaavai-shri-hati-ji-radha-sudha-shatak',
+  'किं-रे-धूर्त्त',
+  'करू-मन-नंदनँदनको-ध्यान',
+  'जब-सम्राट-अकबर-स्वामी-हरिदास-से-निधिवन-वृंदावन-में-मिले',
+  'बिछुरन-मिलन-जहाँ-रहै-सुद्ध-प्रेम-नहिं-होइ',
+  'ansbhuja-diyain-aavat-jamuna-teer-shri-roop-manjari',
+  'janam-janam-jinke-sada-hum-chakar-shri-bhata-devacharya-yugal-shatak'
+];
+
+testSlugs.forEach(slug => {
+  console.log(`\n--- Searching for slug: ${slug} ---`);
   
-  if (cache.verses) {
-    console.log('Total verses:', cache.verses.length);
-    console.log('Sample verse slugs:', cache.verses.slice(0, 10).map(v => v.slug));
-    
-    const nullSlugs = cache.verses.filter(v => !v.slug);
-    console.log('Verses with empty/null slugs:', nullSlugs.length);
-    if (nullSlugs.length > 0) {
-      console.log('First 5 null slug verses:', nullSlugs.slice(0, 5).map(v => ({ id: v.id, title: v.title })));
-    }
-    
-    // Check duplicate slugs
-    const slugMap = {};
-    const dupSlugs = [];
-    cache.verses.forEach(v => {
-      if (v.slug) {
-        if (slugMap[v.slug]) {
-          dupSlugs.push(v.slug);
-        }
-        slugMap[v.slug] = true;
-      }
-    });
-    console.log('Duplicate verse slugs:', dupSlugs.length);
-    if (dupSlugs.length > 0) {
-      console.log('Sample duplicate slugs:', dupSlugs.slice(0, 10));
-    }
+  // 1. Try finding by exact slug in cache
+  const matchBySlug = verses.find(v => v.slug === slug || (v.slug && v.slug.toLowerCase() === slug.toLowerCase()));
+  if (matchBySlug) {
+    console.log(`FOUND EXACT SLUG MATCH:`);
+    console.log(`- ID: ${matchBySlug.id}`);
+    console.log(`  Title: ${matchBySlug.title}`);
+    console.log(`  Author: ${matchBySlug.author}`);
+    console.log(`  Slug: ${matchBySlug.slug}`);
+    return;
   }
   
-  if (cache.saints) {
-    console.log('Total saints:', cache.saints.length);
-    console.log('Saints slugs:', cache.saints.map(s => s.slug));
-  }
+  // 2. Try fuzzy title search
+  const decoded = decodeURIComponent(slug);
+  console.log(`Decoded slug: ${decoded}`);
+  const matches = verses.filter(v => {
+    const text = (v.title || '') + ' ' + (v.hindi_text || '') + ' ' + (v.author || '');
+    return text.toLowerCase().includes(decoded.toLowerCase()) || 
+           text.toLowerCase().replace(/[^a-z0-9]/g, '').includes(decoded.toLowerCase().replace(/[^a-z0-9]/g, ''));
+  });
   
-  if (cache.books) {
-    console.log('Total books:', cache.books.length);
-    console.log('Books slugs:', cache.books.map(b => b.slug));
-  }
-  
-  if (cache.ragas) {
-    console.log('Total ragas:', cache.ragas.length);
-    console.log('Ragas slugs:', cache.ragas.map(r => r.slug));
-  }
-  
-} catch (err) {
-  console.error('Failed to parse cache:', err);
-}
+  console.log(`Fuzzy Matches found: ${matches.length}`);
+  matches.slice(0, 3).forEach(m => {
+    console.log(`- ID: ${m.id}`);
+    console.log(`  Title: ${m.title}`);
+    console.log(`  Author: ${m.author}`);
+    console.log(`  Slug: ${m.slug}`);
+  });
+});

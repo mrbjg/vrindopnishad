@@ -11,6 +11,7 @@ import '../core/stats_provider.dart';
 import 'global_player_screen.dart';
 import '../core/favorites_provider.dart';
 import '../widgets/share_content_widget.dart';
+import '../widgets/divine_ruler_picker.dart';
 import '../core/localization.dart';
 import '../core/providers.dart';
 import '../core/theme.dart';
@@ -18,6 +19,10 @@ import '../core/providers/reading_providers.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../core/personalized_feed_provider.dart';
+import '../widgets/animated_effects.dart';
+import 'saint_detail_screen.dart';
+import 'book_detail_screen.dart';
+import 'raga_detail_screen.dart';
 
 class ContentDetailScreen extends ConsumerStatefulWidget {
   final SacredContent? content;
@@ -38,25 +43,44 @@ class ContentDetailScreen extends ConsumerStatefulWidget {
 
 class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   double _fontSize = 20.0; // Increased base size
-  final ScrollController _scrollController = ScrollController();
+  double _currentScrollOffset = 0.0;
   bool _showCompactHeader = false;
   bool _showAudioPlayer = false;
   ReadingTheme _currentTheme = ReadingTheme.divineFlow;
-  final ValueNotifier<double> _sanskritScale = ValueNotifier<double>(1.0);
-  final ValueNotifier<double> _hindiScale = ValueNotifier<double>(1.0);
-  final ValueNotifier<double> _englishScale = ValueNotifier<double>(1.0);
-  final ValueNotifier<double> _commentaryScale = ValueNotifier<double>(1.0);
-  double _baseScale = 1.0;
+  // Text scale ValueNotifiers removed to prevent drag gesture blocking scroll/swipe
   double _lastScrollOffset = 0.0;
   bool _isScrollingUp = true;
-  late final DateTime _startTime;
+  late DateTime _startTime;
   bool _hasLoggedDwellTime = false;
+
+  late PageController _pageController;
+  List<SacredContent> _siblingContents = [];
+  int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _startTime = DateTime.now();
-    _scrollController.addListener(_onScroll);
+
+    // Resolve initial content and siblings
+    final allContent = ref.read(sacredContentProvider);
+    final resolvedContent = widget.content ??
+        (widget.title != null ? allContent.where((c) => c.title == widget.title).firstOrNull : null);
+
+    if (resolvedContent != null) {
+      final categoryClean = resolvedContent.category;
+      _siblingContents = allContent.where((c) => c.category == categoryClean).toList();
+      _currentIndex = _siblingContents.indexWhere((c) => c.id == resolvedContent.id);
+      if (_currentIndex == -1) {
+        _siblingContents = [resolvedContent];
+        _currentIndex = 0;
+      }
+    } else {
+      _siblingContents = [];
+      _currentIndex = 0;
+    }
+
+    _pageController = PageController(initialPage: _currentIndex);
     
     // Initialize theme from universal preference
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -67,47 +91,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       }
     });
 
-    // Log reading activity to capture this session in history
-    Future.delayed(const Duration(milliseconds: 500), () async {
-      if (mounted) {
-        // Robust content resolution for history tracking
-        final allContent = ref.read(sacredContentProvider);
-        final resolvedContent = widget.content ?? 
-          (widget.title != null ? allContent.where((c) => c.title == widget.title).firstOrNull : null);
-        
-        final logTitle = resolvedContent?.title ?? widget.title ?? 'Sacred Text';
-        final logCategory = resolvedContent?.category ?? widget.category ?? 'Divine';
-        final logId = resolvedContent?.id ?? logTitle;
-
-        try {
-          await ref.read(userStatsProvider.notifier).recordReading(
-            context,
-            logId,
-            title: logTitle,
-            category: logCategory,
-          );
-        } catch (e) {
-             debugPrint("History Sync Error: $e");
-             if (mounted) {
-               ScaffoldMessenger.of(context).showSnackBar(
-                 SnackBar(
-                   backgroundColor: PremiumTokens.activeAccent.withValues(alpha: 0.8),
-                   content: Text(
-                     "VAANI SYNC ERROR: $e",
-                     style: TextStyle(color: PremiumTokens.textPrimary, fontSize: 12),
-                   ),
-                   behavior: SnackBarBehavior.floating,
-                   duration: const Duration(seconds: 5),
-                 ),
-               );
-             }
-        }
-      }
-    });
+    // Log reading activity for initial item
+    _logReadingActivity(_currentIndex);
   }
 
-  void _onScroll() {
-    final offset = _scrollController.offset;
+  void _onScrollWithOffset(double offset) {
+    _currentScrollOffset = offset;
     final showCompact = offset > 100;
     
     // Smart reveal logic (Threshold: 20px)
@@ -131,28 +120,81 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
   // Audio is now managed globally via audioProvider
 
-  @override
-  void deactivate() {
-    if (!_hasLoggedDwellTime) {
+  void _logReadingActivity(int index) {
+    if (_siblingContents.isEmpty || index >= _siblingContents.length) return;
+    final resolvedContent = _siblingContents[index];
+    final logTitle = resolvedContent.title;
+    final logCategory = resolvedContent.category;
+    final logId = resolvedContent.id;
+
+    Future.delayed(const Duration(milliseconds: 500), () async {
+      if (mounted && _currentIndex == index) {
+        try {
+          await ref.read(userStatsProvider.notifier).recordReading(
+            context,
+            logId,
+            title: logTitle,
+            category: logCategory,
+          );
+        } catch (e) {
+          debugPrint("History Sync Error: $e");
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: PremiumTokens.activeAccent.withValues(alpha: 0.8),
+                content: Text(
+                  "VAANI SYNC ERROR: $e",
+                  style: TextStyle(color: PremiumTokens.textPrimary, fontSize: 12),
+                ),
+                behavior: SnackBarBehavior.floating,
+                duration: const Duration(seconds: 5),
+              ),
+            );
+          }
+        }
+      }
+    });
+  }
+
+  void _logDwellTimeForCurrentIndex() {
+    if (!_hasLoggedDwellTime && _siblingContents.isNotEmpty && _currentIndex < _siblingContents.length) {
       _hasLoggedDwellTime = true;
       final durationSeconds = DateTime.now().difference(_startTime).inSeconds;
-      final allContent = ref.read(sacredContentProvider);
-      final resolvedContent = widget.content ?? 
-        (widget.title != null ? allContent.where((c) => c.title == widget.title).firstOrNull : null);
-      if (resolvedContent != null) {
-        ref.read(dwellTimeProvider.notifier).logDwellTime(resolvedContent.id, durationSeconds);
-      }
+      final resolvedContent = _siblingContents[_currentIndex];
+      ref.read(dwellTimeProvider.notifier).logDwellTime(resolvedContent.id, durationSeconds);
     }
+  }
+
+  void _onPageChanged(int index) {
+    HapticFeedback.lightImpact();
+    
+    // Log dwell time for the page we are leaving
+    _logDwellTimeForCurrentIndex();
+    
+    setState(() {
+      _currentIndex = index;
+      _currentScrollOffset = 0.0;
+      _lastScrollOffset = 0.0;
+      _isScrollingUp = true;
+      _showCompactHeader = false;
+      _startTime = DateTime.now();
+      _hasLoggedDwellTime = false;
+    });
+
+    // Log reading activity for the new page
+    _logReadingActivity(index);
+  }
+
+  @override
+  void deactivate() {
+    _logDwellTimeForCurrentIndex();
     super.deactivate();
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
-    _sanskritScale.dispose();
-    _hindiScale.dispose();
-    _englishScale.dispose();
-    _commentaryScale.dispose();
+    _pageController.dispose();
+    // Scale disposes removed
     super.dispose();
   }
 
@@ -188,23 +230,18 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     final l = AppLocalization(currentLanguage);
 
     final allContent = ref.watch(sacredContentProvider);
-    final content = widget.content ?? 
-      (widget.title != null ? allContent.cast<SacredContent?>().firstWhere((c) => c?.title == widget.title, orElse: () => null) : null);
+    final content = _siblingContents.isNotEmpty && _currentIndex < _siblingContents.length
+        ? _siblingContents[_currentIndex]
+        : (widget.content ?? (widget.title != null ? allContent.cast<SacredContent?>().firstWhere((c) => c?.title == widget.title, orElse: () => null) : null));
 
-    final displayTitle =
-        (content?.title ?? widget.title ?? "Sacred Text")
-            .replaceAll('\n', ', ');
-    final displayCategory =
-        content?.category ?? widget.category ?? "Wisdom";
-
-    // If no content is found and no title/category provided, we are effectively in a dead state
-    if (content == null && widget.title == null && widget.content == null) {
+    if (content == null) {
       return Scaffold(
         backgroundColor: PremiumTokens.scaffoldBg,
         body: Center(child: CircularProgressIndicator(color: PremiumTokens.activeAccent)),
       );
     }
 
+    final displayTitle = content.title.replaceAll('\n', ', ');
     final themeData = _getThemeData();
 
     return Scaffold(
@@ -240,409 +277,189 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           
           // Dismiss focus mode when tapping empty background area
           Positioned.fill(
-            child: GestureDetector(
-              onTap: () {
-                if (isFocusMode) {
-                  HapticFeedback.lightImpact();
-                  ref.read(focusModeProvider.notifier).state = false;
-                }
-              },
+            child: IgnorePointer(
+              ignoring: !isFocusMode,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  if (isFocusMode) {
+                    HapticFeedback.lightImpact();
+                    ref.read(focusModeProvider.notifier).state = false;
+                  }
+                },
+              ),
             ),
           ),
 
-          // ── Scroll Content ───────────────────────────────────────────────
-          CustomScrollView(
-            controller: _scrollController,
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-                SliverToBoxAdapter(
-                  child: SizedBox(height: MediaQuery.of(context).padding.top + 80),
-                ),
+          // ── Scroll Content with Swipe Page Transitions ───────────────────────
+          Positioned.fill(
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: _siblingContents.length,
+              onPageChanged: _onPageChanged,
+              itemBuilder: (context, pageIndex) {
+                final pageContent = _siblingContents[pageIndex];
+                final pageDisplayTitle = pageContent.title.replaceAll('\n', ', ');
+                final pageDisplayCategory = pageContent.category;
+                
+                return NotificationListener<ScrollNotification>(
+                  onNotification: (notification) {
+                    if (pageIndex == _currentIndex && 
+                        notification is ScrollUpdateNotification && 
+                        notification.metrics.axis == Axis.vertical) {
+                      _onScrollWithOffset(notification.metrics.pixels);
+                    }
+                    return false;
+                  },
+                  child: CustomScrollView(
+                    key: PageStorageKey<String>('content_scroll_${pageContent.id}'),
+                    physics: const BouncingScrollPhysics(),
+                    slivers: [
+                    SliverToBoxAdapter(
+                      child: SizedBox(height: MediaQuery.of(context).padding.top + 80),
+                    ),
 
-              if (!isFocusMode) 
-                SliverToBoxAdapter(
-                  child: PremiumUI.focusContainer(
-                    isFocusMode: isFocusMode,
-                    child: _buildPremiumHero(content, displayTitle, displayCategory, l, themeData),
-                  ),
-                ),
-
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(16, isFocusMode ? 64 : 24, 16, 110),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    // Sanskrit Card - Always visible but styled for focus
-                    Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 600),
-                        child: RepaintBoundary(
-                          child: GestureDetector(
-                            onScaleStart: (details) => _baseScale = _sanskritScale.value,
-                            onScaleUpdate: (details) => _sanskritScale.value = (_baseScale * details.scale).clamp(0.5, 3.0),
-                            child: ValueListenableBuilder<double>(
-                              valueListenable: _sanskritScale,
-                              builder: (context, scale, child) {
-                                return _buildPremiumSanskritCard(content, l, isFocusMode, themeData, scale: scale);
-                              },
-                            ),
-                          ),
+                    if (!isFocusMode) 
+                      SliverToBoxAdapter(
+                        child: PremiumUI.focusContainer(
+                          isFocusMode: isFocusMode,
+                          child: _buildPremiumHero(pageContent, pageDisplayTitle, pageDisplayCategory, l, themeData),
                         ),
                       ),
-                    ),
-                    
-                    const SizedBox(height: 20),
-                    PremiumUI.sacredDivider(color: themeData.textColor.withValues(alpha: isFocusMode ? 0.3 : 0.05)),
-                    const SizedBox(height: 20),
 
-                    // Meaning Sections - Hidden/Simplified in Focus Mode
-                    PremiumUI.focusContainer(
-                      isFocusMode: isFocusMode,
-                      child: Center(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 600),
-                        child: RepaintBoundary(
-                          child: Column(
-                            children: [
-                                GestureDetector(
-                                  onScaleStart: (details) => _baseScale = _hindiScale.value,
-                                  onScaleUpdate: (details) => _hindiScale.value = (_baseScale * details.scale).clamp(0.5, 3.0),
-                                  child: ValueListenableBuilder<double>(
-                                    valueListenable: _hindiScale,
-                                    builder: (context, scale, child) {
-                                      return _buildPremiumContentSection(
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(16, isFocusMode ? 64 : 24, 16, 110),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate([
+                          // Sanskrit Card - Only visible if sanskritText is not empty
+                          if (pageContent.sanskritText.trim().isNotEmpty) ...[
+                            Center(
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(maxWidth: 600),
+                                child: RepaintBoundary(
+                                  child: _buildPremiumSanskritCard(pageContent, l, isFocusMode, themeData),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            PremiumUI.sacredDivider(color: themeData.textColor.withValues(alpha: isFocusMode ? 0.3 : 0.05)),
+                            const SizedBox(height: 20),
+                          ],
+
+                          // Meaning Sections - Hidden/Simplified in Focus Mode
+                          PremiumUI.focusContainer(
+                            isFocusMode: isFocusMode,
+                            child: Center(
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(maxWidth: 600),
+                                child: RepaintBoundary(
+                                  child: Column(
+                                    children: [
+                                      _buildPremiumContentSection(
                                         title: l.translate('hindi_meaning'),
-                                        content: content?.hindiMeaning ?? "",
+                                        content: pageContent.hindiMeaning,
                                         icon: Iconsax.heart,
                                         accentColor: themeData.accentColor,
                                         themeData: themeData,
-                                        currentScale: scale,
-                                      );
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
+                                      ),
+                                      const SizedBox(height: 16),
 
-                                GestureDetector(
-                                  onScaleStart: (details) => _baseScale = _englishScale.value,
-                                  onScaleUpdate: (details) => _englishScale.value = (_baseScale * details.scale).clamp(0.5, 3.0),
-                                  child: ValueListenableBuilder<double>(
-                                    valueListenable: _englishScale,
-                                    builder: (context, scale, child) {
-                                      return _buildPremiumContentSection(
+                                      _buildPremiumContentSection(
                                         title: l.translate('english_translation'),
-                                        content: content?.translation ?? "",
+                                        content: pageContent.translation,
                                         icon: Iconsax.language_circle,
                                         accentColor: themeData.secondaryAccent,
                                         themeData: themeData,
-                                        currentScale: scale,
-                                      );
-                                    },
+                                      ),
+                                    ],
                                   ),
                                 ),
-                            ],
+                              ),
+                            ),
                           ),
-                        ),
-                        ),
-                      ),
-                    ),
-                    
-                    const SizedBox(height: 12),
-                    
-                    // Commentary remains but simplified
-                    Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 600),
-                        child: RepaintBoundary(
-                          child: GestureDetector(
-                            onScaleStart: (details) => _baseScale = _commentaryScale.value,
-                            onScaleUpdate: (details) => _commentaryScale.value = (_baseScale * details.scale).clamp(0.5, 3.0),
-                            child: ValueListenableBuilder<double>(
-                              valueListenable: _commentaryScale,
-                              builder: (context, scale, child) {
-                                return _buildPremiumContentSection(
+                          
+                          const SizedBox(height: 12),
+                          
+                          // Commentary remains but simplified
+                          Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 600),
+                              child: RepaintBoundary(
+                                child: _buildPremiumContentSection(
                                   title: l.translate('commentary'),
-                                  content: content?.commentary ?? "",
+                                  content: pageContent.commentary,
                                   icon: Iconsax.lamp_charge,
                                   accentColor: PremiumTokens.saffronGlow,
                                   isFocusMode: isFocusMode,
                                   themeData: themeData,
-                                  currentScale: scale,
-                                );
-                              },
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    ),
 
-                    if (content != null) ...[
-                      const SizedBox(height: 16),
-                      PremiumUI.sacredDivider(color: themeData.textColor.withValues(alpha: 0.1)),
-                      const SizedBox(height: 16),
-                      
-                      // Tags
-                      Center(
-                        child: Text(
-                          "THEMATIC RESONANCE",
-                          style: GoogleFonts.manrope(
-                            color: themeData.textColor.withValues(alpha: 0.2), 
-                            fontSize: 8, 
-                            fontWeight: FontWeight.bold, 
-                            letterSpacing: 2.0
-                          )
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Center(
-                        child: Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          alignment: WrapAlignment.center,
-                          children: [
-                            ...(content.contentTags).map((tag) => _buildTagChip("#$tag", themeData.accentColor.withValues(alpha: 0.05))),
-                            ...(content.audioTags).map((tag) => _buildTagChip(tag, PremiumTokens.activeAccent.withValues(alpha: 0.1), emoji: "🎧")),
-                            ...(content.videoTags).map((tag) => _buildTagChip(tag, PremiumTokens.activeAccent.withValues(alpha: 0.1), emoji: "🎬")),
-                            ...(content.imageTags).map((tag) => _buildTagChip(tag, PremiumTokens.saffronGlow.withValues(alpha: 0.1), emoji: "🖼️")),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      // "More Like This" Shelf
-                      Consumer(
-                        builder: (context, ref, child) {
-                          final similarList = ref.watch(similarContentProvider(content));
-                          if (similarList.isEmpty) return const SizedBox.shrink();
+                          const SizedBox(height: 16),
+                          PremiumUI.sacredDivider(color: themeData.textColor.withValues(alpha: 0.1)),
+                          const SizedBox(height: 16),
                           
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                child: Text(
-                                  "MORE LIKE THIS",
-                                  style: GoogleFonts.manrope(
-                                    color: themeData.textColor.withValues(alpha: 0.4),
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 2,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              SizedBox(
-                                height: 195,
-                                child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  physics: const BouncingScrollPhysics(),
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                  itemCount: similarList.length,
-                                  itemBuilder: (context, index) {
-                                    final item = similarList[index];
-                                    final match = ref.watch(matchPercentageProvider(item));
-                                    final cardImageUrl = item.displayImageUrl;
+                          // Tags
+                          Center(
+                            child: Text(
+                              "THEMATIC RESONANCE",
+                              style: GoogleFonts.manrope(
+                                color: themeData.textColor.withValues(alpha: 0.2), 
+                                fontSize: 8, 
+                                fontWeight: FontWeight.bold, 
+                                letterSpacing: 2.0
+                              )
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Center(
+                            child: Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              alignment: WrapAlignment.center,
+                              children: [
+                                ...(pageContent.contentTags).map((tag) => _buildTagChip("#$tag", themeData.accentColor.withValues(alpha: 0.05))),
+                                ...(pageContent.audioTags).map((tag) => _buildTagChip(tag, PremiumTokens.activeAccent.withValues(alpha: 0.1), emoji: "🎧")),
+                                ...(pageContent.videoTags).map((tag) => _buildTagChip(tag, PremiumTokens.activeAccent.withValues(alpha: 0.1), emoji: "🎬")),
+                                ...(pageContent.imageTags).map((tag) => _buildTagChip(tag, PremiumTokens.saffronGlow.withValues(alpha: 0.1), emoji: "🖼️")),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          // "More Like This" Shelf
+                          _buildMoreLikeThisShelf(pageContent, themeData),
 
-                                    return Padding(
-                                      padding: const EdgeInsets.only(right: 14),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          HapticFeedback.lightImpact();
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) => ContentDetailScreen(content: item),
-                                            ),
-                                          );
-                                        },
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(24),
-                                          child: BackdropFilter(
-                                            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                                            child: Container(
-                                              width: 350,
-                                              height: 165,
-                                              clipBehavior: Clip.antiAlias,
-                                              padding: const EdgeInsets.all(12),
-                                              decoration: BoxDecoration(
-                                                gradient: LinearGradient(
-                                                  begin: Alignment.topLeft,
-                                                  end: Alignment.bottomRight,
-                                                  colors: [
-                                                    themeData.cardColor.withValues(alpha: 0.85),
-                                                    themeData.cardColor.withValues(alpha: 0.45),
-                                                  ],
-                                                ),
-                                                borderRadius: BorderRadius.circular(24),
-                                                border: Border.all(
-                                                  color: themeData.accentColor.withValues(alpha: 0.16),
-                                                  width: 1.2,
-                                                ),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: themeData.accentColor.withValues(alpha: 0.05),
-                                                    blurRadius: 20,
-                                                    spreadRadius: 1,
-                                                    offset: const Offset(0, 6),
-                                                  ),
-                                                ],
-                                              ),
-                                              child: Row(
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  // Left: Visual Thumbnail with glowing border frame
-                                                  Container(
-                                                    padding: const EdgeInsets.all(2.5),
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(13),
-                                                      border: Border.all(
-                                                        color: themeData.accentColor.withValues(alpha: 0.25),
-                                                        width: 1.5,
-                                                      ),
-                                                    ),
-                                                    child: ClipRRect(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      child: Stack(
-                                                        children: [
-                                                          CachedNetworkImage(
-                                                            imageUrl: cardImageUrl,
-                                                            width: 95,
-                                                            height: 95,
-                                                            fit: BoxFit.cover,
-                                                            placeholder: (context, url) => Container(
-                                                              color: themeData.textColor.withValues(alpha: 0.05),
-                                                              child: Icon(Iconsax.image, color: themeData.textColor.withValues(alpha: 0.2), size: 18),
-                                                            ),
-                                                            errorWidget: (context, url, error) => Container(
-                                                              color: themeData.textColor.withValues(alpha: 0.05),
-                                                              child: Icon(Iconsax.image, color: themeData.textColor.withValues(alpha: 0.2), size: 18),
-                                                            ),
-                                                          ),
-                                                          Positioned(
-                                                            right: 4,
-                                                            bottom: 4,
-                                                            child: Container(
-                                                              padding: const EdgeInsets.all(3.5),
-                                                              decoration: BoxDecoration(
-                                                                shape: BoxShape.circle,
-                                                                color: Colors.black.withValues(alpha: 0.45),
-                                                              ),
-                                                              child: Icon(
-                                                                item.categoryIcon,
-                                                                size: 9,
-                                                                color: Colors.white,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 12),
-                                                  
-                                                  // Right: Metadata & Details
-                                                  Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            PremiumUI.categoryBadge(item.category, fontSize: 10),
-                                                            PremiumUI.resonanceBadge("$match% RESONANCE", fontSize: 9),
-                                                          ],
-                                                        ),
-                                                        
-                                                        // Title with literary serif font
-                                                        Expanded(
-                                                          child: Padding(
-                                                            padding: const EdgeInsets.only(top: 4, bottom: 2),
-                                                            child: Text(
-                                                              item.title,
-                                                              maxLines: 2,
-                                                              overflow: TextOverflow.ellipsis,
-                                                              style: GoogleFonts.spectral(
-                                                                color: themeData.textColor,
-                                                                fontWeight: FontWeight.bold,
-                                                                fontSize: 16,
-                                                                height: 1.25,
-                                                                letterSpacing: 0.1,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        
-                                                        // Author Metadata
-                                                        Row(
-                                                          children: [
-                                                            Icon(
-                                                              Iconsax.user,
-                                                              size: 12,
-                                                              color: themeData.textColor.withValues(alpha: 0.4),
-                                                            ),
-                                                            const SizedBox(width: 4),
-                                                            Expanded(
-                                                              child: Text(
-                                                                (item.author != null && item.author!.isNotEmpty)
-                                                                    ? item.author!
-                                                                    : "Sacred Tradition",
-                                                                maxLines: 1,
-                                                                overflow: TextOverflow.ellipsis,
-                                                                style: GoogleFonts.manrope(
-                                                                  color: themeData.textColor.withValues(alpha: 0.45),
-                                                                  fontSize: 12,
-                                                                  fontWeight: FontWeight.w500,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                    .animate()
-                                    .fadeIn(duration: 250.ms)
-                                    .slideX(begin: 0.03, end: 0, curve: Curves.easeOutCubic);
-                                  },
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    ],
-
-                    const SizedBox(height: 64),
-                    PremiumUI.focusContainer(
-                      isFocusMode: isFocusMode,
-                      child: Center(child: _buildPremiumFontControls(themeData)),
-                    ),
-                    
-                    const SizedBox(height: 48),
-                    RepaintBoundary(
-                      child: Center(
-                        child: AppTheme.lowPerformanceMode 
-                          ? Text("ॐ", style: GoogleFonts.spectral(fontSize: 48, color: themeData.textColor.withValues(alpha: 0.2)))
-                          : Text("ॐ", style: GoogleFonts.spectral(fontSize: 48, color: themeData.textColor))
-                          .animate(onPlay: (c) => c.repeat(reverse: true))
-                          .fadeIn(duration: 2.seconds)
-                          .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.1, 1.1), duration: 3.seconds)
-                          .blur(begin: const Offset(0, 0), end: const Offset(2, 2), duration: 3.seconds)
-                          .custom(builder: (c, v, child) => Opacity(opacity: 0.1 + (v * 0.1), child: child)),
-                      ),
-                    ),
-                     const SizedBox(height: 32),
-                  ]),  // SliverChildListDelegate
-                ),    // SliverList
-              ),      // SliverPadding
-            ],        // slivers: [
-          ),          // CustomScrollView
+                          const SizedBox(height: 64),
+                          PremiumUI.focusContainer(
+                            isFocusMode: isFocusMode,
+                            child: Center(child: _buildPremiumFontControls(themeData)),
+                          ),
+                          
+                          const SizedBox(height: 48),
+                          RepaintBoundary(
+                            child: Center(
+                              child: AppTheme.lowPerformanceMode 
+                                ? Text("ॐ", style: GoogleFonts.spectral(fontSize: 48, color: themeData.textColor.withValues(alpha: 0.2)))
+                                : Text("ॐ", style: GoogleFonts.spectral(fontSize: 48, color: themeData.textColor))
+                                .animate(onPlay: (c) => c.repeat(reverse: true))
+                                .fadeIn(duration: 2.seconds)
+                                .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.1, 1.1), duration: 3.seconds)
+                                .blur(begin: const Offset(0, 0), end: const Offset(2, 2), duration: 3.seconds)
+                                .custom(builder: (c, v, child) => Opacity(opacity: 0.1 + (v * 0.1), child: child)),
+                            ),
+                          ),
+                           const SizedBox(height: 32),
+                        ]), // SliverChildListDelegate
+                      ), // SliverList
+                    ), // SliverPadding
+                  ], // slivers
+                ),
+              );
+              },
+            ),
+          ),
 
           Positioned(
             top: 0,
@@ -650,12 +467,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             right: 0,
             child: AnimatedSlide(
               duration: 500.ms,
-              offset: (isFocusMode && !_isScrollingUp && _scrollController.hasClients && _scrollController.offset > 50) 
+              offset: (isFocusMode && !_isScrollingUp && _currentScrollOffset > 50) 
                  ? const Offset(0, -1) 
                  : const Offset(0, 0),
               child: AnimatedOpacity(
                 duration: 400.ms,
-                opacity: (isFocusMode && !_isScrollingUp && _scrollController.hasClients && _scrollController.offset > 50) 
+                opacity: (isFocusMode && !_isScrollingUp && _currentScrollOffset > 50) 
                    ? 0.0 
                    : 1.0,
                 child: _buildPremiumHeader(content, displayTitle, isFocusMode, themeData),
@@ -734,10 +551,106 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 color: themeData.textColor,
                 height: 1.2,
               ),
-            ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, end: 0),
+            ),
           
-
+          if (content != null) ...[
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              alignment: WrapAlignment.center,
+              children: [
+                if (content.author != null && content.author!.isNotEmpty)
+                  _buildRelationChip(
+                    context: context,
+                    label: content.author!,
+                    icon: Iconsax.user,
+                    color: PremiumTokens.saffronGlow,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => SaintDetailScreen(saintName: content.author!),
+                        ),
+                      );
+                    },
+                  ),
+                if (content.book != null && content.book!.isNotEmpty)
+                  _buildRelationChip(
+                    context: context,
+                    label: content.book!,
+                    icon: Iconsax.book,
+                    color: themeData.accentColor,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BookDetailScreen(bookName: content.book!),
+                        ),
+                      );
+                    },
+                  ),
+                if (content.raga != null && content.raga!.isNotEmpty)
+                  _buildRelationChip(
+                    context: context,
+                    label: content.raga!,
+                    icon: Iconsax.music,
+                    color: themeData.secondaryAccent,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => RagaDetailScreen(ragaName: content.raga!),
+                        ),
+                      );
+                    },
+                  ),
+              ],
+            ),
+          ],
         ],
+      ),
+    );
+  }
+
+  Widget _buildRelationChip({
+    required BuildContext context,
+    required String label,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    final isDark = PremiumTokens.isDark;
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: isDark ? 0.12 : 0.08),
+          borderRadius: BorderRadius.circular(100),
+          border: Border.all(
+            color: color.withValues(alpha: isDark ? 0.25 : 0.15),
+            width: 0.8,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 12, color: color),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: GoogleFonts.manrope(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: isDark ? color : PremiumTokens.textPrimary,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -880,47 +793,46 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     bool resetAfterPlay = true,
     required _ReadingThemeData themeData,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: themeData.textColor.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: themeData.textColor.withValues(alpha: 0.15),
-          width: 1,
+    return PressableScale(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
+      scaleFactor: 0.90,
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: themeData.textColor.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(100),
+          border: Border.all(
+            color: themeData.textColor.withValues(alpha: 0.15),
+            width: 1,
+          ),
         ),
-      ),
-      child: isAnimated 
-        ? PremiumUI.animatedIcon(
-            folder: animFolder!, 
-            fileName: animFile!, 
-            size: 20, 
-            color: (isActive || isToggled) ? themeData.accentColor : themeData.textColor,
-            isToggled: isToggled,
-            resetAfterPlay: resetAfterPlay,
-            onTap: () {
-              HapticFeedback.lightImpact();
-              onTap();
-            },
-          )
-        : InkWell(
-            onTap: () {
-              HapticFeedback.lightImpact();
-              onTap();
-            },
-            child: isCustomSvg
+        child: isAnimated 
+          ? PremiumUI.animatedIcon(
+              folder: animFolder!, 
+              fileName: animFile!, 
+              size: 20, 
+              color: (isActive || isToggled) ? themeData.accentColor : themeData.textColor,
+              isToggled: isToggled,
+              resetAfterPlay: resetAfterPlay,
+              onTap: onTap,
+            )
+          : isCustomSvg
               ? PremiumUI.customIcon(
                   fileName: svgFile!,
                   size: 20,
                   color: (isActive || isToggled) ? themeData.accentColor : themeData.textColor,
                 )
               : Icon(icon, color: (isActive || isToggled) ? themeData.accentColor : themeData.textColor, size: 20),
-          ),
+      ),
     );
   }
 
   Widget _buildPremiumSanskritCard(SacredContent? content, AppLocalization l, bool isFocusMode, _ReadingThemeData themeData, {double scale = 1.0}) {
     final text = content?.sanskritText ?? "";
+    if (text.trim().isEmpty) return const SizedBox.shrink();
     return RepaintBoundary(
       child: AnimatedContainer(
         duration: 500.ms,
@@ -956,7 +868,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
                             color: themeData.accentColor.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(100),
                           ),
                           child: Text(
                             l.translate('mantra_sloka_label').toUpperCase(),
@@ -974,7 +886,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 ),
               ),
             if (!isFocusMode) const SizedBox(height: 24),
-            SelectableText(
+            Text(
               _formatSacredText(text),
               textAlign: TextAlign.center,
               style: PremiumTokens.lailaStyle(
@@ -1068,45 +980,48 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
   Widget _buildPremiumFontControls(_ReadingThemeData themeData) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      width: 280,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: themeData.textColor.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(100),
         border: Border.all(
           color: themeData.textColor.withValues(alpha: 0.12),
           width: 1,
         ),
       ),
-      child: Row(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Iconsax.text, color: themeData.textColor.withValues(alpha: 0.35), size: 16),
-          const SizedBox(width: 16),
-          _buildFontToolButton(Iconsax.minus, () {
-            if (_fontSize > 14) setState(() => _fontSize -= 2);
-          }, themeData),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text("${_fontSize.toInt()}", style: GoogleFonts.outfit(color: themeData.textColor, fontWeight: FontWeight.bold)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Iconsax.text, color: themeData.textColor.withValues(alpha: 0.35), size: 14),
+              const SizedBox(width: 8),
+              Text(
+                "FONT SIZE: ${_fontSize.toInt()}",
+                style: GoogleFonts.outfit(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.5,
+                  color: themeData.textColor.withValues(alpha: 0.6),
+                ),
+              ),
+            ],
           ),
-          _buildFontToolButton(Iconsax.add, () {
-            if (_fontSize < 32) setState(() => _fontSize += 2);
-          }, themeData),
+          const SizedBox(height: 8),
+          DivineRulerPicker(
+            value: _fontSize,
+            min: 14.0,
+            max: 32.0,
+            step: 1.0,
+            onChanged: (val) {
+              setState(() => _fontSize = val);
+            },
+            activeColor: themeData.accentColor,
+            textColor: themeData.textColor,
+          ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildFontToolButton(IconData icon, VoidCallback onTap, _ReadingThemeData themeData) {
-    return InkWell(
-      onTap: () {
-        HapticFeedback.lightImpact();
-        onTap();
-      },
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(color: themeData.textColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
-        child: Icon(icon, color: themeData.textColor, size: 14),
       ),
     );
   }
@@ -1123,7 +1038,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(100),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1146,6 +1061,109 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildMoreLikeThisShelf(SacredContent pageContent, _ReadingThemeData themeData) {
+    return Consumer(
+      builder: (context, ref, _) {
+        final similarList = ref.watch(similarContentProvider(pageContent));
+        if (similarList.isEmpty) return const SizedBox.shrink();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Text(
+                "MORE LIKE THIS",
+                style: GoogleFonts.manrope(
+                  color: themeData.textColor.withValues(alpha: 0.3),
+                  fontSize: 9,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 3,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 150,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.zero,
+                itemCount: similarList.length.clamp(0, 8),
+                itemBuilder: (context, i) {
+                  final item = similarList[i];
+                  final match = ref.watch(matchPercentageProvider(item));
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ContentDetailScreen(content: item),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: 120,
+                      margin: EdgeInsets.only(right: i < similarList.length - 1 ? 12 : 0),
+                      decoration: BoxDecoration(
+                        color: themeData.accentColor.withValues(alpha: 0.06),
+                        borderRadius: BorderRadius.circular(32),
+                        border: Border.all(color: themeData.accentColor.withValues(alpha: 0.12)),
+                      ),
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (item.imageUrl != null)
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(24),
+                              child: SizedBox(
+                                height: 56,
+                                width: double.infinity,
+                                child: PremiumUI.networkImage(url: item.imageUrl!, fit: BoxFit.cover),
+                              ),
+                            )
+                          else
+                            Container(
+                              height: 56,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: themeData.accentColor.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Icon(Iconsax.book_1, size: 20, color: themeData.accentColor.withValues(alpha: 0.5)),
+                            ),
+                          const SizedBox(height: 8),
+                          Text(
+                            item.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: themeData.textColor.withValues(alpha: 0.8),
+                              height: 1.3,
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            "$match% match",
+                            style: GoogleFonts.inter(
+                              fontSize: 8,
+                              fontWeight: FontWeight.bold,
+                              color: PremiumTokens.activeAccent,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -1196,8 +1214,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       child: Consumer(
         builder: (context, ref, child) {
           final audioState = ref.watch(audioProvider);
-          final isPlaying = audioState.isPlaying;
-          final isLoading = audioState.isLoading;
+          final isCurrent = audioState.currentContent?.id == content?.id;
+          final isPlaying = isCurrent && audioState.isPlaying;
+          final isLoading = isCurrent && audioState.isLoading;
           final themeData = _getThemeData();
           
           return Column(
@@ -1293,9 +1312,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               ),
               const SizedBox(height: 16),
               // Progress Slider
-              _buildPremiumProgressBar(audioState, themeData),
+              _buildPremiumProgressBar(audioState, themeData, content),
               const SizedBox(height: 8),
-              _buildPremiumAudioTime(audioState, themeData),
+              _buildPremiumAudioTime(audioState, themeData, content),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -1353,11 +1372,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
   Widget _buildPlayerCircleButton(IconData icon, VoidCallback onTap, {double size = 44, double iconSize = 20}) {
     final themeData = _getThemeData();
-    return GestureDetector(
+    return PressableScale(
       onTap: () {
         HapticFeedback.lightImpact();
         onTap();
       },
+      scaleFactor: 0.90,
       child: Container(
         width: size,
         height: size,
@@ -1366,7 +1386,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           shape: BoxShape.circle,
           border: Border.all(color: themeData.textColor.withValues(alpha: 0.2)),
         ),
-        child: Icon(icon, color: themeData.textColor.withValues(alpha: 0.85), size: iconSize),
+        child: Center(
+          child: Icon(icon, color: themeData.textColor.withValues(alpha: 0.85), size: iconSize),
+        ),
       ),
     );
   }
@@ -1440,43 +1462,28 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Font Size", style: GoogleFonts.spectral(color: themeData.textColor, fontSize: 16)),
-                    // Pass the modal state setter if needed, but since Font Controls use parent setState,
-                    // we need to make sure they also trigger this modal rebuild.
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: themeData.textColor.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: themeData.textColor.withValues(alpha: 0.12),
-                          width: 1,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Iconsax.text, color: themeData.textColor.withValues(alpha: 0.35), size: 16),
-                          const SizedBox(width: 16),
-                          _buildFontToolButton(Iconsax.minus, () {
-                            if (_fontSize > 14) {
-                              setState(() => _fontSize -= 2);
-                              setModalState(() {});
-                            }
-                          }, themeData),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text("${_fontSize.toInt()}", style: GoogleFonts.outfit(color: themeData.textColor, fontWeight: FontWeight.bold)),
-                          ),
-                          _buildFontToolButton(Iconsax.add, () {
-                            if (_fontSize < 32) {
-                              setState(() => _fontSize += 2);
-                              setModalState(() {});
-                            }
-                          }, themeData),
-                        ],
+                    Text(
+                      "${_fontSize.toInt()}",
+                      style: GoogleFonts.outfit(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: themeData.accentColor,
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(height: 12),
+                DivineRulerPicker(
+                  value: _fontSize,
+                  min: 14.0,
+                  max: 32.0,
+                  step: 1.0,
+                  onChanged: (val) {
+                    setState(() => _fontSize = val);
+                    setModalState(() {});
+                  },
+                  activeColor: themeData.accentColor,
+                  textColor: themeData.textColor,
                 ),
                 const SizedBox(height: 32),
                 Text("Divine Backdrop", style: GoogleFonts.spectral(color: themeData.textColor, fontSize: 16)),
@@ -1505,7 +1512,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                         decoration: BoxDecoration(
                           color: btnBg,
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(100),
                           border: Border.all(
                             color: isSelected
                                 ? themeData.accentColor
@@ -1534,9 +1541,10 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  Widget _buildPremiumProgressBar(AudioState audioState, _ReadingThemeData themeData) {
-    final duration = audioState.duration;
-    final position = audioState.position;
+  Widget _buildPremiumProgressBar(AudioState audioState, _ReadingThemeData themeData, SacredContent? content) {
+    final isCurrent = audioState.currentContent?.id == content?.id;
+    final duration = isCurrent ? audioState.duration : Duration.zero;
+    final position = isCurrent ? audioState.position : Duration.zero;
     final progress = duration.inMilliseconds > 0 ? position.inMilliseconds / duration.inMilliseconds : 0.0;
 
     return SliderTheme(
@@ -1552,16 +1560,19 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       child: Slider(
         value: progress.clamp(0.0, 1.0),
         onChanged: (value) {
-          final newPos = Duration(milliseconds: (value * duration.inMilliseconds).toInt());
-          ref.read(audioProvider.notifier).seek(newPos);
+          if (isCurrent) {
+            final newPos = Duration(milliseconds: (value * duration.inMilliseconds).toInt());
+            ref.read(audioProvider.notifier).seek(newPos);
+          }
         },
       ),
     );
   }
 
-  Widget _buildPremiumAudioTime(AudioState audioState, _ReadingThemeData themeData) {
-    final duration = audioState.duration;
-    final position = audioState.position;
+  Widget _buildPremiumAudioTime(AudioState audioState, _ReadingThemeData themeData, SacredContent? content) {
+    final isCurrent = audioState.currentContent?.id == content?.id;
+    final duration = isCurrent ? audioState.duration : Duration.zero;
+    final position = isCurrent ? audioState.position : Duration.zero;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

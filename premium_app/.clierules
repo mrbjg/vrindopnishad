@@ -27,3 +27,38 @@ Never hardcode raw hex values, border-radii, or layout padding in widget files. 
 - Stop or pause AnimationControllers when their parent section is collapsed or hidden off-screen to preserve CPU cycles on budget hardware.
 - All network-fetched images must pass through a unified cache manager that restricts memory footprint (memCacheWidth/memCacheHeight scaling) to prevent out-of-memory crashes on low-performance phone viewports.
 
+Accessible Contrast Checking: Always verify that structural text headers (like section titles or tab labels) maintain a minimum contrast ratio of 4.5:1 against the active screen background. Avoid using light grey muted tones (like Color(0xFFA0A0A0)) for small text on light backgrounds; instead, use themed slate/charcoal tones for light themes and light silver/lavender-grey tones for dark themes.
+
+Strict Dependency Tracking:
+"Always consult pubspec.yaml and verify standard library features/signatures before modifying service files to avoid compile-time parameter mismatches."
+
+Automated Analysis Check:
+"At the end of every feature development cycle, run a sandboxed/bypassed static analysis command to verify that no new lints, warnings, or deprecations have been introduced."
+
+Minimize Import Overhead:
+"When refactoring code to use centralized service wrapper utilities, proactively scan and remove any now-unused package imports to keep imports minimal and clean."
+
+Selective Package Upgrades:
+
+When upgrading dependencies to address a specific issue (e.g. migration, warning), only bump the target packages and resolve their exact direct conflicts instead of upgrading all dependencies. This avoids breaking changes on unrelated modules (e.g., Riverpod state, local notification managers).
+Kotlin/Gradle DSL Uniformity:
+
+Always specify Kotlin/Gradle versions globally inside settings.gradle.kts using the apply false structure rather than hardcoding plugin versions inside build.gradle.kts to keep multi-module Android configurations clean and predictable.
+
+Rule for Automated Code Style Checks: "Always run static analysis (flutter analyze or lint checks) on any modified workspace files to proactively find and resolve unused variables, syntax warnings, or deprecated API usages before finishing a task."
+Rule for Optimistic UI Persistence: "When writing real-time backend updates, ensure that the UI applies optimistic local state changes first and rolls back gracefully on error, to deliver a high-performance, responsive experience for users."
+
+Rule for Decoupling UI and Mock Data: "Avoid hardcoding static fallback models/story bubbles inside UI build methods. Always define mock data in the provider/data layer and seed them to the remote database so the UI remains clean, decoupled, and 100% dynamic."
+Rule for System/Guide Visibility: "When implementing content expiration constraints (e.g. 24-hour story visibility), always include exception checks for system-owned or guide accounts to keep critical onboarding content permanently accessible."
+
+[build_verification]: Always verify code changes by running lint analysis or local compilation targets before completing any task, confirming zero syntax regressions are committed to source files.
+
+design_consistency
+
+Avoid hardcoding color opacities (e.g. Colors.black26, Colors.black38) for background surfaces and containers. Instead, use tokens (e.g., PremiumTokens.isDark) to dynamically adjust opacity levels between light mode and dark mode to maintain contrast ratio compliance (WCAG AA).
+
+
+touch_responsiveness
+
+Ensure all custom pressable gestures (e.g., scaling or fading buttons) auto-release their compressed states after a short threshold (max 100ms) to ensure lists feel light and responsive during long holds or scroll initiation.
+

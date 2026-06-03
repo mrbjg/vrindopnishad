@@ -4,6 +4,8 @@ import 'package:iconsax/iconsax.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../core/audio_provider.dart';
 import '../core/design_system.dart';
+import '../core/mood_theme_provider.dart';
+import '../core/color_theme_provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
@@ -40,6 +42,11 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
 
   @override
   Widget build(BuildContext context) {
+    PremiumTokens.of(context);
+    // Explicitly watch the providers to react instantly to any mood or color theme changes
+    ref.watch(moodPaletteProvider);
+    ref.watch(colorPaletteProvider);
+
     final audioState = ref.watch(audioProvider);
     final isPlaying = audioState.isPlaying;
     final currentContent = audioState.currentContent;
@@ -153,7 +160,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
   }
 
   Color _getCategoryColor(String category) {
-    return PremiumTokens.accentSilver;
+    return PremiumTokens.activeAccent;
   }
 
   Widget _buildHeader(BuildContext context) {
@@ -202,9 +209,9 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
                     icon: Iconsax.share,
                     label: "Share",
                     color: PremiumTokens.textPrimary,
-                    onTap: () {
+                    onTap: () async {
                       if (content != null) {
-                        Share.share("Listen to '${content.title}' on Sant-Vaani: Sacred Wisdom for Modern Life. 🕉️\n📲 Experience the Divine Path: https://vrindopnishad.in");
+                        await SharePlus.instance.share(ShareParams(text: "Listen to '${content.title}' on Sant-Vaani: Sacred Wisdom for Modern Life. 🕉️\n📲 Experience the Divine Path: https://vrindopnishad.in"));
                       }
                     },
                   ),
@@ -291,10 +298,10 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: PremiumTokens.surfaceMain,
-                border: Border.all(color: PremiumTokens.textMuted),
+                border: Border.all(color: PremiumTokens.borderMedium),
                 boxShadow: [
                   BoxShadow(
-                    color: PremiumTokens.etherealBlue.withValues(alpha: 0.4),
+                    color: PremiumTokens.activeAccent.withValues(alpha: 0.25),
                     blurRadius: 30,
                     spreadRadius: -5,
                   ),
@@ -331,9 +338,11 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: PremiumTokens.textMuted,
+          color: PremiumTokens.isDark 
+              ? Colors.white.withValues(alpha: 0.08) 
+              : Colors.black.withValues(alpha: 0.04),
           shape: BoxShape.circle,
-          border: Border.all(color: PremiumTokens.textMuted),
+          border: Border.all(color: PremiumTokens.borderSubtle),
         ),
         child: Icon(icon, color: PremiumTokens.textPrimary, size: 24),
       ),
@@ -356,10 +365,13 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               trackHeight: 2,
-              thumbShape: _CustomGlowingThumbShape(color: PremiumTokens.textPrimary, glowColor: PremiumTokens.etherealBlue),
+              thumbShape: _CustomGlowingThumbShape(
+                color: PremiumTokens.textPrimary, 
+                glowColor: PremiumTokens.activeAccent,
+              ),
               overlayShape: const RoundSliderOverlayShape(overlayRadius: 18),
-              activeTrackColor: PremiumTokens.accentSilver,
-              inactiveTrackColor: PremiumTokens.textMuted,
+              activeTrackColor: PremiumTokens.activeAccent,
+              inactiveTrackColor: PremiumTokens.borderMedium,
               activeTickMarkColor: Colors.transparent,
               inactiveTickMarkColor: Colors.transparent,
             ),

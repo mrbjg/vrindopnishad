@@ -24,7 +24,7 @@ class PressableScale extends StatefulWidget {
     required this.child,
     this.onTap,
     this.onLongPress,
-    this.scaleFactor = 0.97,
+    this.scaleFactor = 0.985,
     this.haptic = true,
   });
 
@@ -32,40 +32,76 @@ class PressableScale extends StatefulWidget {
   State<PressableScale> createState() => _PressableScaleState();
 }
 
-class _PressableScaleState extends State<PressableScale> {
-  bool _isPressed = false;
+class _PressableScaleState extends State<PressableScale>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _scaleAnimation;
+  late final Animation<double> _opacityAnimation;
 
-  void _onTapDown(TapDownDetails details) {
-    setState(() => _isPressed = true);
-    if (widget.haptic) {
-      HapticFeedback.selectionClick();
-    }
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 50),
+      reverseDuration: const Duration(milliseconds: 120),
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: widget.scaleFactor).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOut,
+        reverseCurve: Curves.easeOutBack,
+      ),
+    );
+    _opacityAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOut,
+        reverseCurve: Curves.easeOut,
+      ),
+    );
   }
 
-  void _onTapUp(TapUpDetails details) {
-    setState(() => _isPressed = false);
-  }
-
-  void _onTapCancel() {
-    setState(() => _isPressed = false);
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final bool isActionable = widget.onTap != null || widget.onLongPress != null;
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTapDown: _onTapDown,
-      onTapUp: _onTapUp,
-      onTapCancel: _onTapCancel,
-      onTap: widget.onTap,
+      onTapDown: isActionable
+          ? (_) {
+              _controller.forward();
+            }
+          : null,
+      onTapUp: isActionable
+          ? (_) {
+              _controller.reverse();
+            }
+          : null,
+      onTapCancel: isActionable
+          ? () {
+              _controller.reverse();
+            }
+          : null,
+      onTap: widget.onTap != null
+          ? () {
+              if (widget.haptic) {
+                HapticFeedback.selectionClick();
+              }
+              widget.onTap?.call();
+            }
+          : null,
       onLongPress: widget.onLongPress,
-      child: AnimatedScale(
-        scale: _isPressed ? widget.scaleFactor : 1.0,
-        duration: const Duration(milliseconds: 80),
-        curve: Curves.easeOut,
-        child: AnimatedOpacity(
-          opacity: _isPressed ? 0.85 : 1.0,
-          duration: const Duration(milliseconds: 80),
+      child: FadeTransition(
+        opacity: _opacityAnimation,
+        child: ScaleTransition(
+          scale: _scaleAnimation,
           child: widget.child,
         ),
       ),

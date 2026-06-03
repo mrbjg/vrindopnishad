@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../core/design_system.dart';
 import '../core/providers.dart';
@@ -31,8 +32,12 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen>
+    with AutomaticKeepAliveClientMixin {
   final ScrollController _scrollController = ScrollController();
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -64,6 +69,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }) {
     if (items.isEmpty) return const SizedBox.shrink();
 
+    // Ensure at least 2 items are present for a full visual shelf
+    final List<SacredContent> displayItems = List.from(items);
+    if (displayItems.length < 2) {
+      final allContent = ref.watch(sacredContentProvider);
+      for (final fallbackItem in allContent) {
+        if (!displayItems.any((x) => x.id == fallbackItem.id)) {
+          displayItems.add(fallbackItem);
+          if (displayItems.length >= 2) break;
+        }
+      }
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -80,14 +97,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
         SizedBox(
-          height: 235,
+          height: 200, // Increased height to prevent vertical clipping of Hindi titles/authors
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
-            itemCount: items.length,
+            itemCount: displayItems.length,
             itemBuilder: (context, index) {
-              final item = items[index];
+              final item = displayItems[index];
               return Padding(
                 padding: const EdgeInsets.only(right: 12),
                 child: PressableScale(
@@ -101,86 +118,114 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     );
                   },
                   child: SizedBox(
-                    width: 300,
-                    child: PremiumUI.relicStaticCard(
-                      padding: EdgeInsets.zero,
-                      borderRadius: 16,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: Stack(
-                          children: [
-                            // 1. Full-bleed background image
-                            Positioned.fill(
-                              child: PremiumUI.networkImage(
-                                url: _getEffectiveImageUrl(item),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            
-                            // 2. Premium dark gradient overlay (for high-contrast text readability)
-                            Positioned.fill(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.black.withValues(alpha: 0.2),
-                                      Colors.black.withValues(alpha: 0.8),
-                                    ],
+                    width: 160, // YouTube block width
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Image Thumbnail with border-radius and top badges
+                        Container(
+                          height: 90, // Aspect ratio roughly 16:9
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(color: PremiumTokens.borderSubtle),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(24),
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                PremiumUI.networkImage(
+                                  url: _getEffectiveImageUrl(item),
+                                  fit: BoxFit.cover,
+                                ),
+                                // Bottom subtle vignette
+                                Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.black.withValues(alpha: 0.45),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                            
-                            // 3. Card Content (Text & Badges)
-                            Padding(
-                              padding: const EdgeInsets.all(18),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      PremiumUI.categoryBadge(item.category, fontSize: 11, forceDarkStyle: true),
-                                      Consumer(
-                                        builder: (context, ref, child) {
-                                          final match = ref.watch(matchPercentageProvider(item));
-                                          return PremiumUI.resonanceBadge("$match% MATCH", fontSize: 10, forceDarkStyle: true);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  const Spacer(),
-                                  Text(
-                                    item.title,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.spectral(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 17,
-                                      height: 1.3,
+                                // Category badge top-left
+                                Positioned(
+                                  left: 6,
+                                  top: 6,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withValues(alpha: 0.65),
+                                      borderRadius: BorderRadius.circular(100),
                                     ),
-                                  ),
-                                  if (item.author != null && item.author!.isNotEmpty) ...[
-                                    const SizedBox(height: 6),
-                                    Text(
-                                      item.author!,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
+                                    child: Text(
+                                      item.category.toUpperCase(),
                                       style: PremiumTokens.sansStyle(
-                                        color: Colors.white.withValues(alpha: 0.7),
-                                        fontSize: 13,
+                                        color: PremiumTokens.activeAccentLight,
+                                        fontSize: 7,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  ],
-                                ],
-                              ),
+                                  ),
+                                ),
+                                // Resonance match badge top-right
+                                Consumer(
+                                  builder: (context, ref, child) {
+                                    final match = ref.watch(matchPercentageProvider(item));
+                                    return Positioned(
+                                      right: 6,
+                                      top: 6,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withValues(alpha: 0.65),
+                                          borderRadius: BorderRadius.circular(100),
+                                        ),
+                                        child: Text(
+                                          "$match%",
+                                          style: PremiumTokens.sansStyle(
+                                            color: PremiumTokens.saffronGlow,
+                                            fontSize: 7,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 8),
+                        // Title below the image
+                        Text(
+                          item.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: PremiumTokens.hindiAwareStyle(
+                            item.title,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: PremiumTokens.textPrimary,
+                          ),
+                        ),
+                        if (item.author != null && item.author!.isNotEmpty) ...[
+                          const SizedBox(height: 3),
+                          Text(
+                            item.author!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: PremiumTokens.sansStyle(
+                              color: PremiumTokens.textMuted,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                 ),
@@ -195,6 +240,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     PremiumTokens.of(context);
     // Watch themes to rebuild
     ref.watch(themeProvider);
@@ -306,7 +352,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         
                         return Column(
                           children: categories.map((catInfo) {
-                            final list = ref.watch(filteredContentProvider(catInfo.name));
+                            final list = ref.watch(personalizedFilteredContentProvider(catInfo.name));
                             if (list.isEmpty) return const SizedBox.shrink();
                             
                             return _buildHorizontalShelf(
@@ -366,90 +412,141 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
 // ─── Daily Motivation Section ──────────────────────────────
 
-class _DailyMotivationSection extends ConsumerWidget {
+class _DailyMotivationSection extends ConsumerStatefulWidget {
   const _DailyMotivationSection();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_DailyMotivationSection> createState() => _DailyMotivationSectionState();
+}
+
+class _DailyMotivationSectionState extends ConsumerState<_DailyMotivationSection> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
     final contextMotivation = ref.watch(contextualMotivationProvider);
+    final colorPalette = ref.watch(colorPaletteProvider);
 
     return GestureDetector(
+      onTapDown: (_) {
+        setState(() {
+          _isPressed = true;
+        });
+      },
+      onTapUp: (_) {
+        setState(() {
+          _isPressed = false;
+        });
+      },
+      onTapCancel: () {
+        setState(() {
+          _isPressed = false;
+        });
+      },
       onTap: () {
-        HapticFeedback.lightImpact();
-        Navigator.push(context,
-            MaterialPageRoute(builder: (_) => const DailyMotivationScreen()));
+        HapticFeedback.mediumImpact();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const DailyMotivationScreen()),
+        );
       },
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: PremiumTokens.surfaceMain.withValues(alpha: 0.6),
-            border: Border.all(color: PremiumTokens.borderSubtle),
-          ),
-          child: IntrinsicHeight(
-            child: Row(
-              children: [
-                // Accent gradient strip
-                Container(
-                  width: 4,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      bottomLeft: Radius.circular(20),
-                    ),
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        PremiumTokens.activeAccent.withValues(alpha: 0.8),
-                        PremiumTokens.activeAccent.withValues(alpha: 0.15),
-                      ],
-                    ),
-                  ),
-                ),
-                // Content
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 22, 20, 22),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Iconsax.sun_15, size: 13, color: PremiumTokens.activeAccent),
-                            const SizedBox(width: 8),
-                            Text(
-                              'DAILY INSIGHT',
-                              style: PremiumTokens.sansStyle(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 2.5,
-                                color: PremiumTokens.activeAccent,
-                              ),
-                            ),
-                            const Spacer(),
-                            Icon(Iconsax.arrow_right_3, size: 14, color: PremiumTokens.textMuted),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
-                        Text(
-                          contextMotivation,
-                          style: GoogleFonts.spectral(
-                            fontSize: 17,
-                            color: PremiumTokens.textPrimary,
-                            fontWeight: FontWeight.w300,
-                            height: 1.55,
-                            fontStyle: FontStyle.italic,
-                          ),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
+        child: AnimatedScale(
+          scale: _isPressed ? 0.96 : 1.0,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.easeOutCubic,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              color: PremiumTokens.surfaceMain.withValues(alpha: 0.5),
+              border: Border.all(
+                color: colorPalette.accent.withValues(alpha: 0.15),
+                width: 1.2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: colorPalette.accent.withValues(alpha: 0.08),
+                  blurRadius: 24,
+                  spreadRadius: -2,
+                  offset: const Offset(0, 8),
                 ),
               ],
+            ),
+            child: IntrinsicHeight(
+              child: Row(
+                children: [
+                  // Accent gradient strip
+                  Container(
+                    width: 5,
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        bottomLeft: Radius.circular(24),
+                      ),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          colorPalette.accent.withValues(alpha: 0.8),
+                          colorPalette.accent.withValues(alpha: 0.1),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Content
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 22, 20, 22),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Iconsax.sun_15,
+                                size: 14,
+                                color: colorPalette.accent,
+                              )
+                                  .animate(onPlay: (controller) => controller.repeat())
+                                  .rotate(duration: 15.seconds),
+                              const SizedBox(width: 8),
+                              Text(
+                                'DAILY INSIGHT',
+                                style: PremiumTokens.sansStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 3,
+                                  color: colorPalette.accent,
+                                ),
+                              ),
+                              const Spacer(),
+                              Icon(
+                                Iconsax.arrow_right_3,
+                                size: 14,
+                                color: PremiumTokens.textMuted,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 14),
+                          Text(
+                            contextMotivation,
+                            style: GoogleFonts.spectral(
+                              fontSize: 16.5,
+                              color: PremiumTokens.textPrimary,
+                              fontWeight: FontWeight.w300,
+                              height: 1.55,
+                              fontStyle: FontStyle.italic,
+                            ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -993,7 +1090,7 @@ class _QuickActionTile extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(24),
             color: PremiumTokens.surfaceMain.withValues(alpha: 0.5),
             border: Border.all(color: PremiumTokens.borderSubtle),
           ),
@@ -1005,7 +1102,7 @@ class _QuickActionTile extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(100),
                   color: accentColor.withValues(alpha: 0.1),
                   border: Border.all(
                     color: accentColor.withValues(alpha: 0.15),
@@ -1215,7 +1312,7 @@ class _PremiumNaamJapSection extends ConsumerWidget {
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: PremiumTokens.borderSubtle,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(100),
                       border: Border.all(
                         color: PremiumTokens.borderSubtle,
                       ),
@@ -1284,7 +1381,12 @@ class _CategoriesGridLite extends ConsumerWidget {
                       gradient: LinearGradient(
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
-                        colors: [PremiumTokens.scaffoldBg.withValues(alpha: 0.87), Colors.transparent],
+                        colors: [
+                          PremiumTokens.scaffoldBg.withValues(alpha: 0.96),
+                          PremiumTokens.scaffoldBg.withValues(alpha: 0.45),
+                          Colors.transparent,
+                        ],
+                        stops: const [0.0, 0.45, 1.0],
                       ),
                     ),
                   ),
@@ -1293,8 +1395,24 @@ class _CategoriesGridLite extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(cat.name, style: GoogleFonts.manrope(color: PremiumTokens.textPrimary, fontWeight: FontWeight.bold, fontSize: 14)),
-                        Text('${cat.count} Items', style: GoogleFonts.manrope(color: PremiumTokens.textMuted, fontSize: 10)),
+                        Text(
+                          cat.name.toUpperCase(),
+                          style: PremiumTokens.sansStyle(
+                            color: PremiumTokens.textPrimary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '${cat.count} Items',
+                          style: PremiumTokens.sansStyle(
+                            color: PremiumTokens.textSecondary,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -1424,74 +1542,104 @@ class _PremiumContentListLiteState extends ConsumerState<_PremiumContentListLite
               );
             },
             child: SizedBox(
-              height: 195,
+              height: 250, // Proportional height for split layout
               child: PremiumUI.relicStaticCard(
                 padding: EdgeInsets.zero,
                 borderColor: PremiumTokens.borderSubtle,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(24),
-                  child: Stack(
-                    fit: StackFit.expand,
+                  child: Column(
                     children: [
-                      // 1. Full-bleed background artwork
-                      Positioned.fill(
-                        child: PremiumUI.networkImage(
-                          url: item.displayImageUrl,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-
-                      // 2. Adaptive gradient overlay for text readability
-                      Positioned.fill(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                PremiumTokens.surfaceMain.withValues(alpha: 0.10),
-                                PremiumTokens.surfaceMain.withValues(alpha: 0.70),
-                                PremiumTokens.surfaceMain.withValues(alpha: 0.96),
-                              ],
-                              stops: const [0.0, 0.4, 0.85],
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // 3. Card content
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.end,
+                      // 1. Cover image (top portion)
+                      SizedBox(
+                        height: 120,
+                        width: double.infinity,
+                        child: Stack(
+                          fit: StackFit.expand,
                           children: [
-                            Text(
-                              item.title,
-                              style: PremiumTokens.sansStyle(
-                                color: PremiumTokens.textPrimary,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
+                            PremiumUI.networkImage(
+                              url: item.displayImageUrl,
+                              fit: BoxFit.cover,
                             ),
-                            const SizedBox(height: 6),
-                            Row(
-                              children: [
-                                PremiumUI.categoryBadge(item.category, fontSize: 10),
-                                const SizedBox(width: 8),
-                                Consumer(
-                                  builder: (context, ref, child) {
-                                    final match = ref.watch(matchPercentageProvider(item));
-                                    return PremiumUI.resonanceBadge("$match% MATCH", fontSize: 9);
-                                  },
+                            // Vignette overlay
+                            Positioned.fill(
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.black.withValues(alpha: 0.15),
+                                      Colors.transparent,
+                                      Colors.black.withValues(alpha: 0.35),
+                                    ],
+                                  ),
                                 ),
-                                const Spacer(),
-                                Icon(Iconsax.arrow_right_3, color: PremiumTokens.textMuted, size: 14),
-                              ],
+                              ),
+                            ),
+                            // Resonance percentage badge overlay
+                            Consumer(
+                              builder: (context, ref, child) {
+                                final match = ref.watch(matchPercentageProvider(item));
+                                return Positioned(
+                                  right: 12,
+                                  top: 12,
+                                  child: PremiumUI.resonanceBadge("$match% MATCH", fontSize: 8),
+                                );
+                              },
                             ),
                           ],
+                        ),
+                      ),
+
+                      // 2. Metadata details panel (bottom portion)
+                      Expanded(
+                        child: Container(
+                          color: PremiumTokens.surfaceMain.withValues(alpha: 0.95),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          child: Row(
+                            children: [
+                              // Left details text column
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    if (item.author != null)
+                                      Text(
+                                        item.author!.toUpperCase(),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: PremiumTokens.sansStyle(
+                                          color: PremiumTokens.saffronGlow,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w900,
+                                          letterSpacing: 1.0,
+                                        ),
+                                      ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      item.title,
+                                      style: PremiumTokens.hindiAwareStyle(
+                                        item.title,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: PremiumTokens.textPrimary,
+                                        isSacred: true,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 6),
+                                    PremiumUI.categoryBadge(item.category, fontSize: 10),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              // Right Actions Column (Arrow icon)
+                              Icon(Iconsax.arrow_right_3, color: PremiumTokens.textMuted, size: 20),
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -1629,7 +1777,7 @@ class _CompactProfileButton extends ConsumerWidget {
         child: photoUrl != null
             ? PremiumUI.networkImage(
                 url: photoUrl,
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(100),
                 width: 32,
                 height: 32,
               )

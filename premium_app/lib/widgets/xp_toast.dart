@@ -35,7 +35,11 @@ class XPToast {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('⚡', style: TextStyle(fontSize: 18)),
+                  const Icon(
+                    Icons.bolt,
+                    size: 18,
+                    color: Colors.amber,
+                  ),
                   const SizedBox(width: 12),
                   Text(
                     '+$amount XP',
@@ -63,13 +67,24 @@ class XPToast {
                   ),
                   if (multiplier > 1.0) ...[
                     const SizedBox(width: 8),
-                    Text(
-                      '🔥 ${multiplier}x',
-                      style: PremiumTokens.sansStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w900,
-                        color: PremiumTokens.saffronGlow,
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.whatshot,
+                          size: 14,
+                          color: PremiumTokens.saffronGlow,
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          '${multiplier}x',
+                          style: PremiumTokens.sansStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            color: PremiumTokens.saffronGlow,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ],

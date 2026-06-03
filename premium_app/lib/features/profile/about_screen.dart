@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/design_system.dart';
+import '../../widgets/animated_effects.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -214,7 +215,7 @@ class AboutScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(100),
                 ),
                 child: Icon(icon, color: PremiumTokens.activeAccent, size: 16),
               ),
@@ -249,7 +250,7 @@ class AboutScreen extends StatelessWidget {
   }
 
   Widget _buildPremiumSocialIcon(BuildContext context, IconData icon, String label, Color color) {
-    return GestureDetector(
+    return PressableScale(
       onTap: () {
         HapticFeedback.mediumImpact();
         PremiumUI.showNotification(

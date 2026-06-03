@@ -366,7 +366,9 @@ class PremiumTokens {
     final effectiveColor = color ?? textPrimary;
     final hasHindi = containsHindi(text);
     final adjustedFontSize = hasHindi ? (fontSize + 2) : fontSize; // Hindi matches English size better with +2
-    final adjustedFontWeight = hasHindi ? FontWeight.w600 : fontWeight; // Hindi needs more weight in Dark Mode
+    final adjustedFontWeight = hasHindi 
+        ? (fontWeight == FontWeight.normal ? FontWeight.w500 : fontWeight)
+        : fontWeight; // Softened to w500 for standard Hindi text to match premium minimal design
 
     if (!hasHindi) {
       return sansStyle(
@@ -396,7 +398,7 @@ class PremiumTokens {
   static TextStyle hindiSacredStyle({
     double fontSize = 18,
     Color? color,
-    FontWeight fontWeight = FontWeight.w600,
+    FontWeight fontWeight = FontWeight.w500,
     double height = 1.85,
   }) {
     return GoogleFonts.laila(
@@ -410,10 +412,10 @@ class PremiumTokens {
   static TextStyle hindiUIStyle({
     double fontSize = 14,
     Color? color,
-    FontWeight fontWeight = FontWeight.w600,
+    FontWeight fontWeight = FontWeight.w500,
     double height = 1.7,
   }) {
-    return GoogleFonts.poppins(
+    return GoogleFonts.hind(
       fontSize: fontSize,
       color: color ?? textPrimary,
       fontWeight: fontWeight,
@@ -555,11 +557,11 @@ class EmojiToIcon {
         color: color ?? Colors.white,
       );
     }
-    return Text(
-      emoji,
-      style: TextStyle(
-        fontSize: size * 0.85,
-      ),
+    // Fallback safeguard: Never render raw emojis in the UI, use a serene lotus-like spa icon
+    return Icon(
+      Icons.spa_outlined,
+      size: size,
+      color: color ?? Colors.white,
     );
   }
 }
@@ -629,7 +631,9 @@ class PremiumUI {
     final accent = PremiumTokens.activeAccent;
     final accentLight = PremiumTokens.activeAccentLight;
     final textColor = isDark ? accentLight : accent;
-    final bgColor = Colors.black.withValues(alpha: 0.5);
+    final bgColor = isDark 
+        ? Colors.black.withValues(alpha: 0.5) 
+        : accent.withValues(alpha: 0.12);
     final borderColor = isDark 
         ? accentLight.withValues(alpha: 0.30) 
         : accent.withValues(alpha: 0.25);
@@ -967,7 +971,7 @@ class PremiumUI {
   static Widget voidCard({
     required Widget child,
     Color accentColor = PremiumTokens.nebulaBlue,
-    double borderRadius = 12,
+    double borderRadius = 24,
     EdgeInsets padding = const EdgeInsets.all(16),
     EdgeInsets? margin,
   }) {
@@ -1377,7 +1381,7 @@ class PremiumUI {
     required Widget child,
     required VoidCallback onTap,
     Color? glowColor,
-    double borderRadius = 20,
+    double borderRadius = 100,
     EdgeInsets? padding,
   }) {
     return _LiquidGlassButtonInternal(
@@ -1394,7 +1398,7 @@ class PremiumUI {
     required Widget child,
     required VoidCallback onTap,
     Color? color,
-    double borderRadius = 20,
+    double borderRadius = 100,
     EdgeInsets? padding,
   }) {
     return _DesignSystemPressableScale(
@@ -1423,7 +1427,7 @@ class PremiumUI {
     required Widget child,
     required VoidCallback onTap,
     Color? color,
-    double borderRadius = 35,
+    double borderRadius = 100,
     EdgeInsets? padding,
     bool optimized = true, // Added optimized toggle
   }) {
@@ -2282,7 +2286,7 @@ class PremiumUI {
   static Widget skeleton({
     required double width, 
     required double height, 
-    double borderRadius = 12,
+    double borderRadius = 24,
   }) {
     return Builder(
       builder: (context) {
@@ -2519,10 +2523,10 @@ class _LiquidGlassCardInternalState extends State<_LiquidGlassCardInternal>
     super.initState();
     _pressController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 120),
-      reverseDuration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 60),
+      reverseDuration: const Duration(milliseconds: 150),
     );
-    _scaleAnim = Tween<double>(begin: 1.0, end: 0.965).animate(
+    _scaleAnim = Tween<double>(begin: 1.0, end: 0.985).animate(
       CurvedAnimation(parent: _pressController, curve: Curves.easeOut, reverseCurve: Curves.easeOutBack),
     );
   }
@@ -2586,15 +2590,17 @@ class _LiquidGlassCardInternalState extends State<_LiquidGlassCardInternal>
     if (!widget.interactive) return glassWidget;
 
     return GestureDetector(
-      onTapDown: (_) => _pressController.forward(),
-      onTapUp: (_) {
-        _pressController.reverse();
+      onTap: () {
+        _pressController.forward().then((_) {
+          if (mounted) {
+            _pressController.reverse();
+          }
+        });
         if (widget.onTap != null) {
           HapticFeedback.lightImpact();
           widget.onTap!();
         }
       },
-      onTapCancel: () => _pressController.reverse(),
       child: ScaleTransition(
         scale: _scaleAnim,
         child: glassWidget,
@@ -2617,7 +2623,7 @@ class _LiquidGlassButtonInternal extends StatefulWidget {
     required this.child,
     required this.onTap,
     this.glowColor,
-    this.borderRadius = 20,
+    this.borderRadius = 100,
     this.padding,
   });
 
@@ -2635,10 +2641,10 @@ class _LiquidGlassButtonInternalState extends State<_LiquidGlassButtonInternal>
     super.initState();
     _bounceController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 100),
-      reverseDuration: const Duration(milliseconds: 350),
+      duration: const Duration(milliseconds: 60),
+      reverseDuration: const Duration(milliseconds: 150),
     );
-    _bounceAnim = Tween<double>(begin: 1.0, end: 0.92).animate(
+    _bounceAnim = Tween<double>(begin: 1.0, end: 0.985).animate(
       CurvedAnimation(parent: _bounceController, curve: Curves.easeOut, reverseCurve: Curves.easeOutBack),
     );
   }
@@ -2653,13 +2659,15 @@ class _LiquidGlassButtonInternalState extends State<_LiquidGlassButtonInternal>
   Widget build(BuildContext context) {
     final activeGlow = widget.glowColor ?? PremiumTokens.activeAccent;
     return GestureDetector(
-      onTapDown: (_) => _bounceController.forward(),
-      onTapUp: (_) {
-        _bounceController.reverse();
+      onTap: () {
+        _bounceController.forward().then((_) {
+          if (mounted) {
+            _bounceController.reverse();
+          }
+        });
         HapticFeedback.lightImpact();
         widget.onTap();
       },
-      onTapCancel: () => _bounceController.reverse(),
       child: ScaleTransition(
         scale: _bounceAnim,
         child: Container(
@@ -2716,14 +2724,14 @@ class _DesignSystemPressableScaleState extends State<_DesignSystemPressableScale
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 90),
-      reverseDuration: const Duration(milliseconds: 320),
+      duration: const Duration(milliseconds: 50),
+      reverseDuration: const Duration(milliseconds: 120),
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.985).animate(
       CurvedAnimation(
         parent: _controller,
         curve: Curves.easeOut,
-        reverseCurve: Curves.elasticOut,
+        reverseCurve: Curves.easeOutBack,
       ),
     );
   }
@@ -2737,13 +2745,15 @@ class _DesignSystemPressableScaleState extends State<_DesignSystemPressableScale
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: (_) => _controller.forward(),
-      onTapUp: (_) {
-        _controller.reverse();
+      onTap: () {
+        _controller.forward().then((_) {
+          if (mounted) {
+            _controller.reverse();
+          }
+        });
         HapticFeedback.selectionClick();
         widget.onTap();
       },
-      onTapCancel: () => _controller.reverse(),
       child: ScaleTransition(
         scale: _scaleAnimation,
         child: widget.child,
@@ -3177,7 +3187,6 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal>
 
   void _handleTap() {
     HapticFeedback.mediumImpact();
-    _pressController.forward(from: 0.0).then((_) => _pressController.reverse());
     widget.onTap();
     if (_controller.duration != null) {
       _controller.forward(from: 0.0).then((_) {
@@ -3326,18 +3335,16 @@ class _PremiumAnimatedNavButtonState extends State<_PremiumAnimatedNavButton>
     super.initState();
     _pulseController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 250),
+      duration: const Duration(milliseconds: 60),
+      reverseDuration: const Duration(milliseconds: 140),
     );
-    _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 1.25).chain(CurveTween(curve: Curves.easeOutCubic)),
-        weight: 35,
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.90).animate(
+      CurvedAnimation(
+        parent: _pulseController,
+        curve: Curves.easeOut,
+        reverseCurve: Curves.easeOut,
       ),
-      TweenSequenceItem(
-        tween: Tween(begin: 1.25, end: 1.0).chain(CurveTween(curve: Curves.easeOutBack)),
-        weight: 65,
-      ),
-    ]).animate(_pulseController);
+    );
   }
 
   @override
@@ -3347,15 +3354,17 @@ class _PremiumAnimatedNavButtonState extends State<_PremiumAnimatedNavButton>
   }
 
   void _handleTap() {
-    HapticFeedback.mediumImpact();
+    HapticFeedback.selectionClick();
     widget.onTap(widget.index);
-    _pulseController.forward(from: 0.0);
   }
 
   @override
   Widget build(BuildContext context) {
     PremiumTokens.of(context);
     return GestureDetector(
+      onTapDown: (_) => _pulseController.forward(),
+      onTapUp: (_) => _pulseController.reverse(),
+      onTapCancel: () => _pulseController.reverse(),
       onTap: _handleTap,
       behavior: HitTestBehavior.opaque,
       child: RepaintBoundary(

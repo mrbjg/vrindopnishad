@@ -1,0 +1,19 @@
+# Ignore build, platform boilerplate, and asset files to focus on application logic
+.agents/
+build/
+android/
+ios/
+linux/
+macos/
+windows/
+web/
+assets/
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.svg
+*.mp3
+*.wav
+*.json

@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/journal_entry.dart';
+import '../core/firestore_service.dart';
 
 class JournalService {
   /// Fetch all journal entries for a user
   Future<List<JournalEntry>> fetchEntries(String uid) async {
     try {
-      final snapshot = await FirebaseFirestore.instance
+      final snapshot = await firestore
           .collection('journal_entries')
           .where('firebase_uid', isEqualTo: uid)
           .get();
@@ -29,7 +29,7 @@ class JournalService {
   /// Fetch all public entries (feed & chat)
   Future<List<JournalEntry>> fetchPublicEntries() async {
     try {
-      final snapshot = await FirebaseFirestore.instance
+      final snapshot = await firestore
           .collection('journal_entries')
           .limit(100)
           .get();
@@ -51,7 +51,7 @@ class JournalService {
 
   /// Stream all public entries in real-time
   Stream<List<JournalEntry>> getPublicEntriesStream() {
-    return FirebaseFirestore.instance
+    return firestore
         .collection('journal_entries')
         .snapshots()
         .map((snapshot) {
@@ -70,15 +70,11 @@ class JournalService {
   /// Create a new journal entry
   Future<JournalEntry?> createEntry(JournalEntry entry) async {
     try {
-      final docRef = await FirebaseFirestore.instance
+      await firestore
           .collection('journal_entries')
-          .add(entry.toJson());
-          
-      final doc = await docRef.get();
-      final data = doc.data()!;
-      data['id'] = doc.id;
-      
-      return JournalEntry.fromJson(data);
+          .doc(entry.id)
+          .set(entry.toJson());
+      return entry;
     } catch (e) {
       debugPrint('Error creating journal entry: $e');
       return null;
@@ -88,7 +84,7 @@ class JournalService {
   /// Update an existing journal entry
   Future<void> updateEntry(String id, Map<String, dynamic> updates) async {
     try {
-      await FirebaseFirestore.instance
+      await firestore
           .collection('journal_entries')
           .doc(id)
           .update(updates);
@@ -100,7 +96,7 @@ class JournalService {
   /// Delete a journal entry
   Future<void> deleteEntry(String id) async {
     try {
-      await FirebaseFirestore.instance
+      await firestore
           .collection('journal_entries')
           .doc(id)
           .delete();

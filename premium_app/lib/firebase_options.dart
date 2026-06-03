@@ -51,11 +51,11 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBUKS4FEGc4UxBVdKqAg_ebye0wZMG2Xms',
-    appId: '1:373857631114:ios:66d74abdd09886bfa82673',
-    messagingSenderId: '373857631114',
-    projectId: 'vrindavaanig',
-    storageBucket: 'vrindavaanig.firebasestorage.app',
+    apiKey: 'AIzaSyC_H5NWNm53LcmncHDiHZ9Xa2CqduQQIv4',
+    appId: '1:1027361942428:ios:a6ce547a905c9a4553b659',
+    messagingSenderId: '1027361942428',
+    projectId: 'santvaanig',
+    storageBucket: 'santvaanig.firebasestorage.app',
     iosBundleId: 'com.santvaani.santVaani',
   );
 
@@ -71,11 +71,11 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBUKS4FEGc4UxBVdKqAg_ebye0wZMG2Xms',
-    appId: '1:373857631114:ios:66d74abdd09886bfa82673',
-    messagingSenderId: '373857631114',
-    projectId: 'vrindavaanig',
-    storageBucket: 'vrindavaanig.firebasestorage.app',
+    apiKey: 'AIzaSyC_H5NWNm53LcmncHDiHZ9Xa2CqduQQIv4',
+    appId: '1:1027361942428:ios:a6ce547a905c9a4553b659',
+    messagingSenderId: '1027361942428',
+    projectId: 'santvaanig',
+    storageBucket: 'santvaanig.firebasestorage.app',
     iosBundleId: 'com.santvaani.santVaani',
   );
 

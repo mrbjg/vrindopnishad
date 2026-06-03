@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../core/design_system.dart';
 import '../../core/content_provider.dart';
 import '../../core/favorites_provider.dart';
@@ -58,7 +57,7 @@ class SavedItemsScreen extends ConsumerWidget {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: SizedBox(
-                            height: 185,
+                            height: 220, // Height for saved item cards
                             child: PressableScale(
                               onTap: () {
                                 Navigator.push(
@@ -77,67 +76,88 @@ class SavedItemsScreen extends ConsumerWidget {
                                 borderColor: PremiumTokens.borderSubtle,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(24),
-                                  child: Stack(
-                                    fit: StackFit.expand,
+                                  child: Column(
                                     children: [
-                                      // 1. Full-bleed background artwork
-                                      Positioned.fill(
-                                        child: PremiumUI.networkImage(
-                                          url: item.displayImageUrl,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-
-                                      // 2. Adaptive gradient overlay for text readability
-                                      Positioned.fill(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              begin: Alignment.topCenter,
-                                              end: Alignment.bottomCenter,
-                                              colors: [
-                                                PremiumTokens.surfaceMain.withValues(alpha: 0.10),
-                                                PremiumTokens.surfaceMain.withValues(alpha: 0.70),
-                                                PremiumTokens.surfaceMain.withValues(alpha: 0.96),
-                                              ],
-                                              stops: const [0.0, 0.45, 0.85],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-
-                                      // 3. Card content
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                                        child: Row(
+                                      // 1. Cover image (top portion)
+                                      SizedBox(
+                                        height: 110,
+                                        width: double.infinity,
+                                        child: Stack(
+                                          fit: StackFit.expand,
                                           children: [
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                children: [
-                                                  Text(
-                                                    item.title,
-                                                    style: GoogleFonts.manrope(
-                                                      color: PremiumTokens.textPrimary,
-                                                      fontSize: 19,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                    maxLines: 2,
-                                                    overflow: TextOverflow.ellipsis,
+                                            PremiumUI.networkImage(
+                                              url: item.displayImageUrl,
+                                              fit: BoxFit.cover,
+                                            ),
+                                            Positioned.fill(
+                                              child: DecoratedBox(
+                                                decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                    begin: Alignment.topCenter,
+                                                    end: Alignment.bottomCenter,
+                                                    colors: [
+                                                      Colors.black.withValues(alpha: 0.15),
+                                                      Colors.transparent,
+                                                      Colors.black.withValues(alpha: 0.3),
+                                                    ],
                                                   ),
-                                                   const SizedBox(height: 6),
-                                                   PremiumUI.categoryBadge(item.category, fontSize: 10),
-                                                ],
+                                                ),
                                               ),
                                             ),
-                                            const SizedBox(width: 12),
-                                            Icon(
-                                              Iconsax.arrow_right_3,
-                                              size: 24,
-                                              color: PremiumTokens.textPrimary.withValues(alpha: 0.8),
-                                            ),
                                           ],
+                                        ),
+                                      ),
+
+                                      // 2. Metadata details panel (bottom portion)
+                                      Expanded(
+                                        child: Container(
+                                          color: PremiumTokens.surfaceMain.withValues(alpha: 0.95),
+                                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    if (item.author != null)
+                                                      Text(
+                                                        item.author!.toUpperCase(),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: PremiumTokens.sansStyle(
+                                                          color: PremiumTokens.saffronGlow,
+                                                          fontSize: 9,
+                                                          fontWeight: FontWeight.w900,
+                                                          letterSpacing: 1.0,
+                                                        ),
+                                                      ),
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      item.title,
+                                                      style: PremiumTokens.hindiAwareStyle(
+                                                        item.title,
+                                                        fontSize: 15,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: PremiumTokens.textPrimary,
+                                                        isSacred: true,
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                    ),
+                                                    const SizedBox(height: 4),
+                                                    PremiumUI.categoryBadge(item.category, fontSize: 10),
+                                                  ],
+                                                ),
+                                              ),
+                                              const SizedBox(width: 12),
+                                              Icon(
+                                                Iconsax.arrow_right_3,
+                                                size: 20,
+                                                color: PremiumTokens.textPrimary.withValues(alpha: 0.8),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ],

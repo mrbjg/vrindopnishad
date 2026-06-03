@@ -66,15 +66,15 @@ class DailyChallenge {
   String get typeIcon {
     switch (type) {
       case 'naam_jap':
-        return '📿';
+        return 'Jap';
       case 'reading':
-        return '📖';
+        return 'Read';
       case 'ritual':
-        return '🕉️';
+        return 'Ritual';
       case 'meditation':
-        return '🧘';
+        return 'Dhyan';
       default:
-        return '⭐';
+        return 'Sadhana';
     }
   }
 

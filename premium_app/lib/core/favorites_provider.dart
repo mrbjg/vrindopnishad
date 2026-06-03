@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'firestore_service.dart';
 
 /// Provider for managing favorites with Cloud Firestore sync
 class FavoritesNotifier extends StateNotifier<Set<String>> {
@@ -50,7 +50,7 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
     if (_currentUser == null) return;
 
     try {
-      final response = await FirebaseFirestore.instance
+      final response = await firestore
           .collection('favorites')
           .where('user_id', isEqualTo: _currentUser!.uid)
           .get();
@@ -92,7 +92,7 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
     if (_currentUser != null) {
       try {
         final favId = '${_currentUser!.uid}_$contentId';
-        await FirebaseFirestore.instance.collection('favorites').doc(favId).set({
+        await firestore.collection('favorites').doc(favId).set({
           'user_id': _currentUser!.uid,
           'content_id': contentId,
           'created_at': DateTime.now().toUtc().toIso8601String(),
@@ -115,7 +115,7 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
     if (_currentUser != null) {
       try {
         final favId = '${_currentUser!.uid}_$contentId';
-        await FirebaseFirestore.instance
+        await firestore
             .collection('favorites')
             .doc(favId)
             .delete();

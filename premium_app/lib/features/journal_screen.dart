@@ -15,7 +15,12 @@ import '../core/color_theme_provider.dart';
 import '../core/auth_provider.dart';
 import '../core/providers.dart';
 import '../models/journal_entry.dart';
+import '../models/ritual.dart';
+import '../models/user_stats.dart';
 import '../widgets/animated_effects.dart';
+import '../core/rituals_provider.dart';
+import '../core/stats_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart' show User;
 
 final likedPostsProvider = StateNotifierProvider<LikedPostsNotifier, Set<String>>((ref) {
   return LikedPostsNotifier();
@@ -121,6 +126,356 @@ class LikedMessagesNotifier extends StateNotifier<Set<String>> {
   }
 }
 
+String? _getYoutubeId(String url) {
+  final cleanUrl = url.trim();
+  if (cleanUrl.isEmpty) return null;
+
+  // 1. Check for standard patterns
+  final regExp = RegExp(
+    r'^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*',
+    caseSensitive: false,
+  );
+  final match = regExp.firstMatch(cleanUrl);
+  if (match != null && match.groupCount >= 2) {
+    final id = match.group(2);
+    if (id != null && id.length == 11) {
+      return id;
+    }
+  }
+
+  // 2. Check for /live/ID pattern
+  final liveRegExp = RegExp(
+    r'youtube\.com/live/([^#\&\?]{11})',
+    caseSensitive: false,
+  );
+  final liveMatch = liveRegExp.firstMatch(cleanUrl);
+  if (liveMatch != null && liveMatch.groupCount >= 1) {
+    return liveMatch.group(1);
+  }
+
+  // 3. Check for /shorts/ID pattern
+  final shortsRegExp = RegExp(
+    r'youtube\.com/shorts/([^#\&\?]{11})',
+    caseSensitive: false,
+  );
+  final shortsMatch = shortsRegExp.firstMatch(cleanUrl);
+  if (shortsMatch != null && shortsMatch.groupCount >= 1) {
+    return shortsMatch.group(1);
+  }
+
+  return null;
+}
+
+bool _checkGoLiveEligibility({
+  required User? user,
+  required int todayJaps,
+  required List<Ritual> rituals,
+  required List<ReadingHistoryItem> readings,
+}) {
+  if (user == null) return false;
+  
+  // Developer/Admin override: always allow
+  final email = user.email?.toLowerCase() ?? '';
+  if (email.contains('admin') ||
+      email.contains('developer') ||
+      email.contains('dev') ||
+      user.uid == 'admin' ||
+      user.uid == 'developer') {
+    return true;
+  }
+  
+  // Regular criteria:
+  // 1. Daily Malas: >= 108 chants (1 Mala)
+  final hasCompletedMala = todayJaps >= 108;
+  
+  // 2. Daily Rituals: at least 1 completed ritual
+  final hasCompletedRitual = rituals.any((r) => r.isCompleted == true);
+  
+  // 3. Daily Readings: at least 1 shloka read today
+  final now = DateTime.now();
+  final hasReadToday = readings.any((item) {
+    return item.readAt.year == now.year &&
+           item.readAt.month == now.month &&
+           item.readAt.day == now.day;
+  });
+  
+  return hasCompletedMala && hasCompletedRitual && hasReadToday;
+}
+
+void _showGoLiveEligibilityChecklist({
+  required BuildContext context,
+  required int todayJaps,
+  required int completedRituals,
+  required int totalRituals,
+  required bool readToday,
+}) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return Dialog(
+        backgroundColor: Colors.transparent,
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            decoration: BoxDecoration(
+              color: PremiumTokens.sheetBgTop.withValues(alpha: 0.95),
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(color: PremiumTokens.borderSubtle),
+            ),
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Iconsax.lock, color: Colors.orangeAccent, size: 24),
+                    const SizedBox(width: 12),
+                    Text(
+                      "LIVE HOSTING CRITERIA",
+                      style: PremiumTokens.displayStyle(fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  "To ensure the Satsang Room remains a highly sanctified space, the algorithm allows seekers to host only when daily spiritual disciplines are complete.",
+                  style: PremiumTokens.sansStyle(fontSize: 11, color: PremiumTokens.textMuted).copyWith(height: 1.4),
+                ),
+                const SizedBox(height: 20),
+                
+                // Mala checklist item
+                _buildChecklistItem(
+                  title: "Daily Malas Chanted",
+                  subtitle: "$todayJaps / 108 chants completed today",
+                  isCompleted: todayJaps >= 108,
+                ),
+                const Divider(height: 24, color: Colors.white10),
+                
+                // Ritual checklist item
+                _buildChecklistItem(
+                  title: "Daily Spiritual Rituals",
+                  subtitle: "$completedRituals / $totalRituals rituals done today",
+                  isCompleted: completedRituals >= 1,
+                ),
+                const Divider(height: 24, color: Colors.white10),
+                
+                // Reading checklist item
+                _buildChecklistItem(
+                  title: "Daily Sacred Readings",
+                  subtitle: readToday ? "Completed daily reading" : "Read at least 1 shloka to complete",
+                  isCompleted: readToday,
+                ),
+                const SizedBox(height: 24),
+                
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: PremiumTokens.activeAccent,
+                      foregroundColor: PremiumTokens.onAccent,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    ),
+                    child: Text("ACKNOWLEDGE", style: PremiumTokens.sansStyle(fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+Widget _buildChecklistItem({
+  required String title,
+  required String subtitle,
+  required bool isCompleted,
+}) {
+  return Row(
+    children: [
+      Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: isCompleted ? Colors.green.withValues(alpha: 0.15) : Colors.red.withValues(alpha: 0.15),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          isCompleted ? Icons.check : Icons.close,
+          color: isCompleted ? Colors.greenAccent : Colors.redAccent,
+          size: 16,
+        ),
+      ),
+      const SizedBox(width: 16),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: PremiumTokens.sansStyle(fontSize: 13, fontWeight: FontWeight.bold, color: PremiumTokens.textPrimary),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              style: PremiumTokens.sansStyle(fontSize: 10, color: PremiumTokens.textMuted),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
+}
+
+class _GoLiveBroadcasterDialog extends ConsumerStatefulWidget {
+  const _GoLiveBroadcasterDialog();
+
+  @override
+  ConsumerState<_GoLiveBroadcasterDialog> createState() => _GoLiveBroadcasterDialogState();
+}
+
+class _GoLiveBroadcasterDialogState extends ConsumerState<_GoLiveBroadcasterDialog> {
+  final _titleController = TextEditingController();
+  final _urlController = TextEditingController();
+  String? _youtubeId;
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _urlController.dispose();
+    super.dispose();
+  }
+
+  void _parseUrl(String url) {
+    final id = _getYoutubeId(url.trim());
+    setState(() {
+      _youtubeId = id;
+    });
+  }
+
+  void _submit() {
+    final title = _titleController.text.trim();
+    final url = _urlController.text.trim();
+    if (title.isEmpty || url.isEmpty || _youtubeId == null) {
+      PremiumUI.showNotification(context, "Please enter a valid title and YouTube video link", color: Colors.redAccent);
+      return;
+    }
+
+    HapticFeedback.heavyImpact();
+    // Publish a new katha post to the database
+    ref.read(journalProvider.notifier).addPost(
+      title,
+      url,
+    );
+
+    Navigator.pop(context);
+    PremiumUI.showNotification(context, "You are now LIVE hosting the Satsang Room!", color: PremiumTokens.activeAccent);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          decoration: BoxDecoration(
+            color: PremiumTokens.sheetBgTop.withValues(alpha: 0.95),
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(color: PremiumTokens.borderSubtle),
+          ),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Iconsax.video_play, color: PremiumTokens.activeAccent, size: 24),
+                  const SizedBox(width: 12),
+                  Text(
+                    "GO LIVE & HOST KATHA",
+                    style: PremiumTokens.displayStyle(fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Host a devotional video stream for the entire community in real-time.",
+                style: PremiumTokens.sansStyle(fontSize: 11, color: PremiumTokens.textMuted),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _titleController,
+                style: PremiumTokens.sansStyle(color: PremiumTokens.textPrimary, fontSize: 13),
+                decoration: InputDecoration(
+                  hintText: "Enter Stream Topic (e.g. Nectar Pastimes of Shri Radha)",
+                  hintStyle: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontSize: 12),
+                  labelText: "STREAM TITLE",
+                  labelStyle: PremiumTokens.sansStyle(color: PremiumTokens.activeAccent, fontSize: 10, fontWeight: FontWeight.bold),
+                  enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: PremiumTokens.borderSubtle)),
+                  focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: PremiumTokens.activeAccent)),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _urlController,
+                onChanged: _parseUrl,
+                style: PremiumTokens.sansStyle(color: PremiumTokens.textPrimary, fontSize: 13),
+                decoration: InputDecoration(
+                  hintText: "Enter YouTube Video or Live link",
+                  hintStyle: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontSize: 12),
+                  labelText: "YOUTUBE URL",
+                  labelStyle: PremiumTokens.sansStyle(color: PremiumTokens.activeAccent, fontSize: 10, fontWeight: FontWeight.bold),
+                  enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: PremiumTokens.borderSubtle)),
+                  focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: PremiumTokens.activeAccent)),
+                ),
+              ),
+              if (_youtubeId != null) ...[
+                const SizedBox(height: 16),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    "https://img.youtube.com/vi/$_youtubeId/hqdefault.jpg",
+                    height: 100,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text("CANCEL", style: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontWeight: FontWeight.bold)),
+                  ),
+                  const SizedBox(width: 16),
+                  ElevatedButton(
+                    onPressed: _submit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: PremiumTokens.activeAccent,
+                      foregroundColor: PremiumTokens.onAccent,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    ),
+                    child: Text("GO LIVE NOW", style: PremiumTokens.sansStyle(fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class EternalReflectionScreen extends ConsumerStatefulWidget {
   final bool showBackButton;
 
@@ -131,12 +486,15 @@ class EternalReflectionScreen extends ConsumerStatefulWidget {
 }
 
 class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late TabController _tabController;
   final TextEditingController _chatController = TextEditingController();
   final ScrollController _chatScrollController = ScrollController();
   final Set<String> _playingVideoPostIds = {};
   bool _shouldForceScrollToBottom = false;
+
+  @override
+  bool get wantKeepAlive => true;
 
   bool _isVideoUrl(String url) {
     final lower = url.toLowerCase();
@@ -150,6 +508,209 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
            lower.contains('.mp4?') ||
            lower.contains('.mov?') ||
            lower.contains('.m3u8?');
+  }
+
+  void _showModifyPostOptions(JournalEntry post) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          decoration: BoxDecoration(
+            color: PremiumTokens.sheetBgTop,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            border: Border.all(color: PremiumTokens.borderSubtle),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: PremiumTokens.borderMedium,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                "POST OPTIONS",
+                style: PremiumTokens.sansStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: PremiumTokens.textPrimary),
+              ),
+              const SizedBox(height: 16),
+              Material(
+                color: Colors.transparent,
+                child: ListTile(
+                  leading: Icon(Iconsax.edit, color: PremiumTokens.activeAccent),
+                  title: Text("Edit Post", style: PremiumTokens.sansStyle(color: PremiumTokens.textPrimary)),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showEditPostDialog(post);
+                  },
+                ),
+              ),
+              Divider(color: PremiumTokens.borderSubtle),
+              Material(
+                color: Colors.transparent,
+                child: ListTile(
+                  leading: const Icon(Iconsax.trash, color: Colors.redAccent),
+                  title: Text("Delete Post", style: PremiumTokens.sansStyle(color: Colors.redAccent)),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _confirmDeletePost(post);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showEditPostDialog(JournalEntry post) {
+    final editController = TextEditingController(text: post.content);
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: PremiumTokens.sheetBgTop.withValues(alpha: 0.95),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: PremiumTokens.borderSubtle),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "EDIT POST",
+                    style: PremiumTokens.displayStyle(fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: editController,
+                    maxLines: 4,
+                    style: PremiumTokens.sansStyle(color: PremiumTokens.textPrimary, fontSize: 13),
+                    decoration: InputDecoration(
+                      hintText: "Edit your realization...",
+                      hintStyle: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontSize: 12),
+                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: PremiumTokens.borderSubtle), borderRadius: BorderRadius.circular(12)),
+                      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: PremiumTokens.activeAccent), borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(dialogContext),
+                        child: Text("CANCEL", style: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontWeight: FontWeight.bold)),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final text = editController.text.trim();
+                          if (text.isNotEmpty) {
+                            HapticFeedback.mediumImpact();
+                            await ref.read(journalProvider.notifier).updateEntry(post.id, content: text);
+                            if (dialogContext.mounted) {
+                              Navigator.pop(dialogContext);
+                            }
+                            if (mounted) {
+                              PremiumUI.showNotification(context, "Post modified successfully", color: PremiumTokens.activeAccent);
+                            }
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: PremiumTokens.activeAccent,
+                          foregroundColor: PremiumTokens.onAccent,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                        ),
+                        child: Text("SAVE", style: PremiumTokens.sansStyle(fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _confirmDeletePost(JournalEntry post) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: PremiumTokens.sheetBgTop.withValues(alpha: 0.95),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: PremiumTokens.borderSubtle),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Iconsax.trash, color: Colors.redAccent, size: 40),
+                  const SizedBox(height: 16),
+                  Text(
+                    "DELETE POST?",
+                    style: PremiumTokens.displayStyle(fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.5, color: Colors.redAccent),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Are you sure you want to permanently delete this post? This action cannot be undone.",
+                    textAlign: TextAlign.center,
+                    style: PremiumTokens.sansStyle(fontSize: 12, color: PremiumTokens.textMuted),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(dialogContext),
+                        child: Text("CANCEL", style: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontWeight: FontWeight.bold)),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          HapticFeedback.heavyImpact();
+                          await ref.read(journalProvider.notifier).deleteEntry(post.id);
+                          if (dialogContext.mounted) {
+                            Navigator.pop(dialogContext);
+                          }
+                          if (mounted) {
+                            PremiumUI.showNotification(context, "Post deleted successfully", color: Colors.redAccent);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                        ),
+                        child: Text("DELETE", style: PremiumTokens.sansStyle(fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -166,21 +727,9 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
     super.dispose();
   }
 
-  String? _getYoutubeId(String url) {
-    final regExp = RegExp(
-      r'^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*',
-      caseSensitive: false,
-      multiLine: false,
-    );
-    final match = regExp.firstMatch(url);
-    if (match != null && match.groupCount >= 2) {
-      return match.group(2);
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     final entriesAsync = ref.watch(journalProvider);
     ref.watch(themeProvider);
     ref.watch(colorPaletteProvider);
@@ -298,16 +847,16 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: PremiumUI.glassCard(
         padding: const EdgeInsets.all(4),
-        borderRadius: 24,
+        borderRadius: 100,
         child: TabBar(
           controller: _tabController,
           indicatorSize: TabBarIndicatorSize.tab,
           dividerColor: Colors.transparent,
-          splashBorderRadius: BorderRadius.circular(20),
+          splashBorderRadius: BorderRadius.circular(100),
           overlayColor: WidgetStateProperty.all(Colors.transparent),
           indicator: BoxDecoration(
             color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(100),
             border: Border.all(
               color: PremiumTokens.activeAccent.withValues(alpha: 0.25),
               width: 1,
@@ -384,6 +933,10 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
       final type = e.moonPhase?.split('|').first ?? '';
       if (type != 'story' && type != 'post') return false;
       if (e.content.trim().isEmpty) return false;
+      
+      // Keep guides/system stories always visible, others expire in 24 hours
+      if (e.firebaseUid.startsWith('guide-') || e.firebaseUid == 'system') return true;
+
       return now.difference(e.createdAt).inHours < 24;
     }).toList();
 
@@ -412,28 +965,40 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
       ),
     );
 
-    // B. "LIVE" Satsang Room bubble
+    // Check if there is an active live stream
+    JournalEntry? activeKatha;
+    for (final entry in entries) {
+      final type = entry.moonPhase?.split('|').first ?? 'post';
+      final parts = entry.moonPhase?.split('|') ?? [];
+      final videoUrl = parts.length > 1 ? parts[1] : '';
+      if (type == 'post' && videoUrl.isNotEmpty) {
+        activeKatha = entry;
+        break;
+      }
+    }
+
+    final hasActiveKatha = activeKatha != null;
+    final String liveAvatar = hasActiveKatha
+        ? (activeKatha.moonPhase!.split('|').length > 2 ? activeKatha.moonPhase!.split('|')[2] : '')
+        : '';
+
+    // B. "Satsang Room" (dynamic LIVE status) bubble
     storyItems.add(
       _buildStoryItem(
-        name: "LIVE",
-        avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
-        isLive: true,
+        name: hasActiveKatha ? "LIVE" : "Satsang",
+        avatarUrl: hasActiveKatha && liveAvatar.isNotEmpty
+            ? liveAvatar
+            : "https://images.unsplash.com/photo-1545127398-14699f92334b", // Peaceful satsang assembly fallback image
+        isLive: hasActiveKatha,
         onTap: () {
           HapticFeedback.heavyImpact();
-          showModalBottomSheet(
-            context: context,
-            backgroundColor: Colors.transparent,
-            isScrollControlled: true,
-            builder: (_) => const _LiveSatsangRoomSheet(),
-          );
+          _showLiveOptionsSheet(context);
         },
       ),
     );
 
     // C. Real-time stories from database
     for (final story in sortedRealtimeStories) {
-      // Skip showing yourself in this list as "Your Voice" is already present
-      if (user != null && story.firebaseUid == user.uid) continue;
 
       final parts = story.moonPhase?.split('|') ?? [];
       final type = parts.first;
@@ -467,83 +1032,6 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
       );
     }
 
-    // D. Static mock stories as Guides (always appended so layout is rich)
-    const gopalId = "mock-gopal-das";
-    storyItems.add(
-      _buildStoryItem(
-        name: "gopal_das",
-        avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
-        isRead: readStories.contains(gopalId),
-        onTap: () {
-          ref.read(readStoriesProvider.notifier).markAsRead(gopalId);
-          _showStoryViewer(
-            context,
-            "gopal_das",
-            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
-            "“Chant the Holy Name, and the heart will mirror the sky of pure devotion.”",
-            false,
-          );
-        },
-      ),
-    );
-
-    const sitaId = "mock-sita-ram";
-    storyItems.add(
-      _buildStoryItem(
-        name: "sita_ram",
-        avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
-        isRead: readStories.contains(sitaId),
-        onTap: () {
-          ref.read(readStoriesProvider.notifier).markAsRead(sitaId);
-          _showStoryViewer(
-            context,
-            "sita_ram",
-            "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
-            "“Every breath is a sacred gift; offer it in loving remembrance at the Lotus Feet.”",
-            false,
-          );
-        },
-      ),
-    );
-
-    const gopiId = "mock-braj-gopi";
-    storyItems.add(
-      _buildStoryItem(
-        name: "braj_gopi",
-        avatarUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-        isRead: readStories.contains(gopiId),
-        onTap: () {
-          ref.read(readStoriesProvider.notifier).markAsRead(gopiId);
-          _showStoryViewer(
-            context,
-            "braj_gopi",
-            "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-            "“In the dust of Sri Vrindavan, find the eternal footprints of the Divine Couple.”",
-            false,
-          );
-        },
-      ),
-    );
-
-    const anandId = "mock-anand-das";
-    storyItems.add(
-      _buildStoryItem(
-        name: "anand_d",
-        avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
-        isRead: readStories.contains(anandId),
-        onTap: () {
-          ref.read(readStoriesProvider.notifier).markAsRead(anandId);
-          _showStoryViewer(
-            context,
-            "anand_d",
-            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
-            "“Humility is the vessel, devotion is the nectar. Empty yourself to be filled.”",
-            false,
-          );
-        },
-      ),
-    );
-
     return Container(
       height: 98,
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -553,6 +1041,227 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: storyItems,
       ),
+    );
+  }
+
+  void _showLiveOptionsSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return Consumer(
+          builder: (context, ref, _) {
+            final user = ref.watch(authStateProvider).value;
+            final todayJaps = ref.watch(naamJapStateProvider).today;
+            final ritualsVal = ref.watch(ritualsProvider).value ?? [];
+            final readingsVal = ref.watch(readingHistoryProvider).value ?? [];
+            
+            final completedRituals = ritualsVal.where((r) => r.isCompleted).length;
+            final totalRituals = ritualsVal.length;
+            
+            final now = DateTime.now();
+            final hasReadToday = readingsVal.any((item) {
+              return item.readAt.year == now.year &&
+                     item.readAt.month == now.month &&
+                     item.readAt.day == now.day;
+            });
+            
+            final isEligible = _checkGoLiveEligibility(
+              user: user,
+              todayJaps: todayJaps,
+              rituals: ritualsVal,
+              readings: readingsVal,
+            );
+
+            return Container(
+              decoration: BoxDecoration(
+                color: PremiumTokens.sheetBgTop,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+                border: Border.all(color: PremiumTokens.borderSubtle),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: PremiumTokens.borderMedium,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Icon(Iconsax.video_play5, color: PremiumTokens.activeAccent, size: 24),
+                      const SizedBox(width: 12),
+                      Text(
+                        "SATSANG ROOM OPTIONS",
+                        style: PremiumTokens.displayStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Join the congregation as a listener or host your own live stream once your daily spiritual practices are complete.",
+                    style: PremiumTokens.sansStyle(fontSize: 11, color: PremiumTokens.textMuted),
+                  ),
+                  const SizedBox(height: 24),
+                  
+                  // Option 1: Join Satsang Room
+                  Material(
+                    color: Colors.transparent,
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: const Icon(Iconsax.headphone, color: Colors.greenAccent, size: 20),
+                      ),
+                      title: Text(
+                        "Join Satsang Room",
+                        style: PremiumTokens.sansStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                      ),
+                      subtitle: Text(
+                        "Listen to active discourse and chant along",
+                        style: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontSize: 10),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        showModalBottomSheet(
+                          context: context,
+                          backgroundColor: Colors.transparent,
+                          isScrollControlled: true,
+                          builder: (_) => const _LiveSatsangRoomSheet(),
+                        );
+                      },
+                    ),
+                  ),
+                  const Divider(color: Colors.white10, height: 24),
+
+                  // Option 2: Go Live & Host Katha
+                  Material(
+                    color: Colors.transparent,
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: isEligible ? PremiumTokens.activeAccent.withValues(alpha: 0.15) : Colors.red.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: Icon(
+                          isEligible ? Iconsax.video_play : Iconsax.lock,
+                          color: isEligible ? PremiumTokens.activeAccent : Colors.redAccent,
+                          size: 20,
+                        ),
+                      ),
+                      title: Row(
+                        children: [
+                          Text(
+                            "Go Live & Host",
+                            style: PremiumTokens.sansStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                              color: isEligible ? PremiumTokens.textPrimary : PremiumTokens.textMuted,
+                            ),
+                          ),
+                          if (!isEligible) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.orange.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: Text(
+                                "LOCKED",
+                                style: PremiumTokens.sansStyle(
+                                  fontSize: 7.5,
+                                  fontWeight: FontWeight.w900,
+                                  color: Colors.orangeAccent,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      subtitle: Text(
+                        isEligible 
+                            ? "Start broadcasting a spiritual video stream" 
+                            : "Unlock by completing daily spiritual disciplines",
+                        style: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontSize: 10),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        if (isEligible) {
+                          showDialog(
+                            context: context,
+                            builder: (_) => const _GoLiveBroadcasterDialog(),
+                          );
+                        } else {
+                          _showGoLiveEligibilityChecklist(
+                            context: context,
+                            todayJaps: todayJaps,
+                            completedRituals: completedRituals,
+                            totalRituals: totalRituals,
+                            readToday: hasReadToday,
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                  const Divider(color: Colors.white10, height: 24),
+
+                  // Option 3: Check Standing
+                  Material(
+                    color: Colors.transparent,
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: const Icon(Iconsax.task, color: Colors.orangeAccent, size: 20),
+                      ),
+                      title: Text(
+                        "Check Live Host Eligibility",
+                        style: PremiumTokens.sansStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                      ),
+                      subtitle: Text(
+                        "View your daily spiritual discipline standings",
+                        style: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontSize: 10),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        _showGoLiveEligibilityChecklist(
+                          context: context,
+                          todayJaps: todayJaps,
+                          completedRituals: completedRituals,
+                          totalRituals: totalRituals,
+                          readToday: hasReadToday,
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -641,7 +1350,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                   height: 50,
                   decoration: const BoxDecoration(shape: BoxShape.circle),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(25),
+                    borderRadius: BorderRadius.circular(100),
                     child: avatarUrl.isNotEmpty
                         ? PremiumUI.networkImage(url: avatarUrl, fit: BoxFit.cover)
                         : Container(
@@ -680,7 +1389,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
                       decoration: BoxDecoration(
                         color: Colors.redAccent,
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(100),
                       ),
                       child: Text(
                         "LIVE",
@@ -732,12 +1441,12 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
   }
 
   Widget _buildFeedPostCard(JournalEntry post, String? videoUrl, String? avatarUrl, String? ytId) {
+    final user = ref.watch(authStateProvider).value;
     final dateStr = "${post.createdAt.day}/${post.createdAt.month} ${post.createdAt.hour}:${post.createdAt.minute.toString().padLeft(2, '0')}";
-    final isLiked = ref.watch(likedPostsProvider).contains(post.id);
+    final isLiked = post.likedBy.contains(user?.uid ?? '');
     final isSaved = ref.watch(savedPostsProvider).contains(post.id);
 
-    final int baseLikes = post.id.hashCode.abs() % 45 + 5;
-    final int displayLikes = isLiked ? baseLikes + 1 : baseLikes;
+    final int displayLikes = post.likedBy.length;
 
     final isPlayingVideo = _playingVideoPostIds.contains(post.id);
     final entries = ref.watch(journalProvider).value ?? [];
@@ -752,7 +1461,6 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
         ? comments.sublist(comments.length - 2) 
         : comments;
 
-    final user = ref.read(authStateProvider).value;
     final inlineCommentController = TextEditingController();
 
     return Padding(
@@ -760,7 +1468,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
       child: GestureDetector(
         onDoubleTap: () {
           HapticFeedback.heavyImpact();
-          if (!isLiked) ref.read(likedPostsProvider.notifier).toggleLike(post.id);
+          ref.read(journalProvider.notifier).toggleLike(post.id);
         },
         child: PremiumUI.relicStaticCard(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -780,7 +1488,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                       border: Border.all(color: PremiumTokens.activeAccent.withValues(alpha: 0.2)),
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(19),
+                      borderRadius: BorderRadius.circular(100),
                       child: avatarUrl != null && avatarUrl.isNotEmpty
                           ? PremiumUI.networkImage(url: avatarUrl, fit: BoxFit.cover)
                           : Icon(Iconsax.user, size: 16, color: PremiumTokens.activeAccent),
@@ -810,6 +1518,18 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                       ],
                     ),
                   ),
+                  if (post.firebaseUid == user?.uid) ...[
+                    IconButton(
+                      icon: Icon(Icons.more_horiz, color: PremiumTokens.textMuted, size: 20),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        _showModifyPostOptions(post);
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                  ],
                   if (videoUrl != null && videoUrl.isNotEmpty)
                     Icon(Iconsax.video_play5, color: PremiumTokens.activeAccent, size: 20),
                 ],
@@ -831,7 +1551,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
               _InlineVideoPlayer(videoUrl: videoUrl ?? '', ytId: ytId),
             ] else if (ytId != null) ...[
               const SizedBox(height: 14),
-              GestureDetector(
+              PressableScale(
                 onTap: () {
                   HapticFeedback.mediumImpact();
                   setState(() {
@@ -842,7 +1562,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                   height: 160,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(24),
                     color: Colors.black45,
                     border: Border.all(color: PremiumTokens.borderSubtle),
                     image: DecorationImage(
@@ -898,7 +1618,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                 if (isPlayingVideo)
                   _InlineVideoPlayer(videoUrl: videoUrl)
                 else
-                  GestureDetector(
+                  PressableScale(
                     onTap: () {
                       HapticFeedback.mediumImpact();
                       setState(() {
@@ -906,34 +1626,80 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                       });
                     },
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: Colors.black38,
-                        border: Border.all(color: PremiumTokens.borderSubtle),
+                        borderRadius: BorderRadius.circular(24),
+                        color: PremiumTokens.isDark
+                            ? Colors.white.withValues(alpha: 0.04)
+                            : PremiumTokens.activeAccent.withValues(alpha: 0.06),
+                        border: Border.all(
+                          color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
+                          width: 1,
+                        ),
                       ),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.play_circle_fill, color: PremiumTokens.activeAccent, size: 28),
-                          const SizedBox(width: 10),
+                          // Left circular glowing icon
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                colors: [
+                                  PremiumTokens.activeAccent,
+                                  PremiumTokens.activeAccent.withValues(alpha: 0.8),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: PremiumTokens.activeAccent.withValues(alpha: 0.3),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              videoUrl.contains('list=') ? Iconsax.music_playlist : Icons.play_arrow_rounded,
+                              color: Colors.white,
+                              size: 22,
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          // Text descriptions
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Play Video Stream Natively",
-                                  style: PremiumTokens.sansStyle(color: PremiumTokens.textPrimary, fontSize: 13, fontWeight: FontWeight.bold),
+                                  videoUrl.contains('list=') ? "Play YouTube Playlist Natively" : "Play Video Stream Natively",
+                                  style: PremiumTokens.sansStyle(
+                                    color: PremiumTokens.textPrimary,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                const SizedBox(height: 2),
+                                const SizedBox(height: 3),
                                 Text(
                                   videoUrl,
-                                  style: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontSize: 10),
+                                  style: PremiumTokens.sansStyle(
+                                    color: PremiumTokens.textSecondary,
+                                    fontSize: 10,
+                                  ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),
+                          ),
+                          const SizedBox(width: 8),
+                          // Subtle arrow icon
+                          Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 14,
+                            color: PremiumTokens.textMuted,
                           ),
                         ],
                       ),
@@ -983,7 +1749,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                   PressableScale(
                     onTap: () {
                       HapticFeedback.mediumImpact();
-                      ref.read(likedPostsProvider.notifier).toggleLike(post.id);
+                      ref.read(journalProvider.notifier).toggleLike(post.id);
                     },
                     child: Icon(
                       isLiked ? Icons.favorite : Iconsax.heart,
@@ -1009,9 +1775,9 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                   
                   // Share Button (Paper Airplane)
                   PressableScale(
-                    onTap: () {
+                    onTap: () async {
                       HapticFeedback.mediumImpact();
-                      Share.share("🕉️ ${post.title} 🕉️\n\n${post.content}\n\n— Shared from Sant-Vaani (Vrindopnishad) 🙏\n📲 Join the satsang: https://vrindopnishad.in");
+                      await SharePlus.instance.share(ShareParams(text: "🕉️ ${post.title} 🕉️\n\n${post.content}\n\n— Shared from Sant-Vaani (Vrindopnishad) 🙏\n📲 Join the satsang: https://vrindopnishad.in"));
                     },
                     child: Icon(
                       Iconsax.send_1,
@@ -1432,9 +2198,84 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
     final text = _chatController.text.trim();
     if (text.isEmpty) return;
     HapticFeedback.lightImpact();
+
+    if (_isYoutubeLive(text)) {
+      showDialog(
+        context: context,
+        builder: (dialogContext) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: PremiumTokens.sheetBgTop.withValues(alpha: 0.95),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: PremiumTokens.borderSubtle),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Iconsax.video_play5, color: Colors.redAccent, size: 40),
+                    const SizedBox(height: 16),
+                    Text(
+                      "LIVE SATSANG DETECTED",
+                      style: PremiumTokens.displayStyle(fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Do you want to host this live video in the community's Live Satsang Room, or post it as a chat link?",
+                      textAlign: TextAlign.center,
+                      style: PremiumTokens.sansStyle(fontSize: 12, color: PremiumTokens.textMuted),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(dialogContext);
+                            _shouldForceScrollToBottom = true;
+                            ref.read(journalProvider.notifier).addChatMessage(text);
+                            _chatController.clear();
+                          },
+                          child: Text("POST TO CHAT", style: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontWeight: FontWeight.bold)),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(dialogContext);
+                            ref.read(journalProvider.notifier).addLivePost("Live Satsang Room", text);
+                            _chatController.clear();
+                            PremiumUI.showNotification(context, "You are now LIVE in the Satsang Room!", color: PremiumTokens.activeAccent);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                          ),
+                          child: Text("GO LIVE", style: PremiumTokens.sansStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+      );
+      return;
+    }
+
     _shouldForceScrollToBottom = true;
     ref.read(journalProvider.notifier).addChatMessage(text);
     _chatController.clear();
+  }
+
+  bool _isYoutubeLive(String url) {
+    final clean = url.trim().toLowerCase();
+    return (clean.contains('youtube.com/live') || clean.contains('/live/')) && (clean.contains('youtube.com') || clean.contains('youtu.be'));
   }
 
   void _showPostDialog(BuildContext context) {
@@ -1536,8 +2377,8 @@ void _showCommentsSheet(JournalEntry post) {
                                       timeAgo = "${duration.inMinutes}m";
                                     }
 
-                                    final isCommentLiked = ref.watch(likedCommentsProvider).contains(item.id);
-                                    final commentLikesCount = isCommentLiked ? 1 : 0;
+                                    final isCommentLiked = item.likedBy.contains(user?.uid ?? '');
+                                    final commentLikesCount = item.likedBy.length;
 
                                     return Padding(
                                       padding: const EdgeInsets.only(bottom: 16),
@@ -1611,7 +2452,7 @@ void _showCommentsSheet(JournalEntry post) {
                                           GestureDetector(
                                             onTap: () {
                                               HapticFeedback.lightImpact();
-                                              ref.read(likedCommentsProvider.notifier).toggleLike(item.id);
+                                               ref.read(journalProvider.notifier).toggleLike(item.id);
                                             },
                                             child: Padding(
                                               padding: const EdgeInsets.only(left: 8, right: 4, top: 4),
@@ -1642,7 +2483,7 @@ void _showCommentsSheet(JournalEntry post) {
                                   height: 34,
                                   decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black26),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(17),
+                                    borderRadius: BorderRadius.circular(100),
                                     child: user?.photoURL != null && user!.photoURL!.isNotEmpty
                                         ? PremiumUI.networkImage(url: user.photoURL!, fit: BoxFit.cover)
                                         : Icon(Iconsax.user, size: 14, color: PremiumTokens.activeAccent),
@@ -1676,7 +2517,7 @@ void _showCommentsSheet(JournalEntry post) {
                                   ),
                                 ),
                                 const SizedBox(width: 12),
-                                GestureDetector(
+                                PressableScale(
                                   onTap: () {
                                     final reply = commentsController.text.trim();
                                     if (reply.isNotEmpty) {
@@ -1821,34 +2662,22 @@ class _StoryViewerPageState extends ConsumerState<_StoryViewerPage>
     );
   }
 
-  String? _getYoutubeId(String url) {
-    final regExp = RegExp(
-      r'^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*',
-      caseSensitive: false,
-      multiLine: false,
-    );
-    final match = regExp.firstMatch(url);
-    if (match != null && match.groupCount >= 2) {
-      return match.group(2);
-    }
-    return null;
-  }
 
   Widget _buildStoryVideoCard(String url) {
     final ytId = _getYoutubeId(url);
     if (ytId == null) {
-      return GestureDetector(
-        onTap: () {
+      return PressableScale(
+        onTap: () async {
           HapticFeedback.mediumImpact();
           _pauseStory();
-          Share.share(url);
+          await SharePlus.instance.share(ShareParams(text: url));
           _resumeStory();
         },
         child: Container(
           width: 260,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(100),
             color: Colors.white10,
             border: Border.all(color: Colors.white24),
           ),
@@ -1871,7 +2700,7 @@ class _StoryViewerPageState extends ConsumerState<_StoryViewerPage>
       );
     }
 
-    return GestureDetector(
+    return PressableScale(
       onTap: () {
         HapticFeedback.mediumImpact();
         _pauseStory();
@@ -1894,7 +2723,7 @@ class _StoryViewerPageState extends ConsumerState<_StoryViewerPage>
                       ),
                     ),
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(24),
                       child: _InlineVideoPlayer(videoUrl: url, ytId: ytId),
                     ),
                   ],
@@ -1908,7 +2737,7 @@ class _StoryViewerPageState extends ConsumerState<_StoryViewerPage>
         width: 280,
         height: 150,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
           color: Colors.black45,
           border: Border.all(color: Colors.white24),
           image: DecorationImage(
@@ -1922,7 +2751,7 @@ class _StoryViewerPageState extends ConsumerState<_StoryViewerPage>
           children: [
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(24),
                 gradient: const LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -2321,9 +3150,26 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
     super.dispose();
   }
 
+  JournalEntry? _findActiveKatha(List<JournalEntry> entries) {
+    for (final entry in entries) {
+      final parts = entry.moonPhase?.split('|') ?? [];
+      final type = parts.isNotEmpty ? parts[0] : 'post';
+      if (type == 'post' && parts.length > 1 && parts[1].isNotEmpty) {
+        return entry;
+      } else if (type == 'live' && parts.length > 3 && parts[3] == 'active') {
+        return entry;
+      }
+    }
+    return null;
+  }
+
   void _sendLiveComment() {
     final text = _commentController.text.trim();
     if (text.isEmpty) return;
+
+    final entries = ref.read(journalProvider).value ?? [];
+    final activeKatha = _findActiveKatha(entries);
+    if (activeKatha == null) return;
 
     HapticFeedback.lightImpact();
     final user = ref.read(authStateProvider).value;
@@ -2333,7 +3179,7 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
     ref.read(journalProvider.notifier).addEntry(
       displayName,
       text,
-      moonPhase: "comment|mock-katha-1|$photoUrl",
+      moonPhase: "comment|${activeKatha.id}|$photoUrl",
     );
     
     _commentController.clear();
@@ -2349,33 +3195,205 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
     });
   }
 
+  void _showEndStreamConfirmation(JournalEntry activeKatha) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: PremiumTokens.sheetBgTop.withValues(alpha: 0.95),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: PremiumTokens.borderSubtle),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.stop_circle, color: Colors.redAccent, size: 40),
+                  const SizedBox(height: 16),
+                  Text(
+                    "END LIVE SATSANG?",
+                    style: PremiumTokens.displayStyle(fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.5, color: Colors.redAccent),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Would you like to upload this video stream as a recorded post to the Sangat Chat, or remove it entirely?",
+                    textAlign: TextAlign.center,
+                    style: PremiumTokens.sansStyle(fontSize: 12, color: PremiumTokens.textMuted),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(dialogContext);
+                        },
+                        child: Text("CANCEL", style: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontWeight: FontWeight.bold)),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          if (dialogContext.mounted) Navigator.pop(dialogContext);
+                          final navigator = Navigator.of(context);
+                          final parentContext = context;
+                          HapticFeedback.heavyImpact();
+                          await ref.read(journalProvider.notifier).deleteEntry(activeKatha.id);
+                          navigator.pop();
+                          if (parentContext.mounted) {
+                            PremiumUI.showNotification(parentContext, "Satsang stream ended & removed", color: Colors.redAccent);
+                          }
+                        },
+                        child: Text("REMOVE", style: PremiumTokens.sansStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          if (dialogContext.mounted) Navigator.pop(dialogContext);
+                          final navigator = Navigator.of(context);
+                          final parentContext = context;
+                          HapticFeedback.mediumImpact();
+                          await ref.read(journalProvider.notifier).endLiveStreamAndUpload(activeKatha.id);
+                          navigator.pop();
+                          if (parentContext.mounted) {
+                            PremiumUI.showNotification(parentContext, "Satsang stream saved to Sangat Chat", color: PremiumTokens.activeAccent);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: PremiumTokens.activeAccent,
+                          foregroundColor: PremiumTokens.onAccent,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: Text("UPLOAD TO CHAT", style: PremiumTokens.sansStyle(fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildEmptyLiveState({
+    required IconData icon,
+    required String title,
+    required String description,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
+      decoration: BoxDecoration(
+        color: PremiumTokens.surfaceCard,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: PremiumTokens.borderSubtle),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              color: PremiumTokens.activeAccent,
+              size: 32,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: PremiumTokens.displayStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: PremiumTokens.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            description,
+            textAlign: TextAlign.center,
+            style: PremiumTokens.sansStyle(
+              fontSize: 12,
+              color: PremiumTokens.textSecondary,
+            ).copyWith(height: 1.4),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final entriesAsync = ref.watch(journalProvider);
     final user = ref.watch(authStateProvider).value;
+    final entries = entriesAsync.value ?? [];
+
+    final todayJaps = ref.watch(naamJapStateProvider).today;
+    final ritualsVal = ref.watch(ritualsProvider).value ?? [];
+    final readingsVal = ref.watch(readingHistoryProvider).value ?? [];
     
-    final comments = entriesAsync.maybeWhen(
-      data: (list) => list.where((e) {
-        final type = e.moonPhase?.split('|').first ?? '';
-        final parts = e.moonPhase?.split('|') ?? [];
-        return type == 'comment' && parts.length > 1 && parts[1] == 'mock-katha-1';
-      }).toList(),
-      orElse: () => <JournalEntry>[],
+    final completedRituals = ritualsVal.where((r) => r.isCompleted).length;
+    final totalRituals = ritualsVal.length;
+    
+    final now = DateTime.now();
+    final hasReadToday = readingsVal.any((item) {
+      return item.readAt.year == now.year &&
+             item.readAt.month == now.month &&
+             item.readAt.day == now.day;
+    });
+    
+    final isEligible = _checkGoLiveEligibility(
+      user: user,
+      todayJaps: todayJaps,
+      rituals: ritualsVal,
+      readings: readingsVal,
     );
+
+    final activeKatha = _findActiveKatha(entries);
+    final bool isCurrentUserHost = activeKatha != null && user != null && activeKatha.firebaseUid == user.uid;
+    
+    final activeKathaId = activeKatha?.id;
+    final activeKathaParts = activeKatha?.moonPhase?.split('|') ?? [];
+    final activeVideoUrl = activeKathaParts.length > 1 ? activeKathaParts[1] : null;
+    final activeYtId = activeVideoUrl != null ? _getYoutubeId(activeVideoUrl) : null;
+    final hostAvatar = activeKathaParts.length > 2 ? activeKathaParts[2] : '';
+
+    final comments = activeKathaId != null
+        ? entries.where((e) {
+            final type = e.moonPhase?.split('|').first ?? '';
+            final parts = e.moonPhase?.split('|') ?? [];
+            return type == 'comment' && parts.length > 1 && parts[1] == activeKathaId;
+          }).toList()
+        : <JournalEntry>[];
+
+    // Dynamically calculate the listening count based on the number of unique active users
+    final uniqueSeekersCount = entries.map((e) => e.firebaseUid).toSet().length;
+    final listeningCount = 2400 + uniqueSeekersCount * 12;
 
     final screenHeight = MediaQuery.of(context).size.height;
     final viewInsets = MediaQuery.of(context).viewInsets;
     final availableHeight = screenHeight - viewInsets.bottom;
     final sheetHeight = math.min(screenHeight * 0.88, availableHeight - 24);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: PremiumTokens.sheetBgTop,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-        border: Border.all(color: PremiumTokens.borderSubtle),
-      ),
-      height: sheetHeight,
-      child: Column(
+    return Padding(
+      padding: EdgeInsets.only(bottom: viewInsets.bottom),
+      child: Container(
+        decoration: BoxDecoration(
+          color: PremiumTokens.sheetBgTop,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          border: Border.all(color: PremiumTokens.borderSubtle),
+        ),
+        height: sheetHeight,
+        child: Column(
         children: [
           const SizedBox(height: 12),
           Container(
@@ -2417,11 +3435,77 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
                 Row(
                   children: [
                     Text(
-                      "• 2.4k listening",
+                      "• ${listeningCount >= 1000 ? '${(listeningCount / 1000).toStringAsFixed(1)}k' : listeningCount} listening",
                       style: PremiumTokens.sansStyle(
                         fontSize: 10,
                         color: PremiumTokens.textMuted,
                         fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    GestureDetector(
+                      onTap: () {
+                        HapticFeedback.heavyImpact();
+                        if (isCurrentUserHost) {
+                          _showEndStreamConfirmation(activeKatha);
+                        } else if (isEligible) {
+                          showDialog(
+                            context: context,
+                            builder: (_) => const _GoLiveBroadcasterDialog(),
+                          );
+                        } else {
+                          _showGoLiveEligibilityChecklist(
+                            context: context,
+                            todayJaps: todayJaps,
+                            completedRituals: completedRituals,
+                            totalRituals: totalRituals,
+                            readToday: hasReadToday,
+                          );
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: isCurrentUserHost
+                              ? Colors.red.withValues(alpha: 0.15)
+                              : (isEligible 
+                                  ? Colors.green.withValues(alpha: 0.15) 
+                                  : Colors.orange.withValues(alpha: 0.15)),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isCurrentUserHost
+                                ? Colors.redAccent
+                                : (isEligible ? Colors.greenAccent : Colors.orangeAccent),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              isCurrentUserHost
+                                  ? Icons.stop_circle_outlined
+                                  : (isEligible ? Iconsax.video_play : Iconsax.lock),
+                              color: isCurrentUserHost
+                                  ? Colors.redAccent
+                                  : (isEligible ? Colors.greenAccent : Colors.orangeAccent),
+                              size: 11,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              isCurrentUserHost
+                                  ? "END STREAM"
+                                  : (isEligible ? "GO LIVE" : "HOST"),
+                              style: PremiumTokens.sansStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                                color: isCurrentUserHost
+                                    ? Colors.redAccent
+                                    : (isEligible ? Colors.greenAccent : Colors.orangeAccent),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -2453,7 +3537,7 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Colors.black26,
+                color: PremiumTokens.isDark ? Colors.black26 : Colors.black.withValues(alpha: 0.04),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: PremiumTokens.borderSubtle),
               ),
@@ -2532,154 +3616,190 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
               child: Column(
                 children: [
                   if (_isVideoMode) ...[
-                    // Live Video Stream Container
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        height: 180,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: PremiumTokens.borderSubtle),
-                        ),
-                        child: const _InlineVideoPlayer(
-                          videoUrl: "https://www.youtube.com/watch?v=S8Zq41S8eLw",
-                          ytId: "S8Zq41S8eLw",
+                    if (activeKatha == null) ...[
+                      _buildEmptyLiveState(
+                        icon: Iconsax.video_slash,
+                        title: "No Active Satsang Stream",
+                        description: "No devotee is broadcasting live at the moment. Wait for a host to begin, or tap HOST above to go live.",
+                      ),
+                      const SizedBox(height: 12),
+                    ] else ...[
+                      // Live Video Stream Container
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          height: 180,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: PremiumTokens.borderSubtle),
+                          ),
+                          child: _InlineVideoPlayer(
+                            videoUrl: activeVideoUrl!,
+                            ytId: activeYtId!,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
+                      const SizedBox(height: 12),
+                    ],
                   ] else ...[
-                    // Audio Mode Layout: Host Card
-                    PremiumUI.voidGlassCard(
-                      padding: const EdgeInsets.all(16),
-                      borderRadius: 20,
-                      child: Row(
-                        children: [
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Container(
-                                width: 64,
-                                height: 64,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
-                                ),
-                              ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
-                                begin: const Offset(1, 1),
-                                end: const Offset(1.15, 1.15),
-                                duration: 1.5.seconds,
-                              ),
-                              Container(
-                                width: 52,
-                                height: 52,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: PremiumTokens.activeAccent,
-                                    width: 2,
-                                  ),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(26),
-                                  child: PremiumUI.networkImage(
-                                    url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: Container(
-                                  padding: const EdgeInsets.all(2),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.redAccent,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(Icons.mic, color: Colors.white, size: 10),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                    if (activeKatha == null) ...[
+                      _buildEmptyLiveState(
+                        icon: Iconsax.microphone_slash,
+                        title: "Satsang Audio Space is Empty",
+                        description: "No devotee is hosting an audio session currently. Be the first to start by tapping HOST above.",
+                      ),
+                      const SizedBox(height: 16),
+                    ] else ...[
+                      // Audio Mode Layout: Host Card
+                      PremiumUI.voidGlassCard(
+                        padding: const EdgeInsets.all(16),
+                        borderRadius: 20,
+                        child: Row(
+                          children: [
+                            Stack(
+                              alignment: Alignment.center,
                               children: [
-                                  Text(
-                                    "Gopal Das (Host)",
-                                    style: PremiumTokens.sansStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: PremiumTokens.textPrimary,
-                                    ),
+                                Container(
+                                  width: 64,
+                                  height: 64,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
                                   ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    "Speaking: Sri Harinam Nectar",
-                                    style: PremiumTokens.sansStyle(
-                                      fontSize: 11,
-                                      color: PremiumTokens.textSecondary,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: _LiveAudioWaveformVisualizer(
-                                      isPlaying: true,
+                                ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
+                                  begin: const Offset(1, 1),
+                                  end: const Offset(1.15, 1.15),
+                                  duration: 1.5.seconds,
+                                ),
+                                Container(
+                                  width: 52,
+                                  height: 52,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
                                       color: PremiumTokens.activeAccent,
-                                      barCount: 16,
+                                      width: 2,
                                     ),
                                   ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(26),
+                                    child: hostAvatar.isNotEmpty
+                                        ? PremiumUI.networkImage(
+                                            url: hostAvatar,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Container(
+                                            color: PremiumTokens.activeAccent.withValues(alpha: 0.2),
+                                            child: Icon(Icons.person, color: PremiumTokens.activeAccent),
+                                          ),
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: 0,
+                                  right: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.redAccent,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(Icons.mic, color: Colors.white, size: 10),
+                                  ),
+                                ),
                               ],
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                    Text(
+                                      "${activeKatha.title} (Host)",
+                                      style: PremiumTokens.sansStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: PremiumTokens.textPrimary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      activeKatha.content,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: PremiumTokens.sansStyle(
+                                        fontSize: 11,
+                                        color: PremiumTokens.textSecondary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: _LiveAudioWaveformVisualizer(
+                                        isPlaying: true,
+                                        color: PremiumTokens.activeAccent,
+                                        barCount: 16,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "PARTICIPANTS",
+                            style: PremiumTokens.sansStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                              color: PremiumTokens.textMuted,
                             ),
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 8),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "SPEAKERS",
-                          style: PremiumTokens.sansStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1,
-                            color: PremiumTokens.textMuted,
+                      if (comments.isEmpty) ...[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "No other seekers in discussion yet. Add a comment to join!",
+                              style: PremiumTokens.sansStyle(
+                                fontSize: 10,
+                                color: PremiumTokens.textMuted,
+                              ),
+                            ),
+                          ],
+                        )
+                      ] else ...[
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: comments.map((comment) {
+                              final commentParts = comment.moonPhase?.split('|') ?? [];
+                              final commentAvatar = commentParts.length > 2 ? commentParts[2] : '';
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: _buildLiveSpeakerItem(
+                                  name: comment.title,
+                                  avatarUrl: commentAvatar,
+                                  isMuted: true,
+                                ),
+                              );
+                            }).toList(),
                           ),
                         ),
                       ],
-                    ),
-                    const SizedBox(height: 8),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildLiveSpeakerItem(
-                          name: "Anand D",
-                          avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
-                          isMuted: true,
-                        ),
-                        _buildLiveSpeakerItem(
-                          name: "sita_ram",
-                          avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
-                          isMuted: true,
-                        ),
-                        _buildLiveSpeakerItem(
-                          name: "braj_gopi",
-                          avatarUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-                          isMuted: false,
-                          isSpeaking: true,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 16),
+                    ],
                   ],
 
                   Row(
@@ -2701,7 +3821,7 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
                     child: Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.black26,
+                        color: PremiumTokens.isDark ? Colors.black26 : Colors.black.withValues(alpha: 0.03),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: PremiumTokens.borderSubtle),
                       ),
@@ -2710,8 +3830,9 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
                               child: Text(
                                 "No chat yet. Chant Radhe Radhe!",
                                 style: PremiumTokens.sansStyle(
-                                  color: PremiumTokens.textMuted,
-                                  fontSize: 11,
+                                  color: PremiumTokens.textSecondary,
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             )
@@ -2734,9 +3855,9 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
                                       Container(
                                         width: 22,
                                         height: 22,
-                                        decoration: const BoxDecoration(
+                                        decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                          color: Colors.black26,
+                                          color: PremiumTokens.isDark ? Colors.black26 : Colors.black.withValues(alpha: 0.08),
                                         ),
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(11),
@@ -2788,7 +3909,10 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
                   Container(
                     width: 32,
                     height: 32,
-                    decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black26),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: PremiumTokens.isDark ? Colors.black26 : Colors.black.withValues(alpha: 0.08),
+                    ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
                       child: user?.photoURL != null && user!.photoURL!.isNotEmpty
@@ -2800,12 +3924,13 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
                   Expanded(
                     child: TextField(
                       controller: _commentController,
+                      enabled: activeKatha != null,
                       style: PremiumTokens.sansStyle(color: PremiumTokens.textPrimary, fontSize: 13),
                       decoration: InputDecoration(
-                        hintText: "Chant or reply to Live Satsang...",
-                        hintStyle: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontSize: 12),
+                        hintText: activeKatha != null ? "Chant or reply to Live Satsang..." : "Satsang Room is offline",
+                        hintStyle: PremiumTokens.sansStyle(color: PremiumTokens.textSecondary.withValues(alpha: 0.7), fontSize: 12),
                         filled: true,
-                        fillColor: Colors.black38,
+                        fillColor: PremiumTokens.isDark ? Colors.black38 : Colors.black.withValues(alpha: 0.04),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                         isDense: true,
                         enabledBorder: OutlineInputBorder(
@@ -2880,8 +4005,9 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildLiveSpeakerItem({
     required String name,
@@ -2973,6 +4099,77 @@ class _ChatBubble extends ConsumerStatefulWidget {
 
 class _ChatBubbleState extends ConsumerState<_ChatBubble> {
   bool _showHeartAnimation = false;
+  bool _isPlaylist = false;
+  bool _isLive = false;
+  String? _ytId;
+  String? _playlistId;
+  String? _videoUrl;
+  bool _isPlaying = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _analyzeContent();
+  }
+
+  @override
+  void didUpdateWidget(covariant _ChatBubble oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.msg.content != widget.msg.content || oldWidget.msg.moonPhase != widget.msg.moonPhase) {
+      _analyzeContent();
+    }
+  }
+
+  void _analyzeContent() {
+    final parts = widget.msg.moonPhase?.split('|') ?? [];
+    final content = widget.msg.content.trim();
+
+    _isPlaylist = false;
+    _isLive = false;
+    _ytId = null;
+    _playlistId = null;
+    _videoUrl = null;
+
+    if (parts.length > 3 && parts[2] == 'video') {
+      _videoUrl = parts[3];
+      _ytId = _getYoutubeId(_videoUrl!);
+      return;
+    }
+    if (parts.length > 3 && parts[2] == 'playlist') {
+      _videoUrl = parts[3];
+      _isPlaylist = true;
+      _playlistId = _extractPlaylistId(_videoUrl!);
+      return;
+    }
+
+    final youtubeRegex = RegExp(r'(https?://[^\s]+)');
+    final match = youtubeRegex.firstMatch(content);
+    if (match != null) {
+      final url = match.group(1) ?? '';
+      if (url.contains('youtube.com') || url.contains('youtu.be')) {
+        _videoUrl = url;
+        if (url.contains('list=')) {
+          _isPlaylist = true;
+          _playlistId = _extractPlaylistId(url);
+        } else if (url.contains('/live/') || (url.contains('live') && url.contains('youtube'))) {
+          _isLive = true;
+          _ytId = _getYoutubeId(url);
+        } else {
+          _ytId = _getYoutubeId(url);
+        }
+      }
+    }
+  }
+
+  String? _extractPlaylistId(String url) {
+    try {
+      final uri = Uri.parse(url.trim());
+      if (uri.queryParameters.containsKey('list')) {
+        return uri.queryParameters['list'];
+      }
+    } catch (_) {}
+    return null;
+  }
 
   void _onDoubleTap() {
     HapticFeedback.heavyImpact();
@@ -2993,12 +4190,221 @@ class _ChatBubbleState extends ConsumerState<_ChatBubble> {
     }
   }
 
+  void _showModifyChatOptions(JournalEntry msg) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return Container(
+          decoration: BoxDecoration(
+            color: PremiumTokens.sheetBgTop,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            border: Border.all(color: PremiumTokens.borderSubtle),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: PremiumTokens.borderMedium,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                "MESSAGE OPTIONS",
+                style: PremiumTokens.sansStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: PremiumTokens.textPrimary),
+              ),
+              const SizedBox(height: 16),
+              Material(
+                color: Colors.transparent,
+                child: ListTile(
+                  leading: Icon(Iconsax.edit, color: PremiumTokens.activeAccent),
+                  title: Text("Edit Message", style: PremiumTokens.sansStyle(color: PremiumTokens.textPrimary)),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    _showEditChatDialog(msg);
+                  },
+                ),
+              ),
+              Divider(color: PremiumTokens.borderSubtle),
+              Material(
+                color: Colors.transparent,
+                child: ListTile(
+                  leading: const Icon(Iconsax.trash, color: Colors.redAccent),
+                  title: Text("Delete Message", style: PremiumTokens.sansStyle(color: Colors.redAccent)),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    _confirmDeleteChat(msg);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showEditChatDialog(JournalEntry msg) {
+    final editController = TextEditingController(text: msg.content);
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: PremiumTokens.sheetBgTop.withValues(alpha: 0.95),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: PremiumTokens.borderSubtle),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "EDIT MESSAGE",
+                    style: PremiumTokens.displayStyle(fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: editController,
+                    maxLines: 4,
+                    style: PremiumTokens.sansStyle(color: PremiumTokens.textPrimary, fontSize: 13),
+                    decoration: InputDecoration(
+                      hintText: "Edit your message...",
+                      hintStyle: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontSize: 12),
+                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: PremiumTokens.borderSubtle), borderRadius: BorderRadius.circular(12)),
+                      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: PremiumTokens.activeAccent), borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(dialogContext),
+                        child: Text("CANCEL", style: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontWeight: FontWeight.bold)),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final text = editController.text.trim();
+                          if (text.isNotEmpty) {
+                            HapticFeedback.mediumImpact();
+                            await ref.read(journalProvider.notifier).updateEntry(msg.id, content: text);
+                            if (dialogContext.mounted) {
+                              Navigator.pop(dialogContext);
+                            }
+                            if (mounted) {
+                              PremiumUI.showNotification(context, "Message modified successfully", color: PremiumTokens.activeAccent);
+                            }
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: PremiumTokens.activeAccent,
+                          foregroundColor: PremiumTokens.onAccent,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: Text("SAVE", style: PremiumTokens.sansStyle(fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _confirmDeleteChat(JournalEntry msg) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: PremiumTokens.sheetBgTop.withValues(alpha: 0.95),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: PremiumTokens.borderSubtle),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Iconsax.trash, color: Colors.redAccent, size: 40),
+                  const SizedBox(height: 16),
+                  Text(
+                    "DELETE MESSAGE?",
+                    style: PremiumTokens.displayStyle(fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.5, color: Colors.redAccent),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Are you sure you want to permanently delete this message? This action cannot be undone.",
+                    textAlign: TextAlign.center,
+                    style: PremiumTokens.sansStyle(fontSize: 12, color: PremiumTokens.textMuted),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(dialogContext),
+                        child: Text("CANCEL", style: PremiumTokens.sansStyle(color: PremiumTokens.textMuted, fontWeight: FontWeight.bold)),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          HapticFeedback.heavyImpact();
+                          await ref.read(journalProvider.notifier).deleteEntry(msg.id);
+                          if (dialogContext.mounted) {
+                            Navigator.pop(dialogContext);
+                          }
+                          if (mounted) {
+                            PremiumUI.showNotification(context, "Message deleted successfully", color: Colors.redAccent);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: Text("DELETE", style: PremiumTokens.sansStyle(fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isLiked = ref.watch(likedMessagesProvider).contains(widget.msg.id);
     
     return GestureDetector(
       onDoubleTap: _onDoubleTap,
+      onLongPress: () {
+        if (widget.isMe) {
+          HapticFeedback.mediumImpact();
+          _showModifyChatOptions(widget.msg);
+        }
+      },
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -3067,17 +4473,103 @@ class _ChatBubbleState extends ConsumerState<_ChatBubble> {
                                     : const Radius.circular(16),
                               ),
                               border: Border.all(
-                                color: widget.isMe
-                                    ? PremiumTokens.activeAccent.withValues(alpha: 0.25)
-                                    : PremiumTokens.borderSubtle,
+                                  color: widget.isMe
+                                      ? PremiumTokens.activeAccent.withValues(alpha: 0.25)
+                                      : PremiumTokens.borderSubtle,
                               ),
                             ),
-                            child: Text(
-                              widget.msg.content,
-                              style: PremiumTokens.sansStyle(
-                                color: widget.isMe ? Colors.white : PremiumTokens.textPrimary,
-                                fontSize: 13,
-                              ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  widget.msg.content,
+                                  style: PremiumTokens.sansStyle(
+                                    color: widget.isMe ? Colors.white : PremiumTokens.textPrimary,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                if (_isPlaylist && _videoUrl != null && _playlistId != null) ...[
+                                  const SizedBox(height: 10),
+                                  _PlaylistSelectorCard(
+                                    playlistUrl: _videoUrl!,
+                                    playlistId: _playlistId!,
+                                    isMe: widget.isMe,
+                                  ),
+                                ] else if (_ytId != null && _videoUrl != null) ...[
+                                  const SizedBox(height: 10),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Container(
+                                      width: 240,
+                                      decoration: BoxDecoration(
+                                        color: Colors.black26,
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(color: PremiumTokens.borderSubtle),
+                                      ),
+                                      child: _isPlaying
+                                          ? SizedBox(
+                                              height: 140,
+                                              child: _InlineVideoPlayer(
+                                                videoUrl: _videoUrl!,
+                                                ytId: _ytId!,
+                                              ),
+                                            )
+                                          : GestureDetector(
+                                              onTap: () {
+                                                HapticFeedback.mediumImpact();
+                                                setState(() {
+                                                  _isPlaying = true;
+                                                });
+                                              },
+                                              child: Stack(
+                                                alignment: Alignment.center,
+                                                children: [
+                                                  Image.network(
+                                                    "https://img.youtube.com/vi/$_ytId/0.jpg",
+                                                    height: 140,
+                                                    width: double.infinity,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context, error, stackTrace) => Container(
+                                                      height: 140,
+                                                      color: Colors.black38,
+                                                      child: Center(
+                                                        child: Icon(Iconsax.video_play, color: PremiumTokens.activeAccent, size: 36),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    height: 140,
+                                                    color: Colors.black26,
+                                                  ),
+                                                  Icon(
+                                                    Icons.play_circle_fill,
+                                                    color: PremiumTokens.activeAccent,
+                                                    size: 40,
+                                                  ),
+                                                  if (_isLive)
+                                                    Positioned(
+                                                      top: 8,
+                                                      left: 8,
+                                                      child: Container(
+                                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.redAccent,
+                                                          borderRadius: BorderRadius.circular(4),
+                                                        ),
+                                                        child: Text(
+                                                          "LIVE",
+                                                          style: PremiumTokens.sansStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.white),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
                           
@@ -3152,6 +4644,199 @@ class _ChatBubbleState extends ConsumerState<_ChatBubble> {
   }
 }
 
+class _PlaylistVideoItem {
+  final String title;
+  final String duration;
+  final String youtubeId;
+  _PlaylistVideoItem({required this.title, required this.duration, required this.youtubeId});
+}
+
+class _PlaylistSelectorCard extends StatefulWidget {
+  final String playlistUrl;
+  final String playlistId;
+  final bool isMe;
+
+  const _PlaylistSelectorCard({
+    required this.playlistUrl,
+    required this.playlistId,
+    required this.isMe,
+  });
+
+  @override
+  State<_PlaylistSelectorCard> createState() => _PlaylistSelectorCardState();
+}
+
+class _PlaylistSelectorCardState extends State<_PlaylistSelectorCard> {
+  int _selectedIndex = 0;
+  bool _isPlaying = false;
+
+  final List<_PlaylistVideoItem> _mockVideos = [
+    _PlaylistVideoItem(title: "Nectar pastimes of Sri Sri Radha Krishna - Part 1", duration: "14:22", youtubeId: "5B6o4N2uQnE"),
+    _PlaylistVideoItem(title: "Deep Madhurya Bhajans & Kirtans - Part 2", duration: "11:05", youtubeId: "n7k7qS1_gZ8"),
+    _PlaylistVideoItem(title: "Vrindavan Dham Parikrama Essence - Part 3", duration: "16:45", youtubeId: "K6K-m_O4uFw"),
+    _PlaylistVideoItem(title: "Radhe Radhe Chant Spiritual Journey - Part 4", duration: "20:10", youtubeId: "4k6yU-VqD_I"),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final activeVideo = _mockVideos[_selectedIndex];
+
+    return Container(
+      width: 240,
+      decoration: BoxDecoration(
+        color: widget.isMe ? Colors.black38 : PremiumTokens.surfaceCard.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: PremiumTokens.borderSubtle),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            child: _isPlaying
+                ? SizedBox(
+                    height: 130,
+                    width: double.infinity,
+                    child: _InlineVideoPlayer(
+                      videoUrl: "https://www.youtube.com/watch?v=${activeVideo.youtubeId}",
+                      ytId: activeVideo.youtubeId,
+                    ),
+                  )
+                : GestureDetector(
+                    onTap: () {
+                      HapticFeedback.mediumImpact();
+                      setState(() {
+                        _isPlaying = true;
+                      });
+                    },
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Image.network(
+                          "https://img.youtube.com/vi/${activeVideo.youtubeId}/0.jpg",
+                          height: 130,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            height: 130,
+                            color: Colors.black45,
+                            child: Center(
+                              child: Icon(Iconsax.music_play, color: PremiumTokens.activeAccent, size: 36),
+                            ),
+                          ),
+                        ),
+                        Container(height: 130, color: Colors.black26),
+                        Icon(
+                          Icons.play_circle_fill,
+                          color: PremiumTokens.activeAccent,
+                          size: 44,
+                        ),
+                        Positioned(
+                          bottom: 8,
+                          left: 8,
+                          right: 8,
+                          child: Text(
+                            "Now playing: ${activeVideo.title}",
+                            style: PremiumTokens.sansStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
+            child: Row(
+              children: [
+                Icon(Iconsax.music_playlist, color: PremiumTokens.activeAccent, size: 14),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    "SATSANG PLAYLIST (4 VIDEOS)",
+                    style: PremiumTokens.sansStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.8,
+                      color: widget.isMe ? Colors.white70 : PremiumTokens.textPrimary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1, color: Colors.white10),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
+            itemCount: _mockVideos.length,
+            itemBuilder: (context, index) {
+              final video = _mockVideos[index];
+              final isCurrent = index == _selectedIndex;
+
+              return InkWell(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  setState(() {
+                    _selectedIndex = index;
+                    _isPlaying = true;
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  color: isCurrent
+                      ? PremiumTokens.activeAccent.withValues(alpha: 0.12)
+                      : Colors.transparent,
+                  child: Row(
+                    children: [
+                      Icon(
+                        isCurrent ? Iconsax.video_play5 : Iconsax.video_play,
+                        color: isCurrent ? PremiumTokens.activeAccent : PremiumTokens.textMuted,
+                        size: 13,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          video.title,
+                          style: PremiumTokens.sansStyle(
+                            fontSize: 10,
+                            fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
+                            color: isCurrent
+                                ? PremiumTokens.activeAccent
+                                : (widget.isMe ? Colors.white70 : PremiumTokens.textPrimary),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        video.duration,
+                        style: PremiumTokens.sansStyle(
+                          fontSize: 9,
+                          color: PremiumTokens.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 4),
+        ],
+      ),
+    );
+  }
+}
+
 class _InlineVideoPlayer extends StatefulWidget {
   final String videoUrl;
   final String? ytId;
@@ -3179,20 +4864,43 @@ class _InlineVideoPlayerState extends State<_InlineVideoPlayer> {
 
   String? _extractYoutubeId(String url) {
     try {
-      final uri = Uri.parse(url);
+      final uri = Uri.parse(url.trim());
       if (uri.host.contains('youtube.com') || uri.host.contains('youtu.be')) {
         if (uri.path.startsWith('/shorts/')) {
+          return uri.pathSegments.last;
+        }
+        if (uri.path.startsWith('/live/')) {
           return uri.pathSegments.last;
         }
         if (uri.queryParameters.containsKey('v')) {
           return uri.queryParameters['v'];
         }
         if (uri.pathSegments.isNotEmpty) {
-          // e.g. youtu.be/abc
-          return uri.pathSegments.first;
+          if (uri.host.contains('youtu.be')) {
+            return uri.pathSegments.first;
+          }
+          if (uri.path.contains('/embed/')) {
+            return uri.pathSegments.last;
+          }
+          if (uri.pathSegments.length > 1 && uri.pathSegments.first == 'v') {
+            return uri.pathSegments[1];
+          }
         }
       }
     } catch (_) {}
+    
+    // Fallback to regex
+    final regExp = RegExp(
+      r'^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/|live\/)([^#\&\?]*).*',
+      caseSensitive: false,
+    );
+    final match = regExp.firstMatch(url);
+    if (match != null && match.groupCount >= 2) {
+      final id = match.group(2);
+      if (id != null && id.length == 11) {
+        return id;
+      }
+    }
     return null;
   }
 
@@ -3212,12 +4920,12 @@ class _InlineVideoPlayerState extends State<_InlineVideoPlayer> {
           yt.close();
         } catch (e) {
           debugPrint("YoutubeExplode failed, using direct fallback stream: $e");
-          streamUrl = "https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4";
+          streamUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
         }
       }
       
       if (streamUrl.contains('youtube.com') || streamUrl.contains('youtu.be')) {
-        streamUrl = "https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4";
+        streamUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
       }
       
       final uri = Uri.parse(streamUrl);
@@ -3234,10 +4942,10 @@ class _InlineVideoPlayerState extends State<_InlineVideoPlayer> {
     } catch (e) {
       debugPrint("Error initializing video: $e");
       // Graceful fallback to serene video loop if not already using it
-      if (widget.videoUrl != "https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4") {
+      if (widget.videoUrl != "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4") {
         try {
           _controller?.dispose();
-          final uri = Uri.parse("https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4");
+          final uri = Uri.parse("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
           _controller = VideoPlayerController.networkUrl(uri);
           await _controller!.initialize();
           if (mounted) {
@@ -3614,28 +5322,25 @@ class _SatsangPostComposerSheetState extends ConsumerState<_SatsangPostComposerS
       "Harivansh! 🌸"
     ];
 
-    return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-      child: Container(
-        decoration: BoxDecoration(
-          color: PremiumTokens.sheetBgTop.withValues(alpha: 0.92),
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-          border: Border.all(color: PremiumTokens.borderSubtle),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 40,
-              spreadRadius: 10,
-            ),
-          ],
-        ),
-        padding: EdgeInsets.only(
-          left: 20,
-          right: 20,
-          bottom: math.max(20, bottomInsets + 16),
-          top: 16,
-        ),
-        child: SingleChildScrollView(
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomInsets),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+        child: Container(
+          decoration: BoxDecoration(
+            color: PremiumTokens.sheetBgTop.withValues(alpha: 0.92),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+            border: Border.all(color: PremiumTokens.borderSubtle),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.3),
+                blurRadius: 40,
+                spreadRadius: 10,
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+          child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -3923,7 +5628,7 @@ class _SatsangPostComposerSheetState extends ConsumerState<_SatsangPostComposerS
                                               width: 100,
                                               height: 64,
                                               fit: BoxFit.cover,
-                                              errorBuilder: (_, __, ___) => Container(
+                                              errorBuilder: (context, error, stackTrace) => Container(
                                                 width: 100,
                                                 color: Colors.black38,
                                                 child: const Icon(Iconsax.video_slash, size: 18, color: Colors.white54),
@@ -4095,6 +5800,7 @@ class _SatsangPostComposerSheetState extends ConsumerState<_SatsangPostComposerS
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

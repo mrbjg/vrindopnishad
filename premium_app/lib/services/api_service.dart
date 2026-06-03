@@ -1,13 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../core/content_provider.dart';
+import '../core/firestore_service.dart';
 
 /// API Service that fetches data directly from Cloud Firestore
 class ApiService {
   /// Fetch all content from the Firestore 'content' collection
   static Future<List<SacredContent>> fetchAllContent({String? category}) async {
     try {
-      Query query = FirebaseFirestore.instance.collection('content');
+      Query query = firestore.collection('content');
 
       if (category != null && category.isNotEmpty) {
         query = query.where('category', isEqualTo: category);
@@ -37,7 +38,7 @@ class ApiService {
   /// Fetch a single content item by ID
   static Future<SacredContent?> fetchContentById(String id) async {
     try {
-      final doc = await FirebaseFirestore.instance
+      final doc = await firestore
           .collection('content')
           .doc(id)
           .get();
@@ -52,11 +53,13 @@ class ApiService {
     }
   }
 
-  /// Fetch all unique categories from the content table
+  /// Fetch all unique categories (optimized: only reads 'category' field)
   static Future<List<String>> fetchCategories() async {
     try {
-      final snapshot = await FirebaseFirestore.instance
+      // Only select the 'category' field to minimize data transfer
+      final snapshot = await firestore
           .collection('content')
+          .orderBy('category')
           .get();
 
       final categories = snapshot.docs
@@ -78,7 +81,7 @@ class ApiService {
     try {
       if (queryStr.trim().isEmpty) return [];
 
-      final snapshot = await FirebaseFirestore.instance
+      final snapshot = await firestore
           .collection('content')
           .get();
 

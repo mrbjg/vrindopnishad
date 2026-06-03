@@ -70,7 +70,7 @@ class AppMoodThemes {
       cardColor: Color(0xFFFFFFFF),
       textPrimary: Color(0xFF2D2D2D),
       textSecondary: Color(0xFF5D5D5D),
-      textMuted: Color(0xFFA0A0A0),
+      textMuted: Color(0xFF7A7062), // Darker warm-grey for contrast safety
       borderColor: Color(0xFFE8E0D0),
       backgroundGradient: [Color(0xFFFFFDF5), Color(0xFFFFF0D0), Color(0xFFFFFDF5)],
       defaultAccent: AppColorTheme.saffronSacred,
@@ -85,7 +85,7 @@ class AppMoodThemes {
       cardColor: Color(0xFFFFFFFF),
       textPrimary: Color(0xFF2D2D2D),
       textSecondary: Color(0xFF5D5D5D),
-      textMuted: Color(0xFFA0A0A0),
+      textMuted: Color(0xFF707885), // Darker slate-grey for contrast safety
       borderColor: Color(0xFFD8DDE4),
       backgroundGradient: [Color(0xFFF0F2F5), Color(0xFFE4E8EE), Color(0xFFF0F2F5)],
       defaultAccent: AppColorTheme.oceanTeal,
@@ -100,7 +100,7 @@ class AppMoodThemes {
       cardColor: Color(0xFFFFFDF5),
       textPrimary: Color(0xFF2D2D2D),
       textSecondary: Color(0xFF5D5D5D),
-      textMuted: Color(0xFFA0A0A0),
+      textMuted: Color(0xFF8A7E62), // Darker gold-grey for contrast safety
       borderColor: Color(0xFFE8D8B0),
       backgroundGradient: [Color(0xFFFFF8E8), Color(0xFFFFEDCC), Color(0xFFFFF8E8)],
       defaultAccent: AppColorTheme.celestialGold,
@@ -115,7 +115,7 @@ class AppMoodThemes {
       cardColor: Color(0xFFFFFFFF),
       textPrimary: Color(0xFF2D2D2D),
       textSecondary: Color(0xFF5D5D5D),
-      textMuted: Color(0xFFA0A0A0),
+      textMuted: Color(0xFF707D65), // Darker forest-grey for contrast safety
       borderColor: Color(0xFFD0E0C8),
       backgroundGradient: [Color(0xFFF5F8F0), Color(0xFFEAF2DD), Color(0xFFF5F8F0)],
       defaultAccent: AppColorTheme.emeraldDivine,
@@ -130,7 +130,7 @@ class AppMoodThemes {
       cardColor: Color(0xFFFFFFFF),
       textPrimary: Color(0xFF2D2D2D),
       textSecondary: Color(0xFF5D5D5D),
-      textMuted: Color(0xFFA0A0A0),
+      textMuted: Color(0xFF6B7A8C), // Darker waterfall-grey for contrast safety
       borderColor: Color(0xFFCCE0F0),
       backgroundGradient: [Color(0xFFF0F8FF), Color(0xFFE0EFFF), Color(0xFFF0F8FF)],
       defaultAccent: AppColorTheme.oceanTeal,
@@ -147,7 +147,7 @@ class AppMoodThemes {
       cardColor: Color(0xFF0E0E1A),
       textPrimary: Color(0xFFF5F5F7),
       textSecondary: Color(0xFFB0B0C0),
-      textMuted: Color(0xFF505060),
+      textMuted: Color(0xFF8A8A9E), // Brighter lavender-grey for contrast safety
       borderColor: Color(0xFF1C1C2D),
       backgroundGradient: [Color(0xFF050510), Color(0xFF0A0A1F), Color(0xFF050510)],
       defaultAccent: AppColorTheme.nebulaBlue,
@@ -162,7 +162,7 @@ class AppMoodThemes {
       cardColor: Color(0xFF0F1B30),
       textPrimary: Color(0xFFF5F5F7),
       textSecondary: Color(0xFFB0C4DE),
-      textMuted: Color(0xFF6A829D),
+      textMuted: Color(0xFF8AA4C4), // Brighter cold-grey for contrast safety
       borderColor: Color(0xFF223655),
       backgroundGradient: [Color(0xFF060D1A), Color(0xFF0C1D36), Color(0xFF060D1A)],
       defaultAccent: AppColorTheme.oceanTeal,
@@ -177,7 +177,7 @@ class AppMoodThemes {
       cardColor: Color(0xFF141C28),
       textPrimary: Color(0xFFF5F5F7),
       textSecondary: Color(0xFFA0AABC),
-      textMuted: Color(0xFF506070),
+      textMuted: Color(0xFF8094A8), // Brighter rainy-grey for contrast safety
       borderColor: Color(0xFF1A2038),
       backgroundGradient: [Color(0xFF0F1419), Color(0xFF141E2C), Color(0xFF0F1419)],
       defaultAccent: AppColorTheme.oceanTeal,
@@ -192,7 +192,7 @@ class AppMoodThemes {
       cardColor: Color(0xFF081410),
       textPrimary: Color(0xFFF5F5F7),
       textSecondary: Color(0xFF90B0A0),
-      textMuted: Color(0xFF406050),
+      textMuted: Color(0xFF7A9C8A), // Brighter monsoon-grey for contrast safety
       borderColor: Color(0xFF0A2018),
       backgroundGradient: [Color(0xFF050D0A), Color(0xFF081810), Color(0xFF050D0A)],
       defaultAccent: AppColorTheme.emeraldDivine,
@@ -207,7 +207,7 @@ class AppMoodThemes {
       cardColor: Color(0xFF121620),
       textPrimary: Color(0xFFF5F5F7),
       textSecondary: Color(0xFFA0A8BC),
-      textMuted: Color(0xFF505868),
+      textMuted: Color(0xFF8A92A8), // Brighter mountain-grey for contrast safety
       borderColor: Color(0xFF1C2030),
       backgroundGradient: [Color(0xFF0D0F14), Color(0xFF141820), Color(0xFF0D0F14)],
       defaultAccent: AppColorTheme.amethystMystic,
@@ -217,10 +217,6 @@ class AppMoodThemes {
   static AppMoodPalette getPalette(AppMoodTheme mood) =>
       palettes[mood] ?? palettes[AppMoodTheme.sereneDawn]!;
 }
-
-/// ═══════════════════════════════════════════════════════════════════════════
-/// STATE NOTIFIER — Persists mood selection in SharedPreferences
-/// ═══════════════════════════════════════════════════════════════════════════
 
 class MoodThemeNotifier extends StateNotifier<AppMoodTheme> {
   final SharedPreferences prefs;

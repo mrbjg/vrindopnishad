@@ -91,7 +91,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   "SANT-VAANI",
                   style: PremiumTokens.sansStyle(
                     fontSize: 24,
-                    fontWeight: FontWeight.w200,
+                    fontWeight: FontWeight.w300,
                     letterSpacing: 8,
                   ),
                 )

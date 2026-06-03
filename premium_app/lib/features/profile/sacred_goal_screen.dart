@@ -7,6 +7,7 @@ import '../../core/stats_provider.dart';
 import '../../core/auth_provider.dart';
 import '../../services/notification_service.dart';
 import '../../core/color_theme_provider.dart';
+import '../../widgets/divine_ruler_picker.dart';
 
 class SacredGoalScreen extends ConsumerStatefulWidget {
   final bool isOnboarding;
@@ -90,26 +91,24 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
           "DAILY MALAS",
           style: PremiumTokens.sansStyle(fontSize: 12, fontWeight: FontWeight.bold, color: PremiumTokens.activeAccent, letterSpacing: 2),
         ),
-        const SizedBox(height: 32),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              onPressed: () => setState(() => _malaGoal = (_malaGoal > 1) ? _malaGoal - 1 : 1),
-              icon: Icon(Iconsax.minus, color: PremiumTokens.textMuted),
-            ),
-            const SizedBox(width: 24),
-            Text(
-              "$_malaGoal",
-              style: GoogleFonts.spectral(fontSize: 84, fontWeight: FontWeight.w300, color: PremiumTokens.textPrimary),
-            ),
-            const SizedBox(width: 24),
-            IconButton(
-              onPressed: () => setState(() => _malaGoal++),
-              icon: Icon(Iconsax.add, color: PremiumTokens.textMuted),
-            ),
-          ],
+        const SizedBox(height: 16),
+        Text(
+          "$_malaGoal",
+          style: GoogleFonts.spectral(fontSize: 84, fontWeight: FontWeight.w300, color: PremiumTokens.textPrimary),
         ),
+        const SizedBox(height: 16),
+        DivineRulerPicker(
+          value: _malaGoal.toDouble(),
+          min: 1.0,
+          max: 108.0,
+          step: 1.0,
+          onChanged: (val) {
+            setState(() => _malaGoal = val.toInt());
+          },
+          activeColor: PremiumTokens.activeAccent,
+          textColor: PremiumTokens.textPrimary,
+        ),
+        const SizedBox(height: 24),
         Text(
           "${_malaGoal * 108} CHANTS",
           style: PremiumTokens.sansStyle(fontSize: 14, color: PremiumTokens.textHint),
@@ -154,6 +153,7 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
   }
 
   Widget _buildSubmitButton() {
+    final colorPalette = ref.watch(colorPaletteProvider);
     return GestureDetector(
       onTap: () async {
         final user = ref.read(authStateProvider).value;
@@ -174,16 +174,27 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
         width: double.infinity,
         height: 60,
         decoration: BoxDecoration(
-          gradient: PremiumTokens.activeGradient,
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: colorPalette.gradient,
+          ),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
-            BoxShadow(color: PremiumTokens.activeAccent.withValues(alpha: 0.3), blurRadius: 20, spreadRadius: 2),
+            BoxShadow(color: colorPalette.accent.withValues(alpha: 0.3), blurRadius: 20, spreadRadius: 2),
           ],
         ),
         child: Center(
           child: Text(
             "SET INTENTION",
-            style: PremiumTokens.sansStyle(fontSize: 14, fontWeight: FontWeight.w900, color: PremiumTokens.textPrimary, letterSpacing: 2),
+            style: PremiumTokens.sansStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w900,
+              color: colorPalette.accent.computeLuminance() > 0.4
+                  ? const Color(0xFF1A1A2E)
+                  : Colors.white,
+              letterSpacing: 2,
+            ),
           ),
         ),
       ),

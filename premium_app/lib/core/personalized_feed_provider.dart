@@ -415,6 +415,7 @@ class PersonalizedDiscoveryNotifier extends StateNotifier<PersonalizedFeedState>
 
 final personalizedDiscoveryProvider =
     StateNotifierProvider<PersonalizedDiscoveryNotifier, PersonalizedFeedState>((ref) {
+  ref.watch(rankedContentProvider);
   return PersonalizedDiscoveryNotifier(ref);
 });
 
@@ -534,4 +535,18 @@ final continueReadingProvider = Provider<List<SacredContent>>((ref) {
     },
     orElse: () => <SacredContent>[],
   );
+});
+
+/// Personalized category filter content provider, ordering items by personalization score
+final personalizedFilteredContentProvider = Provider.family<List<SacredContent>, String>((ref, category) {
+  final ranked = ref.watch(rankedContentProvider);
+  final normalized = category.toLowerCase().trim();
+  return ranked
+      .where((item) =>
+          item.category.toLowerCase().trim() == normalized ||
+          (item.category.toLowerCase().trim().endsWith('s') &&
+              item.category.toLowerCase().trim().substring(0, item.category.length - 1) == normalized) ||
+          (normalized.endsWith('s') &&
+              normalized.substring(0, normalized.length - 1) == item.category.toLowerCase().trim()))
+      .toList();
 });

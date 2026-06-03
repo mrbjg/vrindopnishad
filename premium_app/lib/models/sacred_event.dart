@@ -60,17 +60,17 @@ class SacredEvent {
   String get typeLabel {
     switch (type) {
       case 'vrat':
-        return '🕉️ व्रत';
+        return 'व्रत';
       case 'utsav':
-        return '🎉 उत्सव';
+        return 'उत्सव';
       case 'tithi':
-        return '📅 तिथि';
+        return 'तिथि';
       case 'ekadashi':
-        return '🌙 एकादशी';
+        return 'एकादशी';
       case 'purnima':
-        return '🌕 पूर्णिमा';
+        return 'पूर्णिमा';
       default:
-        return '📿 आध्यात्मिक';
+        return 'आध्यात्मिक';
     }
   }
 }

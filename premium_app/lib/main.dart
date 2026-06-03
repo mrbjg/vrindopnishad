@@ -22,11 +22,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
+import 'core/firestore_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-  GoogleFonts.config.allowRuntimeFetching = false;
+  GoogleFonts.config.allowRuntimeFetching = true;
 
   // Initialize Cache & Storage first (Fast & Synchronous-ish)
   final prefs = await SharedPreferences.getInstance();
@@ -39,6 +40,7 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    debugPrint('Firestore Database ID: ${firestore.databaseId}');
   } catch (e) {
     if (!e.toString().contains('duplicate-app')) {
       rethrow;

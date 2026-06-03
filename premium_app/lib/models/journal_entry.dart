@@ -5,6 +5,7 @@ class JournalEntry {
   final String content;
   final DateTime createdAt;
   final String? moonPhase;
+  final List<String> likedBy;
 
   JournalEntry({
     required this.id,
@@ -13,6 +14,7 @@ class JournalEntry {
     required this.content,
     required this.createdAt,
     this.moonPhase,
+    this.likedBy = const [],
   });
 
   Map<String, dynamic> toJson() {
@@ -23,6 +25,7 @@ class JournalEntry {
       'content': content,
       'created_at': createdAt.toUtc().toIso8601String(),
       'moon_phase': moonPhase,
+      'liked_by': likedBy,
     };
   }
 
@@ -34,6 +37,7 @@ class JournalEntry {
       content: json['content'] ?? '',
       createdAt: DateTime.parse(json['created_at']).toLocal(),
       moonPhase: json['moon_phase'],
+      likedBy: List<String>.from(json['liked_by'] ?? []),
     );
   }
 
@@ -42,6 +46,7 @@ class JournalEntry {
     String? content,
     DateTime? createdAt,
     String? moonPhase,
+    List<String>? likedBy,
   }) {
     return JournalEntry(
       id: id,
@@ -50,6 +55,7 @@ class JournalEntry {
       content: content ?? this.content,
       createdAt: createdAt ?? this.createdAt,
       moonPhase: moonPhase ?? this.moonPhase,
+      likedBy: likedBy ?? this.likedBy,
     );
   }
 }

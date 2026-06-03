@@ -6,6 +6,7 @@ import '../models/sacred_event.dart';
 import '../models/achievement.dart';
 import '../models/daily_challenge.dart';
 import '../core/cache_service.dart';
+import '../core/firestore_service.dart';
 
 class SpiritualContentService {
   // ─── Daily Motivation ───────────────────────────────────────
@@ -19,7 +20,7 @@ class SpiritualContentService {
         return cached;
       }
 
-      final snapshot = await FirebaseFirestore.instance
+      final snapshot = await firestore
           .collection('daily_motivations')
           .get();
 
@@ -52,7 +53,7 @@ class SpiritualContentService {
   Future<List<DailyMotivation>> getMotivationsByCategory(
       String category, int userLevel) async {
     try {
-      final snapshot = await FirebaseFirestore.instance
+      final snapshot = await firestore
           .collection('daily_motivations')
           .where('category', isEqualTo: category)
           .get();
@@ -100,7 +101,7 @@ class SpiritualContentService {
         difficulty = 2;
       }
 
-      final snapshot = await FirebaseFirestore.instance
+      final snapshot = await firestore
           .collection('daily_gyaan')
           .get();
 
@@ -159,7 +160,7 @@ class SpiritualContentService {
       if (cached != null) {
         list = cached;
       } else {
-        final snapshot = await FirebaseFirestore.instance
+        final snapshot = await firestore
             .collection('daily_gyaan')
             .get();
 
@@ -222,7 +223,7 @@ class SpiritualContentService {
 
       final today = DateTime.now().toIso8601String().split('T')[0];
       
-      final snapshot = await FirebaseFirestore.instance
+      final snapshot = await firestore
           .collection('sacred_calendar')
           .get();
 
@@ -276,7 +277,7 @@ class SpiritualContentService {
         return cached;
       }
 
-      final snapshot = await FirebaseFirestore.instance
+      final snapshot = await firestore
           .collection('sacred_calendar')
           .get();
 
@@ -422,7 +423,7 @@ class SpiritualContentService {
 
       final today = DateTime.now().toIso8601String().split('T')[0];
       
-      final snapshot = await FirebaseFirestore.instance
+      final snapshot = await firestore
           .collection('sacred_calendar')
           .get();
 
@@ -473,7 +474,7 @@ class SpiritualContentService {
   /// Fetch user's unlocked achievements
   Future<List<UserAchievement>> getUserAchievements(String uid) async {
     try {
-      final snapshot = await FirebaseFirestore.instance
+      final snapshot = await firestore
           .collection('user_achievements')
           .where('firebase_uid', isEqualTo: uid)
           .get();
@@ -495,7 +496,7 @@ class SpiritualContentService {
   Future<bool> unlockAchievement(String uid, String achievementId) async {
     try {
       final id = '${uid}_$achievementId';
-      await FirebaseFirestore.instance.collection('user_achievements').doc(id).set({
+      await firestore.collection('user_achievements').doc(id).set({
         'firebase_uid': uid,
         'achievement_id': achievementId,
         'unlocked_at': DateTime.now().toUtc().toIso8601String(),
@@ -520,7 +521,7 @@ class SpiritualContentService {
       }
 
       // Get challenges matching user level
-      final snapshot = await FirebaseFirestore.instance
+      final snapshot = await firestore
           .collection('daily_challenges')
           .get();
 
@@ -533,7 +534,7 @@ class SpiritualContentService {
       if (challenges.isEmpty) return [];
 
       // Fetch user progress for these challenges
-      final progressSnapshot = await FirebaseFirestore.instance
+      final progressSnapshot = await firestore
           .collection('user_challenge_progress')
           .where('firebase_uid', isEqualTo: uid)
           .get();
@@ -598,7 +599,7 @@ class SpiritualContentService {
     // Sync with Firestore in background
     try {
       final progressId = '${uid}_$challengeId';
-      await FirebaseFirestore.instance
+      await firestore
           .collection('user_challenge_progress')
           .doc(progressId)
           .set({

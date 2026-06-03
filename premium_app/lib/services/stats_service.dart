@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_stats.dart';
+import '../core/firestore_service.dart';
 
 class StatsService {
   /// Fetch or initialize user stats from Firestore
   Future<UserStats?> getOrCreateStats(String uid) async {
     try {
-      final doc = await FirebaseFirestore.instance
+      final doc = await firestore
           .collection('user_stats')
           .doc(uid)
           .get();
@@ -32,7 +32,7 @@ class StatsService {
           'updated_at': DateTime.now().toUtc().toIso8601String(),
         };
 
-        await FirebaseFirestore.instance
+        await firestore
             .collection('user_stats')
             .doc(uid)
             .set(newStats);
@@ -50,7 +50,7 @@ class StatsService {
   /// Update user stats (Experience, Reading Time, etc.)
   Future<void> updateStats(String uid, Map<String, dynamic> updates) async {
     try {
-      await FirebaseFirestore.instance
+      await firestore
           .collection('user_stats')
           .doc(uid)
           .update({...updates, 'updated_at': DateTime.now().toUtc().toIso8601String()});
@@ -64,7 +64,7 @@ class StatsService {
     try {
       // 1. Insert into history
       if (count > 0) {
-        await FirebaseFirestore.instance.collection('jap_history').add({
+        await firestore.collection('jap_history').add({
           'firebase_uid': uid,
           'count': count,
           'created_at': DateTime.now().toUtc().toIso8601String(),
@@ -98,7 +98,7 @@ class StatsService {
   /// Fetch user's jap history
   Future<List<Map<String, dynamic>>> getJapHistory(String uid) async {
     try {
-      final snapshot = await FirebaseFirestore.instance
+      final snapshot = await firestore
           .collection('jap_history')
           .where('firebase_uid', isEqualTo: uid)
           .get();
@@ -130,7 +130,7 @@ class StatsService {
     String? category,
   }) async {
     try {
-      await FirebaseFirestore.instance.collection('reading_history').add({
+      await firestore.collection('reading_history').add({
         'firebase_uid': uid,
         'content_id': contentId,
         'title': title,
@@ -159,7 +159,7 @@ class StatsService {
   /// Fetch user's reading history
   Future<List<ReadingHistoryItem>> getReadingHistory(String uid) async {
     try {
-      final snapshot = await FirebaseFirestore.instance
+      final snapshot = await firestore
           .collection('reading_history')
           .where('firebase_uid', isEqualTo: uid)
           .get();
@@ -224,7 +224,7 @@ class StatsService {
   /// Delete user's stats and history from Firestore
   Future<void> deleteUserData(String uid) async {
     try {
-      final firestore = FirebaseFirestore.instance;
+      // Removed local firestore assignment so global firestore getter is used
       
       // 1. Delete reading history
       final readingSnap = await firestore
@@ -281,7 +281,7 @@ class StatsService {
   /// Clear user's reading history
   Future<void> clearReadingHistory(String uid) async {
     try {
-      final readingSnap = await FirebaseFirestore.instance
+      final readingSnap = await firestore
           .collection('reading_history')
           .where('firebase_uid', isEqualTo: uid)
           .get();
@@ -295,7 +295,7 @@ class StatsService {
 
   Future<void> updateGoal(String uid, int goal, String? reminderTime) async {
     try {
-      await FirebaseFirestore.instance.collection('user_stats').doc(uid).update({
+      await firestore.collection('user_stats').doc(uid).update({
         'daily_mala_goal': goal,
         'reminder_time': reminderTime,
         'updated_at': DateTime.now().toUtc().toIso8601String(),
