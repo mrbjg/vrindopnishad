@@ -1,3 +1,4 @@
+import 'package:premium_app/core/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
@@ -6,7 +7,6 @@ import '../../core/design_system.dart';
 import '../../core/stats_provider.dart';
 import '../content_detail_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../core/auth_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class ReadingHistoryScreen extends ConsumerStatefulWidget {
@@ -42,6 +42,7 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    PremiumTokens.of(context);
     final historyAsync = ref.watch(readingHistoryProvider);
 
     return Scaffold(
@@ -229,27 +230,21 @@ class _ReadingHistoryScreenState extends ConsumerState<ReadingHistoryScreen> {
                       isPrimary: true,
                       onTap: () async {
                         Navigator.pop(ctx);
-                        final user = ref.read(authServiceProvider).currentUser;
-                        if (user != null) {
-                          try {
-                            // High performance clear
-                            await ref.read(statsServiceProvider).clearReadingHistory(user.uid);
-                            // Deep refresh
-                            ref.invalidate(readingHistoryProvider);
-                            HapticFeedback.heavyImpact();
-                            
-                            // Sacred Notification Feedback
-                            if (context.mounted) {
-                              PremiumUI.showNotification(
-                                context, 
-                                "Celestial vaults cleared",
-                                icon: Iconsax.trash,
-                                color: Colors.redAccent,
-                              );
-                            }
-                          } catch (e) {
-                            debugPrint('Error clearing history: $e');
+                        try {
+                          await clearReadingHistoryEverywhere(ref);
+                          AppHapticFeedback.heavyImpact();
+                          
+                          // Sacred Notification Feedback
+                          if (context.mounted) {
+                            PremiumUI.showNotification(
+                              context, 
+                              "Celestial vaults cleared",
+                              icon: Iconsax.trash,
+                              color: Colors.redAccent,
+                            );
                           }
+                        } catch (e) {
+                          debugPrint('Error clearing history: $e');
                         }
                       },
                     ),

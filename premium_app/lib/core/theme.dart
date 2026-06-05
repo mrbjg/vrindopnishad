@@ -13,7 +13,7 @@ class AppTheme {
   // ═══════════════════════════════════════════════════════════════════════════
   // PERFORMANCE MODE - For low-RAM devices
   // ═══════════════════════════════════════════════════════════════════════════
-  static const bool lowPerformanceMode = true; // Enabled for extreme smoothness
+  static bool lowPerformanceMode = false; // Toggleable dynamically for speed/visuals
 
   // ═══════════════════════════════════════════════════════════════════════════
   // PRIMARY PALETTE - "Divine Minimal" Vibrant Marigold

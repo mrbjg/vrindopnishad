@@ -1,3 +1,4 @@
+import 'package:premium_app/core/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -95,7 +96,7 @@ class _DivineRulerPickerState extends State<DivineRulerPicker> {
     
     if (steppedValue != widget.value) {
       _lastEmittedValue = steppedValue;
-      HapticFeedback.selectionClick();
+      AppHapticFeedback.selectionClick();
       widget.onChanged(steppedValue);
     }
   }
@@ -165,7 +166,7 @@ class _DivineRulerPickerState extends State<DivineRulerPicker> {
           onTap: () {
             final newVal = (widget.value - widget.step).clamp(widget.min, widget.max);
             if (newVal != widget.value) {
-              HapticFeedback.lightImpact();
+              AppHapticFeedback.lightImpact();
               widget.onChanged(newVal);
             }
           },
@@ -378,7 +379,7 @@ class _DivineRulerPickerState extends State<DivineRulerPicker> {
           onTap: () {
             final newVal = (widget.value + widget.step).clamp(widget.min, widget.max);
             if (newVal != widget.value) {
-              HapticFeedback.lightImpact();
+              AppHapticFeedback.lightImpact();
               widget.onChanged(newVal);
             }
           },

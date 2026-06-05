@@ -17,6 +17,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/services.dart';
 import '../core/stats_provider.dart';
 import '../core/color_theme_provider.dart';
+import '../core/mood_theme_provider.dart';
+import '../core/providers.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   final bool isPushed;
@@ -34,10 +36,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    PremiumTokens.of(context);
     final authState = ref.watch(authStateProvider);
     final user = authState.value;
-    // Watch colorPaletteProvider to trigger a rebuild when custom theme changes
+    // Watch theme, color palette, and mood to trigger rebuild when they change
+    ref.watch(themeProvider);
     ref.watch(colorPaletteProvider);
+    ref.watch(moodThemeProvider);
 
     // Sync system status and navigation bar overlay style
     PremiumUI.setSacredStatus();
@@ -197,7 +202,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   }) {
     return PressableScale(
       onTap: () {
-        HapticFeedback.lightImpact();
+        AppHapticFeedback.lightImpact();
         onTap();
       },
       child: PremiumUI.voidCard(
@@ -274,7 +279,7 @@ class _PremiumProfileHeader extends ConsumerWidget {
                     size: 20,
                   ),
                   onPressed: () {
-                    HapticFeedback.lightImpact();
+                    AppHapticFeedback.lightImpact();
                     Navigator.pop(context);
                   },
                 ),

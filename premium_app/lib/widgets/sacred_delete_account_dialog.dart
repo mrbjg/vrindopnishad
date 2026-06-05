@@ -1,3 +1,4 @@
+import 'package:premium_app/core/providers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,7 +34,7 @@ class _SacredDeleteAccountDialogState extends ConsumerState<SacredDeleteAccountD
   bool _isLoading = false;
 
   Future<void> _handleDeleteAccount() async {
-    HapticFeedback.heavyImpact();
+    AppHapticFeedback.heavyImpact();
     setState(() => _isLoading = true);
 
     try {
@@ -351,7 +352,7 @@ class _SacredDeleteAccountDialogState extends ConsumerState<SacredDeleteAccountD
         onPressed: _isLoading
             ? null
             : () {
-                HapticFeedback.lightImpact();
+                AppHapticFeedback.lightImpact();
                 Navigator.pop(context);
               },
         style: OutlinedButton.styleFrom(

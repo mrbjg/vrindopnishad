@@ -80,13 +80,36 @@ class UserStatsNotifier extends AsyncNotifier<UserStats?> {
     final user = ref.read(authStateProvider).value;
     if (user == null) return;
     
-    // Optimistic XP update could go here, but keep it simple for now
-    await ref.read(statsServiceProvider).logReadingActivity(
-      user.uid, 
-      contentId: contentId,
-      title: title,
-      category: category,
-    );
+    // Cache locally for offline-first reading history
+    final prefs = ref.read(sharedPreferencesProvider);
+    const cacheKey = 'reading_history_cache';
+    final newEntry = {
+      'id': 'local_${DateTime.now().millisecondsSinceEpoch}',
+      'firebase_uid': user.uid,
+      'content_id': contentId,
+      'title': title,
+      'category': category,
+      'read_at': DateTime.now().toUtc().toIso8601String(),
+    };
+    try {
+      final existing = prefs.getString(cacheKey);
+      final List<dynamic> list = existing != null ? jsonDecode(existing) : [];
+      list.insert(0, newEntry); // newest first
+      if (list.length > 50) list.removeRange(50, list.length);
+      await prefs.setString(cacheKey, jsonEncode(list));
+    } catch (_) {}
+
+    // Try remote logging (best effort)
+    try {
+      await ref.read(statsServiceProvider).logReadingActivity(
+        user.uid, 
+        contentId: contentId,
+        title: title,
+        category: category,
+      );
+    } catch (e) {
+      debugPrint('Remote reading log failed: $e');
+    }
     
     if (context.mounted) {
       await ref.read(gamificationServiceProvider).awardXP(
@@ -138,9 +161,62 @@ class UserStatsNotifier extends AsyncNotifier<UserStats?> {
 final readingHistoryProvider = FutureProvider<List<ReadingHistoryItem>>((ref) async {
   final user = ref.watch(authStateProvider).value;
   if (user == null) return [];
-  
-  return await ref.read(statsServiceProvider).getReadingHistory(user.uid);
+
+  final prefs = ref.read(sharedPreferencesProvider);
+  const cacheKey = 'reading_history_cache';
+
+  // 1. Try remote first
+  try {
+    final remote = await ref.read(statsServiceProvider).getReadingHistory(user.uid);
+    if (remote.isNotEmpty) {
+      // Save to local cache
+      final encoded = jsonEncode(remote.map((e) => e.toJson()).toList());
+      await prefs.setString(cacheKey, encoded);
+      return remote;
+    }
+  } catch (e) {
+    debugPrint('Remote reading history failed, using local cache: $e');
+  }
+
+  // 2. Fallback to local cache
+  final cached = prefs.getString(cacheKey);
+  if (cached != null) {
+    try {
+      final decoded = (jsonDecode(cached) as List).cast<Map<String, dynamic>>();
+      return decoded.asMap().entries.map((e) {
+        final data = Map<String, dynamic>.from(e.value);
+        data['id'] = data['id'] ?? 'local_${e.key}';
+        return ReadingHistoryItem.fromJson(data);
+      }).toList();
+    } catch (e) {
+      debugPrint('Error parsing reading history cache: $e');
+    }
+  }
+
+  return [];
 });
+
+/// Clear reading history from both local cache and remote Firestore.
+Future<void> clearReadingHistoryEverywhere(WidgetRef ref) async {
+  final prefs = ref.read(sharedPreferencesProvider);
+  const cacheKey = 'reading_history_cache';
+
+  // 1. Clear local cache immediately (guarantees UI updates)
+  await prefs.remove(cacheKey);
+
+  // 2. Try to clear remote (best-effort)
+  final user = ref.read(authServiceProvider).currentUser;
+  if (user != null) {
+    try {
+      await ref.read(statsServiceProvider).clearReadingHistory(user.uid);
+    } catch (e) {
+      debugPrint('Remote clear failed (expected if Firestore native disabled): $e');
+    }
+  }
+
+  // 3. Refresh the provider to show empty state
+  ref.invalidate(readingHistoryProvider);
+}
 
 final japHistoryProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
   final user = ref.watch(authStateProvider).value;

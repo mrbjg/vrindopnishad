@@ -12,9 +12,11 @@ import '../core/providers.dart';
 import '../core/stats_provider.dart';
 import '../core/color_theme_provider.dart';
 import '../widgets/animated_effects.dart';
+import '../core/mood_theme_provider.dart';
 
 class NaamJapScreen extends ConsumerStatefulWidget {
-  const NaamJapScreen({super.key});
+  final bool isPushed;
+  const NaamJapScreen({super.key, this.isPushed = false});
 
   @override
   ConsumerState<NaamJapScreen> createState() => _NaamJapScreenState();
@@ -133,7 +135,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
                         ? Icon(Iconsax.tick_circle, color: PremiumTokens.activeAccent)
                         : null,
                     onTap: () {
-                      HapticFeedback.lightImpact();
+                      AppHapticFeedback.lightImpact();
                       setSheetState(() => _selectedAmbiance = key);
                       _playAmbiance(key);
                       Navigator.pop(context);
@@ -151,9 +153,13 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
+    PremiumTokens.of(context);
     final japState = ref.watch(naamJapStateProvider);
     final stats = ref.watch(userStatsProvider).value;
     final isFocusMode = ref.watch(focusModeProvider);
+    ref.watch(themeProvider);
+    ref.watch(colorPaletteProvider);
+    ref.watch(moodThemeProvider);
     
     // Calculation: Integer Malas (cycles) + Completed Beads
     final int todayJaps = japState.today;
@@ -162,26 +168,29 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
     
     final int count = japState.total;
 
+    final showBg = widget.isPushed;
+
     return Scaffold(
-      backgroundColor: PremiumTokens.scaffoldBg,
+      backgroundColor: showBg ? PremiumTokens.scaffoldBg : Colors.transparent,
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {
           final int nextCount = count + 1;
           if (nextCount > 0 && nextCount % 108 == 0) {
             // High-fidelity physical vibration sequence on completing 108 chants
-            HapticFeedback.heavyImpact();
-            Future.delayed(const Duration(milliseconds: 120), () => HapticFeedback.heavyImpact());
-            Future.delayed(const Duration(milliseconds: 240), () => HapticFeedback.heavyImpact());
+            AppHapticFeedback.heavyImpact();
+            Future.delayed(const Duration(milliseconds: 120), () => AppHapticFeedback.heavyImpact());
+            Future.delayed(const Duration(milliseconds: 240), () => AppHapticFeedback.heavyImpact());
           } else {
-            HapticFeedback.lightImpact();
+            AppHapticFeedback.lightImpact();
           }
           ref.read(naamJapStateProvider.notifier).increment(context);
         },
         child: Stack(
           children: [
             // Ethereal Background
-            Positioned.fill(child: PremiumUI.masterBackground(index: 2, context: context)),
+            if (showBg)
+              Positioned.fill(child: PremiumUI.masterBackground(index: 2, context: context)),
             
             if (!_isImmersive)
               SafeArea(
@@ -508,7 +517,7 @@ class _NaamJapScreenState extends ConsumerState<NaamJapScreen>
           // Glowing gradient chant button
           PressableScale(
             onTap: () {
-              HapticFeedback.mediumImpact();
+              AppHapticFeedback.mediumImpact();
               ref.read(naamJapStateProvider.notifier).increment(context);
             },
             child: Container(

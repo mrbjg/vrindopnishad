@@ -28,6 +28,7 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    PremiumTokens.of(context);
     // Sync system status and navigation bar overlay style
     PremiumUI.setSacredStatus();
 

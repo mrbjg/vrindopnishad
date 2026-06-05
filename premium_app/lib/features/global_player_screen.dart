@@ -1,3 +1,4 @@
+import 'package:premium_app/core/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
@@ -193,7 +194,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
           ),
           GestureDetector(
             onLongPressStart: (details) {
-              HapticFeedback.heavyImpact();
+              AppHapticFeedback.heavyImpact();
               _pointerPosition.value = details.globalPosition;
               
               final content = ref.read(audioProvider).currentContent;
@@ -285,7 +286,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
           // Play/Pause
           GestureDetector(
             onTap: () {
-              HapticFeedback.mediumImpact();
+              AppHapticFeedback.mediumImpact();
               if (state.isPlaying) {
                 ref.read(audioProvider.notifier).pause();
               } else {
@@ -332,7 +333,7 @@ class _GlobalPlayerScreenState extends ConsumerState<GlobalPlayerScreen> with Ti
   Widget _buildSmallControl(IconData icon, VoidCallback onTap) {
     return GestureDetector(
       onTap: () {
-        HapticFeedback.lightImpact();
+        AppHapticFeedback.lightImpact();
         onTap();
       },
       child: Container(

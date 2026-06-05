@@ -62,3 +62,51 @@ touch_responsiveness
 
 Ensure all custom pressable gestures (e.g., scaling or fading buttons) auto-release their compressed states after a short threshold (max 100ms) to ensure lists feel light and responsive during long holds or scroll initiation.
 
+Rule for State/Theme Reactivity:
+"When using static styling classes or global tokens (e.g. PremiumTokens), ensure that any page widget consuming these tokens explicitly registers a dependency on their underlying state providers (like themeProvider or moodThemeProvider) inside its build method to prevent static/stale rendering bugs."
+
+Rule for const Constructor Reconciliation:
+"When using const screen widget instances within a PageView or Navigator, confirm that rebuilds propagate correctly during theme/mode adjustments without losing transient states (like scroll controller positions) through excessive key-recreation hacks."
+
+1. **Avoid Double-Drawing Overdraw**: "Always verify if child screens/sub-panels nested inside a parent navigation container render their own backgrounds, gradients, or custom paints. Automatically make these backgrounds transparent/conditional to avoid rendering overhead on the GPU."
+2. **Offscreen Canvas Disabling**: "For any heavy custom painters or continuous animations (e.g., star systems, glowing auroras), ensure they stop ticking or rendering entirely when the screen is not active or is pushed off-screen."
+Walkthrough
+8:38
+8:42
+I will search 
+
+home_screen.dart
+ for references to "JAPS TODAY" or "JAP" to see how the home screen renders this part of the UI.
+
+I will read lines 180 to 220 of 
+
+main_navigation_screen.dart
+ to see how the PageView is wired to the controller and index provider.
+
+Investigating Navigation Anomaly
+
+I'm currently focused on a peculiar discrepancy. The PageView displays HomeScreen (index 0), yet the navigation bar highlights the NaamJap tab (index 2). I've reviewed the navigation bar code, particularly lines 226-253, to identify the root cause of this mismatch. My aim is to figure out why the selected tab isn't synced with the current PageView index.
+
+Analyzing Navigation Logic
+
+I've uncovered a crucial detail in the floatingNavBar. The selectedIndex logic, specifically currentIndex == 5 ? 2 : currentIndex, and discovered a potential culprit in the center button's behavior. Tapping the center area, regardless of the currentIndex, sets the navigation index to 2 via the onTap callback. This might explain the observed discrepancy and the interaction with sacredVoidButton.
+
+**Sticky App Bar Glassmorphism**: "For any sticky, floating, or pinned header/SliverAppBar, avoid using a fully transparent background when content scrolls under it. Implement a dynamic glassmorphism (frosted glass) background that becomes active only when the scroll offset is greater than 0 to prevent text and icon overlaps."
+
+- **Listen to Theme Changes in Custom Widgets**: "When building custom cards, buttons, or section wrappers that read colors from static token classes (e.g. PremiumTokens), always ensure the widget watches the active theme/mood provider (e.g., via `ref.watch`) or uses `Theme.of(context)` to register it as a dependency. Avoid caching these widgets with `const` in parent lists so they correctly rebuild and paint their colors during theme switches."
+
+- **Contrast Safety for Gradient Text**: "Never hardcode light text gradients (e.g. silver or white-to-gray) on background elements that change dynamically. Always define conditional gradients that fall back to high-contrast dark gradients (e.g. charcoal/slate) when the active mood theme is in Light Mode."
+
+
+Avoid Layout-Stretching Inside Fixed-Height Cards:
+When building text details inside fixed-height cards, avoid wrapping inner text elements in Expanded or using MainAxisAlignment.spaceBetween if the text doesn't fill the vertical space. Instead, group the elements, set spacing tightly with small SizedBox heights, and use MainAxisAlignment.center on the parent Column to center the block vertically for a clean, balanced look.
+
+Vibration/Haptics Wrapper Rule:
+Never call low-level platform APIs (like Flutter's HapticFeedback) directly. Always utilize a project-specific wrapper class (e.g., AppHapticFeedback) to guarantee global preference checks (on/off toggles) are consistently enforced.
+
+Local-First Caching Rule:
+For any user-generated state (like reading history, user stats, bookmarks, or journal posts), always implement a local caching strategy (e.g., SharedPreferences, Hive, or SQLite) first before making network calls. This prevents UI blocking and preserves core features if cloud databases (like Firestore) are disabled, offline, or experience pre-condition failures.
+
+Automated Code Quality Rule:
+After modifying files, automatically run flutter analyze and dart format to locate and resolve unused imports, formatting discrepancies, and deprecated members proactively.
+

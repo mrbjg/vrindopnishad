@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui' show ImageFilter;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
@@ -12,6 +13,7 @@ import '../core/spirituality_provider.dart';
 import '../core/stats_provider.dart';
 import '../core/auth_provider.dart';
 import '../core/content_provider.dart';
+import '../core/mood_theme_provider.dart';
 import 'search_screen.dart';
 import 'daily_motivation_screen.dart';
 import 'daily_gyaan_screen.dart';
@@ -35,6 +37,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen>
     with AutomaticKeepAliveClientMixin {
   final ScrollController _scrollController = ScrollController();
+  final ValueNotifier<bool> _isScrolled = ValueNotifier<bool>(false);
 
   @override
   bool get wantKeepAlive => true;
@@ -48,12 +51,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   void dispose() {
     _scrollController.dispose();
+    _isScrolled.dispose();
     super.dispose();
   }
 
   void _onScroll() {
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 250) {
       ref.read(personalizedDiscoveryProvider.notifier).loadMore();
+    }
+    final isScrolledNow = _scrollController.hasClients && _scrollController.offset > 5;
+    if (_isScrolled.value != isScrolledNow) {
+      _isScrolled.value = isScrolledNow;
     }
   }
 
@@ -109,7 +117,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 padding: const EdgeInsets.only(right: 12),
                 child: PressableScale(
                   onTap: () {
-                    HapticFeedback.lightImpact();
+                    AppHapticFeedback.lightImpact();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -245,6 +253,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     // Watch themes to rebuild
     ref.watch(themeProvider);
     ref.watch(colorPaletteProvider);
+    ref.watch(moodThemeProvider);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -252,7 +261,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         children: [
           RefreshIndicator(
             onRefresh: () async {
-              HapticFeedback.mediumImpact();
+              AppHapticFeedback.mediumImpact();
               await ref.read(sacredContentProvider.notifier).refresh();
               ref.read(personalizedDiscoveryProvider.notifier).refresh();
             },
@@ -273,6 +282,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 elevation: 0,
                 scrolledUnderElevation: 0,
                 backgroundColor: Colors.transparent,
+                flexibleSpace: ValueListenableBuilder<bool>(
+                  valueListenable: _isScrolled,
+                  builder: (context, isScrolled, child) {
+                    if (!isScrolled) return const SizedBox.shrink();
+                    return ClipRect(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: PremiumTokens.surfaceMain.withValues(alpha: 0.8),
+                            border: Border(
+                              bottom: BorderSide(
+                                color: PremiumTokens.borderSubtle,
+                                width: 0.5,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 titleSpacing: 20,
                 title: Row(
                   children: [
@@ -280,7 +311,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       padding: const EdgeInsets.only(left: 4),
                       child: GestureDetector(
                         onTap: () {
-                          HapticFeedback.lightImpact();
+                          AppHapticFeedback.lightImpact();
                           PremiumUI.showNotification(
                             context, 
                             "Welcome to Divine Path", 
@@ -308,13 +339,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               // 0. Daily Check-in (REMOVED)
 
               // Consolodated Lite Section
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                 child: Column(
                   children: [
-                    _DailyMotivationSection(),
-                    RepaintBoundary(child: _PeaceBreathingSection()),
-                    RepaintBoundary(child: _PremiumNaamJapSection()),
-                    _QuickActionsGrid(),
+                    const _DailyMotivationSection(),
+                    const RepaintBoundary(child: _PeaceBreathingSection()),
+                    const RepaintBoundary(child: _PremiumNaamJapSection()),
+                    const _QuickActionsGrid(),
                   ],
                 ),
               ),
@@ -444,7 +475,7 @@ class _DailyMotivationSectionState extends ConsumerState<_DailyMotivationSection
         });
       },
       onTap: () {
-        HapticFeedback.mediumImpact();
+        AppHapticFeedback.mediumImpact();
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const DailyMotivationScreen()),
@@ -621,6 +652,10 @@ class _PeaceBreathingSectionState extends ConsumerState<_PeaceBreathingSection>
 
   @override
   Widget build(BuildContext context) {
+    PremiumTokens.of(context);
+    ref.watch(themeProvider);
+    ref.watch(colorPaletteProvider);
+    ref.watch(moodThemeProvider);
     final ambientState = ref.watch(ambientAudioProvider);
     final current = ambientState.currentSoundscape;
 
@@ -639,7 +674,7 @@ class _PeaceBreathingSectionState extends ConsumerState<_PeaceBreathingSection>
             // Top Header Banner (Collapsible Header)
             GestureDetector(
               onTap: () {
-                HapticFeedback.lightImpact();
+                AppHapticFeedback.lightImpact();
                 setState(() {
                   _isExpanded = !_isExpanded;
                   if (_isExpanded) {
@@ -832,7 +867,7 @@ class _PeaceBreathingSectionState extends ConsumerState<_PeaceBreathingSection>
                           icon: '🚫',
                           isActive: current == null,
                           onTap: () async {
-                            HapticFeedback.lightImpact();
+                            AppHapticFeedback.lightImpact();
                             await ref.read(ambientAudioProvider.notifier).stop();
                           },
                         ),
@@ -841,7 +876,7 @@ class _PeaceBreathingSectionState extends ConsumerState<_PeaceBreathingSection>
                           icon: s.icon,
                           isActive: current?.id == s.id,
                           onTap: () async {
-                            HapticFeedback.lightImpact();
+                            AppHapticFeedback.lightImpact();
                             await ref.read(ambientAudioProvider.notifier).selectSoundscape(s);
                           },
                         )),
@@ -1023,11 +1058,15 @@ class _EqualizerBarState extends State<_EqualizerBar>
 
 // ─── Quick Actions Grid ────────────────────────────────────
 
-class _QuickActionsGrid extends StatelessWidget {
+class _QuickActionsGrid extends ConsumerWidget {
   const _QuickActionsGrid();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    PremiumTokens.of(context);
+    ref.watch(themeProvider);
+    ref.watch(colorPaletteProvider);
+    ref.watch(moodThemeProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: Row(
@@ -1084,7 +1123,7 @@ class _QuickActionTile extends StatelessWidget {
     return Expanded(
       child: PressableScale(
         onTap: () {
-          HapticFeedback.lightImpact();
+          AppHapticFeedback.lightImpact();
           onTap();
         },
         child: Container(
@@ -1155,6 +1194,7 @@ class _CategoriesHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    PremiumTokens.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       child: Row(
@@ -1168,7 +1208,7 @@ class _CategoriesHeader extends ConsumerWidget {
                   letterSpacing: 0.5)),
           GestureDetector(
             onTap: () {
-              HapticFeedback.lightImpact();
+              AppHapticFeedback.lightImpact();
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const CategoryListScreen()),
@@ -1195,6 +1235,10 @@ class _PremiumNaamJapSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    PremiumTokens.of(context);
+    ref.watch(themeProvider);
+    ref.watch(colorPaletteProvider);
+    ref.watch(moodThemeProvider);
     final japState = ref.watch(naamJapStateProvider);
     const goal = 1008; // Example goal
     final progress = (japState.total % goal) / goal;
@@ -1205,7 +1249,7 @@ class _PremiumNaamJapSection extends ConsumerWidget {
         child: PressableScale(
           scaleFactor: 0.95,
           onTap: () {
-            HapticFeedback.selectionClick();
+            AppHapticFeedback.selectionClick();
             ref.read(naamJapStateProvider.notifier).increment(context);
           },
           child: SizedBox(
@@ -1279,8 +1323,14 @@ class _PremiumNaamJapSection extends ConsumerWidget {
                     children: [
                       // Using ShaderMask for "Silver" Metallic look
                       ShaderMask(
-                        shaderCallback: (bounds) =>
-                            PremiumTokens.silverGradient.createShader(bounds),
+                        shaderCallback: (bounds) => (PremiumTokens.isDark
+                                ? PremiumTokens.silverGradient
+                                : const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [Color(0xFF2D3748), Color(0xFF4A5568)],
+                                  ))
+                            .createShader(bounds),
                         child: Text(
                           '${japState.total}',
                           style: GoogleFonts.spectral(
@@ -1341,6 +1391,7 @@ class _CategoriesGridLite extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    PremiumTokens.of(context);
     final categories = ref.watch(personalizedCategoriesProvider);
     final displayCategories = categories.take(4).toList();
 
@@ -1362,7 +1413,7 @@ class _CategoriesGridLite extends ConsumerWidget {
         final cat = displayCategories[index];
         return GestureDetector(
           onTap: () {
-            HapticFeedback.lightImpact();
+            AppHapticFeedback.lightImpact();
             // Filter library by this category and switch tab
             ref.read(libraryCategoryProvider.notifier).state = cat.name;
             ref.read(navigationIndexProvider.notifier).state = 1;
@@ -1431,6 +1482,7 @@ class _RecentReflectionPreviewLite extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    PremiumTokens.of(context);
     final historyAsync = ref.watch(readingHistoryProvider);
 
     return Padding(
@@ -1465,7 +1517,8 @@ class _RecentReflectionPreviewLite extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(latest.title ?? 'Sacred Reflection',
-                                style: GoogleFonts.spectral(
+                                style: PremiumTokens.hindiAwareStyle(
+                                  latest.title ?? 'Sacred Reflection',
                                   color: PremiumTokens.textPrimary,
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -1484,7 +1537,7 @@ class _RecentReflectionPreviewLite extends ConsumerWidget {
               );
             },
             loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (error, stack) => const SizedBox.shrink(),
           ),
         ],
       ),
@@ -1533,7 +1586,7 @@ class _PremiumContentListLiteState extends ConsumerState<_PremiumContentListLite
           padding: const EdgeInsets.only(bottom: 16),
           child: PressableScale(
             onTap: () {
-              HapticFeedback.lightImpact();
+              AppHapticFeedback.lightImpact();
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -1668,7 +1721,7 @@ class _PremiumContentListLiteState extends ConsumerState<_PremiumContentListLite
             padding: const EdgeInsets.only(top: 8, bottom: 24),
             child: PressableScale(
               onTap: () {
-                HapticFeedback.mediumImpact();
+                AppHapticFeedback.mediumImpact();
                 setState(() {
                   _visibleCount += 5;
                 });
@@ -1723,7 +1776,7 @@ class _CompactSearchButton extends ConsumerWidget {
     ref.watch(colorPaletteProvider);
     return PressableScale(
       onTap: () {
-        HapticFeedback.lightImpact();
+        AppHapticFeedback.lightImpact();
         Navigator.push(
             context, MaterialPageRoute(builder: (_) => const SearchScreen()));
 
@@ -1741,7 +1794,7 @@ class _CompactNotificationButton extends ConsumerWidget {
     ref.watch(colorPaletteProvider);
     return PressableScale(
       onTap: () {
-        HapticFeedback.lightImpact();
+        AppHapticFeedback.lightImpact();
         Navigator.push(
           context, 
           MaterialPageRoute(builder: (_) => const RitualsScreen())
@@ -1763,7 +1816,7 @@ class _CompactProfileButton extends ConsumerWidget {
 
     return PressableScale(
       onTap: () {
-        HapticFeedback.lightImpact();
+        AppHapticFeedback.lightImpact();
         ref.read(navigationIndexProvider.notifier).state = 4;
       },
       child: Container(

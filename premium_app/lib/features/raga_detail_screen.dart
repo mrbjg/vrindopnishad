@@ -1,3 +1,4 @@
+import 'package:premium_app/core/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -326,7 +327,7 @@ class RagaDetailScreen extends ConsumerWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: PressableScale(
         onTap: () {
-          HapticFeedback.lightImpact();
+          AppHapticFeedback.lightImpact();
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -387,7 +388,7 @@ class RagaDetailScreen extends ConsumerWidget {
               if (item.audioUrl != null && item.audioUrl!.isNotEmpty)
                 GestureDetector(
                   onTap: () {
-                    HapticFeedback.heavyImpact();
+                    AppHapticFeedback.heavyImpact();
                     ref.read(audioProvider.notifier).playWithPlaylist(item, playlist);
                   },
                   child: Container(

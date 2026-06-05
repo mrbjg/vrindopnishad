@@ -166,7 +166,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   }
 
   void _onPageChanged(int index) {
-    HapticFeedback.lightImpact();
+    AppHapticFeedback.lightImpact();
     
     // Log dwell time for the page we are leaving
     _logDwellTimeForCurrentIndex();
@@ -200,7 +200,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
   Future<void> _toggleFavoriteResolved(SacredContent? content) async {
     if (content == null) return;
-    HapticFeedback.lightImpact();
+    AppHapticFeedback.lightImpact();
     try {
       await ref
           .read(favoritesProvider.notifier)
@@ -219,12 +219,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
   void _shareContentResolved(SacredContent? content) {
     if (content == null) return;
-    HapticFeedback.lightImpact();
+    AppHapticFeedback.lightImpact();
     ShareContentHelper.shareAsImage(context, content);
   }
 
   @override
   Widget build(BuildContext context) {
+    PremiumTokens.of(context);
     final currentLanguage = ref.watch(languageProvider);
     final isFocusMode = ref.watch(focusModeProvider);
     final l = AppLocalization(currentLanguage);
@@ -252,7 +253,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             Positioned.fill(
               child: GestureDetector(
                 onTap: () {
-                  HapticFeedback.lightImpact();
+                  AppHapticFeedback.lightImpact();
                   ref.read(focusModeProvider.notifier).state = !isFocusMode;
                 },
                 child: RepaintBoundary(
@@ -283,7 +284,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
                   if (isFocusMode) {
-                    HapticFeedback.lightImpact();
+                    AppHapticFeedback.lightImpact();
                     ref.read(focusModeProvider.notifier).state = false;
                   }
                 },
@@ -623,7 +624,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     final isDark = PremiumTokens.isDark;
     return GestureDetector(
       onTap: () {
-        HapticFeedback.lightImpact();
+        AppHapticFeedback.lightImpact();
         onTap();
       },
       child: Container(
@@ -691,7 +692,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           _buildHeaderCircleButton(
             null, 
             () async {
-              HapticFeedback.mediumImpact();
+              AppHapticFeedback.mediumImpact();
               await Future.delayed(200.ms); // Allow pulse to be seen
               if (mounted) Navigator.pop(context);
             },
@@ -727,7 +728,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           _buildHeaderCircleButton(
             null,
             () {
-              HapticFeedback.mediumImpact();
+              AppHapticFeedback.mediumImpact();
               ref.read(focusModeProvider.notifier).state = !isFocusMode;
             },
             isActive: isFocusMode,
@@ -795,7 +796,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   }) {
     return PressableScale(
       onTap: () {
-        HapticFeedback.lightImpact();
+        AppHapticFeedback.lightImpact();
         onTap();
       },
       scaleFactor: 0.90,
@@ -1172,7 +1173,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       alignment: Alignment.bottomRight,
       child: GestureDetector(
         onTap: () {
-          HapticFeedback.mediumImpact();
+          AppHapticFeedback.mediumImpact();
           setState(() => _showAudioPlayer = true);
         },
         child: Container(
@@ -1276,7 +1277,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     children: [
                       IconButton(
                         onPressed: () {
-                          HapticFeedback.mediumImpact();
+                          AppHapticFeedback.mediumImpact();
                           Navigator.of(context).push(
                             PageRouteBuilder(
                               pageBuilder: (context, animation, secondaryAnimation) => const GlobalPlayerScreen(),
@@ -1328,7 +1329,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   const SizedBox(width: 24),
                   GestureDetector(
                     onTap: () {
-                      HapticFeedback.mediumImpact();
+                      AppHapticFeedback.mediumImpact();
                       if (content != null) {
                         ref.read(audioProvider.notifier).play(content);
                       }
@@ -1374,7 +1375,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     final themeData = _getThemeData();
     return PressableScale(
       onTap: () {
-        HapticFeedback.lightImpact();
+        AppHapticFeedback.lightImpact();
         onTap();
       },
       scaleFactor: 0.90,
@@ -1501,7 +1502,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         : themeData.textColor.withValues(alpha: 0.75);
                     return GestureDetector(
                       onTap: () {
-                        HapticFeedback.lightImpact();
+                        AppHapticFeedback.lightImpact();
                         setState(() => _currentTheme = theme);
                         setModalState(() {});
                         ref.read(readerThemeProvider.notifier).state = theme;

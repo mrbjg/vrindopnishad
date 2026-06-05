@@ -1,3 +1,4 @@
+import 'package:premium_app/core/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -183,7 +184,7 @@ class DailyGyaanScreen extends ConsumerWidget {
                   width: double.infinity,
                   child: PremiumUI.etherealButton(
                     onTap: () {
-                      HapticFeedback.mediumImpact();
+                      AppHapticFeedback.mediumImpact();
                     },
                     child: Text(
                       'REFLECT ON WISDOM',
@@ -240,7 +241,7 @@ class DailyGyaanScreen extends ConsumerWidget {
           padding: const EdgeInsets.only(bottom: 12),
           child: GestureDetector(
             onTap: () {
-              HapticFeedback.lightImpact();
+              AppHapticFeedback.lightImpact();
               _showGyaanDetail(context, gyaan);
             },
             child: PremiumUI.relicCard(

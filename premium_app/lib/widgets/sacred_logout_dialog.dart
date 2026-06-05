@@ -1,3 +1,4 @@
+import 'package:premium_app/core/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -143,7 +144,7 @@ class SacredLogoutDialog extends ConsumerWidget {
         ),
         child: ElevatedButton(
           onPressed: () {
-            HapticFeedback.mediumImpact();
+            AppHapticFeedback.mediumImpact();
             Navigator.pop(context);
           },
           style: ElevatedButton.styleFrom(
@@ -171,7 +172,7 @@ class SacredLogoutDialog extends ConsumerWidget {
       height: 54,
       child: OutlinedButton(
         onPressed: () {
-          HapticFeedback.heavyImpact();
+          AppHapticFeedback.heavyImpact();
           Navigator.pop(context);
           onLogout();
         },

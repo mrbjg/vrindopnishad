@@ -204,7 +204,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
       borderRadius: 14,
       child: InkWell(
         onTap: () {
-          HapticFeedback.lightImpact();
+          AppHapticFeedback.lightImpact();
           onTap();
         },
         child: Icon(icon, color: PremiumTokens.textPrimary, size: 22),
@@ -215,7 +215,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
   Widget _buildPremiumContentCard(BuildContext context, SacredContent item) {
     return GestureDetector(
       onTap: () {
-        HapticFeedback.selectionClick();
+        AppHapticFeedback.selectionClick();
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => ContentDetailScreen(content: item)),

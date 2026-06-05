@@ -21,6 +21,7 @@ enum AppMoodTheme {
   forestHaven,
   waterfallBlue,
   mountainPeak,
+  cherryBlossom,
 }
 
 class AppMoodPalette {
@@ -212,6 +213,21 @@ class AppMoodThemes {
       backgroundGradient: [Color(0xFF0D0F14), Color(0xFF141820), Color(0xFF0D0F14)],
       defaultAccent: AppColorTheme.amethystMystic,
     ),
+    AppMoodTheme.cherryBlossom: AppMoodPalette(
+      name: 'Cherry Blossom',
+      nameHi: 'चेरी ब्लॉसम',
+      emoji: '🌸',
+      brightness: Brightness.light,
+      scaffoldBg: Color(0xFFFFF0F5),
+      surfaceColor: Color(0xFFFFE4E1),
+      cardColor: Color(0xFFFFFFFF),
+      textPrimary: Color(0xFF2D2D2D),
+      textSecondary: Color(0xFF5D5D5D),
+      textMuted: Color(0xFF8A6B70),
+      borderColor: Color(0xFFFCD0D7),
+      backgroundGradient: [Color(0xFFFFF0F5), Color(0xFFFFE4E1), Color(0xFFFFF0F5)],
+      defaultAccent: AppColorTheme.lotusRose,
+    ),
   };
 
   static AppMoodPalette getPalette(AppMoodTheme mood) =>
@@ -220,9 +236,10 @@ class AppMoodThemes {
 
 class MoodThemeNotifier extends StateNotifier<AppMoodTheme> {
   final SharedPreferences prefs;
+  final Ref ref;
   static const _key = 'app_mood_theme';
 
-  MoodThemeNotifier(this.prefs) : super(AppMoodTheme.sereneDawn) {
+  MoodThemeNotifier(this.prefs, this.ref) : super(AppMoodTheme.sereneDawn) {
     _load();
   }
 
@@ -236,13 +253,24 @@ class MoodThemeNotifier extends StateNotifier<AppMoodTheme> {
   void setMood(AppMoodTheme mood) {
     state = mood;
     prefs.setInt(_key, mood.index);
+
+    try {
+      final palette = AppMoodThemes.getPalette(mood);
+      final currentTheme = ref.read(themeProvider);
+      final currentIsDark = currentTheme == ThemeMode.dark;
+      if (currentIsDark != palette.isDark) {
+        ref.read(themeProvider.notifier).toggleTheme(palette.isDark);
+      }
+    } catch (e) {
+      // Ignore
+    }
   }
 }
 
 final moodThemeProvider =
     StateNotifierProvider<MoodThemeNotifier, AppMoodTheme>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
-  return MoodThemeNotifier(prefs);
+  return MoodThemeNotifier(prefs, ref);
 });
 
 final moodPaletteProvider = Provider<AppMoodPalette>((ref) {

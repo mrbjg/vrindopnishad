@@ -1,3 +1,4 @@
+import 'package:premium_app/core/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -104,7 +105,7 @@ class _DailyMotivationScreenState extends ConsumerState<DailyMotivationScreen> {
                         padding: const EdgeInsets.only(bottom: 12),
                         child: GestureDetector(
                           onTap: () async {
-                            HapticFeedback.selectionClick();
+                            AppHapticFeedback.selectionClick();
                             await audioNotifier.selectSoundscape(scape);
                             setModalState(() {});
                           },
@@ -200,7 +201,7 @@ class _DailyMotivationScreenState extends ConsumerState<DailyMotivationScreen> {
     });
 
     try {
-      HapticFeedback.mediumImpact();
+      AppHapticFeedback.mediumImpact();
       await ref.read(journalProvider.notifier).addEntry(
             'Contemplation: Daily Motivation',
             text,
@@ -505,7 +506,7 @@ class _DailyMotivationScreenState extends ConsumerState<DailyMotivationScreen> {
                             Expanded(
                               child: GestureDetector(
                                 onTap: () async {
-                                  HapticFeedback.mediumImpact();
+                                  AppHapticFeedback.mediumImpact();
                                   final m = ref.read(dailyMotivationProvider).value;
                                   final text = m != null
                                       ? '"${m.content}" ${m.source != null ? '— ${m.source}' : ''}\n\nShared via VrindaVaani'

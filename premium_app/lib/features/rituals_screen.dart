@@ -21,6 +21,7 @@ class RitualsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    PremiumTokens.of(context);
     final ritualsAsync = ref.watch(ritualsProvider);
 
     return Scaffold(
@@ -82,7 +83,7 @@ class RitualsScreen extends ConsumerWidget {
             left: 20,
             child: GestureDetector(
               onTap: () {
-                HapticFeedback.mediumImpact();
+                AppHapticFeedback.mediumImpact();
                 if (Navigator.canPop(context)) {
                   Navigator.pop(context);
                 } else {
@@ -113,7 +114,7 @@ class RitualsScreen extends ConsumerWidget {
         children: [
           GestureDetector(
             onTap: () {
-              HapticFeedback.mediumImpact();
+              AppHapticFeedback.mediumImpact();
               ref.read(themeProvider.notifier).toggleTheme(!isDark);
             },
             child: PremiumUI.glassCard(
@@ -147,7 +148,7 @@ class RitualsScreen extends ConsumerWidget {
   Widget _buildTestTrigger(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       onTap: () {
-        HapticFeedback.mediumImpact();
+        AppHapticFeedback.mediumImpact();
         SacredRitualAlert.show(
           context,
           title: "Celestial Call",
@@ -279,7 +280,7 @@ class RitualsScreen extends ConsumerWidget {
         ),
         child: GestureDetector(
           onTap: () {
-            HapticFeedback.lightImpact();
+            AppHapticFeedback.lightImpact();
             final willBeCompleted = !ritual.isCompleted;
             if (willBeCompleted) {
               ref.read(userStatsProvider.notifier).recordReading(
@@ -292,7 +293,7 @@ class RitualsScreen extends ConsumerWidget {
             ref.read(ritualsProvider.notifier).toggleRitual(ritual.id);
           },
           onLongPress: () {
-            HapticFeedback.mediumImpact();
+            AppHapticFeedback.mediumImpact();
             _showAddRitualDialog(context, ref, ritual: ritual);
           },
           child: Container(
@@ -446,7 +447,7 @@ class RitualsScreen extends ConsumerWidget {
     return Consumer(
       builder: (context, ref, child) => GestureDetector(
         onTap: () {
-          HapticFeedback.lightImpact();
+          AppHapticFeedback.lightImpact();
           final willBeCompleted = !ritual.isCompleted;
           if (willBeCompleted) {
             ref.read(userStatsProvider.notifier).recordReading(

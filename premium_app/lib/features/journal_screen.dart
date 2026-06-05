@@ -14,6 +14,7 @@ import '../core/journal_provider.dart';
 import '../core/color_theme_provider.dart';
 import '../core/auth_provider.dart';
 import '../core/providers.dart';
+import '../core/mood_theme_provider.dart';
 import '../models/journal_entry.dart';
 import '../models/ritual.dart';
 import '../models/user_stats.dart';
@@ -364,7 +365,7 @@ class _GoLiveBroadcasterDialogState extends ConsumerState<_GoLiveBroadcasterDial
       return;
     }
 
-    HapticFeedback.heavyImpact();
+    AppHapticFeedback.heavyImpact();
     // Publish a new katha post to the database
     ref.read(journalProvider.notifier).addPost(
       title,
@@ -618,7 +619,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                         onPressed: () async {
                           final text = editController.text.trim();
                           if (text.isNotEmpty) {
-                            HapticFeedback.mediumImpact();
+                            AppHapticFeedback.mediumImpact();
                             await ref.read(journalProvider.notifier).updateEntry(post.id, content: text);
                             if (dialogContext.mounted) {
                               Navigator.pop(dialogContext);
@@ -686,7 +687,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                       ),
                       ElevatedButton(
                         onPressed: () async {
-                          HapticFeedback.heavyImpact();
+                          AppHapticFeedback.heavyImpact();
                           await ref.read(journalProvider.notifier).deleteEntry(post.id);
                           if (dialogContext.mounted) {
                             Navigator.pop(dialogContext);
@@ -730,33 +731,40 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
   @override
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
+    PremiumTokens.of(context);
     final entriesAsync = ref.watch(journalProvider);
     ref.watch(themeProvider);
     ref.watch(colorPaletteProvider);
+    ref.watch(moodThemeProvider);
+
+    final showBg = widget.showBackButton;
 
     return Scaffold(
-      backgroundColor: PremiumTokens.scaffoldBg,
+      backgroundColor: showBg ? PremiumTokens.scaffoldBg : Colors.transparent,
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              PremiumTokens.surfaceMain,
-              PremiumTokens.scaffoldBg,
-            ],
-          ),
-        ),
+        decoration: showBg
+            ? BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    PremiumTokens.surfaceMain,
+                    PremiumTokens.scaffoldBg,
+                  ],
+                ),
+              )
+            : null,
         child: Stack(
           children: [
             // Stardust Background
-            const Positioned.fill(
-              child: RepaintBoundary(
-                child: CustomPaint(
-                  painter: StardustPainter(),
+            if (showBg)
+              const Positioned.fill(
+                child: RepaintBoundary(
+                  child: CustomPaint(
+                    painter: StardustPainter(),
+                  ),
                 ),
               ),
-            ),
 
             SafeArea(
               bottom: false,
@@ -790,16 +798,18 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
       floatingActionButton: AnimatedBuilder(
         animation: _tabController.animation!,
         builder: (context, _) {
+          PremiumTokens.of(context);
           final activeIndex = _tabController.index;
           if (activeIndex != 0) return const SizedBox.shrink();
+          final isDark = Theme.of(context).brightness == Brightness.dark;
           return Padding(
             padding: const EdgeInsets.only(bottom: 100),
             child: FloatingActionButton(
               onPressed: () {
-                HapticFeedback.heavyImpact();
+                AppHapticFeedback.heavyImpact();
                 _showPostDialog(context);
               },
-              backgroundColor: PremiumTokens.fabBg,
+              backgroundColor: isDark ? PremiumTokens.voidPure : Colors.white,
               shape: const CircleBorder(),
               elevation: 4,
               child: Container(
@@ -812,7 +822,11 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                     width: 1.5,
                   ),
                 ),
-                child: Icon(Iconsax.add, color: PremiumTokens.textPrimary, size: 26),
+                child: Icon(
+                  Iconsax.add,
+                  color: isDark ? PremiumTokens.textPrimary : const Color(0xFF1A1A2E),
+                  size: 26,
+                ),
               ),
             ),
           );
@@ -833,7 +847,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
           IconButton(
             icon: Icon(Iconsax.arrow_left, color: PremiumTokens.textPrimary, size: 24),
             onPressed: () {
-              HapticFeedback.lightImpact();
+              AppHapticFeedback.lightImpact();
               Navigator.pop(context);
             },
           ),
@@ -888,7 +902,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
           color: PremiumTokens.activeAccent,
           backgroundColor: PremiumTokens.surfaceMain,
           onRefresh: () async {
-            HapticFeedback.mediumImpact();
+            AppHapticFeedback.mediumImpact();
             await ref.read(journalProvider.notifier).refresh();
           },
           child: ListView.builder(
@@ -959,7 +973,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
         avatarUrl: user?.photoURL ?? "",
         isMe: true,
         onTap: () {
-          HapticFeedback.lightImpact();
+          AppHapticFeedback.lightImpact();
           _showPostDialog(context);
         },
       ),
@@ -991,7 +1005,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
             : "https://images.unsplash.com/photo-1545127398-14699f92334b", // Peaceful satsang assembly fallback image
         isLive: hasActiveKatha,
         onTap: () {
-          HapticFeedback.heavyImpact();
+          AppHapticFeedback.heavyImpact();
           _showLiveOptionsSheet(context);
         },
       ),
@@ -1417,7 +1431,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
   }
 
   void _showStoryViewer(BuildContext context, String username, String avatarUrl, String quote, bool isLive, {String? videoUrl}) {
-    HapticFeedback.mediumImpact();
+    AppHapticFeedback.mediumImpact();
     Navigator.of(context).push(
       PageRouteBuilder(
         opaque: false,
@@ -1467,7 +1481,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
       padding: const EdgeInsets.only(bottom: 12),
       child: GestureDetector(
         onDoubleTap: () {
-          HapticFeedback.heavyImpact();
+          AppHapticFeedback.heavyImpact();
           ref.read(journalProvider.notifier).toggleLike(post.id);
         },
         child: PremiumUI.relicStaticCard(
@@ -1524,7 +1538,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                       onPressed: () {
-                        HapticFeedback.lightImpact();
+                        AppHapticFeedback.lightImpact();
                         _showModifyPostOptions(post);
                       },
                     ),
@@ -1553,7 +1567,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
               const SizedBox(height: 14),
               PressableScale(
                 onTap: () {
-                  HapticFeedback.mediumImpact();
+                  AppHapticFeedback.mediumImpact();
                   setState(() {
                     _playingVideoPostIds.add(post.id);
                   });
@@ -1620,7 +1634,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                 else
                   PressableScale(
                     onTap: () {
-                      HapticFeedback.mediumImpact();
+                      AppHapticFeedback.mediumImpact();
                       setState(() {
                         _playingVideoPostIds.add(post.id);
                       });
@@ -1709,7 +1723,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                 // Standard web link decoration (non-video)
                 GestureDetector(
                   onTap: () {
-                    HapticFeedback.lightImpact();
+                    AppHapticFeedback.lightImpact();
                     Clipboard.setData(ClipboardData(text: videoUrl));
                     PremiumUI.showNotification(context, "URL copied to clipboard");
                   },
@@ -1748,7 +1762,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                   // Heart Like Button
                   PressableScale(
                     onTap: () {
-                      HapticFeedback.mediumImpact();
+                      AppHapticFeedback.mediumImpact();
                       ref.read(journalProvider.notifier).toggleLike(post.id);
                     },
                     child: Icon(
@@ -1762,7 +1776,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                   // Comment Button
                   PressableScale(
                     onTap: () {
-                      HapticFeedback.lightImpact();
+                      AppHapticFeedback.lightImpact();
                       _showCommentsSheet(post);
                     },
                     child: Icon(
@@ -1776,7 +1790,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                   // Share Button (Paper Airplane)
                   PressableScale(
                     onTap: () async {
-                      HapticFeedback.mediumImpact();
+                      AppHapticFeedback.mediumImpact();
                       await SharePlus.instance.share(ShareParams(text: "🕉️ ${post.title} 🕉️\n\n${post.content}\n\n— Shared from Sant-Vaani (Vrindopnishad) 🙏\n📲 Join the satsang: https://vrindopnishad.in"));
                     },
                     child: Icon(
@@ -1790,7 +1804,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                   // Bookmark/Save Button
                   PressableScale(
                     onTap: () {
-                      HapticFeedback.mediumImpact();
+                      AppHapticFeedback.mediumImpact();
                       ref.read(savedPostsProvider.notifier).toggleSave(post.id);
                       PremiumUI.showNotification(
                         context,
@@ -1887,7 +1901,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                     onTap: () {
                       final text = inlineCommentController.text.trim();
                       if (text.isEmpty) return;
-                      HapticFeedback.lightImpact();
+                      AppHapticFeedback.lightImpact();
                       final displayName = user?.displayName ?? user?.email?.split('@').first ?? "Divine Seeker";
                       final photoUrl = user?.photoURL ?? "";
                       final moonPhase = "comment|${post.id}|$photoUrl";
@@ -1921,7 +1935,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
   Widget _buildLiveRoomBanner() {
     return GestureDetector(
       onTap: () {
-        HapticFeedback.heavyImpact();
+        AppHapticFeedback.heavyImpact();
         showModalBottomSheet(
           context: context,
           backgroundColor: Colors.transparent,
@@ -2039,7 +2053,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                   color: PremiumTokens.activeAccent,
                   backgroundColor: PremiumTokens.surfaceMain,
                   onRefresh: () async {
-                    HapticFeedback.mediumImpact();
+                    AppHapticFeedback.mediumImpact();
                     await ref.read(journalProvider.notifier).refresh();
                   },
                   child: ListView(
@@ -2081,7 +2095,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
                 color: PremiumTokens.activeAccent,
                 backgroundColor: PremiumTokens.surfaceMain,
                 onRefresh: () async {
-                  HapticFeedback.mediumImpact();
+                  AppHapticFeedback.mediumImpact();
                   await ref.read(journalProvider.notifier).refresh();
                 },
                 child: ListView.builder(
@@ -2197,7 +2211,7 @@ class _EternalReflectionScreenState extends ConsumerState<EternalReflectionScree
   void _sendChatMessage() {
     final text = _chatController.text.trim();
     if (text.isEmpty) return;
-    HapticFeedback.lightImpact();
+    AppHapticFeedback.lightImpact();
 
     if (_isYoutubeLive(text)) {
       showDialog(
@@ -2354,7 +2368,7 @@ void _showCommentsSheet(JournalEntry post) {
                                   color: PremiumTokens.activeAccent,
                                   backgroundColor: PremiumTokens.surfaceMain,
                                   onRefresh: () async {
-                                    HapticFeedback.mediumImpact();
+                                    AppHapticFeedback.mediumImpact();
                                     await ref.read(journalProvider.notifier).refresh();
                                   },
                                   child: ListView.builder(
@@ -2433,7 +2447,7 @@ void _showCommentsSheet(JournalEntry post) {
                                                     ],
                                                     GestureDetector(
                                                       onTap: () {
-                                                        HapticFeedback.lightImpact();
+                                                        AppHapticFeedback.lightImpact();
                                                         commentsController.text = "@${item.title} ";
                                                         commentsController.selection = TextSelection.fromPosition(
                                                           TextPosition(offset: commentsController.text.length),
@@ -2451,7 +2465,7 @@ void _showCommentsSheet(JournalEntry post) {
                                           ),
                                           GestureDetector(
                                             onTap: () {
-                                              HapticFeedback.lightImpact();
+                                              AppHapticFeedback.lightImpact();
                                                ref.read(journalProvider.notifier).toggleLike(item.id);
                                             },
                                             child: Padding(
@@ -2521,7 +2535,7 @@ void _showCommentsSheet(JournalEntry post) {
                                   onTap: () {
                                     final reply = commentsController.text.trim();
                                     if (reply.isNotEmpty) {
-                                      HapticFeedback.lightImpact();
+                                      AppHapticFeedback.lightImpact();
                                       final displayName = user?.displayName ?? user?.email?.split('@').first ?? "Divine Seeker";
                                       final photoUrl = user?.photoURL ?? "";
                                       final moonPhase = "comment|${post.id}|$photoUrl";
@@ -2649,7 +2663,7 @@ class _StoryViewerPageState extends ConsumerState<_StoryViewerPage>
     final text = _replyController.text.trim();
     if (text.isEmpty) return;
 
-    HapticFeedback.lightImpact();
+    AppHapticFeedback.lightImpact();
     ref.read(journalProvider.notifier).addChatMessage(
       "[Story Reply to @${widget.username}]: $text",
     );
@@ -2668,7 +2682,7 @@ class _StoryViewerPageState extends ConsumerState<_StoryViewerPage>
     if (ytId == null) {
       return PressableScale(
         onTap: () async {
-          HapticFeedback.mediumImpact();
+          AppHapticFeedback.mediumImpact();
           _pauseStory();
           await SharePlus.instance.share(ShareParams(text: url));
           _resumeStory();
@@ -2702,7 +2716,7 @@ class _StoryViewerPageState extends ConsumerState<_StoryViewerPage>
 
     return PressableScale(
       onTap: () {
-        HapticFeedback.mediumImpact();
+        AppHapticFeedback.mediumImpact();
         _pauseStory();
         showDialog(
           context: context,
@@ -3171,7 +3185,7 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
     final activeKatha = _findActiveKatha(entries);
     if (activeKatha == null) return;
 
-    HapticFeedback.lightImpact();
+    AppHapticFeedback.lightImpact();
     final user = ref.read(authStateProvider).value;
     final displayName = user?.displayName ?? user?.email?.split('@').first ?? "Divine Seeker";
     final photoUrl = user?.photoURL ?? "";
@@ -3240,7 +3254,7 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
                           if (dialogContext.mounted) Navigator.pop(dialogContext);
                           final navigator = Navigator.of(context);
                           final parentContext = context;
-                          HapticFeedback.heavyImpact();
+                          AppHapticFeedback.heavyImpact();
                           await ref.read(journalProvider.notifier).deleteEntry(activeKatha.id);
                           navigator.pop();
                           if (parentContext.mounted) {
@@ -3254,7 +3268,7 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
                           if (dialogContext.mounted) Navigator.pop(dialogContext);
                           final navigator = Navigator.of(context);
                           final parentContext = context;
-                          HapticFeedback.mediumImpact();
+                          AppHapticFeedback.mediumImpact();
                           await ref.read(journalProvider.notifier).endLiveStreamAndUpload(activeKatha.id);
                           navigator.pop();
                           if (parentContext.mounted) {
@@ -3445,7 +3459,7 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
                     const SizedBox(width: 12),
                     GestureDetector(
                       onTap: () {
-                        HapticFeedback.heavyImpact();
+                        AppHapticFeedback.heavyImpact();
                         if (isCurrentUserHost) {
                           _showEndStreamConfirmation(activeKatha);
                         } else if (isEligible) {
@@ -3511,7 +3525,7 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
                     const SizedBox(width: 12),
                     GestureDetector(
                       onTap: () {
-                        HapticFeedback.mediumImpact();
+                        AppHapticFeedback.mediumImpact();
                         Navigator.pop(context);
                       },
                       child: Container(
@@ -3546,7 +3560,7 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        HapticFeedback.lightImpact();
+                        AppHapticFeedback.lightImpact();
                         setState(() => _isVideoMode = true);
                       },
                       child: Container(
@@ -3577,7 +3591,7 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        HapticFeedback.lightImpact();
+                        AppHapticFeedback.lightImpact();
                         setState(() => _isVideoMode = false);
                       },
                       child: Container(
@@ -3978,7 +3992,7 @@ class _LiveSatsangRoomSheetState extends ConsumerState<_LiveSatsangRoomSheet> {
                   const SizedBox(width: 8),
                   GestureDetector(
                     onTap: () {
-                      HapticFeedback.mediumImpact();
+                      AppHapticFeedback.mediumImpact();
                       Navigator.pop(context);
                     },
                     child: Container(
@@ -4172,7 +4186,7 @@ class _ChatBubbleState extends ConsumerState<_ChatBubble> {
   }
 
   void _onDoubleTap() {
-    HapticFeedback.heavyImpact();
+    AppHapticFeedback.heavyImpact();
     ref.read(likedMessagesProvider.notifier).toggleLike(widget.msg.id);
     
     final isLikedBefore = ref.read(likedMessagesProvider).contains(widget.msg.id);
@@ -4298,7 +4312,7 @@ class _ChatBubbleState extends ConsumerState<_ChatBubble> {
                         onPressed: () async {
                           final text = editController.text.trim();
                           if (text.isNotEmpty) {
-                            HapticFeedback.mediumImpact();
+                            AppHapticFeedback.mediumImpact();
                             await ref.read(journalProvider.notifier).updateEntry(msg.id, content: text);
                             if (dialogContext.mounted) {
                               Navigator.pop(dialogContext);
@@ -4366,7 +4380,7 @@ class _ChatBubbleState extends ConsumerState<_ChatBubble> {
                       ),
                       ElevatedButton(
                         onPressed: () async {
-                          HapticFeedback.heavyImpact();
+                          AppHapticFeedback.heavyImpact();
                           await ref.read(journalProvider.notifier).deleteEntry(msg.id);
                           if (dialogContext.mounted) {
                             Navigator.pop(dialogContext);
@@ -4401,7 +4415,7 @@ class _ChatBubbleState extends ConsumerState<_ChatBubble> {
       onDoubleTap: _onDoubleTap,
       onLongPress: () {
         if (widget.isMe) {
-          HapticFeedback.mediumImpact();
+          AppHapticFeedback.mediumImpact();
           _showModifyChatOptions(widget.msg);
         }
       },
@@ -4517,7 +4531,7 @@ class _ChatBubbleState extends ConsumerState<_ChatBubble> {
                                             )
                                           : GestureDetector(
                                               onTap: () {
-                                                HapticFeedback.mediumImpact();
+                                                AppHapticFeedback.mediumImpact();
                                                 setState(() {
                                                   _isPlaying = true;
                                                 });
@@ -4705,7 +4719,7 @@ class _PlaylistSelectorCardState extends State<_PlaylistSelectorCard> {
                   )
                 : GestureDetector(
                     onTap: () {
-                      HapticFeedback.mediumImpact();
+                      AppHapticFeedback.mediumImpact();
                       setState(() {
                         _isPlaying = true;
                       });
@@ -4783,7 +4797,7 @@ class _PlaylistSelectorCardState extends State<_PlaylistSelectorCard> {
 
               return InkWell(
                 onTap: () {
-                  HapticFeedback.lightImpact();
+                  AppHapticFeedback.lightImpact();
                   setState(() {
                     _selectedIndex = index;
                     _isPlaying = true;
@@ -4979,7 +4993,7 @@ class _InlineVideoPlayerState extends State<_InlineVideoPlayer> {
 
   void _togglePlay() {
     if (_controller == null || !_controller!.value.isInitialized) return;
-    HapticFeedback.lightImpact();
+    AppHapticFeedback.lightImpact();
     setState(() {
       if (_controller!.value.isPlaying) {
         _controller!.pause();
@@ -4991,7 +5005,7 @@ class _InlineVideoPlayerState extends State<_InlineVideoPlayer> {
 
   void _toggleMute() {
     if (_controller == null || !_controller!.value.isInitialized) return;
-    HapticFeedback.lightImpact();
+    AppHapticFeedback.lightImpact();
     setState(() {
       _isMuted = !_isMuted;
       _controller!.setVolume(_isMuted ? 0.0 : 1.0);
@@ -5238,7 +5252,7 @@ class _SatsangPostComposerSheetState extends ConsumerState<_SatsangPostComposerS
   }
 
   void _appendTag(String tag) {
-    HapticFeedback.lightImpact();
+    AppHapticFeedback.lightImpact();
     final text = _textController.text;
     final selection = _textController.selection;
     
@@ -5264,7 +5278,7 @@ class _SatsangPostComposerSheetState extends ConsumerState<_SatsangPostComposerS
     final video = _linkController.text.trim();
     if (text.isEmpty) return;
 
-    HapticFeedback.mediumImpact();
+    AppHapticFeedback.mediumImpact();
     
     final notifier = ref.read(journalProvider.notifier);
     
@@ -5545,7 +5559,7 @@ class _SatsangPostComposerSheetState extends ConsumerState<_SatsangPostComposerS
                 children: [
                   GestureDetector(
                     onTap: () {
-                      HapticFeedback.lightImpact();
+                      AppHapticFeedback.lightImpact();
                       setState(() {
                         _showLinkInput = !_showLinkInput;
                       });

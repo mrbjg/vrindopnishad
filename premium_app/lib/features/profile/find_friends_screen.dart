@@ -198,6 +198,7 @@ class _FindFriendsScreenState extends ConsumerState<FindFriendsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    PremiumTokens.of(context);
     // Read user's active mood and palette details
     final userMood = ref.watch(moodThemeProvider);
     ref.watch(colorPaletteProvider);
@@ -372,7 +373,7 @@ class _FindFriendsScreenState extends ConsumerState<FindFriendsScreen> {
                           padding: const EdgeInsets.only(bottom: 14),
                           child: GestureDetector(
                             onTap: () {
-                              HapticFeedback.mediumImpact();
+                              AppHapticFeedback.mediumImpact();
                               _showSadhanaCardSheet(context, seeker);
                             },
                             child: PremiumUI.relicStaticCard(
@@ -585,7 +586,7 @@ class _FindFriendsScreenState extends ConsumerState<FindFriendsScreen> {
                                             Expanded(
                                               child: OutlinedButton(
                                                 onPressed: () {
-                                                  HapticFeedback.mediumImpact();
+                                                  AppHapticFeedback.mediumImpact();
                                                   _showJointChantSheet(context, seeker);
                                                 },
                                                 style: OutlinedButton.styleFrom(
@@ -616,7 +617,7 @@ class _FindFriendsScreenState extends ConsumerState<FindFriendsScreen> {
                                             Expanded(
                                               child: ElevatedButton(
                                                 onPressed: () {
-                                                  HapticFeedback.lightImpact();
+                                                  AppHapticFeedback.lightImpact();
                                                   // Redirect to Journal tab (Index 3)
                                                   ref.read(navigationIndexProvider.notifier).state = 3;
                                                   // Close Find Seekers Screen
@@ -686,7 +687,7 @@ class _FindFriendsScreenState extends ConsumerState<FindFriendsScreen> {
       padding: const EdgeInsets.only(right: 8),
       child: GestureDetector(
         onTap: () {
-          HapticFeedback.lightImpact();
+          AppHapticFeedback.lightImpact();
           setState(() {
             _selectedMoodFilter = value;
           });
@@ -819,7 +820,7 @@ class _FindFriendsScreenState extends ConsumerState<FindFriendsScreen> {
                   // Sacred Bead Button
                   GestureDetector(
                     onTap: () {
-                      HapticFeedback.lightImpact();
+                      AppHapticFeedback.lightImpact();
                       setSheetState(() {
                         localCount++;
                       });
@@ -956,7 +957,7 @@ class _FindFriendsScreenState extends ConsumerState<FindFriendsScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          HapticFeedback.mediumImpact();
+                          AppHapticFeedback.mediumImpact();
                           ref.read(shareStatsEnabledProvider.notifier).toggle(true);
                         },
                         style: ElevatedButton.styleFrom(
@@ -1220,6 +1221,7 @@ class _SadhanaCardActionsState extends State<_SadhanaCardActions> {
 
   @override
   Widget build(BuildContext context) {
+    PremiumTokens.of(context);
     return Row(
       children: [
         // Add Friend Button
@@ -1230,7 +1232,7 @@ class _SadhanaCardActionsState extends State<_SadhanaCardActions> {
                 ? OutlinedButton.icon(
                     key: const ValueKey('sent'),
                     onPressed: () {
-                      HapticFeedback.lightImpact();
+                      AppHapticFeedback.lightImpact();
                       setState(() => _requested = false);
                       PremiumUI.showNotification(
                         context,
@@ -1257,7 +1259,7 @@ class _SadhanaCardActionsState extends State<_SadhanaCardActions> {
                 : ElevatedButton.icon(
                     key: const ValueKey('add'),
                     onPressed: () {
-                      HapticFeedback.mediumImpact();
+                      AppHapticFeedback.mediumImpact();
                       setState(() => _requested = true);
                       PremiumUI.showNotification(
                         context,

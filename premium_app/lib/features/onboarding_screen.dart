@@ -152,7 +152,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     const SizedBox(height: 12),
                     TextButton(
                       onPressed: () {
-                        HapticFeedback.lightImpact();
+                        AppHapticFeedback.lightImpact();
                         _pageController.animateToPage(
                           totalPages - 1,
                           duration: const Duration(milliseconds: 600),
@@ -474,7 +474,7 @@ class _AssessmentSlide extends ConsumerWidget {
                   label: goal.toString(),
                   selected: isSelected,
                   onTap: () {
-                    HapticFeedback.selectionClick();
+                    AppHapticFeedback.selectionClick();
                     ref.read(selectedDailyGoalProvider.notifier).state = goal;
                   },
                 ),
@@ -544,7 +544,7 @@ class _LevelOption extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        HapticFeedback.selectionClick();
+        AppHapticFeedback.selectionClick();
         onTap();
       },
       child: AnimatedContainer(
@@ -754,7 +754,7 @@ class _MoodPickerSlide extends ConsumerWidget {
                 palette: palette,
                 isSelected: isSelected,
                 onTap: () {
-                  HapticFeedback.mediumImpact();
+                  AppHapticFeedback.mediumImpact();
                   ref.read(moodThemeProvider.notifier).setMood(mood);
                   // Also set the default accent for this mood
                   ref.read(colorThemeProvider.notifier).setTheme(palette.defaultAccent);

@@ -23,6 +23,7 @@ class _SacredGoalScreenState extends ConsumerState<SacredGoalScreen> {
 
   @override
   Widget build(BuildContext context) {
+    PremiumTokens.of(context);
     ref.watch(colorPaletteProvider);
     return Scaffold(
       backgroundColor: PremiumTokens.scaffoldBg,

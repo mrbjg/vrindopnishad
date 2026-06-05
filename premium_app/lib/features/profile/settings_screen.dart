@@ -25,6 +25,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    PremiumTokens.of(context);
     final themeMode = ref.watch(themeProvider);
     final isDark = themeMode == ThemeMode.dark;
     final currentLanguage = ref.watch(languageProvider);
@@ -98,7 +99,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Iconsax.moon,
                   isDark,
                   (val) {
-                    HapticFeedback.lightImpact();
+                    AppHapticFeedback.lightImpact();
                     ref.read(themeProvider.notifier).toggleTheme(val);
                   },
                   gradientColors: [PremiumTokens.activeAccent, PremiumTokens.activeAccent.withValues(alpha: 0.8)],
@@ -113,6 +114,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 _buildMoodThemePicker(context),
                 const SizedBox(height: 16),
 
+                _buildToggleCard(
+                  context,
+                  "UI Lite (Performance Mode)",
+                  "Disable blurs and heavy animations for maximum speed",
+                  Iconsax.flash_1,
+                  ref.watch(uiLiteEnabledProvider),
+                  (val) {
+                    AppHapticFeedback.mediumImpact();
+                    ref.read(uiLiteEnabledProvider.notifier).toggle(val);
+                    PremiumUI.showNotification(
+                      context,
+                      val ? "Performance Mode active" : "Premium Visuals restored",
+                      icon: Iconsax.flash_1,
+                    );
+                  },
+                  gradientColors: [PremiumTokens.activeAccent, PremiumTokens.activeAccent.withValues(alpha: 0.8)],
+                ),
+                const SizedBox(height: 16),
+
                 if (isDark) ...[
                   _buildToggleCard(
                     context,
@@ -121,7 +141,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Iconsax.setting_3,
                     ref.watch(trueDarkEnabledProvider),
                     (val) {
-                      HapticFeedback.lightImpact();
+                      AppHapticFeedback.lightImpact();
                       ref.read(trueDarkEnabledProvider.notifier).toggle(val);
                     },
                     gradientColors: [PremiumTokens.activeAccent, PremiumTokens.activeAccent.withValues(alpha: 0.8)],
@@ -140,7 +160,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Iconsax.magicpen,
                   ref.watch(dynamicIconEnabledProvider),
                   (val) async {
-                    HapticFeedback.mediumImpact();
+                    AppHapticFeedback.mediumImpact();
                     final user = ref.read(authServiceProvider).currentUser;
                     if (user != null) {
                       /* 
@@ -191,7 +211,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Iconsax.magic_star,
                   _notifications,
                   (val) {
-                    HapticFeedback.lightImpact();
+                    AppHapticFeedback.lightImpact();
                     setState(() => _notifications = val);
                   },
                   gradientColors: [PremiumTokens.activeAccent, PremiumTokens.activeAccent.withValues(alpha: 0.8)],
@@ -213,7 +233,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Iconsax.eye,
                   ref.watch(shareStatsEnabledProvider),
                   (val) {
-                    HapticFeedback.mediumImpact();
+                    AppHapticFeedback.mediumImpact();
                     ref.read(shareStatsEnabledProvider.notifier).toggle(val);
                   },
                   gradientColors: [PremiumTokens.activeAccent, PremiumTokens.activeAccent.withValues(alpha: 0.8)],
@@ -379,7 +399,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     return Container(
       decoration: BoxDecoration(
-        color: PremiumTokens.borderSubtle,
+        color: PremiumTokens.surfaceCard,
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
           color: PremiumTokens.borderSubtle,
@@ -500,7 +520,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       onTap: () => _showLanguageDialog(context, l),
       child: Container(
         decoration: BoxDecoration(
-          color: PremiumTokens.borderSubtle,
+          color: PremiumTokens.surfaceCard,
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
             color: PremiumTokens.borderSubtle,
@@ -678,7 +698,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     padding: const EdgeInsets.only(bottom: 12),
                     child: PressableScale(
                       onTap: () {
-                        HapticFeedback.lightImpact();
+                        AppHapticFeedback.lightImpact();
                         ref.read(languageProvider.notifier).setLanguage(lang);
                         Navigator.pop(context);
                       },
@@ -786,7 +806,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     return PressableScale(
       onTap: () {
-        HapticFeedback.lightImpact();
+        AppHapticFeedback.lightImpact();
         if (onTap != null) {
           onTap();
         } else {
@@ -800,11 +820,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: PremiumTokens.borderSubtle,
+          color: PremiumTokens.surfaceCard,
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
             color: isDestructive
-                ? Colors.red.withValues(alpha: 0.15)
+                ? Colors.red.withValues(alpha: 0.3)
                 : PremiumTokens.borderSubtle,
             width: 1.5,
           ),
@@ -872,7 +892,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: PremiumTokens.borderSubtle,
+        color: PremiumTokens.surfaceCard,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: PremiumTokens.borderSubtle),
       ),
@@ -916,7 +936,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Expanded(
       child: PressableScale(
         onTap: () {
-          HapticFeedback.mediumImpact();
+          AppHapticFeedback.mediumImpact();
           ref.read(readerThemeProvider.notifier).state = theme;
         },
         child: AnimatedContainer(
@@ -1043,7 +1063,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       onTap: () => _showColorThemeSheet(context),
       child: Container(
         decoration: BoxDecoration(
-          color: PremiumTokens.borderSubtle,
+          color: PremiumTokens.surfaceCard,
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
             color: currentPalette.accent.withValues(alpha: 0.15),
@@ -1123,7 +1143,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   return Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        HapticFeedback.mediumImpact();
+                        AppHapticFeedback.mediumImpact();
                         ref.read(colorThemeProvider.notifier).setTheme(theme);
                       },
                       child: AnimatedContainer(
@@ -1239,7 +1259,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         padding: const EdgeInsets.only(bottom: 12),
                         child: PressableScale(
                           onTap: () {
-                            HapticFeedback.mediumImpact();
+                            AppHapticFeedback.mediumImpact();
                             ref.read(colorThemeProvider.notifier).setTheme(theme);
                           },
                           child: AnimatedContainer(
@@ -1367,10 +1387,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       onTap: () => _showMoodThemeSheet(context),
       child: Container(
         decoration: BoxDecoration(
-          color: PremiumTokens.borderSubtle,
+          color: PremiumTokens.surfaceCard,
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
-            color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
+            color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
             width: 1.5,
           ),
         ),
@@ -1525,7 +1545,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                             return GestureDetector(
                               onTap: () {
-                                HapticFeedback.mediumImpact();
+                                AppHapticFeedback.mediumImpact();
                                 ref.read(moodThemeProvider.notifier).setMood(mood);
                                 ref.read(colorThemeProvider.notifier).setTheme(palette.defaultAccent);
                               },

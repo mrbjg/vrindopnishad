@@ -1,3 +1,4 @@
+import 'package:premium_app/core/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,6 +12,7 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    PremiumTokens.of(context);
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
@@ -252,7 +254,7 @@ class AboutScreen extends StatelessWidget {
   Widget _buildPremiumSocialIcon(BuildContext context, IconData icon, String label, Color color) {
     return PressableScale(
       onTap: () {
-        HapticFeedback.mediumImpact();
+        AppHapticFeedback.mediumImpact();
         PremiumUI.showNotification(
           context, 
           "Connecting to $label...",

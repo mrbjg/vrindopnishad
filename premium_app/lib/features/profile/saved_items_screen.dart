@@ -13,6 +13,7 @@ class SavedItemsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    PremiumTokens.of(context);
     final allContent = ref.watch(sacredContentProvider);
     final favoriteIds = ref.watch(favoritesProvider);
     ref.watch(colorPaletteProvider);

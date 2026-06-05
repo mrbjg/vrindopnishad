@@ -1,3 +1,4 @@
+import 'package:premium_app/core/providers.dart';
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -92,7 +93,7 @@ class _PressableScaleState extends State<PressableScale>
       onTap: widget.onTap != null
           ? () {
               if (widget.haptic) {
-                HapticFeedback.selectionClick();
+                AppHapticFeedback.selectionClick();
               }
               widget.onTap?.call();
             }

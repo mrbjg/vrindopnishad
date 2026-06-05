@@ -98,6 +98,13 @@ class _SantVaaniPremiumAppState extends ConsumerState<SantVaaniPremiumApp> {
     final colorPalette = ref.watch(colorPaletteProvider);
     final trueDarkEnabled = ref.watch(trueDarkEnabledProvider);
     final moodPalette = ref.watch(moodPaletteProvider);
+    final uiLiteEnabled = ref.watch(uiLiteEnabledProvider);
+    final hapticEnabled = ref.watch(hapticEnabledProvider);
+
+    // Sync UI Lite setting
+    AppTheme.lowPerformanceMode = uiLiteEnabled;
+    // Sync Haptic Feedback setting
+    AppHapticFeedback.setEnabled(hapticEnabled);
 
     // Determine effective brightness from mood palette
     final moodBrightness = moodPalette.brightness;

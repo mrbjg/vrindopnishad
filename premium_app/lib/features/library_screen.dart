@@ -16,6 +16,7 @@ import '../core/audio_provider.dart';
 import '../core/color_theme_provider.dart';
 import '../widgets/animated_effects.dart';
 import '../core/personalized_feed_provider.dart';
+import '../core/mood_theme_provider.dart';
 
 final libraryTabProvider = StateProvider<int>((ref) => 0);
 
@@ -24,7 +25,11 @@ class LibraryScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    PremiumTokens.of(context);
     final activeTab = ref.watch(libraryTabProvider);
+    ref.watch(themeProvider);
+    ref.watch(colorPaletteProvider);
+    ref.watch(moodThemeProvider);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -94,50 +99,79 @@ class LibraryScreen extends ConsumerWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Container(
-        height: 48,
-        decoration: BoxDecoration(
-          color: PremiumTokens.surfaceElevated.withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: PremiumTokens.borderSubtle),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: Row(
-            children: List.generate(tabs.length, (index) {
-              final isSelected = activeTab == index;
-              return Expanded(
-                child: PressableScale(
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    ref.read(libraryTabProvider.notifier).state = index;
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeInOut,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? palette.accent.withValues(alpha: 0.15)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    margin: const EdgeInsets.all(4),
-                    child: Text(
-                      tabs[index].toUpperCase(),
-                      style: PremiumTokens.sansStyle(
-                        fontSize: 10,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        color: isSelected ? palette.accent : PremiumTokens.textSecondary,
-                        letterSpacing: 0.8,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+          final slotWidth = width / tabs.length;
+          const double marginVal = 4.0;
+          const double heightVal = 48.0;
+          const double capsuleHeight = heightVal - (marginVal * 2);
+          final capsuleWidth = slotWidth - (marginVal * 2);
+
+          return Container(
+            height: heightVal,
+            decoration: BoxDecoration(
+              color: PremiumTokens.surfaceElevated.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: PremiumTokens.borderSubtle),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: Stack(
+                children: [
+                  // Sliding Background Capsule
+                  AnimatedPositioned(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOutBack,
+                    left: (activeTab * slotWidth) + marginVal,
+                    top: marginVal,
+                    width: capsuleWidth,
+                    height: capsuleHeight,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: palette.accent.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(20),
                       ),
                     ),
                   ),
-                ),
-              );
-            }),
-          ),
-        ),
+                  
+                  // Interactive Tab Items
+                  Positioned.fill(
+                    child: Row(
+                      children: List.generate(tabs.length, (index) {
+                        final isSelected = activeTab == index;
+                        return Expanded(
+                          child: PressableScale(
+                            onTap: () {
+                              AppHapticFeedback.lightImpact();
+                              ref.read(libraryTabProvider.notifier).state = index;
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              color: Colors.transparent, // Ensures entire slot is tap-target
+                              child: AnimatedDefaultTextStyle(
+                                duration: const Duration(milliseconds: 200),
+                                style: PremiumTokens.sansStyle(
+                                  fontSize: 10,
+                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                  color: isSelected ? palette.accent : PremiumTokens.textSecondary,
+                                  letterSpacing: 0.8,
+                                ),
+                                child: Text(
+                                  tabs[index].toUpperCase(),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -175,7 +209,7 @@ class LibraryScreen extends ConsumerWidget {
 
             return PressableScale(
               onTap: () {
-                HapticFeedback.lightImpact();
+                AppHapticFeedback.lightImpact();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -265,7 +299,7 @@ class LibraryScreen extends ConsumerWidget {
 
             return PressableScale(
               onTap: () {
-                HapticFeedback.lightImpact();
+                AppHapticFeedback.lightImpact();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -363,7 +397,7 @@ class LibraryScreen extends ConsumerWidget {
               padding: const EdgeInsets.only(bottom: 10),
               child: PressableScale(
                 onTap: () {
-                  HapticFeedback.lightImpact();
+                  AppHapticFeedback.lightImpact();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -517,7 +551,7 @@ class LibraryScreen extends ConsumerWidget {
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: PressableScale(
         onTap: () {
-          HapticFeedback.lightImpact();
+          AppHapticFeedback.lightImpact();
           Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const SearchScreen()),
@@ -600,7 +634,7 @@ class LibraryScreen extends ConsumerWidget {
           ),
         ),
         SizedBox(
-          height: 120,
+          height: 155,
           child: ListView.separated(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             scrollDirection: Axis.horizontal,
@@ -611,7 +645,7 @@ class LibraryScreen extends ConsumerWidget {
               final item = forYouItems[index];
               return PressableScale(
                 onTap: () {
-                  HapticFeedback.lightImpact();
+                  AppHapticFeedback.lightImpact();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -639,23 +673,23 @@ class LibraryScreen extends ConsumerWidget {
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       PremiumUI.categoryBadge(item.category, fontSize: 10),
                       const SizedBox(height: 8),
-                      Expanded(
-                        child: Text(
+                      Text(
+                        item.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: PremiumTokens.hindiAwareStyle(
                           item.title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: PremiumTokens.hindiAwareStyle(
-                            item.title,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: PremiumTokens.textPrimary,
-                          ),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: PremiumTokens.textPrimary,
                         ),
                       ),
-                      if (item.author != null)
+                      if (item.author != null) ...[
+                        const SizedBox(height: 6),
                         Text(
                           item.author!,
                           maxLines: 1,
@@ -665,6 +699,7 @@ class LibraryScreen extends ConsumerWidget {
                             color: PremiumTokens.saffronGlow.withValues(alpha: 0.8),
                           ),
                         ),
+                      ],
                     ],
                   ),
                 ),
@@ -738,7 +773,7 @@ class LibraryScreen extends ConsumerWidget {
                 const SizedBox(width: 8),
                 GestureDetector(
                   onTap: () {
-                    HapticFeedback.lightImpact();
+                    AppHapticFeedback.lightImpact();
                     ref.read(libraryCategoryProvider.notifier).state = "ALL";
                   },
                   behavior: HitTestBehavior.opaque,
@@ -815,7 +850,7 @@ class LibraryScreen extends ConsumerWidget {
             // Play/Pause Action
             PressableScale(
               onTap: () {
-                HapticFeedback.mediumImpact();
+                AppHapticFeedback.mediumImpact();
                 ref.read(audioProvider.notifier).togglePlayPause();
               },
               child: Container(
@@ -849,7 +884,7 @@ class LibraryScreen extends ConsumerWidget {
         padding: const EdgeInsets.only(bottom: 14),
         child: PressableScale(
           onTap: () {
-            HapticFeedback.lightImpact();
+            AppHapticFeedback.lightImpact();
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -1039,7 +1074,7 @@ class LibraryScreen extends ConsumerWidget {
                                 isToggled: ref.watch(isFavoriteProvider(item.id)),
                                 resetAfterPlay: false,
                                 onTap: () {
-                                  HapticFeedback.lightImpact();
+                                  AppHapticFeedback.lightImpact();
                                   ref.read(favoritesProvider.notifier).toggleFavorite(item.id);
                                 },
                               ),
@@ -1047,7 +1082,7 @@ class LibraryScreen extends ConsumerWidget {
                                 const SizedBox(height: 10),
                                 GestureDetector(
                                   onTap: () {
-                                    HapticFeedback.heavyImpact();
+                                    AppHapticFeedback.heavyImpact();
                                     ref.read(audioProvider.notifier).playWithPlaylist(item, playlist);
                                   },
                                   child: Container(

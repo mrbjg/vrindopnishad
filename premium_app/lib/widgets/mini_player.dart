@@ -1,3 +1,4 @@
+import 'package:premium_app/core/providers.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -46,7 +47,7 @@ class _MiniPlayerState extends ConsumerState<MiniPlayer> {
       onVerticalDragEnd: (details) {
         if (_dragOffset > 80) {
           setState(() => _isDismissing = true);
-          HapticFeedback.mediumImpact();
+          AppHapticFeedback.mediumImpact();
           ref.read(audioProvider.notifier).stop().then((_) {
             if (mounted) {
               setState(() {
@@ -83,17 +84,34 @@ class _MiniPlayerState extends ConsumerState<MiniPlayer> {
                 margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 height: 68, 
                 width: width - 24, // Accommodate margin
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(
+                        alpha: PremiumTokens.isDark ? 0.45 : 0.08,
+                      ),
+                      blurRadius: 16,
+                      spreadRadius: -2,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(24),
                   child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                    filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: PremiumTokens.borderSubtle,
+                        color: PremiumTokens.surfaceCard.withValues(
+                          alpha: PremiumTokens.isDark ? 0.72 : 0.85,
+                        ),
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: PremiumTokens.borderSubtle,
-                          width: 0.5,
+                          color: PremiumTokens.textPrimary.withValues(
+                            alpha: PremiumTokens.isDark ? 0.15 : 0.18,
+                          ),
+                          width: 0.8,
                         ),
                       ),
                       child: Stack(
@@ -154,7 +172,7 @@ class _MiniPlayerState extends ConsumerState<MiniPlayer> {
                                 IconButton(
                                   icon: Icon(Iconsax.backward_10_seconds, color: PremiumTokens.textPrimary.withValues(alpha: 0.4), size: 18),
                                   onPressed: () {
-                                    HapticFeedback.lightImpact();
+                                    AppHapticFeedback.lightImpact();
                                     ref.read(audioProvider.notifier).skipBackward();
                                   },
                                   padding: EdgeInsets.zero,
@@ -174,7 +192,7 @@ class _MiniPlayerState extends ConsumerState<MiniPlayer> {
                                         )
                                       : Icon(isPlaying ? Iconsax.pause5 : Iconsax.play5, color: PremiumTokens.textPrimary, size: 28),
                                     onPressed: () {
-                                      HapticFeedback.mediumImpact();
+                                      AppHapticFeedback.mediumImpact();
                                       ref.read(audioProvider.notifier).togglePlayPause();
                                     },
                                     padding: EdgeInsets.zero,

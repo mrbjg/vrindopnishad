@@ -1,3 +1,4 @@
+import 'package:premium_app/core/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -16,7 +17,7 @@ class AchievementUnlockDialog extends StatelessWidget {
   });
 
   static void show(BuildContext context, Achievement achievement, {VoidCallback? onDismiss}) {
-    HapticFeedback.heavyImpact();
+    AppHapticFeedback.heavyImpact();
     showDialog(
       context: context,
       barrierDismissible: false,

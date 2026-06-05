@@ -16,6 +16,8 @@ import '../widgets/mini_player.dart';
 import 'rituals_screen.dart';
 import '../core/stats_provider.dart';
 import '../core/notification_manager.dart';
+import '../core/mood_theme_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MainNavigationScreen extends ConsumerStatefulWidget {
   const MainNavigationScreen({super.key});
@@ -95,9 +97,11 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // CRITICAL: Watch themeProvider and colorPaletteProvider to force rebuild on theme change.
-    final themeMode = ref.watch(themeProvider);
-    final colorPalette = ref.watch(colorPaletteProvider);
+    PremiumTokens.of(context);
+    // CRITICAL: Watch themeProvider, colorPaletteProvider, and moodThemeProvider to force rebuild on theme change.
+    ref.watch(themeProvider);
+    ref.watch(colorPaletteProvider);
+    ref.watch(moodThemeProvider);
     // Activate Dynamic Icon Service
     ref.watch(dynamicIconServiceProvider);
     
@@ -144,7 +148,6 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
           // Main content: PageView for swipeable tabs
           Positioned.fill(
             child: RepaintBoundary(
-              key: ValueKey('${themeMode.name}_${colorPalette.name}'),
               child: Stack(
                 children: [
                   // Swipeable PageView (always present, hidden behind rituals when active)
@@ -248,7 +251,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                     ],
                   ),
                   Positioned(
-                    bottom: 22,
+                    bottom: 26,
                     child: Consumer(
                       builder: (context, ref, child) {
                         final count = ref.watch(naamJapStateProvider);
@@ -256,7 +259,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                           isActive: currentIndex == 2 || currentIndex == 5,
                           count: count.total,
                           onTap: () {
-                            HapticFeedback.heavyImpact();
+                            AppHapticFeedback.heavyImpact();
                             ref.read(naamJapStateProvider.notifier).increment(context);
                           },
                           onLongPressStart: (details) {
@@ -297,15 +300,19 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                                   ),
                                   SacredMenuItem(
                                     icon: Icons.vibration,
-                                    label: "Haptics",
-                                    color: PremiumTokens.activeAccent,
+                                    label: ref.read(hapticEnabledProvider) ? "Haptics: On" : "Haptics: Off",
+                                    color: ref.read(hapticEnabledProvider) 
+                                        ? PremiumTokens.activeAccent 
+                                        : PremiumTokens.textMuted,
                                     onTap: () {
-                                      HapticFeedback.vibrate();
+                                      ref.read(hapticEnabledProvider.notifier).toggle();
+                                      final isNowOn = ref.read(hapticEnabledProvider);
+                                      if (isNowOn) AppHapticFeedback.mediumImpact();
                                       PremiumUI.showNotification(
                                         context, 
-                                        "Haptic Feedback: Heavy",
+                                        isNowOn ? "Haptic feedback enabled" : "Haptic feedback disabled",
                                         icon: Icons.vibration,
-                                        color: PremiumTokens.activeAccent,
+                                        color: isNowOn ? PremiumTokens.activeAccent : PremiumTokens.textMuted,
                                       );
                                     },
                                   ),
@@ -314,11 +321,12 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
                                     label: "Share",
                                     color: Colors.greenAccent,
                                     onTap: () {
-                                      PremiumUI.showNotification(
-                                        context, 
-                                        "Sharing Sant-Vaani...",
-                                        icon: Iconsax.send_2,
-                                        color: Colors.greenAccent,
+                                      AppHapticFeedback.lightImpact();
+                                      SharePlus.instance.share(
+                                        ShareParams(
+                                          text: '🙏 Experience divine Sant-Vaani — sacred wisdom, chanting & daily rituals.\n\nDownload now: https://play.google.com/store/apps/details?id=com.vrindavaani.app',
+                                          subject: 'Sant-Vaani — Sacred Wisdom App',
+                                        ),
                                       );
                                     },
                                   ),

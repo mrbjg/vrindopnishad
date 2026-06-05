@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_provider.dart';
 import 'stats_provider.dart';
 import 'cache_service.dart';
 import '../services/gamification_service.dart';
+import 'mood_theme_provider.dart';
+import 'color_theme_provider.dart';
 
 final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
 
@@ -15,8 +18,9 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
 
 class ThemeNotifier extends StateNotifier<ThemeMode> {
   final SharedPreferences prefs;
+  final Ref ref;
 
-  ThemeNotifier(this.prefs) : super(ThemeMode.system) {
+  ThemeNotifier(this.prefs, this.ref) : super(ThemeMode.system) {
     _loadTheme();
   }
 
@@ -35,6 +39,19 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
   void toggleTheme(bool isDark) {
     final newMode = isDark ? ThemeMode.dark : ThemeMode.light;
     setThemeMode(newMode);
+
+    try {
+      final currentMood = ref.read(moodThemeProvider);
+      final currentPalette = AppMoodThemes.getPalette(currentMood);
+      if (currentPalette.isDark != isDark) {
+        final newMood = isDark ? AppMoodTheme.midnightVoid : AppMoodTheme.sereneDawn;
+        ref.read(moodThemeProvider.notifier).setMood(newMood);
+        final newPalette = AppMoodThemes.getPalette(newMood);
+        ref.read(colorThemeProvider.notifier).setTheme(newPalette.defaultAccent);
+      }
+    } catch (e) {
+      // Ignore
+    }
   }
 
   /// Reset to follow system theme
@@ -48,7 +65,7 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
 
 final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
-  return ThemeNotifier(prefs);
+  return ThemeNotifier(prefs, ref);
 });
 
 enum AppLanguage { english, hindi, sanskrit }
@@ -310,3 +327,72 @@ final shareStatsEnabledProvider = StateNotifierProvider<ShareStatsNotifier, bool
   final prefs = ref.watch(sharedPreferencesProvider);
   return ShareStatsNotifier(prefs);
 });
+
+class UiLiteNotifier extends StateNotifier<bool> {
+  final SharedPreferences prefs;
+  static const _key = 'ui_lite_enabled';
+
+  UiLiteNotifier(this.prefs) : super(false) {
+    state = prefs.getBool(_key) ?? false;
+  }
+
+  void toggle(bool value) {
+    state = value;
+    prefs.setBool(_key, value);
+  }
+}
+
+final uiLiteEnabledProvider = StateNotifierProvider<UiLiteNotifier, bool>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return UiLiteNotifier(prefs);
+});
+
+/// Haptic feedback toggle — persisted in SharedPreferences.
+/// When disabled, nav/menu taps won't vibrate. Default: true (enabled).
+class HapticModeNotifier extends StateNotifier<bool> {
+  final SharedPreferences prefs;
+  static const _key = 'haptic_feedback_enabled';
+
+  HapticModeNotifier(this.prefs) : super(true) {
+    state = prefs.getBool(_key) ?? true;
+  }
+
+  void toggle() {
+    state = !state;
+    prefs.setBool(_key, state);
+  }
+}
+
+final hapticEnabledProvider = StateNotifierProvider<HapticModeNotifier, bool>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return HapticModeNotifier(prefs);
+});
+
+/// Global manager to dynamically enable/disable HapticFeedback based on user preference.
+class AppHapticFeedback {
+  static bool _isEnabled = true;
+
+  static void setEnabled(bool enabled) {
+    _isEnabled = enabled;
+  }
+
+  static Future<void> lightImpact() async {
+    if (_isEnabled) await HapticFeedback.lightImpact();
+  }
+
+  static Future<void> mediumImpact() async {
+    if (_isEnabled) await HapticFeedback.mediumImpact();
+  }
+
+  static Future<void> heavyImpact() async {
+    if (_isEnabled) await HapticFeedback.heavyImpact();
+  }
+
+  static Future<void> selectionClick() async {
+    if (_isEnabled) await HapticFeedback.selectionClick();
+  }
+
+  static Future<void> vibrate() async {
+    if (_isEnabled) await HapticFeedback.vibrate();
+  }
+}

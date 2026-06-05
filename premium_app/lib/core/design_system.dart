@@ -1,3 +1,4 @@
+import 'package:premium_app/core/providers.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'dart:math' as math;
@@ -19,9 +20,7 @@ import 'mood_theme_provider.dart';
 
 class PremiumTokens {
   static Brightness brightness = Brightness.dark;
-  static bool get isDark => _moodActive 
-      ? (_moodBrightness == Brightness.dark) 
-      : (brightness == Brightness.dark);
+  static bool get isDark => brightness == Brightness.dark;
 
   /// Context-aware brightness sync. Call this at the top of any build()
   /// method to ensure PremiumTokens reads the correct theme from the
@@ -90,7 +89,6 @@ class PremiumTokens {
   static Color _moodBorder = const Color(0xFFE8E0D0);
   static List<Color> _moodGradient = const [Color(0xFFFFFDF5), Color(0xFFFFF0D0), Color(0xFFFFFDF5)];
   static bool _moodActive = false;
-  static Brightness _moodBrightness = Brightness.light;
   static AppMoodTheme _currentMood = AppMoodTheme.sereneDawn;
   static AppMoodTheme get currentMood => _currentMood;
   static bool get isMoodActive => _moodActive;
@@ -110,7 +108,6 @@ class PremiumTokens {
   }) {
     _moodActive = true;
     _currentMood = theme;
-    _moodBrightness = brightness;
     _moodScaffold = scaffold;
     _moodSurface = surface;
     _moodCard = card;
@@ -329,7 +326,7 @@ class PremiumTokens {
   }) {
     return GoogleFonts.notoSerif(
       fontSize: fontSize,
-      color: color ?? (isDark ? celestialSilver : const Color(0xFF1A1A1A)),
+      color: color ?? textPrimary,
       fontWeight: fontWeight,
       letterSpacing: letterSpacing,
     );
@@ -348,7 +345,7 @@ class PremiumTokens {
   }) {
     return GoogleFonts.poppins(
       fontSize: fontSize,
-      color: color ?? (isDark ? celestialSilver : const Color(0xFF2D2D2D)),
+      color: color ?? textPrimary,
       fontWeight: fontWeight,
       fontStyle: fontStyle,
       letterSpacing: letterSpacing,
@@ -1069,26 +1066,45 @@ class PremiumUI {
             alignment: Alignment.bottomCenter,
             clipBehavior: Clip.none,
             children: [
+              // Premium drop shadow layer behind the blur
+              Positioned(
+                bottom: 0,
+                child: Container(
+                  height: 70,
+                  width: effectiveWidth - 32,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(35),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(
+                          alpha: PremiumTokens.isDark ? 0.45 : 0.08,
+                        ),
+                        blurRadius: 20,
+                        spreadRadius: -2,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               // Glass Bar Container
               ClipRRect(
                 borderRadius: BorderRadius.circular(35),
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                  filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
                   child: Container(
                     height: 70,
                     width: effectiveWidth - 32, // Strictly bound to parent width
                     decoration: BoxDecoration(
-                      color: (PremiumTokens.isDark
-                              ? Colors.black
-                              : Colors.white)
-                          .withValues(alpha: PremiumTokens.isDark ? 0.35 : 0.45),
+                      color: PremiumTokens.surfaceCard.withValues(
+                        alpha: PremiumTokens.isDark ? 0.72 : 0.85,
+                      ),
                       borderRadius: BorderRadius.circular(35),
                       border: Border.all(
-                        color: (PremiumTokens.isDark
-                                ? Colors.white
-                                : Colors.black)
-                            .withValues(alpha: 0.12),
-                        width: 0.5,
+                        color: PremiumTokens.textPrimary.withValues(
+                          alpha: PremiumTokens.isDark ? 0.15 : 0.18,
+                        ),
+                        width: 0.8,
                       ),
                     ),
                     child: Stack(
@@ -1227,18 +1243,19 @@ class PremiumUI {
     double borderRadius = 24,
     EdgeInsets? padding,
     EdgeInsets? margin,
-    bool optimized = true,
+    bool? optimized,
   }) {
     return Builder(
       builder: (context) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         final baseColor = isDark ? Colors.white : Colors.black;
+        final effectiveOptimized = optimized ?? AppTheme.lowPerformanceMode;
         
         return Container(
           margin: margin,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(borderRadius),
-            child: optimized
+            child: effectiveOptimized
                 ? Container(
                     padding: padding ?? const EdgeInsets.all(20),
                     decoration: BoxDecoration(
@@ -1268,13 +1285,14 @@ class PremiumUI {
                       padding: padding ?? const EdgeInsets.all(20),
                       decoration: PremiumTokens.glassDecoration(
                         blur: blur,
-                        opacity: opacity,
-                    borderRadius: borderRadius,
+                        opacity: isDark ? opacity * 1.5 : 0.85,
+                        borderRadius: borderRadius,
+                        color: Colors.white,
+                      ),
+                      child: child,
+                    ),
                   ),
-                  child: child,
-                ),
-              ),
-            ),
+          ),
         );
       },
     );
@@ -1449,7 +1467,7 @@ class PremiumUI {
 
     return GestureDetector(
       onTap: () {
-        HapticFeedback.lightImpact();
+        AppHapticFeedback.lightImpact();
         onTap();
       },
       child: Container(
@@ -1525,35 +1543,23 @@ class PremiumUI {
             // Render specific decorations depending on mood
             if (mood == AppMoodTheme.sereneDawn) ...[
               // Rising sun behind clouds
-              if (isVoid)
-                _buildSun(bottom: 120, left: 60, size: 110)
-              else
-                _buildSun(top: 80, right: 40, size: 90),
+              _buildSun(top: 80, right: 40, size: 90),
               // Soft drifting clouds
               const Positioned.fill(child: DriftingClouds()),
             ] else if (mood == AppMoodTheme.midnightVoid) ...[
               // Glowing crescent moon
-              if (isVoid)
-                _buildMoon(bottom: 120, left: 60, size: 80)
-              else
-                _buildMoon(top: 60, left: 40, size: 60),
+              _buildMoon(top: 60, left: 40, size: 60),
             ] else if (mood == AppMoodTheme.cloudyCalm) ...[
               // Atmospheric drifting clouds
               const Positioned.fill(child: DriftingClouds()),
             ] else if (mood == AppMoodTheme.shinyBloom) ...[
               // Sun behind clouds
-              if (isVoid)
-                _buildSun(bottom: 120, left: 60, size: 120)
-              else
-                _buildSun(top: 80, right: 40, size: 100),
+              _buildSun(top: 80, right: 40, size: 100),
               // Sunny day clouds
               const Positioned.fill(child: DriftingClouds()),
             ] else if (mood == AppMoodTheme.coldMist) ...[
               // Soft frost glow & mist moon
-              if (isVoid)
-                _buildMoon(bottom: 120, left: 60, size: 85)
-              else
-                _buildMoon(top: 60, left: 40, size: 65),
+              _buildMoon(top: 60, left: 40, size: 65),
             ] else if (mood == AppMoodTheme.rainyPeace || mood == AppMoodTheme.monsoonGreen) ...[
               // Overcast background gradient overlay at the top to simulate a dark, heavy sky
               Positioned(
@@ -1677,10 +1683,7 @@ class PremiumUI {
               ),
             ] else if (mood == AppMoodTheme.mountainPeak) ...[
               // Moon behind peaks
-              if (isVoid)
-                _buildMoon(bottom: 160, left: 80, size: 70)
-              else
-                _buildMoon(top: 80, left: 50, size: 55),
+              _buildMoon(top: 80, left: 50, size: 55),
               // Distant silhouette of mountain peaks at the bottom
               Positioned(
                 left: 0,
@@ -1692,6 +1695,30 @@ class PremiumUI {
                     color: PremiumTokens.activeAccent,
                   ),
                   child: const SizedBox.expand(),
+                ),
+              ),
+            ] else if (mood == AppMoodTheme.cherryBlossom) ...[
+              // Cherry Blossom pink floral silhouettes at corners
+              Positioned(
+                top: -30,
+                right: -30,
+                child: Opacity(
+                  opacity: 0.1,
+                  child: Transform.rotate(
+                    angle: -0.4,
+                    child: const Icon(Icons.spa, size: 220, color: Color(0xFFFFB7C5)),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: -40,
+                left: -40,
+                child: Opacity(
+                  opacity: 0.08,
+                  child: Transform.rotate(
+                    angle: 0.8,
+                    child: const Icon(Icons.local_florist, size: 190, color: Color(0xFFFFB7C5)),
+                  ),
                 ),
               ),
             ],
@@ -1752,7 +1779,7 @@ class PremiumUI {
                 size: 350,
                 color: PremiumTokens.activeAccent.withValues(alpha: 0.06),
               ),
-              _buildMoon(bottom: 120, left: 60, size: 80),
+              _buildMoon(top: 60, left: 40, size: 60),
             ] else ...[
               _buildBokeh(
                 bottom: -100,
@@ -1765,7 +1792,7 @@ class PremiumUI {
           ] else ...[
             // LIGHT MODE: Sun Morning
             if (isVoid) ...[
-              _buildSun(bottom: 120, left: 60, size: 120),
+              _buildSun(top: 80, right: 40, size: 100),
             ] else ...[
               _buildSun(top: 80, right: 40, size: 100),
             ],
@@ -2597,7 +2624,7 @@ class _LiquidGlassCardInternalState extends State<_LiquidGlassCardInternal>
           }
         });
         if (widget.onTap != null) {
-          HapticFeedback.lightImpact();
+          AppHapticFeedback.lightImpact();
           widget.onTap!();
         }
       },
@@ -2665,7 +2692,7 @@ class _LiquidGlassButtonInternalState extends State<_LiquidGlassButtonInternal>
             _bounceController.reverse();
           }
         });
-        HapticFeedback.lightImpact();
+        AppHapticFeedback.lightImpact();
         widget.onTap();
       },
       child: ScaleTransition(
@@ -2751,7 +2778,7 @@ class _DesignSystemPressableScaleState extends State<_DesignSystemPressableScale
             _controller.reverse();
           }
         });
-        HapticFeedback.selectionClick();
+        AppHapticFeedback.selectionClick();
         widget.onTap();
       },
       child: ScaleTransition(
@@ -3186,7 +3213,7 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal>
   }
 
   void _handleTap() {
-    HapticFeedback.mediumImpact();
+    AppHapticFeedback.mediumImpact();
     widget.onTap();
     if (_controller.duration != null) {
       _controller.forward(from: 0.0).then((_) {
@@ -3199,7 +3226,7 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal>
 
   void _handleLongPressStart(LongPressStartDetails details) {
     if (widget.onLongPressStart != null) {
-      HapticFeedback.heavyImpact();
+      AppHapticFeedback.heavyImpact();
       widget.onLongPressStart!(details);
     }
   }
@@ -3219,6 +3246,12 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal>
   @override
   Widget build(BuildContext context) {
     PremiumTokens.of(context);
+    final isDark = PremiumTokens.isDark;
+    final buttonBg = isDark
+        ? const Color(0xFF03030F).withValues(alpha: 0.9)
+        : PremiumTokens.surfaceMain.withValues(alpha: 0.95);
+    final contentColor = PremiumTokens.activeAccent;
+
     return ScaleTransition(
       scale: _pressAnimation,
       child: GestureDetector(
@@ -3238,14 +3271,22 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal>
               height: 58,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(
-                  0xFF03030F,
-                ).withValues(alpha: 0.9), // Near-black void
+                color: buttonBg,
                 border: Border.all(
                   color: PremiumTokens.activeAccent
                       .withValues(alpha: widget.isActive ? 0.8 : 0.35),
                   width: 1.5,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: PremiumTokens.activeAccent.withValues(
+                      alpha: isDark ? 0.45 : 0.16,
+                    ),
+                    blurRadius: 12,
+                    spreadRadius: 1,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Center(
                 child: widget.count != null && widget.count! > 0
@@ -3254,9 +3295,9 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal>
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min, // Ensure min size
                           children: [
-                            const Icon(
+                            Icon(
                                   Iconsax.heart5,
-                                  color: Colors.white,
+                                  color: contentColor,
                                   size: 24,
                                 )
                                 .animate(onPlay: (c) => c.repeat(reverse: true))
@@ -3271,7 +3312,7 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal>
                               style: GoogleFonts.spectral(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: contentColor,
                               ),
                             ),
                           ],
@@ -3280,8 +3321,8 @@ class _SacredVoidButtonInternalState extends State<_SacredVoidButtonInternal>
                     : Padding(
                         padding: const EdgeInsets.all(12),
                         child: ColorFiltered(
-                          colorFilter: const ColorFilter.mode(
-                            Colors.white,
+                          colorFilter: ColorFilter.mode(
+                            contentColor,
                             BlendMode.srcIn,
                           ),
                           child: Lottie.asset(
@@ -3354,7 +3395,7 @@ class _PremiumAnimatedNavButtonState extends State<_PremiumAnimatedNavButton>
   }
 
   void _handleTap() {
-    HapticFeedback.selectionClick();
+    AppHapticFeedback.selectionClick();
     widget.onTap(widget.index);
   }
 
@@ -3486,7 +3527,7 @@ class _PremiumInteractiveIconState extends State<_PremiumInteractiveIcon>
   }
 
   void _handleTap() {
-    HapticFeedback.lightImpact();
+    AppHapticFeedback.lightImpact();
     if (widget.onTap != null) {
       widget.onTap!();
     }
@@ -3568,7 +3609,7 @@ class SacredActionMenuState extends State<SacredActionMenu> {
   // Public method to be called via GlobalKey by the trigger (button)
   void handleRelease() {
     if (_hoveredIndex != -1) {
-      HapticFeedback.mediumImpact();
+      AppHapticFeedback.mediumImpact();
       widget.items[_hoveredIndex].onTap();
     }
 
@@ -3616,7 +3657,7 @@ class SacredActionMenuState extends State<SacredActionMenu> {
     }
 
     if (closestIndex != _hoveredIndex) {
-      HapticFeedback.lightImpact();
+      AppHapticFeedback.lightImpact();
       setState(() => _hoveredIndex = closestIndex);
     }
   }
@@ -3791,7 +3832,7 @@ class SacredActionMenuState extends State<SacredActionMenu> {
                       opacity: _isVisible ? (index == _hoveredIndex ? 1.0 : 0.45) : 0,
                       child: GestureDetector(
                         onTap: () {
-                          HapticFeedback.mediumImpact();
+                          AppHapticFeedback.mediumImpact();
                           item.onTap();
                           _handleClose();
                         },
@@ -3990,7 +4031,7 @@ void showSacredMenu(
   ValueNotifier<Offset?>? pointerPosition,
   Key? key,
 }) {
-  HapticFeedback.heavyImpact();
+  AppHapticFeedback.heavyImpact();
   late OverlayEntry entry;
   entry = OverlayEntry(
     builder: (context) => SacredActionMenu(
@@ -4094,7 +4135,7 @@ class _PremiumNaamJapCounterInternalState
           curve: Curves.easeOutBack,
           duration: const Duration(milliseconds: 400),
         );
-        HapticFeedback.mediumImpact();
+        AppHapticFeedback.mediumImpact();
         widget.onTap();
       },
       onTapCancel: () {
@@ -4419,6 +4460,13 @@ class _AtmosphericParticle {
         speedY = 0.03 + random.nextDouble() * 0.03;
         opacity = random.nextDouble() * 0.3 + 0.2;
         break;
+      case AppMoodTheme.cherryBlossom:
+        y = -0.05;
+        size = random.nextDouble() * 7 + 4; // Petal size
+        speedX = -0.02 - random.nextDouble() * 0.02; // Gentle baseline drift left
+        speedY = 0.02 + random.nextDouble() * 0.03;  // Gentle downward float
+        opacity = random.nextDouble() * 0.5 + 0.35;  // Soft visible opacity
+        break;
       case AppMoodTheme.waterfallBlue:
         y = 1.05;
         size = random.nextDouble() * 4 + 2;
@@ -4452,6 +4500,9 @@ class _AtmosphericParticle {
 
     if (mood == AppMoodTheme.coldMist) {
       x += (speedX + math.sin(progress * 4 * math.pi + phase) * 0.003) * 0.35;
+      y += speedY * 0.35;
+    } else if (mood == AppMoodTheme.cherryBlossom) {
+      x += (speedX + math.sin(progress * 3 * math.pi + phase) * 0.015) * 0.35; // Fluttering sway
       y += speedY * 0.35;
     } else {
       x += speedX * 0.35;
@@ -4556,6 +4607,26 @@ class _AtmosphericParticlePainter extends CustomPainter {
             Rect.fromCenter(center: Offset.zero, width: p.size * 1.8, height: p.size * 0.8),
             paint,
           );
+          canvas.restore();
+          break;
+        case AppMoodTheme.cherryBlossom:
+          // Premium soft pink / coral rose cherry blossom petal
+          paint.color = const Color(0xFFFFC0CB).withValues(alpha: p.opacity * 0.78);
+          paint.style = PaintingStyle.fill;
+          canvas.save();
+          canvas.translate(dx, dy);
+          canvas.rotate(p.rotation);
+          
+          final path = Path();
+          // Draw a detailed organic cherry blossom petal (with double rounded lobes at the top and a pointed base at the bottom)
+          path.moveTo(0, p.size * 0.9); // Bottom tip of the petal
+          path.cubicTo(-p.size * 0.8, p.size * 0.3, -p.size * 0.9, -p.size * 0.5, -p.size * 0.45, -p.size * 0.8);
+          path.cubicTo(-p.size * 0.25, -p.size * 0.95, -p.size * 0.05, -p.size * 0.85, 0, -p.size * 0.65); // Notch indent at the top
+          path.cubicTo(p.size * 0.05, -p.size * 0.85, p.size * 0.25, -p.size * 0.95, p.size * 0.45, -p.size * 0.8);
+          path.cubicTo(p.size * 0.9, -p.size * 0.5, p.size * 0.8, p.size * 0.3, 0, p.size * 0.9);
+          path.close();
+          
+          canvas.drawPath(path, paint);
           canvas.restore();
           break;
         case AppMoodTheme.waterfallBlue:

@@ -1,3 +1,4 @@
+import 'package:premium_app/core/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,6 +31,7 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    PremiumTokens.of(context);
     final eventsAsync = ref.watch(
       monthlyEventsProvider((year: _selectedYear, month: _selectedMonth)),
     );
@@ -230,7 +232,7 @@ class _SacredCalendarScreenState extends ConsumerState<SacredCalendarScreen> {
           final isSelected = (index + 1) == _selectedMonth;
           return GestureDetector(
             onTap: () {
-              HapticFeedback.lightImpact();
+              AppHapticFeedback.lightImpact();
               setState(() => _selectedMonth = index + 1);
             },
             child: AnimatedContainer(
