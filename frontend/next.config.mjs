@@ -7,6 +7,14 @@ const __dirname = path.dirname(__filename);
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    outputFileTracingIncludes: {
+      '/**/*': [
+        'data/processed_cache.json',
+        'data/saints_formatted.json'
+      ]
+    }
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
