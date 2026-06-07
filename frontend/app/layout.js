@@ -2,6 +2,8 @@ import React, { Suspense } from 'react';
 import '../src/index.css';
 import '../src/App.css';
 import { ClientProviders } from '../src/contexts/ClientProviders';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 export const viewport = {
   width: 'device-width',
@@ -25,6 +27,8 @@ export default function RootLayout({ children }) {
             {children}
           </Suspense>
         </ClientProviders>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

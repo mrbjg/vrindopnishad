@@ -108,7 +108,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.transparent,
+                    PremiumTokens.scaffoldBg.withValues(alpha: 0),
                     PremiumTokens.scaffoldBg.withValues(alpha: 0.85),
                     PremiumTokens.scaffoldBg,
                   ],
@@ -180,7 +180,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Widget _buildNextButton() {
-    return PremiumUI.liquidGlassButton(
+    return PremiumUI.accentButton(
       onTap: () {
         _pageController.nextPage(
           duration: const Duration(milliseconds: 500),
@@ -195,7 +195,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             fontSize: 14,
             fontWeight: FontWeight.w800,
             letterSpacing: 3,
-            color: PremiumTokens.activeAccent,
+            color: PremiumTokens.onAccent,
           ),
         ),
       ),
@@ -260,6 +260,35 @@ class _OnboardingSlide extends StatelessWidget {
 
   const _OnboardingSlide({required this.data});
 
+  Widget _buildSlideGraphic() {
+    if (data.title == "Divine Wisdom") {
+      return const _DivineWisdomGraphic();
+    } else if (data.title == "Immersive Stillness") {
+      return const _ImmersiveStillnessGraphic();
+    } else if (data.title == "Soul Reflection") {
+      return const _SoulReflectionGraphic();
+    }
+    return Container(
+      width: 120,
+      height: 120,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: PremiumTokens.activeAccent.withValues(alpha: 0.08),
+        border: Border.all(
+          color: PremiumTokens.activeAccent.withValues(alpha: 0.2),
+          width: 1.5,
+        ),
+      ),
+      child: Center(
+        child: Icon(
+          data.icon,
+          size: 48,
+          color: PremiumTokens.activeAccent,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -278,30 +307,12 @@ class _OnboardingSlide extends StatelessWidget {
 
           SizedBox(height: screenHeight * 0.06),
 
-          // Icon with accent ring
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: PremiumTokens.activeAccent.withValues(alpha: 0.08),
-              border: Border.all(
-                color: PremiumTokens.activeAccent.withValues(alpha: 0.2),
-                width: 1.5,
-              ),
-            ),
-            child: Center(
-              child: Icon(
-                data.icon,
-                size: 48,
-                color: PremiumTokens.activeAccent,
-              ),
-            ),
-          )
+          // Custom animated graphic for each slide
+          _buildSlideGraphic()
               .animate()
               .fadeIn(duration: 500.ms)
               .scale(
-                begin: const Offset(0.7, 0.7),
+                begin: const Offset(0.85, 0.85),
                 end: const Offset(1, 1),
                 curve: Curves.easeOutBack,
               ),
@@ -359,6 +370,288 @@ class _OnboardingSlide extends StatelessWidget {
 
           // Remaining space for bottom controls
           const Spacer(),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PREMIUM SLIDE GRAPHICS
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _DivineWisdomGraphic extends StatelessWidget {
+  const _DivineWisdomGraphic();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 140,
+      height: 140,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Background ambient soft glow
+          Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: PremiumTokens.activeAccent.withValues(alpha: 0.12),
+            ),
+          ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+           .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.1, 1.1), duration: 2500.ms, curve: Curves.easeInOut),
+
+          // Outer accent spinning ring
+          Container(
+            width: 130,
+            height: 130,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: PremiumTokens.activeAccent.withValues(alpha: 0.2),
+                width: 1,
+              ),
+            ),
+          ).animate(onPlay: (controller) => controller.repeat(reverse: false))
+           .rotate(begin: 0, end: 1, duration: 15000.ms),
+
+          // The Floating Scripture Card
+          Container(
+            width: 90,
+            height: 110,
+            decoration: BoxDecoration(
+              color: PremiumTokens.surfaceCard.withValues(alpha: 0.85),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: PremiumTokens.activeAccent.withValues(alpha: 0.4),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: PremiumTokens.activeAccent.withValues(alpha: 0.08),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Iconsax.book_1,
+                  size: 28,
+                  color: PremiumTokens.activeAccent,
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  width: 50,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: PremiumTokens.activeAccent.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Container(
+                  width: 60,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: PremiumTokens.activeAccent.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: PremiumTokens.activeAccent.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ],
+            ),
+          ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+           .slideY(begin: -0.05, end: 0.05, duration: 2000.ms, curve: Curves.easeInOut),
+        ],
+      ),
+    );
+  }
+}
+
+class _ImmersiveStillnessGraphic extends StatelessWidget {
+  const _ImmersiveStillnessGraphic();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 140,
+      height: 140,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Outer pulse wave 2
+          Container(
+            width: 130,
+            height: 130,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: PremiumTokens.activeAccent.withValues(alpha: 0.06),
+                width: 2,
+              ),
+            ),
+          ).animate(onPlay: (controller) => controller.repeat())
+           .scale(begin: const Offset(0.7, 0.7), end: const Offset(1.3, 1.3), duration: 3000.ms, curve: Curves.easeOut)
+           .fadeOut(duration: 3000.ms),
+
+          // Outer pulse wave 1
+          Container(
+            width: 110,
+            height: 110,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: PremiumTokens.activeAccent.withValues(alpha: 0.12),
+                width: 1.5,
+              ),
+            ),
+          ).animate(onPlay: (controller) => controller.repeat())
+           .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.2, 1.2), duration: 2000.ms, curve: Curves.easeOut)
+           .fadeOut(duration: 2000.ms),
+
+          // Central Breathing Orb
+          Container(
+            width: 70,
+            height: 70,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
+              border: Border.all(
+                color: PremiumTokens.activeAccent.withValues(alpha: 0.4),
+                width: 2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: PremiumTokens.activeAccent.withValues(alpha: 0.1),
+                  blurRadius: 25,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: Center(
+              child: Icon(
+                Iconsax.music_play,
+                size: 24,
+                color: PremiumTokens.activeAccent,
+              ),
+            ),
+          ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+           .scale(begin: const Offset(0.92, 0.92), end: const Offset(1.08, 1.08), duration: 2500.ms, curve: Curves.easeInOut),
+        ],
+      ),
+    );
+  }
+}
+
+class _SoulReflectionGraphic extends StatelessWidget {
+  const _SoulReflectionGraphic();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 140,
+      height: 140,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            width: 110,
+            height: 110,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: PremiumTokens.activeAccent.withValues(alpha: 0.08),
+            ),
+          ),
+
+          // Stylized Journal page
+          Container(
+            width: 80,
+            height: 100,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: PremiumTokens.surfaceCard.withValues(alpha: 0.9),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: PremiumTokens.borderSubtle,
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 15,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 28,
+                  height: 3,
+                  decoration: BoxDecoration(
+                    color: PremiumTokens.activeAccent.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(1.5),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ...List.generate(4, (i) {
+                  final widths = [40.0, 50.0, 45.0, 30.0];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: Container(
+                      width: widths[i],
+                      height: 2,
+                      decoration: BoxDecoration(
+                        color: PremiumTokens.textMuted.withValues(alpha: 0.25),
+                        borderRadius: BorderRadius.circular(1),
+                      ),
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+           .slideY(begin: -0.04, end: 0.04, duration: 3000.ms, curve: Curves.easeInOut),
+
+          // Floating Quill/Pen Icon
+          Positioned(
+            top: 25,
+            right: 20,
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: PremiumTokens.activeAccent,
+                boxShadow: [
+                  BoxShadow(
+                    color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Icon(
+                Iconsax.edit_2,
+                size: 16,
+                color: PremiumTokens.onAccent,
+              ),
+            ),
+          ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+           .slideY(begin: -0.1, end: 0.1, duration: 1800.ms, curve: Curves.easeInOut)
+           .slideX(begin: -0.05, end: 0.05, duration: 1800.ms, curve: Curves.easeInOut),
         ],
       ),
     );
@@ -662,9 +955,9 @@ class _GoalChip extends StatelessWidget {
           boxShadow: selected
               ? [
                   BoxShadow(
-                    color: PremiumTokens.activeAccent.withValues(alpha: 0.3),
+                    color: PremiumTokens.activeAccent.withValues(alpha: 0.08),
                     blurRadius: 16,
-                    spreadRadius: 2,
+                    spreadRadius: 0,
                   ),
                 ]
               : [],
@@ -781,26 +1074,26 @@ class _MoodCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeAccentColor = AppColorThemes.getPalette(palette.defaultAccent).accent;
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOutCubic,
         decoration: BoxDecoration(
-          color: isSelected
-              ? PremiumTokens.activeAccent.withValues(alpha: 0.1)
-              : PremiumTokens.surfaceCard.withValues(alpha: 0.6),
+          color: palette.cardColor,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
             color: isSelected
-                ? PremiumTokens.activeAccent.withValues(alpha: 0.5)
-                : PremiumTokens.borderSubtle,
-            width: isSelected ? 2 : 1,
+                ? themeAccentColor
+                : palette.borderColor,
+            width: isSelected ? 2.5 : 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: PremiumTokens.activeAccent.withValues(alpha: 0.15),
+                    color: themeAccentColor.withValues(alpha: 0.08),
                     blurRadius: 16,
                     spreadRadius: -2,
                   ),
@@ -819,12 +1112,12 @@ class _MoodCard extends StatelessWidget {
                   EmojiToIcon.getIconWidget(
                     palette.emoji,
                     size: 24,
-                    color: isSelected ? PremiumTokens.activeAccent : PremiumTokens.textMuted,
+                    color: isSelected ? themeAccentColor : palette.textMuted,
                   ),
                   if (isSelected)
                     Icon(
                       Iconsax.tick_circle5,
-                      color: PremiumTokens.activeAccent,
+                      color: themeAccentColor,
                       size: 18,
                     ),
                 ],
@@ -836,10 +1129,10 @@ class _MoodCard extends StatelessWidget {
                 palette.name,
                 style: GoogleFonts.manrope(
                   color: isSelected
-                      ? PremiumTokens.activeAccent
-                      : PremiumTokens.textPrimary,
+                      ? themeAccentColor
+                      : palette.textPrimary,
                   fontSize: 13,
-                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 6),

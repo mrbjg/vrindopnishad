@@ -103,6 +103,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ref.read(themeProvider.notifier).toggleTheme(val);
                   },
                   gradientColors: [PremiumTokens.activeAccent, PremiumTokens.activeAccent.withValues(alpha: 0.8)],
+                  isThemeToggle: true,
                 ),
                 const SizedBox(height: 16),
 
@@ -393,6 +394,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     bool value,
     Function(bool) onChanged, {
     List<Color>? gradientColors,
+    bool isThemeToggle = false,
   }) {
     final colors =
         gradientColors ?? [PremiumTokens.activeAccent, PremiumTokens.activeAccent.withValues(alpha: 0.8)];
@@ -453,7 +455,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ],
               ),
             ),
-            _buildPremiumSwitch(value, onChanged, colors[0]),
+            isThemeToggle
+                ? _buildThemeSwitch(value, onChanged)
+                : _buildPremiumSwitch(value, onChanged, colors[0]),
           ],
         ),
       ),
@@ -512,6 +516,136 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       ),
     );
   }
+
+  Widget _buildThemeSwitch(
+    bool value,
+    Function(bool) onChanged,
+  ) {
+    final isDarkState = value;
+
+    final Color outerLightShadow = isDarkState
+        ? Colors.white.withValues(alpha: 0.02)
+        : Colors.white;
+
+    final Color outerDarkShadow = isDarkState
+        ? Colors.black.withValues(alpha: 0.5)
+        : const Color(0xFFD1D9E6);
+
+    // Inset-like gradient for track to simulate carved depth
+    final Gradient trackGradient = LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: isDarkState
+          ? [
+              Colors.black.withValues(alpha: 0.8),
+              PremiumTokens.surfaceCard.withValues(alpha: 0.2),
+            ]
+          : [
+              const Color(0xFFD1D9E6),
+              Colors.white,
+            ],
+    );
+
+    // Thumb styling using the active mood-aware accent color
+    final List<Color> thumbGradientColors = [
+      PremiumTokens.activeAccent,
+      PremiumTokens.activeAccentLight,
+    ];
+
+    // CSS-like bezier curve for sliding animation (matching web cubic-bezier)
+    const customCurve = Cubic(0.85, 0.05, 0.18, 1.35);
+
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeInOut,
+        width: 60,
+        height: 30,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          gradient: trackGradient,
+          boxShadow: [
+            BoxShadow(
+              color: outerLightShadow,
+              offset: const Offset(-4, -2),
+              blurRadius: 6,
+            ),
+            BoxShadow(
+              color: outerDarkShadow,
+              offset: const Offset(4, 2),
+              blurRadius: 8,
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(13),
+            child: Stack(
+              clipBehavior: Clip.antiAlias,
+              children: [
+                // Liquid Sliding Indicator (stretches and melts across the middle)
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 350),
+                  curve: customCurve,
+                  left: value ? 30.0 : -86.0,
+                  top: 0,
+                  bottom: 0,
+                  width: 112,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(13),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: thumbGradientColors,
+                      ),
+                    ),
+                  ),
+                ),
+                // Sliding and fading icon in sync with the visual center
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 350),
+                  curve: customCurve,
+                  left: value ? 30.0 : 0.0,
+                  top: 0,
+                  bottom: 0,
+                  width: 26,
+                  child: Center(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      transitionBuilder: (Widget child, Animation<double> animation) {
+                        return RotationTransition(
+                          turns: Tween<double>(begin: -0.5, end: 0.0).animate(animation),
+                          child: FadeTransition(
+                            opacity: animation,
+                            child: ScaleTransition(
+                              scale: animation,
+                              child: child,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Icon(
+                        value ? Icons.nightlight_round : Icons.wb_sunny_rounded,
+                        key: ValueKey<bool>(value),
+                        size: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+
+
 
   // Optimized language tile without BackdropFilter
   Widget _buildLanguageTile(BuildContext context, AppLocalization l) {

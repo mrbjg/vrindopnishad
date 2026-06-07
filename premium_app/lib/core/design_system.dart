@@ -1428,7 +1428,7 @@ class PremiumUI {
           borderRadius: BorderRadius.circular(borderRadius),
           boxShadow: [
             BoxShadow(
-              color: (color ?? PremiumTokens.activeAccent).withValues(alpha: 0.3),
+              color: (color ?? PremiumTokens.activeAccent).withValues(alpha: 0.12),
               blurRadius: 15,
               offset: const Offset(0, 6),
             ),
@@ -2715,7 +2715,7 @@ class _LiquidGlassButtonInternalState extends State<_LiquidGlassButtonInternal>
             ),
             boxShadow: [
               BoxShadow(
-                color: activeGlow.withValues(alpha: 0.15),
+                color: activeGlow.withValues(alpha: 0.08),
                 blurRadius: 20,
                 spreadRadius: -4,
               ),
