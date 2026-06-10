@@ -8,6 +8,10 @@ export const metadata = {
   description: 'पवित्र संस्कृत श्लोक, स्तोत्र, और वृन्दावन के रसिक सन्तों की वाणी का संग्रह। अर्थ और व्याख्या सहित पढ़ें।',
   alternates: {
     canonical: 'https://path.vrindopnishad.in/hi/content',
+    languages: {
+      'en': 'https://path.vrindopnishad.in/content',
+      'hi': 'https://path.vrindopnishad.in/hi/content',
+    }
   },
 };
 

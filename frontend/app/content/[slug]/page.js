@@ -2,7 +2,7 @@ import React from 'react';
 import ContentDetailPage from '../../../src/views/ContentDetailPage';
 import Layout from '../../../src/components/Layout';
 import { getVerseBySlug, getAllVerses, getAllSaints, getAllGranthas, getAllRagas, ensureDataLoaded } from '../../../src/lib/contentData';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { Link } from '../../../src/lib/router-compat';
 
 export async function generateStaticParams() {
@@ -17,32 +17,77 @@ export async function generateMetadata({ params }) {
   const verse = getVerseBySlug(decodedSlug);
   if (!verse) return {};
 
-  const cleanTitle = verse.title || "";
-  const brand = "Vrindopnishad";
-  let title = `${cleanTitle} | ${brand}`;
-  if (title.length > 60) {
-    title = cleanTitle.substring(0, 41) + `... | ${brand}`;
+  let parsedSaintName = "";
+  let parsedGranthName = "";
+  let padNumber = "";
+  
+  const titleVal = verse.title || "";
+  const tParts = titleVal.split(/\s+-\s+/);
+  if (tParts.length >= 2) {
+    padNumber = tParts[0].trim();
+    const relText = tParts[1].trim();
+    const bracketMatch = relText.match(/\(([^)]+)\)$/);
+    const bracketContent = bracketMatch ? bracketMatch[1].trim() : "";
+    const cleanRelText = bracketMatch ? relText.replace(/\(([^)]+)\)$/, '').trim() : relText;
+    const relSplit = cleanRelText.split(/\s*,\s*/);
+    
+    if (relSplit.length >= 2) {
+      parsedSaintName = relSplit[0].trim();
+      parsedGranthName = relSplit[1].trim();
+    } else if (relSplit.length === 1) {
+      const val = relSplit[0].trim();
+      if (val.includes('वाणी') || val.includes('सागर') || val.includes('शतक') || val.includes('महिमामृत') || val.includes('दोहे') || val.includes('ग्रंथावली') || val.includes('पदावली') || val.includes('शत') || val.includes('केलिमाल') || val.includes('चौरासी')) {
+        parsedGranthName = val;
+      } else {
+        parsedSaintName = val;
+      }
+    }
+    if (!parsedGranthName && bracketContent) {
+      parsedGranthName = bracketContent.replace(/\d+/g, '').replace(/[१२३४५६७८९०]+/g, '').trim();
+    }
+  } else {
+    padNumber = titleVal;
   }
-  const textSummary = verse.hindi_text || verse.english_translation || verse.description || '';
-  const description = textSummary.substring(0, 155) + (textSummary.length > 155 ? '...' : '');
+
+  if (!parsedSaintName) {
+    parsedSaintName = verse.author && verse.author !== 'Braj Rasik Heritage' ? verse.author : '';
+  }
+
+  const cleanSaint = parsedSaintName ? parsedSaintName.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim() : "Vaishnava Saint";
+  const cleanGranth = parsedGranthName ? parsedGranthName.trim() : "Vrindopnishad Granth";
+  
+  const formattedPad = padNumber
+    .replace(/पद्/g, 'Pad')
+    .replace(/पद/g, 'Pad')
+    .replace(/श्लोक/g, 'Shloka')
+    .replace(/१/g, '1').replace(/२/g, '2').replace(/३/g, '3').replace(/४/g, '4')
+    .replace(/५/g, '5').replace(/६/g, '6').replace(/७/g, '7').replace(/८/g, '8')
+    .replace(/९/g, '9').replace(/०/g, '0');
+
+  const title = `${cleanGranth} — ${formattedPad} | ${cleanSaint} | Vrindopnishad`;
+  const description = `Read and explore ${verse.title} by ${cleanSaint} from the grantha ${cleanGranth}. Completely free online access with meaning, translation, and commentary. Available in Hindi, Sanskrit, Braj Bhasha, and English transliteration.`;
 
   return {
     title,
     description,
     alternates: {
-      canonical: `https://path.vrindopnishad.in/content/${params.slug}`,
+      canonical: `https://path.vrindopnishad.in/content/${verse.slug}`,
+      languages: {
+        'en': `https://path.vrindopnishad.in/content/${verse.slug}`,
+        'hi': `https://path.vrindopnishad.in/hi/content/${verse.slug}`,
+      }
     },
     openGraph: {
       title,
       description,
-      url: `https://path.vrindopnishad.in/content/${params.slug}`,
+      url: `https://path.vrindopnishad.in/content/${verse.slug}`,
       type: 'article',
       images: [
         {
           url: 'https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png',
           width: 800,
           height: 600,
-          alt: cleanTitle,
+          alt: cleanSaint,
         }
       ]
     },
@@ -61,6 +106,10 @@ export default async function VerseRoute({ params }) {
   const verse = getVerseBySlug(decodedSlug);
   if (!verse) {
     notFound();
+  }
+
+  if (params.slug !== verse.slug) {
+    permanentRedirect(`/content/${verse.slug}`);
   }
 
   const allVerses = getAllVerses();
@@ -106,13 +155,13 @@ export default async function VerseRoute({ params }) {
 
   const matchedRaga = ragaName ? ragas.find(r => r.name === ragaName) : null;
 
-  const categoryVerses = allVerses.filter(item => 
-    item.category === verse.category && 
+  const categoryVerses = allVerses.filter(item =>
+    item.category === verse.category &&
     item.id?.toString() !== verse.id?.toString() &&
     item.category?.toLowerCase() !== 'saint'
   ).slice(0, 3);
 
-  
+
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -165,8 +214,8 @@ export default async function VerseRoute({ params }) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsSchema) }}
       />
-      
-      
+
+
       <div className="max-w-6xl mx-auto px-4 pt-4 mb-2 flex items-center gap-1.5 text-xs text-white/50 select-none">
         <Link href="/" className="hover:text-amber-400 transition-colors">Home</Link>
         <span>→</span>

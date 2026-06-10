@@ -8,6 +8,10 @@ export const metadata = {
   description: 'Explore the digital collection of authentic Sanskrit shlokas, devotional strotras, and spiritual poetry. Search by name, theme or keyword.',
   alternates: {
     canonical: 'https://path.vrindopnishad.in/content',
+    languages: {
+      'en': 'https://path.vrindopnishad.in/content',
+      'hi': 'https://path.vrindopnishad.in/hi/content',
+    }
   },
 };
 

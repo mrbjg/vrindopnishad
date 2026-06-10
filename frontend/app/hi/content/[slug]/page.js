@@ -2,7 +2,7 @@ import React from 'react';
 import ContentDetailPage from '../../../../src/views/ContentDetailPage';
 import Layout from '../../../../src/components/Layout';
 import { getVerseBySlug, getAllVerses, getAllSaints, getAllGranthas, getAllRagas, ensureDataLoaded } from '../../../../src/lib/contentData';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { Link } from '../../../../src/lib/router-compat';
 
 export async function generateStaticParams() {
@@ -17,32 +17,69 @@ export async function generateMetadata({ params }) {
   const verse = getVerseBySlug(decodedSlug);
   if (!verse) return {};
 
-  const cleanTitle = verse.title || "";
-  const brand = "वृंदोपनिषद्";
-  let title = `${cleanTitle} | ${brand}`;
-  if (title.length > 60) {
-    title = cleanTitle.substring(0, 43) + `... | ${brand}`;
+  let parsedSaintName = "";
+  let parsedGranthName = "";
+  let padNumber = "";
+  
+  const titleVal = verse.title || "";
+  const tParts = titleVal.split(/\s+-\s+/);
+  if (tParts.length >= 2) {
+    padNumber = tParts[0].trim();
+    const relText = tParts[1].trim();
+    const bracketMatch = relText.match(/\(([^)]+)\)$/);
+    const bracketContent = bracketMatch ? bracketMatch[1].trim() : "";
+    const cleanRelText = bracketMatch ? relText.replace(/\(([^)]+)\)$/, '').trim() : relText;
+    const relSplit = cleanRelText.split(/\s*,\s*/);
+    
+    if (relSplit.length >= 2) {
+      parsedSaintName = relSplit[0].trim();
+      parsedGranthName = relSplit[1].trim();
+    } else if (relSplit.length === 1) {
+      const val = relSplit[0].trim();
+      if (val.includes('वाणी') || val.includes('सागर') || val.includes('शतक') || val.includes('महिमामृत') || val.includes('दोहे') || val.includes('ग्रंथावली') || val.includes('पदावली') || val.includes('शत') || val.includes('केलिमाल') || val.includes('चौरासी')) {
+        parsedGranthName = val;
+      } else {
+        parsedSaintName = val;
+      }
+    }
+    if (!parsedGranthName && bracketContent) {
+      parsedGranthName = bracketContent.replace(/\d+/g, '').replace(/[१२३४५६७८९०]+/g, '').trim();
+    }
+  } else {
+    padNumber = titleVal;
   }
-  const textSummary = verse.hindi_text || verse.english_translation || verse.description || '';
-  const description = textSummary.substring(0, 155) + (textSummary.length > 155 ? '...' : '');
+
+  if (!parsedSaintName) {
+    parsedSaintName = verse.author && verse.author !== 'Braj Rasik Heritage' ? verse.author : '';
+  }
+
+  const cleanSaint = parsedSaintName ? parsedSaintName.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim() : "वैष्णव संत";
+  const cleanGranth = parsedGranthName ? parsedGranthName.trim() : "वृंदोपनिषद् ग्रन्थ";
+
+  const title = `${cleanGranth} — ${padNumber} | ${cleanSaint} | वृंदोपनिषद्`;
+  const description = `पवित्र वैष्णव संत ${cleanSaint} द्वारा रचित पद/श्लोक ${verse.title} (ग्रन्थ: ${cleanGranth})। मूल पाठ, हिंदी भावार्थ, अंग्रेजी अनुवाद और रोमन व्याख्या सहित निःशुल्क पढ़ें।`;
 
   return {
     title,
     description,
     alternates: {
-      canonical: `https://path.vrindopnishad.in/hi/content/${params.slug}`,
+      canonical: `https://path.vrindopnishad.in/hi/content/${verse.slug}`,
+      languages: {
+        'en': `https://path.vrindopnishad.in/content/${verse.slug}`,
+        'hi': `https://path.vrindopnishad.in/hi/content/${verse.slug}`,
+      }
     },
     openGraph: {
       title,
       description,
-      url: `https://path.vrindopnishad.in/hi/content/${params.slug}`,
+      url: `https://path.vrindopnishad.in/hi/content/${verse.slug}`,
       type: 'article',
       images: [
         {
           url: 'https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png',
           width: 800,
           height: 600,
-          alt: cleanTitle,
+          alt: cleanSaint,
         }
       ]
     },
@@ -61,6 +98,10 @@ export default async function HindiVerseRoute({ params }) {
   const verse = getVerseBySlug(decodedSlug);
   if (!verse) {
     notFound();
+  }
+
+  if (params.slug !== verse.slug) {
+    permanentRedirect(`/hi/content/${verse.slug}`);
   }
 
   const allVerses = getAllVerses();
@@ -106,13 +147,13 @@ export default async function HindiVerseRoute({ params }) {
 
   const matchedRaga = ragaName ? ragas.find(r => r.name === ragaName) : null;
 
-  const categoryVerses = allVerses.filter(item => 
-    item.category === verse.category && 
+  const categoryVerses = allVerses.filter(item =>
+    item.category === verse.category &&
     item.id?.toString() !== verse.id?.toString() &&
     item.category?.toLowerCase() !== 'saint'
   ).slice(0, 3);
 
-  
+
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -165,8 +206,8 @@ export default async function HindiVerseRoute({ params }) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsSchema) }}
       />
-      
-      
+
+
       <div className="max-w-6xl mx-auto px-4 pt-4 mb-2 flex items-center gap-1.5 text-xs text-white/50 select-none">
         <Link href="/hi" className="hover:text-amber-400 transition-colors">मुख्यपृष्ठ</Link>
         <span>→</span>

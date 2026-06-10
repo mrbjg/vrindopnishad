@@ -2,7 +2,7 @@ import React from 'react';
 import GlossaryDetailPage from '../../../src/views/seo/GlossaryDetailPage';
 import Layout from '../../../src/components/Layout';
 import { getGlossaryTermBySlug, getGlossaryTerms } from '../../../src/lib/contentData';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 
 export async function generateStaticParams() {
   const terms = getGlossaryTerms();
@@ -23,12 +23,16 @@ export async function generateMetadata({ params }) {
     title,
     description,
     alternates: {
-      canonical: `https://path.vrindopnishad.in/glossary/${params.slug}`,
+      canonical: `https://path.vrindopnishad.in/glossary/${term.slug}`,
+      languages: {
+        'en': `https://path.vrindopnishad.in/glossary/${term.slug}`,
+        'hi': `https://path.vrindopnishad.in/hi/glossary/${term.slug}`,
+      }
     },
     openGraph: {
       title,
       description,
-      url: `https://path.vrindopnishad.in/glossary/${params.slug}`,
+      url: `https://path.vrindopnishad.in/glossary/${term.slug}`,
       type: 'article',
     }
   };
@@ -39,6 +43,10 @@ export default function GlossaryRoute({ params }) {
   const term = getGlossaryTermBySlug(decodedSlug);
   if (!term) {
     notFound();
+  }
+
+  if (params.slug !== term.slug) {
+    permanentRedirect(`/glossary/${term.slug}`);
   }
 
   const definedTermSchema = {

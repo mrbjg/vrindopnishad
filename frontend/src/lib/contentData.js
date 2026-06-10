@@ -886,14 +886,15 @@ export function getVerseBySlug(slug) {
   );
   if (matched) return matched;
 
-  // 2. If the slug contains non-ASCII (Devanagari) characters, transliterate and search
+  // 2. Transliterate search slug if it contains Devanagari
+  let searchSlug = decodedSlug;
   if (/[^\x00-\x7F]/.test(decodedSlug)) {
     const cleanForTransliterate = decodedSlug.replace(/-/g, ' ');
-    const transliteratedSlug = generateSlug(cleanForTransliterate);
+    searchSlug = generateSlug(cleanForTransliterate);
     
-    // 2a. Match transliterated slug against item slugs
+    // 2a. Match transliterated slug exactly
     matched = verses.find(item => 
-      (item.slug && item.slug.toLowerCase() === transliteratedSlug)
+      (item.slug && item.slug.toLowerCase() === searchSlug)
     );
     if (matched) return matched;
     
@@ -901,13 +902,13 @@ export function getVerseBySlug(slug) {
     matched = verses.find(item => {
       if (!item.title) return false;
       const itemTitleTransliterated = generateSlug(item.title);
-      return itemTitleTransliterated === transliteratedSlug;
+      return itemTitleTransliterated === searchSlug;
     });
     if (matched) return matched;
   }
 
-  // 3. Try spelling-insensitive normalized fuzzy match (only if not empty string)
-  const normDecoded = normalizeFuzzyText(decodedSlug);
+  // 3. Try spelling-insensitive normalized fuzzy match
+  const normDecoded = normalizeFuzzyText(searchSlug);
   const normClean = normalizeFuzzyText(cleanSlug);
   
   if (normDecoded) {
@@ -920,7 +921,18 @@ export function getVerseBySlug(slug) {
              normDecoded.startsWith(normItem) ||
              normItem.startsWith(normClean) ||
              normClean.startsWith(normItem) ||
-             (normDecoded.length > 6 && (normItem.includes(normDecoded) || normDecoded.includes(normItem)));
+             (normDecoded.length > 5 && (normItem.includes(normDecoded) || normDecoded.includes(normItem)));
+    });
+    if (matched) return matched;
+
+    // 3b. Try fuzzy match on transliterated title
+    matched = verses.find(item => {
+      if (!item.title) return false;
+      const normTitle = normalizeFuzzyText(generateSlug(item.title));
+      return normTitle === normDecoded ||
+             normTitle.startsWith(normDecoded) ||
+             normDecoded.startsWith(normTitle) ||
+             (normDecoded.length > 5 && (normTitle.includes(normDecoded) || normDecoded.includes(normTitle)));
     });
     if (matched) return matched;
   }
@@ -938,19 +950,29 @@ export function getSaintBySlug(slug) {
   
   let matched = saints.find(s => s.slug.toLowerCase() === decodedSlug);
   if (matched) return matched;
+
+  // Try using getNormalizedSaintSlug directly
+  const normSaintSlug = getNormalizedSaintSlug(decodedSlug);
+  matched = saints.find(s => s.slug.toLowerCase() === normSaintSlug);
+  if (matched) return matched;
   
-  const cleanSlug = decodedSlug.replace(/-maharaj$/, '');
-  
-  // Try transliterating if Devanagari
+  // Transliterate if Devanagari
+  let searchSlug = decodedSlug;
   if (/[^\x00-\x7F]/.test(decodedSlug)) {
     const cleanForTransliterate = decodedSlug.replace(/-/g, ' ');
-    const transliteratedSlug = generateSlug(cleanForTransliterate);
-    matched = saints.find(s => s.slug.toLowerCase() === transliteratedSlug || s.slug.toLowerCase() === transliteratedSlug.replace(/-maharaj$/, ''));
+    searchSlug = generateSlug(cleanForTransliterate);
+    matched = saints.find(s => s.slug.toLowerCase() === searchSlug || s.slug.toLowerCase() === searchSlug.replace(/-maharaj$/, ''));
+    if (matched) return matched;
+
+    const normSearchSaintSlug = getNormalizedSaintSlug(searchSlug);
+    matched = saints.find(s => s.slug.toLowerCase() === normSearchSaintSlug);
     if (matched) return matched;
   }
 
-  // Try spelling-insensitive normalized match (only if not empty string)
-  const normDecoded = normalizeFuzzyText(decodedSlug);
+  const cleanSlug = searchSlug.replace(/-maharaj$/, '');
+  
+  // Try spelling-insensitive normalized match
+  const normDecoded = normalizeFuzzyText(searchSlug);
   const normClean = normalizeFuzzyText(cleanSlug);
   
   if (normDecoded) {
@@ -981,16 +1003,17 @@ export function getGranthaBySlug(slug) {
   let matched = books.find(b => b.slug.toLowerCase() === decodedSlug);
   if (matched) return matched;
 
-  // Try transliterating if Devanagari
+  // Transliterate if Devanagari
+  let searchSlug = decodedSlug;
   if (/[^\x00-\x7F]/.test(decodedSlug)) {
     const cleanForTransliterate = decodedSlug.replace(/-/g, ' ');
-    const transliteratedSlug = generateSlug(cleanForTransliterate);
-    matched = books.find(b => b.slug.toLowerCase() === transliteratedSlug);
+    searchSlug = generateSlug(cleanForTransliterate);
+    matched = books.find(b => b.slug.toLowerCase() === searchSlug);
     if (matched) return matched;
   }
 
-  // 2. Try spelling-insensitive normalized match (only if not empty string)
-  const normDecoded = normalizeFuzzyText(decodedSlug);
+  // 2. Try spelling-insensitive normalized match
+  const normDecoded = normalizeFuzzyText(searchSlug);
   if (normDecoded) {
     matched = books.find(b => {
       if (!b.slug) return false;
@@ -1018,16 +1041,17 @@ export function getRagaBySlug(slug) {
   let matched = ragas.find(r => r.slug.toLowerCase() === decodedSlug);
   if (matched) return matched;
 
-  // Try transliterating if Devanagari
+  // Transliterate if Devanagari
+  let searchSlug = decodedSlug;
   if (/[^\x00-\x7F]/.test(decodedSlug)) {
     const cleanForTransliterate = decodedSlug.replace(/-/g, ' ');
-    const transliteratedSlug = generateSlug(cleanForTransliterate);
-    matched = ragas.find(r => r.slug.toLowerCase() === transliteratedSlug);
+    searchSlug = generateSlug(cleanForTransliterate);
+    matched = ragas.find(r => r.slug.toLowerCase() === searchSlug);
     if (matched) return matched;
   }
 
-  // 2. Try spelling-insensitive normalized match (only if not empty string)
-  const normDecoded = normalizeFuzzyText(decodedSlug);
+  // 2. Try spelling-insensitive normalized match
+  const normDecoded = normalizeFuzzyText(searchSlug);
   if (normDecoded) {
     matched = ragas.find(r => {
       if (!r.slug) return false;
@@ -1051,11 +1075,24 @@ export function getGlossaryTermBySlug(slug) {
   let matched = GLOSSARY_TERMS.find(term => term.slug.toLowerCase() === decodedSlug);
   if (matched) return matched;
 
-  // Try transliterating if Devanagari
+  // Transliterate if Devanagari
+  let searchSlug = decodedSlug;
   if (/[^\x00-\x7F]/.test(decodedSlug)) {
     const cleanForTransliterate = decodedSlug.replace(/-/g, ' ');
-    const transliteratedSlug = generateSlug(cleanForTransliterate);
-    matched = GLOSSARY_TERMS.find(term => term.slug.toLowerCase() === transliteratedSlug);
+    searchSlug = generateSlug(cleanForTransliterate);
+    matched = GLOSSARY_TERMS.find(term => term.slug.toLowerCase() === searchSlug);
+    if (matched) return matched;
+  }
+
+  // Fuzzy match
+  const normDecoded = normalizeFuzzyText(searchSlug);
+  if (normDecoded) {
+    matched = GLOSSARY_TERMS.find(term => {
+      const normTerm = normalizeFuzzyText(term.slug);
+      return normTerm === normDecoded ||
+             normTerm.startsWith(normDecoded) ||
+             normDecoded.startsWith(normTerm);
+    });
     if (matched) return matched;
   }
   return null;

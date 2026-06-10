@@ -2,7 +2,7 @@ import React from 'react';
 import SaintDetailPage from '../../../src/views/SaintDetailPage';
 import Layout from '../../../src/components/Layout';
 import { getSaintBySlug, getAllSaints, ensureDataLoaded } from '../../../src/lib/contentData';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { Link } from '../../../src/lib/router-compat';
 
 export async function generateStaticParams() {
@@ -15,7 +15,7 @@ export async function generateMetadata({ params }) {
   const decodedSlug = decodeURIComponent(params.slug);
   const saint = getSaintBySlug(decodedSlug);
   if (!saint) return {};
-  
+
   const brand = "Vrindopnishad";
   const mainPart = `${saint.hinglishName} Biography`;
   let title = `${mainPart} | ${brand}`;
@@ -28,12 +28,16 @@ export async function generateMetadata({ params }) {
     title,
     description,
     alternates: {
-      canonical: `https://path.vrindopnishad.in/saints/${params.slug}`,
+      canonical: `https://path.vrindopnishad.in/saints/${saint.slug}`,
+      languages: {
+        'en': `https://path.vrindopnishad.in/saints/${saint.slug}`,
+        'hi': `https://path.vrindopnishad.in/hi/saints/${saint.slug}`,
+      }
     },
     openGraph: {
       title,
       description,
-      url: `https://path.vrindopnishad.in/saints/${params.slug}`,
+      url: `https://path.vrindopnishad.in/saints/${saint.slug}`,
       type: 'profile',
     }
   };
@@ -45,6 +49,10 @@ export default async function SaintRoute({ params }) {
   const saint = getSaintBySlug(decodedSlug);
   if (!saint) {
     notFound();
+  }
+
+  if (params.slug !== saint.slug) {
+    permanentRedirect(`/saints/${saint.slug}`);
   }
 
   const profilePageSchema = {
@@ -95,7 +103,7 @@ export default async function SaintRoute({ params }) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsSchema) }}
       />
-      
+
       <div className="max-w-4xl mx-auto px-4 pt-4 mb-2 flex items-center gap-1.5 text-xs text-white/50 select-none">
         <Link href="/" className="hover:text-amber-400 transition-colors">Home</Link>
         <span>→</span>

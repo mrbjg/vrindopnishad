@@ -4,6 +4,8 @@
   "private": true,
   "homepage": "/",
   "dependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/core": "^8.4.0",
     "@supabase/supabase-js": "^2.90.1",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
@@ -45,6 +47,7 @@
     ]
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.4.0",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.6"
   }
