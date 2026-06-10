@@ -181,17 +181,10 @@
   ],
   "functions": {
     "api/seo-handler.js": {
-      "includeFiles": [
-        "build/index.html",
-        "data/brajrasik_hi_full.json",
-        "data/saints_formatted.json"
-      ]
+      "includeFiles": "{build/index.html,data/brajrasik_hi_full.json,data/saints_formatted.json}"
     },
     "api/sitemap.js": {
-      "includeFiles": [
-        "data/brajrasik_hi_full.json",
-        "data/saints_formatted.json"
-      ]
+      "includeFiles": "{data/brajrasik_hi_full.json,data/saints_formatted.json}"
     }
   }
 }
