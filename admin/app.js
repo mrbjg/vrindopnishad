@@ -105,6 +105,10 @@ async function checkAuth() {
         if (AUTHORIZED_ADMINS.length > 0 && !AUTHORIZED_ADMINS.includes(session.user.email)) {
             showToast('Access Denied: Unrecognized Admin Email', 'error');
             await handleLogout();
+            // Redirect to homepage to prevent unauthorized persistence on the admin page
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 1500);
             return;
         }
 

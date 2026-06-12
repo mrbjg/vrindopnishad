@@ -2,7 +2,7 @@
 Server with Supabase Support for Vrindopnishad Backend
 This is an alternative server configuration that uses Supabase instead of Firebase
 """
-from fastapi import FastAPI, APIRouter, Depends, HTTPException, UploadFile, File, Form, status
+from fastapi import FastAPI, APIRouter, Depends, HTTPException, UploadFile, File, Form, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -15,6 +15,9 @@ import uuid
 from datetime import datetime, timezone, timedelta
 import jwt
 from passlib.context import CryptContext
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 # Import Supabase client
 from supabase_client import SupabaseDB, get_supabase_client
@@ -33,8 +36,14 @@ else:
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
 
+# Initialize Rate Limiter
+limiter = Limiter(key_func=get_remote_address)
+
 # Create the main app
 app = FastAPI(title="Vrindopnishad API (Supabase)")
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 api_router = APIRouter(prefix="/api")
 
 # JWT Configuration
@@ -96,6 +105,11 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
     try:
         token = credentials.credentials
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        if payload.get("role") != "admin":
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Forbidden: Admin access required"
+            )
         return payload
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired")
@@ -105,7 +119,8 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
 
 # Authentication Routes
 @api_router.post("/auth/login", response_model=TokenResponse)
-async def login(credentials: AdminLogin):
+@limiter.limit("5/minute")
+async def login(request: Request, credentials: AdminLogin):
     """Admin login endpoint"""
     admin_email = os.environ.get('ADMIN_EMAIL', 'admin@vrindopnishad.com')
     admin_password = os.environ.get('ADMIN_PASSWORD', 'admin123')
