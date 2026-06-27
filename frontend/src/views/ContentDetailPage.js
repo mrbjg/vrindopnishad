@@ -643,11 +643,11 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
             {content.sanskrit_text && (
               <div className="relative group py-8 sm:py-12 border-b border-white/5">
                 <div className="absolute top-0 right-0 p-8 opacity-5 text-9xl font-serif pointer-events-none">ॐ</div>
-                <h3 className="content-section-heading text-[10px] sm:text-xs uppercase tracking-[0.4em] mb-6 sm:mb-8 flex items-center justify-center sm:justify-start gap-4 py-2">
+                <h2 className="content-section-heading text-[10px] sm:text-xs uppercase tracking-[0.4em] mb-6 sm:mb-8 flex items-center justify-center sm:justify-start gap-4 py-2">
                   <span className="content-section-line h-[1px] w-12 hidden sm:block"></span>
                   Sanskrit Text
                   <span className="content-section-line h-[1px] w-12 hidden sm:block"></span>
-                </h3>
+                </h2>
                 <div className={`text-center font-medium content-verse-text hindi-text ${
                   settings.fontStyle === 'Sans' ? 'font-sans' :
                   settings.fontStyle === 'Inter' ? 'font-inter' :
@@ -665,11 +665,11 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
             {content.hindi_text && (
               <div className="py-8 sm:py-12 border-b border-white/5">
-                <h3 className="content-section-heading content-section-heading--hindi text-[10px] sm:text-xs uppercase tracking-[0.4em] mb-6 sm:mb-8 flex items-center justify-center sm:justify-start gap-4 py-2">
+                <h2 className="content-section-heading content-section-heading--hindi text-[10px] sm:text-xs uppercase tracking-[0.4em] mb-6 sm:mb-8 flex items-center justify-center sm:justify-start gap-4 py-2">
                   <span className="content-section-line content-section-line--hindi h-[1px] w-12 hidden sm:block"></span>
                   Hindi Meaning
                   <span className="content-section-line content-section-line--hindi h-[1px] w-12 hidden sm:block"></span>
-                </h3>
+                </h2>
                 <div className={`content-verse-text hindi-text ${
                   settings.fontStyle === 'Sans' ? 'font-sans' :
                   settings.fontStyle === 'Inter' ? 'font-inter' :
@@ -687,11 +687,11 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
             {(transliteratedSanskrit || transliteratedHindi) && (
               <div className="py-8 sm:py-12 border-b border-white/5">
-                <h3 className="content-section-heading content-section-heading--hinglish text-[10px] sm:text-xs uppercase tracking-[0.4em] mb-6 sm:mb-8 flex items-center justify-center sm:justify-start gap-4 py-2">
+                <h2 className="content-section-heading content-section-heading--hinglish text-[10px] sm:text-xs uppercase tracking-[0.4em] mb-6 sm:mb-8 flex items-center justify-center sm:justify-start gap-4 py-2">
                   <span className="content-section-line content-section-line--hinglish h-[1px] w-12 hidden sm:block"></span>
                   Hinglish Transliteration (रोमन पाठ)
                   <span className="content-section-line content-section-line--hinglish h-[1px] w-12 hidden sm:block"></span>
-                </h3>
+                </h2>
                 <div className={`content-verse-text font-inter tracking-wide leading-relaxed text-white/80 ${
                   settings.fontStyle === 'Sans' ? 'font-sans' :
                   settings.fontStyle === 'Inter' ? 'font-inter' :
@@ -709,7 +709,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
             {content.english_text && (
               <div>
-                <h3 className="content-section-heading text-xs uppercase tracking-[0.3em] mb-6 font-semibold">Transliteration</h3>
+                <h2 className="content-section-heading text-xs uppercase tracking-[0.3em] mb-6 font-semibold">Transliteration</h2>
                 <div className="content-body-text leading-relaxed font-inter" style={{
                   fontSize: sizeLevel === 1 ? '0.9rem' :
                             sizeLevel === 2 ? '1.1rem' :
@@ -723,10 +723,10 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
             {content.english_translation && (
               <div className="py-12">
-                <h3 className="content-section-heading content-section-heading--english text-xs uppercase tracking-[0.3em] mb-10 flex items-center gap-3">
+                <h2 className="content-section-heading content-section-heading--english text-xs uppercase tracking-[0.3em] mb-10 flex items-center gap-3">
                   <span className="content-section-line content-section-line--english h-[1px] w-8"></span>
                   English Translation
-                </h3>
+                </h2>
                 <div className="content-body-text leading-relaxed font-light" style={{
                   fontSize: sizeLevel === 1 ? '1.1rem' :
                             sizeLevel === 2 ? '1.4rem' :
@@ -741,10 +741,10 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
             
             {content.audio_url && (
               <div className="pt-8 border-t border-white/5">
-                <h3 className="text-xl font-bold mb-6 flex items-center gap-3">
+                <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
                   <Music size={24} className="text-amber-400" />
                   Listen to Audio
-                </h3>
+                </h2>
                 <div className="bg-white/5 rounded-2xl p-6 flex items-center gap-6 group hover:bg-white/10 transition-all border border-white/5 hover:border-amber-500/20">
                   <AudioPlayButton 
                     track={content} 
@@ -761,16 +761,16 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
             {(content.image_url || (content.image_urls && content.image_urls.length > 0)) && (
               <div className="pt-8 border-t border-white/5">
-                <h3 className="text-xl font-bold mb-8 flex items-center gap-3">
+                <h2 className="text-xl font-bold mb-8 flex items-center gap-3">
                   <ImageIcon size={24} className="text-amber-400" />
                   Gallery
-                </h3>
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {content.image_url && (
-                    <img src={content.image_url} alt="Verse" loading="lazy" className="rounded-2xl w-full h-auto border border-white/10 hover:border-amber-400/30 transition-all shadow-2xl" />
+                    <img src={content.image_url} alt="Verse" width={800} height={600} loading="lazy" className="rounded-2xl w-full h-auto border border-white/10 hover:border-amber-400/30 transition-all shadow-2xl" />
                   )}
                   {content.image_urls?.map((url, idx) => (
-                    <img key={idx} src={url} alt={`Verse ${idx + 1}`} loading="lazy" className="rounded-2xl w-full h-auto border border-white/10 hover:border-amber-400/30 transition-all shadow-2xl" />
+                    <img key={idx} src={url} alt={`Verse ${idx + 1}`} width={800} height={600} loading="lazy" className="rounded-2xl w-full h-auto border border-white/10 hover:border-amber-400/30 transition-all shadow-2xl" />
                   ))}
                 </div>
               </div>
@@ -778,10 +778,10 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
             {content.video_urls && content.video_urls.length > 0 && (
               <div className="pt-8 border-t border-white/5">
-                <h3 className="text-xl font-bold mb-8 flex items-center gap-3">
+                <h2 className="text-xl font-bold mb-8 flex items-center gap-3">
                   <Video size={24} className="text-primary" />
                   Videos
-                </h3>
+                </h2>
                 <div className="space-y-6">
                   {content.video_urls.map((url, idx) => (
                     <div key={idx} className="aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
@@ -889,6 +889,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                         <img 
                           src={relatedSaint.imageUrl} 
                           alt={relatedSaint.name} 
+                          width={40}
+                          height={40}
                           className="w-10 h-10 rounded-full object-cover border border-amber-500/10"
                         />
                       ) : (
@@ -938,6 +940,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                         <img 
                           src={relatedBook.imageUrl} 
                           alt={relatedBook.name} 
+                          width={40}
+                          height={40}
                           className="w-10 h-10 rounded-lg object-cover border border-sky-500/10"
                         />
                       ) : (
