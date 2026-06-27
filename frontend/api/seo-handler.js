@@ -609,6 +609,18 @@ const STATIC_SEO_PAGES = {
       description: 'वृंदोपनिषद् की सेवा की शर्तें। हमारी सामग्री लाइसेंसिंग, शास्त्र संरक्षण नीति और गैर-व्यावसायिक नियमों के बारे में जानें।',
       body: '<h1>सेवा की शर्तें</h1><p>वृंदावन की पावन आध्यात्मिक विरासत को पूर्ण प्रामाणिकता के साथ सहेजना। हमारी सामग्री के उपयोग की शर्तें पढ़ें।</p>'
     }
+  },
+  'references': {
+    en: {
+      title: 'References & Citations | Vrindopnishad',
+      description: 'Explore the academic and scriptural references bibliography compiled for the Vrindopnishad digital knowledge base.',
+      body: '<h1>References & Bibliography</h1><p>Comprehensive listing of manuscripts, textual sources, and historical references used in validation.</p>'
+    },
+    hi: {
+      title: 'प्रमाण एवं संदर्भ सूची | वृंदोपनिषद्',
+      description: 'वृंदोपनिषद् ग्रंथालय के प्रामाणिक संदर्भों और सहायक ग्रंथों की सूची।',
+      body: '<h1>प्रमाण एवं संदर्भ सूची</h1><p>पांडुलिपियों, प्रकाशित प्रतियों और सहायक संदर्भ ग्रंथों की सूची जो हमारे सत्यापन का मुख्य प्रमाण हैं।</p>'
+    }
   }
 };
 
