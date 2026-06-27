@@ -1,7 +1,7 @@
 import React from 'react';
 import ContentDetailPage from '../../../src/views/ContentDetailPage';
 import Layout from '../../../src/components/Layout';
-import { getVerseBySlug, getAllVerses, getAllSaints, getAllGranthas, getAllRagas, ensureDataLoaded } from '../../../src/lib/contentData';
+import { getVerseBySlug, getAllVerses, getAllSaints, getAllGranthas, getAllRagas, ensureDataLoaded, getSaintBySlug, getGranthaBySlug } from '../../../src/lib/contentData';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { Link } from '../../../src/lib/router-compat';
 
@@ -105,6 +105,14 @@ export default async function VerseRoute({ params }) {
   const decodedSlug = decodeURIComponent(params.slug);
   const verse = getVerseBySlug(decodedSlug);
   if (!verse) {
+    const saint = getSaintBySlug(decodedSlug);
+    if (saint) {
+      permanentRedirect(`/saints/${saint.slug}`);
+    }
+    const book = getGranthaBySlug(decodedSlug);
+    if (book) {
+      permanentRedirect(`/granthas/${book.slug}`);
+    }
     notFound();
   }
 

@@ -936,6 +936,23 @@ export function getVerseBySlug(slug) {
     });
     if (matched) return matched;
   }
+
+  // 4. Try consonantal skeleton match for Devanagari transliteration differences
+  const skeleton = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/[aeiouy]/g, '');
+  const decodedSkeleton = skeleton(searchSlug);
+  
+  if (decodedSkeleton && decodedSkeleton.length > 3) {
+    matched = verses.find(item => {
+      if (!item.slug) return false;
+      const itemSkeleton = skeleton(item.slug);
+      return itemSkeleton === decodedSkeleton ||
+             itemSkeleton.startsWith(decodedSkeleton) ||
+             decodedSkeleton.startsWith(itemSkeleton) ||
+             (decodedSkeleton.length > 5 && (itemSkeleton.includes(decodedSkeleton) || decodedSkeleton.includes(itemSkeleton)));
+    });
+    if (matched) return matched;
+  }
+
   return null;
 }
 
@@ -987,6 +1004,24 @@ export function getSaintBySlug(slug) {
     });
     if (matched) return matched;
   }
+
+  // Try consonantal skeleton match fallback
+  const skeleton = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/[aeiouy]/g, '');
+  const decodedSkeleton = skeleton(searchSlug);
+  const cleanSkeleton = skeleton(cleanSlug);
+  if (decodedSkeleton && decodedSkeleton.length > 3) {
+    matched = saints.find(s => {
+      const itemSkeleton = skeleton(s.slug);
+      return itemSkeleton === decodedSkeleton ||
+             itemSkeleton === cleanSkeleton ||
+             itemSkeleton.startsWith(decodedSkeleton) ||
+             decodedSkeleton.startsWith(itemSkeleton) ||
+             itemSkeleton.includes(cleanSkeleton) ||
+             cleanSkeleton.includes(itemSkeleton);
+    });
+    if (matched) return matched;
+  }
+
   return null;
 }
 
@@ -1025,6 +1060,22 @@ export function getGranthaBySlug(slug) {
     });
     if (matched) return matched;
   }
+
+  // Try consonantal skeleton match fallback
+  const skeleton = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/[aeiouy]/g, '');
+  const decodedSkeleton = skeleton(searchSlug);
+  if (decodedSkeleton && decodedSkeleton.length > 3) {
+    matched = books.find(b => {
+      if (!b.slug) return false;
+      const itemSkeleton = skeleton(b.slug);
+      return itemSkeleton === decodedSkeleton ||
+             itemSkeleton.startsWith(decodedSkeleton) ||
+             decodedSkeleton.startsWith(itemSkeleton) ||
+             (decodedSkeleton.length > 5 && (itemSkeleton.includes(decodedSkeleton) || decodedSkeleton.includes(itemSkeleton)));
+    });
+    if (matched) return matched;
+  }
+
   return null;
 }
 
