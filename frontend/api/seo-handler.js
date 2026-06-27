@@ -585,6 +585,30 @@ const STATIC_SEO_PAGES = {
       description: 'वृंदोपनिषद् की सम्पादकीय टीम से संपर्क करें। किसी भी पद में वर्तनी सुधार, सुझाव या सहयोग के लिए संदेश भेजें।',
       body: '<h1>सम्पादकीय टीम से संपर्क करें</h1><p>पदों में वर्तनी सुधार, अनुवाद में शंका समाधान, पांडुलिपि डिजिटलीकरण सहयोग या अन्य किसी भी सुझाव के लिए आप हमसे संपर्क कर सकते हैं। हमारी ईमेल आईडी <strong>info@vrindopnishad.in</strong> है। हमारा सम्पादकीय कार्यालय लोहिया बाजार मार्ग, राधावल्लभ मंदिर के समीप, वृंदावन, उत्तर प्रदेश, 281121, भारत में स्थित है। हम आपके सभी संदेशों और संशोधनों पर 48 घंटे के भीतर विचार करते हैं।</p>'
     }
+  },
+  'privacy': {
+    en: {
+      title: 'Privacy Policy | Vrindopnishad',
+      description: 'Read the privacy policy of Vrindopnishad. Learn how we handle cookies, preferences, and local data settings.',
+      body: '<h1>Privacy Policy</h1><p>Your privacy is highly valued. Learn how Vrindopnishad manages local preference caching and anonymous analytical reports.</p>'
+    },
+    hi: {
+      title: 'गोपनीयता नीति | वृंदोपनिषद्',
+      description: 'वृंदोपनिषद् की गोपनीयता नीति। जानें कि हम कुकीज़, प्राथमिकताओं और स्थानीय डेटा सेटिंग्स को कैसे संभालते हैं।',
+      body: '<h1>गोपनीयता नीति</h1><p>आपकी गोपनीयता हमारे लिए अत्यंत महत्वपूर्ण है। समझें कि हम आपकी स्थानीय सेटिंग्स और प्राथमिकताओं को कैसे सहेजते हैं।</p>'
+    }
+  },
+  'terms': {
+    en: {
+      title: 'Terms of Service | Vrindopnishad',
+      description: 'Review the terms of service of Vrindopnishad. Learn about our content licensing, scriptural preservation policy, and non-commercial guidelines.',
+      body: '<h1>Terms of Service</h1><p>Preserving the sacred spiritual heritage of Vrindavan with integrity. Review our terms of content usage.</p>'
+    },
+    hi: {
+      title: 'सेवा की शर्तें | वृंदोपनिषद्',
+      description: 'वृंदोपनिषद् की सेवा की शर्तें। हमारी सामग्री लाइसेंसिंग, शास्त्र संरक्षण नीति और गैर-व्यावसायिक नियमों के बारे में जानें।',
+      body: '<h1>सेवा की शर्तें</h1><p>वृंदावन की पावन आध्यात्मिक विरासत को पूर्ण प्रामाणिकता के साथ सहेजना। हमारी सामग्री के उपयोग की शर्तें पढ़ें।</p>'
+    }
   }
 };
 

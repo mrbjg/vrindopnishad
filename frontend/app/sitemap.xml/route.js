@@ -1,23 +1,34 @@
 export async function GET() {
+  const today = new Date().toISOString().split('T')[0];
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
     <loc>https://path.vrindopnishad.in/sitemaps/pages.xml</loc>
+    <lastmod>${today}</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://path.vrindopnishad.in/sitemaps/content.xml</loc>
+    <lastmod>${today}</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://path.vrindopnishad.in/sitemaps/saints.xml</loc>
+    <lastmod>${today}</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://path.vrindopnishad.in/sitemaps/granthas.xml</loc>
+    <lastmod>${today}</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://path.vrindopnishad.in/sitemaps/ragas.xml</loc>
+    <lastmod>${today}</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://path.vrindopnishad.in/sitemaps/glossary.xml</loc>
+    <lastmod>${today}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://path.vrindopnishad.in/sitemaps/festivals.xml</loc>
+    <lastmod>${today}</lastmod>
   </sitemap>
 </sitemapindex>`;
 

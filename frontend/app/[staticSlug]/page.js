@@ -32,6 +32,8 @@ import AboutPage from '../../src/views/seo/AboutPage';
 import EditorialPolicyPage from '../../src/views/seo/EditorialPolicyPage';
 import SourcesPage from '../../src/views/seo/SourcesPage';
 import ContactPage from '../../src/views/seo/ContactPage';
+import PrivacyPage from '../../src/views/seo/PrivacyPage';
+import TermsPage from '../../src/views/seo/TermsPage';
 
 // Import new entity pages
 import ShriHitHarivansh from '../../src/views/seo/ShriHitHarivansh';
@@ -68,6 +70,8 @@ const componentMap = {
   'editorial-policy': EditorialPolicyPage,
   'sources': SourcesPage,
   'contact': ContactPage,
+  'privacy': PrivacyPage,
+  'terms': TermsPage,
   
   // New entity pages
   'shri-hit-harivansh-mahaprabhu': ShriHitHarivansh,

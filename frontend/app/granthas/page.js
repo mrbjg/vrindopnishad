@@ -3,13 +3,14 @@ import BooksListPage from '../../src/views/BooksListPage';
 import Layout from '../../src/components/Layout';
 import { getAllGranthas } from '../../src/lib/contentData';
 
-export const metadata = {
+import { generatePageMetadata } from '../../src/lib/metadata';
+
+export const metadata = generatePageMetadata({
   title: 'Sacred Granthas & Books | Vrindopnishad',
   description: 'Read and browse the sacred books, granthas and vanis written by the saints of Vrindavan.',
-  alternates: {
-    canonical: 'https://path.vrindopnishad.in/granthas',
-  },
-};
+  path: '/granthas',
+  keywords: ['Granthas', 'Vaishnava Books', 'Sacred Literature', 'Braj Granths']
+});
 
 export default function GranthasListRoute() {
   const books = getAllGranthas();

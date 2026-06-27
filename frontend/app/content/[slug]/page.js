@@ -108,6 +108,10 @@ export default async function VerseRoute({ params }) {
     notFound();
   }
 
+  if (verse.category === 'poem' || verse.category === 'lyrics') {
+    permanentRedirect(`/lyrics/${verse.slug}`);
+  }
+
   if (params.slug !== verse.slug) {
     permanentRedirect(`/content/${verse.slug}`);
   }

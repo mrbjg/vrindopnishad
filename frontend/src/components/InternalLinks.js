@@ -1,6 +1,4 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-
+import { Link } from '@/lib/router-compat';
 
 const ALL_SEO_PAGES = [
   { path: '/what-is-vrindopnishad', title: 'What is Vrindopnishad?', desc: 'Discover the vision and mission of Vrindopnishad' },
@@ -24,11 +22,14 @@ const ALL_SEO_PAGES = [
   { path: '/vrindavan-parikrama-guide', title: 'Vrindavan Parikrama Guide', desc: 'Route, ghats, and spiritual rules' },
   { path: '/history-of-radhavallabh-sampradaya', title: 'Radhavallabh Sampradaya History', desc: 'Complete history, founder and teachings' },
   { path: '/major-rasik-saints-of-braj', title: 'Major Rasik Saints of Braj', desc: 'Biographies, lineages and contributions' },
+  { path: '/festivals', title: 'Sacred Festivals', desc: 'Explore historical festivals of Vrindavan' },
   { path: '/about', title: 'About Us', desc: 'Our mission, team and archival vision' },
   { path: '/editorial-policy', title: 'Editorial Policy', desc: 'Content verification and manuscript accuracy' },
   { path: '/sources', title: 'Sources & Citations', desc: 'Our scriptural references bibliography' },
   { path: '/contact', title: 'Contact Us', desc: 'Get in touch with the editorial team' },
   { path: '/author', title: 'Authors & Scholars', desc: 'Meet the manuscript editors and Sanskrit scholars' },
+  { path: '/privacy', title: 'Privacy Policy', desc: 'Read the privacy policy of Vrindopnishad' },
+  { path: '/terms', title: 'Terms of Service', desc: 'Review the terms of service of Vrindopnishad' },
 ];
 
 const InternalLinks = ({ exclude = [], count = 4 }) => {
@@ -43,7 +44,7 @@ const InternalLinks = ({ exclude = [], count = 4 }) => {
         {links.map(link => (
           <Link
             key={link.path}
-            to={link.path}
+            href={link.path}
             className="px-4 py-2.5 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-primary/30 text-xs text-white/70 hover:text-primary hover:bg-primary/5 transition-all duration-300 font-medium"
           >
             {link.title}
