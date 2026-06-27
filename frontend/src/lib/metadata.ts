@@ -44,9 +44,19 @@ export function generatePageMetadata({
 
   const allKeywords = Array.from(new Set([...DEFAULT_KEYWORDS, ...keywords]));
 
+  // Truncate title to max 60 characters for search snippet fitting
+  const truncatedTitle = title.length > 60 
+    ? title.substring(0, 57) + '...' 
+    : title;
+
+  // Truncate description to max 155 characters for search snippet fitting
+  const truncatedDescription = description.length > 155 
+    ? description.substring(0, 152) + '...' 
+    : description;
+
   const metadata: Metadata = {
-    title,
-    description,
+    title: truncatedTitle,
+    description: truncatedDescription,
     keywords: allKeywords,
     alternates: {
       canonical: canonicalUrl,
@@ -67,8 +77,8 @@ export function generatePageMetadata({
       },
     },
     openGraph: {
-      title,
-      description,
+      title: truncatedTitle,
+      description: truncatedDescription,
       url: canonicalUrl,
       siteName: 'Vrindopnishad',
       locale: 'en_US',
@@ -78,14 +88,14 @@ export function generatePageMetadata({
           url: absoluteImageUrl,
           width: 1200,
           height: 630,
-          alt: title,
+          alt: truncatedTitle,
         }
       ]
     },
     twitter: {
       card: 'summary_large_image',
-      title,
-      description,
+      title: truncatedTitle,
+      description: truncatedDescription,
       images: [absoluteImageUrl],
     }
   };
