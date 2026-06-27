@@ -100,6 +100,10 @@ export default async function HindiVerseRoute({ params }) {
     notFound();
   }
 
+  if (verse.category === 'poem' || verse.category === 'lyrics') {
+    permanentRedirect(`/hi/lyrics/${verse.slug}`);
+  }
+
   if (params.slug !== verse.slug) {
     permanentRedirect(`/hi/content/${verse.slug}`);
   }

@@ -3,13 +3,14 @@ import RagasListPage from '../../src/views/RagasListPage';
 import Layout from '../../src/components/Layout';
 import { getAllRagas } from '../../src/lib/contentData';
 
-export const metadata = {
+import { generatePageMetadata } from '../../src/lib/metadata';
+
+export const metadata = generatePageMetadata({
   title: 'Ragas & Devotional Songs | Vrindopnishad',
   description: 'Explore sacred songs and poetry categorized by classical Indian musical ragas.',
-  alternates: {
-    canonical: 'https://path.vrindopnishad.in/ragas',
-  },
-};
+  path: '/ragas',
+  keywords: ['Ragas', 'Classical Music', 'Braj Bhajans', 'Sangeet Devotion']
+});
 
 export default function RagasListRoute() {
   const ragas = getAllRagas();

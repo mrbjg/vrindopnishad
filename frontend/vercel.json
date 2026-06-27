@@ -41,11 +41,11 @@
       "destination": "/api/seo-handler?type=static&lang=hi"
     },
     {
-      "source": "/:slug(about|editorial-policy|sources|contact|search|granthas|what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|what-is-radha-snata|nitya-vihar-vs-nikunj-vihar|glossary|places|saints|books|ragas|content|who-is-harirae-ji|what-is-madhurya-and-sakhi-bhava|radhavallabh-vs-gaudiya-sampradaya|vrindavan-parikrama-guide|history-of-radhavallabh-sampradaya|major-rasik-saints-of-braj)",
+      "source": "/:slug(about|editorial-policy|sources|contact|search|granthas|what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|what-is-radha-snata|nitya-vihar-vs-nikunj-vihar|glossary|places|saints|books|ragas|content|who-is-harirae-ji|what-is-madhurya-and-sakhi-bhava|radhavallabh-vs-gaudiya-sampradaya|vrindavan-parikrama-guide|history-of-radhavallabh-sampradaya|major-rasik-saints-of-braj|privacy|terms|festivals)",
       "destination": "/api/seo-handler?type=static&slug=:slug"
     },
     {
-      "source": "/hi/:slug(about|editorial-policy|sources|contact|search|granthas|what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|what-is-radha-snata|nitya-vihar-vs-nikunj-vihar|glossary|places|saints|books|ragas|content|who-is-harirae-ji|what-is-madhurya-and-sakhi-bhava|radhavallabh-vs-gaudiya-sampradaya|vrindavan-parikrama-guide|history-of-radhavallabh-sampradaya|major-rasik-saints-of-braj)",
+      "source": "/hi/:slug(about|editorial-policy|sources|contact|search|granthas|what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|what-is-radha-snata|nitya-vihar-vs-nikunj-vihar|glossary|places|saints|books|ragas|content|who-is-harirae-ji|what-is-madhurya-and-sakhi-bhava|radhavallabh-vs-gaudiya-sampradaya|vrindavan-parikrama-guide|history-of-radhavallabh-sampradaya|major-rasik-saints-of-braj|privacy|terms|festivals)",
       "destination": "/api/seo-handler?type=static&slug=:slug&lang=hi"
     },
     {
@@ -54,6 +54,14 @@
     },
     {
       "source": "/hi/content/:slug",
+      "destination": "/api/seo-handler?type=content&slug=:slug&lang=hi"
+    },
+    {
+      "source": "/lyrics/:slug",
+      "destination": "/api/seo-handler?type=content&slug=:slug"
+    },
+    {
+      "source": "/hi/lyrics/:slug",
       "destination": "/api/seo-handler?type=content&slug=:slug&lang=hi"
     },
     {

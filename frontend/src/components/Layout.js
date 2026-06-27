@@ -8,6 +8,8 @@ import { useSettings } from '../contexts/SettingsContext';
 import { extractRelations } from '../utils/relations';
 import { articles } from '../utils/kbArticles';
 import { hinglishMatch } from '../utils/hinglishSearch';
+import { GLOSSARY_TERMS } from '../data/glossaryTerms';
+import { FESTIVALS_DATA } from '../data/festivalsData';
 import {
   Home,
   Compass,
@@ -29,6 +31,8 @@ import ThemeOnboardingModal from './ThemeOnboardingModal';
 import CelestialParticles from './CelestialParticles';
 import PookizLayout from './PookizLayout';
 import PageSkeleton from './ui/PageSkeleton';
+import SkipLink from './seo/SkipLink';
+import ReadingProgress from './seo/ReadingProgress';
 
 let hasLayoutMounted = false;
 
@@ -193,7 +197,7 @@ const LayoutInner = ({ children }) => {
   
   const filteredResults = useMemo(() => {
     if (!searchQuery.trim() || searchQuery.trim().length < 2 || !dataLoaded) {
-      return { sants: [], books: [], ragas: [], verses: [] };
+      return { sants: [], books: [], ragas: [], verses: [], festivals: [], glossary: [] };
     }
     const q = searchQuery.toLowerCase().trim();
     const showAll = searchFilter === 'all';
@@ -210,6 +214,20 @@ const LayoutInner = ({ children }) => {
         : [],
       verses: (showAll || searchFilter === 'verse')
         ? searchData.verses.filter(v => hinglishMatch(v, q)).slice(0, 6)
+        : [],
+      festivals: (showAll || searchFilter === 'festival')
+        ? Object.values(FESTIVALS_DATA).filter(f => 
+            f.name.toLowerCase().includes(q) || 
+            f.hindiName.includes(q) || 
+            f.description.toLowerCase().includes(q)
+          ).slice(0, 4)
+        : [],
+      glossary: (showAll || searchFilter === 'glossary')
+        ? GLOSSARY_TERMS.filter(t => 
+            t.term.toLowerCase().includes(q) || 
+            t.devanagari.includes(q) || 
+            t.definition.toLowerCase().includes(q)
+          ).slice(0, 4)
         : [],
     };
   }, [searchQuery, searchFilter, searchData, dataLoaded]);
@@ -236,6 +254,8 @@ const LayoutInner = ({ children }) => {
 
   return (
     <div className={`min-h-screen relative text-foreground ${hideHeaderSearch ? 'layout-no-header-search' : ''} ${isKbRoute ? 'lg:h-screen lg:min-h-0 lg:overflow-hidden' : ''}`}>
+      <SkipLink />
+      <ReadingProgress />
       
       
 
@@ -271,6 +291,7 @@ const LayoutInner = ({ children }) => {
                 onClick={() => setIsSettingsOpen(true)}
                 className="header-control-btn shrink-0 w-8 h-8"
                 title="Settings"
+                aria-label="Open Settings Panel"
               >
                 <Settings size={15} className="w-[15px] h-[15px]" />
               </button>
@@ -349,6 +370,8 @@ const LayoutInner = ({ children }) => {
                   <option value="book" className="bg-[#121215] text-white/80">{isHiRoute ? "ग्रन्थ" : "Granthas"}</option>
                   <option value="raga" className="bg-[#121215] text-white/80">{isHiRoute ? "राग" : "Ragas"}</option>
                   <option value="verse" className="bg-[#121215] text-white/80">{isHiRoute ? "वाणी" : "Verses"}</option>
+                  <option value="festival" className="bg-[#121215] text-white/80">{isHiRoute ? "उत्सव" : "Festivals"}</option>
+                  <option value="glossary" className="bg-[#121215] text-white/80">{isHiRoute ? "शब्दावली" : "Glossary"}</option>
                 </select>
 
                 {searchQuery && (
@@ -400,7 +423,7 @@ const LayoutInner = ({ children }) => {
                           <h4 className="text-[9px] uppercase tracking-widest text-primary font-bold mb-1.5">Ragas / राग</h4>
                           <div className="grid grid-cols-1 gap-1">
                             {filteredResults.ragas.map(r => (
-                              <Link key={r.name} to={isHiRoute ? `/hi/raga/${r.slug}` : `/raga/${r.slug}`} onClick={() => setSearchFocused(false)}
+                              <Link key={r.name} to={isHiRoute ? `/hi/ragas/${r.slug}` : `/ragas/${r.slug}`} onClick={() => setSearchFocused(false)}
                                 className="flex items-center justify-between p-1.5 rounded-lg hover:bg-white/5 transition-colors text-[11px] font-medium text-white/90">
                                 <span className="truncate">{r.name}</span>
                                 <span className="text-[9px] text-white/30 font-light">{r.hinglishName}</span>
@@ -413,11 +436,43 @@ const LayoutInner = ({ children }) => {
                         <div>
                           <h4 className="text-[9px] uppercase tracking-widest text-primary font-bold mb-1.5">Verses / वाणी-पद</h4>
                           <div className="grid grid-cols-1 gap-1">
-                            {filteredResults.verses.map(v => (
-                              <Link key={v.id} to={isHiRoute ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`} onClick={() => setSearchFocused(false)}
-                                className="block p-1.5 rounded-lg hover:bg-white/5 transition-colors text-[11px] text-white/85 truncate">
-                                <span className="font-semibold block">{v.title}</span>
-                                <p className="text-[9px] text-white/30 truncate mt-0.5">{v.hindi_text || v.english_translation || v.description}</p>
+                            {filteredResults.verses.map(v => {
+                              const isLyrics = v.category === 'poem' || v.category === 'lyrics';
+                              const prefix = isLyrics ? '/lyrics/' : '/content/';
+                              return (
+                                <Link key={v.id} to={isHiRoute ? `/hi${prefix}${v.slug || v.id}` : `${prefix}${v.slug || v.id}`} onClick={() => setSearchFocused(false)}
+                                  className="block p-1.5 rounded-lg hover:bg-white/5 transition-colors text-[11px] text-white/85 truncate">
+                                  <span className="font-semibold block">{v.title}</span>
+                                  <p className="text-[9px] text-white/30 truncate mt-0.5">{v.hindi_text || v.english_translation || v.description}</p>
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                      {filteredResults.festivals && filteredResults.festivals.length > 0 && (
+                        <div>
+                          <h4 className="text-[9px] uppercase tracking-widest text-primary font-bold mb-1.5">Festivals / उत्सव</h4>
+                          <div className="grid grid-cols-1 gap-1">
+                            {filteredResults.festivals.map(f => (
+                              <Link key={f.slug} to={isHiRoute ? `/hi/festivals/${f.slug}` : `/festivals/${f.slug}`} onClick={() => setSearchFocused(false)}
+                                className="flex items-center justify-between p-1.5 rounded-lg hover:bg-white/5 transition-colors text-[11px] font-medium text-white/90">
+                                <span className="truncate">{isHiRoute ? f.hindiName : f.name}</span>
+                                <span className="text-[9px] text-white/30 font-light">{f.timeline.split(' ')[0]}</span>
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {filteredResults.glossary && filteredResults.glossary.length > 0 && (
+                        <div>
+                          <h4 className="text-[9px] uppercase tracking-widest text-primary font-bold mb-1.5">Glossary / शब्दावली</h4>
+                          <div className="grid grid-cols-1 gap-1">
+                            {filteredResults.glossary.map(t => (
+                              <Link key={t.slug} to={isHiRoute ? `/hi/glossary/${t.slug}` : `/glossary/${t.slug}`} onClick={() => setSearchFocused(false)}
+                                className="flex items-center justify-between p-1.5 rounded-lg hover:bg-white/5 transition-colors text-[11px] font-medium text-white/90">
+                                <span className="truncate">{isHiRoute ? t.devanagari : t.term}</span>
+                                <span className="text-[9px] text-white/30 font-light truncate max-w-[150px]">{t.definition}</span>
                               </Link>
                             ))}
                           </div>
@@ -472,6 +527,7 @@ const LayoutInner = ({ children }) => {
                 onClick={() => setIsSettingsOpen(true)}
                 className="header-control-btn shrink-0"
                 title="Settings"
+                aria-label="Open Settings Panel"
               >
                 <Settings size={18} className="w-[16px] h-[16px] sm:w-[18px] sm:h-[18px]" />
               </button>
@@ -612,7 +668,7 @@ const LayoutInner = ({ children }) => {
       )}
 
       
-      <main className={`${isAuthPage ? 'pt-0 pl-0' : `${isKbRoute ? 'pl-0 md:pl-[88px] lg:h-screen lg:pt-20 lg:pb-0 lg:overflow-hidden' : 'pl-0 md:pl-28'} pt-[152px] md:pt-[120px] lg:pt-20 pb-36 md:pb-12`}`}>
+      <main id="main-content" className={`${isAuthPage ? 'pt-0 pl-0' : `${isKbRoute ? 'pl-0 md:pl-[88px] lg:h-screen lg:pt-20 lg:pb-0 lg:overflow-hidden' : 'pl-0 md:pl-28'} pt-[152px] md:pt-[120px] lg:pt-20 pb-36 md:pb-12`}`}>
         <div className={`${isAuthPage ? 'w-full min-h-screen flex items-center justify-center' : 'w-full px-4 md:px-6'} ${isKbRoute ? 'lg:h-full lg:px-6 lg:pb-4' : ''}`}>
           {transition ? (
             <div className="min-h-[60vh] flex flex-col justify-start py-8 animate-pulse">
