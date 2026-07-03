@@ -2417,33 +2417,24 @@ html.light-mode .login-card {
 }
 
 .header-dropdown-menu {
-    background-color: rgba(18, 18, 22, 0.95) !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
+    background-color: var(--header-bg) !important;
+    background: var(--header-bg) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid var(--glass-border) !important;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.15), 0 0 1px 0 rgba(0, 0, 0, 0.1) !important;
 }
 
-.header-dropdown-menu a {
-    color: rgba(255, 255, 255, 0.8) !important;
+.header-dropdown-menu a,
+.header-dropdown-menu span,
+.header-dropdown-menu p,
+.header-dropdown-menu h4 {
+    color: hsl(var(--foreground) / 0.85) !important;
 }
 
-.header-dropdown-menu a:hover {
+.header-dropdown-menu a:hover,
+.header-dropdown-menu a:hover * {
     color: var(--primary-color) !important;
-    background-color: rgba(255, 255, 255, 0.05) !important;
-}
-
-html:not(.dark) .header-dropdown-menu {
-    background-color: rgba(255, 255, 255, 0.98) !important;
-    background: #ffffff !important;
-    border-color: rgba(0, 0, 0, 0.1) !important;
-    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 0 1px 0 rgba(0, 0, 0, 0.1) !important;
-}
-
-html:not(.dark) .header-dropdown-menu a {
-    color: #1e293b !important; /* dark slate */
-}
-
-html:not(.dark) .header-dropdown-menu a:hover {
-    color: var(--primary-color) !important;
-    background-color: rgba(0, 0, 0, 0.05) !important;
+    background-color: hsl(var(--foreground) / 0.05) !important;
 }
 
 .header-control-btn {
@@ -4547,6 +4538,7 @@ html.lenis, html.lenis body {
 html:not(.dark) .absolute.bg-black,
 html:not(.dark) .absolute.bg-black\/80,
 html:not(.dark) .absolute.bg-black\/85,
+html:not(.dark) .absolute[class*="bg-black"][class*="text-white"],
 html:not(.dark) [class*="keep-dark"] {
     background-color: #0c0c0e !important;
     background: #0c0c0e !important;
@@ -4557,11 +4549,13 @@ html:not(.dark) [class*="keep-dark"] {
 html:not(.dark) .absolute.bg-black *,
 html:not(.dark) .absolute.bg-black\/80 *,
 html:not(.dark) .absolute.bg-black\/85 *,
+html:not(.dark) .absolute[class*="bg-black"][class*="text-white"] *,
 html:not(.dark) [class*="keep-dark"] * {
     color: #ffffff !important;
 }
 
 html:not(.dark) .bg-\[\#121216\]\/95 {
-    background-color: rgba(255, 255, 255, 0.98) !important;
-    border-color: rgba(0, 0, 0, 0.1) !important;
+    background-color: var(--header-bg) !important;
+    background: var(--header-bg) !important;
+    border-color: var(--glass-border) !important;
 }
