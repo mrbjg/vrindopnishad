@@ -1,8 +1,10 @@
 import fs from 'fs';
 import path from 'path';
-import { SAINT_METADATA, getSaintMetadata } from '../data/saintMetadata.js';
-import { GLOSSARY_TERMS } from '../data/glossaryTerms.js';
-import { extractRelations } from '../utils/relations.js';
+import { SAINT_METADATA, getSaintMetadata } from '../data/saintMetadata';
+import { GLOSSARY_TERMS } from '../data/glossaryTerms';
+import { listAllContent } from './dataconnect';
+import { dataConnect } from '../firebase';
+import { extractRelations } from '../utils/relations';
 
 const DevanagariToHinglishMap = {
   'अ': 'a', 'आ': 'aa', 'इ': 'i', 'ई': 'ee', 'उ': 'u', 'ऊ': 'oo', 'ऋ': 'ri',
@@ -38,37 +40,37 @@ export function transliterate(text) {
   if (!text) return "";
   let result = "";
   const chars = Array.from(text);
-  
+
   for (let i = 0; i < chars.length; i++) {
     const char = chars[i];
     const nextChar = chars[i + 1] || "";
-    
+
     const nuqtaCombo = char + nextChar;
     if (DevanagariToHinglishMap[nuqtaCombo] !== undefined) {
       result += DevanagariToHinglishMap[nuqtaCombo];
       i++;
       continue;
     }
-    
+
     if (char === '्') {
       if (result.endsWith('a')) {
         result = result.substring(0, result.length - 1);
       }
       continue;
     }
-    
+
     const mapped = DevanagariToHinglishMap[char];
     if (mapped !== undefined) {
       result += mapped;
-      
+
       if (Consonants.has(char)) {
         const nextHasMatra = Matras.has(nextChar);
         const nextIsHalant = nextChar === '्';
-        const nextIsWordBoundary = nextChar === ' ' || nextChar === '\n' || nextChar === '\t' || 
-                                   nextChar === '।' || nextChar === '॥' || nextChar === ',' || 
-                                   nextChar === '.' || nextChar === '?' || nextChar === '!' || 
-                                   nextChar === '"' || nextChar === '\'' || nextChar === "";
-        
+        const nextIsWordBoundary = nextChar === ' ' || nextChar === '\n' || nextChar === '\t' ||
+          nextChar === '।' || nextChar === '॥' || nextChar === ',' ||
+          nextChar === '.' || nextChar === '?' || nextChar === '!' ||
+          nextChar === '"' || nextChar === '\'' || nextChar === "";
+
         if (nextHasMatra || nextIsHalant || nextIsWordBoundary) {
           if (result.endsWith('a')) {
             result = result.substring(0, result.length - 1);
@@ -118,14 +120,14 @@ export const sanitizeSlug = (slug) => {
     .trim();
 };
 
-export function classifyItemCategory(item) {
+function classifyItemCategory(item) {
   if (!item) return 'poem';
   const rawCat = (item.category || '').toLowerCase().trim();
-  
+
   if (rawCat === 'saint' || rawCat === 'dham') {
     return rawCat;
   }
-  
+
   if (rawCat === 'strotra' || rawCat === 'strotras' || rawCat === 'stotra' || rawCat === 'stotras') {
     return 'strotra';
   }
@@ -135,7 +137,7 @@ export function classifyItemCategory(item) {
 
   const title = (item.title || '').toLowerCase();
   const sanskrit = (item.sanskrit_text || '').toLowerCase();
-  
+
   if (
     title.includes('स्तोत्र') || title.includes('strotra') || title.includes('stotra') ||
     title.includes('शतक') || title.includes('shatak') ||
@@ -147,20 +149,20 @@ export function classifyItemCategory(item) {
   ) {
     return 'strotra';
   }
-  
-  const hasSanskritText = sanskrit.trim().length > 10 && 
+
+  const hasSanskritText = sanskrit.trim().length > 10 &&
     (sanskrit.includes('॥') || sanskrit.includes('।') || sanskrit.includes('ॐ') || !/[a-z]{5,}/.test(sanskrit));
-  
-  const isScriptureBook = title.includes('gita') || title.includes('गीता') || 
-    title.includes('upnishad') || title.includes('उपनिषद') || 
-    title.includes('samhita') || title.includes('संहिता') || 
+
+  const isScriptureBook = title.includes('gita') || title.includes('गीता') ||
+    title.includes('upnishad') || title.includes('उपनिषद') ||
+    title.includes('samhita') || title.includes('संहिता') ||
     title.includes('purana') || title.includes('पुराण') ||
     title.includes('shloka') || title.includes('श्लोक');
 
   if (isScriptureBook || hasSanskritText || rawCat === 'shloka' || rawCat === 'shlokas') {
     return 'shloka';
   }
-  
+
   return 'poem';
 }
 
@@ -168,17 +170,20 @@ let contentCache = typeof global !== 'undefined' ? (global.contentCache || null)
 let localFallbackCache = typeof global !== 'undefined' ? (global.localFallbackCache || null) : null;
 let initializationPromise = typeof global !== 'undefined' ? (global.initializationPromise || null) : null;
 
-
+async function fetchAllFromDataConnect() {
+  console.log("[DataConnect] Blocked: fetchAllFromDataConnect has been disabled.");
+  return [];
+}
 
 function loadLocalJSONFallback() {
   const appDirectory = process.cwd();
-  
+
   // Try loading full backup first to ensure we have the complete 10k+ items even when quota is exceeded
   let contentPath = path.join(appDirectory, 'public/data/content_backup.json');
   if (!fs.existsSync(contentPath)) {
     contentPath = path.join(appDirectory, 'frontend/public/data/content_backup.json');
   }
-  
+
   // Fall back to smaller initial dataset if full backup is missing
   if (!fs.existsSync(contentPath)) {
     contentPath = path.join(appDirectory, 'data/brajrasik_hi_full.json');
@@ -196,7 +201,15 @@ function loadLocalJSONFallback() {
     let allContentItems = [];
     if (fs.existsSync(contentPath)) {
       const rawContent = fs.readFileSync(contentPath, 'utf8');
-      allContentItems = JSON.parse(rawContent).map((item, idx) => {
+      const parsedContent = JSON.parse(rawContent);
+      const totalItems = parsedContent.length;
+
+      for (let i = 0; i < totalItems; i += 500) {
+        const end = Math.min(i + 500, totalItems);
+        console.log(`[DataCache] Initializing memory cache... Loaded ${end} / ${totalItems} items`);
+      }
+
+      allContentItems = parsedContent.map((item, idx) => {
         const cleanCategory = classifyItemCategory(item);
         let slug = item.slug;
         if (!slug || slug.startsWith('untitled')) {
@@ -266,9 +279,63 @@ function getProcessedCacheFilePath() {
   if (!fs.existsSync(cacheDir)) {
     try {
       fs.mkdirSync(cacheDir, { recursive: true });
-    } catch (e) {}
+    } catch (e) { }
   }
   return path.join(cacheDir, 'processed_cache.json');
+}
+
+function writeBackupFile(verses, force = false) {
+  if (!verses || verses.length === 0) return;
+  try {
+    const appDirectory = process.cwd();
+    let dataDir = path.join(appDirectory, 'public/data');
+    if (!fs.existsSync(dataDir)) {
+      dataDir = path.join(appDirectory, 'frontend/public/data');
+    }
+    if (!fs.existsSync(dataDir)) {
+      try {
+        fs.mkdirSync(dataDir, { recursive: true });
+      } catch (e) { }
+    }
+
+    const backupFile = path.join(dataDir, 'content_backup.json');
+    const writeFull = force || !fs.existsSync(backupFile);
+    if (writeFull) {
+      console.log(`[DataCache] Saving backup data file to: ${backupFile}...`);
+      fs.writeFile(backupFile, JSON.stringify(verses), 'utf8', (err) => {
+        if (err) console.warn("[DataCache] Async backup write failed:", err);
+      });
+    }
+
+    // Split and write category-specific files
+    const categories = ['shloka', 'strotra', 'poem', 'saint', 'dham'];
+    categories.forEach(cat => {
+      const catFile = path.join(dataDir, `content_backup_${cat}.json`);
+      if (force || !fs.existsSync(catFile)) {
+        const catVerses = verses.filter(v => {
+          const itemCat = classifyItemCategory(v);
+          return itemCat === cat;
+        });
+        console.log(`[DataCache] Saving category backup [${cat}] to: ${catFile}...`);
+        fs.writeFile(catFile, JSON.stringify(catVerses), 'utf8', (err) => {
+          if (err) console.warn(`[DataCache] Async backup write failed for ${cat}:`, err);
+        });
+      }
+    });
+
+    // Pre-compute and save relations
+    const relationsFile = path.join(dataDir, 'relations_backup.json');
+    if (force || !fs.existsSync(relationsFile)) {
+      console.log(`[DataCache] Pre-computing and saving relations backup to: ${relationsFile}...`);
+      const relations = extractRelations(verses);
+      fs.writeFile(relationsFile, JSON.stringify(relations), 'utf8', (err) => {
+        if (err) console.warn("[DataCache] Async relations backup write failed:", err);
+      });
+    }
+
+  } catch (err) {
+    console.warn("[DataCache] Could not start content backup write:", err);
+  }
 }
 
 export async function ensureDataLoaded() {
@@ -285,43 +352,139 @@ export async function ensureDataLoaded() {
 
   initializationPromise = (async () => {
     console.log("[DataCache] Initializing memory cache...");
-    
+
     if (typeof window === 'undefined') {
-      const cacheFile = getProcessedCacheFilePath();
-      if (!fs.existsSync(cacheFile)) {
-        throw new Error("[DataCache] Build Error: Cache file processed_cache.json is missing. Please run 'npm run sync-content' before building Next.js!");
-      }
-      
       try {
-        console.log(`[DataCache] Loading flat processed cache from file: ${cacheFile}...`);
-        const rawCache = fs.readFileSync(cacheFile, 'utf8');
-        const cachePayload = JSON.parse(rawCache);
-        const verses = cachePayload.verses || [];
-        const saintsRaw = cachePayload.saintsRaw || [];
-        const combined = [...verses, ...saintsRaw];
-        
-        const relations = buildRelations(combined);
-        
-        contentCache = {
-          items: combined,
-          verses: verses,
-          saints: relations.saints,
-          books: relations.books,
-          ragas: relations.ragas
-        };
-        
-        console.log(`[DataCache] Successfully loaded and mapped flat cache.`);
-        if (typeof global !== 'undefined') global.contentCache = contentCache;
-        return contentCache;
+        const cacheFile = getProcessedCacheFilePath();
+        let loadedFromCache = false;
+
+        if (fs.existsSync(cacheFile)) {
+          try {
+            const stat = fs.statSync(cacheFile);
+            const now = Date.now();
+            const age = now - stat.mtimeMs;
+            const isDev = process.env.NODE_ENV === 'development';
+            const ttl = isDev ? CACHE_TTL_DEV : CACHE_TTL_PROD;
+
+            const rawCache = fs.readFileSync(cacheFile, 'utf8');
+            const cachePayload = JSON.parse(rawCache);
+            const verses = cachePayload.verses || [];
+
+            // Check if this cache is fallback (contains only ~643 local items instead of all 8073 items)
+            const isFallback = verses.length < 1000;
+            const isFresh = age < ttl;
+
+            if (!isFallback && (isFresh || !isDev)) {
+              console.log(`[DataCache] Loading flat processed cache from file: ${cacheFile} (Age: ${Math.round(age / 1000)}s)...`);
+              const startTime = Date.now();
+
+              if (!cachePayload.saintsRaw && cachePayload.saints) {
+                console.log("[DataCache] Old nested cache structure detected. Upgrading to flat cache format...");
+                throw new Error("Old cache format forcing rebuild.");
+              }
+
+              const verses = cachePayload.verses || [];
+              const saintsRaw = cachePayload.saintsRaw || [];
+              const combined = [...verses, ...saintsRaw];
+
+              const totalItems = combined.length;
+              for (let i = 0; i < totalItems; i += 500) {
+                const end = Math.min(i + 500, totalItems);
+                console.log(`[DataCache] Initializing memory cache... Loaded ${end} / ${totalItems} items`);
+              }
+
+              const relations = buildRelations(combined);
+
+              contentCache = {
+                items: combined,
+                verses: verses,
+                saints: relations.saints,
+                books: relations.books,
+                ragas: relations.ragas
+              };
+
+              loadedFromCache = true;
+              console.log(`[DataCache] Successfully loaded and mapped flat cache in ${Date.now() - startTime}ms.`);
+              writeBackupFile(contentCache.verses, false);
+              if (typeof global !== 'undefined') global.contentCache = contentCache;
+              return contentCache;
+            } else {
+              console.log(`[DataCache] Processed cache is stale (Age: ${Math.round(age / 1000)}s, TTL: ${ttl / 1000}s). Rebuilding...`);
+            }
+          } catch (readErr) {
+            console.warn("[DataCache] Cache loading bypassed or failed, rebuilding:", readErr.message || readErr);
+          }
+        }
+
+        console.log("[DataCache] Rebuilding data graph from scratch...");
+        const startTime = Date.now();
+        const localData = loadLocalJSONFallback();
+        let remoteItems = await fetchAllFromDataConnect();
+
+        if (remoteItems && remoteItems.length > 0) {
+          const appDirectory = process.cwd();
+          let saintsPath = path.join(appDirectory, 'data/saints_formatted.json');
+          if (!fs.existsSync(saintsPath)) {
+            saintsPath = path.join(appDirectory, 'frontend/data/saints_formatted.json');
+          }
+          let rawSaints = [];
+          if (fs.existsSync(saintsPath)) {
+            const rawSaintsData = fs.readFileSync(saintsPath, 'utf8');
+            rawSaints = JSON.parse(rawSaintsData).map((saint, idx) => ({
+              id: saint.id || `saint-local-${idx}`,
+              ...saint,
+              category: 'saint',
+              slug: saint.slug || generateSlug(saint.title)
+            }));
+          }
+
+          const combined = [...remoteItems, ...rawSaints];
+          const totalItems = combined.length;
+          for (let i = 0; i < totalItems; i += 500) {
+            const end = Math.min(i + 500, totalItems);
+            console.log(`[DataCache] Initializing memory cache... Loaded ${end} / ${totalItems} items`);
+          }
+          const relations = buildRelations(combined);
+
+          contentCache = {
+            items: combined,
+            verses: remoteItems,
+            saints: relations.saints,
+            books: relations.books,
+            ragas: relations.ragas
+          };
+
+          try {
+            console.log(`[DataCache] Saving flat cache layout to: ${cacheFile}...`);
+            const cachePayload = {
+              verses: remoteItems,
+              saintsRaw: rawSaints
+            };
+            fs.writeFileSync(cacheFile, JSON.stringify(cachePayload), 'utf8');
+            writeBackupFile(remoteItems, true); // Force update backup when cache is completely rebuilt
+          } catch (writeErr) {
+            console.warn("[DataCache] Could not write processed cache file:", writeErr);
+          }
+
+          console.log(`[DataCache] Cache built from scratch in ${Date.now() - startTime}ms.`);
+          if (typeof global !== 'undefined') global.contentCache = contentCache;
+          return contentCache;
+        } else {
+          contentCache = localData;
+          writeBackupFile(localData.verses, true);
+          console.log(`[DataCache] Falling back to local data. Cache built in ${Date.now() - startTime}ms.`);
+          if (typeof global !== 'undefined') global.contentCache = contentCache;
+          return contentCache;
+        }
       } catch (err) {
-        throw new Error(`[DataCache] Build Error: Failed to load processed_cache.json: ${err.message}`);
+        console.warn("[DataCache] Load failed, falling back to local dataset:", err);
       }
-    } else {
-      const localData = loadLocalJSONFallback();
-      contentCache = localData;
-      if (typeof global !== 'undefined') global.contentCache = contentCache;
-      return contentCache;
     }
+
+    const localData = loadLocalJSONFallback();
+    contentCache = localData;
+    if (typeof global !== 'undefined') global.contentCache = contentCache;
+    return contentCache;
   })();
 
   if (typeof global !== 'undefined') global.initializationPromise = initializationPromise;
@@ -343,9 +506,9 @@ export function getNormalizedBookSlug(name) {
   if (!name) return '';
   const clean = name.toLowerCase();
   if (
-    clean.includes('सुधानिधि') || 
-    clean.includes('sudhanidhi') || 
-    clean.includes('sudha-nidhi') || 
+    clean.includes('सुधानिधि') ||
+    clean.includes('sudhanidhi') ||
+    clean.includes('sudha-nidhi') ||
     clean.includes('sudha_nidhi') ||
     (clean.includes('सुधा') && clean.includes('निधि')) ||
     (clean.includes('sudha') && clean.includes('nidhi'))
@@ -363,8 +526,8 @@ export function getNormalizedBookName(name) {
   if (!name) return '';
   const clean = name.toLowerCase();
   if (
-    clean.includes('सुधानिधि') || 
-    clean.includes('sudhanidhi') || 
+    clean.includes('सुधानिधि') ||
+    clean.includes('sudhanidhi') ||
     clean.includes('sudha-nidhi') ||
     (clean.includes('सुधा') && clean.includes('निधि')) ||
     (clean.includes('sudha') && clean.includes('nidhi'))
@@ -489,7 +652,7 @@ function buildRelations(items) {
     const matchTitle = title.match(ragaRegex);
     const matchSanskrit = item.sanskrit_text?.match(ragaRegex);
     const matchHindi = item.hindi_text?.match(ragaRegex);
-    
+
     if (matchTitle) ragaName = matchTitle[1];
     else if (matchSanskrit) ragaName = matchSanskrit[1];
     else if (matchHindi) ragaName = matchHindi[1];
@@ -524,7 +687,7 @@ function buildRelations(items) {
       const cleanSantKey = saintName.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim();
       const santSlug = getNormalizedSaintSlug(cleanSantKey);
       if (!santsMap[santSlug]) {
-        const matchedBio = biographies.find(bio => 
+        const matchedBio = biographies.find(bio =>
           bio.name.includes(cleanSantKey) || cleanSantKey.includes(bio.name) ||
           (cleanSantKey.includes('हरिदास') && bio.name.includes('हरिदास')) ||
           (cleanSantKey.includes('हरिवंश') && bio.name.includes('हरिवंश'))
@@ -592,7 +755,7 @@ function buildRelations(items) {
 
   const sevaKunjSlug = 'seva-kunj-texts';
   const sevaKunjVerses = [];
-  
+
   items.forEach(item => {
     if (item.category?.toLowerCase() === 'saint') return;
     const textToScan = [
@@ -603,15 +766,15 @@ function buildRelations(items) {
       item.english_translation,
       item.description
     ].filter(Boolean).join(' ').toLowerCase();
-    
-    const isSevaKunj = textToScan.includes('सेवा कुंज') || 
-                       textToScan.includes('सेवाकुंज') || 
-                       textToScan.includes('seva kunj') || 
-                       textToScan.includes('sewakunj') || 
-                       textToScan.includes('seva-kunj') || 
-                       textToScan.includes('सेवा सुख') ||
-                       (item.tags && item.tags.some(t => t.toLowerCase().includes('seva') || t.toLowerCase().includes('kunj')));
-                       
+
+    const isSevaKunj = textToScan.includes('सेवा कुंज') ||
+      textToScan.includes('सेवाकुंज') ||
+      textToScan.includes('seva kunj') ||
+      textToScan.includes('sewakunj') ||
+      textToScan.includes('seva-kunj') ||
+      textToScan.includes('सेवा सुख') ||
+      (item.tags && item.tags.some(t => t.toLowerCase().includes('seva') || t.toLowerCase().includes('kunj')));
+
     if (isSevaKunj) {
       let enriched = item;
       for (const b of Object.values(booksMap)) {
@@ -690,9 +853,9 @@ export function getVerseBySlug(slug) {
   const { verses } = loadRawData(false);
   const decodedSlug = decodeURIComponent(slug).toLowerCase();
   const cleanSlug = sanitizeSlug(decodedSlug);
-  
+
   // 1. Try exact match
-  let matched = verses.find(item => 
+  let matched = verses.find(item =>
     (item.slug && item.slug.toLowerCase() === decodedSlug) ||
     (item.slug && item.slug.toLowerCase() === cleanSlug) ||
     (item.id?.toString() === decodedSlug)
@@ -704,13 +867,13 @@ export function getVerseBySlug(slug) {
   if (/[^\x00-\x7F]/.test(decodedSlug)) {
     const cleanForTransliterate = decodedSlug.replace(/-/g, ' ');
     searchSlug = generateSlug(cleanForTransliterate);
-    
+
     // 2a. Match transliterated slug exactly
-    matched = verses.find(item => 
+    matched = verses.find(item =>
       (item.slug && item.slug.toLowerCase() === searchSlug)
     );
     if (matched) return matched;
-    
+
     // 2b. Match transliterated slug against transliterated item titles
     matched = verses.find(item => {
       if (!item.title) return false;
@@ -723,18 +886,18 @@ export function getVerseBySlug(slug) {
   // 3. Try spelling-insensitive normalized fuzzy match
   const normDecoded = normalizeFuzzyText(searchSlug);
   const normClean = normalizeFuzzyText(cleanSlug);
-  
+
   if (normDecoded) {
     matched = verses.find(item => {
       if (!item.slug) return false;
       const normItem = normalizeFuzzyText(item.slug);
-      return normItem === normDecoded || 
-             normItem === normClean ||
-             normItem.startsWith(normDecoded) || 
-             normDecoded.startsWith(normItem) ||
-             normItem.startsWith(normClean) ||
-             normClean.startsWith(normItem) ||
-             (normDecoded.length > 5 && (normItem.includes(normDecoded) || normDecoded.includes(normItem)));
+      return normItem === normDecoded ||
+        normItem === normClean ||
+        normItem.startsWith(normDecoded) ||
+        normDecoded.startsWith(normItem) ||
+        normItem.startsWith(normClean) ||
+        normClean.startsWith(normItem) ||
+        (normDecoded.length > 5 && (normItem.includes(normDecoded) || normDecoded.includes(normItem)));
     });
     if (matched) return matched;
 
@@ -743,9 +906,9 @@ export function getVerseBySlug(slug) {
       if (!item.title) return false;
       const normTitle = normalizeFuzzyText(generateSlug(item.title));
       return normTitle === normDecoded ||
-             normTitle.startsWith(normDecoded) ||
-             normDecoded.startsWith(normTitle) ||
-             (normDecoded.length > 5 && (normTitle.includes(normDecoded) || normDecoded.includes(normTitle)));
+        normTitle.startsWith(normDecoded) ||
+        normDecoded.startsWith(normTitle) ||
+        (normDecoded.length > 5 && (normTitle.includes(normDecoded) || normDecoded.includes(normTitle)));
     });
     if (matched) return matched;
   }
@@ -753,15 +916,15 @@ export function getVerseBySlug(slug) {
   // 4. Try consonantal skeleton match for Devanagari transliteration differences
   const skeleton = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/[aeiouy]/g, '');
   const decodedSkeleton = skeleton(searchSlug);
-  
+
   if (decodedSkeleton && decodedSkeleton.length > 3) {
     matched = verses.find(item => {
       if (!item.slug) return false;
       const itemSkeleton = skeleton(item.slug);
       return itemSkeleton === decodedSkeleton ||
-             itemSkeleton.startsWith(decodedSkeleton) ||
-             decodedSkeleton.startsWith(itemSkeleton) ||
-             (decodedSkeleton.length > 5 && (itemSkeleton.includes(decodedSkeleton) || decodedSkeleton.includes(itemSkeleton)));
+        itemSkeleton.startsWith(decodedSkeleton) ||
+        decodedSkeleton.startsWith(itemSkeleton) ||
+        (decodedSkeleton.length > 5 && (itemSkeleton.includes(decodedSkeleton) || decodedSkeleton.includes(itemSkeleton)));
     });
     if (matched) return matched;
   }
@@ -777,7 +940,7 @@ export function getAllSaints() {
 export function getSaintBySlug(slug) {
   const { saints } = loadRawData(false);
   const decodedSlug = decodeURIComponent(slug).toLowerCase();
-  
+
   let matched = saints.find(s => s.slug.toLowerCase() === decodedSlug);
   if (matched) return matched;
 
@@ -785,7 +948,7 @@ export function getSaintBySlug(slug) {
   const normSaintSlug = getNormalizedSaintSlug(decodedSlug);
   matched = saints.find(s => s.slug.toLowerCase() === normSaintSlug);
   if (matched) return matched;
-  
+
   // Transliterate if Devanagari
   let searchSlug = decodedSlug;
   if (/[^\x00-\x7F]/.test(decodedSlug)) {
@@ -800,20 +963,20 @@ export function getSaintBySlug(slug) {
   }
 
   const cleanSlug = searchSlug.replace(/-maharaj$/, '');
-  
+
   // Try spelling-insensitive normalized match
   const normDecoded = normalizeFuzzyText(searchSlug);
   const normClean = normalizeFuzzyText(cleanSlug);
-  
+
   if (normDecoded) {
     matched = saints.find(s => {
       const normItem = normalizeFuzzyText(s.slug);
-      return normItem === normDecoded || 
-             normItem === normClean || 
-             normItem.startsWith(normDecoded) || 
-             normDecoded.startsWith(normItem) ||
-             normItem.includes(normClean) ||
-             normClean.includes(normItem);
+      return normItem === normDecoded ||
+        normItem === normClean ||
+        normItem.startsWith(normDecoded) ||
+        normDecoded.startsWith(normItem) ||
+        normItem.includes(normClean) ||
+        normClean.includes(normItem);
     });
     if (matched) return matched;
   }
@@ -826,11 +989,11 @@ export function getSaintBySlug(slug) {
     matched = saints.find(s => {
       const itemSkeleton = skeleton(s.slug);
       return itemSkeleton === decodedSkeleton ||
-             itemSkeleton === cleanSkeleton ||
-             itemSkeleton.startsWith(decodedSkeleton) ||
-             decodedSkeleton.startsWith(itemSkeleton) ||
-             itemSkeleton.includes(cleanSkeleton) ||
-             cleanSkeleton.includes(itemSkeleton);
+        itemSkeleton === cleanSkeleton ||
+        itemSkeleton.startsWith(decodedSkeleton) ||
+        decodedSkeleton.startsWith(itemSkeleton) ||
+        itemSkeleton.includes(cleanSkeleton) ||
+        cleanSkeleton.includes(itemSkeleton);
     });
     if (matched) return matched;
   }
@@ -846,7 +1009,7 @@ export function getAllGranthas() {
 export function getGranthaBySlug(slug) {
   const { books } = loadRawData(false);
   const decodedSlug = decodeURIComponent(slug).toLowerCase();
-  
+
   // 1. Try exact match
   let matched = books.find(b => b.slug.toLowerCase() === decodedSlug);
   if (matched) return matched;
@@ -866,10 +1029,10 @@ export function getGranthaBySlug(slug) {
     matched = books.find(b => {
       if (!b.slug) return false;
       const normItem = normalizeFuzzyText(b.slug);
-      return normItem === normDecoded || 
-             normItem.startsWith(normDecoded) || 
-             normDecoded.startsWith(normItem) ||
-             (normDecoded.length > 5 && (normItem.includes(normDecoded) || normDecoded.includes(normItem)));
+      return normItem === normDecoded ||
+        normItem.startsWith(normDecoded) ||
+        normDecoded.startsWith(normItem) ||
+        (normDecoded.length > 5 && (normItem.includes(normDecoded) || normDecoded.includes(normItem)));
     });
     if (matched) return matched;
   }
@@ -882,9 +1045,9 @@ export function getGranthaBySlug(slug) {
       if (!b.slug) return false;
       const itemSkeleton = skeleton(b.slug);
       return itemSkeleton === decodedSkeleton ||
-             itemSkeleton.startsWith(decodedSkeleton) ||
-             decodedSkeleton.startsWith(itemSkeleton) ||
-             (decodedSkeleton.length > 5 && (itemSkeleton.includes(decodedSkeleton) || decodedSkeleton.includes(itemSkeleton)));
+        itemSkeleton.startsWith(decodedSkeleton) ||
+        decodedSkeleton.startsWith(itemSkeleton) ||
+        (decodedSkeleton.length > 5 && (itemSkeleton.includes(decodedSkeleton) || decodedSkeleton.includes(itemSkeleton)));
     });
     if (matched) return matched;
   }
@@ -900,7 +1063,7 @@ export function getAllRagas() {
 export function getRagaBySlug(slug) {
   const { ragas } = loadRawData(false);
   const decodedSlug = decodeURIComponent(slug).toLowerCase();
-  
+
   // 1. Try exact match
   let matched = ragas.find(r => r.slug.toLowerCase() === decodedSlug);
   if (matched) return matched;
@@ -920,10 +1083,10 @@ export function getRagaBySlug(slug) {
     matched = ragas.find(r => {
       if (!r.slug) return false;
       const normItem = normalizeFuzzyText(r.slug);
-      return normItem === normDecoded || 
-             normItem.startsWith(normDecoded) || 
-             normDecoded.startsWith(normItem) ||
-             (normDecoded.length > 5 && (normItem.includes(normDecoded) || normDecoded.includes(normItem)));
+      return normItem === normDecoded ||
+        normItem.startsWith(normDecoded) ||
+        normDecoded.startsWith(normItem) ||
+        (normDecoded.length > 5 && (normItem.includes(normDecoded) || normDecoded.includes(normItem)));
     });
     if (matched) return matched;
   }
@@ -954,8 +1117,8 @@ export function getGlossaryTermBySlug(slug) {
     matched = GLOSSARY_TERMS.find(term => {
       const normTerm = normalizeFuzzyText(term.slug);
       return normTerm === normDecoded ||
-             normTerm.startsWith(normDecoded) ||
-             normDecoded.startsWith(normTerm);
+        normTerm.startsWith(normDecoded) ||
+        normDecoded.startsWith(normTerm);
     });
     if (matched) return matched;
   }

@@ -43,11 +43,13 @@ const AtmosphereCustomizer = ({ isHi, theme, updateSetting }) => {
           <button
             key={t.id}
             onClick={() => updateSetting('theme', t.id)}
-            className={`flex-none px-4 py-3 rounded-2xl border text-left transition-all duration-300 w-44 hover:scale-[1.02] ${
+            className={`flex-none px-4 py-3 rounded-2xl border text-left transition-all duration-300 w-44 hover:scale-[1.02] relative group overflow-hidden ${
               theme === t.id
                 ? 'border-primary bg-primary/10 text-primary shadow-lg shadow-primary/5'
                 : 'border-white/5 bg-white/2 text-white/60 hover:border-white/10'
             }`}
+            aria-label={isHi ? `${t.label} वातावरण सक्रिय करें` : `Activate ${t.label} atmosphere`}
+            title={t.desc}
           >
             <div className="flex justify-between items-center">
               <span className="text-xs font-bold truncate block">{t.label}</span>
@@ -57,6 +59,11 @@ const AtmosphereCustomizer = ({ isHi, theme, updateSetting }) => {
               />
             </div>
             <span className="text-[9px] text-white/35 mt-1 block font-light leading-none truncate">{t.desc}</span>
+            <div className="absolute inset-0 bg-amber-500/10 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+              <span className="text-[9px] font-bold text-primary uppercase tracking-[0.2em]">
+                {theme === t.id ? (isHi ? 'सक्रिय' : 'Active') : (isHi ? 'चुनें' : 'Select')}
+              </span>
+            </div>
           </button>
         ))}
       </div>

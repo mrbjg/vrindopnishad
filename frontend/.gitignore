@@ -29,6 +29,7 @@ public/sitemap.xml
 
 # Data Cache
 *remote_cache.json
+*processed_cache.json
 
 # Scratch files
 scratch/

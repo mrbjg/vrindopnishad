@@ -279,7 +279,7 @@ const PreviewDrawer = ({
             )}
             {previewType === 'raga' && (
               <Link
-                to={isHi ? `/hi/raga/${selectedItem.slug}` : `/raga/${selectedItem.slug}`}
+                to={isHi ? `/hi/ragas/${selectedItem.slug}` : `/ragas/${selectedItem.slug}`}
                 onClick={closePreview}
                 className="btn-premium flex-1 text-center py-3 text-xs uppercase tracking-wider font-semibold min-h-[44px] flex items-center justify-center"
               >

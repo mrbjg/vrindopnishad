@@ -430,8 +430,8 @@ export const apiService = {
       resultItems = memoryCachedItems || [];
     }
 
-    // Background Delta Sync (Disabled)
-    if (false && !USE_MOCK && typeof window !== 'undefined') {
+    // Background Delta Sync
+    if (!USE_MOCK && typeof window !== 'undefined') {
       const now = Date.now();
       if (now - lastSyncTime > 5 * 60 * 1000) {
         lastSyncTime = now;
@@ -638,7 +638,67 @@ export const apiService = {
     // 2. Try fetching from live DB asynchronously
     let rawData = null;
     try {
-      throw new Error("Live database connection is disabled");
+      if (DB_PROVIDER === 'supabase') {
+        console.log('[Supabase] Fetching content by ID/Slug:', decodedId);
+        let query = supabase.from('content').select('*');
+        if (isUuid) {
+          query = query.eq('id', decodedId);
+        } else {
+          query = query.eq('slug', decodedId);
+        }
+        const { data, error } = await query.maybeSingle();
+        if (!error && data) {
+          rawData = data;
+          const dataObj = mapToAppModel(rawData);
+          const cleanCategory = classifyItemCategory(dataObj);
+          const contentData = { 
+            ...dataObj, 
+            category: cleanCategory,
+            slug: dataObj.slug || generateSlug(dataObj.title) 
+          };
+          setCache(cacheKey, contentData);
+          return contentData;
+        }
+      } else {
+        console.log('[DataConnect-Client] Fetching live content for', decodedId);
+        let result;
+        if (isUuid) {
+          result = await getDcContentById(dataConnect, { id: decodedId });
+        } else {
+          result = await getDcContentBySlug(dataConnect, { slug: decodedId });
+        }
+        if (result && result.data && result.data.content) {
+          const mapped = mapToAppModel(result.data.content);
+          const cleanCategory = classifyItemCategory(mapped);
+          const found = {
+            ...mapped,
+            category: cleanCategory,
+            slug: (mapped.slug && !mapped.slug.startsWith('untitled')) ? mapped.slug : generateSlug(mapped.title)
+          };
+          
+          if (found.id) {
+            contentMapById.set(found.id.toString(), found);
+          }
+          if (found.slug) {
+            contentMapBySlug.set(found.slug, found);
+            contentMapBySlug.set(decodeURIComponent(found.slug), found);
+          }
+          
+          if (!memoryCategoryCache[found.category]) {
+            memoryCategoryCache[found.category] = [];
+          }
+          if (!memoryCategoryCache[found.category].some(x => x.id === found.id)) {
+            memoryCategoryCache[found.category].push(found);
+            memoryCategoryCache[found.category] = ensureSorted(memoryCategoryCache[found.category]);
+            try {
+              localStorage.setItem(`vrindopnishad_cache_${found.category}`, JSON.stringify(memoryCategoryCache[found.category]));
+            } catch (e) {}
+          }
+          
+          setCache(cacheKey, found);
+          return found;
+        }
+      }
     } catch (networkErr) {
       console.warn('[Cache-Miss] Live fetch failed, will try local cache:', networkErr);
     }

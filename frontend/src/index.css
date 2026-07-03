@@ -2416,6 +2416,35 @@ html.light-mode .login-card {
     font-weight: 600;
 }
 
+.header-dropdown-menu {
+    background-color: rgba(18, 18, 22, 0.95) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.header-dropdown-menu a {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.header-dropdown-menu a:hover {
+    color: var(--primary-color) !important;
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+html.light-mode .header-dropdown-menu {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 0 1px 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+html.light-mode .header-dropdown-menu a {
+    color: hsl(var(--foreground) / 0.8) !important;
+}
+
+html.light-mode .header-dropdown-menu a:hover {
+    color: var(--primary-color) !important;
+    background-color: hsl(var(--foreground) / 0.05) !important;
+}
+
 .header-control-btn {
     display: flex;
     align-items: center;
@@ -4490,4 +4519,25 @@ body {
         transform: scale(0.97) !important;
         transition: transform 0.05s ease !important;
     }
+}
+
+/* Lenis smooth scrolling support to prevent scroll freezing */
+html.lenis, html.lenis body {
+    height: auto;
+}
+
+.lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+    overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+    pointer-events: none;
 }

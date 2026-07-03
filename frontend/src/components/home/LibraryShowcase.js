@@ -26,10 +26,15 @@ const LibraryShowcase = ({ isHi, books, navigate }) => {
         </div>
         <Link
           to={isHi ? "/hi/granthas" : "/granthas"}
-          className="text-xs text-primary hover:underline flex items-center gap-0.5 font-bold min-h-[30px] flex items-center"
+          className="text-xs text-primary hover:underline flex items-center gap-0.5 font-bold min-h-[30px] flex items-center relative group"
+          aria-label={isHi ? "सभी ग्रन्थ और संग्रह देखें" : "View all available granthas and scriptures"}
+          title={isHi ? "सभी ग्रन्थ देखें" : "View All Granthas"}
         >
           {isHi ? "सभी ग्रन्थ" : "View All Granthas"}
           <ChevronRight size={14} />
+          <span className="absolute -top-7 right-0 scale-0 group-hover:scale-100 bg-black text-[9px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-30">
+            {isHi ? "सभी ग्रन्थ सूची" : "Explore all granthas"}
+          </span>
         </Link>
       </div>
 
@@ -39,8 +44,19 @@ const LibraryShowcase = ({ isHi, books, navigate }) => {
           <div
             key={`${book.slug || book.name || 'book'}-${index}`}
             onClick={() => navigate(isHi ? `/hi/granthas/${book.slug}` : `/granthas/${book.slug}`)}
-            className="w-[280px] sm:w-80 flex-none glass-card p-4 rounded-2xl hover:border-amber-500/25 transition-all snap-start flex gap-4 border border-white/5 cursor-pointer group shadow-lg touch-manipulation"
+            className="w-[280px] sm:w-80 flex-none glass-card p-4 rounded-2xl hover:border-amber-500/25 transition-all snap-start flex gap-4 border border-white/5 cursor-pointer group shadow-lg touch-manipulation relative overflow-hidden"
+            role="button"
+            tabIndex={0}
+            aria-label={isHi ? `ग्रन्थ: ${book.name}` : `Grantha: ${book.name}`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                navigate(isHi ? `/hi/granthas/${book.slug}` : `/granthas/${book.slug}`);
+              }
+            }}
           >
+            <div className="absolute top-2 right-2 scale-0 group-hover:scale-100 bg-black/80 text-[8px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-10">
+              {isHi ? "ग्रन्थ खोलें" : "Open Book"}
+            </div>
             
             <div
               className="book-cover-premium shrink-0 text-white select-none shadow-xl w-[90px] h-[130px] rounded-lg overflow-hidden relative"
@@ -72,7 +88,10 @@ const LibraryShowcase = ({ isHi, books, navigate }) => {
                   <FileText size={10} />
                   {book.verses ? book.verses.length : (book.verseIds ? book.verseIds.length : 0)} verses
                 </span>
-                <button className="w-full bg-white/5 hover:bg-primary/20 text-white/70 hover:text-primary font-bold text-[9px] py-1.5 px-2 rounded-lg transition-colors border border-white/10 hover:border-primary/20 tracking-wider uppercase min-h-[28px] flex items-center justify-center">
+                <button 
+                  className="w-full bg-white/5 hover:bg-primary/20 text-white/70 hover:text-primary font-bold text-[9px] py-1.5 px-2 rounded-lg transition-colors border border-white/10 hover:border-primary/20 tracking-wider uppercase min-h-[28px] flex items-center justify-center"
+                  aria-label={isHi ? `ग्रन्थ ${book.name} की वाणियाँ पढ़ें` : `Read verses from ${book.name}`}
+                >
                   {isHi ? "वाणी पढ़ें" : "Read Now"}
                 </button>
               </div>

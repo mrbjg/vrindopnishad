@@ -139,7 +139,7 @@ const RagasListPage = ({ initialRagas }) => {
             {filteredRagas.slice(0, visibleCount).map(raga => (
               <Link 
                 key={raga.name} 
-                to={isHindiRoute ? `/hi/raga/${raga.slug}` : `/raga/${raga.slug}`}
+                to={isHindiRoute ? `/hi/ragas/${raga.slug}` : `/ragas/${raga.slug}`}
                 className="glass-card group hover:border-[rgba(var(--primary-rgb),0.3)] transition-all duration-300 flex flex-col justify-between hover:shadow-2xl"
               >
                 <div>

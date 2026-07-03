@@ -125,11 +125,13 @@ const DailySwadhyaya = ({
             <div className="flex justify-center gap-2.5 sm:gap-3">
               <button
                 onClick={handleChantAudio}
-                className={`flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-full border transition-all text-xs font-bold touch-manipulation min-h-[40px] ${
+                className={`flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-full border transition-all text-xs font-bold touch-manipulation min-h-[40px] relative group ${
                   isPlaying
                     ? 'border-primary bg-primary/10 text-primary'
                     : 'border-white/10 hover:border-primary/30 text-white/70'
                 }`}
+                title={isPlaying ? (isHi ? "ऑडियो रोकें" : "Pause Audio") : (isHi ? "ऑडियो सुनें" : "Listen to Audio")}
+                aria-label={isPlaying ? "Pause Audio" : "Listen to Audio"}
               >
                 <span>{isPlaying ? '⏸' : '▶'}</span>
                 <span>{isHi ? "सुनिए" : "Listen"}</span>
@@ -141,15 +143,20 @@ const DailySwadhyaya = ({
                     <span className="w-0.5 bg-primary rounded-full animate-bar-pulse-4" style={{ height: '6px' }} />
                   </div>
                 )}
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+                  {isPlaying ? (isHi ? "ऑडियो रोकें" : "Pause Audio") : (isHi ? "ऑडियो सुनें" : "Listen to Audio")}
+                </span>
               </button>
 
               <button
                 onClick={handleComplete}
-                className={`flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-full border transition-all text-xs font-bold relative touch-manipulation min-h-[40px] ${
+                className={`flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-full border transition-all text-xs font-bold relative touch-manipulation min-h-[40px] group ${
                   isCompleted
                     ? 'border-green-500 bg-green-500/10 text-green-500 cursor-default'
                     : 'border-white/10 hover:border-green-500/30 text-white/70'
                 }`}
+                title={isCompleted ? (isHi ? "पढ़ना पूर्ण किया" : "Already Completed") : (isHi ? "पढ़ा हुआ चिह्नित करें" : "Mark as Completed")}
+                aria-label={isCompleted ? "Completed" : "Mark as Completed"}
               >
                 <span>{isCompleted ? '✓' : '📿'}</span>
                 <span>{isCompleted ? (isHi ? "पूर्ण" : "Completed") : (isHi ? "Mark Read" : "Mark Read")}</span>
@@ -166,6 +173,9 @@ const DailySwadhyaya = ({
                     }}
                   />
                 ))}
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+                  {isCompleted ? (isHi ? "पूर्ण हुआ" : "Completed") : (isHi ? "पढ़ा हुआ चिह्नित करें" : "Mark as Read")}
+                </span>
               </button>
             </div>
 
@@ -185,10 +195,15 @@ const DailySwadhyaya = ({
                   <span className="text-[8px] uppercase tracking-wider text-primary font-bold">भावार्थ (Hindi)</span>
                   <button 
                     onClick={() => handleCopy(dailyShloka.hindi, 'hindi')}
-                    className="text-[9px] text-white/40 hover:text-white transition-colors flex items-center gap-0.5"
+                    className="text-[9px] text-white/40 hover:text-white transition-colors flex items-center gap-0.5 relative group"
+                    title={isHi ? "हिंदी भावार्थ कॉपी करें" : "Copy Hindi Translation"}
+                    aria-label="Copy Hindi Translation"
                   >
-                    <Copy size={9} />
+                    <Copy size={9} aria-hidden="true" />
                     <span>{copiedText === 'hindi' ? (isHi ? "कॉपी हुआ" : "Copied") : (isHi ? "कॉपी" : "Copy")}</span>
+                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[9px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+                      {copiedText === 'hindi' ? (isHi ? "कॉपी हुआ!" : "Copied!") : (isHi ? "कॉपी करें" : "Copy Translation")}
+                    </span>
                   </button>
                 </div>
                 <p className="text-white/80 font-medium leading-relaxed whitespace-pre-line">{dailyShloka.hindi}</p>
@@ -198,10 +213,15 @@ const DailySwadhyaya = ({
                   <span className="text-[8px] uppercase tracking-wider text-sky-400/80 font-bold">English</span>
                   <button 
                     onClick={() => handleCopy(dailyShloka.english, 'english')}
-                    className="text-[9px] text-white/40 hover:text-white transition-colors flex items-center gap-0.5"
+                    className="text-[9px] text-white/40 hover:text-white transition-colors flex items-center gap-0.5 relative group"
+                    title={isHi ? "अंग्रेजी अनुवाद कॉपी करें" : "Copy English Translation"}
+                    aria-label="Copy English Translation"
                   >
-                    <Copy size={9} />
+                    <Copy size={9} aria-hidden="true" />
                     <span>{copiedText === 'english' ? (isHi ? "कॉपी हुआ" : "Copied") : (isHi ? "कॉपी" : "Copy")}</span>
+                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[9px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+                      {copiedText === 'english' ? (isHi ? "कॉपी हुआ!" : "Copied!") : (isHi ? "कॉपी करें" : "Copy Translation")}
+                    </span>
                   </button>
                 </div>
                 <p className="text-white/70 italic leading-relaxed whitespace-pre-line">{dailyShloka.english}</p>
@@ -232,14 +252,18 @@ const DailySwadhyaya = ({
         )}
 
         {/* Share & Copy Actions (Problem #4 & #15) */}
-        <div className="flex flex-wrap items-center justify-center gap-2 pt-3.5 border-t border-white/5 mt-5">
+        <div className="flex flex-wrap items-center justify-center gap-2 pt-3.5 border-t border-white/5 mt-5 font-sans">
           <button
             onClick={() => handleCopy(dailyShloka.sanskrit, 'sanskrit')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all text-[10px] font-semibold border border-white/5"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all text-[10px] font-semibold border border-white/5 relative group"
             title={isHi ? "संस्कृत श्लोक कॉपी करें" : "Copy Sanskrit Verse"}
+            aria-label="Copy Sanskrit Verse"
           >
-            <Copy size={11} />
+            <Copy size={11} aria-hidden="true" />
             <span>{copiedText === 'sanskrit' ? (isHi ? "कॉपी हुआ!" : "Copied!") : (isHi ? "श्लोक कॉपी" : "Copy Verse")}</span>
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+              {copiedText === 'sanskrit' ? (isHi ? "कॉपी हुआ!" : "Copied!") : (isHi ? "श्लोक कॉपी करें" : "Copy Sanskrit")}
+            </span>
           </button>
 
           <button
@@ -248,11 +272,15 @@ const DailySwadhyaya = ({
               const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
               window.open(url, '_blank');
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] hover:text-[#25D366]/90 transition-all text-[10px] font-semibold border border-[#25D366]/10"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] hover:text-[#25D366]/90 transition-all text-[10px] font-semibold border border-[#25D366]/10 relative group"
             title={isHi ? "व्हाट्सएप पर साझा करें" : "Share on WhatsApp"}
+            aria-label="Share on WhatsApp"
           >
-            <MessageCircle size={11} />
+            <MessageCircle size={11} aria-hidden="true" />
             <span>WhatsApp</span>
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+              {isHi ? "व्हाट्सएप पर शेयर" : "Share on WhatsApp"}
+            </span>
           </button>
 
           <button
@@ -261,11 +289,15 @@ const DailySwadhyaya = ({
               const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
               window.open(url, '_blank');
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all text-[10px] font-semibold border border-white/5"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all text-[10px] font-semibold border border-white/5 relative group"
             title={isHi ? "X पर साझा करें" : "Share on X"}
+            aria-label="Share on X"
           >
-            <span className="font-bold">𝕏</span>
+            <span className="font-bold" aria-hidden="true">𝕏</span>
             <span>Share</span>
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+              {isHi ? "X पर साझा करें" : "Share on X"}
+            </span>
           </button>
 
           <button
@@ -277,11 +309,15 @@ const DailySwadhyaya = ({
               title: dailyShloka.source,
               category: "shloka"
             }, isHi)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary hover:text-primary transition-all text-[10px] font-bold border border-primary/20"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary hover:text-primary transition-all text-[10px] font-bold border border-primary/20 relative group"
             title={isHi ? "कार्ड चित्र सहेजें" : "Save Image Card"}
+            aria-label="Save Image Card"
           >
-            <Share2 size={11} />
+            <Share2 size={11} aria-hidden="true" />
             <span>{isHi ? "कार्ड चित्र" : "Share Card"}</span>
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+              {isHi ? "कार्ड चित्र बनाएं" : "Create Image Card"}
+            </span>
           </button>
         </div>
       </div>

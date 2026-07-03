@@ -33,10 +33,14 @@ const BrajCalendar = ({ isHi, calendarData, onSaveCalendar }) => {
           {!isEditing && (
             <button
               onClick={() => setIsEditing(true)}
-              className="text-zinc-600 hover:text-white transition-colors"
+              className="text-zinc-600 hover:text-white transition-colors relative group"
               title="Edit Calendar"
+              aria-label={isHi ? "पंचांग संपादित करें" : "Edit Braj Calendar"}
             >
               <Edit2 size={12} />
+              <span className="absolute -top-7 right-0 scale-0 group-hover:scale-100 bg-black text-[9px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-30">
+                {isHi ? "संपादन" : "Edit"}
+              </span>
             </button>
           )}
         </div>
@@ -122,15 +126,23 @@ const BrajCalendar = ({ isHi, calendarData, onSaveCalendar }) => {
             <div className="flex gap-2 justify-end pt-1">
               <button
                 onClick={handleCancel}
-                className="px-2 py-0.5 text-[9px] rounded border border-white/10 hover:bg-white/5 text-zinc-400 hover:text-white transition-colors"
+                className="px-2 py-0.5 text-[9px] rounded border border-white/10 hover:bg-white/5 text-zinc-400 hover:text-white transition-colors relative group"
+                aria-label={isHi ? "संपादन रद्द करें" : "Cancel edit"}
               >
-                Cancel
+                {isHi ? "रद्द करें" : "Cancel"}
+                <span className="absolute -top-7 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[9px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-30">
+                  {isHi ? "रद्द करें" : "Cancel changes"}
+                </span>
               </button>
               <button
                 onClick={handleSave}
-                className="px-2 py-0.5 text-[9px] rounded bg-white text-zinc-950 hover:bg-zinc-200 font-semibold transition-colors"
+                className="px-2 py-0.5 text-[9px] rounded bg-white text-zinc-950 hover:bg-zinc-200 font-semibold transition-colors relative group"
+                aria-label={isHi ? "पंचांग सहेजें" : "Save calendar"}
               >
-                Save
+                {isHi ? "सहेजें" : "Save"}
+                <span className="absolute -top-7 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[9px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-30">
+                  {isHi ? "सहेजें" : "Save changes"}
+                </span>
               </button>
             </div>
           </div>

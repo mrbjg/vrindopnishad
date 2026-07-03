@@ -17,8 +17,19 @@ const PilgrimageHub = ({ isHi, navigate }) => {
         
         <div
           onClick={() => navigate(isHi ? "/hi/places" : "/places")}
-          className="glass-card p-5 sm:p-6 rounded-3xl border border-white/5 hover:border-amber-500/20 cursor-pointer group transition-all flex flex-col justify-between space-y-4 hover:scale-[1.01] touch-manipulation"
+          className="glass-card p-5 sm:p-6 rounded-3xl border border-white/5 hover:border-amber-500/20 cursor-pointer group transition-all flex flex-col justify-between space-y-4 hover:scale-[1.01] touch-manipulation relative overflow-hidden"
+          role="button"
+          tabIndex={0}
+          aria-label={isHi ? "ब्रज धाम दर्शन मार्गदर्शिका" : "Braj Dham Sacred Places"}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              navigate(isHi ? "/hi/places" : "/places");
+            }
+          }}
         >
+          <div className="absolute top-2 right-2 scale-0 group-hover:scale-100 bg-black/80 text-[8px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-10">
+            {isHi ? "दर्शन प्रारम्भ करें" : "Start journey"}
+          </div>
           <div className="space-y-3">
             <div className="flex justify-between items-start">
               <div className="w-10 h-10 rounded-2xl bg-amber-500/5 border border-amber-500/10 flex items-center justify-center text-amber-500 group-hover:border-amber-500/30 transition-all duration-300 select-none">
@@ -51,8 +62,19 @@ const PilgrimageHub = ({ isHi, navigate }) => {
         
         <div
           onClick={() => navigate(isHi ? "/hi/glossary" : "/glossary")}
-          className="glass-card p-5 sm:p-6 rounded-3xl border border-white/5 hover:border-amber-500/20 cursor-pointer group transition-all flex flex-col justify-between space-y-4 hover:scale-[1.01] touch-manipulation"
+          className="glass-card p-5 sm:p-6 rounded-3xl border border-white/5 hover:border-amber-500/20 cursor-pointer group transition-all flex flex-col justify-between space-y-4 hover:scale-[1.01] touch-manipulation relative overflow-hidden"
+          role="button"
+          tabIndex={0}
+          aria-label={isHi ? "ब्रज रसिक शब्दावली" : "Braj Rasik Glossary"}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              navigate(isHi ? "/hi/glossary" : "/glossary");
+            }
+          }}
         >
+          <div className="absolute top-2 right-2 scale-0 group-hover:scale-100 bg-black/80 text-[8px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-10">
+            {isHi ? "शब्दावली खोजें" : "Explore glossary"}
+          </div>
           <div className="space-y-3">
             <div className="flex justify-between items-start">
               <div className="w-10 h-10 rounded-2xl bg-sky-500/5 border border-sky-500/10 flex items-center justify-center text-sky-400 group-hover:border-sky-500/30 transition-all duration-300 select-none">

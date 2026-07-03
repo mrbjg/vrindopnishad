@@ -1,4 +1,4 @@
-import { transliterate } from './transliterate.js';
+import { transliterate } from './transliterate';
 
 export const slugify = (text) => {
   if (!text) return '';
@@ -28,9 +28,9 @@ export function getNormalizedBookSlug(name) {
   if (!name) return '';
   const clean = name.toLowerCase();
   if (
-    clean.includes('सुधानिधि') || 
-    clean.includes('sudhanidhi') || 
-    clean.includes('sudha-nidhi') || 
+    clean.includes('सुधानिधि') ||
+    clean.includes('sudhanidhi') ||
+    clean.includes('sudha-nidhi') ||
     clean.includes('sudha_nidhi') ||
     (clean.includes('सुधा') && clean.includes('निधि')) ||
     (clean.includes('sudha') && clean.includes('nidhi'))
@@ -48,8 +48,8 @@ export function getNormalizedBookName(name) {
   if (!name) return '';
   const clean = name.toLowerCase();
   if (
-    clean.includes('सुधानिधि') || 
-    clean.includes('sudhanidhi') || 
+    clean.includes('सुधानिधि') ||
+    clean.includes('sudhanidhi') ||
     clean.includes('sudha-nidhi') ||
     (clean.includes('सुधा') && clean.includes('निधि')) ||
     (clean.includes('sudha') && clean.includes('nidhi'))
@@ -105,7 +105,7 @@ export function extractRelations(items) {
 
   if (lastItemsRef && items.length === lastItemsRef.length && items.length > 0) {
     if (items[0] === lastItemsRef[0] && items[items.length - 1] === lastItemsRef[lastItemsRef.length - 1]) {
-      lastItemsRef = items; 
+      lastItemsRef = items;
       return lastResult;
     }
   }
@@ -146,7 +146,7 @@ export function extractRelations(items) {
       const cleanName = title.replace(/\([^)]+\)/g, '').replace(/महाप्रभु/g, '').trim();
       const transliteratedName = transliterate(cleanName);
       const saintSlug = getNormalizedSaintSlug(cleanName);
-      
+
       biographies.push({
         id: item.id,
         slug: saintSlug,
@@ -161,7 +161,7 @@ export function extractRelations(items) {
   });
 
   items.forEach(item => {
-    if (item.category?.toLowerCase() === 'saint') return; 
+    if (item.category?.toLowerCase() === 'saint') return;
 
     const title = item.title || '';
     let cleanTitle = title;
@@ -221,7 +221,7 @@ export function extractRelations(items) {
     const matchTitle = title.match(ragaRegex);
     const matchSanskrit = item.sanskrit_text?.match(ragaRegex);
     const matchHindi = item.hindi_text?.match(ragaRegex);
-    
+
     if (matchTitle) ragaName = matchTitle[1];
     else if (matchSanskrit) ragaName = matchSanskrit[1];
     else if (matchHindi) ragaName = matchHindi[1];
@@ -233,9 +233,9 @@ export function extractRelations(items) {
     if (saintName) {
       const cleanSantKey = saintName.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim();
       const santSlug = getNormalizedSaintSlug(cleanSantKey);
-      
+
       if (!santsMap[santSlug]) {
-        const matchedBio = biographies.find(bio => 
+        const matchedBio = biographies.find(bio =>
           bio.name.includes(cleanSantKey) || cleanSantKey.includes(bio.name) ||
           (cleanSantKey.includes('हरिदास') && bio.name.includes('हरिदास')) ||
           (cleanSantKey.includes('हरिवंश') && bio.name.includes('हरिवंश'))
@@ -295,7 +295,7 @@ export function extractRelations(items) {
 
   const sevaKunjSlug = 'seva-kunj-texts';
   const sevaKunjVerseIds = [];
-  
+
   items.forEach(item => {
     if (item.category?.toLowerCase() === 'saint') return;
     const textToScan = [
@@ -306,15 +306,15 @@ export function extractRelations(items) {
       item.english_translation,
       item.description
     ].filter(Boolean).join(' ').toLowerCase();
-    
-    const isSevaKunj = textToScan.includes('सेवा कुंज') || 
-                       textToScan.includes('सेवाकुंज') || 
-                       textToScan.includes('seva kunj') || 
-                       textToScan.includes('sewakunj') || 
-                       textToScan.includes('seva-kunj') || 
-                       textToScan.includes('सेवा सुख') ||
-                       (item.tags && item.tags.some(t => t.toLowerCase().includes('seva') || t.toLowerCase().includes('kunj')));
-                       
+
+    const isSevaKunj = textToScan.includes('सेवा कुंज') ||
+      textToScan.includes('सेवाकुंज') ||
+      textToScan.includes('seva kunj') ||
+      textToScan.includes('sewakunj') ||
+      textToScan.includes('seva-kunj') ||
+      textToScan.includes('सेवा सुख') ||
+      (item.tags && item.tags.some(t => t.toLowerCase().includes('seva') || t.toLowerCase().includes('kunj')));
+
     if (isSevaKunj) {
       if (!sevaKunjVerseIds.includes(item.id)) {
         sevaKunjVerseIds.push(item.id);
@@ -355,7 +355,7 @@ export function extractRelations(items) {
       };
       globalRelationsCache = cacheData;
       localStorage.setItem('sv_extracted_relations_cache', JSON.stringify(cacheData));
-    } catch (e) {}
+    } catch (e) { }
   }
 
   return result;

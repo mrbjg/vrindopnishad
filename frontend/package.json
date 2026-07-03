@@ -27,8 +27,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "sync-content": "node scripts/sync-content.mjs"
+    "start": "next start"
   },
   "eslintConfig": {
     "extends": [

@@ -26,10 +26,15 @@ const SaintsSpotlight = ({ isHi, saints, navigate }) => {
         </div>
         <Link
           to={isHi ? "/hi/saints" : "/saints"}
-          className="text-xs text-primary hover:underline flex items-center gap-0.5 font-bold min-h-[30px] flex items-center"
+          className="text-xs text-primary hover:underline flex items-center gap-0.5 font-bold min-h-[30px] flex items-center relative group"
+          aria-label={isHi ? "सभी रसिक संतों की जीवनियाँ देखें" : "View all Rasik saint biographies"}
+          title={isHi ? "सभी सन्त देखें" : "View All Saints"}
         >
           {isHi ? "सभी सन्त" : "View All Saints"}
           <ChevronRight size={14} />
+          <span className="absolute -top-7 right-0 scale-0 group-hover:scale-100 bg-black text-[9px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-30">
+            {isHi ? "सभी संत जीवनी" : "Explore all saints"}
+          </span>
         </Link>
       </div>
 
@@ -38,8 +43,20 @@ const SaintsSpotlight = ({ isHi, saints, navigate }) => {
           <div
             key={`${sant.slug || sant.cleanName || 'sant'}-${index}`}
             onClick={() => navigate(isHi ? `/hi/saints/${sant.slug}` : `/saints/${sant.slug}`)}
-            className="glass-card !p-3 rounded-2xl border border-white/5 hover:border-amber-500/20 text-center cursor-pointer group transition-all flex flex-col items-center justify-between space-y-2.5 touch-manipulation hover:scale-[1.02]"
+            className="glass-card !p-3 rounded-2xl border border-white/5 hover:border-amber-500/20 text-center cursor-pointer group transition-all flex flex-col items-center justify-between space-y-2.5 touch-manipulation hover:scale-[1.02] relative overflow-hidden"
+            role="button"
+            tabIndex={0}
+            aria-label={isHi ? `संत: ${sant.name}` : `Saint: ${sant.hinglishName}`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                navigate(isHi ? `/hi/saints/${sant.slug}` : `/saints/${sant.slug}`);
+              }
+            }}
           >
+            <div className="absolute top-1 right-1.5 scale-0 group-hover:scale-100 bg-black/85 text-[7px] text-white/90 px-1 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-10">
+              {isHi ? "जीवनी देखें" : "View Bio"}
+            </div>
+
             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-amber-500/5 border border-amber-500/10 group-hover:border-amber-500/40 flex items-center justify-center text-amber-500 font-bold text-base sm:text-lg shadow-inner group-hover:scale-105 transition-all duration-300 select-none">
               {getInitials(isHi ? sant.name : sant.hinglishName)}
             </div>
@@ -51,7 +68,10 @@ const SaintsSpotlight = ({ isHi, saints, navigate }) => {
                 {sant.verses ? sant.verses.length : (sant.verseIds ? sant.verseIds.length : 0)} verses
               </span>
             </div>
-            <span className="text-[8px] bg-amber-500/10 text-primary border border-amber-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider font-bold select-none">
+            <span 
+              className="text-[8px] bg-amber-500/10 text-primary border border-amber-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider font-bold select-none"
+              aria-label={isHi ? `${sant.name} का अन्वेषण करें` : `Explore ${sant.hinglishName}`}
+            >
               Explore
             </span>
           </div>

@@ -523,13 +523,13 @@ const LayoutInner = ({ children }) => {
               >
                 <button 
                   onClick={() => navigate(isHiRoute ? "/hi/content" : "/content")}
-                  className={`header-nav-link text-xs xl:text-sm flex items-center gap-1 outline-none ${isCategoryActive('shloka') || isCategoryActive('strotra') || isCategoryActive('poem') || isActive('/content') ? 'active' : ''}`}
+                      className={`header-nav-link text-xs xl:text-sm flex items-center gap-1 outline-none ${isCategoryActive('shloka') || isCategoryActive('strotra') || isCategoryActive('poem') || isActive('/content') ? 'active' : ''}`}
                 >
                   <span>{isHiRoute ? "साहित्य" : "Read"}</span>
                   <span className="text-[10px] opacity-60">▼</span>
                 </button>
                 {readMenuOpen && (
-                  <div className="absolute top-full left-0 mt-0.5 w-40 bg-[#121216]/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-md z-50 py-1.5 animate-in fade-in slide-in-from-top-1 duration-150 text-left">
+                  <div className="absolute top-full left-0 mt-0.5 w-40 bg-[#121216]/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-md z-50 py-1.5 animate-in fade-in slide-in-from-top-1 duration-150 text-left header-dropdown-menu">
                     <Link 
                       to={isHiRoute ? "/hi/content" : "/content"} 
                       onClick={() => setReadMenuOpen(false)}

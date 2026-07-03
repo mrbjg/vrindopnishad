@@ -128,14 +128,18 @@ const ChantSanctuary = ({
               <span className="text-xl font-extrabold text-minimal-gold block mt-0.5 font-mono">{japaCount}</span>
               <button
                 onClick={toggleTanpura}
-                className={`p-1.5 rounded-full border transition-all touch-manipulation min-w-[28px] min-h-[28px] flex items-center justify-center ${
+                className={`p-1.5 rounded-full border transition-all touch-manipulation min-w-[28px] min-h-[28px] flex items-center justify-center relative group ${
                   isTanpuraPlaying
                     ? 'bg-sky-500/10 border-sky-500/40 text-sky-400 animate-pulse'
                     : 'bg-white/5 border-white/10 text-white/40 hover:text-white'
                 }`}
-                title={isTanpuraPlaying ? "Stop Tanpura Drone" : "Start Tanpura Drone"}
+                title={isTanpuraPlaying ? (isHi ? "तंबूरा बंद करें" : "Stop Tanpura Drone") : (isHi ? "तंबूरा शुरू करें" : "Start Tanpura Drone")}
+                aria-label={isTanpuraPlaying ? "Stop Tanpura Drone" : "Start Tanpura Drone"}
               >
-                {isTanpuraPlaying ? <Volume2 size={12} /> : <VolumeX size={12} />}
+                {isTanpuraPlaying ? <Volume2 size={12} aria-hidden="true" /> : <VolumeX size={12} aria-hidden="true" />}
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+                  {isTanpuraPlaying ? (isHi ? "तंबूरा बंद" : "Stop Tanpura") : (isHi ? "तंबूरा चालू" : "Start Tanpura")}
+                </span>
               </button>
             </div>
           </div>
@@ -149,20 +153,30 @@ const ChantSanctuary = ({
             </span>
           </div>
         </div>
-
+ 
         
         <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-white/5">
           <button
             onClick={() => handleUpdateJapaCount(japaCount + 1)}
-            className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl py-2.5 text-center text-xs font-bold text-white/80 transition-colors touch-manipulation min-h-[38px]"
+            className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl py-2.5 text-center text-xs font-bold text-white/80 transition-colors touch-manipulation min-h-[38px] relative group"
+            title={isHi ? "१ जाप जोड़ें" : "Add 1 Chant"}
+            aria-label={isHi ? "१ जाप जोड़ें" : "Add 1 Chant"}
           >
             +1
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+              {isHi ? "१ जाप जोड़ें" : "Add 1 Chant"}
+            </span>
           </button>
           <button
             onClick={() => handleUpdateJapaCount(japaCount + 108)}
-            className="bg-primary/10 hover:bg-primary/20 border border-primary/25 rounded-xl py-2.5 text-center text-xs font-bold text-primary transition-colors touch-manipulation min-h-[38px]"
+            className="bg-primary/10 hover:bg-primary/20 border border-primary/25 rounded-xl py-2.5 text-center text-xs font-bold text-primary transition-colors touch-manipulation min-h-[38px] relative group"
+            title={isHi ? "१ माला जोड़ें" : "Add 1 Mala (108)"}
+            aria-label={isHi ? "१ माला जोड़ें" : "Add 1 Mala (108)"}
           >
             +108
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+              {isHi ? "१ माला (१०८)" : "Add 1 Mala (+108)"}
+            </span>
           </button>
           <button
             onClick={() => {
@@ -170,9 +184,14 @@ const ChantSanctuary = ({
                 handleUpdateJapaCount(0);
               }
             }}
-            className="bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 hover:border-red-500/20 rounded-xl py-2.5 text-center text-xs font-bold text-red-400 transition-colors touch-manipulation min-h-[38px]"
+            className="bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 hover:border-red-500/20 rounded-xl py-2.5 text-center text-xs font-bold text-red-400 transition-colors touch-manipulation min-h-[38px] relative group"
+            title={isHi ? "जाप संख्या रीसेट करें" : "Reset Chant Count"}
+            aria-label={isHi ? "जाप संख्या रीसेट करें" : "Reset Chant Count"}
           >
             Reset
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+              {isHi ? "जाप रीसेट" : "Reset Count"}
+            </span>
           </button>
         </div>
       </div>
