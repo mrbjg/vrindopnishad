@@ -133,7 +133,7 @@ const LoginPage = () => {
                   onChange={(e) => setFullName(e.target.value)}
                   className="premium-input-field text-sm"
                   placeholder="Your Name"
-                  autocomplete="name"
+                  autoComplete="name"
                   required={isSignUp}
                 />
               </div>
@@ -152,7 +152,7 @@ const LoginPage = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 className="premium-input-field text-sm"
                 placeholder="name@example.com"
-                autocomplete="username"
+                autoComplete="username"
                 required
               />
             </div>
@@ -181,7 +181,7 @@ const LoginPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="premium-input-field text-sm"
                 placeholder="••••••••"
-                autocomplete={isSignUp ? "new-password" : "current-password"}
+                autoComplete={isSignUp ? "new-password" : "current-password"}
                 required
               />
             </div>
