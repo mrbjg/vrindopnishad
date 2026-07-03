@@ -2430,19 +2430,20 @@ html.light-mode .login-card {
     background-color: rgba(255, 255, 255, 0.05) !important;
 }
 
-html.light-mode .header-dropdown-menu {
-    background-color: rgba(255, 255, 255, 0.95) !important;
+html:not(.dark) .header-dropdown-menu {
+    background-color: rgba(255, 255, 255, 0.98) !important;
+    background: #ffffff !important;
     border-color: rgba(0, 0, 0, 0.1) !important;
     box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 0 1px 0 rgba(0, 0, 0, 0.1) !important;
 }
 
-html.light-mode .header-dropdown-menu a {
-    color: hsl(var(--foreground) / 0.8) !important;
+html:not(.dark) .header-dropdown-menu a {
+    color: #1e293b !important; /* dark slate */
 }
 
-html.light-mode .header-dropdown-menu a:hover {
+html:not(.dark) .header-dropdown-menu a:hover {
     color: var(--primary-color) !important;
-    background-color: hsl(var(--foreground) / 0.05) !important;
+    background-color: rgba(0, 0, 0, 0.05) !important;
 }
 
 .header-control-btn {
@@ -4543,21 +4544,24 @@ html.lenis, html.lenis body {
 }
 
 /* Custom tooltips and dropdowns light mode contrast overrides */
-html.light-mode [class*="bg-black"][class*="scale-0"][class*="group-hover:scale-100"],
-html.light-mode [class*="bg-black/80"][class*="scale-0"][class*="group-hover:scale-100"],
-html.light-mode [class*="bg-black/85"][class*="scale-0"][class*="group-hover:scale-100"] {
+html:not(.dark) .absolute.bg-black,
+html:not(.dark) .absolute.bg-black\/80,
+html:not(.dark) .absolute.bg-black\/85,
+html:not(.dark) [class*="keep-dark"] {
     background-color: #0c0c0e !important;
-    color: rgba(255, 255, 255, 0.95) !important;
+    background: #0c0c0e !important;
+    color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.15) !important;
 }
 
-html.light-mode [class*="bg-black"][class*="scale-0"][class*="group-hover:scale-100"] *,
-html.light-mode [class*="bg-black/80"][class*="scale-0"][class*="group-hover:scale-100"] *,
-html.light-mode [class*="bg-black/85"][class*="scale-0"][class*="group-hover:scale-100"] * {
-    color: rgba(255, 255, 255, 0.95) !important;
+html:not(.dark) .absolute.bg-black *,
+html:not(.dark) .absolute.bg-black\/80 *,
+html:not(.dark) .absolute.bg-black\/85 *,
+html:not(.dark) [class*="keep-dark"] * {
+    color: #ffffff !important;
 }
 
-html.light-mode .bg-\[\#121216\]\/95 {
+html:not(.dark) .bg-\[\#121216\]\/95 {
     background-color: rgba(255, 255, 255, 0.98) !important;
     border-color: rgba(0, 0, 0, 0.1) !important;
 }

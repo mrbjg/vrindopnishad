@@ -61,8 +61,48 @@ const LayoutInner = ({ children }) => {
   const isAuthPage = location.pathname === '/login' || location.pathname === '/hi/login' || location.pathname === '/admin-old/login';
 
   const isKbRoute = useMemo(() => {
-    return location.pathname.includes('/knowledge-base') ||
-      articles.some(art => location.pathname.includes(art.slug));
+    const path = location.pathname.toLowerCase().trim().replace(/\/$/, '');
+    const cleanPath = path.startsWith('/hi') ? path.substring(3) : path;
+
+    if (path.includes('/knowledge-base')) return true;
+
+    // List of exact static KB slugs (note that dynamic /glossary/:slug is excluded)
+    const kbSlugs = [
+      '/what-is-vrindopnishad',
+      '/meaning',
+      '/origin',
+      '/philosophy',
+      '/teachings',
+      '/importance',
+      '/devotion',
+      '/faq',
+      '/comparison-with-upanishads',
+      '/guide',
+      '/braj-rasik-heritage',
+      '/major-rasik-saints-of-braj',
+      '/history-of-radhavallabh-sampradaya',
+      '/radhavallabh-vs-gaudiya-sampradaya',
+      '/who-is-harirae-ji',
+      '/what-is-radha-snata',
+      '/nitya-vihar-vs-nikunj-vihar',
+      '/what-is-madhurya-and-sakhi-bhava',
+      '/glossary',
+      '/vrindavan-parikrama-guide',
+      '/places',
+      '/who-is-harirae-ji',
+      '/about',
+      '/editorial-policy',
+      '/sources',
+      '/contact',
+      '/author',
+      '/shri-hit-harivansh-mahaprabhu',
+      '/shri-harirae-ji',
+      '/vrindavan',
+      '/barsana',
+      '/hit-chaurasi'
+    ];
+
+    return kbSlugs.includes(cleanPath || '/');
   }, [location.pathname]);
 
   
@@ -399,7 +439,7 @@ const LayoutInner = ({ children }) => {
 
               
               {searchFocused && searchQuery.trim().length >= 2 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-[#121216]/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-md z-[3000] overflow-y-auto max-h-[50vh] p-3 text-left">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-[#121216]/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-md z-[3000] overflow-y-auto max-h-[50vh] p-3 text-left header-dropdown-menu">
                   {loadingSearchData ? (
                     <p className="text-[10px] text-white/30 py-4 text-center animate-pulse">Loading search realm...</p>
                   ) : !filteredResults.sants.length && !filteredResults.books.length && !filteredResults.ragas.length && !filteredResults.verses.length ? (

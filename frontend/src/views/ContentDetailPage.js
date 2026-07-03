@@ -285,15 +285,17 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
   const formatVerseText = (text) => {
     if (!text) return null;
 
-    const rawLines = text.split(/\r?\n/);
+    const isProse = text.length > 350 || !text.includes('॥');
 
-    if (!settings.lineByLine) {
+    if (!settings.lineByLine || isProse) {
       return (
-        <div style={{ whiteSpace: 'pre-wrap' }}>
+        <div className="prose-text text-left leading-relaxed font-sans font-light tracking-wide space-y-4 whitespace-pre-line" style={{ lineHeight: '1.8' }}>
           {text}
         </div>
       );
     }
+
+    const rawLines = text.split(/\r?\n/);
 
     const finalLines = [];
     
