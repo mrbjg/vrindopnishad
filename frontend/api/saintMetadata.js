@@ -1,5 +1,3 @@
-
-
 const SAINT_METADATA = {
   'haridas': {
     lineageEn: 'Haridasi Sampradaya (Sakhi Sampradaya)',
