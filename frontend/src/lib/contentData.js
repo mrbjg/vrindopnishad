@@ -171,66 +171,7 @@ let localFallbackCache = typeof global !== 'undefined' ? (global.localFallbackCa
 let initializationPromise = typeof global !== 'undefined' ? (global.initializationPromise || null) : null;
 
 async function fetchAllFromDataConnect() {
-  const originalFetch = global.fetch;
-  if (typeof global.fetch === 'function') {
-    global.fetch = function (url, init) {
-      if (url && url.toString().includes('firebasedataconnect.googleapis.com')) {
-        const newInit = { ...init, cache: 'no-store' };
-        return originalFetch(url, newInit);
-      }
-      return originalFetch(url, init);
-    };
-  }
-
-  try {
-    console.log("[DataConnect] Fetching all content items from Firebase Data Connect (limit 25000)...");
-    const result = await listAllContent(dataConnect, { limit: 25000 });
-    if (result && result.data && result.data.contents) {
-      console.log(`[DataConnect] Successfully fetched ${result.data.contents.length} items.`);
-      return result.data.contents.map(item => {
-        let slug = item.slug;
-        if (!slug || slug.startsWith('untitled')) {
-          slug = generateSlug(item.title);
-        } else {
-          slug = slugify(slug);
-        }
-        if (slug.length > 100) {
-          slug = slug.substring(0, 100).replace(/-+$/, '');
-        }
-        return {
-          id: item.id,
-          title: item.title,
-          sanskrit_text: item.sanskritText || '',
-          hindi_text: item.hindiText || '',
-          english_text: item.englishText || '',
-          english_translation: item.englishTranslation || '',
-          category: item.category,
-          description: item.description || '',
-          content_text: item.contentText || '',
-          tags: item.tags || [],
-          status: (item.status || 'PUBLISHED').toLowerCase(),
-          author: item.author || '',
-          media_links: item.mediaLinks || [],
-          audio_url: item.audioUrl || '',
-          image_urls: item.imageUrls || [],
-          video_urls: item.videoUrls || [],
-          slug: slug,
-          created_at: item.createdAt,
-          updated_at: item.updatedAt
-        };
-      });
-    }
-  } catch (error) {
-    if (error.message && (error.message.includes('Quota exceeded') || error.message.includes('RESOURCE_EXHAUSTED') || error.message.includes('429'))) {
-      console.warn("[DataConnect] Quota exceeded (429 Rate Limit). Will fall back to full local JSON backup.");
-    } else {
-      console.error("[DataConnect] Query failed:", error);
-    }
-  } finally {
-    if (typeof global.fetch === 'function') {
-      global.fetch = originalFetch;
-    }
-  }
+  console.log("[DataConnect] Blocked: fetchAllFromDataConnect has been disabled.");
   return [];
 }
 
