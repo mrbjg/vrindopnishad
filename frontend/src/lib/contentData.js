@@ -1,10 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import { SAINT_METADATA, getSaintMetadata } from '../data/saintMetadata';
-import { GLOSSARY_TERMS } from '../data/glossaryTerms';
-import { listAllContent } from './dataconnect';
-import { dataConnect } from '../firebase';
-import { extractRelations } from '../utils/relations';
+import { SAINT_METADATA, getSaintMetadata } from '../data/saintMetadata.js';
+import { GLOSSARY_TERMS } from '../data/glossaryTerms.js';
+import { extractRelations } from '../utils/relations.js';
 
 const DevanagariToHinglishMap = {
   'अ': 'a', 'आ': 'aa', 'इ': 'i', 'ई': 'ee', 'उ': 'u', 'ऊ': 'oo', 'ऋ': 'ri',
@@ -120,7 +118,7 @@ export const sanitizeSlug = (slug) => {
     .trim();
 };
 
-function classifyItemCategory(item) {
+export function classifyItemCategory(item) {
   if (!item) return 'poem';
   const rawCat = (item.category || '').toLowerCase().trim();
   
@@ -170,10 +168,7 @@ let contentCache = typeof global !== 'undefined' ? (global.contentCache || null)
 let localFallbackCache = typeof global !== 'undefined' ? (global.localFallbackCache || null) : null;
 let initializationPromise = typeof global !== 'undefined' ? (global.initializationPromise || null) : null;
 
-async function fetchAllFromDataConnect() {
-  console.log("[DataConnect] Blocked: fetchAllFromDataConnect has been disabled.");
-  return [];
-}
+
 
 function loadLocalJSONFallback() {
   const appDirectory = process.cwd();
@@ -276,60 +271,6 @@ function getProcessedCacheFilePath() {
   return path.join(cacheDir, 'processed_cache.json');
 }
 
-function writeBackupFile(verses, force = false) {
-  if (!verses || verses.length === 0) return;
-  try {
-    const appDirectory = process.cwd();
-    let dataDir = path.join(appDirectory, 'public/data');
-    if (!fs.existsSync(dataDir)) {
-      dataDir = path.join(appDirectory, 'frontend/public/data');
-    }
-    if (!fs.existsSync(dataDir)) {
-      try {
-        fs.mkdirSync(dataDir, { recursive: true });
-      } catch (e) {}
-    }
-
-    const backupFile = path.join(dataDir, 'content_backup.json');
-    const writeFull = force || !fs.existsSync(backupFile);
-    if (writeFull) {
-      console.log(`[DataCache] Saving backup data file to: ${backupFile}...`);
-      fs.writeFile(backupFile, JSON.stringify(verses), 'utf8', (err) => {
-        if (err) console.warn("[DataCache] Async backup write failed:", err);
-      });
-    }
-
-    // Split and write category-specific files
-    const categories = ['shloka', 'strotra', 'poem', 'saint', 'dham'];
-    categories.forEach(cat => {
-      const catFile = path.join(dataDir, `content_backup_${cat}.json`);
-      if (force || !fs.existsSync(catFile)) {
-        const catVerses = verses.filter(v => {
-          const itemCat = classifyItemCategory(v);
-          return itemCat === cat;
-        });
-        console.log(`[DataCache] Saving category backup [${cat}] to: ${catFile}...`);
-        fs.writeFile(catFile, JSON.stringify(catVerses), 'utf8', (err) => {
-          if (err) console.warn(`[DataCache] Async backup write failed for ${cat}:`, err);
-        });
-      }
-    });
-
-    // Pre-compute and save relations
-    const relationsFile = path.join(dataDir, 'relations_backup.json');
-    if (force || !fs.existsSync(relationsFile)) {
-      console.log(`[DataCache] Pre-computing and saving relations backup to: ${relationsFile}...`);
-      const relations = extractRelations(verses);
-      fs.writeFile(relationsFile, JSON.stringify(relations), 'utf8', (err) => {
-        if (err) console.warn("[DataCache] Async relations backup write failed:", err);
-      });
-    }
-
-  } catch (err) {
-    console.warn("[DataCache] Could not start content backup write:", err);
-  }
-}
-
 export async function ensureDataLoaded() {
   if (typeof global !== 'undefined' && global.contentCache) {
     contentCache = global.contentCache;
@@ -346,126 +287,41 @@ export async function ensureDataLoaded() {
     console.log("[DataCache] Initializing memory cache...");
     
     if (typeof window === 'undefined') {
-      try {
-        const cacheFile = getProcessedCacheFilePath();
-        let loadedFromCache = false;
-
-        if (fs.existsSync(cacheFile)) {
-          try {
-            const stat = fs.statSync(cacheFile);
-            const now = Date.now();
-            const age = now - stat.mtimeMs;
-            const isDev = process.env.NODE_ENV === 'development';
-            const ttl = isDev ? CACHE_TTL_DEV : CACHE_TTL_PROD;
-
-            const rawCache = fs.readFileSync(cacheFile, 'utf8');
-            const cachePayload = JSON.parse(rawCache);
-            const verses = cachePayload.verses || [];
-            
-            // Check if this cache is fallback (contains only ~643 local items instead of all 8073 items)
-            const isFallback = verses.length < 1000;
-            const isFresh = age < ttl;
-
-            if (!isFallback && (isFresh || !isDev)) {
-              console.log(`[DataCache] Loading flat processed cache from file: ${cacheFile} (Age: ${Math.round(age / 1000)}s)...`);
-              const startTime = Date.now();
-              
-              if (!cachePayload.saintsRaw && cachePayload.saints) {
-                console.log("[DataCache] Old nested cache structure detected. Upgrading to flat cache format...");
-                throw new Error("Old cache format forcing rebuild.");
-              }
-
-              const verses = cachePayload.verses || [];
-              const saintsRaw = cachePayload.saintsRaw || [];
-              const combined = [...verses, ...saintsRaw];
-              
-              const relations = buildRelations(combined);
-              
-              contentCache = {
-                items: combined,
-                verses: verses,
-                saints: relations.saints,
-                books: relations.books,
-                ragas: relations.ragas
-              };
-              
-              loadedFromCache = true;
-              console.log(`[DataCache] Successfully loaded and mapped flat cache in ${Date.now() - startTime}ms.`);
-              writeBackupFile(contentCache.verses, false);
-              if (typeof global !== 'undefined') global.contentCache = contentCache;
-              return contentCache;
-            } else {
-              console.log(`[DataCache] Processed cache is stale (Age: ${Math.round(age / 1000)}s, TTL: ${ttl / 1000}s). Rebuilding...`);
-            }
-          } catch (readErr) {
-            console.warn("[DataCache] Cache loading bypassed or failed, rebuilding:", readErr.message || readErr);
-          }
-        }
-
-        console.log("[DataCache] Rebuilding data graph from scratch...");
-        const startTime = Date.now();
-        const localData = loadLocalJSONFallback();
-        let remoteItems = await fetchAllFromDataConnect();
-        
-        if (remoteItems && remoteItems.length > 0) {
-          const appDirectory = process.cwd();
-          let saintsPath = path.join(appDirectory, 'data/saints_formatted.json');
-          if (!fs.existsSync(saintsPath)) {
-            saintsPath = path.join(appDirectory, 'frontend/data/saints_formatted.json');
-          }
-          let rawSaints = [];
-          if (fs.existsSync(saintsPath)) {
-            const rawSaintsData = fs.readFileSync(saintsPath, 'utf8');
-            rawSaints = JSON.parse(rawSaintsData).map((saint, idx) => ({
-              id: saint.id || `saint-local-${idx}`,
-              ...saint,
-              category: 'saint',
-              slug: saint.slug || generateSlug(saint.title)
-            }));
-          }
-
-          const combined = [...remoteItems, ...rawSaints];
-          const relations = buildRelations(combined);
-
-          contentCache = {
-            items: combined,
-            verses: remoteItems,
-            saints: relations.saints,
-            books: relations.books,
-            ragas: relations.ragas
-          };
-          
-          try {
-            console.log(`[DataCache] Saving flat cache layout to: ${cacheFile}...`);
-            const cachePayload = {
-              verses: remoteItems,
-              saintsRaw: rawSaints
-            };
-            fs.writeFileSync(cacheFile, JSON.stringify(cachePayload), 'utf8');
-            writeBackupFile(remoteItems, true); // Force update backup when cache is completely rebuilt
-          } catch (writeErr) {
-            console.warn("[DataCache] Could not write processed cache file:", writeErr);
-          }
-
-          console.log(`[DataCache] Cache built from scratch in ${Date.now() - startTime}ms.`);
-          if (typeof global !== 'undefined') global.contentCache = contentCache;
-          return contentCache;
-        } else {
-          contentCache = localData;
-          writeBackupFile(localData.verses, true);
-          console.log(`[DataCache] Falling back to local data. Cache built in ${Date.now() - startTime}ms.`);
-          if (typeof global !== 'undefined') global.contentCache = contentCache;
-          return contentCache;
-        }
-      } catch (err) {
-        console.warn("[DataCache] Load failed, falling back to local dataset:", err);
+      const cacheFile = getProcessedCacheFilePath();
+      if (!fs.existsSync(cacheFile)) {
+        throw new Error("[DataCache] Build Error: Cache file processed_cache.json is missing. Please run 'npm run sync-content' before building Next.js!");
       }
+      
+      try {
+        console.log(`[DataCache] Loading flat processed cache from file: ${cacheFile}...`);
+        const rawCache = fs.readFileSync(cacheFile, 'utf8');
+        const cachePayload = JSON.parse(rawCache);
+        const verses = cachePayload.verses || [];
+        const saintsRaw = cachePayload.saintsRaw || [];
+        const combined = [...verses, ...saintsRaw];
+        
+        const relations = buildRelations(combined);
+        
+        contentCache = {
+          items: combined,
+          verses: verses,
+          saints: relations.saints,
+          books: relations.books,
+          ragas: relations.ragas
+        };
+        
+        console.log(`[DataCache] Successfully loaded and mapped flat cache.`);
+        if (typeof global !== 'undefined') global.contentCache = contentCache;
+        return contentCache;
+      } catch (err) {
+        throw new Error(`[DataCache] Build Error: Failed to load processed_cache.json: ${err.message}`);
+      }
+    } else {
+      const localData = loadLocalJSONFallback();
+      contentCache = localData;
+      if (typeof global !== 'undefined') global.contentCache = contentCache;
+      return contentCache;
     }
-    
-    const localData = loadLocalJSONFallback();
-    contentCache = localData;
-    if (typeof global !== 'undefined') global.contentCache = contentCache;
-    return contentCache;
   })();
 
   if (typeof global !== 'undefined') global.initializationPromise = initializationPromise;

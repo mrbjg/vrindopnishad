@@ -3,7 +3,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getDatabase } from "firebase/database";
 import { getDataConnect } from "firebase/data-connect";
-import { connectorConfig } from "./lib/dataconnect";
+import { connectorConfig } from "./lib/dataconnect/esm/index.esm.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBV89ziohwoKmshLiZLxKm5JnbVPrYWL_o",

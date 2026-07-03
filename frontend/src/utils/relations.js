@@ -1,4 +1,4 @@
-import { transliterate } from './transliterate';
+import { transliterate } from './transliterate.js';
 
 export const slugify = (text) => {
   if (!text) return '';
