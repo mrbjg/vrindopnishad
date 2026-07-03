@@ -44,6 +44,7 @@ const LayoutInner = ({ children }) => {
   const { isAdmin, user, logout } = useContext(AuthContext);
   const { apiService, transition } = useContext(ApiContext);
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
+  const [readMenuOpen, setReadMenuOpen] = React.useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -160,6 +161,20 @@ const LayoutInner = ({ children }) => {
   };
 
   const searchRef = useRef(null);
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    const handleGlobalKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        if (searchInputRef.current) {
+          searchInputRef.current.focus();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, []);
 
   
   const handleSearchFocus = async () => {
@@ -350,6 +365,7 @@ const LayoutInner = ({ children }) => {
               <div className="flex items-center bg-white/[0.04] border border-white/10 rounded-full pl-3 pr-2 h-9 text-xs md:text-sm focus-within:border-primary/50 focus-within:bg-white/[0.07] transition-all">
                 <Search className="text-white/30 mr-1.5 shrink-0" size={14} />
                 <input
+                  ref={searchInputRef}
                   type="text"
                   placeholder={isHiRoute ? "खोजें..." : "Search..."}
                   className="w-full bg-transparent outline-none pr-2 text-white/95 placeholder:text-white/35 h-full text-xs font-light"
@@ -500,15 +516,51 @@ const LayoutInner = ({ children }) => {
               <Link to={isHiRoute ? "/hi/ragas" : "/ragas"} className={`header-nav-link text-xs xl:text-sm ${isActive('/ragas') ? 'active' : ''}`}>
                 {isHiRoute ? "राग" : "Ragas"}
               </Link>
-              <Link to={isHiRoute ? "/hi/category/shloka" : "/category/shloka"} className={`header-nav-link text-xs xl:text-sm ${isCategoryActive('shloka') ? 'active' : ''}`}>
-                {isHiRoute ? "श्लोक" : "Shlokas"}
-              </Link>
-              <Link to={isHiRoute ? "/hi/category/strotra" : "/category/strotra"} className={`header-nav-link text-xs xl:text-sm ${isCategoryActive('strotra') ? 'active' : ''}`}>
-                {isHiRoute ? "स्तोत्र" : "Strotras"}
-              </Link>
-              <Link to={isHiRoute ? "/hi/category/poem" : "/category/poem"} className={`header-nav-link text-xs xl:text-sm ${isCategoryActive('poem') ? 'active' : ''}`}>
-                {isHiRoute ? "कविता" : "Poems"}
-              </Link>
+              <div 
+                className="relative"
+                onMouseEnter={() => setReadMenuOpen(true)}
+                onMouseLeave={() => setReadMenuOpen(false)}
+              >
+                <button 
+                  onClick={() => navigate(isHiRoute ? "/hi/content" : "/content")}
+                  className={`header-nav-link text-xs xl:text-sm flex items-center gap-1 outline-none ${isCategoryActive('shloka') || isCategoryActive('strotra') || isCategoryActive('poem') || isActive('/content') ? 'active' : ''}`}
+                >
+                  <span>{isHiRoute ? "साहित्य" : "Read"}</span>
+                  <span className="text-[10px] opacity-60">▼</span>
+                </button>
+                {readMenuOpen && (
+                  <div className="absolute top-full left-0 mt-0.5 w-40 bg-[#121216]/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-md z-50 py-1.5 animate-in fade-in slide-in-from-top-1 duration-150 text-left">
+                    <Link 
+                      to={isHiRoute ? "/hi/content" : "/content"} 
+                      onClick={() => setReadMenuOpen(false)}
+                      className={`block px-4 py-2 text-xs text-white/80 hover:text-primary hover:bg-white/5 transition-all ${isActive('/content') ? 'text-primary font-semibold' : ''}`}
+                    >
+                      {isHiRoute ? "सभी पाठ" : "All Content"}
+                    </Link>
+                    <Link 
+                      to={isHiRoute ? "/hi/category/shloka" : "/category/shloka"} 
+                      onClick={() => setReadMenuOpen(false)}
+                      className={`block px-4 py-2 text-xs text-white/80 hover:text-primary hover:bg-white/5 transition-all ${isCategoryActive('shloka') ? 'text-primary font-semibold' : ''}`}
+                    >
+                      {isHiRoute ? "वैदिक श्लोक" : "Sacred Shlokas"}
+                    </Link>
+                    <Link 
+                      to={isHiRoute ? "/hi/category/strotra" : "/category/strotra"} 
+                      onClick={() => setReadMenuOpen(false)}
+                      className={`block px-4 py-2 text-xs text-white/80 hover:text-primary hover:bg-white/5 transition-all ${isCategoryActive('strotra') ? 'text-primary font-semibold' : ''}`}
+                    >
+                      {isHiRoute ? "भक्ति स्तोत्र" : "Divine Strotras"}
+                    </Link>
+                    <Link 
+                      to={isHiRoute ? "/hi/category/poem" : "/category/poem"} 
+                      onClick={() => setReadMenuOpen(false)}
+                      className={`block px-4 py-2 text-xs text-white/80 hover:text-primary hover:bg-white/5 transition-all ${isCategoryActive('poem') ? 'text-primary font-semibold' : ''}`}
+                    >
+                      {isHiRoute ? "संत कविताएँ" : "Spiritual Poetry"}
+                    </Link>
+                  </div>
+                )}
+              </div>
             </nav>
 
             <div className="flex items-center gap-2 sm:gap-3">
