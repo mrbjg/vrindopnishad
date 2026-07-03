@@ -57,6 +57,8 @@ const LenisScroll = () => {
   );
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const checkContainer = () => {
       const pookizContainer = document.getElementById('pookiz-main-scroll-container');
       const kbClassicContainer = document.getElementById('kb-classic-content-container');
@@ -73,8 +75,20 @@ const LenisScroll = () => {
       }
     };
 
-    const frameId = requestAnimationFrame(checkContainer);
-    return () => cancelAnimationFrame(frameId);
+    checkContainer();
+
+    const observer = new MutationObserver(() => {
+      checkContainer();
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+
+    return () => {
+      observer.disconnect();
+    };
   }, [pathname, settings.layoutMode, containerType]);
 
   useEffect(() => {
@@ -138,6 +152,12 @@ const LenisScroll = () => {
       window.lenis = null;
       document.documentElement.style.removeProperty('overflow');
       document.body.style.removeProperty('overflow');
+      document.documentElement.style.removeProperty('height');
+      document.body.style.removeProperty('height');
+      document.documentElement.classList.remove('lenis');
+      document.documentElement.classList.remove('lenis-stopped');
+      document.documentElement.classList.remove('lenis-smooth');
+      document.documentElement.classList.remove('lenis-scrolling');
       
       if (pookizContainer) {
         pookizContainer.style.removeProperty('overflow');
