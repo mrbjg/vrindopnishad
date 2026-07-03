@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Edit2, Sun, Sunrise, Sunset, Share2 } from 'lucide-react';
+import { Edit2, Sun, Sunrise, Sunset, Share2, Search } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { ApiContext, AuthContext } from '../contexts/ClientProviders';
 import { supabase } from '../lib/supabase';
@@ -810,6 +810,72 @@ const HomePage = ({
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-4 animate-fade-in space-y-12 pt-6">
 
+        {/* Hero Section */}
+        <div className="text-center py-8 md:py-14 max-w-3xl mx-auto space-y-6 animate-fade-in select-none">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] md:text-xs font-semibold uppercase tracking-widest">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+            {isHi ? "भारत का सबसे बड़ा श्रीराधावल्लभ डिजिटल पुस्तकालय" : "India's Largest Radhavallabh Digital Library"}
+          </div>
+          <h1 className="text-4xl md:text-6xl font-bold font-headings text-minimal-gold tracking-tight leading-tight">
+            {isHi ? "वृंदोपनिषद् पाठ" : "Vrindopnishad Paath"}
+          </h1>
+          <p className="text-sm md:text-lg text-white/70 max-w-2xl mx-auto leading-relaxed">
+            {isHi 
+              ? "१०,०००+ प्रामाणिक संस्कृत श्लोकों को हिंदी भावार्थ, अंग्रेजी व्याख्या, ऑडियो उच्चारण और प्राचीन हस्तलिखित ग्रंथ संदर्भों के साथ पढ़ें।" 
+              : "Read 10,000+ authentic Sanskrit Shlokas with Hindi meaning, English explanation, audio chanting and references."
+            }
+          </p>
+
+          {/* Centered Search Bar */}
+          <div className="relative max-w-md mx-auto mt-6">
+            <div className="flex items-center bg-white/[0.04] hover:bg-white/[0.06] border border-white/10 hover:border-white/20 focus-within:border-primary/50 focus-within:bg-white/[0.08] rounded-full pl-4 pr-3 h-12 text-sm transition-all shadow-inner">
+              <Search className="text-white/40 mr-2.5 shrink-0" size={16} />
+              <input
+                type="text"
+                placeholder={isHi ? "वाणी, श्लोक, ग्रंथ या संत खोजें..." : "Search Shlokas, Saints, Books..."}
+                className="w-full bg-transparent outline-none pr-3 text-white placeholder:text-white/40 text-xs sm:text-sm font-light h-full"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && e.target.value.trim().length > 0) {
+                    const q = e.target.value.trim();
+                    navigate(isHi ? `/hi/content?q=${encodeURIComponent(q)}` : `/content?q=${encodeURIComponent(q)}`);
+                  }
+                }}
+              />
+              <kbd className="hidden sm:inline-flex items-center gap-0.5 text-[9px] text-white/30 bg-white/5 border border-white/10 px-1.5 py-0.5 rounded font-mono">
+                ⌘K
+              </kbd>
+            </div>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-wrap justify-center gap-3 pt-2">
+            <button 
+              onClick={() => {
+                document.getElementById('daily-swadhyaya-container')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="btn-premium px-6 py-3 text-xs md:text-sm font-semibold flex items-center gap-2"
+            >
+              <span>{isHi ? "आज का श्लोक पढ़ें" : "Read Today's Shloka"}</span>
+              <span>→</span>
+            </button>
+            <Link 
+              to={isHi ? "/hi/content" : "/content"} 
+              className="px-6 py-3 rounded-full border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 text-white/80 hover:text-white transition-all text-xs md:text-sm font-semibold"
+            >
+              {isHi ? "पुस्तकालय देखें" : "Explore Library"}
+            </Link>
+          </div>
+
+          {/* Stats strip */}
+          <div className="flex items-center justify-center gap-4 text-[10px] md:text-xs text-white/40 font-medium pt-3">
+            <span>{isHi ? "१०K+ श्लोक" : "10K+ Shlokas"}</span>
+            <span className="w-1 h-1 rounded-full bg-white/20" />
+            <span>{isHi ? "५०+ सन्त" : "50+ Saints"}</span>
+            <span className="w-1 h-1 rounded-full bg-white/20" />
+            <span>{isHi ? "२००+ ग्रन्थ" : "200+ Books"}</span>
+          </div>
+        </div>
+
         
         <div className="space-y-6">
           
@@ -922,7 +988,7 @@ const HomePage = ({
           </div>
 
           
-          <div className="lg:col-span-2 h-full flex flex-col">
+          <div id="daily-swadhyaya-container" className="lg:col-span-2 h-full flex flex-col">
             <DailySwadhyaya
               isHi={isHi}
               dailyShloka={dailyShloka}
@@ -1054,6 +1120,28 @@ const HomePage = ({
           ragas={ragas}
           navigate={navigate}
         />
+
+        {/* Storytelling Mission Section */}
+        <div className="max-w-4xl mx-auto border-t border-white/5 pt-12 pb-4 text-center space-y-4 select-none">
+          <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-bold block">
+            {isHi ? "हमारा संकल्प" : "Our Sacred Mission"}
+          </span>
+          <h2 className="text-xl md:text-2xl font-bold font-headings text-minimal-gold">
+            {isHi ? "लुप्त हो रही धरोहर का संरक्षण" : "Preserving a 400-Year-Old Legacy"}
+          </h2>
+          <p className="text-sm md:text-base text-white/80 leading-relaxed italic max-w-2xl mx-auto font-light">
+            {isHi 
+              ? "“मंदिरों और संदूक़ों में रखे सैकड़ों वर्ष पुराने हस्तलिखित ग्रंथ और रसिक संतों की अमूल्य वाणी समय, दीमक और उपेक्षा के कारण सदा के लिए खो सकती है।”" 
+              : "“Centuries-old handwritten manuscripts of rasik saints kept in temple chests are at risk of being lost forever to time, humidity, and neglect.”"
+            }
+          </p>
+          <p className="text-xs text-white/50 max-w-3xl mx-auto leading-relaxed font-light">
+            {isHi
+              ? "वृंदोपनिषद् इन दुर्लभ पांडुलिपियों का डिजिटलीकरण करने, उनके सही सस्वर पाठ को संजोने और श्रीराधावल्लभ संप्रदाय की दिव्यवाणी को बिना किसी मूल्य के पूरी दुनिया तक पहुँचाने के लिए समर्पित है। हम प्राचीन ज्ञान को आधुनिक रूप में सहेज रहे हैं ताकि आने वाली पीढ़ियां इस अमृत रस का आस्वादन कर सकें।"
+              : "Vrindopnishad is dedicated to digitizing these rare manuscripts, recording authentic chanting recitations, and making the sacred teachings of the Radhavallabh sampradaya accessible to everyone, for free. We bridge ancient wisdom with modern technology to ensure this heritage thrives for generations."
+            }
+          </p>
+        </div>
 
         
         <div className="py-8 max-w-4xl mx-auto border-t border-white/5 text-center text-xs text-white/35 leading-relaxed font-light space-y-4 select-none">

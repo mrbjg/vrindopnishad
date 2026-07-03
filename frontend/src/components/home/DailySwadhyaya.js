@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Share2, Copy, MessageCircle } from 'lucide-react';
+import { shareVerseCard } from '../../utils/shareCard';
 
 const DailySwadhyaya = ({
   isHi,
@@ -11,6 +12,14 @@ const DailySwadhyaya = ({
 }) => {
   const [activeTab, setActiveTab] = useState('verse'); 
   const [isPlaying, setIsPlaying] = useState(false);
+  const [copiedText, setCopiedText] = useState(null);
+
+  const handleCopy = (text, type) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedText(type);
+      setTimeout(() => setCopiedText(null), 2000);
+    });
+  };
 
   
   const handleChantAudio = () => {
@@ -172,11 +181,29 @@ const DailySwadhyaya = ({
           <div className="space-y-3.5 text-left animate-in fade-in zoom-in-95 duration-200">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3 text-xs font-light leading-relaxed">
               <div className="space-y-1">
-                <span className="text-[8px] uppercase tracking-wider text-primary font-bold block">भावार्थ (Hindi)</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-[8px] uppercase tracking-wider text-primary font-bold">भावार्थ (Hindi)</span>
+                  <button 
+                    onClick={() => handleCopy(dailyShloka.hindi, 'hindi')}
+                    className="text-[9px] text-white/40 hover:text-white transition-colors flex items-center gap-0.5"
+                  >
+                    <Copy size={9} />
+                    <span>{copiedText === 'hindi' ? (isHi ? "कॉपी हुआ" : "Copied") : (isHi ? "कॉपी" : "Copy")}</span>
+                  </button>
+                </div>
                 <p className="text-white/80 font-medium leading-relaxed whitespace-pre-line">{dailyShloka.hindi}</p>
               </div>
               <div className="border-t md:border-t-0 md:border-l lg:border-l-0 lg:border-t xl:border-t-0 xl:border-l border-white/5 pt-3.5 md:pt-0 md:pl-3.5 lg:pl-0 lg:pt-3.5 xl:pt-0 xl:pl-3.5 space-y-1">
-                <span className="text-[8px] uppercase tracking-wider text-sky-400/80 font-bold block">English</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-[8px] uppercase tracking-wider text-sky-400/80 font-bold">English</span>
+                  <button 
+                    onClick={() => handleCopy(dailyShloka.english, 'english')}
+                    className="text-[9px] text-white/40 hover:text-white transition-colors flex items-center gap-0.5"
+                  >
+                    <Copy size={9} />
+                    <span>{copiedText === 'english' ? (isHi ? "कॉपी हुआ" : "Copied") : (isHi ? "कॉपी" : "Copy")}</span>
+                  </button>
+                </div>
                 <p className="text-white/70 italic leading-relaxed whitespace-pre-line">{dailyShloka.english}</p>
               </div>
             </div>
@@ -203,6 +230,60 @@ const DailySwadhyaya = ({
             ))}
           </div>
         )}
+
+        {/* Share & Copy Actions (Problem #4 & #15) */}
+        <div className="flex flex-wrap items-center justify-center gap-2 pt-3.5 border-t border-white/5 mt-5">
+          <button
+            onClick={() => handleCopy(dailyShloka.sanskrit, 'sanskrit')}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all text-[10px] font-semibold border border-white/5"
+            title={isHi ? "संस्कृत श्लोक कॉपी करें" : "Copy Sanskrit Verse"}
+          >
+            <Copy size={11} />
+            <span>{copiedText === 'sanskrit' ? (isHi ? "कॉपी हुआ!" : "Copied!") : (isHi ? "श्लोक कॉपी" : "Copy Verse")}</span>
+          </button>
+
+          <button
+            onClick={() => {
+              const text = `${dailyShloka.sanskrit}\n\n${isHi ? 'भावार्थ' : 'Translation'}: ${isHi ? dailyShloka.hindi : dailyShloka.english}\n\n— ${dailyShloka.source}\n\nvia path.vrindopnishad.in`;
+              const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+              window.open(url, '_blank');
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] hover:text-[#25D366]/90 transition-all text-[10px] font-semibold border border-[#25D366]/10"
+            title={isHi ? "व्हाट्सएप पर साझा करें" : "Share on WhatsApp"}
+          >
+            <MessageCircle size={11} />
+            <span>WhatsApp</span>
+          </button>
+
+          <button
+            onClick={() => {
+              const text = `"${dailyShloka.sanskrit.substring(0, 100)}..." — ${dailyShloka.source} via path.vrindopnishad.in`;
+              const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+              window.open(url, '_blank');
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all text-[10px] font-semibold border border-white/5"
+            title={isHi ? "X पर साझा करें" : "Share on X"}
+          >
+            <span className="font-bold">𝕏</span>
+            <span>Share</span>
+          </button>
+
+          <button
+            onClick={() => shareVerseCard({
+              sanskrit_text: dailyShloka.sanskrit,
+              hindi_text: dailyShloka.hindi,
+              english_translation: dailyShloka.english,
+              author: isHi ? "श्रीमद्भगवद्गीता" : "Bhagavad Gita",
+              title: dailyShloka.source,
+              category: "shloka"
+            }, isHi)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary hover:text-primary transition-all text-[10px] font-bold border border-primary/20"
+            title={isHi ? "कार्ड चित्र सहेजें" : "Save Image Card"}
+          >
+            <Share2 size={11} />
+            <span>{isHi ? "कार्ड चित्र" : "Share Card"}</span>
+          </button>
+        </div>
       </div>
     </div>
   );
