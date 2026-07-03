@@ -221,7 +221,11 @@ async function fetchAllFromDataConnect() {
       });
     }
   } catch (error) {
-    console.error("[DataConnect] Query failed:", error);
+    if (error.message && (error.message.includes('Quota exceeded') || error.message.includes('RESOURCE_EXHAUSTED') || error.message.includes('429'))) {
+      console.warn("[DataConnect] Quota exceeded (429 Rate Limit). Will fall back to full local JSON backup.");
+    } else {
+      console.error("[DataConnect] Query failed:", error);
+    }
   } finally {
     if (typeof global.fetch === 'function') {
       global.fetch = originalFetch;
@@ -232,11 +236,23 @@ async function fetchAllFromDataConnect() {
 
 function loadLocalJSONFallback() {
   const appDirectory = process.cwd();
-  let contentPath = path.join(appDirectory, 'data/brajrasik_hi_full.json');
-  let saintsPath = path.join(appDirectory, 'data/saints_formatted.json');
-
+  
+  // Try loading full backup first to ensure we have the complete 10k+ items even when quota is exceeded
+  let contentPath = path.join(appDirectory, 'public/data/content_backup.json');
+  if (!fs.existsSync(contentPath)) {
+    contentPath = path.join(appDirectory, 'frontend/public/data/content_backup.json');
+  }
+  
+  // Fall back to smaller initial dataset if full backup is missing
+  if (!fs.existsSync(contentPath)) {
+    contentPath = path.join(appDirectory, 'data/brajrasik_hi_full.json');
+  }
   if (!fs.existsSync(contentPath)) {
     contentPath = path.join(appDirectory, 'frontend/data/brajrasik_hi_full.json');
+  }
+
+  let saintsPath = path.join(appDirectory, 'data/saints_formatted.json');
+  if (!fs.existsSync(saintsPath)) {
     saintsPath = path.join(appDirectory, 'frontend/data/saints_formatted.json');
   }
 
