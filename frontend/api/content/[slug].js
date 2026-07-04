@@ -64,7 +64,7 @@ export default async function handler(req, res) {
       const fs = require('fs');
       const decodedSlug = decodeURIComponent(slug).toLowerCase();
       let localFilePath = join(process.cwd(), 'data/brajrasik_hi_full.json');
-      
+
       if (!fs.existsSync(localFilePath)) {
         localFilePath = join(process.cwd(), 'frontend/data/brajrasik_hi_full.json');
       }
@@ -75,8 +75,8 @@ export default async function handler(req, res) {
       if (fs.existsSync(localFilePath)) {
         const fileContent = fs.readFileSync(localFilePath, 'utf8');
         const localData = JSON.parse(fileContent);
-        
-        content = localData.find(item => 
+
+        content = localData.find(item =>
           (item.slug && item.slug.toLowerCase() === decodedSlug) ||
           (item.title && item.title.toLowerCase().replace(/\s+/g, '-') === decodedSlug)
         );
@@ -93,10 +93,10 @@ export default async function handler(req, res) {
 
   const description = content
     ? escapeHtml(
-        (content.sanskrit_text || content.hindi_text || content.description || '')
-          .substring(0, 160)
-          .replace(/[\r\n]+/g, ' ')
-      ) + '...'
+      (content.sanskrit_text || content.hindi_text || content.description || '')
+        .substring(0, 160)
+        .replace(/[\r\n]+/g, ' ')
+    ) + '...'
     : 'Sacred shlokas, strotras, and devotional poetry from Vrindavan saints.';
 
   const pageUrl = `${DOMAIN}/content/${encodeURIComponent(slug)}`;
@@ -104,7 +104,7 @@ export default async function handler(req, res) {
 
   // JSON-LD structured data
   const jsonLd = content ? JSON.stringify({
-    "@context": "https:
+    "@context": "https:",
     "@type": "Article",
     "headline": content.title || "Sacred Verse",
     "description": (content.description || content.hindi_text || '').substring(0, 200),
@@ -121,10 +121,10 @@ export default async function handler(req, res) {
     ...(content.image_url ? { "image": content.image_url } : {})
   }) : '';
 
-  
-  
-  
-  
+
+
+
+
   const html = `<!doctype html>
 <html lang="hi" dir="ltr">
 <head>
