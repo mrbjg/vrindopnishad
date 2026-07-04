@@ -189,8 +189,6 @@ const SAINT_METADATA = {
     timelineHi: 'समकालीन (वर्तमान काल)',
     associatedPlacesEn: 'Shri Radha Keli Kunj, Vrindavan',
     associatedPlacesHi: 'श्री राधा केलि कुंज, वृंदावन',
-    discipleOfEn: 'Shri Vrindaban Bux Ji Maharaj',
-    discipleOfHi: 'श्री वृंदावन बक्स जी महाराज',
     influencedByEn: 'Shri Hit Harivansh Mahaprabhu, Shri Dhruvdas',
     influencedByHi: 'श्री हित हरिवंश महाप्रभु, श्री ध्रुवदास',
     associatedSampradayaEn: 'Radhavallabh Sampradaya',

@@ -1,5 +1,3 @@
-
-
 const HF_MODEL = 'sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2';
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || 'https://tilimltxgeucefxzerqi.supabase.co';
 const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
@@ -9,8 +7,7 @@ const HF_TOKEN = process.env.HF_TOKEN;
 let cachedContent = null;
 let cachedEmbeddings = null;
 let cacheTimestamp = 0;
-const CACHE_TTL = 30 * 60 * 1000; 
-
+const CACHE_TTL = 30 * 60 * 1000;
 
 async function getEmbeddings(texts) {
   const res = await fetch(
@@ -52,7 +49,7 @@ async function fetchContent() {
     console.warn('Supabase fetch failed in semantic search, loading from local backups...', err.message);
     const fs = require('fs');
     const path = require('path');
-    
+
     let localFilePath = path.join(process.cwd(), 'data/brajrasik_hi_full.json');
     if (!fs.existsSync(localFilePath)) {
       localFilePath = path.join(process.cwd(), 'frontend/data/brajrasik_hi_full.json');
@@ -82,7 +79,7 @@ function cosineSimilarity(a, b) {
 
 
 function meanPool(embedding) {
-  if (!Array.isArray(embedding[0])) return embedding; 
+  if (!Array.isArray(embedding[0])) return embedding;
   const len = embedding.length;
   const dim = embedding[0].length;
   const result = new Array(dim).fill(0);
@@ -96,7 +93,7 @@ function meanPool(embedding) {
 
 
 export default async function handler(req, res) {
-  
+
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -113,7 +110,7 @@ export default async function handler(req, res) {
   try {
     const now = Date.now();
 
-    
+
     if (!cachedContent || !cachedEmbeddings || now - cacheTimestamp > CACHE_TTL) {
       console.log('Cache miss — fetching content from Supabase...');
       cachedContent = await fetchContent();
@@ -121,27 +118,27 @@ export default async function handler(req, res) {
       const titles = cachedContent.map(
         (c) => `${c.title || ''} ${c.author || ''} ${c.category || ''}`
       );
-      
+
       const chunks = [];
       for (let i = 0; i < titles.length; i += 64) {
         chunks.push(titles.slice(i, i + 64));
       }
 
       console.log(`[SemanticSearch] Fetching embeddings for ${chunks.length} chunks in parallel (concurrency: 8)...`);
-      
+
       // Concurrency-limited parallel execution pool
       const pMap = async (items, mapper, concurrency) => {
         const results = [];
         const promises = [];
         let index = 0;
-        
+
         async function run() {
           if (index >= items.length) return;
           const curIdx = index++;
           results[curIdx] = await mapper(items[curIdx], curIdx);
           await run();
         }
-        
+
         for (let i = 0; i < Math.min(concurrency, items.length); i++) {
           promises.push(run());
         }
@@ -163,11 +160,11 @@ export default async function handler(req, res) {
       console.log(`Cached ${cachedContent.length} items with embeddings`);
     }
 
-    
+
     const queryEmbRaw = await getEmbeddings([query.trim()]);
     const queryEmb = meanPool(queryEmbRaw[0]);
 
-    
+
     const scored = cachedContent.map((item, i) => ({
       id: item.id,
       title: item.title,
@@ -178,7 +175,7 @@ export default async function handler(req, res) {
       score: cosineSimilarity(queryEmb, cachedEmbeddings[i]),
     }));
 
-    
+
     scored.sort((a, b) => b.score - a.score);
     const results = scored.slice(0, 6).filter((r) => r.score > 0.25);
 

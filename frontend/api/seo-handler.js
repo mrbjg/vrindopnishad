@@ -1950,7 +1950,6 @@ export default async function handler(req, res) {
         });
       }
     }
-  }
 
   } else {
     
@@ -2064,7 +2063,10 @@ export default async function handler(req, res) {
   <meta name="twitter:image" content="${ogImageUrl}"/>
   ${jsonLd ? `<script type="application/ld+json">${jsonLd}</script>` : ''}
   <meta name="theme-color" content="#0D0D12"/>
-  <link rel="icon" href="https://vrindopnishad.in/favicon.ico" sizes="48x48"/>
+  <link rel="icon" href="${DOMAIN}/favicon.ico" sizes="any"/>
+  <link rel="icon" href="${DOMAIN}/favicon-32x32.png" sizes="32x32" type="image/png"/>
+  <link rel="icon" href="${DOMAIN}/icon-192.png" sizes="192x192" type="image/png"/>
+  <link rel="apple-touch-icon" href="${DOMAIN}/apple-touch-icon.png" sizes="180x180"/>
   <meta name="robots" content="index, follow"/>
 </head>
 <body style="font-family: sans-serif; background: #faf9f6; color: #1c1917; padding: 20px; line-height: 1.6;">
@@ -2117,6 +2119,10 @@ export default async function handler(req, res) {
   <meta name="twitter:image" content="${ogImageUrl}"/>
   ${jsonLd ? `<script type="application/ld+json">${jsonLd}</script>` : ''}
   <meta name="theme-color" content="#0D0D12"/>
+  <link rel="icon" href="${DOMAIN}/favicon.ico" sizes="any"/>
+  <link rel="icon" href="${DOMAIN}/favicon-32x32.png" sizes="32x32" type="image/png"/>
+  <link rel="icon" href="${DOMAIN}/icon-192.png" sizes="192x192" type="image/png"/>
+  <link rel="apple-touch-icon" href="${DOMAIN}/apple-touch-icon.png" sizes="180x180"/>
   <meta name="robots" content="index, follow"/>
 `;
       indexHtml = indexHtml.replace('</head>', `${extraHead}</head>`);
