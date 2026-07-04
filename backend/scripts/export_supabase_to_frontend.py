@@ -1,5 +1,6 @@
 import os
 import json
+import re
 from pathlib import Path
 from dotenv import load_dotenv
 from supabase import create_client
@@ -13,10 +14,51 @@ key = os.environ.get('SUPABASE_SERVICE_ROLE_KEY') or os.environ.get('SUPABASE_AN
 client = create_client(url, key)
 
 def classify_item_category(item):
-    # Match the JS helper logic
-    cat = item.get('category', 'poem')
-    if cat in ['shloka', 'strotra', 'poem', 'saint', 'dham']:
-        return cat
+    if not item:
+        return 'poem'
+    
+    raw_cat = str(item.get('category') or '').lower().strip()
+    
+    if raw_cat in ['saint', 'dham']:
+        return raw_cat
+        
+    if raw_cat in ['strotra', 'strotras', 'stotra', 'storas']:
+        return 'strotra'
+        
+    if raw_cat in ['poem', 'poems', 'poetry']:
+        return 'poem'
+        
+    title = str(item.get('title') or '').lower()
+    sanskrit = str(item.get('sanskrit_text') or '').lower()
+    
+    strotra_keywords = [
+        'स्तोत्र', 'strotra', 'stotra',
+        'शतक', 'shatak',
+        'अष्टक', 'ashtak',
+        'महिमामृत', 'mahimamrit',
+        'सुधानिधि', 'sudhanidhi',
+        'सहस्रनाम', 'sahasranam'
+    ]
+    
+    has_strotra_keyword = any(k in title for k in strotra_keywords) or \
+                          any(k in sanskrit for k in ['स्तोत्र', 'strotra', 'stotra'])
+                          
+    if has_strotra_keyword:
+        return 'strotra'
+        
+    sanskrit_trimmed = sanskrit.strip()
+    has_sanskrit_text = False
+    if len(sanskrit_trimmed) > 10:
+        has_marker = '॥' in sanskrit or '।' in sanskrit or 'ॐ' in sanskrit
+        has_long_english = bool(re.search(r'[a-z]{5,}', sanskrit))
+        if has_marker or not has_long_english:
+            has_sanskrit_text = True
+            
+    is_scripture_book = any(k in title for k in ['gita', 'गीता', 'upnishad', 'उपनिषद', 'samhita', 'संहिता', 'purana', 'पुराण', 'shloka', 'श्लोक'])
+    
+    if is_scripture_book or has_sanskrit_text or raw_cat in ['shloka', 'shlokas']:
+        return 'shloka'
+        
     return 'poem'
 
 def export_all():

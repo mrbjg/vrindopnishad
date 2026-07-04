@@ -40,6 +40,21 @@ let memoryLastUpdated = '1970-01-01T00:00:00.000Z';
 let memoryCategoryCache = {};
 let lastSyncTime = 0;
 
+if (typeof window !== 'undefined') {
+  const CURRENT_CACHE_VERSION = 'v3'; // Increment to force reset and reload the correct full category files
+  const storedVersion = localStorage.getItem('vrindopnishad_cache_version');
+  if (storedVersion !== CURRENT_CACHE_VERSION) {
+    console.log(`[Cache-Reset] Version mismatch (stored: "${storedVersion}", current: "${CURRENT_CACHE_VERSION}"). Resetting LocalStorage cache...`);
+    const categories = ['shloka', 'strotra', 'poem', 'saint', 'dham'];
+    categories.forEach(cat => {
+      localStorage.removeItem(`vrindopnishad_cache_${cat}`);
+      localStorage.removeItem(`vrindopnishad_last_updated_${cat}`);
+    });
+    localStorage.removeItem('vrindopnishad_relations_cache');
+    localStorage.setItem('vrindopnishad_cache_version', CURRENT_CACHE_VERSION);
+  }
+}
+
 const contentMapById = new Map();
 const contentMapBySlug = new Map();
 
