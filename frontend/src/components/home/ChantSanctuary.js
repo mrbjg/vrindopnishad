@@ -137,7 +137,7 @@ const ChantSanctuary = ({
                 aria-label={isTanpuraPlaying ? "Stop Tanpura Drone" : "Start Tanpura Drone"}
               >
                 {isTanpuraPlaying ? <Volume2 size={12} aria-hidden="true" /> : <VolumeX size={12} aria-hidden="true" />}
-                <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
                   {isTanpuraPlaying ? (isHi ? "तंबूरा बंद" : "Stop Tanpura") : (isHi ? "तंबूरा चालू" : "Start Tanpura")}
                 </span>
               </button>
@@ -163,7 +163,7 @@ const ChantSanctuary = ({
             aria-label={isHi ? "१ जाप जोड़ें" : "Add 1 Chant"}
           >
             +1
-            <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
               {isHi ? "१ जाप जोड़ें" : "Add 1 Chant"}
             </span>
           </button>
@@ -174,7 +174,7 @@ const ChantSanctuary = ({
             aria-label={isHi ? "१ माला जोड़ें" : "Add 1 Mala (108)"}
           >
             +108
-            <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
               {isHi ? "१ माला (१०८)" : "Add 1 Mala (+108)"}
             </span>
           </button>
@@ -189,7 +189,7 @@ const ChantSanctuary = ({
             aria-label={isHi ? "जाप संख्या रीसेट करें" : "Reset Chant Count"}
           >
             Reset
-            <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
               {isHi ? "जाप रीसेट" : "Reset Count"}
             </span>
           </button>
