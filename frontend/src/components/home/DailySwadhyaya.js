@@ -10,7 +10,7 @@ const DailySwadhyaya = ({
   handleComplete,
   particles,
 }) => {
-  const [activeTab, setActiveTab] = useState('verse'); 
+  const [activeTab, setActiveTab] = useState('verse');
   const [isPlaying, setIsPlaying] = useState(false);
   const [copiedText, setCopiedText] = useState(null);
 
@@ -21,7 +21,7 @@ const DailySwadhyaya = ({
     });
   };
 
-  
+
   const handleChantAudio = () => {
     if (isPlaying) {
       window.speechSynthesis.cancel();
@@ -31,7 +31,7 @@ const DailySwadhyaya = ({
       const utterance = new SpeechSynthesisUtterance(dailyShloka.sanskrit);
 
       const voices = window.speechSynthesis.getVoices();
-      
+
       const hiVoice = voices.find(
         (v) =>
           v.lang.startsWith('hi') ||
@@ -42,7 +42,7 @@ const DailySwadhyaya = ({
       if (hiVoice) {
         utterance.voice = hiVoice;
       }
-      utterance.rate = 0.75; 
+      utterance.rate = 0.75;
       utterance.pitch = 0.9;
 
       utterance.onend = () => setIsPlaying(false);
@@ -78,7 +78,7 @@ const DailySwadhyaya = ({
           </span>
         </div>
 
-        
+
         <div className="flex bg-white/5 p-1 rounded-xl gap-1 mb-5 relative select-none">
           {['verse', 'translation', 'breakdown'].map((tab) => (
             <button
@@ -90,18 +90,17 @@ const DailySwadhyaya = ({
                   setIsPlaying(false);
                 }
               }}
-              className={`flex-1 py-2 text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all z-10 touch-manipulation min-h-[36px] ${
-                activeTab === tab ? 'text-primary' : 'text-white/45 hover:text-white/70'
-              }`}
+              className={`flex-1 py-2 text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all z-10 touch-manipulation min-h-[36px] ${activeTab === tab ? 'text-primary' : 'text-white/45 hover:text-white/70'
+                }`}
             >
               {tab === 'verse'
                 ? isHi ? "श्लोक" : "Verse"
                 : tab === 'translation'
-                ? isHi ? "भावार्थ" : "Translation"
-                : isHi ? "शब्दार्थ" : "Breakdown"}
+                  ? isHi ? "भावार्थ" : "Translation"
+                  : isHi ? "शब्दार्थ" : "Breakdown"}
             </button>
           ))}
-          
+
           <div
             className="absolute top-1 bottom-1 bg-white/[0.04] border border-white/10 rounded-lg transition-all duration-300 ease-out z-0"
             style={{
@@ -112,7 +111,7 @@ const DailySwadhyaya = ({
         </div>
       </div>
 
-      
+
       <div className="min-h-[10rem] flex flex-col justify-center transition-all duration-300 flex-1">
         {activeTab === 'verse' && (
           <div className="space-y-5 animate-in fade-in zoom-in-95 duration-200 text-center">
@@ -125,11 +124,10 @@ const DailySwadhyaya = ({
             <div className="flex justify-center gap-2.5 sm:gap-3">
               <button
                 onClick={handleChantAudio}
-                className={`flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-full border transition-all text-xs font-bold touch-manipulation min-h-[40px] relative group ${
-                  isPlaying
+                className={`flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-full border transition-all text-xs font-bold touch-manipulation min-h-[40px] relative group ${isPlaying
                     ? 'border-primary bg-primary/10 text-primary'
                     : 'border-white/10 hover:border-primary/30 text-white/70'
-                }`}
+                  }`}
                 title={isPlaying ? (isHi ? "ऑडियो रोकें" : "Pause Audio") : (isHi ? "ऑडियो सुनें" : "Listen to Audio")}
                 aria-label={isPlaying ? "Pause Audio" : "Listen to Audio"}
               >
@@ -143,18 +141,17 @@ const DailySwadhyaya = ({
                     <span className="w-0.5 bg-primary rounded-full animate-bar-pulse-4" style={{ height: '6px' }} />
                   </div>
                 )}
-                <span className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
                   {isPlaying ? (isHi ? "ऑडियो रोकें" : "Pause Audio") : (isHi ? "ऑडियो सुनें" : "Listen to Audio")}
                 </span>
               </button>
 
               <button
                 onClick={handleComplete}
-                className={`flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-full border transition-all text-xs font-bold relative touch-manipulation min-h-[40px] group ${
-                  isCompleted
+                className={`flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-full border transition-all text-xs font-bold relative touch-manipulation min-h-[40px] group ${isCompleted
                     ? 'border-green-500 bg-green-500/10 text-green-500 cursor-default'
                     : 'border-white/10 hover:border-green-500/30 text-white/70'
-                }`}
+                  }`}
                 title={isCompleted ? (isHi ? "पढ़ना पूर्ण किया" : "Already Completed") : (isHi ? "पढ़ा हुआ चिह्नित करें" : "Mark as Completed")}
                 aria-label={isCompleted ? "Completed" : "Mark as Completed"}
               >
@@ -173,7 +170,7 @@ const DailySwadhyaya = ({
                     }}
                   />
                 ))}
-                <span className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
                   {isCompleted ? (isHi ? "पूर्ण हुआ" : "Completed") : (isHi ? "पढ़ा हुआ चिह्नित करें" : "Mark as Read")}
                 </span>
               </button>
@@ -193,7 +190,7 @@ const DailySwadhyaya = ({
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="text-[8px] uppercase tracking-wider text-primary font-bold">भावार्थ (Hindi)</span>
-                  <button 
+                  <button
                     onClick={() => handleCopy(dailyShloka.hindi, 'hindi')}
                     className="text-[9px] text-white/40 hover:text-white transition-colors flex items-center gap-0.5 relative group"
                     title={isHi ? "हिंदी भावार्थ कॉपी करें" : "Copy Hindi Translation"}
@@ -201,7 +198,7 @@ const DailySwadhyaya = ({
                   >
                     <Copy size={9} aria-hidden="true" />
                     <span>{copiedText === 'hindi' ? (isHi ? "कॉपी हुआ" : "Copied") : (isHi ? "कॉपी" : "Copy")}</span>
-                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible bg-black text-[9px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[9px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
                       {copiedText === 'hindi' ? (isHi ? "कॉपी हुआ!" : "Copied!") : (isHi ? "कॉपी करें" : "Copy Translation")}
                     </span>
                   </button>
@@ -211,7 +208,7 @@ const DailySwadhyaya = ({
               <div className="border-t md:border-t-0 md:border-l lg:border-l-0 lg:border-t xl:border-t-0 xl:border-l border-white/5 pt-3.5 md:pt-0 md:pl-3.5 lg:pl-0 lg:pt-3.5 xl:pt-0 xl:pl-3.5 space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="text-[8px] uppercase tracking-wider text-sky-400/80 font-bold">English</span>
-                  <button 
+                  <button
                     onClick={() => handleCopy(dailyShloka.english, 'english')}
                     className="text-[9px] text-white/40 hover:text-white transition-colors flex items-center gap-0.5 relative group"
                     title={isHi ? "अंग्रेजी अनुवाद कॉपी करें" : "Copy English Translation"}
@@ -219,7 +216,7 @@ const DailySwadhyaya = ({
                   >
                     <Copy size={9} aria-hidden="true" />
                     <span>{copiedText === 'english' ? (isHi ? "कॉपी हुआ" : "Copied") : (isHi ? "कॉपी" : "Copy")}</span>
-                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible bg-black text-[9px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[9px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
                       {copiedText === 'english' ? (isHi ? "कॉपी हुआ!" : "Copied!") : (isHi ? "कॉपी करें" : "Copy Translation")}
                     </span>
                   </button>
@@ -261,7 +258,7 @@ const DailySwadhyaya = ({
           >
             <Copy size={11} aria-hidden="true" />
             <span>{copiedText === 'sanskrit' ? (isHi ? "कॉपी हुआ!" : "Copied!") : (isHi ? "श्लोक कॉपी" : "Copy Verse")}</span>
-            <span className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
               {copiedText === 'sanskrit' ? (isHi ? "कॉपी हुआ!" : "Copied!") : (isHi ? "श्लोक कॉपी करें" : "Copy Sanskrit")}
             </span>
           </button>
@@ -278,7 +275,7 @@ const DailySwadhyaya = ({
           >
             <MessageCircle size={11} aria-hidden="true" />
             <span>WhatsApp</span>
-            <span className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
               {isHi ? "व्हाट्सएप पर शेयर" : "Share on WhatsApp"}
             </span>
           </button>
@@ -295,7 +292,7 @@ const DailySwadhyaya = ({
           >
             <span className="font-bold" aria-hidden="true">𝕏</span>
             <span>Share</span>
-            <span className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
               {isHi ? "X पर साझा करें" : "Share on X"}
             </span>
           </button>
@@ -315,7 +312,7 @@ const DailySwadhyaya = ({
           >
             <Share2 size={11} aria-hidden="true" />
             <span>{isHi ? "कार्ड चित्र" : "Share Card"}</span>
-            <span className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
               {isHi ? "कार्ड चित्र बनाएं" : "Create Image Card"}
             </span>
           </button>

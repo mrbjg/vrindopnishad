@@ -9,7 +9,7 @@ const ChantSanctuary = ({
   percentComplete,
   rounds,
 }) => {
-  
+
   const [isTanpuraPlaying, setIsTanpuraPlaying] = useState(false);
   const [audioCtx, setAudioCtx] = useState(null);
   const [tanpuraTimer, setTanpuraTimer] = useState(null);
@@ -66,12 +66,12 @@ const ChantSanctuary = ({
       setAudioCtx(ctx);
       setIsTanpuraPlaying(true);
 
-      const baseFreq = 130.81; 
+      const baseFreq = 130.81;
       const freqs = [
-        baseFreq * 1.5, 
-        baseFreq * 2.0, 
-        baseFreq * 2.0, 
-        baseFreq        
+        baseFreq * 1.5,
+        baseFreq * 2.0,
+        baseFreq * 2.0,
+        baseFreq
       ];
 
       let pluckIdx = 0;
@@ -87,7 +87,7 @@ const ChantSanctuary = ({
     }
   };
 
-  
+
   useEffect(() => {
     return () => {
       if (tanpuraTimer) clearInterval(tanpuraTimer);
@@ -128,16 +128,15 @@ const ChantSanctuary = ({
               <span className="text-xl font-extrabold text-minimal-gold block mt-0.5 font-mono">{japaCount}</span>
               <button
                 onClick={toggleTanpura}
-                className={`p-1.5 rounded-full border transition-all touch-manipulation min-w-[28px] min-h-[28px] flex items-center justify-center relative group ${
-                  isTanpuraPlaying
+                className={`p-1.5 rounded-full border transition-all touch-manipulation min-w-[28px] min-h-[28px] flex items-center justify-center relative group ${isTanpuraPlaying
                     ? 'bg-sky-500/10 border-sky-500/40 text-sky-400 animate-pulse'
                     : 'bg-white/5 border-white/10 text-white/40 hover:text-white'
-                }`}
+                  }`}
                 title={isTanpuraPlaying ? (isHi ? "तंबूरा बंद करें" : "Stop Tanpura Drone") : (isHi ? "तंबूरा शुरू करें" : "Start Tanpura Drone")}
                 aria-label={isTanpuraPlaying ? "Stop Tanpura Drone" : "Start Tanpura Drone"}
               >
                 {isTanpuraPlaying ? <Volume2 size={12} aria-hidden="true" /> : <VolumeX size={12} aria-hidden="true" />}
-                <span className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
                   {isTanpuraPlaying ? (isHi ? "तंबूरा बंद" : "Stop Tanpura") : (isHi ? "तंबूरा चालू" : "Start Tanpura")}
                 </span>
               </button>
@@ -153,8 +152,8 @@ const ChantSanctuary = ({
             </span>
           </div>
         </div>
- 
-        
+
+
         <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-white/5">
           <button
             onClick={() => handleUpdateJapaCount(japaCount + 1)}
@@ -163,7 +162,7 @@ const ChantSanctuary = ({
             aria-label={isHi ? "१ जाप जोड़ें" : "Add 1 Chant"}
           >
             +1
-            <span className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
               {isHi ? "१ जाप जोड़ें" : "Add 1 Chant"}
             </span>
           </button>
@@ -174,7 +173,7 @@ const ChantSanctuary = ({
             aria-label={isHi ? "१ माला जोड़ें" : "Add 1 Mala (108)"}
           >
             +108
-            <span className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
               {isHi ? "१ माला (१०८)" : "Add 1 Mala (+108)"}
             </span>
           </button>
@@ -189,7 +188,7 @@ const ChantSanctuary = ({
             aria-label={isHi ? "जाप संख्या रीसेट करें" : "Reset Chant Count"}
           >
             Reset
-            <span className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
               {isHi ? "जाप रीसेट" : "Reset Count"}
             </span>
           </button>
