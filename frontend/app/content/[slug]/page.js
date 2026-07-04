@@ -6,10 +6,14 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import { Link } from '../../../src/lib/router-compat';
 
 export async function generateStaticParams() {
-  // Return empty array to generate pages on-demand (ISR/SSR).
-  // This reduces Vercel compilation time from 15+ minutes to under 1 minute.
-  return [];
+  await ensureDataLoaded();
+  const verses = getAllVerses().slice(0, 200);
+  return verses.map(verse => ({
+    slug: encodeURIComponent(verse.slug),
+  }));
 }
+
+export const dynamicParams = true;
 
 export async function generateMetadata({ params }) {
   await ensureDataLoaded();
@@ -258,4 +262,4 @@ export default async function VerseRoute({ params }) {
     </>
   );
 }
-export const revalidate = 86400;
+export const revalidate = 604800;

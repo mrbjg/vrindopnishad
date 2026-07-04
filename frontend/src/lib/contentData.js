@@ -383,7 +383,22 @@ export async function ensureDataLoaded() {
                 throw new Error("Old cache format forcing rebuild.");
               }
 
-              const verses = cachePayload.verses || [];
+              const rawVerses = cachePayload.verses || [];
+              const verses = rawVerses.map((item, idx) => {
+                let slug = item.slug;
+                if (!slug || slug.startsWith('untitled')) {
+                  slug = generateSlug(item.title);
+                } else {
+                  slug = slugify(slug);
+                }
+                if (slug && slug.length > 100) {
+                  slug = slug.substring(0, 100).replace(/-+$/, '');
+                }
+                return {
+                  ...item,
+                  slug: slug
+                };
+              });
               const saintsRaw = cachePayload.saintsRaw || [];
               const combined = [...verses, ...saintsRaw];
 

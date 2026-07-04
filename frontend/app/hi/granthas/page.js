@@ -20,4 +20,4 @@ export default function HindiGranthasListRoute() {
     </Layout>
   );
 }
-export const revalidate = 86400;
+export const revalidate = 604800;

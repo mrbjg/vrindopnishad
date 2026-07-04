@@ -11,6 +11,8 @@ export async function generateStaticParams() {
   }));
 }
 
+export const dynamicParams = true;
+
 export async function generateMetadata({ params }) {
   const decodedSlug = decodeURIComponent(params.slug);
   const term = getGlossaryTermBySlug(decodedSlug);
@@ -74,4 +76,4 @@ export default function GlossaryRoute({ params }) {
     </>
   );
 }
-export const revalidate = 86400;
+export const revalidate = 604800;

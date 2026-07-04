@@ -105,4 +105,4 @@ export default async function HomeRoute() {
     </>
   );
 }
-export const revalidate = 86400;
+export const revalidate = 604800;

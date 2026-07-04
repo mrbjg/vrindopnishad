@@ -6,9 +6,14 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import { Link } from '../../../../src/lib/router-compat';
 
 export async function generateStaticParams() {
-  // Generate pages on-demand (ISR/SSR) to save Vercel build time.
-  return [];
+  await ensureDataLoaded();
+  const saints = getAllSaints().slice(0, 50);
+  return saints.map(saint => ({
+    slug: encodeURIComponent(saint.slug),
+  }));
 }
+
+export const dynamicParams = true;
 
 export async function generateMetadata({ params }) {
   await ensureDataLoaded();
@@ -118,4 +123,4 @@ export default async function HindiSaintRoute({ params }) {
     </>
   );
 }
-export const revalidate = 86400;
+export const revalidate = 604800;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { notFound, permanentRedirect } from 'next/navigation';
 import Layout from '../../../src/components/Layout';
+import { Link } from '../../../src/lib/router-compat';
 import { 
   getVerseBySlug, 
   getAllVerses, 
@@ -21,9 +22,14 @@ import LastUpdated from '../../../src/components/seo/LastUpdated';
 import AuthorCard from '../../../src/components/seo/AuthorCard';
 
 export async function generateStaticParams() {
-  // On-demand ISR to minimize build time, or preload the first few
-  return [];
+  await ensureDataLoaded();
+  const verses = getAllVerses().slice(0, 200);
+  return verses.map(verse => ({
+    slug: encodeURIComponent(verse.slug),
+  }));
 }
+
+export const dynamicParams = true;
 
 export async function generateMetadata({ params }) {
   await ensureDataLoaded();
@@ -288,4 +294,4 @@ export default async function LyricsDetailPage({ params }) {
     </>
   );
 }
-export const revalidate = 86400;
+export const revalidate = 604800;

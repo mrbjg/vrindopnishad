@@ -14,6 +14,8 @@ export async function generateStaticParams() {
   return Object.keys(FESTIVALS_DATA).map(slug => ({ slug }));
 }
 
+export const dynamicParams = true;
+
 export async function generateMetadata({ params }) {
   const fest = FESTIVALS_DATA[params.slug];
   if (!fest) return {};
@@ -116,4 +118,4 @@ export default function FestivalDetailPage({ params }) {
     </>
   );
 }
-export const revalidate = 86400;
+export const revalidate = 604800;

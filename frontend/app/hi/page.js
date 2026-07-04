@@ -99,4 +99,4 @@ export default async function HindiHomeRoute() {
     </>
   );
 }
-export const revalidate = 86400;
+export const revalidate = 604800;

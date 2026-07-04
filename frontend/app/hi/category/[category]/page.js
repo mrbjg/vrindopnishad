@@ -40,4 +40,4 @@ export default function HindiCategoryRoute({ params }) {
   );
 }
 
-export const revalidate = 86400;
+export const revalidate = 604800;

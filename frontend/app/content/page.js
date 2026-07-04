@@ -25,4 +25,4 @@ export default function ContentListRoute() {
     </Layout>
   );
 }
-export const revalidate = 86400;
+export const revalidate = 604800;

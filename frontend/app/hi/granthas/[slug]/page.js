@@ -6,9 +6,14 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import { Link } from '../../../../src/lib/router-compat';
 
 export async function generateStaticParams() {
-  // Generate pages on-demand (ISR/SSR) to save Vercel build time.
-  return [];
+  await ensureDataLoaded();
+  const books = getAllGranthas();
+  return books.map(book => ({
+    slug: encodeURIComponent(book.slug),
+  }));
 }
+
+export const dynamicParams = true;
 
 export async function generateMetadata({ params }) {
   await ensureDataLoaded();
@@ -121,4 +126,4 @@ export default async function HindiBookRoute({ params }) {
     </>
   );
 }
-export const revalidate = 86400;
+export const revalidate = 604800;
