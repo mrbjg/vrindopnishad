@@ -4559,3 +4559,20 @@ html:not(.dark) .bg-\[\#121216\]\/95 {
     background: var(--header-bg) !important;
     border-color: var(--glass-border) !important;
 }
+
+/* Custom Tooltips Visibility Fix */
+.absolute[class*="scale-0"] {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translate(var(--tw-translate-x, 0), var(--tw-translate-y, 0)) scale(0) !important;
+    transition: opacity 0.15s ease, visibility 0.15s ease, transform 0.15s ease !important;
+}
+
+.group:hover .absolute[class*="scale-0"],
+.group:hover .absolute[class*="group-hover:scale-100"],
+.group:focus-within .absolute[class*="scale-0"],
+.group:focus-within .absolute[class*="group-hover:scale-100"] {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translate(var(--tw-translate-x, 0), var(--tw-translate-y, 0)) scale(1) !important;
+}
