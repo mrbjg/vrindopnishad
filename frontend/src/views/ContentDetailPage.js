@@ -29,6 +29,7 @@ import { extractRelations, parseAuthorField, getNormalizedSaintSlug, getNormaliz
 import { GLOSSARY_TERMS } from '../utils/glossaryTerms';
 import { shareVerseCard } from '../utils/shareCard';
 import PageSkeleton from '../components/ui/PageSkeleton';
+import { splitVerseAndTranslation } from '../utils/textSplitter';
 
 const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelatedBook, initialRelatedRaga, initialRelatedVerses }) => {
   const params = useParams();
@@ -40,7 +41,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
   const { isDark } = useTheme();
   const sizeLevel = settings.fontSize || 2;
 
-  const [content, setContent] = useState(initialContent || (() => {
+  const [rawContent, setRawContent] = useState(initialContent || (() => {
     const sessionCached = apiService.getCachedData(`id_${id}`);
     if (sessionCached && !sessionCached.isLightweight) return sessionCached;
     try {
@@ -53,11 +54,21 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
           item.slug === id ||
           item.slug === decodedId) && !item.isLightweight
         );
-        if (matched) return matched;
+        return matched || null;
       }
     } catch (e) {}
     return null;
   }));
+
+  const content = React.useMemo(() => {
+    if (!rawContent) return null;
+    const { verse, translation } = splitVerseAndTranslation(rawContent.hindi_text);
+    return {
+      ...rawContent,
+      hindi_text: verse || rawContent.hindi_text,
+      english_translation: rawContent.english_translation || translation
+    };
+  }, [rawContent]);
   
   const [loading, setLoading] = useState(() => {
     if (initialContent) return false;
@@ -156,7 +167,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
     };
 
     if (initialContent) {
-      setContent(initialContent);
+      setRawContent(initialContent);
       setRelatedSaint(initialRelatedSaint || null);
       setRelatedBook(initialRelatedBook || null);
       setRelatedRaga(initialRelatedRaga || null);
@@ -185,7 +196,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
     };
 
     const cachedContent = getInitialContent();
-    setContent(cachedContent);
+    setRawContent(cachedContent);
     performConceptScan(cachedContent);
     setLoading(cachedContent === null);
 
@@ -194,7 +205,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
         const decodedId = decodeURIComponent(id);
         const data = await apiService.getContentById(decodedId);
         if (active) {
-          setContent(data);
+          setRawContent(data);
           performConceptScan(data);
           setLoading(false); // Render the main content on screen IMMEDIATELY
 

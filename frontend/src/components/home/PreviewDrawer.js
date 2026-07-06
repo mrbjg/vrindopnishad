@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 import { X, ChevronRight } from 'lucide-react';
 import AudioPlayButton from '../ui/AudioPlayButton';
 import { ApiContext } from '../../contexts/ClientProviders';
+import { splitVerseAndTranslation } from '../../utils/textSplitter';
 
 const PreviewDrawer = ({
   isHi,
-  selectedItem,
+  selectedItem: rawSelectedItem,
   previewType,
   closePreview,
   books,
@@ -15,6 +16,16 @@ const PreviewDrawer = ({
   const { apiService } = useContext(ApiContext);
   const [drawerTab, setDrawerTab] = useState('bio');
   const [resolvedVerses, setResolvedVerses] = useState([]);
+
+  const selectedItem = React.useMemo(() => {
+    if (!rawSelectedItem) return null;
+    const { verse, translation } = splitVerseAndTranslation(rawSelectedItem.hindi_text);
+    return {
+      ...rawSelectedItem,
+      hindi_text: verse || rawSelectedItem.hindi_text,
+      english_translation: rawSelectedItem.english_translation || translation
+    };
+  }, [rawSelectedItem]);
 
   useEffect(() => {
     setDrawerTab('bio');
