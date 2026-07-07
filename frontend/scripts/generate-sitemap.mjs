@@ -3,9 +3,7 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import glossaryTermsApi from '../api/glossaryTerms.js';
-const { GLOSSARY_TERMS } = glossaryTermsApi;
-
+import { GLOSSARY_TERMS } from '../api/glossaryTerms.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -142,6 +140,84 @@ const escapeXmlUrl = (url) => {
     .replace(/>/g, '&gt;');
 };
 
+function classifyItemCategory(item) {
+  if (!item) return 'poem';
+  const rawCat = (item.category || '').toLowerCase().trim();
+
+  if (rawCat === 'saint' || rawCat === 'dham') {
+    return rawCat;
+  }
+
+  if (rawCat === 'strotra' || rawCat === 'strotras' || rawCat === 'stotra' || rawCat === 'storas') {
+    return 'strotra';
+  }
+  if (rawCat === 'poem' || rawCat === 'poems' || rawCat === 'poetry') {
+    return 'poem';
+  }
+
+  const title = (item.title || '').toLowerCase();
+  const sanskrit = (item.sanskrit_text || '').toLowerCase();
+
+  if (
+    title.includes('स्तोत्र') || title.includes('strotra') || title.includes('stotra') ||
+    title.includes('शतक') || title.includes('shatak') ||
+    title.includes('अष्टक') || title.includes('ashtak') ||
+    title.includes('महिमामृत') || title.includes('mahimamrit') ||
+    title.includes('सुधानिधि') || title.includes('sudhanidhi') ||
+    title.includes('सहस्रनाम') || title.includes('sahasranam') ||
+    sanskrit.includes('स्तोत्र') || sanskrit.includes('strotra') || sanskrit.includes('stotra')
+  ) {
+    return 'strotra';
+  }
+
+  const hasSanskritText = sanskrit.trim().length > 10 &&
+    (sanskrit.includes('॥') || sanskrit.includes('।') || sanskrit.includes('ॐ') || !/[a-z]{5,}/.test(sanskrit));
+
+  const isScriptureBook = title.includes('gita') || title.includes('गीता') ||
+    title.includes('upnishad') || title.includes('उपनिषद') ||
+    title.includes('samhita') || title.includes('संहिता') ||
+    title.includes('purana') || title.includes('पुराण') ||
+    title.includes('shloka') || title.includes('श्लोक');
+
+  if (isScriptureBook || hasSanskritText || rawCat === 'shloka' || rawCat === 'shlokas') {
+    return 'shloka';
+  }
+
+  return 'poem';
+}
+
+function getNormalizedSaintSlug(name) {
+  if (!name) return '';
+  const clean = name.toLowerCase();
+  if (clean.includes('haridas') || clean.includes('हरिदास')) return 'swami-haridas';
+  if (clean.includes('harivansh') || clean.includes('हरिवंश')) return 'hit-harivansh';
+  if (clean.includes('vyas') || clean.includes('व्यास')) return 'hariram-vyas';
+  if (clean.includes('dhruv') || clean.includes('ध्रुव')) return 'dhruvdas';
+  if (clean.includes('premanand') || clean.includes('प्रेमानंद')) return 'premanand-ji-maharaj';
+  return slugify(transliterate(name));
+}
+
+function getNormalizedBookSlug(name) {
+  if (!name) return '';
+  const clean = name.toLowerCase();
+  if (
+    clean.includes('सुधानिधि') ||
+    clean.includes('sudhanidhi') ||
+    clean.includes('sudha-nidhi') ||
+    clean.includes('sudha_nidhi') ||
+    (clean.includes('सुधा') && clean.includes('निधि')) ||
+    (clean.includes('sudha') && clean.includes('nidhi'))
+  ) return 'radha-sudha-nidhi';
+  if (clean.includes('चौरासी') || clean.includes('चतुरासी') || clean.includes('chaurasi') || clean.includes('chaturasi')) return 'hit-chaurasi';
+  if (clean.includes('केलिमाल') || clean.includes('केलीमाल') || clean.includes('kelimal')) return 'kelimal';
+  if (clean.includes('सिद्धान्त के पद') || clean.includes('सिद्धांत के पद') || clean.includes('सिद्धान्त की पद') || clean.includes('siddhanta-pada') || clean.includes('siddhant-pada')) return 'siddhanta-pada';
+  if (clean.includes('बयालीस लीला') || clean.includes('ब्यालीस लीला') || clean.includes('bayalees') || clean.includes('byalees')) return 'bayalees-leela';
+  if (clean.includes('व्यास वाणी') || clean.includes('vyas-vani') || clean.includes('vyas vani')) return 'vyas-vani';
+  if (clean.includes('seva-kunj-texts') || clean.includes('seva-kunj') || clean.includes('सेवा कुंज') || clean.includes('सेवा कुञ्ज')) return 'seva-kunj-texts';
+  return slugify(transliterate(name));
+}
+
+
 
 function extractRelations(items) {
   if (!items || !items.length) {
@@ -158,10 +234,9 @@ function extractRelations(items) {
     if (item.category?.toLowerCase() === 'saint') {
       const title = item.title || '';
       const cleanName = title.replace(/\([^)]+\)/g, '').replace(/महाप्रभु/g, '').trim();
-      const transliteratedName = transliterate(cleanName);
       biographies.push({
         name: cleanName,
-        slug: item.slug || slugify(transliteratedName)
+        slug: item.slug || getNormalizedSaintSlug(cleanName)
       });
     }
   });
@@ -215,7 +290,7 @@ function extractRelations(items) {
 
     if (saintName) {
       const cleanSantKey = saintName.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim();
-      const santSlug = slugify(transliterate(cleanSantKey));
+      const santSlug = getNormalizedSaintSlug(cleanSantKey);
       if (!santsMap[cleanSantKey]) {
         const matchedBio = biographies.find(bio => bio.name.includes(cleanSantKey) || cleanSantKey.includes(bio.name));
         santsMap[cleanSantKey] = {
@@ -225,7 +300,7 @@ function extractRelations(items) {
     }
 
     if (bookName) {
-      const bookSlug = slugify(transliterate(bookName));
+      const bookSlug = getNormalizedBookSlug(bookName);
       if (!booksMap[bookName]) {
         booksMap[bookName] = { slug: bookSlug };
       }
@@ -250,7 +325,7 @@ const SEO_PAGES = [
   { path: '/', priority: '1.0', changefreq: 'daily' },
   { path: '/content', priority: '0.9', changefreq: 'daily' },
   { path: '/saints', priority: '0.9', changefreq: 'weekly' },
-  { path: '/books', priority: '0.9', changefreq: 'weekly' },
+  { path: '/granthas', priority: '0.9', changefreq: 'weekly' },
   { path: '/ragas', priority: '0.9', changefreq: 'weekly' },
   { path: '/what-is-vrindopnishad', priority: '0.9', changefreq: 'weekly' },
   { path: '/meaning', priority: '0.9', changefreq: 'weekly' },
@@ -439,24 +514,24 @@ async function generateSitemap() {
   const santUrls = sants.flatMap(s => {
     const escSlug = encodeURIComponent(decodeURIComponent(s.slug));
     return [
-      `  <url><loc>${DOMAIN}/saint/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`,
-      `  <url><loc>${DOMAIN}/hi/saint/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
+      `  <url><loc>${DOMAIN}/saints/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`,
+      `  <url><loc>${DOMAIN}/hi/saints/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
     ];
   }).join('\n');
 
   const bookUrls = books.flatMap(b => {
     const escSlug = encodeURIComponent(decodeURIComponent(b.slug));
     return [
-      `  <url><loc>${DOMAIN}/book/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`,
-      `  <url><loc>${DOMAIN}/hi/book/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
+      `  <url><loc>${DOMAIN}/granthas/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`,
+      `  <url><loc>${DOMAIN}/hi/granthas/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
     ];
   }).join('\n');
 
   const ragaUrls = ragas.flatMap(r => {
     const escSlug = encodeURIComponent(decodeURIComponent(r.slug));
     return [
-      `  <url><loc>${DOMAIN}/raga/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`,
-      `  <url><loc>${DOMAIN}/hi/raga/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
+      `  <url><loc>${DOMAIN}/ragas/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`,
+      `  <url><loc>${DOMAIN}/hi/ragas/${escSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
     ];
   }).join('\n');
 
@@ -471,6 +546,13 @@ async function generateSitemap() {
   const seenSlugs = new Set();
   const contentUrls = allContentItems
     .flatMap(item => {
+      const category = classifyItemCategory(item);
+      
+      // Filter out categories that are already in their own sitemap lists
+      if (category === 'saint') return [];
+      if (category === 'book' || category === 'granthas') return [];
+      if (category === 'raga' || category === 'ragas') return [];
+
       const rawSlug = item.slug || generateSlug(item.title);
       const slug = sanitizeSlug(rawSlug);
       if (!slug) return [];
@@ -480,8 +562,13 @@ async function generateSitemap() {
       seenSlugs.add(normalizedSlug);
       
       const encodedSlug = encodeURIComponent(decodeURIComponent(slug));
-      const defaultUrl = escapeXmlUrl(`${DOMAIN}/content/${encodedSlug}`);
-      const hiUrl = escapeXmlUrl(`${DOMAIN}/hi/content/${encodedSlug}`);
+      
+      // Route poems and lyrics to /lyrics/ instead of /content/ to prevent redirects
+      const isLyrics = category === 'poem' || category === 'lyrics';
+      const routePrefix = isLyrics ? 'lyrics' : 'content';
+      
+      const defaultUrl = escapeXmlUrl(`${DOMAIN}/${routePrefix}/${encodedSlug}`);
+      const hiUrl = escapeXmlUrl(`${DOMAIN}/hi/${routePrefix}/${encodedSlug}`);
       return [
         `  <url><loc>${defaultUrl}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`,
         `  <url><loc>${hiUrl}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`

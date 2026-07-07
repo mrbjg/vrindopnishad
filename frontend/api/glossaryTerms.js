@@ -239,4 +239,4 @@ const GLOSSARY_TERMS = [
   }
 ];
 
-module.exports = { GLOSSARY_TERMS };
+export { GLOSSARY_TERMS };
