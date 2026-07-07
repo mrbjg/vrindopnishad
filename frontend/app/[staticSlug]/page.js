@@ -34,6 +34,7 @@ import SourcesPage from '../../src/views/seo/SourcesPage';
 import ContactPage from '../../src/views/seo/ContactPage';
 import PrivacyPage from '../../src/views/seo/PrivacyPage';
 import TermsPage from '../../src/views/seo/TermsPage';
+import ReferencesPage from '../../src/views/seo/ReferencesPage';
 
 // Import new entity pages
 import ShriHitHarivansh from '../../src/views/seo/ShriHitHarivansh';
@@ -72,6 +73,7 @@ const componentMap = {
   'contact': ContactPage,
   'privacy': PrivacyPage,
   'terms': TermsPage,
+  'references': ReferencesPage,
   
   // New entity pages
   'shri-hit-harivansh-mahaprabhu': ShriHitHarivansh,

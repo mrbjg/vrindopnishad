@@ -30,6 +30,7 @@ import AboutPage from '../../../src/views/seo/AboutPage';
 import EditorialPolicyPage from '../../../src/views/seo/EditorialPolicyPage';
 import SourcesPage from '../../../src/views/seo/SourcesPage';
 import ContactPage from '../../../src/views/seo/ContactPage';
+import ReferencesPage from '../../../src/views/seo/ReferencesPage';
 
 const componentMap = {
   'what-is-vrindopnishad': WhatIsVrindopnishad,
@@ -56,7 +57,8 @@ const componentMap = {
   'about': AboutPage,
   'editorial-policy': EditorialPolicyPage,
   'sources': SourcesPage,
-  'contact': ContactPage
+  'contact': ContactPage,
+  'references': ReferencesPage
 };
 
 export async function generateStaticParams() {

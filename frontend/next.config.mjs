@@ -79,8 +79,28 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/content/:slug',
+        destination: '/lyrics/:slug',
+        permanent: true,
+      },
+      {
+        source: '/hi/content/:slug',
+        destination: '/hi/lyrics/:slug',
+        permanent: true,
+      },
+      {
+        source: '/content',
+        destination: '/lyrics',
+        permanent: true,
+      },
+      {
+        source: '/hi/content',
+        destination: '/hi/lyrics',
+        permanent: true,
+      },
+      {
         source: '/shlokas',
-        destination: '/content',
+        destination: '/lyrics',
         permanent: true,
       },
       {
@@ -90,7 +110,7 @@ const nextConfig = {
       },
       {
         source: '/hi/shlokas',
-        destination: '/hi/content',
+        destination: '/hi/lyrics',
         permanent: true,
       },
       {

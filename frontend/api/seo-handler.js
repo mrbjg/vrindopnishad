@@ -16,7 +16,7 @@ let globalCache = {
   timestamp: 0,
   promise: null
 };
-const CACHE_TTL = 300000; 
+const CACHE_TTL = 300000;
 
 
 const DevanagariToHinglishMap = {
@@ -53,18 +53,18 @@ function transliterate(text) {
   if (!text) return "";
   let result = "";
   const chars = Array.from(text);
-  
+
   for (let i = 0; i < chars.length; i++) {
     const char = chars[i];
     const nextChar = chars[i + 1] || "";
-    
+
     const nuqtaCombo = char + nextChar;
     if (DevanagariToHinglishMap[nuqtaCombo] !== undefined) {
       result += DevanagariToHinglishMap[nuqtaCombo];
       i++;
       continue;
     }
-    
+
     if (char === '्') {
       if (result.endsWith('a')) {
         result = result.substring(0, result.length - 1);
@@ -75,15 +75,15 @@ function transliterate(text) {
     const mapped = DevanagariToHinglishMap[char];
     if (mapped !== undefined) {
       result += mapped;
-      
+
       if (Consonants.has(char)) {
         const nextHasMatra = Matras.has(nextChar);
         const nextIsHalant = nextChar === '्';
-        const nextIsWordBoundary = nextChar === ' ' || nextChar === '\n' || nextChar === '\t' || 
-                                   nextChar === '।' || nextChar === '॥' || nextChar === ',' || 
-                                   nextChar === '.' || nextChar === '?' || nextChar === '!' || 
-                                   nextChar === '"' || nextChar === '\'' || nextChar === "";
-        
+        const nextIsWordBoundary = nextChar === ' ' || nextChar === '\n' || nextChar === '\t' ||
+          nextChar === '।' || nextChar === '॥' || nextChar === ',' ||
+          nextChar === '.' || nextChar === '?' || nextChar === '!' ||
+          nextChar === '"' || nextChar === '\'' || nextChar === "";
+
         if (nextHasMatra || nextIsHalant || nextIsWordBoundary) {
           if (result.endsWith('a')) {
             result = result.substring(0, result.length - 1);
@@ -192,7 +192,7 @@ function extractRelations(items) {
       const verseMatch = relationText.match(/\(([^)]+)\)$/);
       const textWithoutVerse = verseMatch ? relationText.replace(/\(([^)]+)\)$/, '').trim() : relationText;
       const relParts = textWithoutVerse.split(/\s*,\s*/);
-      
+
       if (relParts.length >= 2) {
         saintName = relParts[0].trim();
         bookName = relParts[1].trim();
@@ -216,7 +216,7 @@ function extractRelations(items) {
     const matchTitle = title.match(ragaRegex);
     const matchSanskrit = item.sanskrit_text?.match(ragaRegex);
     const matchHindi = item.hindi_text?.match(ragaRegex);
-    
+
     if (matchTitle) ragaName = matchTitle[1];
     else if (matchSanskrit) ragaName = matchSanskrit[1];
     else if (matchHindi) ragaName = matchHindi[1];
@@ -659,7 +659,7 @@ export default async function handler(req, res) {
     { question: "क्या मैं श्लोकों का उच्चारण सुन सकता हूँ?", answer: "हाँ, इस मंच पर अधिकांश श्लोकों और पदों के साथ ऑडियो उच्चारण/गायन दिया गया है, जिससे आप पारंपरिक रागों में इनके पाठ को सुन सकते हैं।" }
   ];
 
-  
+
   let allContentItems = [];
   try {
     const now = Date.now();
@@ -667,14 +667,14 @@ export default async function handler(req, res) {
       allContentItems = globalCache.items;
       console.log('⚡ Serving content index from serverless cache (size:', allContentItems.length, ')');
     } else {
-      
+
       if (!globalCache.promise) {
         globalCache.promise = (async () => {
           let fetchedItems = [];
           const PAGE_SIZE = 1000;
           let offset = 0;
           let hasMore = true;
-          
+
           while (hasMore) {
             const response = await fetch(
               `${SUPABASE_URL}/rest/v1/content?select=id,title,slug,category,author,hindi_text,sanskrit_text,image_url&order=id&offset=${offset}&limit=${PAGE_SIZE}`,
@@ -683,11 +683,11 @@ export default async function handler(req, res) {
                   'apikey': SUPABASE_KEY,
                   'Authorization': `Bearer ${SUPABASE_KEY}`
                 },
-                timeout: 10000 
+                timeout: 10000
               }
             );
             const items = await response.json();
-            
+
             if (Array.isArray(items) && items.length > 0) {
               fetchedItems = fetchedItems.concat(items);
               offset += PAGE_SIZE;
@@ -706,7 +706,7 @@ export default async function handler(req, res) {
         globalCache.timestamp = Date.now();
       } catch (fetchError) {
         console.error('Supabase fetch query failed:', fetchError.message);
-        
+
         if (globalCache.items) {
           allContentItems = globalCache.items;
           console.warn('⚠️ Stale cache used as fallback after Supabase fetch failed');
@@ -719,11 +719,11 @@ export default async function handler(req, res) {
     }
   } catch (e) {
     console.error('Supabase fetch failed, trying local backups fallback:', e.message);
-    
+
     try {
       let localFilePath = path.join(process.cwd(), 'data/brajrasik_hi_full.json');
       let localSaintsPath = path.join(process.cwd(), 'data/saints_formatted.json');
-      
+
       if (!fs.existsSync(localFilePath)) {
         localFilePath = path.join(process.cwd(), 'frontend/data/brajrasik_hi_full.json');
         localSaintsPath = path.join(process.cwd(), 'frontend/data/saints_formatted.json');
@@ -732,24 +732,24 @@ export default async function handler(req, res) {
         localFilePath = path.join(process.cwd(), 'admin/data/brajrasik_hi_full.json');
         localSaintsPath = path.join(process.cwd(), 'admin/data/saints_formatted.json');
       }
-      
+
       let backupItems = [];
       if (fs.existsSync(localFilePath)) {
         const fileContent = fs.readFileSync(localFilePath, 'utf8');
         const localData = JSON.parse(fileContent);
         console.log(`📦 Loaded ${localData.length} items from local backup.`);
-        
+
         const sanitizedData = localData.map((item, index) => ({
           id: item.id || `local-${index}`,
           ...item
         }));
         backupItems = backupItems.concat(sanitizedData);
       }
-      
+
       if (fs.existsSync(localSaintsPath)) {
         const saintsContent = fs.readFileSync(localSaintsPath, 'utf8');
         const localSaints = JSON.parse(saintsContent);
-        
+
         const formattedSaints = localSaints.map((s, index) => ({
           id: s.id || `local-saint-${index}`,
           ...s,
@@ -757,9 +757,9 @@ export default async function handler(req, res) {
         }));
         backupItems = backupItems.concat(formattedSaints);
       }
-      
+
       allContentItems = backupItems;
-      
+
       globalCache.items = allContentItems;
       globalCache.timestamp = Date.now() - CACHE_TTL + 30000;
     } catch (fallbackError) {
@@ -767,17 +767,21 @@ export default async function handler(req, res) {
     }
   }
 
-  
   const { sants, books, ragas } = extractRelations(allContentItems);
 
-  
-  const getRouteLink = (path) => {
-    return DOMAIN + (isHindiRoute ? '/hi' : '') + path;
+  const getRouteLink = (pathStr) => {
+    let normalized = pathStr;
+    if (normalized === '/books') normalized = '/granthas';
+    else if (normalized === '/content') normalized = '/lyrics';
+    else if (normalized.startsWith('/book/')) normalized = normalized.replace('/book/', '/granthas/');
+    else if (normalized.startsWith('/saint/')) normalized = normalized.replace('/saint/', '/saints/');
+    else if (normalized.startsWith('/raga/')) normalized = normalized.replace('/raga/', '/ragas/');
+    else if (normalized.startsWith('/content/')) normalized = normalized.replace('/content/', '/lyrics/');
+    return DOMAIN + (isHindiRoute ? '/hi' : '') + normalized;
   };
 
-  
   if (type === 'content' && slug) {
-    
+
     const decodedSlug = decodeURIComponent(slug);
     const transliteratedSlug = slugify(transliterate(decodedSlug));
     const lowerSlug = decodedSlug.toLowerCase();
@@ -789,17 +793,16 @@ export default async function handler(req, res) {
       if (transliteratedSlug && s === transliteratedSlug) return true;
       if (transliteratedSlug && s.toLowerCase() === transliteratedSlug) return true;
       if (item.id?.toString() === decodedSlug) return true;
-      
-      
+
       const genSlug = generateSlug(item.title);
       if (genSlug && genSlug === decodedSlug) return true;
       if (genSlug && genSlug.toLowerCase() === decodedSlug.toLowerCase()) return true;
       if (genSlug && transliteratedSlug && genSlug === transliteratedSlug) return true;
       return false;
     });
-    
+
     if (content) {
-      
+
       let fullContent = content;
       try {
         const detailResponse = await fetch(
@@ -833,7 +836,7 @@ export default async function handler(req, res) {
         const bracketContent = bracketMatch ? bracketMatch[1].trim() : "";
         const cleanRelText = bracketMatch ? relText.replace(/\(([^)]+)\)$/, '').trim() : relText;
         const relSplit = cleanRelText.split(/\s*,\s*/);
-        
+
         if (relSplit.length >= 2) {
           parsedSaint = relSplit[0].trim();
           parsedGranth = relSplit[1].trim();
@@ -845,7 +848,7 @@ export default async function handler(req, res) {
             parsedSaint = val;
           }
         }
-        
+
         if (!parsedGranth && bracketContent) {
           parsedGranth = bracketContent.replace(/\d+/g, '').replace(/[१२३४५६७८९०]+/g, '').trim();
         }
@@ -856,10 +859,10 @@ export default async function handler(req, res) {
       if (!parsedSaint) {
         parsedSaint = fullContent.author && fullContent.author !== 'Braj Rasik Heritage' ? fullContent.author : '';
       }
-      
+
       const cleanSaint = parsedSaint ? parsedSaint.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim() : (isHindiRoute ? 'वैष्णव संत' : 'Vaishnava Saint');
       const cleanGranth = parsedGranth ? parsedGranth.trim() : (isHindiRoute ? 'वृंदोपनिषद् ग्रन्थ' : 'Vrindopnishad Granth');
-      
+
       let formattedPad = padName;
       if (!isHindiRoute) {
         formattedPad = formattedPad
@@ -877,7 +880,7 @@ export default async function handler(req, res) {
       description = isHindiRoute
         ? `${cleanSaint} द्वारा रचित ${fullContent.title} (ग्रन्थ: ${cleanGranth})। हिन्दी, संस्कृत, ब्रजभाषा और अंग्रेजी रोमन अनुवाद (with meaning, commentary) में बिल्कुल निःशुल्क (completely free) पढ़ें।`
         : `Read and explore ${fullContent.title} by ${cleanSaint} from the grantha ${cleanGranth}. Completely free online access with meaning, translation, and commentary. Available in Hindi, Sanskrit, Braj Bhasha, and English transliteration (with meaning, complete collection).`;
-      
+
       pageUrl = getRouteLink(`/content/${canonicalSlug}`);
 
       if (fullContent.image_url) {
@@ -937,16 +940,16 @@ export default async function handler(req, res) {
             "headline": fullContent.title,
             "description": description,
             "image": ogImageUrl,
-            "author": { 
-              "@type": "Person", 
-              "name": cleanSaint 
+            "author": {
+              "@type": "Person",
+              "name": cleanSaint
             },
             "publisher": {
               "@type": "Organization",
               "name": "Vrindopnishad",
-              "logo": { 
-                "@type": "ImageObject", 
-                "url": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png" 
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png"
               }
             },
             "mainEntityOfPage": { "@type": "WebPage", "@id": pageUrl },
@@ -981,7 +984,7 @@ export default async function handler(req, res) {
           if (currentIndex !== -1) {
             const prevVerse = sortedVerses[currentIndex - 1];
             const nextVerse = sortedVerses[currentIndex + 1];
-            
+
             prevNextHtml = `
               <div style="display: flex; justify-content: space-between; align-items: center; margin: 35px 0; padding: 15px 0; border-top: 1px solid #eae6df; border-bottom: 1px solid #eae6df; font-family: sans-serif; font-size: 0.9rem;">
                 ${prevVerse ? `<a href="${getRouteLink(`/content/${prevVerse.slug || prevVerse.id}`)}" style="color: #f2a60d; text-decoration: none; font-weight: 500;">&larr; ${escapeHtml(prevVerse.title)}</a>` : '<span style="color: #a8a29e;">&larr; Beginning</span>'}
@@ -1016,7 +1019,7 @@ export default async function handler(req, res) {
           // Build dynamic semantic cross-links
           const links = [];
           const authorName = fullContent.author && fullContent.author !== 'Braj Rasik Heritage' ? fullContent.author : null;
-          
+
           // Link to the saint who composed this verse
           if (authorName) {
             const cleanAuthor = authorName.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim();
@@ -1026,7 +1029,7 @@ export default async function handler(req, res) {
               links.push(`<li><a href="${getRouteLink(`/saint/${matchedSant.slug}`)}">${isHindiRoute ? `${escapeHtml(cleanAuthor)} — जीवनी एवं वाणी संग्रह` : `${escapeHtml(cleanAuthor)} — Biography & Complete Works`}</a></li>`);
             }
           }
-          
+
           // Link to the book/grantha this verse belongs to
           const titleParts = (fullContent.title || '').split(/\s+-\s+/);
           if (titleParts.length >= 2) {
@@ -1041,13 +1044,13 @@ export default async function handler(req, res) {
               }
             }
           }
-          
+
           // Link to the category page
           if (fullContent.category) {
             const catSlug = fullContent.category.toLowerCase().trim().replace(/\s+/g, '-');
             links.push(`<li><a href="${getRouteLink(`/category/${catSlug}`)}">${isHindiRoute ? `श्रेणी: ${escapeHtml(fullContent.category)}` : `Category: ${escapeHtml(fullContent.category)}`}</a></li>`);
           }
-          
+
           // Link to 3 related verses from the same author
           if (authorName) {
             const relatedVerses = allContentItems
@@ -1059,7 +1062,7 @@ export default async function handler(req, res) {
               });
             }
           }
-          
+
           if (links.length > 0) {
             return `<nav aria-label="Related" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eae6df;">
               <h2>${isHindiRoute ? 'संबंधित पाठ' : 'Related'}</h2>
@@ -1070,55 +1073,55 @@ export default async function handler(req, res) {
         })()}
       `;
     } else {
-      
+
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.status(404).send(`<!doctype html><html lang="hi"><head><meta charset="utf-8"/><title>Content Not Found — Vrindopnishad</title><meta name="robots" content="noindex"/></head><body style="font-family:sans-serif;text-align:center;padding:60px 20px;"><h1>404 — Content Not Found</h1><p>The requested verse could not be located.</p><p><a href="${DOMAIN}/content">Browse All Sacred Content →</a></p></body></html>`);
+      res.status(404).send(`<!doctype html><html lang="hi"><head><meta charset="utf-8"/><title>Content Not Found — Vrindopnishad</title><meta name="robots" content="noindex"/></head><body style="font-family:sans-serif;text-align:center;padding:60px 20px;"><h1>404 — Content Not Found</h1><p>The requested verse could not be located.</p><p><a href="${DOMAIN}/lyrics">Browse All Sacred Content →</a></p></body></html>`);
       return;
     }
 
   } else if (type === 'saint' && slug) {
-    
+
     const decodedSlug = decodeURIComponent(slug);
     const transliteratedSlug = slugify(transliterate(decodedSlug));
     const lowerSlug = decodedSlug.toLowerCase();
     const sant = sants.find(s => {
       const sSlug = s.slug || '';
       return sSlug === decodedSlug ||
-             sSlug.toLowerCase() === lowerSlug ||
-             (transliteratedSlug && sSlug === transliteratedSlug) ||
-             (transliteratedSlug && sSlug.toLowerCase() === transliteratedSlug) ||
-             (s.name && slugify(transliterate(s.name)) === transliteratedSlug);
+        sSlug.toLowerCase() === lowerSlug ||
+        (transliteratedSlug && sSlug === transliteratedSlug) ||
+        (transliteratedSlug && sSlug.toLowerCase() === transliteratedSlug) ||
+        (s.name && slugify(transliterate(s.name)) === transliteratedSlug);
     });
 
     if (sant) {
       const santName = sant.name;
       const santHinglish = sant.hinglishName || sant.name;
-      
-      
+
+
       const meta = getSaintMetadata(sant.slug || slug);
 
-      const lineage = meta 
+      const lineage = meta
         ? (isHindiRoute ? meta.lineageHi : meta.lineageEn)
         : (isHindiRoute ? "वैष्णव संप्रदाय" : "Vaishnava Tradition");
-      
-      const timeline = meta 
+
+      const timeline = meta
         ? (isHindiRoute ? meta.timelineHi : meta.timelineEn)
         : (isHindiRoute ? "मध्यकालीन काल" : "Medieval Era");
 
-      const places = meta 
+      const places = meta
         ? (isHindiRoute ? meta.associatedPlacesHi : meta.associatedPlacesEn)
         : (isHindiRoute ? "वृंदावन धाम" : "Vrindavan Dham");
 
-      const bioText = meta 
+      const bioText = meta
         ? (isHindiRoute ? meta.biographyHi : meta.biographyEn)
         : (sant.biography?.text || (isHindiRoute ? "ब्रज परंपरा के वैष्णव संत।" : "Vaishnava saint of the Braj tradition."));
 
       title = `${santName} — [भजन/वाणियाँ] | Vrindopnishad`;
-        
+
       description = isHindiRoute
         ? `महान रसिक संत ${santName} (परंपरा: ${lineage}, काल: ${timeline}) का जीवन चरित्र, इतिहास, ग्रन्थ और वाणी संग्रह। हिन्दी, संस्कृत, ब्रजभाषा और अंग्रेजी रोमन अनुवाद (with meaning) में बिल्कुल निःशुल्क (completely free) उपलब्ध।`
         : `Explore the biography of ${santHinglish} (Lineage: ${lineage}, Era: ${timeline}), including spiritual teachings and complete verses. Available in Hindi, Sanskrit, Braj Bhasha, and English transliteration. Completely free online with meaning, biography, and complete collection.`;
-      
+
       pageUrl = getRouteLink(`/saint/${encodeURIComponent(sant.slug || slug)}`);
 
       if (sant.imageUrl) {
@@ -1279,18 +1282,18 @@ export default async function handler(req, res) {
     }
 
   } else if (type === 'glossary' && slug) {
-    
+
     const decodedSlug = decodeURIComponent(slug).toLowerCase();
     const termData = GLOSSARY_TERMS.find(t => t.slug === decodedSlug);
 
     if (termData) {
-      title = isHindiRoute 
+      title = isHindiRoute
         ? `${termData.term} (${termData.devanagari}) का अर्थ, परिभाषा और आध्यात्मिक संदर्भ | वृंदोपनिषद्`
         : `${termData.term} Meaning, Definition & Theological Context | Vrindopnishad`;
       description = isHindiRoute
         ? `${termData.term} (${termData.devanagari}) क्या है? जानिए इसका संस्कृत अर्थ, परिभाषा और रसिक संतों के विचार।`
         : `Explore the definition, Sanskrit meaning, etymology, and deep theological context of ${termData.term} (${termData.devanagari}) in Braj Ras.`;
-      
+
       pageUrl = getRouteLink(`/glossary/${termData.slug}`);
 
       jsonLd = JSON.stringify({
@@ -1382,17 +1385,17 @@ export default async function handler(req, res) {
     }
 
   } else if (type === 'book' && slug) {
-    
+
     const decodedSlug = decodeURIComponent(slug);
     const transliteratedSlug = slugify(transliterate(decodedSlug));
     const lowerSlug = decodedSlug.toLowerCase();
     const book = books.find(b => {
       const bSlug = b.slug || '';
       return bSlug === decodedSlug ||
-             bSlug.toLowerCase() === lowerSlug ||
-             (transliteratedSlug && bSlug === transliteratedSlug) ||
-             (transliteratedSlug && bSlug.toLowerCase() === transliteratedSlug) ||
-             (b.name && slugify(transliterate(b.name)) === transliteratedSlug);
+        bSlug.toLowerCase() === lowerSlug ||
+        (transliteratedSlug && bSlug === transliteratedSlug) ||
+        (transliteratedSlug && bSlug.toLowerCase() === transliteratedSlug) ||
+        (b.name && slugify(transliterate(b.name)) === transliteratedSlug);
     });
 
     if (book) {
@@ -1402,7 +1405,7 @@ export default async function handler(req, res) {
       description = isHindiRoute
         ? `वैष्णव संत ${book.author} द्वारा रचित पवित्र ग्रन्थ ${book.name} के सभी पद, मूल संस्कृत श्लोक, हिंदी अनुवाद और व्याख्या।`
         : `Read, chant, and explore the sacred verses of ${book.name} grantha composed by ${book.author}, with detailed translations and spiritual insights.`;
-      
+
       pageUrl = getRouteLink(`/book/${encodeURIComponent(book.slug || slug)}`);
 
       if (book.imageUrl) {
@@ -1482,22 +1485,22 @@ export default async function handler(req, res) {
       `;
     } else {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.status(404).send(`<!doctype html><html lang="hi"><head><meta charset="utf-8"/><title>Book Not Found — Vrindopnishad</title><meta name="robots" content="noindex"/></head><body style="font-family:sans-serif;text-align:center;padding:60px 20px;"><h1>404 — Book Not Found</h1><p><a href="${DOMAIN}/books">Browse All Books →</a></p></body></html>`);
+      res.status(404).send(`<!doctype html><html lang="hi"><head><meta charset="utf-8"/><title>Book Not Found — Vrindopnishad</title><meta name="robots" content="noindex"/></head><body style="font-family:sans-serif;text-align:center;padding:60px 20px;"><h1>404 — Book Not Found</h1><p><a href="${DOMAIN}/granthas">Browse All Books →</a></p></body></html>`);
       return;
     }
 
   } else if (type === 'raga' && slug) {
-    
+
     const decodedSlug = decodeURIComponent(slug);
     const transliteratedSlug = slugify(transliterate(decodedSlug));
     const lowerSlug = decodedSlug.toLowerCase();
     const raga = ragas.find(r => {
       const rSlug = r.slug || '';
       return rSlug === decodedSlug ||
-             rSlug.toLowerCase() === lowerSlug ||
-             (transliteratedSlug && rSlug === transliteratedSlug) ||
-             (transliteratedSlug && rSlug.toLowerCase() === transliteratedSlug) ||
-             (r.name && slugify(transliterate(r.name)) === transliteratedSlug);
+        rSlug.toLowerCase() === lowerSlug ||
+        (transliteratedSlug && rSlug === transliteratedSlug) ||
+        (transliteratedSlug && rSlug.toLowerCase() === transliteratedSlug) ||
+        (r.name && slugify(transliterate(r.name)) === transliteratedSlug);
     });
 
     if (raga) {
@@ -1507,7 +1510,7 @@ export default async function handler(req, res) {
       description = isHindiRoute
         ? `शास्त्रीय संगीत के राग ${raga.name} में निबद्ध सभी वैष्णव भजन, पद और संकीर्तन पाठ। मूल स्वर और भावार्थ के साथ पढ़ें।`
         : `Browse and read the collection of devotional verses, bhajans, and temple kirtans composed in the traditional classical melody of Raga ${raga.hinglishName || raga.name}.`;
-      
+
       pageUrl = getRouteLink(`/raga/${encodeURIComponent(raga.slug || slug)}`);
 
       if (raga.imageUrl) {
@@ -1574,7 +1577,7 @@ export default async function handler(req, res) {
     }
 
   } else if (type === 'category' && slug) {
-    
+
     const decodedSlug = decodeURIComponent(slug).toLowerCase().trim().replace(/\s+/g, '-');
     const filteredVerses = allContentItems.filter(item => item.category?.toLowerCase().trim().replace(/\s+/g, '-') === decodedSlug);
     const categoryTitle = decodedSlug.charAt(0).toUpperCase() + decodedSlug.slice(1);
@@ -1709,7 +1712,7 @@ export default async function handler(req, res) {
       }
     } else {
       let listName = "";
-      
+
       if (decodedSlug === 'search') {
         title = isHindiRoute ? `खोज (Search) — वृंदोपनिषद् लाइब्रेरी` : `Search Sacred Verses & Saints | Vrindopnishad`;
         description = isHindiRoute
@@ -1717,7 +1720,7 @@ export default async function handler(req, res) {
           : `Search the complete archive of Vrindavan saint biographies, sacred verses, shlokas, and granthas on Vrindopnishad.`;
         pageUrl = getRouteLink('/search');
         listName = isHindiRoute ? "खोज" : "Search";
-        
+
         const popularTags = [
           { name: 'राधा', query: 'राधा' },
           { name: 'कृष्ण', query: 'कृष्ण' },
@@ -1844,11 +1847,11 @@ export default async function handler(req, res) {
           const lowerQuery = searchQuery.toLowerCase();
           const filtered = allContentItems.filter(item => {
             return (item.title && item.title.toLowerCase().includes(lowerQuery)) ||
-                   (item.author && item.author.toLowerCase().includes(lowerQuery)) ||
-                   (item.hindi_text && item.hindi_text.toLowerCase().includes(lowerQuery)) ||
-                   (item.sanskrit_text && item.sanskrit_text.toLowerCase().includes(lowerQuery));
+              (item.author && item.author.toLowerCase().includes(lowerQuery)) ||
+              (item.hindi_text && item.hindi_text.toLowerCase().includes(lowerQuery)) ||
+              (item.sanskrit_text && item.sanskrit_text.toLowerCase().includes(lowerQuery));
           });
-          
+
           title = isHindiRoute
             ? `खोज परिणाम: "${escapeHtml(searchQuery)}" | वृंदोपनिषद्`
             : `Search Results for "${escapeHtml(searchQuery)}" | Vrindopnishad`;
@@ -1952,7 +1955,7 @@ export default async function handler(req, res) {
     }
 
   } else {
-    
+
     pageUrl = getRouteLink('/');
     title = isHindiRoute ? `वृंदोपनिषद् पाठ | श्लोक, स्तोत्र, और आध्यात्मिक कविता संग्रह` : `Vrindopnishad Paath — वृंदोपनिषद् पाठ | Sacred Shlokas, Strotras & Devotional Poetry`;
     description = `Vrindopnishad Paath (वृंदोपनिषद् पाठ) — Read and listen to sacred Sanskrit shlokas, strotras, devotional poetry and Vedic wisdom from Vrindavan saints. Free online paath in Hindi, Sanskrit and English. भगवद्गीता, मंत्र, श्लोक, स्तोत्र सब यहाँ पढ़ें।`;
@@ -2031,14 +2034,14 @@ export default async function handler(req, res) {
     `;
   }
 
-  
+
   const currentPath = pageUrl.replace(DOMAIN, '');
   const isHi = currentPath.startsWith('/hi');
   const cleanPath = isHi ? (currentPath.replace(/^\/hi/, '') || '/') : currentPath;
   const enUrl = DOMAIN + cleanPath;
   const hiUrl = DOMAIN + '/hi' + (cleanPath === '/' ? '' : cleanPath);
 
-  
+
   let html = `<!doctype html>
 <html lang="hi" dir="ltr">
 <head>
@@ -2095,11 +2098,11 @@ export default async function handler(req, res) {
     }
     if (fs.existsSync(indexPath)) {
       let indexHtml = fs.readFileSync(indexPath, 'utf8');
-      
+
       // Replace title and description
       indexHtml = indexHtml.replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`);
       indexHtml = indexHtml.replace(/<meta name="description" content="[^"]*"\s*\/?>/, `<meta name="description" content="${description}"/>`);
-      
+
       // Add extra tags in head
       const extraHead = `
   <link rel="canonical" href="${pageUrl}"/>
@@ -2126,7 +2129,7 @@ export default async function handler(req, res) {
   <meta name="robots" content="index, follow"/>
 `;
       indexHtml = indexHtml.replace('</head>', `${extraHead}</head>`);
-      
+
       // Replace noscript
       const newNoscript = `<noscript>
   <div style="max-width: 800px; margin: 0 auto; background: #ffffff; padding: 30px 40px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #eae6df; font-family: sans-serif; line-height: 1.6;">
@@ -2142,7 +2145,7 @@ export default async function handler(req, res) {
   </div>
 </noscript>`;
       indexHtml = indexHtml.replace(/<noscript>[\s\S]*?<\/noscript>/, newNoscript);
-      
+
       html = indexHtml;
     }
   } catch (err) {
