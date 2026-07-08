@@ -1,5 +1,5 @@
 
-import { readFileSync } from 'fs';
+import fs, { readFileSync } from 'fs';
 import { join } from 'path';
 
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || 'https://tilimltxgeucefxzerqi.supabase.co';
@@ -61,7 +61,7 @@ export default async function handler(req, res) {
 
   if (!content) {
     try {
-      const fs = require('fs');
+
       const decodedSlug = decodeURIComponent(slug).toLowerCase();
       let localFilePath = join(process.cwd(), 'data/brajrasik_hi_full.json');
 

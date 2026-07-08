@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+
 const HF_MODEL = 'sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2';
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || 'https://tilimltxgeucefxzerqi.supabase.co';
 const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
@@ -47,8 +50,7 @@ async function fetchContent() {
     throw new Error(`Supabase error status: ${res.status}`);
   } catch (err) {
     console.warn('Supabase fetch failed in semantic search, loading from local backups...', err.message);
-    const fs = require('fs');
-    const path = require('path');
+
 
     let localFilePath = path.join(process.cwd(), 'data/brajrasik_hi_full.json');
     if (!fs.existsSync(localFilePath)) {

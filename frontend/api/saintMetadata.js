@@ -241,7 +241,7 @@ const getSaintMetadata = (slug) => {
   return null;
 };
 
-module.exports = {
+export {
   SAINT_METADATA,
   getSaintMetadata
 };

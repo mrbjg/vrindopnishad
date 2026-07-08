@@ -1,5 +1,8 @@
 
 
+import fs from 'fs';
+import path from 'path';
+
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || 'https://tilimltxgeucefxzerqi.supabase.co';
 const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpbGltbHR4Z2V1Y2VmeHplcnFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2MjQyNTQsImV4cCI6MjA4MzIwMDI1NH0.lwaCJyTRW6jNsfQJ32R_wAwp11yj6bvsJ4fzC0EX_00';
 const DOMAIN = 'https://path.vrindopnishad.in';
@@ -383,8 +386,7 @@ export default async function handler(req, res) {
   if (contentItems.length === 0) {
     console.log('⚠️ Both database fetches failed (offline/sandboxed). Loading from local backups...');
     try {
-      const fs = require('fs');
-      const path = require('path');
+
       let localFilePath = path.join(process.cwd(), 'data/brajrasik_hi_full.json');
       let localSaintsPath = path.join(process.cwd(), 'data/saints_formatted.json');
       
