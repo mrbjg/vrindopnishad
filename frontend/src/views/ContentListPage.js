@@ -183,7 +183,7 @@ const ContentListPage = ({ initialContent, initialCategories }) => {
         <title>{selectedCategory ? `${selectedCategory}s — Sacred ${selectedCategory} Collection` : 'All Sacred Verses, Shlokas, Strotras & Poetry'} | Vrindopnishad</title>
         <meta name="description" content={`Browse ${filteredContent.length}+ ${selectedCategory || 'sacred shlokas, strotras, poems, and devotional hymns'} in Hindi, Sanskrit & English. The largest curated spiritual repository from Vrindavan saints at Vrindopnishad.`} />
         <meta name="keywords" content={`${selectedCategory || 'shlokas, strotras, poems'}, Sanskrit verses, Hindi mantras, spiritual collection, Vrindopnishad, Sant Vaani, devotional content`} />
-        <link rel="canonical" href={`https://path.vrindopnishad.in/content${selectedCategory ? `?category=${selectedCategory}` : ''}`} />
+        <link rel="canonical" href={`https://path.vrindopnishad.in${isHindiRoute ? '/hi/lyrics' : '/lyrics'}${selectedCategory ? `?category=${selectedCategory}` : ''}`} />
 
         <script type="application/ld+json">
           {JSON.stringify({
@@ -191,7 +191,7 @@ const ContentListPage = ({ initialContent, initialCategories }) => {
             "@type": "CollectionPage",
             "name": `${selectedCategory ? `${selectedCategory}s Collection` : 'Sacred Spiritual Repository'} — Vrindopnishad`,
             "description": `Browse ${filteredContent.length}+ ${selectedCategory || 'sacred spiritual texts'} — shlokas, strotras, and devotional poetry in Hindi, Sanskrit & English.`,
-            "url": `https://path.vrindopnishad.in/content${selectedCategory ? `?category=${selectedCategory}` : ''}`,
+            "url": `https://path.vrindopnishad.in${isHindiRoute ? '/hi/lyrics' : '/lyrics'}${selectedCategory ? `?category=${selectedCategory}` : ''}`,
             "inLanguage": ["hi", "en", "sa"],
             "numberOfItems": filteredContent.length,
             "publisher": {
@@ -274,7 +274,7 @@ const ContentListPage = ({ initialContent, initialCategories }) => {
             const colors = getCategoryColorClasses(item.category);
             return (
               <Link 
-                to={isHindiRoute ? `/hi/content/${item.slug || item.id}` : `/content/${item.slug || item.id}`} 
+                to={isHindiRoute ? `/hi/lyrics/${item.slug || item.id}` : `/lyrics/${item.slug || item.id}`} 
                 key={`${item.slug || item.id || 'item'}-${index}`} 
                 className={`glass-card group flex flex-col justify-between transition-all duration-500 border border-[var(--glass-border)] ${colors.hover} hover:shadow-2xl`}
               >
@@ -359,7 +359,7 @@ const ContentListPage = ({ initialContent, initialCategories }) => {
               {aiResults.map((item, i) => (
                 <Link
                   key={item.id || item.slug || `${item.title || 'ai'}-${i}`}
-                  to={isHindiRoute ? `/hi/content/${item.slug || item.id}` : `/content/${item.slug || item.id}`}
+                  to={isHindiRoute ? `/hi/lyrics/${item.slug || item.id}` : `/lyrics/${item.slug || item.id}`}
                   className="glass-card group hover:border-purple-400/30 transition-all duration-300 relative overflow-hidden"
                 >
                   <div className="absolute top-0 right-0 px-3 py-1 bg-purple-500/10 rounded-bl-xl">

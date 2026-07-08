@@ -10,7 +10,7 @@ const SEOFooter = () => {
         <div>
           <h3 className="text-[10px] font-bold uppercase tracking-widest text-amber-500/80 mb-3">Primary Hubs (English)</h3>
           <div className="flex flex-wrap gap-x-4 gap-y-2">
-            <Link to="/content" className="text-xs text-white/50 hover:text-primary transition-colors font-medium">Shlokas &amp; Verses</Link>
+            <Link to="/lyrics" className="text-xs text-white/50 hover:text-primary transition-colors font-medium">Shlokas &amp; Verses</Link>
             <Link to="/saints" className="text-xs text-white/50 hover:text-primary transition-colors font-medium">Rasik Saints</Link>
             <Link to="/ragas" className="text-xs text-white/50 hover:text-primary transition-colors font-medium">Classical Ragas</Link>
             <Link to="/places" className="text-xs text-white/50 hover:text-primary transition-colors font-medium">Braj Pilgrimage</Link>
@@ -20,7 +20,7 @@ const SEOFooter = () => {
         <div>
           <h3 className="text-[10px] font-bold uppercase tracking-widest text-amber-500/80 mb-3">मुख्य अनुक्रमणिका (हिन्दी)</h3>
           <div className="flex flex-wrap gap-x-4 gap-y-2">
-            <Link to="/hi/content" className="text-xs text-white/50 hover:text-primary transition-colors font-medium">पवित्र श्लोक और पद</Link>
+            <Link to="/hi/lyrics" className="text-xs text-white/50 hover:text-primary transition-colors font-medium">पवित्र श्लोक और पद</Link>
             <Link to="/hi/saints" className="text-xs text-white/50 hover:text-primary transition-colors font-medium">रसिक संत जीवनी</Link>
             <Link to="/hi/ragas" className="text-xs text-white/50 hover:text-primary transition-colors font-medium">राग अनुक्रमणिका</Link>
             <Link to="/hi/places" className="text-xs text-white/50 hover:text-primary transition-colors font-medium">पवित्र लीला स्थल</Link>

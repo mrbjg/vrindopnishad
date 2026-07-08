@@ -34,7 +34,7 @@ export default function NotFound() {
             Go to Home
           </Link>
           <Link
-            href="/content"
+            href="/lyrics"
             className="w-full sm:w-auto px-8 py-3.5 bg-white/5 hover:bg-white/10 text-white font-medium rounded-xl border border-white/10 transition-all hover:-translate-y-0.5 active:translate-y-0 select-none text-center"
           >
             Explore Library

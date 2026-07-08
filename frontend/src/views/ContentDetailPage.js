@@ -412,8 +412,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
   ].filter(Boolean).join(" \n");
 
   const canonicalUrl = isHindiRoute
-    ? `https://path.vrindopnishad.in/hi/content/${content.slug || id}`
-    : `https://path.vrindopnishad.in/content/${content.slug || id}`;
+    ? `https://path.vrindopnishad.in/hi/lyrics/${content.slug || id}`
+    : `https://path.vrindopnishad.in/lyrics/${content.slug || id}`;
 
   // Parse Granth, Pad, and Saint for title
   let parsedSaintName = "";
@@ -508,7 +508,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 "@type": "ListItem",
                 "position": 1,
                 "name": isHindiRoute ? "संग्रह" : "Collection",
-                "item": isHindiRoute ? "https://path.vrindopnishad.in/hi/content" : "https://path.vrindopnishad.in/content"
+                "item": isHindiRoute ? "https://path.vrindopnishad.in/hi/lyrics" : "https://path.vrindopnishad.in/lyrics"
               },
               {
                 "@type": "ListItem",
@@ -556,7 +556,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
             },
             "mainEntityOfPage": {
               "@type": "WebPage",
-              "@id": `https://path.vrindopnishad.in/content/${content.slug || id}`
+              "@id": `https://path.vrindopnishad.in/lyrics/${content.slug || id}`
             },
             ...(content.image_url ? { "image": content.image_url } : {})
           })}
@@ -1029,7 +1029,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                       {relatedVerses.map(v => (
                         <Link
                           key={v.id}
-                          to={isHindiRoute ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`}
+                          to={isHindiRoute ? `/hi/lyrics/${v.slug || v.id}` : `/lyrics/${v.slug || v.id}`}
                           className="flex items-center gap-2 text-[11px] text-white/70 hover:text-emerald-400 transition-colors py-1 group border-b border-white/[0.02] last:border-0 text-left"
                         >
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/40 group-hover:bg-emerald-400 shrink-0"></span>

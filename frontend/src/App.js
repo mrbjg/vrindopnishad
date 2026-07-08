@@ -356,6 +356,8 @@ function App() {
     { path: '/', element: <HomePage /> },
     { path: '/content', element: <ContentListPage /> },
     { path: '/content/:id', element: <ContentDetailPage /> },
+    { path: '/lyrics', element: <ContentListPage /> },
+    { path: '/lyrics/:id', element: <ContentDetailPage /> },
     { path: '/category/:category', element: <CategoryPage /> },
     { path: '/loader-demo', element: <LoaderDemo /> },
     { path: '/saints', element: <SaintsListPage /> },

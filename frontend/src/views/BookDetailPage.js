@@ -267,7 +267,7 @@ const BookDetailPage = ({ initialBook }) => {
           {(book.verses || []).map((verse) => (
             <Link
               key={verse.id}
-              to={isHindiRoute ? `/hi/content/${verse.slug || verse.id}` : `/content/${verse.slug || verse.id}`}
+              to={isHindiRoute ? `/hi/lyrics/${verse.slug || verse.id}` : `/lyrics/${verse.slug || verse.id}`}
               className="glass-card p-4 flex flex-col justify-between group hover:border-amber-500/20 transition-all min-h-[140px]"
             >
               <div>

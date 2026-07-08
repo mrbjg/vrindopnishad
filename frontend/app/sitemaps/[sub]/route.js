@@ -34,8 +34,8 @@ export async function GET(request, { params }) {
     const coreRoutes = [
       '',
       '/hi',
-      '/content',
-      '/hi/content',
+      '/lyrics',
+      '/hi/lyrics',
       '/saints',
       '/hi/saints',
       '/granthas',
@@ -78,13 +78,13 @@ export async function GET(request, { params }) {
       const lastmodDate = v.updated_at || v.updatedAt || v.created_at || v.createdAt || '2026-06-27';
       const formattedDate = new Date(lastmodDate).toISOString().split('T')[0];
       urlItems.push({
-        loc: `${base}/content/${slug}`,
+        loc: `${base}/lyrics/${slug}`,
         changefreq: 'weekly',
         priority: '0.8',
         lastmod: formattedDate
       });
       urlItems.push({
-        loc: `${base}/hi/content/${slug}`,
+        loc: `${base}/hi/lyrics/${slug}`,
         changefreq: 'weekly',
         priority: '0.8',
         lastmod: formattedDate

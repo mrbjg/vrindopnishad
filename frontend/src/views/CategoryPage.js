@@ -230,7 +230,7 @@ const CategoryPage = ({ category: propCategory }) => {
               return (
                 <Link 
                   key={`${item.id || item.slug || 'item'}-${index}`} 
-                  to={isHindiRoute ? `/hi/content/${item.slug || item.id}` : `/content/${item.slug || item.id}`} 
+                  to={isHindiRoute ? `/hi/lyrics/${item.slug || item.id}` : `/lyrics/${item.slug || item.id}`} 
                   className={`glass-card group flex flex-col justify-between transition-all duration-500 border border-[var(--glass-border)] ${colors.hover} hover:shadow-2xl`}
                 >
                   <div>

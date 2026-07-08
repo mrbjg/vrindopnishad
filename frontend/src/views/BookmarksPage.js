@@ -97,7 +97,7 @@ const BookmarksPage = () => {
             }
           </p>
           <Link 
-            to={isHindiRoute ? "/hi/content" : "/content"} 
+            to={isHindiRoute ? "/hi/lyrics" : "/lyrics"} 
             className="btn-sacred-gold px-8 py-3 text-sm inline-block"
           >
             {isHindiRoute ? "संग्रह का अन्वेषण करें" : "Explore Library"}
@@ -158,7 +158,7 @@ const BookmarksPage = () => {
                       className="glass-card p-5 flex items-center justify-between gap-6 group hover:border-amber-500/20 transition-all"
                     >
                       <Link 
-                        to={isHindiRoute ? `/hi/content/${verse.slug || verse.id}` : `/content/${verse.slug || verse.id}`}
+                        to={isHindiRoute ? `/hi/lyrics/${verse.slug || verse.id}` : `/lyrics/${verse.slug || verse.id}`}
                         className="flex-1 min-w-0"
                       >
                         <div className="flex items-center gap-2 mb-1">

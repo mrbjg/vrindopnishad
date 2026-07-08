@@ -174,7 +174,7 @@ export const generateMusicCompositionSchema = (verse: {
 }) => ({
   "@context": "https://schema.org",
   "@type": "MusicComposition",
-  "@id": `${SITE_URL}/content/${verse.slug}/#composition`,
+  "@id": `${SITE_URL}/lyrics/${verse.slug}/#composition`,
   "name": verse.title,
   "composer": {
     "@type": "Person",

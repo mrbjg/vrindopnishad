@@ -171,7 +171,7 @@ const PreviewDrawer = ({
                     {resolvedVerses.map((v, i) => (
                       <Link
                         key={`${v.slug || v.id || 'verse'}-${i}`}
-                        to={isHi ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`}
+                        to={isHi ? `/hi/lyrics/${v.slug || v.id}` : `/lyrics/${v.slug || v.id}`}
                         onClick={closePreview}
                         className="block p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-xs font-bold text-white/85 hover:text-primary transition-colors truncate touch-manipulation min-h-[38px]"
                       >
@@ -189,7 +189,7 @@ const PreviewDrawer = ({
                 {resolvedVerses.map((v, i) => (
                   <Link
                     key={`${v.slug || v.id || 'verse'}-${i}`}
-                    to={isHi ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`}
+                    to={isHi ? `/hi/lyrics/${v.slug || v.id}` : `/lyrics/${v.slug || v.id}`}
                     onClick={closePreview}
                     className="block p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-xs font-bold text-white/85 hover:text-primary transition-colors truncate touch-manipulation min-h-[38px]"
                   >
@@ -205,7 +205,7 @@ const PreviewDrawer = ({
                 {resolvedVerses.map((v, i) => (
                   <Link
                     key={`${v.slug || v.id || 'verse'}-${i}`}
-                    to={isHi ? `/hi/content/${v.slug || v.id}` : `/content/${v.slug || v.id}`}
+                    to={isHi ? `/hi/lyrics/${v.slug || v.id}` : `/lyrics/${v.slug || v.id}`}
                     onClick={closePreview}
                     className="block p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-xs font-bold text-white/85 hover:text-primary transition-colors truncate touch-manipulation min-h-[38px]"
                   >
@@ -299,7 +299,7 @@ const PreviewDrawer = ({
             )}
             {previewType === 'verse' && (
               <Link
-                to={isHi ? `/hi/content/${selectedItem.slug || selectedItem.id}` : `/content/${selectedItem.slug || selectedItem.id}`}
+                to={isHi ? `/hi/lyrics/${selectedItem.slug || selectedItem.id}` : `/lyrics/${selectedItem.slug || selectedItem.id}`}
                 onClick={closePreview}
                 className="btn-premium flex-1 text-center py-3 text-xs uppercase tracking-wider font-semibold min-h-[44px] flex items-center justify-center"
               >

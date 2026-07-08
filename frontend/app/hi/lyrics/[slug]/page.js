@@ -42,7 +42,7 @@ export async function generateMetadata({ params }) {
   return generatePageMetadata({
     title: `${verse.cleanTitle || verse.title} — मूल पाठ और व्याख्या | ${cleanAuthor} | वृंदोपनिषद्`,
     description: verse.description || `संत ${cleanAuthor} द्वारा रचित पद/भजन ${verse.title}। मूल देवनागरी पाठ, हिंदी अनुवाद, व्याख्या और श्रवण ऑडियो।`,
-    path: `/lyrics/${verse.slug}`,
+    path: `/hi/lyrics/${verse.slug}`,
     keywords: [verse.cleanTitle || verse.title, 'भजन', 'पद अनुवाद', cleanAuthor, 'ब्रजभाषा काव्य'],
     type: 'music.song'
   });

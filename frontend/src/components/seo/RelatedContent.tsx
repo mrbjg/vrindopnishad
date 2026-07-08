@@ -17,7 +17,7 @@ interface RelatedContentProps {
 const typeConfig = {
   saint: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', text: 'text-emerald-400', label: 'Saint', prefix: '/saints' },
   grantha: { bg: 'bg-amber-500/10', border: 'border-amber-500/20', text: 'text-amber-400', label: 'Scripture', prefix: '/granthas' },
-  verse: { bg: 'bg-blue-500/10', border: 'border-blue-500/20', text: 'text-blue-400', label: 'Verse', prefix: '/content' },
+  verse: { bg: 'bg-blue-500/10', border: 'border-blue-500/20', text: 'text-blue-400', label: 'Verse', prefix: '/lyrics' },
   raga: { bg: 'bg-purple-500/10', border: 'border-purple-500/20', text: 'text-purple-400', label: 'Raga', prefix: '/ragas' },
   glossary: { bg: 'bg-rose-500/10', border: 'border-rose-500/20', text: 'text-rose-400', label: 'Concept', prefix: '/glossary' },
   festival: { bg: 'bg-indigo-500/10', border: 'border-indigo-500/20', text: 'text-indigo-400', label: 'Festival', prefix: '/festivals' }

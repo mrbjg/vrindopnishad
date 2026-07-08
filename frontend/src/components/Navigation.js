@@ -48,7 +48,7 @@ const Navigation = () => {
             <Home size={20} />
             <span>Home</span>
           </Link>
-          <Link to="/content" className="nav-link" data-testid="nav-content" onClick={closeMobileMenu}>
+          <Link to="/lyrics" className="nav-link" data-testid="nav-content" onClick={closeMobileMenu}>
             <BookOpen size={20} />
             <span>Content</span>
           </Link>

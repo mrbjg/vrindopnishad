@@ -16,7 +16,7 @@ export async function GET() {
   const itemsXml = sorted.map(v => {
     const slug = encodeURIComponent(v.slug || v.id?.toString() || '');
     const title = v.title || 'Sacred Devotional Pad';
-    const link = `${base}/content/${slug}`;
+    const link = `${base}/lyrics/${slug}`;
     const description = v.description || v.hindi_text?.substring(0, 200) || 'Sacred Vaishnava literature and devotional poetry.';
     const pubDate = new Date(v.updated_at || v.updatedAt || v.created_at || v.createdAt || '2026-06-27').toUTCString();
     const author = v.author || 'Braj Rasik Heritage';

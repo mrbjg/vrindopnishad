@@ -795,7 +795,7 @@ const HomePage = ({
               { "@type": "ListItem", "position": 1, "name": "Rasik Sant Vaani", "url": "https://path.vrindopnishad.in/saints" },
               { "@type": "ListItem", "position": 2, "name": "Sacred Granthas", "url": "https://path.vrindopnishad.in/granthas" },
               { "@type": "ListItem", "position": 3, "name": "Classical Ragas", "url": "https://path.vrindopnishad.in/ragas" },
-              { "@type": "ListItem", "position": 4, "name": "Sacred Verses", "url": "https://path.vrindopnishad.in/content" }
+              { "@type": "ListItem", "position": 4, "name": "Sacred Verses", "url": "https://path.vrindopnishad.in/lyrics" }
             ]
           }
         })}</script>
@@ -837,7 +837,7 @@ const HomePage = ({
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && e.target.value.trim().length > 0) {
                     const q = e.target.value.trim();
-                    navigate(isHi ? `/hi/content?q=${encodeURIComponent(q)}` : `/content?q=${encodeURIComponent(q)}`);
+                    navigate(isHi ? `/hi/lyrics?q=${encodeURIComponent(q)}` : `/lyrics?q=${encodeURIComponent(q)}`);
                   }
                 }}
               />
@@ -859,7 +859,7 @@ const HomePage = ({
               <span>→</span>
             </button>
             <Link 
-              to={isHi ? "/hi/content" : "/content"} 
+              to={isHi ? "/hi/lyrics" : "/lyrics"} 
               className="px-6 py-3 rounded-full border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 text-white/80 hover:text-white transition-all text-xs md:text-sm font-semibold"
             >
               {isHi ? "पुस्तकालय देखें" : "Explore Library"}
@@ -1038,7 +1038,7 @@ const HomePage = ({
                     <span>{isHi ? "साझा करें" : "Share Card"}</span>
                   </button>
                   <Link
-                    to={isHi ? `/hi/content/${aajKaPad.slug || aajKaPad.id}` : `/content/${aajKaPad.slug || aajKaPad.id}`}
+                    to={isHi ? `/hi/lyrics/${aajKaPad.slug || aajKaPad.id}` : `/lyrics/${aajKaPad.slug || aajKaPad.id}`}
                     className="btn-premium px-5 py-2 text-xs"
                   >
                     {isHi ? "पूर्ण पाठ पढ़ें" : "Read Full"}

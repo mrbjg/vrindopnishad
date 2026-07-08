@@ -323,7 +323,7 @@ function extractRelations(items) {
 
 const SEO_PAGES = [
   { path: '/', priority: '1.0', changefreq: 'daily' },
-  { path: '/content', priority: '0.9', changefreq: 'daily' },
+  { path: '/lyrics', priority: '0.9', changefreq: 'daily' },
   { path: '/saints', priority: '0.9', changefreq: 'weekly' },
   { path: '/granthas', priority: '0.9', changefreq: 'weekly' },
   { path: '/ragas', priority: '0.9', changefreq: 'weekly' },
@@ -563,9 +563,7 @@ async function generateSitemap() {
       
       const encodedSlug = encodeURIComponent(decodeURIComponent(slug));
       
-      // Route poems and lyrics to /lyrics/ instead of /content/ to prevent redirects
-      const isLyrics = category === 'poem' || category === 'lyrics';
-      const routePrefix = isLyrics ? 'lyrics' : 'content';
+      const routePrefix = 'lyrics';
       
       const defaultUrl = escapeXmlUrl(`${DOMAIN}/${routePrefix}/${encodedSlug}`);
       const hiUrl = escapeXmlUrl(`${DOMAIN}/hi/${routePrefix}/${encodedSlug}`);

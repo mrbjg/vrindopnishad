@@ -63,7 +63,7 @@ export default async function HindiHomeRoute() {
     "url": "https://path.vrindopnishad.in/hi",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://path.vrindopnishad.in/hi/content?q={search_term_string}",
+      "target": "https://path.vrindopnishad.in/hi/lyrics?q={search_term_string}",
       "query-input": "required name=search_term_string"
     }
   };

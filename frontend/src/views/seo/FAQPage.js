@@ -47,7 +47,7 @@ const FAQPage = () => {
 
           <div className="mt-12">
             <h2 className="text-2xl font-bold mb-4 text-white/90">Still Have Questions?</h2>
-            <p className="text-white/70 leading-relaxed mb-6">If your question wasn't answered above, explore our detailed pages on specific topics: <Link to="/philosophy" className="text-primary hover:underline">Philosophy</Link>, <Link to="/teachings" className="text-primary hover:underline">Teachings</Link>, <Link to="/devotion" className="text-primary hover:underline">Devotion</Link>, or the <Link to="/guide" className="text-primary hover:underline">Complete Guide</Link>. You can also <Link to="/content" className="text-primary hover:underline">browse the full content library</Link> to discover more.</p>
+            <p className="text-white/70 leading-relaxed mb-6">If your question wasn't answered above, explore our detailed pages on specific topics: <Link to="/philosophy" className="text-primary hover:underline">Philosophy</Link>, <Link to="/teachings" className="text-primary hover:underline">Teachings</Link>, <Link to="/devotion" className="text-primary hover:underline">Devotion</Link>, or the <Link to="/guide" className="text-primary hover:underline">Complete Guide</Link>. You can also <Link to="/lyrics" className="text-primary hover:underline">browse the full content library</Link> to discover more.</p>
           </div>
         </section>
 

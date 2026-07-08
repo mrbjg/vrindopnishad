@@ -44,7 +44,7 @@ const GuidePage = () => {
           <p className="text-white/70 leading-relaxed mb-6"><strong className="text-white/80">Spiritual Poetry (Poems)</strong> — This category includes both classical and contemporary devotional poetry. From the medieval compositions of Surdas and Meera Bai to the living poetic traditions of Vrindavan, these works express the depths of divine love in accessible, emotionally resonant language.</p>
 
           <h2 className="text-2xl font-bold mb-4 text-white/90">Step 2: Navigating the Platform</h2>
-          <p className="text-white/70 leading-relaxed mb-6">The <Link to="/" className="text-primary hover:underline">homepage</Link> provides quick access to all three content categories. Click on any category card to browse its contents. You can also use the <Link to="/content" className="text-primary hover:underline">content library</Link> page to search through the entire collection, filter by category, and discover content that resonates with your interests.</p>
+          <p className="text-white/70 leading-relaxed mb-6">The <Link to="/" className="text-primary hover:underline">homepage</Link> provides quick access to all three content categories. Click on any category card to browse its contents. You can also use the <Link to="/lyrics" className="text-primary hover:underline">content library</Link> page to search through the entire collection, filter by category, and discover content that resonates with your interests.</p>
           <p className="text-white/70 leading-relaxed mb-6">Each content page features the full text, often with audio playback for hearing the traditional chanting. The dark, contemplative interface is designed to create a distraction-free reading environment — think of it as entering a digital temple where every element supports your spiritual engagement.</p>
 
           <h2 className="text-2xl font-bold mb-4 text-white/90">Step 3: Suggested Reading Paths</h2>
@@ -62,7 +62,7 @@ const GuidePage = () => {
           <h2 className="text-2xl font-bold mb-4 text-white/90">Quick Reference</h2>
           <div className="glass-card p-6 mb-8">
             <p className="text-white/70 leading-relaxed mb-2">🏠 <Link to="/" className="text-primary hover:underline">Homepage</Link> — Category overview and quick navigation</p>
-            <p className="text-white/70 leading-relaxed mb-2">📚 <Link to="/content" className="text-primary hover:underline">Content Library</Link> — Browse and search all content</p>
+            <p className="text-white/70 leading-relaxed mb-2">📚 <Link to="/lyrics" className="text-primary hover:underline">Content Library</Link> — Browse and search all content</p>
             <p className="text-white/70 leading-relaxed mb-2">❓ <Link to="/faq" className="text-primary hover:underline">FAQ</Link> — Common questions answered</p>
             <p className="text-white/70 leading-relaxed mb-2">🌐 <a href="https://vrindopnishad.in" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Main Website</a> — Vrindopnishad official site</p>
           </div>

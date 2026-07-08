@@ -8,7 +8,7 @@ import { generatePageMetadata } from '../../src/lib/metadata';
 export const metadata = generatePageMetadata({
   title: 'Spiritual Library — All Sacred Verses, Shlokas & Strotras | Vrindopnishad',
   description: 'Explore the digital collection of authentic Sanskrit shlokas, devotional strotras, and spiritual poetry. Search by name, theme or keyword.',
-  path: '/content',
+  path: '/lyrics',
   keywords: ['Spiritual Library', 'Shlokas', 'Strotras', 'Sanskrit Verses', 'Bhakti Library']
 });
 

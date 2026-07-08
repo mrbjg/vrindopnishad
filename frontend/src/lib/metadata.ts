@@ -39,6 +39,11 @@ export function generatePageMetadata({
   
   // Strip trailing slashes and normalize /index
   const normalizedPath = cleanPath === '/' ? '' : cleanPath;
+  
+  // Detect if the path already starts with /hi
+  const isHiPath = normalizedPath.startsWith('/hi');
+  const basePath = isHiPath ? normalizedPath.substring(3) : normalizedPath;
+  
   const canonicalUrl = `${SITE_URL}${normalizedPath}`;
   const absoluteImageUrl = image.startsWith('http') ? image : `${SITE_URL}${image}`;
 
@@ -61,8 +66,8 @@ export function generatePageMetadata({
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        'en': `${SITE_URL}${normalizedPath}`,
-        'hi': `${SITE_URL}/hi${normalizedPath}`,
+        'en': `${SITE_URL}${basePath}`,
+        'hi': `${SITE_URL}/hi${basePath}`,
       }
     },
     robots: {

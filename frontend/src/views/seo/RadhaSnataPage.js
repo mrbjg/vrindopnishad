@@ -51,7 +51,7 @@ const RadhaSnataPage = () => {
           <p className="text-white/70 leading-relaxed mb-6">By meditating on Radha Snata, the devotee seeks to cleanse their own consciousness, aligning their heart with the pristine devotion exemplified by the sakhis of Vrindavan. It represents the awakening of devotional consciousness in the quiet, auspicious hours of the morning.</p>
 
           <h2 className="text-2xl font-bold mb-4 text-white/90">Practical Contemplation</h2>
-          <p className="text-white/70 leading-relaxed mb-8">For seekers on the path of Braj Ras, reflecting on this pastime helps transition the mind from worldly thoughts to spiritual remembrance. The complete collection of <Link to="/content" className="text-primary hover:underline">devotional verses and vaanis</Link> contains direct references to these morning pastimes. Seekers can also study the lives of the <Link to="/saints" className="text-primary hover:underline">Braj Rasik Saints</Link> who experienced these leelas in deep trance.</p>
+          <p className="text-white/70 leading-relaxed mb-8">For seekers on the path of Braj Ras, reflecting on this pastime helps transition the mind from worldly thoughts to spiritual remembrance. The complete collection of <Link to="/lyrics" className="text-primary hover:underline">devotional verses and vaanis</Link> contains direct references to these morning pastimes. Seekers can also study the lives of the <Link to="/saints" className="text-primary hover:underline">Braj Rasik Saints</Link> who experienced these leelas in deep trance.</p>
         </section>
 
         <InternalLinks exclude={['/what-is-radha-snata']} count={4} />

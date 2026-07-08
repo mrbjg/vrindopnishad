@@ -143,9 +143,9 @@ const PookizLayout = ({ children }) => {
     },
     {
       label: isHiRoute ? 'पुस्तकालय' : 'Library',
-      path: isHiRoute ? '/hi/content' : '/content',
+      path: isHiRoute ? '/hi/lyrics' : '/lyrics',
       icon: <Compass size={18} />,
-      isActive: isActive('/content')
+      isActive: isActive('/lyrics')
     },
     {
       label: isHiRoute ? 'राग रागिनी' : 'Sacred Ragas',

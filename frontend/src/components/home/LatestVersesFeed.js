@@ -18,7 +18,7 @@ const LatestVersesFeed = ({ isHi, latestVerses, navigate }) => {
           </h2>
         </div>
         <Link
-          to={isHi ? "/hi/content" : "/content"}
+          to={isHi ? "/hi/lyrics" : "/lyrics"}
           className="text-xs text-primary hover:underline flex items-center gap-0.5 font-bold min-h-[30px] flex items-center relative group"
           aria-label={isHi ? "सम्पूर्ण आध्यात्मिक वाणी ग्रन्थागार देखें" : "View all spiritual verses"}
           title={isHi ? "सम्पूर्ण वाणियाँ" : "View Library"}
@@ -44,14 +44,14 @@ const LatestVersesFeed = ({ isHi, latestVerses, navigate }) => {
           return (
             <div
               key={`${verse.slug || verse.id || 'verse'}-${index}`}
-              onClick={() => navigate(isHi ? `/hi/content/${verse.slug || verse.id}` : `/content/${verse.slug || verse.id}`)}
+              onClick={() => navigate(isHi ? `/hi/lyrics/${verse.slug || verse.id}` : `/lyrics/${verse.slug || verse.id}`)}
               className="premium-content-card p-5 cursor-pointer flex flex-col justify-between space-y-4 group hover:scale-[1.01] transition-all duration-300 touch-manipulation relative overflow-hidden"
               role="button"
               tabIndex={0}
               aria-label={isHi ? `वाणी: ${verse.cleanTitle || verse.title}` : `Verse: ${verse.cleanTitle || verse.title}`}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
-                  navigate(isHi ? `/hi/content/${verse.slug || verse.id}` : `/content/${verse.slug || verse.id}`);
+                  navigate(isHi ? `/hi/lyrics/${verse.slug || verse.id}` : `/lyrics/${verse.slug || verse.id}`);
                 }
               }}
             >

@@ -64,7 +64,7 @@ export default async function HomeRoute() {
     "url": "https://path.vrindopnishad.in",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://path.vrindopnishad.in/content?q={search_term_string}",
+      "target": "https://path.vrindopnishad.in/lyrics?q={search_term_string}",
       "query-input": "required name=search_term_string"
     }
   };

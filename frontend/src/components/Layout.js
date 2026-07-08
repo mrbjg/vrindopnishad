@@ -293,13 +293,13 @@ const LayoutInner = ({ children }) => {
       setSearchFocused(false);
       const queryParam = `q=${encodeURIComponent(searchQuery)}`;
       const filterParam = searchFilter !== 'all' ? `&category=${searchFilter}` : '';
-      navigate(isHiRoute ? `/hi/content?${queryParam}${filterParam}` : `/content?${queryParam}${filterParam}`);
+      navigate(isHiRoute ? `/hi/lyrics?${queryParam}${filterParam}` : `/lyrics?${queryParam}${filterParam}`);
     }
   };
 
   const hideHeaderSearch = [
-    '/content', '/saints', '/granthas', '/ragas',
-    '/hi/content', '/hi/saints', '/hi/granthas', '/hi/ragas'
+    '/lyrics', '/saints', '/granthas', '/ragas',
+    '/hi/lyrics', '/hi/saints', '/hi/granthas', '/hi/ragas'
   ].includes(location.pathname);
 
   
@@ -494,7 +494,7 @@ const LayoutInner = ({ children }) => {
                           <div className="grid grid-cols-1 gap-1">
                             {filteredResults.verses.map(v => {
                               const isLyrics = v.category === 'poem' || v.category === 'lyrics';
-                              const prefix = isLyrics ? '/lyrics/' : '/content/';
+                              const prefix = '/lyrics/';
                               return (
                                 <Link key={v.id} to={isHiRoute ? `/hi${prefix}${v.slug || v.id}` : `${prefix}${v.slug || v.id}`} onClick={() => setSearchFocused(false)}
                                   className="block p-1.5 rounded-lg hover:bg-white/5 transition-colors text-[11px] text-white/85 truncate">
@@ -562,8 +562,8 @@ const LayoutInner = ({ children }) => {
                 onMouseLeave={() => setReadMenuOpen(false)}
               >
                 <button 
-                  onClick={() => navigate(isHiRoute ? "/hi/content" : "/content")}
-                      className={`header-nav-link text-xs xl:text-sm flex items-center gap-1 outline-none ${isCategoryActive('shloka') || isCategoryActive('strotra') || isCategoryActive('poem') || isActive('/content') ? 'active' : ''}`}
+                  onClick={() => navigate(isHiRoute ? "/hi/lyrics" : "/lyrics")}
+                      className={`header-nav-link text-xs xl:text-sm flex items-center gap-1 outline-none ${isCategoryActive('shloka') || isCategoryActive('strotra') || isCategoryActive('poem') || isActive('/lyrics') ? 'active' : ''}`}
                 >
                   <span>{isHiRoute ? "साहित्य" : "Read"}</span>
                   <span className="text-[10px] opacity-60">▼</span>
@@ -571,9 +571,9 @@ const LayoutInner = ({ children }) => {
                 {readMenuOpen && (
                   <div className="absolute top-full left-0 mt-0.5 w-40 bg-[#121216]/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-md z-50 py-1.5 animate-in fade-in slide-in-from-top-1 duration-150 text-left header-dropdown-menu">
                     <Link 
-                      to={isHiRoute ? "/hi/content" : "/content"} 
+                      to={isHiRoute ? "/hi/lyrics" : "/lyrics"} 
                       onClick={() => setReadMenuOpen(false)}
-                      className={`block px-4 py-2 text-xs text-white/80 hover:text-primary hover:bg-white/5 transition-all ${isActive('/content') ? 'text-primary font-semibold' : ''}`}
+                      className={`block px-4 py-2 text-xs text-white/80 hover:text-primary hover:bg-white/5 transition-all ${isActive('/lyrics') ? 'text-primary font-semibold' : ''}`}
                     >
                       {isHiRoute ? "सभी पाठ" : "All Content"}
                     </Link>
@@ -707,7 +707,7 @@ const LayoutInner = ({ children }) => {
             <Home size={22} />
             <span className="dock-tooltip-minimal">Home Sanctuary</span>
           </Link>
-          <Link to={isHiRoute ? "/hi/content" : "/content"} className={`dock-item-minimal ${isActive('/content') ? 'active' : ''}`} title="All Content">
+          <Link to={isHiRoute ? "/hi/lyrics" : "/lyrics"} className={`dock-item-minimal ${isActive('/lyrics') ? 'active' : ''}`} title="All Content">
             <Compass size={22} />
             <span className="dock-tooltip-minimal">Sanctuary Library</span>
           </Link>
@@ -776,7 +776,7 @@ const LayoutInner = ({ children }) => {
           <Link to={isHiRoute ? "/hi" : "/"} className={`mobile-nav-item ${isActive('/') ? 'active' : ''}`} title="Home">
             <Home size={24} />
           </Link>
-          <Link to={isHiRoute ? "/hi/content" : "/content"} className={`mobile-nav-item ${isActive('/content') ? 'active' : ''}`} title="All Content">
+          <Link to={isHiRoute ? "/hi/lyrics" : "/lyrics"} className={`mobile-nav-item ${isActive('/lyrics') ? 'active' : ''}`} title="All Content">
             <Compass size={24} />
           </Link>
           <Link to={isHiRoute ? "/hi/category/shloka" : "/category/shloka"} className={`mobile-nav-item ${isCategoryActive('shloka') ? 'active' : ''}`} title="Shlokas">

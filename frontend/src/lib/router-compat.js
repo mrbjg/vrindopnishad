@@ -10,7 +10,7 @@ export function getSkeletonVariant(destination) {
   const cleanPath = path.split('?')[0].split('#')[0].replace(/\/$/, '');
 
   // Detail views (must have a slug after the path prefix)
-  if (/\/content\/.+/.test(cleanPath)) {
+  if (/\/(content|lyrics)\/.+/.test(cleanPath)) {
     return 'detail';
   }
   if (/\/saints?\/.+/.test(cleanPath)) {
@@ -26,6 +26,8 @@ export function getSkeletonVariant(destination) {
     '/hi',
     '/content',
     '/hi/content',
+    '/lyrics',
+    '/hi/lyrics',
     '/saints',
     '/hi/saints',
     '/granthas',

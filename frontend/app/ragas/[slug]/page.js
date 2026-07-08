@@ -69,7 +69,7 @@ export default async function RagaRoute({ params }) {
     "itemListElement": raga.verses ? raga.verses.slice(0, 10).map((v, idx) => ({
       "@type": "ListItem",
       "position": idx + 1,
-      "url": `https://path.vrindopnishad.in/content/${v.slug || v.id}`
+      "url": `https://path.vrindopnishad.in/lyrics/${v.slug || v.id}`
     })) : []
   };
 
