@@ -74,7 +74,10 @@ export default async function LyricsDetailPage({ params }) {
   let matchedSaint = null;
   if (currentAuthor) {
     const cleanAuthorKey = currentAuthor.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim();
-    matchedSaint = saints.find(s => s.name.includes(cleanAuthorKey) || cleanAuthorKey.includes(s.name));
+    matchedSaint = saints.find(s => {
+      const sName = s.name || s.title || '';
+      return sName.includes(cleanAuthorKey) || cleanAuthorKey.includes(sName);
+    });
   }
 
   let bookName = null;
@@ -110,7 +113,7 @@ export default async function LyricsDetailPage({ params }) {
   // Build breadcrumbs
   const breadcrumbItems = [
     { name: 'Home', path: '/' },
-    { name: 'Library', path: '/content' }
+    { name: 'Library', path: '/lyrics' }
   ];
   if (matchedBook) {
     breadcrumbItems.push({ name: matchedBook.name, path: `/granthas/${matchedBook.slug}` });

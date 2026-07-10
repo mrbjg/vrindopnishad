@@ -74,7 +74,10 @@ export default async function HindiLyricsDetailPage({ params }) {
   let matchedSaint = null;
   if (currentAuthor) {
     const cleanAuthorKey = currentAuthor.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim();
-    matchedSaint = saints.find(s => s.name.includes(cleanAuthorKey) || cleanAuthorKey.includes(s.name));
+    matchedSaint = saints.find(s => {
+      const sName = s.name || s.title || '';
+      return sName.includes(cleanAuthorKey) || cleanAuthorKey.includes(sName);
+    });
   }
 
   let bookName = null;
@@ -110,7 +113,7 @@ export default async function HindiLyricsDetailPage({ params }) {
   // Build breadcrumbs
   const breadcrumbItems = [
     { name: 'मुख्यपृष्ठ', path: '/hi' },
-    { name: 'पुस्तकालय', path: '/hi/content' }
+    { name: 'पुस्तकालय', path: '/hi/lyrics' }
   ];
   if (matchedBook) {
     breadcrumbItems.push({ name: matchedBook.name, path: `/hi/granthas/${matchedBook.slug}` });

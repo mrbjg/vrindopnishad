@@ -232,12 +232,18 @@ function loadLocalJSONFallback() {
     let rawSaints = [];
     if (fs.existsSync(saintsPath)) {
       const rawSaintsData = fs.readFileSync(saintsPath, 'utf8');
-      rawSaints = JSON.parse(rawSaintsData).map((saint, idx) => ({
-        id: saint.id || `saint-local-${idx}`,
-        ...saint,
-        category: 'saint',
-        slug: saint.slug || generateSlug(saint.title)
-      }));
+      rawSaints = JSON.parse(rawSaintsData).map((saint, idx) => {
+        const nameVal = saint.name || saint.title || '';
+        return {
+          id: saint.id || `saint-local-${idx}`,
+          ...saint,
+          name: nameVal,
+          hinglishName: saint.hinglishName || transliterate(nameVal),
+          biography: saint.biography || saint.hindi_text || saint.description || '',
+          category: 'saint',
+          slug: saint.slug || generateSlug(nameVal)
+        };
+      });
     }
 
     const combined = [...allContentItems, ...rawSaints];
