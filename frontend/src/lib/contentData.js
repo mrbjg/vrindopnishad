@@ -978,6 +978,20 @@ export function getSaintBySlug(slug) {
   matched = saints.find(s => s.slug.toLowerCase() === normSaintSlug);
   if (matched) return matched;
 
+  // Try sri/shri/shree transliteration variants
+  const sriVariants = [
+    decodedSlug.replace(/\bsri-/g, 'shri-'),
+    decodedSlug.replace(/\bshri-/g, 'sri-'),
+    decodedSlug.replace(/\bshree-/g, 'shri-'),
+    decodedSlug.replace(/\bsri-/g, 'shree-'),
+    decodedSlug.replace(/\bshri-/g, 'shree-'),
+    decodedSlug.replace(/\bshree-/g, 'sri-'),
+  ];
+  for (const variant of sriVariants) {
+    matched = saints.find(s => s.slug.toLowerCase() === variant);
+    if (matched) return matched;
+  }
+
   // Transliterate if Devanagari
   let searchSlug = decodedSlug;
   if (/[^\x00-\x7F]/.test(decodedSlug)) {
