@@ -13,8 +13,7 @@ const DOMAIN = 'https://path.vrindopnishad.in';
 
 let globalCache = {
   items: null,
-  timestamp: 0,
-  promise: null
+  relations: null
 };
 const CACHE_TTL = 300000;
 
@@ -661,65 +660,12 @@ export default async function handler(req, res) {
 
 
   let allContentItems = [];
-  try {
-    const now = Date.now();
-    if (globalCache.items && (now - globalCache.timestamp < CACHE_TTL)) {
-      allContentItems = globalCache.items;
-      console.log('⚡ Serving content index from serverless cache (size:', allContentItems.length, ')');
-    } else {
+  let relations = null;
 
-      if (!globalCache.promise) {
-        globalCache.promise = (async () => {
-          let fetchedItems = [];
-          const PAGE_SIZE = 1000;
-          let offset = 0;
-          let hasMore = true;
-
-          while (hasMore) {
-            const response = await fetch(
-              `${SUPABASE_URL}/rest/v1/content?select=id,title,slug,category,author,hindi_text,sanskrit_text,image_url&order=id&offset=${offset}&limit=${PAGE_SIZE}`,
-              {
-                headers: {
-                  'apikey': SUPABASE_KEY,
-                  'Authorization': `Bearer ${SUPABASE_KEY}`
-                },
-                timeout: 10000
-              }
-            );
-            const items = await response.json();
-
-            if (Array.isArray(items) && items.length > 0) {
-              fetchedItems = fetchedItems.concat(items);
-              offset += PAGE_SIZE;
-              hasMore = items.length === PAGE_SIZE;
-            } else {
-              hasMore = false;
-            }
-          }
-          return fetchedItems;
-        })();
-      }
-
-      try {
-        allContentItems = await globalCache.promise;
-        globalCache.items = allContentItems;
-        globalCache.timestamp = Date.now();
-      } catch (fetchError) {
-        console.error('Supabase fetch query failed:', fetchError.message);
-
-        if (globalCache.items) {
-          allContentItems = globalCache.items;
-          console.warn('⚠️ Stale cache used as fallback after Supabase fetch failed');
-        } else {
-          throw fetchError;
-        }
-      } finally {
-        globalCache.promise = null;
-      }
-    }
-  } catch (e) {
-    console.error('Supabase fetch failed, trying local backups fallback:', e.message);
-
+  if (globalCache.items && globalCache.relations) {
+    allContentItems = globalCache.items;
+    relations = globalCache.relations;
+  } else {
     try {
       let localFilePath = path.join(process.cwd(), 'data/brajrasik_hi_full.json');
       let localSaintsPath = path.join(process.cwd(), 'data/saints_formatted.json');
@@ -737,8 +683,6 @@ export default async function handler(req, res) {
       if (fs.existsSync(localFilePath)) {
         const fileContent = fs.readFileSync(localFilePath, 'utf8');
         const localData = JSON.parse(fileContent);
-        console.log(`📦 Loaded ${localData.length} items from local backup.`);
-
         const sanitizedData = localData.map((item, index) => ({
           id: item.id || `local-${index}`,
           ...item
@@ -747,9 +691,8 @@ export default async function handler(req, res) {
       }
 
       if (fs.existsSync(localSaintsPath)) {
-        const saintsContent = fs.readFileSync(localSaintsPath, 'utf8');
-        const localSaints = JSON.parse(saintsContent);
-
+        const saintsContentRaw = fs.readFileSync(localSaintsPath, 'utf8');
+        const localSaints = JSON.parse(saintsContentRaw);
         const formattedSaints = localSaints.map((s, index) => ({
           id: s.id || `local-saint-${index}`,
           ...s,
@@ -759,15 +702,17 @@ export default async function handler(req, res) {
       }
 
       allContentItems = backupItems;
+      relations = extractRelations(allContentItems);
 
       globalCache.items = allContentItems;
-      globalCache.timestamp = Date.now() - CACHE_TTL + 30000;
+      globalCache.relations = relations;
     } catch (fallbackError) {
-      console.error('❌ Failed to load local backups fallback:', fallbackError.message);
+      console.error('❌ Failed to load local backups:', fallbackError.message);
+      relations = { sants: [], books: [], ragas: [] };
     }
   }
 
-  const { sants, books, ragas } = extractRelations(allContentItems);
+  const { sants, books, ragas } = relations;
 
   function getRouteLink(pathStr) {
     let normalized = pathStr;
@@ -785,7 +730,7 @@ export default async function handler(req, res) {
     const decodedSlug = decodeURIComponent(slug);
     const transliteratedSlug = slugify(transliterate(decodedSlug));
     const lowerSlug = decodedSlug.toLowerCase();
-    const content = allContentItems.find(item => {
+    let content = allContentItems.find(item => {
       const s = item.slug || '';
       if (s === decodedSlug) return true;
       if (s === lowerSlug) return true;
@@ -800,6 +745,27 @@ export default async function handler(req, res) {
       if (genSlug && transliteratedSlug && genSlug === transliteratedSlug) return true;
       return false;
     });
+
+    if (!content) {
+      // Direct fast query to Supabase by slug
+      try {
+        const response = await fetch(
+          `${SUPABASE_URL}/rest/v1/content?select=id,title,slug,category,author,hindi_text,sanskrit_text,image_url&slug=eq.${encodeURIComponent(decodedSlug)}&limit=1`,
+          {
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`
+            }
+          }
+        );
+        const items = await response.json();
+        if (Array.isArray(items) && items.length > 0) {
+          content = items[0];
+        }
+      } catch (err) {
+        console.error('Failed to query new item by slug from Supabase:', err);
+      }
+    }
 
     if (content) {
 
