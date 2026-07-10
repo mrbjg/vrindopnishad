@@ -875,12 +875,17 @@ export function getVerseBySlug(slug) {
   const decodedSlug = decodeURIComponent(slug).toLowerCase();
   const cleanSlug = sanitizeSlug(decodedSlug);
 
+  const decodedClean = decodedSlug.replace(/-+$/, '');
+  const cleanSlugClean = cleanSlug.replace(/-+$/, '');
+
   // 1. Try exact match
-  let matched = verses.find(item =>
-    (item.slug && item.slug.toLowerCase() === decodedSlug) ||
-    (item.slug && item.slug.toLowerCase() === cleanSlug) ||
-    (item.id?.toString() === decodedSlug)
-  );
+  let matched = verses.find(item => {
+    const itemSlug = (item.slug || '').toLowerCase();
+    const itemSlugClean = itemSlug.replace(/-+$/, '');
+    return itemSlugClean === decodedClean ||
+      itemSlugClean === cleanSlugClean ||
+      (item.id?.toString() === decodedSlug);
+  });
   if (matched) return matched;
 
   // 2. Transliterate search slug if it contains Devanagari
@@ -890,9 +895,12 @@ export function getVerseBySlug(slug) {
     searchSlug = generateSlug(cleanForTransliterate);
 
     // 2a. Match transliterated slug exactly
-    matched = verses.find(item =>
-      (item.slug && item.slug.toLowerCase() === searchSlug)
-    );
+    matched = verses.find(item => {
+      const itemSlug = (item.slug || '').toLowerCase();
+      const itemSlugClean = itemSlug.replace(/-+$/, '');
+      const searchSlugClean = searchSlug.replace(/-+$/, '');
+      return itemSlugClean === searchSlugClean;
+    });
     if (matched) return matched;
 
     // 2b. Match transliterated slug against transliterated item titles
