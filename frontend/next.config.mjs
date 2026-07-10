@@ -107,13 +107,138 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: '/pilgrimage',
-        destination: '/places',
+        source: '/hi/shlokas',
+        destination: '/hi/lyrics',
         permanent: true,
       },
       {
-        source: '/hi/shlokas',
+        source: '/shlokas/:slug',
+        destination: '/lyrics/:slug',
+        permanent: true,
+      },
+      {
+        source: '/shloka/:slug',
+        destination: '/lyrics/:slug',
+        permanent: true,
+      },
+      {
+        source: '/hi/shlokas/:slug',
+        destination: '/hi/lyrics/:slug',
+        permanent: true,
+      },
+      {
+        source: '/hi/shloka/:slug',
+        destination: '/hi/lyrics/:slug',
+        permanent: true,
+      },
+      {
+        source: '/strotras',
+        destination: '/lyrics',
+        permanent: true,
+      },
+      {
+        source: '/strotra',
+        destination: '/lyrics',
+        permanent: true,
+      },
+      {
+        source: '/hi/strotras',
         destination: '/hi/lyrics',
+        permanent: true,
+      },
+      {
+        source: '/strotras/:slug',
+        destination: '/lyrics/:slug',
+        permanent: true,
+      },
+      {
+        source: '/strotra/:slug',
+        destination: '/lyrics/:slug',
+        permanent: true,
+      },
+      {
+        source: '/hi/strotras/:slug',
+        destination: '/hi/lyrics/:slug',
+        permanent: true,
+      },
+      {
+        source: '/hi/strotra/:slug',
+        destination: '/hi/lyrics/:slug',
+        permanent: true,
+      },
+      {
+        source: '/poems',
+        destination: '/lyrics',
+        permanent: true,
+      },
+      {
+        source: '/poem',
+        destination: '/lyrics',
+        permanent: true,
+      },
+      {
+        source: '/hi/poems',
+        destination: '/hi/lyrics',
+        permanent: true,
+      },
+      {
+        source: '/poems/:slug',
+        destination: '/lyrics/:slug',
+        permanent: true,
+      },
+      {
+        source: '/poem/:slug',
+        destination: '/lyrics/:slug',
+        permanent: true,
+      },
+      {
+        source: '/hi/poems/:slug',
+        destination: '/hi/lyrics/:slug',
+        permanent: true,
+      },
+      {
+        source: '/hi/poem/:slug',
+        destination: '/hi/lyrics/:slug',
+        permanent: true,
+      },
+      {
+        source: '/sankirtan',
+        destination: '/lyrics',
+        permanent: true,
+      },
+      {
+        source: '/sankirtans',
+        destination: '/lyrics',
+        permanent: true,
+      },
+      {
+        source: '/hi/sankirtan',
+        destination: '/hi/lyrics',
+        permanent: true,
+      },
+      {
+        source: '/sankirtan/:slug',
+        destination: '/lyrics/:slug',
+        permanent: true,
+      },
+      {
+        source: '/sankirtans/:slug',
+        destination: '/lyrics/:slug',
+        permanent: true,
+      },
+      {
+        source: '/hi/sankirtan/:slug',
+        destination: '/hi/lyrics/:slug',
+        permanent: true,
+      },
+      {
+        source: '/hi/sankirtans/:slug',
+        destination: '/hi/lyrics/:slug',
+        permanent: true,
+      },
+      {
+        source: '/pilgrimage',
+        destination: '/places',
         permanent: true,
       },
       {
