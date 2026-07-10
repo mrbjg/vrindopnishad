@@ -373,14 +373,14 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
   if (!loading && !content) {
     return (
       <div className="animate-fade-in">
-        <Link to={isHindiRoute ? "/hi/content" : "/content"} className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-8 transition-colors">
+        <Link to={isHindiRoute ? "/hi/lyrics" : "/lyrics"} className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-8 transition-colors">
           <ArrowLeft size={18} />
           Back to Collection
         </Link>
         <div className="glass-card text-center py-24">
           <h2 className="text-3xl font-bold mb-6">Content not found</h2>
           <p className="text-white/40 mb-10 text-lg">The verse or poem you are looking for does not exist in our library.</p>
-          <Link to={isHindiRoute ? "/hi/content" : "/content"} className="btn-sacred-gold px-10 py-3">
+          <Link to={isHindiRoute ? "/hi/lyrics" : "/lyrics"} className="btn-sacred-gold px-10 py-3">
             Explore All Content
           </Link>
         </div>
@@ -564,7 +564,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
       </Helmet>
 
       <article>
-        <Link to={isHindiRoute ? "/hi/content" : "/content"} className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-8 transition-colors">
+        <Link to={isHindiRoute ? "/hi/lyrics" : "/lyrics"} className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-8 transition-colors">
           <ArrowLeft size={18} />
           Back to Collection
         </Link>

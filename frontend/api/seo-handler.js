@@ -769,7 +769,7 @@ export default async function handler(req, res) {
 
   const { sants, books, ragas } = extractRelations(allContentItems);
 
-  const getRouteLink = (pathStr) => {
+  function getRouteLink(pathStr) {
     let normalized = pathStr;
     if (normalized === '/books') normalized = '/granthas';
     else if (normalized === '/content') normalized = '/lyrics';
@@ -778,7 +778,7 @@ export default async function handler(req, res) {
     else if (normalized.startsWith('/raga/')) normalized = normalized.replace('/raga/', '/ragas/');
     else if (normalized.startsWith('/content/')) normalized = normalized.replace('/content/', '/lyrics/');
     return DOMAIN + (isHindiRoute ? '/hi' : '') + normalized;
-  };
+  }
 
   if (type === 'content' && slug) {
 

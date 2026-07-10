@@ -1,6 +1,7 @@
 import React from 'react';
 import { notFound, permanentRedirect } from 'next/navigation';
 import Layout from '../../../src/components/Layout';
+import ContentDetailPage from '../../../src/views/ContentDetailPage';
 import { Link } from '../../../src/lib/router-compat';
 import { 
   getVerseBySlug, 
@@ -159,137 +160,26 @@ export default async function LyricsDetailPage({ params }) {
     relatedItems.push({ name: matchedRaga.name, slug: matchedRaga.slug, type: 'raga' });
   }
 
-  // Text contents for reading progress / estimation
-  const fullTextContent = `${verse.sanskrit_text || ''} ${verse.hindi_text || ''} ${verse.english_translation || ''}`;
-  const lastmodDate = verse.updated_at || verse.updatedAt || verse.created_at || verse.createdAt || '2026-06-27';
+  const allVerses = getAllVerses();
+  const categoryVerses = allVerses.filter(item =>
+    item.category === verse.category &&
+    item.id?.toString() !== verse.id?.toString() &&
+    item.category?.toLowerCase() !== 'saint'
+  ).slice(0, 3);
 
   return (
     <>
       <JsonLd data={compositionSchema} />
       <Breadcrumbs items={breadcrumbItems} />
       <Layout>
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <header className="mb-8 border-b border-white/5 pb-6">
-            <h1 className="text-2xl md:text-4xl font-bold font-serif text-white mb-4 leading-tight">
-              {verse.title}
-            </h1>
-            <div className="flex flex-wrap items-center gap-4 text-xs">
-              {verse.category && (
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 select-none">
-                  {verse.category}
-                </span>
-              )}
-              <ReadingTime text={fullTextContent} />
-              <LastUpdated date={lastmodDate} />
-            </div>
-          </header>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Main content body */}
-            <div className="lg:col-span-2 space-y-8">
-              {verse.sanskrit_text && (
-                <section>
-                  <h2 className="text-xs font-bold uppercase tracking-widest text-amber-500/80 mb-3 select-none">
-                    Original Text (Sanskrit / Devanagari)
-                  </h2>
-                  <div className="p-6 rounded-2xl bg-white/[0.01] border border-white/5 font-serif text-base leading-relaxed text-white/90 text-center whitespace-pre-line">
-                    {verse.sanskrit_text}
-                  </div>
-                </section>
-              )}
-
-              {verse.hindi_text && (
-                <section>
-                  <h2 className="text-xs font-bold uppercase tracking-widest text-amber-500/80 mb-3 select-none">
-                    Hindi Transliteration &amp; Meaning
-                  </h2>
-                  <div className="p-6 rounded-2xl bg-white/[0.01] border border-white/5 font-serif text-sm leading-relaxed text-white/80 whitespace-pre-line">
-                    {verse.hindi_text}
-                  </div>
-                </section>
-              )}
-
-              {verse.english_translation && (
-                <section>
-                  <h2 className="text-xs font-bold uppercase tracking-widest text-amber-500/80 mb-3 select-none">
-                    English Commentary &amp; Translation
-                  </h2>
-                  <div className="p-6 rounded-2xl bg-white/[0.01] border border-white/5 text-xs leading-relaxed text-white/70 whitespace-pre-line">
-                    {verse.english_translation}
-                  </div>
-                </section>
-              )}
-
-              {verse.description && (
-                <section>
-                  <h2 className="text-xs font-bold uppercase tracking-widest text-amber-500/80 mb-3 select-none">
-                    Spiritual Context
-                  </h2>
-                  <p className="text-xs text-white/60 leading-relaxed font-serif italic border-l-2 border-amber-500/30 pl-4">
-                    {verse.description}
-                  </p>
-                </section>
-              )}
-
-              {verse.audio_url && (
-                <section className="p-4 border border-white/5 rounded-2xl bg-amber-500/[0.02]">
-                  <h3 className="text-xs font-bold text-white/80 mb-3 flex items-center gap-1.5">
-                    <svg className="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                    </svg>
-                    <span>Listen to Chanting Audio</span>
-                  </h3>
-                  <audio src={verse.audio_url} controls className="w-full h-9 outline-none" />
-                </section>
-              )}
-
-              <AuthorCard
-                name={verse.author || 'Braj Rasik Heritage Board'}
-                role={matchedSaint ? 'Rasik Saint' : 'Manuscript Scholar'}
-                slug={matchedSaint?.slug}
-              />
-
-              <ShareButtons title={`Read translation of "${verse.cleanTitle || verse.title}" on Vrindopnishad`} />
-
-              <FAQ questions={faqs} title="Scriptural Q&amp;A" />
-
-              <RelatedContent items={relatedItems} />
-            </div>
-
-            {/* Sidebar widgets */}
-            <div className="space-y-6">
-              {matchedSaint && (
-                <div className="p-5 border border-white/5 rounded-2xl bg-white/[0.01]">
-                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-amber-500/80 mb-3 select-none">
-                    Saint Legacy
-                  </h3>
-                  <h4 className="text-sm font-bold font-serif text-white mb-1.5">{matchedSaint.name}</h4>
-                  <p className="text-[11px] text-white/50 leading-relaxed line-clamp-3 mb-3">
-                    {matchedSaint.rawItem?.biographyEn || 'Great Vaishnava rasik saint of the sweet devotion lineage of Vrindavan.'}
-                  </p>
-                  <Link href={`/saints/${matchedSaint.slug}`} className="text-[11px] font-medium text-amber-500 hover:text-amber-400">
-                    Read Biography →
-                  </Link>
-                </div>
-              )}
-
-              {matchedBook && (
-                <div className="p-5 border border-white/5 rounded-2xl bg-white/[0.01]">
-                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-amber-500/80 mb-3 select-none">
-                    Source Scripture
-                  </h3>
-                  <h4 className="text-sm font-bold font-serif text-white mb-1.5">{matchedBook.name}</h4>
-                  <p className="text-[11px] text-white/50 leading-relaxed line-clamp-2 mb-3">
-                    Author: {matchedBook.author}
-                  </p>
-                  <Link href={`/granthas/${matchedBook.slug}`} className="text-[11px] font-medium text-amber-500 hover:text-amber-400">
-                    Browse Grantha Verses →
-                  </Link>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        <ContentDetailPage
+          key={verse.id || decodedSlug}
+          initialContent={verse}
+          initialRelatedSaint={matchedSaint}
+          initialRelatedBook={matchedBook}
+          initialRelatedRaga={matchedRaga}
+          initialRelatedVerses={categoryVerses}
+        />
       </Layout>
     </>
   );
