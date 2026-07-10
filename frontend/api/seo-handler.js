@@ -730,19 +730,26 @@ export default async function handler(req, res) {
     const decodedSlug = decodeURIComponent(slug);
     const transliteratedSlug = slugify(transliterate(decodedSlug));
     const lowerSlug = decodedSlug.toLowerCase();
+
+    const decodedClean = decodedSlug.replace(/-+$/, '');
+    const lowerClean = lowerSlug.replace(/-+$/, '');
+    const transliteratedClean = transliteratedSlug ? transliteratedSlug.replace(/-+$/, '') : '';
+
     let content = allContentItems.find(item => {
       const s = item.slug || '';
-      if (s === decodedSlug) return true;
-      if (s === lowerSlug) return true;
-      if (s.toLowerCase() === lowerSlug) return true;
-      if (transliteratedSlug && s === transliteratedSlug) return true;
-      if (transliteratedSlug && s.toLowerCase() === transliteratedSlug) return true;
+      const sClean = s.replace(/-+$/, '');
+      if (sClean === decodedClean) return true;
+      if (sClean === lowerClean) return true;
+      if (sClean.toLowerCase() === lowerClean) return true;
+      if (transliteratedClean && sClean === transliteratedClean) return true;
+      if (transliteratedClean && sClean.toLowerCase() === transliteratedClean) return true;
       if (item.id?.toString() === decodedSlug) return true;
 
-      const genSlug = generateSlug(item.title);
-      if (genSlug && genSlug === decodedSlug) return true;
-      if (genSlug && genSlug.toLowerCase() === decodedSlug.toLowerCase()) return true;
-      if (genSlug && transliteratedSlug && genSlug === transliteratedSlug) return true;
+      const genSlug = generateSlug(item.title) || '';
+      const genSlugClean = genSlug.replace(/-+$/, '');
+      if (genSlugClean && genSlugClean === decodedClean) return true;
+      if (genSlugClean && genSlugClean.toLowerCase() === decodedClean.toLowerCase()) return true;
+      if (genSlugClean && transliteratedClean && genSlugClean === transliteratedClean) return true;
       return false;
     });
 
