@@ -41,7 +41,7 @@ let memoryCategoryCache = {};
 let lastSyncTime = 0;
 
 if (typeof window !== 'undefined') {
-  const CURRENT_CACHE_VERSION = 'v3'; // Increment to force reset and reload the correct full category files
+  const CURRENT_CACHE_VERSION = 'v4'; // Increment to force reset and reload the correct full category files
   const storedVersion = localStorage.getItem('vrindopnishad_cache_version');
   if (storedVersion !== CURRENT_CACHE_VERSION) {
     console.log(`[Cache-Reset] Version mismatch (stored: "${storedVersion}", current: "${CURRENT_CACHE_VERSION}"). Resetting LocalStorage cache...`);
