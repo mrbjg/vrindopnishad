@@ -42,90 +42,244 @@
     },
     {
       "source": "/:slug(about|editorial-policy|sources|contact|search|granthas|what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|what-is-radha-snata|nitya-vihar-vs-nikunj-vihar|glossary|places|saints|books|ragas|content|who-is-harirae-ji|what-is-madhurya-and-sakhi-bhava|radhavallabh-vs-gaudiya-sampradaya|vrindavan-parikrama-guide|history-of-radhavallabh-sampradaya|major-rasik-saints-of-braj|privacy|terms|festivals|references)",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=static&slug=:slug"
     },
     {
       "source": "/hi/:slug(about|editorial-policy|sources|contact|search|granthas|what-is-vrindopnishad|meaning|origin|philosophy|teachings|importance|devotion|faq|comparison-with-upanishads|guide|braj-rasik-heritage|what-is-radha-snata|nitya-vihar-vs-nikunj-vihar|glossary|places|saints|books|ragas|content|who-is-harirae-ji|what-is-madhurya-and-sakhi-bhava|radhavallabh-vs-gaudiya-sampradaya|vrindavan-parikrama-guide|history-of-radhavallabh-sampradaya|major-rasik-saints-of-braj|privacy|terms|festivals|references)",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=static&slug=:slug&lang=hi"
     },
     {
       "source": "/content/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=content&slug=:slug"
     },
     {
       "source": "/hi/content/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=content&slug=:slug&lang=hi"
     },
     {
       "source": "/lyrics/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=content&slug=:slug"
     },
     {
       "source": "/hi/lyrics/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=content&slug=:slug&lang=hi"
     },
     {
       "source": "/saint/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=saint&slug=:slug"
     },
     {
       "source": "/hi/saint/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=saint&slug=:slug&lang=hi"
     },
     {
       "source": "/saints/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=saint&slug=:slug"
     },
     {
       "source": "/hi/saints/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=saint&slug=:slug&lang=hi"
     },
     {
       "source": "/book/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=book&slug=:slug"
     },
     {
       "source": "/hi/book/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=book&slug=:slug&lang=hi"
     },
     {
       "source": "/granthas/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=book&slug=:slug"
     },
     {
       "source": "/hi/granthas/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=book&slug=:slug&lang=hi"
     },
     {
       "source": "/raga/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=raga&slug=:slug"
     },
     {
       "source": "/hi/raga/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=raga&slug=:slug&lang=hi"
     },
     {
       "source": "/category/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=category&slug=:slug"
     },
     {
       "source": "/hi/category/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=category&slug=:slug&lang=hi"
     },
     {
       "source": "/glossary/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=glossary&slug=:slug"
     },
     {
       "source": "/hi/glossary/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=glossary&slug=:slug&lang=hi"
     },
     {
       "source": "/teachings/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=static&slug=:slug"
     },
     {
       "source": "/hi/teachings/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
+        }
+      ],
       "destination": "/api/seo-handler?type=static&slug=:slug&lang=hi"
     },
     {
