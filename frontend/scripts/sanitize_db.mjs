@@ -29,33 +29,26 @@ console.log(`Database loaded: ${localData.length} items.`);
 // 3. Process items
 let sanitizedCount = 0;
 const processedData = localData.map(item => {
-  if (!item.slug) return item;
-  const slugLower = item.slug.toLowerCase();
+  sanitizedCount++;
   
-  if (copyrightedSlugs.has(slugLower)) {
-    sanitizedCount++;
-    
-    // Original poetry text (public domain)
-    const basePoetry = item.sanskrit_text || item.hindi_text || "";
-    
-    // Generate clean transliteration for English
-    const cleanTransliteration = basePoetry ? transliterate(basePoetry) : "";
-    
-    return {
-      ...item,
-      // Strip copyrighted commentaries/descriptions
-      description: "",
-      // Keep only public domain poetry in sanskrit_text
-      sanskrit_text: basePoetry,
-      // Replace copyrighted translation with clean transliteration
-      english_translation: cleanTransliteration,
-      english_text: cleanTransliteration,
-      // Remove modern translation/commentary
-      hindi_text: ""
-    };
-  }
+  // Original poetry text (public domain)
+  const basePoetry = item.sanskrit_text || item.hindi_text || "";
   
-  return item;
+  // Generate clean transliteration for English
+  const cleanTransliteration = basePoetry ? transliterate(basePoetry) : "";
+  
+  return {
+    ...item,
+    // Strip copyrighted commentaries/descriptions
+    description: "",
+    // Keep only public domain poetry in sanskrit_text
+    sanskrit_text: basePoetry,
+    // Replace copyrighted translation with clean transliteration
+    english_translation: cleanTransliteration,
+    english_text: cleanTransliteration,
+    // Remove modern translation/commentary
+    hindi_text: ""
+  };
 });
 
 console.log(`Sanitization complete. Sanitized ${sanitizedCount} items.`);
