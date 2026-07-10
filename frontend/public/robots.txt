@@ -1,13 +1,45 @@
+# ===================================================
+# ROBOTS.TXT FOR VRINDOPNISHAD PAATH SANCTUARY
+# Optimized for Search Engines & AI Assistants (LLMs)
+# ===================================================
+
+# Welcome and allow all modern AI Crawlers & Search Assistants
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-Web
+User-agent: PerplexityBot
+User-agent: Google-Extended
+User-agent: Meta-ExternalAgent
+User-agent: Cohere-AI
+User-agent: Omgilibot
+User-agent: Applebot-Extended
+Allow: /
+Allow: /lyrics/
+Allow: /hi/lyrics/
+Allow: /category/
+Allow: /hi/category/
+Allow: /saints/
+Allow: /hi/saints/
+Allow: /granthas/
+Allow: /hi/granthas/
+Allow: /ragas/
+Allow: /hi/ragas/
+Allow: /llms.txt
+
+# Allow all general search engines
 User-agent: *
 Allow: /
-Allow: /content/
+Allow: /lyrics/
+Allow: /hi/lyrics/
 Allow: /category/
-Allow: /saint/
-Allow: /book/
-Allow: /raga/
-Allow: /saints
-Allow: /books
-Allow: /ragas
+Allow: /hi/category/
+Allow: /saints/
+Allow: /hi/saints/
+Allow: /granthas/
+Allow: /hi/granthas/
+Allow: /ragas/
+Allow: /hi/ragas/
 Allow: /what-is-vrindopnishad
 Allow: /meaning
 Allow: /origin
@@ -20,10 +52,11 @@ Allow: /comparison-with-upanishads
 Allow: /guide
 Allow: /braj-rasik-heritage
 Allow: /hi/
+Allow: /llms.txt
 
 # SEO Rule: Disallow internal API and admin routes to save crawl budget
 Disallow: /api/
-Disallow: /admin-old/
+Disallow: /admin/
 Disallow: /login
 Disallow: /static/js/*.map
 Disallow: /static/css/*.map

@@ -24,7 +24,7 @@
         {
           "type": "header",
           "key": "user-agent",
-          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman).*"
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
         }
       ],
       "destination": "/api/seo-handler?type=static"
@@ -35,7 +35,7 @@
         {
           "type": "header",
           "key": "user-agent",
-          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman).*"
+          "value": ".*([gG]ooglebot|[bB]ing|[yY]andex|[bB]aidu|[tT]witter|[fF]acebook|[lL]inked[iI]n|[wW]hats[aA]pp|[tT]elegram|[sS]lack|[dD]iscord|[aA]pple[bB]ot|[cC]url|[wW]get|[lL]ighthouse|[sS]creaming|[pP]ostman|[gG]PT[bB]ot|[cC]hat[gG]PT|[cC]laude[bB]ot|[pP]erplexity[bB]ot|[gG]oogle-[eE]xtended|[mM]eta-[eE]xternal[aA]gent|[cC]ohere-AI).*"
         }
       ],
       "destination": "/api/seo-handler?type=static&lang=hi"

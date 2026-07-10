@@ -1,0 +1,54 @@
+# Vrindopnishad Paath - Online Library of Braj Rasik Literature
+
+Vrindopnishad Paath is a crawlable, fully server-rendered digital library dedicated to the sacred literature, biographies, and teachings of the Braj Rasik saints of Vrindavan (primarily Radhavallabh, Haridasi, and other Vaishnava traditions). 
+
+- **Homepage (English)**: https://path.vrindopnishad.in
+- **Homepage (Hindi)**: https://path.vrindopnishad.in/hi
+- **Sitemap Index**: https://path.vrindopnishad.in/sitemap.xml
+
+## Main Content Entities
+
+All pages embed rich [Schema.org JSON-LD Structured Data](https://schema.org) to make indexing and semantic extraction straightforward for LLMs, search engines, and MCP servers.
+
+### 1. Devotional Lyrics & Translations (Lyrics)
+- **Path structure**: `/lyrics/[slug]` (English) and `/hi/lyrics/[slug]` (Hindi)
+- **Description**: Contains original devotional verses (pads, shlokas, strotras, poems) in Sanskrit/Braj Bhasha devanagari script, romanized transliteration (Hinglish), word meanings, and complete Hindi/English translations and commentaries.
+- **Structured Schema**: `MusicComposition`
+- **Sitemap**: `/sitemaps/content.xml` (contains all 8,000+ verses)
+
+### 2. Rasik Saints & Biographies (Saints)
+- **Path structure**: `/saints/[slug]` (English) and `/hi/saints/[slug]` (Hindi)
+- **Description**: Historical records, lineages, and complete biographies of over 50 Braj Rasik saints (including Swami Haridas, Shri Hit Harivansh, Shri Hariram Vyas, Shri Dhruvdas, Pujya Premanand Ji Maharaj, Jagadguru Shri Kripalu Ji Maharaj, and more).
+- **Structured Schema**: `Person`
+- **Sitemap**: `/sitemaps/saints.xml`
+
+### 3. Holy Scriptures & Books (Granthas)
+- **Path structure**: `/granthas/[slug]` (English) and `/hi/granthas/[slug]` (Hindi)
+- **Description**: Compilations and indices of verses from over 200 classical books and scriptures of the Braj tradition (like *Kelimal*, *Chaurasi Pad*, *Vyas Vani*, *Braj Ras Madhuri*, *Prem Ras Madira*, etc.).
+- **Structured Schema**: `Book`
+- **Sitemap**: `/sitemaps/granthas.xml`
+
+### 4. Classical Ragas (Ragas)
+- **Path structure**: `/ragas/[slug]` (English) and `/hi/ragas/[slug]` (Hindi)
+- **Description**: Compositions categorized by classical Indian musical ragas (such as Raga Paraja, Raga Kedara, Raga Bilavala, etc.).
+- **Sitemap**: `/sitemaps/ragas.xml`
+
+### 5. Glossary of Theological Terms (Glossary)
+- **Path structure**: `/glossary/[slug]` (English) and `/hi/glossary/[slug]` (Hindi)
+- **Description**: Clear definitions and devanagari matches of core spiritual terms and concepts (such as Nitya Vihar, Nikunj, Ras, Manjari, etc.).
+- **Structured Schema**: `DefinedTerm`
+- **Sitemap**: `/sitemaps/glossary.xml`
+
+## Core Concepts & Terminology
+- **Nitya Vihar**: The eternal, dynamic love-play of Shri Radha and Shri Krishna in the secret bower (Nikunj) of Vrindavan, distinct from generic lilas.
+- **Braj Ras**: The aesthetic-spiritual experience of divine nectar in Vrindavan.
+- **Braj Bhasha**: The medieval dialect of Hindi in which the majority of these devotional poems and padavalis are composed.
+
+## Sitemaps Directory
+AI agents and crawlers can fetch the full list of pages via the XML sitemaps:
+- Static pages sitemap: https://path.vrindopnishad.in/sitemaps/pages.xml
+- Saints sitemap: https://path.vrindopnishad.in/sitemaps/saints.xml
+- Granthas sitemap: https://path.vrindopnishad.in/sitemaps/granthas.xml
+- Ragas sitemap: https://path.vrindopnishad.in/sitemaps/ragas.xml
+- Glossary terms sitemap: https://path.vrindopnishad.in/sitemaps/glossary.xml
+- Lyrics sitemap (paginated): https://path.vrindopnishad.in/sitemaps/content.xml
