@@ -12,7 +12,10 @@ const nextConfig = {
     outputFileTracingIncludes: {
       '/**/*': [
         'data/processed_cache.json',
-        'data/saints_formatted.json'
+        'data/saints_formatted.json',
+        'data/brajrasik_hi_full.json',
+        'public/data/content_backup.json',
+        'public/data/relations_backup.json'
       ]
     }
   },
