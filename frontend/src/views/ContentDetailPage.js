@@ -296,9 +296,25 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
   const formatVerseText = (text) => {
     if (!text) return null;
 
-    const isProse = text.length > 350 || !text.includes('॥');
+    // First: split text into paragraphs at verse markers like [1], [2], (1), (2), ॥1॥, etc.
+    // Also split at existing newlines
+    const splitOnMarkers = (str) => {
+      // Split on: [N], (N), ॥N॥, ॥ N ॥, numbered markers, and existing newlines
+      return str
+        .replace(/\s*\[(\d+)\]\s*/g, '\n\n【$1】 ')
+        .replace(/\s*\((\d+)\)\s*/g, '\n\n($1) ')
+        .replace(/\s*॥\s*(\d+)\s*॥\s*/g, '\n\n॥$1॥\n')
+        .replace(/\s*।\s*।\s*/g, '॥\n')
+        .replace(/\s*-\s*श्री\s/g, '\n\n— श्री ')
+        .replace(/\s*–\s*श्री\s/g, '\n\n— श्री ')
+        .split(/\n+/);
+    };
 
-    if (!settings.lineByLine || isProse) {
+    const isProse = text.length > 350 || !text.includes('॥');
+    const hasVerseMarkers = /\[\d+\]|\(\d+\)|॥\s*\d+\s*॥/.test(text);
+
+    if (!settings.lineByLine && !isProse) {
+      // Short verse mode — just show with pre-line
       return (
         <div className="prose-text text-left leading-relaxed font-sans font-light tracking-wide space-y-4 whitespace-pre-line" style={{ lineHeight: '1.8' }}>
           {text}
@@ -306,47 +322,73 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
       );
     }
 
-    const rawLines = text.split(/\r?\n/);
-
-    const finalLines = [];
+    // Smart formatting for prose & long text
+    let paragraphs;
     
-    for (const rawLine of rawLines) {
-      if (!rawLine.trim()) {
-        finalLines.push("");
-        continue;
-      }
+    if (hasVerseMarkers || isProse) {
+      paragraphs = splitOnMarkers(text)
+        .map(p => p.trim())
+        .filter(p => p.length > 0);
 
-      const parts = rawLine.split(/([।॥|]+\s*(?:\[\d+\]|\(?\d+\)?)?|\.{1,2}\s*(?:\[\d+\]|\(?\d+\)?)?)/g);
-      
-      let currentLine = "";
-      for (let i = 0; i < parts.length; i++) {
-        if (i % 2 === 0) {
-          currentLine = parts[i];
+      // If we still have very long paragraphs (>200 chars), split at danda (।)
+      const refined = [];
+      paragraphs.forEach(para => {
+        if (para.length > 200 && para.includes('।')) {
+          const subParts = para.split(/।\s*/);
+          subParts.forEach((sub, i) => {
+            const trimmed = sub.trim();
+            if (trimmed) {
+              refined.push(i < subParts.length - 1 ? trimmed + ' ।' : trimmed);
+            }
+          });
         } else {
-          currentLine += parts[i];
-          if (currentLine.trim()) {
-            finalLines.push(currentLine.trim());
-          }
-          currentLine = "";
+          refined.push(para);
         }
+      });
+      paragraphs = refined;
+    } else {
+      // Standard line-by-line splitting for verse text
+      const rawLines = text.split(/\r?\n/);
+      const finalLines = [];
+      for (const rawLine of rawLines) {
+        if (!rawLine.trim()) { finalLines.push(""); continue; }
+        const parts = rawLine.split(/([।॥|]+\s*(?:\[\d+\]|\(?\d+\)?)?|\.{1,2}\s*(?:\[\d+\]|\(?\d+\)?)?)​/g);
+        let currentLine = "";
+        for (let i = 0; i < parts.length; i++) {
+          if (i % 2 === 0) { currentLine = parts[i]; }
+          else {
+            currentLine += parts[i];
+            if (currentLine.trim()) finalLines.push(currentLine.trim());
+            currentLine = "";
+          }
+        }
+        if (currentLine.trim()) finalLines.push(currentLine.trim());
       }
-      if (currentLine.trim()) {
-        finalLines.push(currentLine.trim());
-      }
+      paragraphs = finalLines;
     }
 
-    if (finalLines.length === 0) return <div style={{ whiteSpace: 'pre-wrap' }}>{text}</div>;
+    if (paragraphs.length === 0) return <div style={{ whiteSpace: 'pre-wrap' }}>{text}</div>;
 
-    return finalLines.map((line, idx) => {
-      if (line === "") {
-        return <div key={idx} className="h-4" />;
-      }
-      return (
-        <div key={idx} className="mb-3 last:mb-0">
-          {line}
-        </div>
-      );
-    });
+    return (
+      <div className="space-y-3">
+        {paragraphs.map((para, idx) => {
+          if (para === "") return <div key={idx} className="h-3" />;
+
+          // Style verse markers specially
+          const isVerseHeader = /^【\d+】|^॥\d+॥|^\(\d+\)|^— श्री/.test(para);
+
+          return (
+            <p key={idx} className={`leading-[1.9] ${
+              isVerseHeader
+                ? 'mt-4 pt-4 border-t border-white/5 text-amber-300/70 text-[0.85em]'
+                : ''
+            }`}>
+              {para}
+            </p>
+          );
+        })}
+      </div>
+    );
   };
 
   const getCategoryBadgeClass = (category) => {
