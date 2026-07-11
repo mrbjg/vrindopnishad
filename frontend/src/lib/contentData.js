@@ -214,11 +214,9 @@ function loadLocalJSONFallback() {
         let slug = item.slug;
         if (!slug || slug.startsWith('untitled')) {
           slug = generateSlug(item.title);
-        } else {
-          slug = slugify(slug);
-        }
-        if (slug.length > 100) {
-          slug = slug.substring(0, 100).replace(/-+$/, '');
+          if (slug.length > 100) {
+            slug = slug.substring(0, 100).replace(/-+$/, '');
+          }
         }
         return {
           id: item.id || `local-${idx}`,
@@ -394,11 +392,9 @@ export async function ensureDataLoaded() {
                 let slug = item.slug;
                 if (!slug || slug.startsWith('untitled')) {
                   slug = generateSlug(item.title);
-                } else {
-                  slug = slugify(slug);
-                }
-                if (slug && slug.length > 100) {
-                  slug = slug.substring(0, 100).replace(/-+$/, '');
+                  if (slug && slug.length > 100) {
+                    slug = slug.substring(0, 100).replace(/-+$/, '');
+                  }
                 }
                 return {
                   ...item,
