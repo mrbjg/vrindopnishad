@@ -13,12 +13,91 @@ export async function generateStaticParams() {
   }));
 }
 
+import { supabase } from '../../../../src/lib/supabase';
+
+const slugify = (text) => {
+  if (!text) return '';
+  return text.toString().toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/--+/g, '-');
+};
+
+async function fetchGranthaFromSupabaseBySlug(slug) {
+  try {
+    const decodedSlug = decodeURIComponent(slug).toLowerCase();
+    
+    const { data: verses, error } = await supabase
+      .from('content')
+      .select('*')
+      .ilike('slug', `%${decodedSlug}%`);
+
+    if (error || !verses || verses.length === 0) {
+      return null;
+    }
+
+    const titleWords = decodedSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1));
+    const bookName = titleWords.join(' ');
+
+    let authorName = 'Braj Rasik';
+    const authorCounts = {};
+    let maxCount = 0;
+    
+    verses.forEach(v => {
+      const auth = v.author || '';
+      if (auth) {
+        authorCounts[auth] = (authorCounts[auth] || 0) + 1;
+        if (authorCounts[auth] > maxCount) {
+          maxCount = authorCounts[auth];
+          authorName = auth;
+        }
+      }
+    });
+
+    authorName = authorName.replace(/जी की वाणी/g, '').replace(/जी/g, '').trim();
+
+    const mappedVerses = verses.map(v => ({
+      id: v.id,
+      title: v.title,
+      sanskrit_text: v.sanskrit_text || v.sanskritText || '',
+      hindi_text: v.hindi_text || v.hindiText || '',
+      english_text: v.english_text || v.englishText || '',
+      english_translation: v.english_translation || v.englishTranslation || '',
+      category: v.category || 'poem',
+      description: v.description || '',
+      content_text: v.content_text || v.contentText || '',
+      tags: v.tags || [],
+      status: (v.status || '').toLowerCase(),
+      author: v.author || '',
+      media_links: v.media_links || v.mediaLinks || [],
+      audio_url: v.audio_url || v.audioUrl || '',
+      image_urls: v.image_urls || v.imageUrls || [],
+      video_urls: v.video_urls || v.videoUrls || [],
+      slug: v.slug,
+      created_at: v.created_at || v.createdAt,
+      updated_at: v.updated_at || v.updatedAt
+    }));
+
+    return {
+      name: bookName,
+      slug: decodedSlug,
+      author: authorName,
+      authorSlug: slugify(authorName),
+      verses: mappedVerses,
+      imageUrl: null
+    };
+  } catch (err) {
+    console.error('Failed to fetch grantha from Supabase:', err);
+    return null;
+  }
+}
+
 export const dynamicParams = true;
 
 export async function generateMetadata({ params }) {
   await ensureDataLoaded();
   const decodedSlug = decodeURIComponent(params.slug);
-  const book = getGranthaBySlug(decodedSlug);
+  let book = getGranthaBySlug(decodedSlug);
+  if (!book) {
+    book = await fetchGranthaFromSupabaseBySlug(decodedSlug);
+  }
   if (!book) return {};
 
   const brand = "वृंदोपनिषद्";
@@ -51,7 +130,10 @@ export async function generateMetadata({ params }) {
 export default async function HindiBookRoute({ params }) {
   await ensureDataLoaded();
   const decodedSlug = decodeURIComponent(params.slug);
-  const book = getGranthaBySlug(decodedSlug);
+  let book = getGranthaBySlug(decodedSlug);
+  if (!book) {
+    book = await fetchGranthaFromSupabaseBySlug(decodedSlug);
+  }
   if (!book) {
     notFound();
   }

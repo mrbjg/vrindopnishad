@@ -13,12 +13,69 @@ export async function generateStaticParams() {
   }));
 }
 
+import { supabase } from '../../../../src/lib/supabase';
+
+async function fetchRagaFromSupabaseBySlug(slug) {
+  try {
+    const decodedSlug = decodeURIComponent(slug).toLowerCase();
+    const cleanRagaName = decodedSlug.replace(/^raag-/, '').replace(/^rag-/, '');
+    
+    // Find verses mentioning this raga in title or text
+    const { data: verses, error } = await supabase
+      .from('content')
+      .select('*')
+      .or(`title.ilike.%${cleanRagaName}%,hindi_text.ilike.%${cleanRagaName}%,sanskrit_text.ilike.%${cleanRagaName}%`);
+
+    if (error || !verses || verses.length === 0) {
+      return null;
+    }
+
+    const ragaName = decodedSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+    const mappedVerses = verses.map(v => ({
+      id: v.id,
+      title: v.title,
+      sanskrit_text: v.sanskrit_text || v.sanskritText || '',
+      hindi_text: v.hindi_text || v.hindiText || '',
+      english_text: v.english_text || v.englishText || '',
+      english_translation: v.english_translation || v.englishTranslation || '',
+      category: v.category || 'poem',
+      description: v.description || '',
+      content_text: v.content_text || v.contentText || '',
+      tags: v.tags || [],
+      status: (v.status || '').toLowerCase(),
+      author: v.author || '',
+      media_links: v.media_links || v.mediaLinks || [],
+      audio_url: v.audio_url || v.audioUrl || '',
+      image_urls: v.image_urls || v.imageUrls || [],
+      video_urls: v.video_urls || v.videoUrls || [],
+      slug: v.slug,
+      created_at: v.created_at || v.createdAt,
+      updated_at: v.updated_at || v.updatedAt
+    }));
+
+    return {
+      name: ragaName,
+      hinglishName: ragaName,
+      slug: decodedSlug,
+      verses: mappedVerses,
+      imageUrl: null
+    };
+  } catch (err) {
+    console.error('Failed to fetch raga from Supabase:', err);
+    return null;
+  }
+}
+
 export const dynamicParams = true;
 
 export async function generateMetadata({ params }) {
   await ensureDataLoaded();
   const decodedSlug = decodeURIComponent(params.slug);
-  const raga = getRagaBySlug(decodedSlug);
+  let raga = getRagaBySlug(decodedSlug);
+  if (!raga) {
+    raga = await fetchRagaFromSupabaseBySlug(decodedSlug);
+  }
   if (!raga) return {};
 
   const brand = "वृंदोपनिषद्";
@@ -51,7 +108,10 @@ export async function generateMetadata({ params }) {
 export default async function HindiRagaRoute({ params }) {
   await ensureDataLoaded();
   const decodedSlug = decodeURIComponent(params.slug);
-  const raga = getRagaBySlug(decodedSlug);
+  let raga = getRagaBySlug(decodedSlug);
+  if (!raga) {
+    raga = await fetchRagaFromSupabaseBySlug(decodedSlug);
+  }
   if (!raga) {
     notFound();
   }

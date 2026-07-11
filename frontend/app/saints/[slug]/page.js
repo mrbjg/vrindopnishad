@@ -13,12 +13,93 @@ export async function generateStaticParams() {
   }));
 }
 
+import { supabase } from '../../../src/lib/supabase';
+import { getSaintMetadata } from '../../../src/utils/saintMetadata';
+
+async function fetchSaintFromSupabaseBySlug(slug) {
+  try {
+    const decodedSlug = decodeURIComponent(slug).toLowerCase();
+    
+    // Find any verse by this author/slug in Supabase
+    const { data: verses, error } = await supabase
+      .from('content')
+      .select('*')
+      .ilike('slug', `%${decodedSlug}%`);
+
+    if (error || !verses || verses.length === 0) {
+      return null;
+    }
+
+    // Find the most common author name in the results
+    const authorCounts = {};
+    let bestAuthor = '';
+    let maxCount = 0;
+    
+    verses.forEach(v => {
+      const auth = v.author || '';
+      if (auth) {
+        authorCounts[auth] = (authorCounts[auth] || 0) + 1;
+        if (authorCounts[auth] > maxCount) {
+          maxCount = authorCounts[auth];
+          bestAuthor = auth;
+        }
+      }
+    });
+
+    if (!bestAuthor) {
+      bestAuthor = decodedSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    }
+
+    const cleanName = bestAuthor.replace(/जी की वाणी/g, '').replace(/जी/g, '').trim();
+
+    const mappedVerses = verses.map(v => ({
+      id: v.id,
+      title: v.title,
+      sanskrit_text: v.sanskrit_text || v.sanskritText || '',
+      hindi_text: v.hindi_text || v.hindiText || '',
+      english_text: v.english_text || v.englishText || '',
+      english_translation: v.english_translation || v.englishTranslation || '',
+      category: v.category || 'poem',
+      description: v.description || '',
+      content_text: v.content_text || v.contentText || '',
+      tags: v.tags || [],
+      status: (v.status || '').toLowerCase(),
+      author: v.author || '',
+      media_links: v.media_links || v.mediaLinks || [],
+      audio_url: v.audio_url || v.audioUrl || '',
+      image_urls: v.image_urls || v.imageUrls || [],
+      video_urls: v.video_urls || v.videoUrls || [],
+      slug: v.slug,
+      created_at: v.created_at || v.createdAt,
+      updated_at: v.updated_at || v.updatedAt
+    }));
+
+    const meta = getSaintMetadata(slug);
+
+    return {
+      name: cleanName,
+      hinglishName: cleanName,
+      slug: decodedSlug,
+      verses: mappedVerses,
+      books: Array.from(new Set(verses.map(v => v.category).filter(Boolean))),
+      biography: meta ? { text: meta.biographyEn } : { text: "Vaishnava saint of the Braj tradition." },
+      imageUrl: null
+    };
+  } catch (err) {
+    console.error('Failed to fetch saint from Supabase:', err);
+    return null;
+  }
+}
+
 export const dynamicParams = true;
 
 export async function generateMetadata({ params }) {
   await ensureDataLoaded();
   const decodedSlug = decodeURIComponent(params.slug);
-  const saint = getSaintBySlug(decodedSlug);
+  let saint = getSaintBySlug(decodedSlug);
+  if (!saint) {
+    saint = await fetchSaintFromSupabaseBySlug(decodedSlug);
+  }
   if (!saint) return {};
 
   const brand = "Vrindopnishad";
@@ -51,7 +132,10 @@ export async function generateMetadata({ params }) {
 export default async function SaintRoute({ params }) {
   await ensureDataLoaded();
   const decodedSlug = decodeURIComponent(params.slug);
-  const saint = getSaintBySlug(decodedSlug);
+  let saint = getSaintBySlug(decodedSlug);
+  if (!saint) {
+    saint = await fetchSaintFromSupabaseBySlug(decodedSlug);
+  }
   if (!saint) {
     notFound();
   }
