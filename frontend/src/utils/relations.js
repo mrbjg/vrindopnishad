@@ -64,7 +64,7 @@ export function getNormalizedBookName(name) {
 }
 
 export function parseAuthorField(authorStr) {
-  if (!authorStr || authorStr === 'Braj Rasik Heritage') {
+  if (!authorStr || authorStr === 'Team VrindaVaani') {
     return { saintName: null, bookName: null, verseNum: null };
   }
 
@@ -212,7 +212,7 @@ export function extractRelations(items) {
       verseNum = parsedAuthor.verseNum || verseNum;
     }
 
-    if (!saintName && item.author && item.author !== 'Braj Rasik Heritage') {
+    if (!saintName && item.author && item.author !== 'Team VrindaVaani') {
       saintName = item.author;
     }
 

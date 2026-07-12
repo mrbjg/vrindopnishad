@@ -15,10 +15,10 @@ const GlossaryPage = () => {
   const pageUrl = `${SITE_URL}${isHindiRoute ? '/hi' : ''}/glossary`;
   const title = isHindiRoute 
     ? 'ब्रज रसिक शब्दकोश — वृंदावन के आध्यात्मिक एवं दार्शनिक शब्द'
-    : 'Braj Rasik Glossary — Vrindavan Spiritual & Theological Terms';
+    : 'Vrindavan Devotional Glossary — Spiritual & Theological Terms';
   const description = isHindiRoute
     ? 'वृंदावन की रसिक परंपरा, नित्य विहार, निकुंज लीला, मंजरी भाव, और सेवा जैसे पारिभाषिक शब्दों की विस्तृत व्याख्या और संदर्भ।'
-    : 'Explore the comprehensive Braj Rasik Glossary of spiritual, theological, and devotional terms from Vrindavan, including etymology, Hindi, and English definitions.';
+    : 'Explore the comprehensive Vrindavan Devotional Glossary of spiritual, theological, and devotional terms, including etymology, Hindi, and English definitions.';
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -52,7 +52,7 @@ const GlossaryPage = () => {
           {isHindiRoute ? "आध्यात्मिक शब्दकोश" : "Spiritual Encyclopedia"}
         </div>
         <h1 className="text-3xl md:text-5xl font-bold font-headings text-sacred-gradient mb-4">
-          {isHindiRoute ? "ब्रज रसिक शब्दकोश" : "Braj Rasik Glossary"}
+          {isHindiRoute ? "ब्रज रसिक शब्दकोश" : "Vrindavan Devotional Glossary"}
         </h1>
         <p className="text-white/60 text-sm leading-relaxed">
           {isHindiRoute 

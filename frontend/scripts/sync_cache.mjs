@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * sync_cache.mjs
- * Regenerates processed_cache.json from brajrasik_hi_full.json + saints_formatted.json
+ * Regenerates processed_cache.json from vrindavaani_content.json + saints_formatted.json
  * Run this after ANY modification to the main database file.
  */
 import fs from 'fs';
@@ -12,7 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const dataDir = path.join(__dirname, '../data');
-const dbPath = path.join(dataDir, 'brajrasik_hi_full.json');
+const dbPath = path.join(dataDir, 'vrindavaani_content.json');
 const saintsPath = path.join(dataDir, 'saints_formatted.json');
 const cachePath = path.join(dataDir, 'processed_cache.json');
 

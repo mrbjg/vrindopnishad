@@ -107,7 +107,7 @@ async function run() {
     }
     
     // 1. Write the main local hi_full file
-    const targetPath = join(dataDir, 'brajrasik_hi_full.json');
+    const targetPath = join(dataDir, 'vrindavaani_content.json');
     writeFileSync(targetPath, JSON.stringify(mapped, null, 2), 'utf8');
     console.log(`💾 Saved ${mapped.length} mapped items to ${targetPath}`);
 

@@ -15,7 +15,7 @@ const __dirname = path.dirname(__filename);
 const dataDir = path.join(__dirname, '../data');
 const publicDataDir = path.join(__dirname, '../public/data');
 
-const dbPath = path.join(dataDir, 'brajrasik_hi_full.json');
+const dbPath = path.join(dataDir, 'vrindavaani_content.json');
 const saintsPath = path.join(dataDir, 'saints_formatted.json');
 
 // Helper to determine if a string/sentence is primarily English

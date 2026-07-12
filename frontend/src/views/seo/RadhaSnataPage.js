@@ -10,7 +10,7 @@ import SEOFooter from '../../components/SEOFooter';
 const RadhaSnataPage = () => {
   const pageUrl = `${SITE_URL}/what-is-radha-snata`;
   const title = 'What is Radha Snata? — Morning Pastimes & Spiritual Meaning';
-  const description = 'Understand the concept of Radha Snata (Radha-snata-vibhusita) in Braj Rasik heritage. Explore its role in Asta-kaliya-lila and morning devotional meditations.';
+  const description = 'Understand the concept of Radha Snata (Radha-snata-vibhusita) in Vrindavan devotional heritage. Explore its role in Asta-kaliya-lila and morning devotional meditations.';
 
   return (
     <div className="animate-fade-in max-w-4xl mx-auto">

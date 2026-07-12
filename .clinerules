@@ -117,3 +117,8 @@ Ensure all static elements (headers, sidebars, hero grids) have fixed heights or
 Rule [accessible_navigation_a11y]:
 Equip all touch controls and action buttons (e.g., chanting bead counter, theme buttons, profile avatar links) with clear aria-label tags and visible interactive states for screen readers and keyboard access.
 
+Rule for Database File Tracing:
+When introducing or modifying any client-side/server-side dynamic page that reads local JSON/cache files at runtime on Next.js/Vercel, always ensure the read target is added to the outputFileTracingIncludes configuration in next.config.mjs to prevent runtime 404 errors.
+
+Rule for Copyright Auditing:
+When importing external content databases, always strip all modern translations, commentaries, and metadata beforehand to avoid DMCA takedown alerts, keeping only public domain texts and generating transliterations programmatically.

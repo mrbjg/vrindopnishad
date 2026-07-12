@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const dataPath = path.join(__dirname, 'data/brajrasik_hi_full.json');
+const dataPath = path.join(__dirname, 'data/vrindavaani_content.json');
 const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
 
 console.log('Total items:', data.length);
@@ -20,7 +20,7 @@ data.forEach((item, idx) => {
                   (item.hindi_text && item.hindi_text.trim().length <= 5);
                   
   // 3. Check for numeric book or saint names
-  const hasWeirdAuthor = item.author && (/^\d+$/.test(item.author) || item.author.trim() === 'Braj Rasik Heritage');
+  const hasWeirdAuthor = item.author && (/^\d+$/.test(item.author) || item.author.trim() === 'Team VrindaVaani');
 
   if (isTestWord || isShort || hasWeirdAuthor) {
     testItems.push({ idx, id: item.id, title: item.title, author: item.author, category: item.category });

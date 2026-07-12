@@ -263,11 +263,45 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
               
               const matchedRaga = ragaName ? relations.ragas.find(r => r.name === ragaName) : null;
               
-              const categoryVerses = allItems.filter(item => 
-                item.category === data.category && 
-                item.id?.toString() !== data.id?.toString() &&
-                item.category?.toLowerCase() !== 'saint'
-              ).slice(0, 3);
+              // --- Dynamic Tag-Based Recommendations ---
+              const currentTags = new Set((data.tags || []).map(t => t.toLowerCase()));
+              const currentId = data.id?.toString();
+              const currentAuthor = (data.author || '').toLowerCase();
+              const umbrellaTag = 'vrindavaani'; // low-weight umbrella
+
+              const scored = allItems
+                .filter(item =>
+                  item.id?.toString() !== currentId &&
+                  item.category?.toLowerCase() !== 'saint'
+                )
+                .map(item => {
+                  const itemTags = new Set((item.tags || []).map(t => t.toLowerCase()));
+                  let score = 0;
+
+                  // Tag overlap scoring (specific tags worth more)
+                  for (const tag of itemTags) {
+                    if (currentTags.has(tag)) {
+                      score += (tag === umbrellaTag) ? 0.5 : 2;
+                    }
+                  }
+
+                  // Same author bonus
+                  if (currentAuthor && (item.author || '').toLowerCase() === currentAuthor) {
+                    score += 3;
+                  }
+
+                  // Same category bonus
+                  if (data.category && item.category === data.category) {
+                    score += 1;
+                  }
+
+                  return { item, score };
+                })
+                .filter(s => s.score > 0)
+                .sort((a, b) => b.score - a.score || Math.random() - 0.5);
+
+              // Pick top 6, adding light randomness within equal-score ties
+              const categoryVerses = scored.slice(0, 6).map(s => s.item);
               
               setRelatedSaint(matchedSaint || null);
               setRelatedBook(matchedBook || null);
@@ -435,7 +469,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
   }
 
   if (!parsedSaintName) {
-    parsedSaintName = content.author && content.author !== 'Braj Rasik Heritage' ? content.author : '';
+    parsedSaintName = content.author && content.author !== 'Team VrindaVaani' ? content.author : '';
   }
 
   const cleanSaint = parsedSaintName ? parsedSaintName.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim() : (isHindiRoute ? 'वैष्णव संत' : 'Vaishnava Saint');
@@ -922,7 +956,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                           {isHindiRoute ? relatedSaint.name : relatedSaint.hinglishName}
                         </h3>
                         <span className="text-[9px] text-white/35 font-light uppercase tracking-wider block mt-0.5">
-                          {isHindiRoute ? "रसिक सन्त" : "Braj Rasik"}
+                          {isHindiRoute ? "रसिक सन्त" : "Rasik Sant"}
                         </span>
                       </div>
                     </div>

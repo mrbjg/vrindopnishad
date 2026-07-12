@@ -102,7 +102,7 @@ const generateSlug = (text) => {
   return slugify(transliterate(text));
 };
 
-const dataPath = path.join(__dirname, '../data/brajrasik_hi_full.json');
+const dataPath = path.join(__dirname, '../data/vrindavaani_content.json');
 const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
 
 // Test URLs from Table.csv in path-2

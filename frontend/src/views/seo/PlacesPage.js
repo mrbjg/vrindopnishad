@@ -93,7 +93,7 @@ const SACRED_PLACES = [
     devanagari: 'केशी घाट',
     category: 'Ghats',
     description: 'The primary and most famous bathing ghat on the Yamuna river in Vrindavan. It is the historic place where Lord Krishna slayed the wild horse demon Keshi sent by Kamsa, and bathed to purify Himself. Thousands gather here daily for the beautiful sunset Yamuna Aarti.',
-    saintConnection: 'Braj Rasik Saints & Pilgrims',
+    saintConnection: 'Rasik Saints & Pilgrims',
     locationHint: 'Vrindavan, bank of Yamuna river.'
   },
   {

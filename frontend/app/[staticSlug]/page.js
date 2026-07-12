@@ -17,7 +17,7 @@ import FAQPage from '../../src/views/seo/FAQPage';
 import { faqData } from '../../src/data/faqData';
 import ComparisonPage from '../../src/views/seo/ComparisonPage';
 import GuidePage from '../../src/views/seo/GuidePage';
-import BrajRasikHeritage from '../../src/views/seo/BrajRasikHeritage';
+import VrindavanDevotionalHeritage from '../../src/views/seo/VrindavanDevotionalHeritage';
 import RadhaSnataPage from '../../src/views/seo/RadhaSnataPage';
 import NityaViharPage from '../../src/views/seo/NityaViharPage';
 import GlossaryPage from '../../src/views/seo/GlossaryPage';
@@ -56,7 +56,7 @@ const componentMap = {
   'faq': FAQPage,
   'comparison-with-upanishads': ComparisonPage,
   'guide': GuidePage,
-  'braj-rasik-heritage': BrajRasikHeritage,
+  'vrindavan-devotional-heritage': VrindavanDevotionalHeritage,
   'what-is-radha-snata': RadhaSnataPage,
   'nitya-vihar-vs-nikunj-vihar': NityaViharPage,
   'glossary': GlossaryPage,

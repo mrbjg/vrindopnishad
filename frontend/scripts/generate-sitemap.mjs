@@ -269,7 +269,7 @@ function extractRelations(items) {
       }
     }
 
-    if (!saintName && item.author && item.author !== 'Braj Rasik Heritage') {
+    if (!saintName && item.author && item.author !== 'Team VrindaVaani') {
       saintName = item.author;
     }
 
@@ -337,7 +337,7 @@ const SEO_PAGES = [
   { path: '/faq', priority: '0.9', changefreq: 'weekly' },
   { path: '/comparison-with-upanishads', priority: '0.9', changefreq: 'weekly' },
   { path: '/guide', priority: '0.9', changefreq: 'weekly' },
-  { path: '/braj-rasik-heritage', priority: '0.9', changefreq: 'weekly' },
+  { path: '/vrindavan-devotional-heritage', priority: '0.9', changefreq: 'weekly' },
   { path: '/what-is-radha-snata', priority: '0.9', changefreq: 'weekly' },
   { path: '/nitya-vihar-vs-nikunj-vihar', priority: '0.9', changefreq: 'weekly' },
   { path: '/glossary', priority: '0.9', changefreq: 'weekly' },
@@ -441,11 +441,11 @@ async function generateSitemap() {
   if (allContentItems.length === 0) {
     console.log('⚠️ Both database fetches failed (offline/sandboxed). Loading from local backups...');
     try {
-      let localFilePath = join(__dirname, '../data/brajrasik_hi_full.json');
+      let localFilePath = join(__dirname, '../data/vrindavaani_content.json');
       let localSaintsPath = join(__dirname, '../data/saints_formatted.json');
       
       if (!fs.existsSync(localFilePath)) {
-        localFilePath = join(__dirname, '../../admin/data/brajrasik_hi_full.json');
+        localFilePath = join(__dirname, '../../admin/data/vrindavaani_content.json');
         localSaintsPath = join(__dirname, '../../admin/data/saints_formatted.json');
       }
       

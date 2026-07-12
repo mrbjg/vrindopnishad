@@ -1,26 +1,26 @@
 import { mockApiService } from './mockData';
 import { auth, db, contentDb, dataConnect } from '../firebase';
 import { getContentById as getDcContentById, getContentBySlug as getDcContentBySlug } from '../lib/dataconnect';
-import { 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
-  signInWithPopup, 
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
   GoogleAuthProvider,
   onAuthStateChanged,
   signOut,
   sendPasswordResetEmail
 } from 'firebase/auth';
-import { 
-  collection, 
-  doc, 
-  getDocs, 
-  getDoc, 
-  setDoc, 
-  updateDoc, 
-  deleteDoc, 
-  query, 
-  where, 
-  limit 
+import {
+  collection,
+  doc,
+  getDocs,
+  getDoc,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  limit
 } from 'firebase/firestore';
 import { ref, get, child, set as dbSet, update as dbUpdate, remove as dbRemove, query as rtdbQuery, orderByChild, startAt } from 'firebase/database';
 import { supabase } from '../lib/supabase';
@@ -41,7 +41,7 @@ let memoryCategoryCache = {};
 let lastSyncTime = 0;
 
 if (typeof window !== 'undefined') {
-  const CURRENT_CACHE_VERSION = 'v4'; // Increment to force reset and reload the correct full category files
+  const CURRENT_CACHE_VERSION = 'v4';
   const storedVersion = localStorage.getItem('vrindopnishad_cache_version');
   if (storedVersion !== CURRENT_CACHE_VERSION) {
     console.log(`[Cache-Reset] Version mismatch (stored: "${storedVersion}", current: "${CURRENT_CACHE_VERSION}"). Resetting LocalStorage cache...`);
@@ -61,7 +61,7 @@ const contentMapBySlug = new Map();
 const rebuildMemoryMaps = () => {
   const mergedItems = [];
   const categories = ['shloka', 'strotra', 'poem', 'saint', 'dham'];
-  
+
   categories.forEach(cat => {
     const catItems = memoryCategoryCache[cat];
     if (catItems && Array.isArray(catItems)) {
@@ -70,24 +70,24 @@ const rebuildMemoryMaps = () => {
   });
 
   memoryCachedItems = ensureSorted(mergedItems);
-  
+
   contentMapById.clear();
   contentMapBySlug.clear();
-  
+
   memoryCachedItems.forEach(item => {
     if (!item) return;
-    
+
     if (!item.category) {
       item.category = classifyItemCategory(item);
     }
-    
+
     if (!item.slug || item.slug.startsWith('untitled')) {
       const titleSlug = generateSlug(item.title);
       if (titleSlug) {
         item.slug = titleSlug;
       }
     }
-    
+
     if (item.id) {
       contentMapById.set(item.id.toString(), item);
     }
@@ -147,7 +147,7 @@ const rebuildMemoryMaps = () => {
         scheduler(() => processQueue(endIndex));
       }
     };
-    
+
     // Defer start of warming slightly to let UI rendering complete
     setTimeout(() => processQueue(0), 150);
   }
@@ -205,11 +205,11 @@ const generateSlug = (text) => {
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9\s-]/g, '') 
-    .replace(/\s+/g, '-')         
-    .replace(/--+/g, '-')         
-    .replace(/^-+/, '')            
-    .replace(/-+$/, '');           
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/--+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
 };
 
 const normalizeFuzzyText = (text) => {
@@ -232,36 +232,36 @@ const normalizeFuzzyText = (text) => {
 };
 
 const setCache = (key, data) => {
-    try {
-        localStorage.setItem(CACHE_PREFIX + key, JSON.stringify({
-            timestamp: Date.now(),
-            data: data
-        }));
-    } catch (e) {}
+  try {
+    localStorage.setItem(CACHE_PREFIX + key, JSON.stringify({
+      timestamp: Date.now(),
+      data: data
+    }));
+  } catch (e) { }
 };
 
 const getCache = (key) => {
-    try {
-        const cached = localStorage.getItem(CACHE_PREFIX + key);
-        if (!cached) return null;
-        const { timestamp, data } = JSON.parse(cached);
-        if (Date.now() - timestamp > CACHE_EXPIRY) {
-            localStorage.removeItem(CACHE_PREFIX + key);
-            return null;
-        }
-        return data;
-    } catch (e) { return null; }
+  try {
+    const cached = localStorage.getItem(CACHE_PREFIX + key);
+    if (!cached) return null;
+    const { timestamp, data } = JSON.parse(cached);
+    if (Date.now() - timestamp > CACHE_EXPIRY) {
+      localStorage.removeItem(CACHE_PREFIX + key);
+      return null;
+    }
+    return data;
+  } catch (e) { return null; }
 };
 
 
 function classifyItemCategory(item) {
   if (!item) return 'poem';
   const rawCat = (item.category || '').toLowerCase().trim();
-  
+
   if (rawCat === 'saint' || rawCat === 'dham') {
     return rawCat;
   }
-  
+
   if (rawCat === 'strotra' || rawCat === 'strotras' || rawCat === 'stotra' || rawCat === 'stotras') {
     return 'strotra';
   }
@@ -271,8 +271,8 @@ function classifyItemCategory(item) {
 
   const title = (item.title || '').toLowerCase();
   const sanskrit = (item.sanskrit_text || '').toLowerCase();
-  
-  
+
+
   if (
     title.includes('स्तोत्र') || title.includes('strotra') || title.includes('stotra') ||
     title.includes('शतक') || title.includes('shatak') ||
@@ -284,21 +284,21 @@ function classifyItemCategory(item) {
   ) {
     return 'strotra';
   }
-  
-  
-  const hasSanskritText = sanskrit.trim().length > 10 && 
+
+
+  const hasSanskritText = sanskrit.trim().length > 10 &&
     (sanskrit.includes('॥') || sanskrit.includes('।') || sanskrit.includes('ॐ') || !/[a-z]{5,}/.test(sanskrit));
-  
-  const isScriptureBook = title.includes('gita') || title.includes('गीता') || 
-    title.includes('upnishad') || title.includes('उपनिषद') || 
-    title.includes('samhita') || title.includes('संहिता') || 
+
+  const isScriptureBook = title.includes('gita') || title.includes('गीता') ||
+    title.includes('upnishad') || title.includes('उपनिषद') ||
+    title.includes('samhita') || title.includes('संहिता') ||
     title.includes('purana') || title.includes('पुराण') ||
     title.includes('shloka') || title.includes('श्लोक');
 
   if (isScriptureBook || hasSanskritText || rawCat === 'shloka' || rawCat === 'shlokas') {
     return 'shloka';
   }
-  
+
   return 'poem';
 }
 
@@ -362,7 +362,7 @@ export const apiService = {
     if (typeof window === 'undefined') {
       return { sants: [], books: [], ragas: [], biographies: [] };
     }
-    
+
     try {
       const cached = localStorage.getItem('vrindopnishad_relations_cache');
       if (cached) {
@@ -371,7 +371,7 @@ export const apiService = {
     } catch (e) {
       console.warn('Failed to parse relations cache:', e);
     }
-    
+
     console.log('[Relations-Cache-Miss] Loading relations from backup file...');
     const relations = await fetchRelationsBackup();
     try {
@@ -383,10 +383,10 @@ export const apiService = {
   },
 
   getAllContent: async (category = null, limit = 50) => {
-    const targetCategories = category 
-      ? [category.toLowerCase().trim()] 
+    const targetCategories = category
+      ? [category.toLowerCase().trim()]
       : ['shloka', 'strotra', 'poem', 'saint', 'dham'];
-      
+
     let cacheUpdated = false;
 
     for (const cat of targetCategories) {
@@ -412,7 +412,7 @@ export const apiService = {
           if (backupItems && backupItems.length > 0) {
             memoryCategoryCache[cat] = ensureSorted(backupItems);
             cacheUpdated = true;
-            
+
             // Determine last updated time for this category
             let maxTime = new Date('1970-01-01T00:00:00Z');
             backupItems.forEach(item => {
@@ -421,7 +421,7 @@ export const apiService = {
                 if (t > maxTime) maxTime = t;
               }
             });
-            
+
             try {
               localStorage.setItem(`vrindopnishad_cache_${cat}`, JSON.stringify(backupItems));
               localStorage.setItem(`vrindopnishad_last_updated_${cat}`, maxTime.toISOString());
@@ -450,7 +450,7 @@ export const apiService = {
       const now = Date.now();
       if (now - lastSyncTime > 5 * 60 * 1000) {
         lastSyncTime = now;
-        
+
         setTimeout(async () => {
           try {
             // Determine maximum updated timestamp among loaded categories
@@ -469,7 +469,7 @@ export const apiService = {
                 .from('content')
                 .select('*')
                 .gt('updated_at', currentLastUpdated);
-              
+
               if (error) throw error;
               updates = (rawUpdates || []).map(mapToAppModel).filter(Boolean);
             } else {
@@ -493,7 +493,7 @@ export const apiService = {
                 console.log(`[Delta-Sync/RTDB] Fetching content updates since ${currentLastUpdated}...`);
                 const dbRef = ref(contentDb, 'content');
                 let rawUpdates = [];
-                
+
                 try {
                   const q = rtdbQuery(dbRef, orderByChild('updated_at'), startAt(currentLastUpdated));
                   const snapshot = await get(q);
@@ -533,14 +533,14 @@ export const apiService = {
                     return itemTime > lastTime;
                   });
                 }
-                
+
                 updates = rawUpdates.map(mapToAppModel).filter(Boolean);
               }
             }
 
             if (updates.length > 0) {
               console.log(`[Delta-Sync] Found ${updates.length} new or updated items!`);
-              
+
               // Group updates by category and distribute them
               const updatesByCat = {};
               updates.forEach(upd => {
@@ -599,7 +599,7 @@ export const apiService = {
                 } catch (relErr) {
                   console.warn('Failed to update relations cache in delta sync:', relErr);
                 }
-                
+
                 window.dispatchEvent(new Event('storage'));
               }
             } else {
@@ -625,20 +625,20 @@ export const apiService = {
 
     const decodedId = decodeURIComponent(id);
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decodedId);
-    
+
     // 1. Try memory map first
-    let matched = contentMapById.get(id.toString()) || 
-                  contentMapById.get(decodedId.toString()) ||
-                  contentMapBySlug.get(id) ||
-                  contentMapBySlug.get(decodedId);
+    let matched = contentMapById.get(id.toString()) ||
+      contentMapById.get(decodedId.toString()) ||
+      contentMapBySlug.get(id) ||
+      contentMapBySlug.get(decodedId);
 
     if (matched) {
       console.log(`[Cache-Hit] getContentById matched item ${id} in memory map.`);
       const cleanCategory = classifyItemCategory(matched);
-      const data = { 
-        ...matched, 
+      const data = {
+        ...matched,
         category: cleanCategory,
-        slug: matched.slug || generateSlug(matched.title) 
+        slug: matched.slug || generateSlug(matched.title)
       };
       setCache(cacheKey, data);
       return data;
@@ -666,10 +666,10 @@ export const apiService = {
           rawData = data;
           const dataObj = mapToAppModel(rawData);
           const cleanCategory = classifyItemCategory(dataObj);
-          const contentData = { 
-            ...dataObj, 
+          const contentData = {
+            ...dataObj,
             category: cleanCategory,
-            slug: dataObj.slug || generateSlug(dataObj.title) 
+            slug: dataObj.slug || generateSlug(dataObj.title)
           };
           setCache(cacheKey, contentData);
           return contentData;
@@ -690,7 +690,7 @@ export const apiService = {
             category: cleanCategory,
             slug: (mapped.slug && !mapped.slug.startsWith('untitled')) ? mapped.slug : generateSlug(mapped.title)
           };
-          
+
           if (found.id) {
             contentMapById.set(found.id.toString(), found);
           }
@@ -698,7 +698,7 @@ export const apiService = {
             contentMapBySlug.set(found.slug, found);
             contentMapBySlug.set(decodeURIComponent(found.slug), found);
           }
-          
+
           if (!memoryCategoryCache[found.category]) {
             memoryCategoryCache[found.category] = [];
           }
@@ -707,9 +707,9 @@ export const apiService = {
             memoryCategoryCache[found.category] = ensureSorted(memoryCategoryCache[found.category]);
             try {
               localStorage.setItem(`vrindopnishad_cache_${found.category}`, JSON.stringify(memoryCategoryCache[found.category]));
-            } catch (e) {}
+            } catch (e) { }
           }
-          
+
           setCache(cacheKey, found);
           return found;
         }
@@ -722,7 +722,7 @@ export const apiService = {
     try {
       const categories = ['shloka', 'strotra', 'poem', 'saint', 'dham'];
       const decodedSlug = decodedId.toLowerCase();
-      
+
       for (const cat of categories) {
         let catItems = memoryCategoryCache[cat];
         if (!catItems || catItems.length === 0) {
@@ -732,7 +732,7 @@ export const apiService = {
             memoryCategoryCache[cat] = catItems;
           }
         }
-        
+
         if (catItems && catItems.length > 0) {
           catItems.forEach(item => {
             if (item.id) contentMapById.set(item.id.toString(), item);
@@ -741,26 +741,26 @@ export const apiService = {
               contentMapBySlug.set(decodeURIComponent(item.slug), item);
             }
           });
-          
+
           let found = contentMapById.get(decodedId) || contentMapBySlug.get(decodedId) || contentMapBySlug.get(decodedSlug);
           if (!found) {
             const normDecoded = normalizeFuzzyText(decodedSlug);
             found = catItems.find(item => {
               if (!item.slug) return false;
               const normItem = normalizeFuzzyText(item.slug);
-              return normItem === normDecoded || 
-                     normItem.startsWith(normDecoded) || 
-                     normDecoded.startsWith(normItem);
+              return normItem === normDecoded ||
+                normItem.startsWith(normDecoded) ||
+                normDecoded.startsWith(normItem);
             });
           }
-          
+
           if (found) {
             setCache(cacheKey, found);
             return found;
           }
         }
       }
-      
+
       // 4. Final resort: Load all content
       const allItems = await apiService.getAllContent();
       let found = contentMapById.get(decodedId) || contentMapBySlug.get(decodedId) || contentMapBySlug.get(decodedSlug);
@@ -775,18 +775,18 @@ export const apiService = {
     throw new Error("Content not found in local cache or live database");
   },
 
-  
+
   getCategories: async () => {
-    
+
     return ['shloka', 'strotra', 'poem'];
   },
 
-  
+
   createContent: async (contentData) => {
     try {
       const id = contentData.id || crypto.randomUUID();
       const slug = contentData.slug || generateSlug(contentData.title);
-      
+
       if (DB_PROVIDER === 'supabase') {
         const payload = {
           id: id,
@@ -855,7 +855,7 @@ export const apiService = {
   updateContent: async (id, contentData) => {
     try {
       const slug = contentData.slug || generateSlug(contentData.title);
-      
+
       if (DB_PROVIDER === 'supabase') {
         const payload = {
           title: contentData.title,
@@ -939,7 +939,7 @@ export const apiService = {
     }
   },
 
-  
+
   login: async (email, password) => {
     try {
       if (DB_PROVIDER === 'supabase') {
@@ -1049,7 +1049,7 @@ export const apiService = {
     }
   },
 
-  
+
   generateAudio: async (contentId, text, language, token) => {
     const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
     const headers = token ? { Authorization: `Bearer ${token}` } : {};

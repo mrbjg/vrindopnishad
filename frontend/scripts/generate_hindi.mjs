@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const dbPath = path.join(__dirname, '../data/brajrasik_hi_full.json');
+const dbPath = path.join(__dirname, '../data/vrindavaani_content.json');
 const cachePath = path.join(__dirname, '../data/hindi_gen_cache.json');
 const backupsDir = path.join(__dirname, '../public/data');
 

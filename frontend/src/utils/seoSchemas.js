@@ -14,7 +14,7 @@ export const generateArticleSchema = (title, description, url, datePublished = '
   "dateModified": dateModified,
   "author": {
     "@type": "Person",
-    "name": "Braj Rasik Heritage Board",
+    "name": "Team VrindaVaani Editorial Board",
     "jobTitle": "Scriptural Archivists & Editors",
     "sameAs": `${SITE_URL}/author`
   },

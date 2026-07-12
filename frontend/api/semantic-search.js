@@ -52,12 +52,12 @@ async function fetchContent() {
     console.warn('Supabase fetch failed in semantic search, loading from local backups...', err.message);
 
 
-    let localFilePath = path.join(process.cwd(), 'data/brajrasik_hi_full.json');
+    let localFilePath = path.join(process.cwd(), 'data/vrindavaani_content.json');
     if (!fs.existsSync(localFilePath)) {
-      localFilePath = path.join(process.cwd(), 'frontend/data/brajrasik_hi_full.json');
+      localFilePath = path.join(process.cwd(), 'frontend/data/vrindavaani_content.json');
     }
     if (!fs.existsSync(localFilePath)) {
-      localFilePath = path.join(process.cwd(), 'admin/data/brajrasik_hi_full.json');
+      localFilePath = path.join(process.cwd(), 'admin/data/vrindavaani_content.json');
     }
 
     if (fs.existsSync(localFilePath)) {

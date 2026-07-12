@@ -11,7 +11,7 @@ const ALL_SEO_PAGES = [
   { path: '/faq', title: 'Frequently Asked Questions', desc: 'Common questions about Vrindopnishad answered' },
   { path: '/comparison-with-upanishads', title: 'Comparison with Upanishads', desc: 'How Vrindopnishad relates to classical Upanishads' },
   { path: '/guide', title: 'Complete Guide', desc: 'A beginner-friendly summary of Vrindopnishad' },
-  { path: '/braj-rasik-heritage', title: 'Braj Rasik Heritage', desc: 'The rich spiritual legacy of Vrindavan' },
+  { path: '/vrindavan-devotional-heritage', title: 'Team VrindaVaani', desc: 'The rich spiritual legacy of Vrindavan' },
   { path: '/what-is-radha-snata', title: 'What is Radha Snata?', desc: 'Morning pastimes and spiritual meaning' },
   { path: '/nitya-vihar-vs-nikunj-vihar', title: 'Nitya Vihar vs Nikunj Vihar', desc: 'Timeless love-play and secluded bowers' },
   { path: '/glossary', title: 'Spiritual Glossary', desc: 'Braj Rasik vocabulary & theological terms' },

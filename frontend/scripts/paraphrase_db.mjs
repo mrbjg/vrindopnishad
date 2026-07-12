@@ -6,8 +6,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Paths
-const originalDbPath = path.join(__dirname, '../data/brajrasik_hi_full.original.json');
-const targetDbPath = path.join(__dirname, '../data/brajrasik_hi_full.json');
+const originalDbPath = path.join(__dirname, '../data/vrindavaani_content.original.json');
+const targetDbPath = path.join(__dirname, '../data/vrindavaani_content.json');
 const cachePath = path.join(__dirname, '../data/paraphrase_cache.json');
 const backupsDir = path.join(__dirname, '../public/data');
 

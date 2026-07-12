@@ -133,7 +133,7 @@ async function runMigration() {
         }
       }
       
-      const author = item.author || 'Braj Rasik Heritage';
+      const author = item.author || 'Team VrindaVaani';
       const mediaLinks = Array.isArray(item.media_links) ? item.media_links : (Array.isArray(item.mediaLinks) ? item.mediaLinks : []);
       const audioUrl = item.audio_url || item.audioUrl || null;
       const imageUrls = Array.isArray(item.image_urls) ? item.image_urls : (Array.isArray(item.imageUrls) ? item.imageUrls : []);

@@ -1,6 +1,6 @@
-# Vrindopnishad Paath - Online Library of Braj Rasik Literature
+# Vrindopnishad Paath - Online Library of Vrindavan Devotional Literature
 
-Vrindopnishad Paath is a crawlable, fully server-rendered digital library dedicated to the sacred literature, biographies, and teachings of the Braj Rasik saints of Vrindavan (primarily Radhavallabh, Haridasi, and other Vaishnava traditions). 
+Vrindopnishad Paath is a crawlable, fully server-rendered digital library dedicated to the sacred literature, biographies, and teachings of the rasik saints of Vrindavan (primarily Radhavallabh, Haridasi, and other Vaishnava traditions). 
 
 - **Homepage (English)**: https://path.vrindopnishad.in
 - **Homepage (Hindi)**: https://path.vrindopnishad.in/hi

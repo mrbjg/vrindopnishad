@@ -30,12 +30,53 @@ export async function generateStaticParams() {
   }));
 }
 
+import { supabase } from '../../../../src/lib/supabase';
+
+async function fetchVerseFromSupabaseBySlug(slug) {
+  try {
+    const { data, error } = await supabase
+      .from('content')
+      .select('*')
+      .eq('slug', slug)
+      .maybeSingle();
+
+    if (error || !data) return null;
+    return {
+      id: data.id,
+      title: data.title,
+      sanskrit_text: data.sanskrit_text || data.sanskritText || '',
+      hindi_text: data.hindi_text || data.hindiText || '',
+      english_text: data.english_text || data.englishText || '',
+      english_translation: data.english_translation || data.englishTranslation || '',
+      category: data.category || 'poem',
+      description: data.description || '',
+      content_text: data.content_text || data.contentText || '',
+      tags: data.tags || [],
+      status: (data.status || '').toLowerCase(),
+      author: data.author || '',
+      media_links: data.media_links || data.mediaLinks || [],
+      audio_url: data.audio_url || data.audioUrl || '',
+      image_urls: data.image_urls || data.imageUrls || [],
+      video_urls: data.video_urls || data.videoUrls || [],
+      slug: data.slug,
+      created_at: data.created_at || data.createdAt,
+      updated_at: data.updated_at || data.updatedAt
+    };
+  } catch (err) {
+    console.error('Failed to fetch verse from Supabase:', err);
+    return null;
+  }
+}
+
 export const dynamicParams = true;
 
 export async function generateMetadata({ params }) {
   await ensureDataLoaded();
   const decodedSlug = decodeURIComponent(params.slug);
-  const verse = getVerseBySlug(decodedSlug);
+  let verse = getVerseBySlug(decodedSlug);
+  if (!verse) {
+    verse = await fetchVerseFromSupabaseBySlug(decodedSlug);
+  }
   if (!verse) return {};
 
   const cleanAuthor = verse.author ? verse.author.replace(/जी की वाणी/g, '').replace(/जी/g, '').trim() : 'वैष्णव संत';
@@ -52,7 +93,10 @@ export async function generateMetadata({ params }) {
 export default async function HindiLyricsDetailPage({ params }) {
   await ensureDataLoaded();
   const decodedSlug = decodeURIComponent(params.slug);
-  const verse = getVerseBySlug(decodedSlug);
+  let verse = getVerseBySlug(decodedSlug);
+  if (!verse) {
+    verse = await fetchVerseFromSupabaseBySlug(decodedSlug);
+  }
   if (!verse) {
     notFound();
   }

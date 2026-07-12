@@ -205,7 +205,7 @@ function extractRelations(items) {
       }
     }
 
-    if (!saintName && item.author && item.author !== 'Braj Rasik Heritage') {
+    if (!saintName && item.author && item.author !== 'Team VrindaVaani') {
       saintName = item.author;
     }
 
@@ -441,11 +441,11 @@ const STATIC_SEO_PAGES = {
       body: '<h1>साधना मार्गदर्शिका</h1><p>वृंदोपनिषद् मंच का अधिकतम लाभ उठाने के लिए हम एक नियमित दैनिक दिनचर्या बनाने की सलाह देते हैं। अपने सुबह के समय को शांत और आध्यात्मिक वातावरण में बिताने का प्रयास करें।</p><p>1. **दैनिक स्वाध्याय:** प्रतिदिन सुबह उठकर सबसे पहले मंच पर दिए गए \'दैनिक श्लोक\' या पद का पाठ करें। संस्कृत शब्दों के सही उच्चारण का अभ्यास करें और उसके बाद उसके अनुवाद और व्याख्या को ध्यानपूर्वक पढ़ें।</p><p>2. **नाम जप साधना:** दिन में कम से कम 10 से 15 मिनट के लिए नाम जप काउंटर का उपयोग करें। एक शांत स्थान पर बैठकर भगवान के नाम का उच्चारण करें और अपना पूरा ध्यान उस ध्वनि पर केंद्रित करें। यह मानसिक विकारों को शांत करने की सबसे शक्तिशाली औषधि है।</p><p>3. **संतों का स्मरण:** संध्या के समय संतों की जीवनियाँ (संत चरित्र) पढ़ें। उनके जीवन की कठिनाइयाँ और उनकी निष्कपट भक्ति हमें कठिन समय में भी धैर्य और विश्वास बनाए रखने की शक्ति देती है।</p>'
     }
   },
-  'braj-rasik-heritage': {
+  'vrindavan-devotional-heritage': {
     en: {
-      title: 'Braj Rasik Heritage — The Devotional Legacy of Vrindavan',
+      title: 'Team VrindaVaani — The Devotional Legacy of Vrindavan',
       description: 'Discover the rich spiritual legacy of the Braj region and Vaishnava Rasik saints. Explore their contributions to kirtan, literature, and art.',
-      body: '<h1>Braj Rasik Heritage</h1><p>Braj Rasik Heritage is the spiritual repository of divine songs, literature, poetry, and theology compiled by the rasik saints of Vrindavan. This heritage centers on absolute selflessness, sweet aesthetic devotion, and ecstatic communion with Shri Radha Krishna. It includes the teachings of Swami Haridas, Hit Harivansh Mahaprabhu, Swami Hariram Vyas, Surdas, and Sri Chaitanya\'s followers.</p><p>This heritage is unique in its emphasis on Madhurya Rasa (the mood of sweet, intimate love) over Aishwarya Rasa (the mood of awe and reverence). It teaches that God is not a distant ruler to be feared, but a beloved friend and partner in a relationship of pure love. The saints expressed this philosophy through beautiful poetry in the Braj Bhasha language, which is celebrated for its musicality and emotional depth.</p><p>By preserving and sharing this heritage, Vrindopnishad aims to keep this living spiritual tradition alive for future generations. The songs and teachings are not just historical artifacts, but active invitations to experience the same divine love that the saints felt. Exploring this heritage is a journey into the very heart of devotion, offering a path to absolute inner fulfillment.</p>'
+      body: '<h1>Team VrindaVaani</h1><p>Team VrindaVaani is the spiritual repository of divine songs, literature, poetry, and theology compiled by the rasik saints of Vrindavan. This heritage centers on absolute selflessness, sweet aesthetic devotion, and ecstatic communion with Shri Radha Krishna. It includes the teachings of Swami Haridas, Hit Harivansh Mahaprabhu, Swami Hariram Vyas, Surdas, and Sri Chaitanya\'s followers.</p><p>This heritage is unique in its emphasis on Madhurya Rasa (the mood of sweet, intimate love) over Aishwarya Rasa (the mood of awe and reverence). It teaches that God is not a distant ruler to be feared, but a beloved friend and partner in a relationship of pure love. The saints expressed this philosophy through beautiful poetry in the Braj Bhasha language, which is celebrated for its musicality and emotional depth.</p><p>By preserving and sharing this heritage, Vrindopnishad aims to keep this living spiritual tradition alive for future generations. The songs and teachings are not just historical artifacts, but active invitations to experience the same divine love that the saints felt. Exploring this heritage is a journey into the very heart of devotion, offering a path to absolute inner fulfillment.</p>'
     },
     hi: {
       title: 'ब्रज रसिक विरासत — वृंदावन की अलौकिक प्रेम परंपरा',
@@ -456,7 +456,7 @@ const STATIC_SEO_PAGES = {
   'what-is-radha-snata': {
     en: {
       title: 'What is Radha Snata? — Morning Pastimes & Spiritual Meaning',
-      description: 'Understand the concept of Radha Snata (Radha-snata-vibhusita) in Braj Rasik heritage. Explore its role in Asta-kaliya-lila and morning devotional meditations.',
+      description: 'Understand the concept of Radha Snata (Radha-snata-vibhusita) in Vrindavan devotional heritage. Explore its role in Asta-kaliya-lila and morning devotional meditations.',
       body: '<h1>What is Radha Snata?</h1><p>In the esoteric Vaishnava tradition of Vrindavan, particularly within the lineage of the Braj Rasik saints, <strong>Radha Snata</strong> (often referred to in Sanskrit verses as <em>Radha Snata-Vibhusita</em> — Srimati Radharani after completing Her divine morning bath and ornamentation) is not merely a physical action but a deep object of spiritual meditation (Smarana).</p><p>According to the Rasik scriptures, every moment of the Divine Couple, Shri Radha and Shri Krishna, is eternal, taking place in the spiritual realm of Nitya Vrindavan. The daily pastimes are structured into eight distinct periods of the day, known as the Asta-kaliya-lila. The morning pastime, occurring in the second period (Dvitiya-Yama, typically between 6:00 AM and 8:20 AM), is when Shri Radha returns to Her home in Yavat, takes Her sacred morning bath, is adorned with divine jewelry and clothing, and prepares delicious foods for Shri Krishna.</p><p>During the morning hours, the Gopis and Manjaris (intimate maidservants) assist Srimati Radharani in Her bathing ritual. Srimati Radharani is bathed with pure, scented waters infused with saffron, sandalwood paste, and fragrant flowers. Following the bath, the sakhis dress Her in brilliant blue garments (nilambari) and decorate Her with exquisite ornaments. Rasik devotees meditate on this form of Radha Snata-Vibhusita to cultivate the mood of a maidservant (Manjari Bhava), desiring only to assist in the pleasure of the Divine Couple.</p>'
     },
     hi: {
@@ -667,15 +667,15 @@ export default async function handler(req, res) {
     relations = globalCache.relations;
   } else {
     try {
-      let localFilePath = path.join(process.cwd(), 'data/brajrasik_hi_full.json');
+      let localFilePath = path.join(process.cwd(), 'data/vrindavaani_content.json');
       let localSaintsPath = path.join(process.cwd(), 'data/saints_formatted.json');
 
       if (!fs.existsSync(localFilePath)) {
-        localFilePath = path.join(process.cwd(), 'frontend/data/brajrasik_hi_full.json');
+        localFilePath = path.join(process.cwd(), 'frontend/data/vrindavaani_content.json');
         localSaintsPath = path.join(process.cwd(), 'frontend/data/saints_formatted.json');
       }
       if (!fs.existsSync(localFilePath)) {
-        localFilePath = path.join(process.cwd(), 'admin/data/brajrasik_hi_full.json');
+        localFilePath = path.join(process.cwd(), 'admin/data/vrindavaani_content.json');
         localSaintsPath = path.join(process.cwd(), 'admin/data/saints_formatted.json');
       }
 
@@ -830,7 +830,7 @@ export default async function handler(req, res) {
       }
 
       if (!parsedSaint) {
-        parsedSaint = fullContent.author && fullContent.author !== 'Braj Rasik Heritage' ? fullContent.author : '';
+        parsedSaint = fullContent.author && fullContent.author !== 'Team VrindaVaani' ? fullContent.author : '';
       }
 
       const cleanSaint = parsedSaint ? parsedSaint.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim() : (isHindiRoute ? 'वैष्णव संत' : 'Vaishnava Saint');
@@ -991,7 +991,7 @@ export default async function handler(req, res) {
         ${(() => {
           // Build dynamic semantic cross-links
           const links = [];
-          const authorName = fullContent.author && fullContent.author !== 'Braj Rasik Heritage' ? fullContent.author : null;
+          const authorName = fullContent.author && fullContent.author !== 'Team VrindaVaani' ? fullContent.author : null;
 
           // Link to the saint who composed this verse
           if (authorName) {
@@ -2002,7 +2002,7 @@ export default async function handler(req, res) {
         <li><a href="${getRouteLink('/faq')}">Frequently Asked Questions</a></li>
         <li><a href="${getRouteLink('/comparison-with-upanishads')}">Comparison study with Vedic Upanishads</a></li>
         <li><a href="${getRouteLink('/guide')}">User Practice Guide</a></li>
-        <li><a href="${getRouteLink('/braj-rasik-heritage')}">Braj Rasik Heritage</a></li>
+        <li><a href="${getRouteLink('/vrindavan-devotional-heritage')}">Team VrindaVaani</a></li>
       </ul>
     `;
   }

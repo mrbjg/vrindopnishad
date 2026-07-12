@@ -186,10 +186,10 @@ function loadLocalJSONFallback() {
 
   // Fall back to smaller initial dataset if full backup is missing
   if (!fs.existsSync(contentPath)) {
-    contentPath = path.join(appDirectory, 'data/brajrasik_hi_full.json');
+    contentPath = path.join(appDirectory, 'data/vrindavaani_content.json');
   }
   if (!fs.existsSync(contentPath)) {
-    contentPath = path.join(appDirectory, 'frontend/data/brajrasik_hi_full.json');
+    contentPath = path.join(appDirectory, 'frontend/data/vrindavaani_content.json');
   }
 
   let saintsPath = path.join(appDirectory, 'data/saints_formatted.json');
@@ -559,7 +559,7 @@ export function getNormalizedBookName(name) {
 }
 
 export function parseAuthorField(authorStr) {
-  if (!authorStr || authorStr === 'Braj Rasik Heritage') {
+  if (!authorStr || authorStr === 'Team VrindaVaani') {
     return { saintName: null, bookName: null, verseNum: null };
   }
 
@@ -660,7 +660,7 @@ function buildRelations(items) {
       verseNum = parsedAuthor.verseNum || verseNum;
     }
 
-    if (!saintName && item.author && item.author !== 'Braj Rasik Heritage') {
+    if (!saintName && item.author && item.author !== 'Team VrindaVaani') {
       saintName = item.author;
     }
 

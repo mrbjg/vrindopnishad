@@ -3,7 +3,7 @@ const path = require('path');
 const crypto = require('crypto');
 const { execSync } = require('child_process');
 
-const rawDataPath = '/Users/sakhi/Code/Company/Projects/VrindaVaani/admin/data/brajrasik_dual_full.json';
+const rawDataPath = '/Users/sakhi/Code/Company/Projects/VrindaVaani/admin/data/vrindavaani_content.json';
 
 function getDeterministicUuid(inputString) {
   const hash = crypto.createHash('sha256').update(inputString).digest('hex');
@@ -86,7 +86,7 @@ const mapped = items.map(item => {
     contentText: item.content_text || null,
     tags: Array.isArray(item.tags) ? item.tags : [],
     status,
-    author: item.author || 'Braj Rasik Heritage',
+    author: item.author || 'Team VrindaVaani',
     mediaLinks: Array.isArray(item.media_links) ? item.media_links : [],
     audioUrl: item.audio_url || null,
     imageUrls: Array.isArray(item.image_urls) ? item.image_urls : [],

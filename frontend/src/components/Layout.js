@@ -78,7 +78,7 @@ const LayoutInner = ({ children }) => {
       '/faq',
       '/comparison-with-upanishads',
       '/guide',
-      '/braj-rasik-heritage',
+      '/vrindavan-devotional-heritage',
       '/major-rasik-saints-of-braj',
       '/history-of-radhavallabh-sampradaya',
       '/radhavallabh-vs-gaudiya-sampradaya',

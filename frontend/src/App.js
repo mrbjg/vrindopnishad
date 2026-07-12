@@ -62,7 +62,7 @@ const DevotionalPage = lazyWithRetry(() => import('./pages/seo/DevotionalPage'))
 const FAQPage = lazyWithRetry(() => import('./pages/seo/FAQPage'));
 const ComparisonPage = lazyWithRetry(() => import('./pages/seo/ComparisonPage'));
 const GuidePage = lazyWithRetry(() => import('./pages/seo/GuidePage'));
-const BrajRasikHeritage = lazyWithRetry(() => import('./pages/seo/BrajRasikHeritage'));
+const VrindavanDevotionalHeritage = lazyWithRetry(() => import('./pages/seo/VrindavanDevotionalHeritage'));
 const RadhaSnataPage = lazyWithRetry(() => import('./pages/seo/RadhaSnataPage'));
 const NityaViharPage = lazyWithRetry(() => import('./pages/seo/NityaViharPage'));
 const GlossaryPage = lazyWithRetry(() => import('./pages/seo/GlossaryPage'));
@@ -385,7 +385,7 @@ function App() {
     { path: 'faq', element: <FAQPage /> },
     { path: 'comparison-with-upanishads', element: <ComparisonPage /> },
     { path: 'guide', element: <GuidePage /> },
-    { path: 'braj-rasik-heritage', element: <BrajRasikHeritage /> },
+    { path: 'vrindavan-devotional-heritage', element: <VrindavanDevotionalHeritage /> },
     { path: 'what-is-radha-snata', element: <RadhaSnataPage /> },
     { path: 'nitya-vihar-vs-nikunj-vihar', element: <NityaViharPage /> },
     { path: 'glossary', element: <GlossaryPage /> },

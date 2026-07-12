@@ -19,7 +19,7 @@ export async function GET() {
     const link = `${base}/lyrics/${slug}`;
     const description = v.description || v.hindi_text?.substring(0, 200) || 'Sacred Vaishnava literature and devotional poetry.';
     const pubDate = new Date(v.updated_at || v.updatedAt || v.created_at || v.createdAt || '2026-06-27').toUTCString();
-    const author = v.author || 'Braj Rasik Heritage';
+    const author = v.author || 'Team VrindaVaani';
     const category = v.category || 'poem';
 
     return `    <item>
@@ -38,7 +38,7 @@ export async function GET() {
   <channel>
     <title>Vrindopnishad RSS Feed</title>
     <link>${base}</link>
-    <description>Latest sacred verses, shlokas, and devotional literature of Vrindavan and Braj Rasik heritage.</description>
+    <description>Latest sacred verses, shlokas, and devotional literature of Vrindavan and Vrindavan devotional heritage.</description>
     <language>en-us</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${base}/rss.xml" rel="self" type="application/rss+xml" />

@@ -38,7 +38,7 @@ export default function FestivalsPage() {
         <div className="max-w-4xl mx-auto px-4 py-8">
           <header className="mb-12 text-center md:text-left">
             <div className="inline-block border border-amber-500/30 text-amber-400 bg-amber-500/5 px-3 py-1 rounded-full text-xs font-medium tracking-wide mb-4">
-              Braj Rasik Heritage
+              Team VrindaVaani
             </div>
             <h1 className="text-3xl md:text-5xl font-bold font-serif text-white mb-4">
               Sacred Festivals of Vrindavan

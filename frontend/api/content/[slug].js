@@ -63,13 +63,13 @@ export default async function handler(req, res) {
     try {
 
       const decodedSlug = decodeURIComponent(slug).toLowerCase();
-      let localFilePath = join(process.cwd(), 'data/brajrasik_hi_full.json');
+      let localFilePath = join(process.cwd(), 'data/vrindavaani_content.json');
 
       if (!fs.existsSync(localFilePath)) {
-        localFilePath = join(process.cwd(), 'frontend/data/brajrasik_hi_full.json');
+        localFilePath = join(process.cwd(), 'frontend/data/vrindavaani_content.json');
       }
       if (!fs.existsSync(localFilePath)) {
-        localFilePath = join(process.cwd(), 'admin/data/brajrasik_hi_full.json');
+        localFilePath = join(process.cwd(), 'admin/data/vrindavaani_content.json');
       }
 
       if (fs.existsSync(localFilePath)) {

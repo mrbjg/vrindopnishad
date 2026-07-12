@@ -45,7 +45,7 @@ export default function TermsPage() {
 
           <h2 className="text-2xl font-bold text-white/90 pt-4">3. Conduct Guidelines</h2>
           <p>
-            We request all visitors to engage with the sacred scriptures, saints, and concepts with a spirit of reverence and respect. In order to preserve server performance for everyone, automated scraping or mass querying of our database is restricted.
+            We request all visitors to engage with the sacred scriptures, saints, and concepts with a spirit of reverence and respect. In order to preserve server performance for everyone, automated data extraction or mass querying of our database is restricted.
           </p>
 
           <h2 className="text-2xl font-bold text-white/90 pt-4">4. Scriptural Disclaimer</h2>

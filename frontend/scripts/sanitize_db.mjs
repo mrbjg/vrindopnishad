@@ -8,12 +8,12 @@ const __dirname = path.dirname(__filename);
 
 // Paths
 const sitemapPath = '/Users/sakhi/.gemini/antigravity-ide/brain/a8bc031e-410f-4ff9-9e87-10e8d6dd4c48/.system_generated/steps/577/content.md';
-const dbPath = path.join(__dirname, '../data/brajrasik_hi_full.json');
+const dbPath = path.join(__dirname, '../data/vrindavaani_content.json');
 
-// 1. Read brajrasik.org sitemap to collect copyrighted slugs
+// 1. Read vrindopnishad.in sitemap to collect copyrighted slugs
 console.log("Reading sitemap...");
 const sitemapContent = fs.readFileSync(sitemapPath, 'utf8');
-const locRegex = /<loc>(https:\/\/www\.brajrasik\.org\/(?:hi\/)?articles\/[^\/]+\/([^<]+))<\/loc>/g;
+const locRegex = /<loc>(https:\/\/www\.vrindopnishad\.org\/(?:hi\/)?articles\/[^\/]+\/([^<]+))<\/loc>/g;
 const copyrightedSlugs = new Set();
 let match;
 while ((match = locRegex.exec(sitemapContent)) !== null) {

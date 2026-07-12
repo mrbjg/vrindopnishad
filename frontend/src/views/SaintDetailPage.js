@@ -171,7 +171,7 @@ const SaintDetailPage = ({ initialSaint }) => {
                 "description": bioText.substring(0, 200),
                 "url": `https://path.vrindopnishad.in/saints/${slug}`,
                 "image": sant.image || "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png",
-                "knowsAbout": ["Vaishnavism", "Bhakti Yoga", "Braj Rasik Heritage", "Vrindavan"],
+                "knowsAbout": ["Vaishnavism", "Bhakti Yoga", "Vrindavan Devotional Heritage", "Vrindavan"],
                 "affiliation": {
                   "@type": "Organization",
                   "name": meta ? (isHindiRoute ? meta.associatedSampradayaHi : meta.associatedSampradayaEn) : "Vaishnava Sampradaya"

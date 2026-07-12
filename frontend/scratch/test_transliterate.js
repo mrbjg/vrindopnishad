@@ -108,7 +108,7 @@ console.log('sambhu-sur-dhyaavain ->', transliterate('sambhu-sur-dhyaavain'), 's
 console.log('करू मन नंदनँदनको ध्यान ->', transliterate('करू मन नंदनँदनको ध्यान'), 'slug ->', generateSlug('करू-मन-नंदनँदनको-ध्यान'));
 console.log('अंसभुजा दीयैं आवत जमुना तीर ->', transliterate('अंसभुजा दीयैं आवत जमुना तीर'), 'slug ->', generateSlug('ansbhuja-diyain-aavat-jamuna-teer-shri-roop-manjari'));
 
-const dataPath = path.join(__dirname, '../data/brajrasik_hi_full.json');
+const dataPath = path.join(__dirname, '../data/vrindavaani_content.json');
 const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
 
 // Let's print out what items are in the JSON file by checking some keywords in Hindi

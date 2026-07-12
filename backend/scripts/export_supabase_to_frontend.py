@@ -94,7 +94,7 @@ def export_all():
             "content_text": item.get("content_text", "") or "",
             "tags": item.get("tags", []) or [],
             "status": item.get("status", "published"),
-            "author": item.get("author", "Braj Rasik Heritage"),
+            "author": item.get("author", "Team VrindaVaani"),
             "media_links": item.get("media_links", []) or [],
             "audio_url": item.get("audio_url", "") or "",
             "image_urls": item.get("image_urls", []) or [],
@@ -113,7 +113,7 @@ def export_all():
     os.makedirs(public_data_dir, exist_ok=True)
 
     # 1. Write the main local hi_full file
-    target_path = data_dir / 'brajrasik_hi_full.json'
+    target_path = data_dir / 'vrindavaani_content.json'
     with open(target_path, 'w', encoding='utf-8') as f:
         json.dump(mapped, f, ensure_ascii=False, indent=2)
     print(f"💾 Saved {len(mapped)} mapped items to {target_path}")

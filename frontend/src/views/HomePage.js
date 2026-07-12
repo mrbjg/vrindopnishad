@@ -766,7 +766,7 @@ const HomePage = ({
       <Helmet>
         <title>Vrindopnishad Paath — वृंदोपनिषद् पाठ | Sacred Shlokas, Strotras &amp; Devotional Poetry</title>
         <meta name="description" content="Vrindopnishad Paath (वृंदोपनिषद् पाठ) — Read and listen to authentic sacred Sanskrit shlokas, devotional strotras, spiritual poetry &amp; Vedic wisdom from Vrindavan saints. Free online paath in Hindi, Sanskrit &amp; English." />
-        <meta name="keywords" content="vrindopnishad, vrindopnishad paath, वृंदोपनिषद्, वृंदोपनिषद् पाठ, vrindopnishad path, vrindopnishad app, sant vaani, sacred shlokas, sanskrit shlokas, strotras, devotional poetry, bhagavad gita, vedic wisdom, vrindavan, bhakti, श्लोक, स्तोत्र, rasik sant, braj rasik, brajrasik, radha krishna, premanand ji maharaj, barsana, nandgaav, govardhan, rasik vaani, रसिक वाणी" />
+        <meta name="keywords" content="vrindopnishad, vrindopnishad paath, वृंदोपनिषद्, वृंदोपनिषद् पाठ, vrindopnishad path, vrindopnishad app, sant vaani, sacred shlokas, sanskrit shlokas, strotras, devotional poetry, bhagavad gita, vedic wisdom, vrindavan, bhakti, श्लोक, स्तोत्र, rasik sant, vrindavan devotional heritage, radha krishna, premanand ji maharaj, barsana, nandgaav, govardhan, rasik vaani, रसिक वाणी" />
         <link rel="canonical" href="https://path.vrindopnishad.in/" />
         <meta name="geo.region" content="IN" />
         <meta name="geo.placename" content="Vrindavan, India" />

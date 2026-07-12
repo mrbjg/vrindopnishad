@@ -153,7 +153,7 @@ export default async function HindiSaintRoute({ params }) {
       "alternateName": saint.hinglishName !== saint.name ? saint.hinglishName : undefined,
       "description": saint.biography || `ब्रज परंपरा के वैष्णव संत।`,
       "url": `https://path.vrindopnishad.in/hi/saints/${saint.slug}`,
-      "knowsAbout": ["Vaishnavism", "Bhakti Yoga", "Braj Rasik Heritage", "Vrindavan"]
+      "knowsAbout": ["Vaishnavism", "Bhakti Yoga", "Team VrindaVaani", "Vrindavan"]
     }
   };
 

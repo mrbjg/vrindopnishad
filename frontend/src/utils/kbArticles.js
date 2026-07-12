@@ -99,8 +99,8 @@ export const articles = [
     readTime: '5 min'
   },
   {
-    slug: 'braj-rasik-heritage',
-    titleEn: 'Braj Rasik Heritage',
+    slug: 'vrindavan-devotional-heritage',
+    titleEn: 'Team VrindaVaani',
     titleHi: 'ब्रज रसिक धरोहर व परम्परा',
     descEn: 'Profiles of the great medieval rasik acharyas and authors of Braj poetry.',
     descHi: 'ब्रज भाषा के मध्यकालीन रस कवियों, आचार्यों और उनके सम्प्रदायों का इतिहास।',

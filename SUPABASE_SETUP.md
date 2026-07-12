@@ -83,7 +83,7 @@ REACT_APP_API_URL=http://localhost:8000/api
 
 - **Database**: Supabase PostgreSQL
 - **Table**: `content`
-- **Records**: 645 dual-language articles from BrajRasik.org
+- **Records**: 8164 dual-language devotional content items
 - **Structure**:
   - `id` - UUID primary key
   - `title` - Article title

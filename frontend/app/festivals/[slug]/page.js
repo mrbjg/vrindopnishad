@@ -49,7 +49,7 @@ export default function FestivalDetailPage({ params }) {
     pageUrl,
     '2026-01-10',
     '2026-06-27',
-    'Braj Rasik Heritage Board'
+    'Team VrindaVaani Editorial Board'
   );
 
   const relatedItems = Object.values(FESTIVALS_DATA)

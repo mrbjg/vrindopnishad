@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const dataPath = path.join(__dirname, '../data/brajrasik_hi_full.json');
+const dataPath = path.join(__dirname, '../data/vrindavaani_content.json');
 if (!fs.existsSync(dataPath)) {
   console.log('File not found:', dataPath);
   process.exit(1);

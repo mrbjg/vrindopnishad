@@ -75,7 +75,7 @@ export const generateArticleSchema = (
   url: string,
   datePublished = '2025-01-15',
   dateModified = '2026-06-02',
-  authorName = 'Braj Rasik Heritage Board',
+  authorName = 'Team VrindaVaani Board',
   image = `${SITE_URL}/official-logo-dark.svg`
 ) => ({
   "@context": "https://schema.org",
@@ -136,7 +136,7 @@ export const generatePersonSchema = (saint: {
   "image": saint.imageUrl || undefined,
   "url": `${SITE_URL}/saints/${saint.slug}`,
   "jobTitle": "Braj Rasik Saint",
-  "knowsAbout": ["Vaishnavism", "Bhakti Yoga", "Braj Rasik Heritage", "Vrindavan", "Radhavallabh Sampraday"]
+  "knowsAbout": ["Vaishnavism", "Bhakti Yoga", "Vrindavan Devotional Heritage", "Vrindavan", "Radhavallabh Sampraday"]
 });
 
 // 8. Book / Grantha Schema
@@ -178,11 +178,11 @@ export const generateMusicCompositionSchema = (verse: {
   "name": verse.title,
   "composer": {
     "@type": "Person",
-    "name": verse.author || "Braj Rasik Heritage"
+    "name": verse.author || "Team VrindaVaani"
   },
   "lyricist": {
     "@type": "Person",
-    "name": verse.author || "Braj Rasik Heritage"
+    "name": verse.author || "Team VrindaVaani"
   },
   "lyrics": {
     "@type": "CreativeWork",

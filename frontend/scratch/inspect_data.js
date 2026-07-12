@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const dataPath = path.join(__dirname, '../data/brajrasik_hi_full.json');
+const dataPath = path.join(__dirname, '../data/vrindavaani_content.json');
 const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
 
 const searchWords = ['ansbhuja', 'ans', 'bhuj', 'sambhu', 'shambhu', 'dhyaavain', 'hati', 'bhata', 'janam', 'chakar'];

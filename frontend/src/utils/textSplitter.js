@@ -19,7 +19,7 @@ export const splitVerseAndTranslation = (text) => {
   if (!text) return { verse: '', translation: '' };
 
   // 1. Pre-process CamelCase and citation boundaries to insert newlines
-  // This cleans up instances where newlines were stripped during scraping/migration.
+  // This cleans up instances where newlines were stripped during data migration.
   let cleaned = text;
 
   // CamelCase transitions (lowercase followed by uppercase, including unicode capitals)

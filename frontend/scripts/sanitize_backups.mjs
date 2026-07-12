@@ -87,7 +87,7 @@ const dataDir = path.join(__dirname, '../public/data');
 // 1. Read sitemap
 console.log("Reading sitemap...");
 const sitemapContent = fs.readFileSync(sitemapPath, 'utf8');
-const locRegex = /<loc>(https:\/\/www\.brajrasik\.org\/(?:hi\/)?articles\/[^\/]+\/([^<]+))<\/loc>/g;
+const locRegex = /<loc>(https:\/\/www\.vrindopnishad\.org\/(?:hi\/)?articles\/[^\/]+\/([^<]+))<\/loc>/g;
 const copyrightedSlugs = new Set();
 let match;
 while ((match = locRegex.exec(sitemapContent)) !== null) {

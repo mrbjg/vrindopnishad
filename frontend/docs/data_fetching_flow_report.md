@@ -50,7 +50,7 @@ graph TD
     E --> F{"Content found?"}
     
     F -- Yes --> G
-    F -- No --> H["Read local fallback: data/brajrasik_hi_full.json"]
+    F -- No --> H["Read local fallback: data/vrindavaani_content.json"]
     H --> I{"Slug match in file?"}
     
     I -- Yes --> G
@@ -59,7 +59,7 @@ graph TD
 
 ### Data Sources & Source of Truth:
 1. **Supabase Database:** Acts as the active cloud source of truth for dynamic queries.
-2. **Local Backup (`public/data/content_backup.json` & `brajrasik_hi_full.json`):** Acts as the offline local fail-safe, containing the complete corpus of ~8,075 items.
+2. **Local Backup (`public/data/content_backup.json` & `vrindavaani_content.json`):** Acts as the offline local fail-safe, containing the complete corpus of ~8,075 items.
 3. **Data Connect:** Fully bypassed (queries are blocked at the code level and return `[]`).
 
 ---
