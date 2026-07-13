@@ -29,6 +29,13 @@ import { normalizeForFuzzy } from '../utils/hinglishSearch';
 
 const DB_PROVIDER = process.env.REACT_APP_DATABASE_PROVIDER || 'firebase';
 
+const getBackendUrl = () => {
+  if (typeof window !== 'undefined') {
+    return `${window.location.origin}/api`;
+  }
+  return process.env.NEXT_PUBLIC_API_URL || process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+};
+
 
 const USE_MOCK = process.env.REACT_APP_DEMO_MODE === 'true';
 const CACHE_PREFIX = 'sv_cache_';
@@ -1051,7 +1058,7 @@ export const apiService = {
 
 
   generateAudio: async (contentId, text, language, token) => {
-    const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+    const backendUrl = getBackendUrl();
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     const axios = require('axios');
     await axios.post(
@@ -1062,7 +1069,7 @@ export const apiService = {
   },
 
   generateImage: async (contentId, prompt, token) => {
-    const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+    const backendUrl = getBackendUrl();
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     const axios = require('axios');
     await axios.post(
@@ -1073,7 +1080,7 @@ export const apiService = {
   },
 
   uploadFile: async (contentId, file, type, token) => {
-    const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+    const backendUrl = getBackendUrl();
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     const formData = new FormData();
     formData.append('file', file);
@@ -1086,7 +1093,7 @@ export const apiService = {
   },
 
   explainContent: async (contentId, sanskritText, hindiText, author, title, language = 'hi') => {
-    const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+    const backendUrl = getBackendUrl();
     const axios = require('axios');
     const response = await axios.post(`${backendUrl}/explain`, {
       content_id: contentId,
