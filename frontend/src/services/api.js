@@ -1093,9 +1093,9 @@ export const apiService = {
   },
 
   explainContent: async (contentId, sanskritText, hindiText, author, title, language = 'hi') => {
-    const backendUrl = getBackendUrl();
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : (process.env.NEXT_PUBLIC_API_URL || '');
     const axios = require('axios');
-    const response = await axios.post(`${backendUrl}/explain`, {
+    const response = await axios.post(`${baseUrl}/ai-api/explain`, {
       content_id: contentId,
       sanskrit_text: sanskritText,
       hindi_text: hindiText,
