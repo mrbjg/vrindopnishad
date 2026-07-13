@@ -405,7 +405,20 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
     };
   }, [id, apiService, initialContent, initialRelatedSaint, initialRelatedBook, initialRelatedRaga, initialRelatedVerses]);
 
-  const formatVerseText = (text) => {
+  // Dynamic font size: scales inversely with longest line length, respects user sizeLevel
+  const computeVerseFontSize = (text, userSizeLevel = 2) => {
+    if (!text) return '1.6rem';
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    const maxChars = Math.max(...lines.map(l => l.length), 1);
+    // Base rem at sizeLevel 2 is 1.6; steps of 0.35 per level
+    const baseRem = 0.85 + userSizeLevel * 0.35; // 1.2 → 2.6 across levels 1–5
+    // Scale: target ~28 chars per line at full size; longer → shrink
+    const scale = Math.min(Math.max(28 / maxChars, 0.55), 1.4);
+    const finalRem = Math.round(baseRem * scale * 100) / 100;
+    return `${finalRem}rem`;
+  };
+
+  const formatVerseText = (text, centered = false) => {
     if (!text) return null;
 
     let processed = text;
@@ -426,17 +439,17 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
     }
 
     return (
-      <div className="space-y-4">
+      <div className={`space-y-3 ${centered ? 'text-center' : ''}`}>
         {paragraphs.map((para, idx) => {
           const isAttribution = para.startsWith('— श्री') || para.startsWith('- श्री');
           return (
             <p
               key={idx}
-              className={`leading-[1.8] text-left ${
+              className={`leading-[1.9] ${
                 isAttribution 
-                  ? 'mt-4 pt-4 border-t border-white/5 text-amber-400/90 font-medium' 
-                  : 'text-white/90'
-              }`}
+                  ? 'mt-5 pt-4 border-t border-white/5 text-amber-400/90 font-medium text-sm' 
+                  : 'text-white/95'
+              } ${centered && !isAttribution ? 'text-center' : isAttribution ? 'text-center' : 'text-left'}`}
             >
               {para}
             </p>
@@ -751,24 +764,31 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
           <div className="space-y-16">
             {content.sanskrit_text && (
-              <div className="relative group py-8 sm:py-12 border-b border-white/5">
-                <div className="absolute top-0 right-0 p-8 opacity-5 text-9xl font-serif pointer-events-none">ॐ</div>
-                <h2 className="content-section-heading text-[10px] sm:text-xs uppercase tracking-[0.4em] mb-6 sm:mb-8 flex items-center justify-center sm:justify-start gap-4 py-2">
-                  <span className="content-section-line h-[1px] w-12 hidden sm:block"></span>
-                  Sanskrit Text
-                  <span className="content-section-line h-[1px] w-12 hidden sm:block"></span>
+              <div className="relative group py-8 sm:py-16 border-b border-white/5">
+                {/* Decorative watermark */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-[0.025] text-[12rem] font-serif pointer-events-none select-none">ॐ</div>
+
+                {/* Section label */}
+                <h2 className="content-section-heading text-[10px] sm:text-xs uppercase tracking-[0.45em] mb-8 sm:mb-12 flex items-center justify-center gap-4 py-2">
+                  <span className="content-section-line h-px w-8 opacity-40"></span>
+                  {isHindiRoute ? 'मूल पाठ' : 'Sanskrit Text'}
+                  <span className="content-section-line h-px w-8 opacity-40"></span>
                 </h2>
-                <div className={`text-center font-medium content-verse-text hindi-text ${
-                  settings.fontStyle === 'Sans' ? 'font-sans' :
-                  settings.fontStyle === 'Inter' ? 'font-inter' :
-                  'font-headings'
-                }`} style={{
-                  fontSize: sizeLevel === 1 ? '1.25rem' :
-                            sizeLevel === 2 ? '1.6rem' :
-                            sizeLevel === 3 ? '2.0rem' :
-                            sizeLevel === 4 ? '2.5rem' : '3.0rem'
-                }}>
-                  {formatVerseText(content.sanskrit_text)}
+
+                {/* Verse body — dynamic size, centered */}
+                <div
+                  className={`content-verse-text hindi-text mx-auto max-w-2xl ${
+                    settings.fontStyle === 'Sans' ? 'font-sans' :
+                    settings.fontStyle === 'Inter' ? 'font-inter' :
+                    'font-headings'
+                  }`}
+                  style={{
+                    fontSize: computeVerseFontSize(content.sanskrit_text, sizeLevel),
+                    lineHeight: 2,
+                    letterSpacing: '0.01em',
+                  }}
+                >
+                  {formatVerseText(content.sanskrit_text, true)}
                 </div>
               </div>
             )}
