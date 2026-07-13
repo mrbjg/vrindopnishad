@@ -60,11 +60,15 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
   const minRem = [1.15, 1.35, 1.55, 1.85, 2.15][sizeLevel - 1] || 1.35;
   const maxRem = [1.65, 2.25, 2.85, 3.55, 4.45][sizeLevel - 1] || 2.25;
 
+  // Multiplier to scale the fluid size dynamically with user settings
+  const scaleMap = [0.75, 1.0, 1.25, 1.55, 1.90];
+  const multiplier = scaleMap[sizeLevel - 1] || 1.0;
+
   // Formula: Container width (e.g. max 650px content column or 90vw on tablets/mobile)
-  // Divided by character factor (N chars * 0.72 avg char-width-ratio)
+  // Scaled by user preference multiplier, divided by character factor
   const charFactor = 0.70;
   const targetCharsVal = Math.max(maxLineLength, 12);
-  const fluidFontSize = `clamp(${minRem}rem, calc(min(650px, 90vw) / (${targetCharsVal} * ${charFactor})), ${maxRem}rem)`;
+  const fluidFontSize = `clamp(${minRem}rem, calc(min(650px, 90vw) * ${multiplier} / (${targetCharsVal} * ${charFactor})), ${maxRem}rem)`;
 
   return (
     <div 
