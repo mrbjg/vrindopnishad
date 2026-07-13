@@ -32,7 +32,6 @@ import CelestialParticles from './CelestialParticles';
 import PookizLayout from './PookizLayout';
 import PageSkeleton from './ui/PageSkeleton';
 import SkipLink from './seo/SkipLink';
-import ReadingProgress from './seo/ReadingProgress';
 
 let hasLayoutMounted = false;
 
@@ -310,7 +309,6 @@ const LayoutInner = ({ children }) => {
   return (
     <div className={`min-h-screen relative text-foreground ${hideHeaderSearch ? 'layout-no-header-search' : ''} ${isKbRoute ? 'lg:h-screen lg:min-h-0 lg:overflow-hidden' : ''}`}>
       <SkipLink />
-      <ReadingProgress />
       
       
 

@@ -427,10 +427,6 @@ export default function PromoLanding() {
               <span className="dot" style={{ background: 'var(--or)' }} />
             </Link>
           </div>
-          <div 
-            className="pm-header-progress-line" 
-            style={{ width: `${(currentScene / (totalScenes - 1)) * 100}%` }}
-          />
         </div>
 
         {/* ═══ CHROME BOTTOM ═══ */}

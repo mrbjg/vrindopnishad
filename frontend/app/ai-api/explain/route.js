@@ -34,35 +34,31 @@ async function handleExplain(body) {
   }
 
   const verseText = dbVerse?.sanskrit_text || sanskrit_text || '';
-  const refExplain = dbVerse?.hindi_text || dbVerse?.description || hindi_text || '';
+  const refMeaning = dbVerse?.hindi_text || dbVerse?.description || hindi_text || '';
   const refAuthor = dbVerse?.author || author || '';
   const refTitle = dbVerse?.title || title || '';
 
-  const systemPrompt = `You are a humble Brajwasi devotee of Shri Radha-Krishna. You have deep bhakti, respect, and love for the Rasik saints of Vrindavan.
-Your task is to explain and translate the given sacred verse/lyrics in the requested language: ${targetLang === 'hi' ? 'Hindi (हिंदी)' : 'English'}.
+  // Concise prompt - uses reference meaning to understand verse, outputs brief devotional explanation
+  const systemPrompt = `You are a humble Brajwasi devotee. Explain the sacred verse briefly and devotionally.
+Rules:
+- Language: ${targetLang === 'hi' ? 'Hindi (हिंदी)' : 'English'}.
+- Start with "जय श्री राधे।"
+- One short paragraph for the overall spiritual mood (2-3 sentences).
+- Then explain each verse line in 1 line. Total: 80-120 words max.
+- Use the reference meaning to understand the verse — paraphrase in your own devotional words, never copy it.
+- No generic AI phrases.`;
 
-Follow these guidelines strictly:
-1. Adopt the voice and attitude of a sweet, humble devotee (Brajwasi) expressing bhakti, loving reverence, and deep spiritual insight. Use expressions like "जय श्री राधे", "रसिक संतों की कृपा", "ठाकुर जी की लीला" naturally.
-2. Structure your explanation beautifully:
-   - First, give a summary of the inner devotional mood (भावार्थ/spiritual essence).
-   - Second, explain the meaning line-by-line or phrase-by-phrase with deep spiritual depth.
-3. COPYRIGHT PROTECTION RULE: You are provided with a reference commentary/explanation. Do NOT copy the reference commentary verbatim. You must paraphrase it completely, rewriting it in your own beautiful, devotee-like words so that there are absolutely no copyright concerns.
-4. Do NOT use generic AI introductory phrases (like "Here is the explanation..." or "Sure, I can help with that"). Start directly with a devotional greeting (e.g., "जय श्री राधे।") followed by the explanation.`;
-
-  const userContent = `Verse/Lyrics details:
-Title: ${refTitle}
-Author: ${refAuthor}
-Sacred Text (Verse):
+  const userContent = `Verse by ${refAuthor}: "${refTitle}"
+---
 ${verseText}
-
-Reference Explanation (for context - do not copy verbatim):
-${refExplain}`;
+---
+Reference meaning (understand only, do not copy):
+${refMeaning}`;
 
   // 1. Try Groq
   const GROQ_API_KEY = process.env.GROQ_API_KEY;
   if (GROQ_API_KEY) {
     try {
-      console.log('[Explain] Attempting Groq...');
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -75,75 +71,56 @@ ${refExplain}`;
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userContent }
           ],
-          temperature: 0.6
+          temperature: 0.65,
+          max_tokens: 400
         })
       });
 
       if (response.ok) {
         const data = await response.json();
         const text = data?.choices?.[0]?.message?.content;
-        if (text) {
-          return { success: true, explanation: text.trim() };
-        }
+        if (text) return { success: true, explanation: text.trim() };
       } else {
         const errText = await response.text();
-        console.error(`[Explain] Groq failed: Status ${response.status} - ${errText}`);
+        console.error(`[Explain] Groq failed: ${response.status} - ${errText}`);
       }
     } catch (e) {
-      console.error('[Explain] Groq connection error:', e);
+      console.error('[Explain] Groq error:', e);
     }
   }
 
-  // 2. Try Gemini
+  // 2. Try Gemini fallback
   const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.REACT_APP_GEMINI_API_KEY;
   if (GEMINI_API_KEY) {
     try {
-      console.log('[Explain] Attempting Gemini fallback...');
       const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
       const response = await fetch(geminiUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                { text: `${systemPrompt}\n\n${userContent}` }
-              ]
-            }
-          ],
-          generationConfig: {
-            temperature: 0.6
-          }
+          contents: [{ parts: [{ text: `${systemPrompt}\n\n${userContent}` }] }],
+          generationConfig: { temperature: 0.65, maxOutputTokens: 400 }
         })
       });
 
       if (response.ok) {
         const data = await response.json();
         const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (text) {
-          return { success: true, explanation: text.trim() };
-        }
+        if (text) return { success: true, explanation: text.trim() };
       } else {
         const errText = await response.text();
-        console.error(`[Explain] Gemini failed: Status ${response.status} - ${errText}`);
+        console.error(`[Explain] Gemini failed: ${response.status} - ${errText}`);
       }
     } catch (e) {
-      console.error('[Explain] Gemini connection error:', e);
+      console.error('[Explain] Gemini error:', e);
     }
   }
 
-  // Fallback if both fail
   const fallbackMsg = targetLang === 'hi'
-    ? 'हे रसिक! इस समय ठाकुर जी की लीला में कुछ व्यवधान आ गया है। कृपया कुछ समय बाद पुनः प्रयास करें। जय श्री राधे! 🙏 (व्याख्या सेवा अभी उपलब्ध नहीं है)'
-    : 'Dear devotee, there is a temporary interruption in retrieving the explanation. Please try again in a moment. Jai Shri Radhe! 🙏 (Explanation service temporarily offline)';
+    ? 'जय श्री राधे 🙏 इस समय व्याख्या सेवा उपलब्ध नहीं है। कृपया कुछ समय बाद पुनः प्रयास करें।'
+    : 'Jai Shri Radhe 🙏 Explanation service is temporarily unavailable. Please try again shortly.';
 
-  return {
-    success: false,
-    message: fallbackMsg,
-    explanation: fallbackMsg
-  };
+  return { success: false, message: fallbackMsg, explanation: fallbackMsg };
 }
 
 export async function POST(request) {
@@ -151,7 +128,7 @@ export async function POST(request) {
   try {
     body = await request.json();
   } catch (e) {
-    console.error('[Explain Route] Failed to parse request JSON:', e.message);
+    console.error('[Explain Route] Failed to parse JSON:', e.message);
   }
 
   try {
@@ -165,7 +142,7 @@ export async function POST(request) {
       }
     });
   } catch (error) {
-    console.error('Next.js App Router API route explain error:', error);
+    console.error('[Explain Route] Error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -175,8 +152,5 @@ export async function OPTIONS() {
   headers.set('Access-Control-Allow-Origin', '*');
   headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
   headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  return new Response(null, {
-    status: 200,
-    headers: headers,
-  });
+  return new Response(null, { status: 200, headers });
 }
