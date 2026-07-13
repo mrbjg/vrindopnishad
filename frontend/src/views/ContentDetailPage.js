@@ -33,6 +33,122 @@ import { shareVerseCard } from '../utils/shareCard';
 import PageSkeleton from '../components/ui/PageSkeleton';
 import { splitVerseAndTranslation } from '../utils/textSplitter';
 
+// Professional auto-fit typography component for Sanskrit/Hindi verses
+// Dynamically scales font size to ensure lines fit on a single row without wrapping on desktop/tablet,
+// and wraps gracefully at a minimum font size on narrow mobile screens.
+const AutoFitVerse = ({ text, sizeLevel, fontStyle, isHindiRoute, centered = true }) => {
+  const containerRef = React.useRef(null);
+  const [fontSize, setFontSize] = React.useState('1.8rem');
+  const [isOverflowing, setIsOverflowing] = React.useState(false);
+
+  React.useLayoutEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const adjustSize = () => {
+      const containerWidth = el.clientWidth;
+      if (containerWidth <= 0) return;
+
+      const originalFontSize = el.style.fontSize;
+      el.style.fontSize = '16px';
+      
+      const lines = el.querySelectorAll('.verse-line-text');
+      let maxLineWidth = 0;
+
+      lines.forEach(line => {
+        const originalWS = line.style.whiteSpace;
+        const originalDisp = line.style.display;
+        
+        line.style.whiteSpace = 'nowrap';
+        line.style.display = 'inline-block';
+        
+        const width = line.offsetWidth;
+        if (width > maxLineWidth) {
+          maxLineWidth = width;
+        }
+
+        line.style.whiteSpace = originalWS;
+        line.style.display = originalDisp;
+      });
+
+      el.style.fontSize = originalFontSize;
+
+      if (maxLineWidth <= 0) return;
+
+      // Calculate perfect scale (0.96 for a small safety margin)
+      const idealRem = (containerWidth * 0.96) / maxLineWidth;
+
+      // Level 1: 1.35rem, Level 2: 1.75rem, Level 3: 2.15rem, Level 4: 2.65rem, Level 5: 3.25rem
+      const baseMap = [1.35, 1.75, 2.15, 2.65, 3.25];
+      const targetBaseRem = baseMap[(sizeLevel || 2) - 1] ?? 1.75;
+
+      // Minimum font size for mobile readability
+      const minRem = 1.15;
+
+      const finalRem = Math.max(minRem, Math.min(targetBaseRem, idealRem));
+
+      setFontSize(`${finalRem}rem`);
+      setIsOverflowing(idealRem < minRem);
+    };
+
+    adjustSize();
+
+    if (typeof window !== 'undefined' && window.ResizeObserver) {
+      const resizeObserver = new ResizeObserver(() => {
+        adjustSize();
+      });
+      resizeObserver.observe(el);
+      return () => {
+        resizeObserver.disconnect();
+      };
+    }
+  }, [text, sizeLevel, fontStyle]);
+
+  const cleanLines = React.useMemo(() => {
+    if (!text) return [];
+    let processed = text;
+    const pattern = /(॥\s*(?:\[\d+\]|\(\d+\))?|।\s*(?:\[\d+\]|\(\d+\))?|।।|॥|\[\d+\]|\(\d+\))/g;
+    processed = processed.replace(pattern, "$1\n");
+    processed = processed.replace(/(\s*-\s*श्री|\s*—\s*श्री)/g, "\n— श्री");
+
+    return processed
+      .split('\n')
+      .map(p => p.trim())
+      .filter(Boolean);
+  }, [text]);
+
+  return (
+    <div 
+      ref={containerRef} 
+      className={`w-full flex flex-col ${centered ? 'items-center text-center' : 'items-start text-left'} space-y-4`}
+      style={{ 
+        fontSize,
+        lineHeight: 1.8,
+        letterSpacing: '0.015em',
+        fontWeight: 500
+      }}
+    >
+      {cleanLines.map((line, idx) => {
+        const isAttribution = line.startsWith('— श्री') || line.startsWith('- श्री');
+        return (
+          <div
+            key={idx}
+            className={`verse-line-text transition-all duration-200 select-text ${
+              isAttribution 
+                ? 'mt-5 pt-4 border-t border-white/5 text-amber-400/90 font-medium text-sm w-full block text-center' 
+                : isOverflowing 
+                  ? 'text-white/95 whitespace-normal break-words leading-relaxed' 
+                  : 'text-white/95 whitespace-nowrap'
+            }`}
+          >
+            {line}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelatedBook, initialRelatedRaga, initialRelatedVerses }) => {
   const params = useParams();
   const id = params?.id || params?.slug || '';
@@ -405,72 +521,6 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
     };
   }, [id, apiService, initialContent, initialRelatedSaint, initialRelatedBook, initialRelatedRaga, initialRelatedVerses]);
 
-  // Professional typographic sizing — verse density drives the scale
-  // Density = lineCount × avgChars captures how much text the eye must process
-  const computeVerseFontSize = (text, userSizeLevel = 2) => {
-    if (!text) return '1.56rem';
-    const phrases = text.split(/[\n।॥]/).map(l => l.trim()).filter(Boolean);
-    const lineCount = phrases.length;
-    const avgChars = phrases.reduce((s, l) => s + l.length, 0) / (lineCount || 1);
-    const density = lineCount * avgChars;
-
-    // Major Third scale (×1.25 ratio): 1.25 → 1.56 → 1.95 → 2.44rem
-    // Light verse  (density < 60)  → 2.44rem — single impactful line
-    // Medium verse (density < 160) → 1.95rem — short doha/couplet
-    // Standard     (density < 340) → 1.56rem — 4–8 line verse
-    // Long text    (density ≥ 340) → 1.25rem — dense composition
-    const baseRem = density < 60  ? 2.44
-                  : density < 160 ? 1.95
-                  : density < 340 ? 1.56
-                  :                 1.25;
-
-    // sizeLevel multiplier (1→5): 0.82 – 1.60
-    const scaleMap = [0.82, 1.0, 1.18, 1.38, 1.60];
-    const scale = scaleMap[(userSizeLevel || 2) - 1] ?? 1.0;
-    return `${Math.round(baseRem * scale * 100) / 100}rem`;
-  };
-
-  const formatVerseText = (text, centered = false) => {
-    if (!text) return null;
-
-    let processed = text;
-    // Add newline after punctuation and verse markers
-    const pattern = /(॥\s*(?:\[\d+\]|\(\d+\))?|।\s*(?:\[\d+\]|\(\d+\))?|।।|॥|\[\d+\]|\(\d+\))/g;
-    processed = processed.replace(pattern, "$1\n");
-    
-    // Add newline before attributions
-    processed = processed.replace(/(\s*-\s*श्री|\s*—\s*श्री)/g, "\n— श्री");
-
-    const paragraphs = processed
-      .split('\n')
-      .map(p => p.trim())
-      .filter(Boolean);
-
-    if (paragraphs.length === 0) {
-      return <div className="whitespace-pre-wrap">{text}</div>;
-    }
-
-    return (
-      <div className={`space-y-3 ${centered ? 'text-center' : ''}`}>
-        {paragraphs.map((para, idx) => {
-          const isAttribution = para.startsWith('— श्री') || para.startsWith('- श्री');
-          return (
-            <p
-              key={idx}
-              className={`leading-[1.9] ${
-                isAttribution 
-                  ? 'mt-5 pt-4 border-t border-white/5 text-amber-400/90 font-medium text-sm' 
-                  : 'text-white/95'
-              } ${centered && !isAttribution ? 'text-center' : isAttribution ? 'text-center' : 'text-left'}`}
-            >
-              {para}
-            </p>
-          );
-        })}
-      </div>
-    );
-  };
-
   const getCategoryBadgeClass = (category) => {
     switch (category?.toLowerCase()) {
       case 'shloka': return 'badge-shloka';
@@ -789,19 +839,19 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
                 {/* Verse body — dynamic size, centered */}
                 <div
-                  className={`content-verse-text hindi-text mx-auto max-w-2xl ${
+                  className={`mx-auto max-w-2xl ${
                     settings.fontStyle === 'Sans' ? 'font-sans' :
                     settings.fontStyle === 'Inter' ? 'font-inter' :
                     'font-headings'
                   }`}
-                  style={{
-                    fontSize: computeVerseFontSize(content.sanskrit_text, sizeLevel),
-                    lineHeight: 1.75,
-                    letterSpacing: '0.015em',
-                    fontWeight: 500,
-                  }}
                 >
-                  {formatVerseText(content.sanskrit_text, true)}
+                  <AutoFitVerse 
+                    text={content.sanskrit_text} 
+                    sizeLevel={sizeLevel} 
+                    fontStyle={settings.fontStyle} 
+                    isHindiRoute={isHindiRoute} 
+                    centered={true} 
+                  />
                 </div>
               </div>
             )}
@@ -996,17 +1046,18 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                   Hinglish Transliteration (रोमन पाठ)
                   <span className="content-section-line content-section-line--hinglish h-[1px] w-12 hidden sm:block"></span>
                 </h2>
-                <div className={`content-verse-text font-inter tracking-wide leading-relaxed text-white/80 ${
+                <div className={`${
                   settings.fontStyle === 'Sans' ? 'font-sans' :
                   settings.fontStyle === 'Inter' ? 'font-inter' :
                   'font-headings'
-                }`} style={{
-                  fontSize: sizeLevel === 1 ? '1.0rem' :
-                            sizeLevel === 2 ? '1.3rem' :
-                            sizeLevel === 3 ? '1.6rem' :
-                            sizeLevel === 4 ? '2.0rem' : '2.4rem'
-                }}>
-                  {transliteratedSanskrit ? formatVerseText(transliteratedSanskrit) : formatVerseText(transliteratedHindi)}
+                }`}>
+                  <AutoFitVerse 
+                    text={transliteratedSanskrit || transliteratedHindi} 
+                    sizeLevel={sizeLevel} 
+                    fontStyle={settings.fontStyle} 
+                    isHindiRoute={isHindiRoute} 
+                    centered={false} 
+                  />
                 </div>
               </div>
             )}
@@ -1459,18 +1510,16 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
             {/* Verse Texts */}
             <div className="w-full space-y-20">
               {content.sanskrit_text && (
-                <div className="space-y-6">
+                <div className="space-y-6 w-full">
                   <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">मूल पाठ (Sanskrit)</div>
-                  <div 
-                    className="leading-[1.8] font-medium"
-                    style={{
-                      fontSize: sizeLevel === 1 ? '1.5rem' :
-                                sizeLevel === 2 ? '1.9rem' :
-                                sizeLevel === 3 ? '2.4rem' :
-                                sizeLevel === 4 ? '3.0rem' : '3.6rem'
-                    }}
-                  >
-                    {formatVerseText(content.sanskrit_text)}
+                  <div className="w-full">
+                    <AutoFitVerse 
+                      text={content.sanskrit_text} 
+                      sizeLevel={sizeLevel} 
+                      fontStyle={settings.fontStyle} 
+                      isHindiRoute={isHindiRoute} 
+                      centered={true} 
+                    />
                   </div>
                 </div>
               )}
@@ -1493,18 +1542,16 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
               )}
 
               {(transliteratedSanskrit || transliteratedHindi) && (
-                <div className="space-y-6 pt-10 border-t border-current/5">
+                <div className="space-y-6 pt-10 border-t border-current/5 w-full">
                   <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">रोमन पाठ (Romanized)</div>
-                  <div 
-                    className="leading-[1.8] font-sans opacity-95 tracking-wide"
-                    style={{
-                      fontSize: sizeLevel === 1 ? '1.2rem' :
-                                sizeLevel === 2 ? '1.5rem' :
-                                sizeLevel === 3 ? '1.9rem' :
-                                sizeLevel === 4 ? '2.3rem' : '2.8rem'
-                    }}
-                  >
-                    {transliteratedSanskrit ? formatVerseText(transliteratedSanskrit) : formatVerseText(transliteratedHindi)}
+                  <div className="w-full">
+                    <AutoFitVerse 
+                      text={transliteratedSanskrit || transliteratedHindi} 
+                      sizeLevel={sizeLevel} 
+                      fontStyle={settings.fontStyle} 
+                      isHindiRoute={isHindiRoute} 
+                      centered={true} 
+                    />
                   </div>
                 </div>
               )}
