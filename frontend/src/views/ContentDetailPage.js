@@ -96,7 +96,7 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
         return (
           <div
             key={idx}
-            className="verse-line-text transition-all duration-200 select-text text-white/95 whitespace-nowrap md:whitespace-normal"
+            className="verse-line-text transition-all duration-200 select-text text-white/95 whitespace-normal md:whitespace-nowrap break-words"
           >
             {line}
           </div>
