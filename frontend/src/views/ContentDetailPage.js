@@ -17,7 +17,9 @@ import {
   User,
   BookOpen,
   Sparkles,
-  FileText
+  FileText,
+  Copy,
+  Check
 } from 'lucide-react';
 import { useSettings } from '../contexts/SettingsContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -142,22 +144,36 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
     }
   };
 
-  const [aiExplanation, setAiExplanation] = useState("");
+  const [aiCache, setAiCache] = useState({});
   const [loadingAi, setLoadingAi] = useState(false);
   const [errorAi, setErrorAi] = useState("");
   const [aiLang, setAiLang] = useState("hi");
   const [isMounted, setIsMounted] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
     setAiLang(isHindiRoute ? "hi" : "en");
   }, [isHindiRoute]);
 
+  // Reset AI state and cache when verse/id changes
+  useEffect(() => {
+    setAiCache({});
+    setErrorAi("");
+    setLoadingAi(false);
+  }, [id]);
+
+  const currentExplanation = aiCache[aiLang] || "";
+
   const handleExplainWithAI = async (lang = aiLang) => {
     if (!content) return;
+    
+    if (aiCache[lang]) {
+      return;
+    }
+    
     setLoadingAi(true);
     setErrorAi("");
-    setAiExplanation("");
     try {
       const res = await apiService.explainContent(
         content.id,
@@ -168,7 +184,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
         lang
       );
       if (res && res.success) {
-        setAiExplanation(res.explanation);
+        setAiCache(prev => ({ ...prev, [lang]: res.explanation }));
       } else {
         setErrorAi(res.message || "Failed to generate explanation.");
       }
@@ -177,6 +193,30 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
       setErrorAi(isHindiRoute ? "व्याख्या प्राप्त करने में त्रुटि हुई। कृपया पुनः प्रयास करें।" : "Failed to fetch explanation. Please try again.");
     } finally {
       setLoadingAi(false);
+    }
+  };
+
+  const handleLangSwitch = (lang) => {
+    setAiLang(lang);
+    
+    // Check if the AI has been revealed/requested before
+    const hasBeenRevealed = Object.values(aiCache).some(val => !!val);
+    
+    if (hasBeenRevealed || loadingAi) {
+      if (!aiCache[lang]) {
+        handleExplainWithAI(lang);
+      }
+    }
+  };
+
+  const handleCopy = async () => {
+    if (!currentExplanation) return;
+    try {
+      await navigator.clipboard.writeText(currentExplanation);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -740,27 +780,45 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 <span className="content-section-line content-section-line--ai h-[1px] w-12 hidden sm:block bg-amber-500/30"></span>
               </h2>
 
-              <div className="glass-card p-6 rounded-2xl border border-amber-500/10 bg-amber-500/[0.02] shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none"></div>
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-                  <div className="flex items-center gap-2.5 text-amber-400 font-semibold text-sm">
-                    <Sparkles size={16} className="animate-pulse" />
-                    <span>{(!isMounted || isHindiRoute) ? "भगवद् रस व्याख्या" : "Divine Nectar Commentary"}</span>
+              <div className="relative overflow-hidden rounded-2xl border border-amber-500/20 bg-[#0c0c0e]/80 backdrop-blur-xl shadow-[0_0_50px_rgba(245,158,11,0.03)] p-6 md:p-8 transition-all duration-500 hover:border-amber-500/30">
+                {/* Neon blur circles */}
+                <div className="absolute -top-16 -right-16 w-36 h-36 bg-amber-500/10 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
+                <div className="absolute -bottom-16 -left-16 w-36 h-36 bg-yellow-600/5 rounded-full blur-3xl pointer-events-none"></div>
+
+                {/* Header */}
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-8 border-b border-white/5 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400">
+                      <Sparkles size={16} className="animate-pulse" />
+                    </div>
+                    <div>
+                      <h3 className="font-headings text-sm font-semibold text-amber-100 tracking-wider">
+                        {(!isMounted || isHindiRoute) ? "भगवद् रस व्याख्या" : "Divine Nectar Commentary"}
+                      </h3>
+                      <p className="text-[10px] text-white/40 tracking-wider">
+                        {(!isMounted || isHindiRoute) ? "श्री राधा-कृपा प्रसाद (AI)" : "By Divine Grace (AI)"}
+                      </p>
+                    </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 bg-white/5 p-1 rounded-lg border border-white/5 text-xs">
+                  {/* Language switch */}
+                  <div className="relative flex items-center bg-white/[0.02] border border-white/10 p-0.5 rounded-full text-xs shadow-inner">
                     <button
-                      onClick={() => { setAiLang("hi"); handleExplainWithAI("hi"); }}
-                      className={`px-3 py-1.5 rounded-md transition-all font-medium ${
-                        aiLang === 'hi' ? 'bg-amber-500 text-black shadow-md' : 'text-white/60 hover:text-white'
+                      onClick={() => handleLangSwitch("hi")}
+                      className={`relative px-4 py-1.5 rounded-full font-medium transition-all duration-300 ${
+                        aiLang === 'hi'
+                          ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold shadow-md shadow-amber-500/15'
+                          : 'text-white/60 hover:text-white'
                       }`}
                     >
                       हिन्दी
                     </button>
                     <button
-                      onClick={() => { setAiLang("en"); handleExplainWithAI("en"); }}
-                      className={`px-3 py-1.5 rounded-md transition-all font-medium ${
-                        aiLang === 'en' ? 'bg-amber-500 text-black shadow-md' : 'text-white/60 hover:text-white'
+                      onClick={() => handleLangSwitch("en")}
+                      className={`relative px-4 py-1.5 rounded-full font-medium transition-all duration-300 ${
+                        aiLang === 'en'
+                          ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold shadow-md shadow-amber-500/15'
+                          : 'text-white/60 hover:text-white'
                       }`}
                     >
                       English
@@ -768,63 +826,130 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                   </div>
                 </div>
 
-                {!aiExplanation && !loadingAi && !errorAi && (
-                  <div className="text-center py-6">
-                    <button
-                      onClick={() => handleExplainWithAI()}
-                      className="px-6 py-3 rounded-full bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-bold text-sm tracking-wide shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 active:scale-95 transition-all flex items-center gap-2 mx-auto"
-                    >
-                      <Sparkles size={16} />
-                      {(!isMounted || isHindiRoute) ? "दिव्य व्याख्या प्राप्त करें" : "Reveal Divine Explanation"}
-                    </button>
-                    <p className="text-xs text-white/30 mt-3 select-none">
+                {/* Initial CTA State */}
+                {!currentExplanation && !loadingAi && !errorAi && (
+                  <div className="text-center py-10 px-4 flex flex-col items-center justify-center relative">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-amber-500/10 to-yellow-500/5 border border-amber-500/20 flex items-center justify-center mb-6 shadow-inner relative group transition-transform duration-300">
+                      <Sparkles size={24} className="text-amber-400/80 animate-pulse" />
+                      <span className="absolute inset-0 rounded-full border border-amber-500/10 animate-ping opacity-25"></span>
+                    </div>
+                    
+                    <h4 className="text-sm font-semibold text-white/90 mb-2">
+                      {(!isMounted || isHindiRoute) ? "दिव्य रस भावार्थ प्रकट करें" : "Reveal the Divine Explanation"}
+                    </h4>
+                    <p className="text-xs text-white/40 max-w-sm mx-auto mb-6 leading-relaxed">
                       {(!isMounted || isHindiRoute)
-                        ? "रसिकों की वाणी का दिव्य रस और भावार्थ AI के माध्यम से जानें" 
-                        : "Discover the spiritual depth of the verse explained dynamically by AI"}
+                        ? "रसिकों की वाणी का रस, गुह्य भाव और दिव्य व्याख्यान AI के माध्यम से प्राप्त करें।"
+                        : "Unlock the spiritual essence and deepest meaning of this verse translated & explained dynamically by AI."}
                     </p>
-                  </div>
-                )}
 
-                {loadingAi && (
-                  <div className="flex flex-col items-center justify-center py-8 gap-4">
-                    <div className="relative w-10 h-10">
-                      <div className="absolute inset-0 rounded-full border-2 border-amber-500/20"></div>
-                      <div className="absolute inset-0 rounded-full border-2 border-t-amber-500 animate-spin"></div>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-sm font-semibold text-amber-500/90 tracking-wide animate-pulse">
-                        {(!isMounted || isHindiRoute) ? "श्री राधा-कृष्ण स्मरण... रस भाव प्रकट हो रहा है" : "Recalling Sri Radha-Krishna... Inner meaning revealing"}
-                      </p>
-                      <p className="text-[10px] text-white/30 mt-1">
-                        {(!isMounted || isHindiRoute) ? "दिव्य वाणी से व्याख्या तैयार की जा रही है" : "Generating commentary based on sacred reference"}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {errorAi && (
-                  <div className="text-center py-6">
-                    <p className="text-red-400 text-sm font-medium">{errorAi}</p>
                     <button
-                      onClick={() => handleExplainWithAI()}
-                      className="mt-4 px-4 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-white text-xs font-semibold transition-all"
+                      onClick={() => handleExplainWithAI(aiLang)}
+                      className="group relative px-8 py-3.5 rounded-full bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-bold text-sm tracking-wide shadow-xl shadow-amber-500/10 hover:shadow-amber-500/25 active:scale-95 transition-all flex items-center gap-2"
+                    >
+                      <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 translate-x-[-150%] group-hover:translate-x-[250%] transition-transform duration-1000 ease-out pointer-events-none"></span>
+                      <Sparkles size={16} />
+                      <span>{(!isMounted || isHindiRoute) ? "रस व्याख्यान प्राप्त करें" : "Reveal Explanation"}</span>
+                    </button>
+                  </div>
+                )}
+
+                {/* Loading State */}
+                {loadingAi && (
+                  <div className="py-10 flex flex-col items-center justify-center gap-6">
+                    <div className="relative w-16 h-16 flex items-center justify-center">
+                      <div className="absolute inset-0 rounded-full border-2 border-dashed border-amber-500/30 animate-spin" style={{ animationDuration: '8s' }}></div>
+                      <div className="absolute inset-1.5 rounded-full border border-yellow-500/20 animate-spin" style={{ animationDuration: '4s', animationDirection: 'reverse' }}></div>
+                      <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                        <Sparkles size={18} className="animate-pulse" />
+                      </div>
+                    </div>
+                    
+                    <div className="text-center space-y-2 max-w-sm">
+                      <p className="text-sm font-serif italic text-amber-200/90 tracking-wide animate-pulse">
+                        {(!isMounted || isHindiRoute) 
+                          ? "श्री राधा-कृष्ण स्मरण... दिव्य रस प्रकट हो रहा है..." 
+                          : "Invoking Sri Radha-Krishna... Inner meaning revealing..."}
+                      </p>
+                      <p className="text-[10px] text-white/45 tracking-wider uppercase">
+                        {(!isMounted || isHindiRoute) 
+                          ? "रसिकों की दिव्य वाणी से व्याख्या सृजित की जा रही है" 
+                          : "Formulating commentary based on rasik references"}
+                      </p>
+                    </div>
+
+                    <div className="w-full space-y-2.5 pt-4 max-w-md opacity-40">
+                      <div className="h-2.5 bg-white/10 rounded-full w-full animate-pulse"></div>
+                      <div className="h-2.5 bg-white/10 rounded-full w-11/12 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                      <div className="h-2.5 bg-white/10 rounded-full w-10/12 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Error State */}
+                {errorAi && (
+                  <div className="text-center py-10 px-4">
+                    <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-4 text-red-400">
+                      <span className="text-lg">⚠️</span>
+                    </div>
+                    <h4 className="text-sm font-semibold text-red-400 mb-2">
+                      {(!isMounted || isHindiRoute) ? "भाव प्रकटन त्रुटि" : "Explanation Failed"}
+                    </h4>
+                    <p className="text-xs text-white/50 max-w-xs mx-auto mb-6">
+                      {errorAi}
+                    </p>
+                    <button
+                      onClick={() => handleExplainWithAI(aiLang)}
+                      className="px-5 py-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-white text-xs font-semibold tracking-wide transition-all active:scale-95"
                     >
                       {(!isMounted || isHindiRoute) ? "पुनः प्रयास करें" : "Try Again"}
                     </button>
                   </div>
                 )}
 
-                {aiExplanation && (
-                  <div className="space-y-4">
-                    <div 
-                      className="text-white/95 leading-[1.8] text-base markdown-content select-text selection:bg-amber-500/30 font-inter"
-                      style={{ whiteSpace: 'pre-line' }}
-                    >
-                      {aiExplanation}
+                {/* Explanation Content State */}
+                {currentExplanation && !loadingAi && (
+                  <div className="space-y-6">
+                    <div className="relative">
+                      {/* Floating copy button */}
+                      <div className="absolute top-0 right-0 z-10 flex gap-2">
+                        <button
+                          onClick={handleCopy}
+                          className="p-2 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all duration-200 flex items-center gap-1.5 text-xs font-medium"
+                          title={(!isMounted || isHindiRoute) ? "व्याख्या कॉपी करें" : "Copy Commentary"}
+                        >
+                          {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+                          <span>{copied ? ((!isMounted || isHindiRoute) ? "कॉपी की गई" : "Copied!") : ((!isMounted || isHindiRoute) ? "कॉपी" : "Copy")}</span>
+                        </button>
+                      </div>
+
+                      <div 
+                        className={`text-white/95 leading-relaxed markdown-content select-text selection:bg-amber-500/30 text-left ${
+                          aiLang === 'hi' ? 'hindi-text font-medium' : 'font-inter font-light'
+                        }`}
+                        style={{ 
+                          whiteSpace: 'pre-line',
+                          fontSize: sizeLevel === 1 ? '14px' :
+                                    sizeLevel === 2 ? '16px' :
+                                    sizeLevel === 3 ? '18px' :
+                                    sizeLevel === 4 ? '20px' : '22px',
+                          paddingTop: '32px'
+                        }}
+                      >
+                        {currentExplanation}
+                      </div>
                     </div>
-                    <div className="pt-4 border-t border-white/5 flex justify-between items-center text-[10px] text-white/30 select-none">
-                      <span>{(!isMounted || isHindiRoute) ? "कृपा पात्र: ब्रज रस अनुगामी" : "Presented by Braj Ras Follower"}</span>
-                      <span>{(!isMounted || isHindiRoute) ? "⚠️ AI व्याख्या (त्रुटि संभव है)" : "⚠️ AI Generated (verify with Rasik saints)"}</span>
+
+                    {/* Footer */}
+                    <div className="pt-6 border-t border-white/5 flex flex-wrap gap-4 items-center justify-between text-[11px] text-white/35 select-none font-medium">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-amber-500/70">🌸</span>
+                        <span>{(!isMounted || isHindiRoute) ? "कृपा पात्र: ब्रज रस अनुगामी" : "Presented by Braj Ras Follower"}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-amber-400/40">
+                        <span>🙏</span>
+                        <span>{(!isMounted || isHindiRoute) ? "रसिक संतों की कृपा से प्रकाशित" : "Illuminated by the grace of Rasik saints"}</span>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1317,7 +1442,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 </div>
               )}
 
-              {(aiExplanation || loadingAi) && (
+              {(currentExplanation || loadingAi) && (
                 <div className="space-y-6 pt-10 border-t border-current/5">
                   <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">{isHindiRoute ? "दिव्य व्याख्या (AI)" : "Divine Explanation (AI)"}</div>
                   <div 
@@ -1329,7 +1454,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                                 sizeLevel === 4 ? '2.2rem' : '2.5rem'
                     }}
                   >
-                    {loadingAi ? (isHindiRoute ? "श्री राधा-कृष्ण स्मरण... रस भाव प्रकट हो रहा है..." : "Recalling Sri Radha-Krishna... Inner meaning revealing...") : aiExplanation}
+                    {loadingAi ? (isHindiRoute ? "श्री राधा-कृष्ण स्मरण... रस भाव प्रकट हो रहा है..." : "Recalling Sri Radha-Krishna... Inner meaning revealing...") : currentExplanation}
                   </div>
                 </div>
               )}
