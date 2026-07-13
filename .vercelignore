@@ -1,0 +1,46 @@
+# Exclude unnecessary directories from Vercel deployment
+frontend-old/
+SantVaaniApp/
+mobile_app/
+premium_app/
+premium_app_swift/
+admin/
+brajrasik/
+icons/
+iconsax/
+animated icons/
+docs/
+
+# Archive and zip files
+*.zip
+frontend.zip
+*.tar
+*.tar.gz
+*.tgz
+
+# Python virtual environments and caches
+venv/
+.venv/
+backend/venv/
+backend/.venv/
+**/__pycache__/
+**/*.pyc
+
+# Node dependencies and build folders
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+build/
+dist/
+
+# Local configuration files
+.env
+.env.local
+.env.*
+backend/.env
+frontend/.env
+*.pem
+*.token.json
+*.credentials.json

@@ -85,6 +85,10 @@ android-sdk/ -e
 # Firebase debug logs
 firebase-debug.log
 .env
-.env.local
-.env.production
 frontend/.env
+.env*
+
+# Scrape and raw dump JSON files
+frontend/scripts/brajrasik/*.json
+frontend/articles_deployment.json
+

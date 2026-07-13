@@ -178,18 +178,15 @@ async function fetchAllFromDataConnect() {
 function loadLocalJSONFallback() {
   const appDirectory = process.cwd();
 
-  // Try loading full backup first to ensure we have the complete 10k+ items even when quota is exceeded
-  let contentPath = path.join(appDirectory, 'public/data/content_backup.json');
-  if (!fs.existsSync(contentPath)) {
-    contentPath = path.join(appDirectory, 'frontend/public/data/content_backup.json');
-  }
-
-  // Fall back to smaller initial dataset if full backup is missing
-  if (!fs.existsSync(contentPath)) {
-    contentPath = path.join(appDirectory, 'data/vrindavaani_content.json');
-  }
+  let contentPath = path.join(appDirectory, 'data/vrindavaani_content.json');
   if (!fs.existsSync(contentPath)) {
     contentPath = path.join(appDirectory, 'frontend/data/vrindavaani_content.json');
+  }
+  if (!fs.existsSync(contentPath)) {
+    contentPath = path.join(appDirectory, 'public/data/content_backup.json');
+  }
+  if (!fs.existsSync(contentPath)) {
+    contentPath = path.join(appDirectory, 'frontend/public/data/content_backup.json');
   }
 
   let saintsPath = path.join(appDirectory, 'data/saints_formatted.json');
