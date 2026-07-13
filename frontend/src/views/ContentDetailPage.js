@@ -405,13 +405,29 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
     };
   }, [id, apiService, initialContent, initialRelatedSaint, initialRelatedBook, initialRelatedRaga, initialRelatedVerses]);
 
-  // Sanskrit text stays LARGE — viewport-relative so it fills the space
+  // Professional typographic sizing — verse density drives the scale
+  // Density = lineCount × avgChars captures how much text the eye must process
   const computeVerseFontSize = (text, userSizeLevel = 2) => {
-    // sizeLevel 1→5 maps to vw targets: 3vw → 5.5vw, clamped for min/max
-    const vw = 2.5 + userSizeLevel * 0.6;       // 3.1 – 5.5vw
-    const minRem = 1.4 + userSizeLevel * 0.2;   // 1.6 – 2.4rem
-    const maxRem = 2.4 + userSizeLevel * 0.4;   // 2.8 – 4.4rem
-    return `clamp(${minRem}rem, ${vw}vw, ${maxRem}rem)`;
+    if (!text) return '1.56rem';
+    const phrases = text.split(/[\n।॥]/).map(l => l.trim()).filter(Boolean);
+    const lineCount = phrases.length;
+    const avgChars = phrases.reduce((s, l) => s + l.length, 0) / (lineCount || 1);
+    const density = lineCount * avgChars;
+
+    // Major Third scale (×1.25 ratio): 1.25 → 1.56 → 1.95 → 2.44rem
+    // Light verse  (density < 60)  → 2.44rem — single impactful line
+    // Medium verse (density < 160) → 1.95rem — short doha/couplet
+    // Standard     (density < 340) → 1.56rem — 4–8 line verse
+    // Long text    (density ≥ 340) → 1.25rem — dense composition
+    const baseRem = density < 60  ? 2.44
+                  : density < 160 ? 1.95
+                  : density < 340 ? 1.56
+                  :                 1.25;
+
+    // sizeLevel multiplier (1→5): 0.82 – 1.60
+    const scaleMap = [0.82, 1.0, 1.18, 1.38, 1.60];
+    const scale = scaleMap[(userSizeLevel || 2) - 1] ?? 1.0;
+    return `${Math.round(baseRem * scale * 100) / 100}rem`;
   };
 
   const formatVerseText = (text, centered = false) => {
