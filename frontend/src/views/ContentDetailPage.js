@@ -130,15 +130,24 @@ const AutoFitVerse = ({ text, sizeLevel, fontStyle, isHindiRoute, centered = tru
     >
       {cleanLines.map((line, idx) => {
         const isAttribution = line.startsWith('— श्री') || line.startsWith('- श्री');
+        if (isAttribution) {
+          return (
+            <div
+              key={idx}
+              className="mt-6 pt-4 border-t border-white/5 text-amber-400/85 font-medium w-full block text-center select-text"
+              style={{ fontSize: '0.875rem', lineHeight: '1.5' }}
+            >
+              {line}
+            </div>
+          );
+        }
         return (
           <div
             key={idx}
             className={`verse-line-text transition-all duration-200 select-text ${
-              isAttribution 
-                ? 'mt-5 pt-4 border-t border-white/5 text-amber-400/90 font-medium text-sm w-full block text-center' 
-                : isOverflowing 
-                  ? 'text-white/95 whitespace-normal break-words leading-relaxed' 
-                  : 'text-white/95 whitespace-nowrap'
+              isOverflowing 
+                ? 'text-white/95 whitespace-normal break-words leading-relaxed' 
+                : 'text-white/95 whitespace-nowrap'
             }`}
           >
             {line}
