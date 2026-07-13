@@ -33,15 +33,16 @@ import { shareVerseCard } from '../utils/shareCard';
 import PageSkeleton from '../components/ui/PageSkeleton';
 import { splitVerseAndTranslation } from '../utils/textSplitter';
 
-// Professional instant auto-fit typography component for Sanskrit/Hindi verses.
-// Uses native CSS clamp math combining container boundaries and character length.
-// Instantaneous rendering, zero JS layout thrashing, 60fps responsive scaling.
-const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered = true, className = "" }) => {
+// Professional typographic scaling component for Sanskrit/Hindi & Hinglish verses.
+// Provides elegant, consistent sizing based on viewport width and user preferences (sizeLevel).
+// Uses micro-tuning for line length to prevent awkward clipping while maintaining stable sizes.
+const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered = true, className = "", isRoman = false }) => {
   const cleanLines = React.useMemo(() => {
     if (!text) return [];
     let processed = text;
-    const pattern = /(॥\s*(?:\[\d+\]|\(\d+\))?|।\s*(?:\[\d+\]|\(\d+\))?|।।|॥|\[\d+\]|\(\d+\))/g;
-    processed = processed.replace(pattern, "$1\n");
+    const pattern = /(॥\s*(?:\[\d+\]|\(\d+\))?精度|।\s*(?:\[\d+\]|\(\d+\))?|।।|॥|\[\d+\]|\(\d+\))/g;
+    // Standardize verse endings to newline
+    processed = processed.replace(/(॥\s*(?:\[\d+\]|\(\d+\))?|।\s*(?:\[\d+\]|\(\d+\))?|।।|॥|\[\d+\]|\(\d+\))/g, "$1\n");
     processed = processed.replace(/(\s*-\s*श्री|\s*—\s*श्री)/g, "\n— श्री");
 
     return processed
@@ -55,29 +56,41 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
     return Math.max(...verseLines.map(l => l.length), 1);
   }, [cleanLines]);
 
-  // CSS clamp limits per sizeLevel (1-5)
-  // Low limit ensures mobile text stays readable. High limit scales to epic sizes.
-  const minRem = [1.15, 1.35, 1.55, 1.85, 2.15][sizeLevel - 1] || 1.35;
-  const maxRem = [1.65, 2.25, 2.85, 3.55, 4.45][sizeLevel - 1] || 2.25;
+  // Premium, highly consistent fluid typography system
+  // Base font size maps to sizeLevel 1-5 (very stable, minimal steps)
+  // Sanskrit has slightly larger glyph presence than Roman transliteration
+  const baseMapDeva = [1.25, 1.55, 1.9, 2.3, 2.8];
+  const baseMapRoman = [1.05, 1.25, 1.5, 1.8, 2.15];
+  
+  const base = isRoman ? baseMapRoman[sizeLevel - 1] : baseMapDeva[sizeLevel - 1];
 
-  // Multiplier to scale the fluid size dynamically with user settings
-  const scaleMap = [0.75, 1.0, 1.25, 1.55, 1.90];
-  const multiplier = scaleMap[sizeLevel - 1] || 1.0;
+  // Dynamic tuning based on longest line length:
+  // We apply a gentle, smooth scaling factor. Extremely long lines shrink slightly (max 15%)
+  // to prevent clumsy wrapping. Short single-line couplets grow slightly (max 10%) for a premium display feel.
+  let scale = 1.0;
+  if (maxLineLength > 34) {
+    // scale down smoothly for long lines
+    scale = Math.max(0.85, 1.0 - (maxLineLength - 34) * 0.008);
+  } else if (maxLineLength < 18) {
+    // scale up smoothly for short lines
+    scale = Math.min(1.1, 1.0 + (18 - maxLineLength) * 0.01);
+  }
 
-  // Formula: Container width (max 650px content column or 100% of parent container query width)
-  // Scaled by user preference multiplier, divided by character factor
-  const charFactor = 0.70;
-  const targetCharsVal = Math.max(maxLineLength, 12);
-  const fluidFontSize = `clamp(${minRem}rem, calc(min(650px, 100cqw) * ${multiplier} / (${targetCharsVal} * ${charFactor})), ${maxRem}rem)`;
+  const finalBaseRem = base * scale;
+  
+  // Fluid design rule: rem base + responsive viewport fraction, clamped in a strict range
+  const minLimit = finalBaseRem * 0.85;
+  const maxLimit = finalBaseRem * 1.15;
+  const fluidFontSize = `clamp(${minLimit}rem, calc(${finalBaseRem}rem + 0.3vw), ${maxLimit}rem)`;
 
   return (
     <div 
       className={`w-full flex flex-col ${centered ? 'items-center text-center' : 'items-start text-left'} space-y-4 ${className}`}
       style={{ 
         fontSize: fluidFontSize,
-        lineHeight: 1.8,
-        letterSpacing: '0.015em',
-        fontWeight: 500
+        lineHeight: isRoman ? '1.8' : '1.9',
+        letterSpacing: isRoman ? '0.03em' : '0.015em',
+        fontWeight: isRoman ? '400' : '500'
       }}
     >
       {cleanLines.map((line, idx) => {
@@ -86,8 +99,8 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
           return (
             <div
               key={idx}
-              className="mt-6 pt-4 border-t border-white/5 text-amber-400/85 font-medium w-full block text-center select-text"
-              style={{ fontSize: '0.875rem', lineHeight: '1.5' }}
+              className="mt-6 pt-4 border-t border-white/5 text-amber-400/85 font-medium w-full block text-center select-text font-sans"
+              style={{ fontSize: '0.85rem', lineHeight: '1.5', letterSpacing: '0.05em' }}
             >
               {line}
             </div>
@@ -96,7 +109,8 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
         return (
           <div
             key={idx}
-            className="verse-line-text transition-all duration-200 select-text text-white/95 whitespace-normal md:whitespace-nowrap break-words"
+            className="verse-line-text select-text text-white/95 whitespace-pre-wrap break-words w-full"
+            style={{ wordBreak: 'keep-all', overflowWrap: 'break-word' }}
           >
             {line}
           </div>
@@ -1020,6 +1034,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                     isHindiRoute={isHindiRoute} 
                     centered={false} 
                     className="content-verse-text"
+                    isRoman={true}
                   />
                 </div>
               </div>
@@ -1516,6 +1531,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                       isHindiRoute={isHindiRoute} 
                       centered={true} 
                       className="content-verse-text"
+                      isRoman={true}
                     />
                   </div>
                 </div>
