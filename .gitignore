@@ -91,4 +91,5 @@ frontend/.env
 # Scrape and raw dump JSON files
 frontend/scripts/brajrasik/*.json
 frontend/articles_deployment.json
+backend/scripts/paraphrase_checkpoint.json
 
