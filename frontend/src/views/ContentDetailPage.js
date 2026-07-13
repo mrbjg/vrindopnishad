@@ -36,7 +36,7 @@ import { splitVerseAndTranslation } from '../utils/textSplitter';
 // Professional auto-fit typography component for Sanskrit/Hindi verses
 // Dynamically scales font size to ensure lines fit on a single row without wrapping on desktop/tablet,
 // and wraps gracefully at a minimum font size on narrow mobile screens.
-const AutoFitVerse = ({ text, sizeLevel, fontStyle, isHindiRoute, centered = true }) => {
+const AutoFitVerse = ({ text, sizeLevel, fontStyle, isHindiRoute, centered = true, className = "" }) => {
   const containerRef = React.useRef(null);
   const [fontSize, setFontSize] = React.useState('1.8rem');
   const [isOverflowing, setIsOverflowing] = React.useState(false);
@@ -120,7 +120,7 @@ const AutoFitVerse = ({ text, sizeLevel, fontStyle, isHindiRoute, centered = tru
   return (
     <div 
       ref={containerRef} 
-      className={`w-full flex flex-col ${centered ? 'items-center text-center' : 'items-start text-left'} space-y-4`}
+      className={`w-full flex flex-col ${centered ? 'items-center text-center' : 'items-start text-left'} space-y-4 ${className}`}
       style={{ 
         fontSize,
         lineHeight: 1.8,
@@ -860,6 +860,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                     fontStyle={settings.fontStyle} 
                     isHindiRoute={isHindiRoute} 
                     centered={true} 
+                    className="content-verse-text hindi-text"
                   />
                 </div>
               </div>
@@ -1066,6 +1067,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                     fontStyle={settings.fontStyle} 
                     isHindiRoute={isHindiRoute} 
                     centered={false} 
+                    className="content-verse-text"
                   />
                 </div>
               </div>
@@ -1528,6 +1530,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                       fontStyle={settings.fontStyle} 
                       isHindiRoute={isHindiRoute} 
                       centered={true} 
+                      className="content-verse-text hindi-text"
                     />
                   </div>
                 </div>
@@ -1560,6 +1563,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                       fontStyle={settings.fontStyle} 
                       isHindiRoute={isHindiRoute} 
                       centered={true} 
+                      className="content-verse-text"
                     />
                   </div>
                 </div>
