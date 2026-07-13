@@ -33,77 +33,10 @@ import { shareVerseCard } from '../utils/shareCard';
 import PageSkeleton from '../components/ui/PageSkeleton';
 import { splitVerseAndTranslation } from '../utils/textSplitter';
 
-// Professional auto-fit typography component for Sanskrit/Hindi verses
-// Dynamically scales font size to ensure lines fit on a single row without wrapping on desktop/tablet,
-// and wraps gracefully at a minimum font size on narrow mobile screens.
-const AutoFitVerse = ({ text, sizeLevel, fontStyle, isHindiRoute, centered = true, className = "" }) => {
-  const containerRef = React.useRef(null);
-  const [fontSize, setFontSize] = React.useState('1.8rem');
-  const [isOverflowing, setIsOverflowing] = React.useState(false);
-
-  React.useLayoutEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    const adjustSize = () => {
-      const containerWidth = el.clientWidth;
-      if (containerWidth <= 0) return;
-
-      const originalFontSize = el.style.fontSize;
-      el.style.fontSize = '16px';
-      
-      const lines = el.querySelectorAll('.verse-line-text');
-      let maxLineWidth = 0;
-
-      lines.forEach(line => {
-        const originalWS = line.style.whiteSpace;
-        const originalDisp = line.style.display;
-        
-        line.style.whiteSpace = 'nowrap';
-        line.style.display = 'inline-block';
-        
-        const width = line.offsetWidth;
-        if (width > maxLineWidth) {
-          maxLineWidth = width;
-        }
-
-        line.style.whiteSpace = originalWS;
-        line.style.display = originalDisp;
-      });
-
-      el.style.fontSize = originalFontSize;
-
-      if (maxLineWidth <= 0) return;
-
-      // Calculate perfect scale (0.96 for a small safety margin)
-      const idealRem = (containerWidth * 0.96) / maxLineWidth;
-
-      // Level 1: 1.35rem, Level 2: 1.75rem, Level 3: 2.15rem, Level 4: 2.65rem, Level 5: 3.25rem
-      const baseMap = [1.35, 1.75, 2.15, 2.65, 3.25];
-      const targetBaseRem = baseMap[(sizeLevel || 2) - 1] ?? 1.75;
-
-      // Minimum font size for mobile readability
-      const minRem = 1.15;
-
-      const finalRem = Math.max(minRem, Math.min(targetBaseRem, idealRem));
-
-      setFontSize(`${finalRem}rem`);
-      setIsOverflowing(idealRem < minRem);
-    };
-
-    adjustSize();
-
-    if (typeof window !== 'undefined' && window.ResizeObserver) {
-      const resizeObserver = new ResizeObserver(() => {
-        adjustSize();
-      });
-      resizeObserver.observe(el);
-      return () => {
-        resizeObserver.disconnect();
-      };
-    }
-  }, [text, sizeLevel, fontStyle]);
-
+// Professional instant auto-fit typography component for Sanskrit/Hindi verses.
+// Uses native CSS clamp math combining container boundaries and character length.
+// Instantaneous rendering, zero JS layout thrashing, 60fps responsive scaling.
+const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered = true, className = "" }) => {
   const cleanLines = React.useMemo(() => {
     if (!text) return [];
     let processed = text;
@@ -117,12 +50,27 @@ const AutoFitVerse = ({ text, sizeLevel, fontStyle, isHindiRoute, centered = tru
       .filter(Boolean);
   }, [text]);
 
+  const maxLineLength = React.useMemo(() => {
+    const verseLines = cleanLines.filter(line => !line.startsWith('— श्री') && !line.startsWith('- श्री'));
+    return Math.max(...verseLines.map(l => l.length), 1);
+  }, [cleanLines]);
+
+  // CSS clamp limits per sizeLevel (1-5)
+  // Low limit ensures mobile text stays readable. High limit scales to epic sizes.
+  const minRem = [1.15, 1.35, 1.55, 1.85, 2.15][sizeLevel - 1] || 1.35;
+  const maxRem = [1.65, 2.25, 2.85, 3.55, 4.45][sizeLevel - 1] || 2.25;
+
+  // Formula: Container width (e.g. max 650px content column or 90vw on tablets/mobile)
+  // Divided by character factor (N chars * 0.72 avg char-width-ratio)
+  const charFactor = 0.70;
+  const targetCharsVal = Math.max(maxLineLength, 12);
+  const fluidFontSize = `clamp(${minRem}rem, calc(min(650px, 90vw) / (${targetCharsVal} * ${charFactor})), ${maxRem}rem)`;
+
   return (
     <div 
-      ref={containerRef} 
       className={`w-full flex flex-col ${centered ? 'items-center text-center' : 'items-start text-left'} space-y-4 ${className}`}
       style={{ 
-        fontSize,
+        fontSize: fluidFontSize,
         lineHeight: 1.8,
         letterSpacing: '0.015em',
         fontWeight: 500
@@ -144,11 +92,7 @@ const AutoFitVerse = ({ text, sizeLevel, fontStyle, isHindiRoute, centered = tru
         return (
           <div
             key={idx}
-            className={`verse-line-text transition-all duration-200 select-text ${
-              isOverflowing 
-                ? 'text-white/95 whitespace-normal break-words leading-relaxed' 
-                : 'text-white/95 whitespace-nowrap'
-            }`}
+            className="verse-line-text transition-all duration-200 select-text text-white/95 whitespace-nowrap md:whitespace-normal"
           >
             {line}
           </div>
