@@ -1085,6 +1085,20 @@ export const apiService = {
     );
   },
 
+  explainContent: async (contentId, sanskritText, hindiText, author, title, language = 'hi') => {
+    const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+    const axios = require('axios');
+    const response = await axios.post(`${backendUrl}/explain`, {
+      content_id: contentId,
+      sanskrit_text: sanskritText,
+      hindi_text: hindiText,
+      author: author,
+      title: title,
+      language: language
+    });
+    return response.data;
+  },
+
   resetPassword: async (email) => {
     if (DB_PROVIDER === 'supabase') {
       const { error } = await supabase.auth.resetPasswordForEmail(email);

@@ -513,7 +513,7 @@ const SaintDetailPage = ({ initialSaint }) => {
                 </h3>
               </div>
               <p className="text-white/45 text-xs line-clamp-2 leading-relaxed mt-2 select-none">
-                {verse.hindi_text || verse.english_translation || verse.description}
+                {verse.sanskrit_text}
               </p>
             </Link>
           ))}

@@ -142,6 +142,38 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
     }
   };
 
+  const [aiExplanation, setAiExplanation] = useState("");
+  const [loadingAi, setLoadingAi] = useState(false);
+  const [errorAi, setErrorAi] = useState("");
+  const [aiLang, setAiLang] = useState(isHindiRoute ? "hi" : "en");
+
+  const handleExplainWithAI = async (lang = aiLang) => {
+    if (!content) return;
+    setLoadingAi(true);
+    setErrorAi("");
+    setAiExplanation("");
+    try {
+      const res = await apiService.explainContent(
+        content.id,
+        content.sanskrit_text,
+        content.hindi_text,
+        content.author,
+        content.title,
+        lang
+      );
+      if (res && res.success) {
+        setAiExplanation(res.explanation);
+      } else {
+        setErrorAi(res.message || "Failed to generate explanation.");
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorAi(isHindiRoute ? "व्याख्या प्राप्त करने में त्रुटि हुई। कृपया पुनः प्रयास करें।" : "Failed to fetch explanation. Please try again.");
+    } finally {
+      setLoadingAi(false);
+    }
+  };
+
   useEffect(() => {
     let active = true;
 
@@ -695,27 +727,103 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
               </div>
             )}
 
-            {content.hindi_text && (
-              <div className="py-8 sm:py-12 border-b border-white/5">
-                <h2 className="content-section-heading content-section-heading--hindi text-[10px] sm:text-xs uppercase tracking-[0.4em] mb-6 sm:mb-8 flex items-center justify-center sm:justify-start gap-4 py-2">
-                  <span className="content-section-line content-section-line--hindi h-[1px] w-12 hidden sm:block"></span>
-                  Hindi Meaning
-                  <span className="content-section-line content-section-line--hindi h-[1px] w-12 hidden sm:block"></span>
-                </h2>
-                <div className={`content-verse-text hindi-text ${
-                  settings.fontStyle === 'Sans' ? 'font-sans' :
-                  settings.fontStyle === 'Inter' ? 'font-inter' :
-                  'font-headings'
-                }`} style={{
-                  fontSize: sizeLevel === 1 ? '1.1rem' :
-                            sizeLevel === 2 ? '1.4rem' :
-                            sizeLevel === 3 ? '1.8rem' :
-                            sizeLevel === 4 ? '2.2rem' : '2.5rem'
-                }}>
-                  {formatVerseText(content.hindi_text)}
+            <div className="py-8 sm:py-12 border-b border-white/5">
+              <h2 className="content-section-heading content-section-heading--ai text-[10px] sm:text-xs uppercase tracking-[0.4em] mb-6 sm:mb-8 flex items-center justify-center sm:justify-start gap-4 py-2">
+                <span className="content-section-line content-section-line--ai h-[1px] w-12 hidden sm:block bg-amber-500/30"></span>
+                {isHindiRoute ? "दिव्य व्याख्या (AI)" : "Divine Explanation (AI)"}
+                <span className="content-section-line content-section-line--ai h-[1px] w-12 hidden sm:block bg-amber-500/30"></span>
+              </h2>
+
+              <div className="glass-card p-6 rounded-2xl border border-amber-500/10 bg-amber-500/[0.02] shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none"></div>
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                  <div className="flex items-center gap-2.5 text-amber-400 font-semibold text-sm">
+                    <Sparkles size={16} className="animate-pulse" />
+                    <span>{isHindiRoute ? "भगवद् रस व्याख्या" : "Divine Nectar Commentary"}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 bg-white/5 p-1 rounded-lg border border-white/5 text-xs">
+                    <button
+                      onClick={() => { setAiLang("hi"); handleExplainWithAI("hi"); }}
+                      className={`px-3 py-1.5 rounded-md transition-all font-medium ${
+                        aiLang === 'hi' ? 'bg-amber-500 text-black shadow-md' : 'text-white/60 hover:text-white'
+                      }`}
+                    >
+                      हिन्दी
+                    </button>
+                    <button
+                      onClick={() => { setAiLang("en"); handleExplainWithAI("en"); }}
+                      className={`px-3 py-1.5 rounded-md transition-all font-medium ${
+                        aiLang === 'en' ? 'bg-amber-500 text-black shadow-md' : 'text-white/60 hover:text-white'
+                      }`}
+                    >
+                      English
+                    </button>
+                  </div>
                 </div>
+
+                {!aiExplanation && !loadingAi && !errorAi && (
+                  <div className="text-center py-6">
+                    <button
+                      onClick={() => handleExplainWithAI()}
+                      className="px-6 py-3 rounded-full bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-bold text-sm tracking-wide shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 active:scale-95 transition-all flex items-center gap-2 mx-auto"
+                    >
+                      <Sparkles size={16} />
+                      {isHindiRoute ? "दिव्य व्याख्या प्राप्त करें" : "Reveal Divine Explanation"}
+                    </button>
+                    <p className="text-xs text-white/30 mt-3 select-none">
+                      {isHindiRoute 
+                        ? "रसिकों की वाणी का दिव्य रस और भावार्थ AI के माध्यम से जानें" 
+                        : "Discover the spiritual depth of the verse explained dynamically by AI"}
+                    </p>
+                  </div>
+                )}
+
+                {loadingAi && (
+                  <div className="flex flex-col items-center justify-center py-8 gap-4">
+                    <div className="relative w-10 h-10">
+                      <div className="absolute inset-0 rounded-full border-2 border-amber-500/20"></div>
+                      <div className="absolute inset-0 rounded-full border-2 border-t-amber-500 animate-spin"></div>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm font-semibold text-amber-500/90 tracking-wide animate-pulse">
+                        {isHindiRoute ? "श्री राधा-कृष्ण स्मरण... रस भाव प्रकट हो रहा है" : "Recalling Sri Radha-Krishna... Inner meaning revealing"}
+                      </p>
+                      <p className="text-[10px] text-white/30 mt-1">
+                        {isHindiRoute ? "दिव्य वाणी से व्याख्या तैयार की जा रही है" : "Generating commentary based on sacred reference"}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {errorAi && (
+                  <div className="text-center py-6">
+                    <p className="text-red-400 text-sm font-medium">{errorAi}</p>
+                    <button
+                      onClick={() => handleExplainWithAI()}
+                      className="mt-4 px-4 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-white text-xs font-semibold transition-all"
+                    >
+                      {isHindiRoute ? "पुनः प्रयास करें" : "Try Again"}
+                    </button>
+                  </div>
+                )}
+
+                {aiExplanation && (
+                  <div className="space-y-4">
+                    <div 
+                      className="text-white/95 leading-[1.8] text-base markdown-content select-text selection:bg-amber-500/30 font-inter"
+                      style={{ whiteSpace: 'pre-line' }}
+                    >
+                      {aiExplanation}
+                    </div>
+                    <div className="pt-4 border-t border-white/5 flex justify-between items-center text-[10px] text-white/30 select-none">
+                      <span>{isHindiRoute ? "कृपा पात्र: ब्रज रस अनुगामी" : "Presented by Braj Ras Follower"}</span>
+                      <span>{isHindiRoute ? "⚠️ AI व्याख्या (त्रुटि संभव है)" : "⚠️ AI Generated (verify with Rasik saints)"}</span>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
 
             {(transliteratedSanskrit || transliteratedHindi) && (
               <div className="py-8 sm:py-12 border-b border-white/5">
@@ -1203,19 +1311,19 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 </div>
               )}
 
-              {content.hindi_text && (
+              {(aiExplanation || loadingAi) && (
                 <div className="space-y-6 pt-10 border-t border-current/5">
-                  <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">भावार्थ (Hindi)</div>
+                  <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">{isHindiRoute ? "दिव्य व्याख्या (AI)" : "Divine Explanation (AI)"}</div>
                   <div 
-                    className="leading-[1.8] font-medium"
+                    className="leading-[1.8] font-medium font-inter"
                     style={{
-                      fontSize: sizeLevel === 1 ? '1.3rem' :
-                                sizeLevel === 2 ? '1.7rem' :
-                                sizeLevel === 3 ? '2.1rem' :
-                                sizeLevel === 4 ? '2.6rem' : '3.1rem'
+                      fontSize: sizeLevel === 1 ? '1.1rem' :
+                                sizeLevel === 2 ? '1.4rem' :
+                                sizeLevel === 3 ? '1.8rem' :
+                                sizeLevel === 4 ? '2.2rem' : '2.5rem'
                     }}
                   >
-                    {formatVerseText(content.hindi_text)}
+                    {loadingAi ? (isHindiRoute ? "श्री राधा-कृष्ण स्मरण... रस भाव प्रकट हो रहा है..." : "Recalling Sri Radha-Krishna... Inner meaning revealing...") : aiExplanation}
                   </div>
                 </div>
               )}

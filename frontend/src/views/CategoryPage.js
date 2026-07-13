@@ -246,7 +246,7 @@ const CategoryPage = ({ category: propCategory }) => {
                       {item.title}
                     </h3>
                     <p className="text-[var(--text-color)]/65 text-sm line-clamp-4 leading-relaxed">
-                      {item.hindi_text || item.english_translation || item.description}
+                      {item.sanskrit_text}
                     </p>
                   </div>
 

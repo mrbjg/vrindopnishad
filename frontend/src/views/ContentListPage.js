@@ -292,7 +292,7 @@ const ContentListPage = ({ initialContent, initialCategories }) => {
                   {item.title}
                 </h3>
                 <p className="text-[var(--text-color)]/60 text-sm line-clamp-3 leading-relaxed mb-6">
-                  {item.hindi_text ? <span className="hindi-text">{item.hindi_text}</span> : item.english_translation}
+                  {item.sanskrit_text}
                 </p>
               </div>
               

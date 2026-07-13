@@ -1057,11 +1057,11 @@ const HomePage = ({
                   className="font-headings text-lg md:text-2xl leading-relaxed text-white/95 max-w-3xl mx-auto hindi-text"
                   style={{ whiteSpace: 'pre-line' }}
                 >
-                  {(aajKaPad.sanskrit_text || aajKaPad.hindi_text || aajKaPad.english_translation || "")
+                  {(aajKaPad.sanskrit_text || "")
                     .split('\n')
                     .slice(0, 4)
                     .join('\n')}
-                  {(aajKaPad.sanskrit_text || aajKaPad.hindi_text || "").split('\n').length > 4 ? "\n..." : ""}
+                  {(aajKaPad.sanskrit_text || "").split('\n').length > 4 ? "\n..." : ""}
                 </div>
               </div>
             </div>
