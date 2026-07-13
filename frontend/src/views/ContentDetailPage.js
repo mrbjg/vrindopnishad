@@ -64,11 +64,11 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
   const scaleMap = [0.75, 1.0, 1.25, 1.55, 1.90];
   const multiplier = scaleMap[sizeLevel - 1] || 1.0;
 
-  // Formula: Container width (e.g. max 650px content column or 90vw on tablets/mobile)
+  // Formula: Container width (max 650px content column or 100% of parent container query width)
   // Scaled by user preference multiplier, divided by character factor
   const charFactor = 0.70;
   const targetCharsVal = Math.max(maxLineLength, 12);
-  const fluidFontSize = `clamp(${minRem}rem, calc(min(650px, 90vw) * ${multiplier} / (${targetCharsVal} * ${charFactor})), ${maxRem}rem)`;
+  const fluidFontSize = `clamp(${minRem}rem, calc(min(650px, 100cqw) * ${multiplier} / (${targetCharsVal} * ${charFactor})), ${maxRem}rem)`;
 
   return (
     <div 
@@ -796,11 +796,12 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
                 {/* Verse body — dynamic size, centered */}
                 <div
-                  className={`mx-auto max-w-2xl ${
+                  className={`mx-auto w-full max-w-2xl ${
                     settings.fontStyle === 'Sans' ? 'font-sans' :
                     settings.fontStyle === 'Inter' ? 'font-inter' :
                     'font-headings'
                   }`}
+                  style={{ containerType: 'inline-size' }}
                 >
                   <AutoFitVerse 
                     text={content.sanskrit_text} 
@@ -1004,11 +1005,14 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                   Hinglish Transliteration (रोमन पाठ)
                   <span className="content-section-line content-section-line--hinglish h-[1px] w-12 hidden sm:block"></span>
                 </h2>
-                <div className={`${
-                  settings.fontStyle === 'Sans' ? 'font-sans' :
-                  settings.fontStyle === 'Inter' ? 'font-inter' :
-                  'font-headings'
-                }`}>
+                <div 
+                  className={`w-full ${
+                    settings.fontStyle === 'Sans' ? 'font-sans' :
+                    settings.fontStyle === 'Inter' ? 'font-inter' :
+                    'font-headings'
+                  }`}
+                  style={{ containerType: 'inline-size' }}
+                >
                   <AutoFitVerse 
                     text={transliteratedSanskrit || transliteratedHindi} 
                     sizeLevel={sizeLevel} 
@@ -1471,7 +1475,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
               {content.sanskrit_text && (
                 <div className="space-y-6 w-full">
                   <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">मूल पाठ (Sanskrit)</div>
-                  <div className="w-full">
+                  <div className="w-full" style={{ containerType: 'inline-size' }}>
                     <AutoFitVerse 
                       text={content.sanskrit_text} 
                       sizeLevel={sizeLevel} 
@@ -1504,7 +1508,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
               {(transliteratedSanskrit || transliteratedHindi) && (
                 <div className="space-y-6 pt-10 border-t border-current/5 w-full">
                   <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">रोमन पाठ (Romanized)</div>
-                  <div className="w-full">
+                  <div className="w-full" style={{ containerType: 'inline-size' }}>
                     <AutoFitVerse 
                       text={transliteratedSanskrit || transliteratedHindi} 
                       sizeLevel={sizeLevel} 
