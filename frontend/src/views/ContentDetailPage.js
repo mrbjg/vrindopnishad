@@ -405,17 +405,13 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
     };
   }, [id, apiService, initialContent, initialRelatedSaint, initialRelatedBook, initialRelatedRaga, initialRelatedVerses]);
 
-  // Dynamic font size: scales inversely with longest line length, respects user sizeLevel
+  // Sanskrit text stays LARGE — viewport-relative so it fills the space
   const computeVerseFontSize = (text, userSizeLevel = 2) => {
-    if (!text) return '1.6rem';
-    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-    const maxChars = Math.max(...lines.map(l => l.length), 1);
-    // Base rem at sizeLevel 2 is 1.6; steps of 0.35 per level
-    const baseRem = 0.85 + userSizeLevel * 0.35; // 1.2 → 2.6 across levels 1–5
-    // Scale: target ~28 chars per line at full size; longer → shrink
-    const scale = Math.min(Math.max(28 / maxChars, 0.55), 1.4);
-    const finalRem = Math.round(baseRem * scale * 100) / 100;
-    return `${finalRem}rem`;
+    // sizeLevel 1→5 maps to vw targets: 3vw → 5.5vw, clamped for min/max
+    const vw = 2.5 + userSizeLevel * 0.6;       // 3.1 – 5.5vw
+    const minRem = 1.4 + userSizeLevel * 0.2;   // 1.6 – 2.4rem
+    const maxRem = 2.4 + userSizeLevel * 0.4;   // 2.8 – 4.4rem
+    return `clamp(${minRem}rem, ${vw}vw, ${maxRem}rem)`;
   };
 
   const formatVerseText = (text, centered = false) => {
@@ -784,8 +780,9 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                   }`}
                   style={{
                     fontSize: computeVerseFontSize(content.sanskrit_text, sizeLevel),
-                    lineHeight: 2,
-                    letterSpacing: '0.01em',
+                    lineHeight: 1.75,
+                    letterSpacing: '0.015em',
+                    fontWeight: 500,
                   }}
                 >
                   {formatVerseText(content.sanskrit_text, true)}
