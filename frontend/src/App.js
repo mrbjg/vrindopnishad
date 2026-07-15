@@ -245,7 +245,54 @@ function App() {
     };
   }, []);
 
-  
+  // Client-side anti-scraping & copy protection
+  useEffect(() => {
+    const handleContextMenu = (e) => {
+      e.preventDefault();
+    };
+
+    const handleCopy = (e) => {
+      e.preventDefault();
+      alert("Copying text is disabled to protect content integrity.");
+    };
+
+    const handleSelectStart = (e) => {
+      // Allow selection on input elements, but block on other content
+      const tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : '';
+      if (tag !== 'input' && tag !== 'textarea') {
+        e.preventDefault();
+      }
+    };
+
+    const handleKeyDown = (e) => {
+      // Block common scrapers/copiers shortcut keys:
+      // Ctrl+C, Cmd+C (Copy)
+      // Ctrl+U, Cmd+U (View Source)
+      // Ctrl+Shift+I, Cmd+Opt+I (Inspect Element)
+      // F12 (DevTools)
+      const isCopyKey = (e.ctrlKey || e.metaKey) && e.key === 'c';
+      const isSourceKey = (e.ctrlKey || e.metaKey) && e.key === 'u';
+      const isInspectKey = (e.ctrlKey && e.shiftKey && e.key === 'i') || (e.metaKey && e.altKey && e.key === 'i');
+      const isF12 = e.key === 'F12';
+
+      if (isCopyKey || isSourceKey || isInspectKey || isF12) {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('copy', handleCopy);
+    document.addEventListener('selectstart', handleSelectStart);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('copy', handleCopy);
+      document.removeEventListener('selectstart', handleSelectStart);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   useEffect(() => {
     // Warm up database cache using requestIdleCallback to avoid blocking main thread rendering
     const timer = setTimeout(() => {

@@ -12,6 +12,15 @@ function escapeHtml(str) {
 }
 
 export default async function handler(req, res) {
+  const ua = req.headers['user-agent'] || '';
+  const isBadBot = /python|scrapy|curl|wget|postman|urllib|axios|http-client|node-fetch|got|needle|superagent|request|crawler|spider|bot/i.test(ua) && 
+                   !/googlebot|bingbot|yandexbot|duckduckbot|baiduspider|slurp|facebookexternalhit|twitterbot/i.test(ua);
+  
+  if (isBadBot) {
+    res.status(403).send('Forbidden: Access denied.');
+    return;
+  }
+
   const slug = req.query.slug;
   if (!slug) {
     res.status(400).send('Missing slug');

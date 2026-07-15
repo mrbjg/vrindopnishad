@@ -1131,3 +1131,11 @@ body,
     border-color 0.3s ease,
     box-shadow 0.3s ease;
 }
+
+/* Protect lyrics from selection and copy-pasting */
+.hindi-text, .sanskrit-text, .content-verse-text, .content-section-heading, .AutoFitVerse, #pookiz-main-scroll-container, #kb-classic-content-container, .reading-card {
+  -webkit-user-select: none !important; /* Safari */
+  -moz-user-select: none !important;    /* Firefox */
+  -ms-user-select: none !important;     /* IE 10+/Edge */
+  user-select: none !important;         /* Standard */
+}
