@@ -21,7 +21,7 @@ const SaintsSpotlight = ({ isHi, saints, navigate }) => {
             Divine Creators & Spiritual Guides
           </span>
           <h2 className="text-xl md:text-2xl font-bold font-headings text-minimal-gold">
-            {isHi ? "परम पावन रसिक सन्त" : "Braj Rasik Saints"}
+            {isHi ? "परम पावन रसिक सन्त" : "VrindaVaani Devotee Saints"}
           </h2>
         </div>
         <Link

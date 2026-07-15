@@ -1007,7 +1007,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                     <div className="pt-6 border-t border-white/5 flex flex-col sm:flex-row gap-4 items-center justify-between text-xs text-white/35 select-none font-semibold">
                       <div className="flex items-center gap-2">
                         <span className="text-amber-500/70">🌸</span>
-                        <span>{(!isMounted || isHindiRoute) ? "कृपा पात्र: ब्रज रस अनुगामी" : "Presented by Braj Ras Follower"}</span>
+                        <span>{(!isMounted || isHindiRoute) ? "कृपा पात्र: श्री वृन्दावाणि टीम" : "Presented by Team VrindaVaani"}</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-amber-400/40">
                         <span>🙏</span>

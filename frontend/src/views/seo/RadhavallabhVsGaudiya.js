@@ -47,7 +47,7 @@ const RadhavallabhVsGaudiya = () => {
         </h1>
         <p className="text-white/60 text-sm leading-relaxed">
           {isHindiRoute 
-            ? "ब्रज रसिक दर्शन के दो प्रमुख स्तम्भों का विस्तृत तुलनात्मक विश्लेषण एवं आध्यात्मिक रहस्य।"
+            ? "वृन्दावाणि दर्शन के दो प्रमुख स्तम्भों का विस्तृत तुलनात्मक विश्लेषण एवं आध्यात्मिक रहस्य।"
             : "A detailed comparative analysis of the two dominant streams of aesthetic devotion (Rasa) in Vrindavan."}
         </p>
       </header>
@@ -158,7 +158,7 @@ const RadhavallabhVsGaudiya = () => {
             </h3>
             <p className="text-[11px] text-white/60 leading-relaxed font-light">
               {isHindiRoute 
-                ? "\"दार्शनिक रूप से भेद होने पर भी, दोनों ही संप्रदाय वृंदावन के निस्वार्थ प्रेम दर्शन (ब्रज रस) का पोषण करते हैं और रसिक संतों का परस्पर गहरा आदर रहा है।\""
+                ? "\"दार्शनिक रूप से भेद होने पर भी, दोनों ही संप्रदाय वृंदावन के निस्वार्थ प्रेम दर्शन (वृन्दावन भक्ति) का पोषण करते हैं और रसिक संतों का परस्पर गहरा आदर रहा है।\""
                 : "\"Despite structural differences, both traditions are beautiful streams watering the same single soil of Vrindavan Rasa. Rasisks of both sampradayas historically shared deep mutual respect.\""}
             </p>
           </div>

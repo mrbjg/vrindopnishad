@@ -95,7 +95,7 @@ const BooksListPage = ({ initialBooks }) => {
     <div className="animate-fade-in max-w-6xl mx-auto px-4 py-8">
       <Helmet>
         <title>{isHindiRoute ? "प्रमुख ग्रन्थ एवं रस शास्त्र | Vrindopnishad" : "Sacred Granthas & Books | Vrindopnishad"}</title>
-        <meta name="description" content={isHindiRoute ? "ब्रज रस के प्रमुख ग्रन्थों, वाणियों और शास्त्रों का संग्रह।" : "Read and browse the sacred books, granthas and vanis written by the saints of Vrindavan."} />
+        <meta name="description" content={isHindiRoute ? "वृन्दावन भक्ति के प्रमुख ग्रन्थों, वाणियों और शास्त्रों का संग्रह।" : "Read and browse the sacred books, granthas and vanis written by the saints of Vrindavan."} />
         <link rel="canonical" href={isHindiRoute ? "https://path.vrindopnishad.in/hi/granthas" : "https://path.vrindopnishad.in/granthas"} />
       </Helmet>
 

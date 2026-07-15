@@ -526,8 +526,8 @@ const PookizDashboardView = ({
                     </div>
                     <p className="text-[11px] text-zinc-400 mt-2 leading-relaxed">
                       {isHi 
-                        ? `रचनाकार: ${b.author || 'ब्रज रसिक सन्त'}। इस ग्रन्थ में ${b.verses?.length || 0} श्लोक संगृहीत हैं।`
-                        : `Written by ${b.author || 'Braj Rasik Sant'}. Contains ${b.verses?.length || 0} verses.`}
+                        ? `रचनाकार: ${b.author || 'वृन्दावाणि सन्त'}। इस ग्रन्थ में ${b.verses?.length || 0} श्लोक संगृहीत हैं।`
+                        : `Written by ${b.author || 'VrindaVaani Devotee Sant'}. Contains ${b.verses?.length || 0} verses.`}
                     </p>
                   </div>
 
@@ -537,7 +537,7 @@ const PookizDashboardView = ({
                         const newTarget = {
                           id: Date.now().toString(),
                           name: b.name,
-                          author: b.author || 'Braj Rasik Sant',
+                          author: b.author || 'VrindaVaani Devotee Sant',
                           target: `2 ${isHi ? 'श्लोक/दिन' : 'verses/day'}`,
                           progress: 0,
                           addedAt: new Date().toLocaleDateString()
@@ -930,7 +930,7 @@ const PookizDashboardView = ({
                 <div>
                   <h3 className="text-lg font-bold text-white">{auditingSaint.name} ({auditingSaint.hinglishName})</h3>
                   <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold block mt-0.5">
-                    {auditingSaint.biography?.sampraday || 'Braj Rasik'} • {getEra(auditingSaint)}
+                    {auditingSaint.biography?.sampraday || 'VrindaVaani Devotee'} • {getEra(auditingSaint)}
                   </span>
                 </div>
               </div>
@@ -976,7 +976,7 @@ const PookizDashboardView = ({
 
             
             <div className="border-t border-white/5 pt-4 mt-4 flex items-center justify-between gap-4">
-              <span className="text-[10px] text-zinc-600">{isHi ? 'ब्रज रसिक परम्परा' : 'Braj Rasik Tradition'}</span>
+              <span className="text-[10px] text-zinc-600">{isHi ? 'वृन्दावाणि परम्परा' : 'VrindaVaani Devotee Tradition'}</span>
               <div className="flex gap-2">
                 <Link
                   to={isHi ? `/hi/saints/${auditingSaint.slug}` : `/saints/${auditingSaint.slug}`}

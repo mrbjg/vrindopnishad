@@ -34,7 +34,7 @@ const GlossaryDetailPage = () => {
   const pageUrl = `${SITE_URL}${isHindiRoute ? '/hi' : ''}/glossary/${termData.slug}`;
   const title = isHindiRoute 
     ? `${termData.term} (${termData.devanagari}) का अर्थ, परिभाषा और आध्यात्मिक संदर्भ`
-    : `${termData.term} Meaning, Definition & Theological Context in Braj Ras`;
+    : `${termData.term} Meaning, Definition & Theological Context in Vrindavan Devotion`;
   const description = isHindiRoute
     ? `${termData.term} (${termData.devanagari}) क्या है? जानिए इसका संस्कृत अर्थ, परिभाषा, वैष्णव संप्रदाय में इसका महत्व और रसिक संतों के विचार।`
     : `Explore the definition, Sanskrit meaning, etymology, and deep theological context of ${termData.term} (${termData.devanagari}) in Vrindavan Rasik devotion.`;

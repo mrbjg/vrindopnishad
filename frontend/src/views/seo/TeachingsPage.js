@@ -34,7 +34,7 @@ const TeachingsPage = () => {
         <section className="prose-content">
           <h2 className="text-2xl font-bold mb-4 text-white/90">The Foundation of All Teachings</h2>
           <p className="text-white/70 leading-relaxed mb-6">
-            The core teachings of Vrindopnishad are derived from the practical realizations of the Braj Rasik saints. These instructions are not abstract intellectual theories; they are practical, heart-centered guidelines for waking the soul\'s innate capacity for divine love (*Prema*).
+            The core teachings of Vrindopnishad are derived from the practical realizations of the VrindaVaani Devotee saints. These instructions are not abstract intellectual theories; they are practical, heart-centered guidelines for waking the soul\'s innate capacity for divine love (*Prema*).
           </p>
 
           <h2>Scriptural Instruction on Humility and Chanting</h2>

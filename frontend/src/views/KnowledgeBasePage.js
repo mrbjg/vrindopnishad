@@ -41,7 +41,7 @@ const KnowledgeBasePage = () => {
       
       <Helmet>
         <title>{isHindiRoute ? "वैदिक ज्ञान कोष और रसिक विकी | Vrindopnishad" : "Vedic Knowledge Base & Rasik Wiki | Vrindopnishad"}</title>
-        <meta name="description" content={isHindiRoute ? "ब्रज रस के दार्शनिक सिद्धांतों, रसिक आचार्यों के इतिहास और शब्दकोश का संग्रह।" : "A unified portal exploring Braj Bhakti, philosophy, saint biographies and devotee guides."} />
+        <meta name="description" content={isHindiRoute ? "वृन्दावन भक्ति के दार्शनिक सिद्धांतों, रसिक आचार्यों के इतिहास और शब्दकोश का संग्रह।" : "A unified portal exploring Braj Bhakti, philosophy, saint biographies and devotee guides."} />
         <link rel="canonical" href={isHindiRoute ? "https://path.vrindopnishad.in/hi/knowledge-base" : "https://path.vrindopnishad.in/knowledge-base"} />
       </Helmet>
 
@@ -58,7 +58,7 @@ const KnowledgeBasePage = () => {
           </h1>
           <p className="text-[var(--text-color)]/50 text-xs mt-0.5 max-w-2xl">
             {isHindiRoute 
-              ? "ब्रज रस भक्ति के रहस्य, सन्त परम्पराओं और वैदिक सिद्धांतों की खोज के लिए एकीकृत विकी।" 
+              ? "वृन्दावन भक्ति भक्ति के रहस्य, सन्त परम्पराओं और वैदिक सिद्धांतों की खोज के लिए एकीकृत विकी।" 
               : "Discover the deep philosophical treatises, parikrama maps, and dictionaries of Braj devotion."}
           </p>
         </div>

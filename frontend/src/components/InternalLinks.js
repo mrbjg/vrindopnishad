@@ -14,7 +14,7 @@ const ALL_SEO_PAGES = [
   { path: '/vrindavan-devotional-heritage', title: 'Team VrindaVaani', desc: 'The rich spiritual legacy of Vrindavan' },
   { path: '/what-is-radha-snata', title: 'What is Radha Snata?', desc: 'Morning pastimes and spiritual meaning' },
   { path: '/nitya-vihar-vs-nikunj-vihar', title: 'Nitya Vihar vs Nikunj Vihar', desc: 'Timeless love-play and secluded bowers' },
-  { path: '/glossary', title: 'Spiritual Glossary', desc: 'Braj Rasik vocabulary & theological terms' },
+  { path: '/glossary', title: 'Spiritual Glossary', desc: 'VrindaVaani Devotee vocabulary & theological terms' },
   { path: '/places', title: 'Braj Dham Places', desc: 'Sacred guide to Vrindavan holy sites' },
   { path: '/who-is-harirae-ji', title: 'Who is Harirae Ji?', desc: 'Biography, teachings, and Varta literature' },
   { path: '/what-is-madhurya-and-sakhi-bhava', title: 'Madhurya & Sakhi Bhava', desc: 'Sentiments of conjugal love and companion service' },

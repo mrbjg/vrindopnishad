@@ -135,7 +135,7 @@ export const generatePersonSchema = (saint: {
   "description": saint.biography || `Vaishnava saint of the Braj tradition.`,
   "image": saint.imageUrl || undefined,
   "url": `${SITE_URL}/saints/${saint.slug}`,
-  "jobTitle": "Braj Rasik Saint",
+  "jobTitle": "VrindaVaani Devotee Saint",
   "knowsAbout": ["Vaishnavism", "Bhakti Yoga", "Vrindavan Devotional Heritage", "Vrindavan", "Radhavallabh Sampraday"]
 });
 
@@ -208,7 +208,7 @@ export const generateDefinedTermSchema = (term: {
   "description": term.definition,
   "inDefinedTermSet": {
     "@type": "DefinedTermSet",
-    "name": "Vrindopnishad Glossary of Braj Rasik Theology",
+    "name": "Vrindopnishad Glossary of VrindaVaani Devotee Theology",
     "url": `${SITE_URL}/glossary`
   }
 });

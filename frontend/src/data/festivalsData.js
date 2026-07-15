@@ -23,10 +23,10 @@ export const FESTIVALS_DATA = {
     slug: 'radhashtami',
     name: 'Radhashtami',
     hindiName: 'श्री राधाष्टमी',
-    description: 'The appearance festival of Srimati Radharani, the supreme deity and life-breath of Braj Rasiks.',
+    description: 'The appearance festival of Srimati Radharani, the supreme deity and life-breath of VrindaVaani Devotees.',
     timeline: 'Bhadrapada Shukla Ashtami (September)',
     history: 'Radhashtami commemorates the divine appearance of Srimati Radharani in Barsana. In the Radhavallabh Sampradaya founded by Shri Hit Harivansh, Radhashtami is the largest festival of the year, celebrated with nine days of continuous chanting, devotional songs (Badhai pads), and dynamic temple processions.',
-    meaning: 'For Braj Rasiks, Radha is not just a consort, but the supreme sovereign controller of the universe and the source of Krishna\'s bliss. Celebrating Her appearance means dedicating oneself to Her lotus feet and praying for Her confidential sahachari service.',
+    meaning: 'For VrindaVaani Devotees, Radha is not just a consort, but the supreme sovereign controller of the universe and the source of Krishna\'s bliss. Celebrating Her appearance means dedicating oneself to Her lotus feet and praying for Her confidential sahachari service.',
     celebration: 'In Barsana and Vrindavan, temples open at 4:00 AM for the grand bathing ceremony (Abhishek) of the deity using milk, curd, honey, ghee, and sacred water. Temple courtyards are filled with saffron powder, and yellow flags are hoisted on all buildings.',
     faqs: [
       {

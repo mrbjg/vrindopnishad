@@ -80,7 +80,7 @@ const LibraryShowcase = ({ isHi, books, navigate }) => {
                   {book.name}
                 </h3>
                 <span className="text-[10px] text-white/40 block truncate">
-                  By {book.author ? book.author.replace(/जी/g, '') : 'Braj Rasik'}
+                  By {book.author ? book.author.replace(/जी/g, '') : 'VrindaVaani Devotee'}
                 </span>
               </div>
               <div className="space-y-2">

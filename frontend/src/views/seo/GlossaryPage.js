@@ -14,7 +14,7 @@ const GlossaryPage = () => {
   const isHindiRoute = location.pathname.startsWith('/hi');
   const pageUrl = `${SITE_URL}${isHindiRoute ? '/hi' : ''}/glossary`;
   const title = isHindiRoute 
-    ? 'ब्रज रसिक शब्दकोश — वृंदावन के आध्यात्मिक एवं दार्शनिक शब्द'
+    ? 'वृन्दावाणि शब्दकोश — वृंदावन के आध्यात्मिक एवं दार्शनिक शब्द'
     : 'Vrindavan Devotional Glossary — Spiritual & Theological Terms';
   const description = isHindiRoute
     ? 'वृंदावन की रसिक परंपरा, नित्य विहार, निकुंज लीला, मंजरी भाव, और सेवा जैसे पारिभाषिक शब्दों की विस्तृत व्याख्या और संदर्भ।'
@@ -52,7 +52,7 @@ const GlossaryPage = () => {
           {isHindiRoute ? "आध्यात्मिक शब्दकोश" : "Spiritual Encyclopedia"}
         </div>
         <h1 className="text-3xl md:text-5xl font-bold font-headings text-sacred-gradient mb-4">
-          {isHindiRoute ? "ब्रज रसिक शब्दकोश" : "Vrindavan Devotional Glossary"}
+          {isHindiRoute ? "वृन्दावाणि शब्दकोश" : "Vrindavan Devotional Glossary"}
         </h1>
         <p className="text-white/60 text-sm leading-relaxed">
           {isHindiRoute 
@@ -143,7 +143,7 @@ const GlossaryPage = () => {
       <section className="mt-16 bg-white/[0.015] border border-white/5 rounded-3xl p-8 max-w-4xl mx-auto text-left">
         <h2 className="text-lg font-bold text-minimal-gold mb-4 flex items-center gap-2">
           <Sparkles size={18} className="text-primary" />
-          {isHindiRoute ? "ब्रज रस भाषा दर्शन को समझना" : "Understanding the Language of Braj Ras"}
+          {isHindiRoute ? "वृन्दावन भक्ति भाषा दर्शन को समझना" : "Understanding the Language of Vrindavan Devotion"}
         </h2>
         <p className="text-xs text-white/60 leading-relaxed mb-4">
           {isHindiRoute 

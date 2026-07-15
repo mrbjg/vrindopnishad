@@ -105,9 +105,9 @@ const VrindavanDevotionalHeritage = () => {
             </div>
           </div>
 
-          <h2 className="text-3xl font-bold mb-6 text-white/90">The Significance of Braj Ras</h2>
+          <h2 className="text-3xl font-bold mb-6 text-white/90">The Significance of Vrindavan Devotion</h2>
           <p className="text-white/70 leading-relaxed mb-6">
-            Braj Ras is not an intellectual concept; it is an experience of the heart. The literature of the rasik saints provides a map to this experience. <strong>Vrindopnishad</strong> focuses on the daily <em>Paath</em> (recitation) and meditative aspects of these texts, providing a multi-dimensional perspective on this divine tradition with Hindi translations, English meanings, and classical Raga notations.
+            Vrindavan Devotion is not an intellectual concept; it is an experience of the heart. The literature of the rasik saints provides a map to this experience. <strong>Vrindopnishad</strong> focuses on the daily <em>Paath</em> (recitation) and meditative aspects of these texts, providing a multi-dimensional perspective on this divine tradition with Hindi translations, English meanings, and classical Raga notations.
           </p>
 
           <div className="glass-card p-8 mb-12 bg-gradient-to-br from-primary/5 to-transparent">

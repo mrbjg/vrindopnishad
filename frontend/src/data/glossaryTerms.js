@@ -1,13 +1,13 @@
 export const GLOSSARY_TERMS = [
   {
-    term: 'Braj Ras',
-    devanagari: 'ब्रज रस',
+    term: 'Vrindavan Devotion',
+    devanagari: 'वृन्दावन भक्ति',
     slug: 'braj-ras',
     category: 'Theology',
     definition: 'The sweet, transcendental mellow or essence of divine love experienced in the sacred groves of Vrindavan. It is the ultimate goal of the Rasik saints, characterized by complete selflessness and absorption in the pleasure of the Divine Couple.',
     etymology: 'From "Braj" (pastoral land of Krishna) + "Rasa" (taste, nectar, emotional essence).',
-    theologicalContextEn: 'Braj Ras represents the zenith of aesthetic devotion (Rasa theology) elaborated by the post-15th century Rasik saints. Unlike other spiritual achievements such as liberation (Mukti) or awe-inspiring devotion (Aishwarya-bhakti), Braj Ras centers entirely on Madhurya — the sweet, equal, and intensely intimate love play of Shri Radha and Krishna. It is described as a liquid nectar that can only be tasted through absolute humility, shedding of ego, and entering the mood of the companion maidservants (Sahacharis).',
-    theologicalContextHi: 'ब्रज रस भक्ति दर्शन की सर्वोच्च अवस्था है जहाँ साधक समस्त ऐश्वर्य भाव से मुक्त होकर केवल श्री राधा कृष्ण के निकुंज के केलि रस में लीन हो जाता है। यह रस मुक्ति की चाह से भी परे है। स्वामी हरिदास और हित हरिवंश महाप्रभु जैसे रसिक संतों ने इसे जीवन का एकमात्र परम पुरुषार्थ माना है। इसे प्राप्त करने के लिए मन को पूर्णतः निष्काम और निर्मल बनाना आवश्यक है।',
+    theologicalContextEn: 'Vrindavan Devotion represents the zenith of aesthetic devotion (Rasa theology) elaborated by the post-15th century Rasik saints. Unlike other spiritual achievements such as liberation (Mukti) or awe-inspiring devotion (Aishwarya-bhakti), Vrindavan Devotion centers entirely on Madhurya — the sweet, equal, and intensely intimate love play of Shri Radha and Krishna. It is described as a liquid nectar that can only be tasted through absolute humility, shedding of ego, and entering the mood of the companion maidservants (Sahacharis).',
+    theologicalContextHi: 'वृन्दावन भक्ति भक्ति दर्शन की सर्वोच्च अवस्था है जहाँ साधक समस्त ऐश्वर्य भाव से मुक्त होकर केवल श्री राधा कृष्ण के निकुंज के केलि रस में लीन हो जाता है। यह रस मुक्ति की चाह से भी परे है। स्वामी हरिदास और हित हरिवंश महाप्रभु जैसे रसिक संतों ने इसे जीवन का एकमात्र परम पुरुषार्थ माना है। इसे प्राप्त करने के लिए मन को पूर्णतः निष्काम और निर्मल बनाना आवश्यक है।',
     relatedSaints: [
       { nameEn: 'Swami Haridas', slug: 'haridas' },
       { nameEn: 'Shri Hit Harivansh', slug: 'hit-harivansh' }
@@ -98,7 +98,7 @@ export const GLOSSARY_TERMS = [
     category: 'Philosophy',
     definition: 'The taste, flavor, or aesthetic essence of spiritual relationship. In Vaishnava theology, there are five primary rasas: Shanta (neutrality), Dasya (servitude), Sakhya (friendship), Vatsalya (parenthood), and Madhurya (conjugal love).',
     etymology: 'Sanskrit root meaning juice, essence, taste, or aesthetic flavor.',
-    theologicalContextEn: 'Vaishnava acharyas, drawing from Bharata Muni\'s Natyashastra, transformed the secular theory of aesthetics into a profound theology of devotion. Rasa is the tasting of the soul\'s relationship with the Supreme Lord. While other traditions value Shanta (impersonal peace) or Dasya (servitude), the Braj Rasik traditions center exclusively on Madhurya Rasa, where the supreme deity is bound and controlled by the sweetness of romantic love.',
+    theologicalContextEn: 'Vaishnava acharyas, drawing from Bharata Muni\'s Natyashastra, transformed the secular theory of aesthetics into a profound theology of devotion. Rasa is the tasting of the soul\'s relationship with the Supreme Lord. While other traditions value Shanta (impersonal peace) or Dasya (servitude), the VrindaVaani Devotee traditions center exclusively on Madhurya Rasa, where the supreme deity is bound and controlled by the sweetness of romantic love.',
     theologicalContextHi: 'रस मूलतः आनंद का वह प्रवाह है जिसे आत्मा भगवान के साथ संबंध में अनुभव करती है। भक्ति शास्त्र में शांत, दास्य, सख्य, वात्सल्य और माधुर्य—ये पाँच मुख्य रस माने गए हैं। इनमें माधुर्य रस (प्रेम रस) को सर्वश्रेष्ठ माना गया है। वृंदावन के रसिक संतों का मुख्य ध्यान इसी माधुर्य रस का आस्वादन करना है।',
     relatedSaints: [
       { nameEn: 'Shri Hariram Vyas', slug: 'hariram-vyas' }

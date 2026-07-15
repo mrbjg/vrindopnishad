@@ -36,7 +36,7 @@ const AboutPage = () => {
         <section className="prose-content">
           <h2 className="text-2xl font-bold mb-4 text-white/90">Our Vision & Mission</h2>
           <p className="text-white/70 leading-relaxed mb-6">
-            The Vrindopnishad Project began as a collaborative effort to solve a major cultural problem: the decay and disappearance of ancient medieval manuscripts containing the compositions (Vaanis) of Braj Rasik saints. Written in dialects like Braj Bhasha and Sanskrit, these compositions have been preserved inside temples and private collections in Vrindavan, Barsana, and Radhakund. Our mission is to digitally archive, transliterate, translate, and explain these texts, making them available completely free of charge to researchers, devotees, and seekers worldwide.
+            The Vrindopnishad Project began as a collaborative effort to solve a major cultural problem: the decay and disappearance of ancient medieval manuscripts containing the compositions (Vaanis) of VrindaVaani Devotee saints. Written in dialects like Braj Bhasha and Sanskrit, these compositions have been preserved inside temples and private collections in Vrindavan, Barsana, and Radhakund. Our mission is to digitally archive, transliterate, translate, and explain these texts, making them available completely free of charge to researchers, devotees, and seekers worldwide.
           </p>
 
           <h2 className="text-2xl font-bold mb-4 text-white/90">Digital Ashram Framework</h2>
@@ -51,7 +51,7 @@ const AboutPage = () => {
 
           <h2 className="text-2xl font-bold mb-4 text-white/90">Collaborative Stewardship</h2>
           <p className="text-white/70 leading-relaxed mb-6">
-            Our platform operates under the direct supervision of Sanskrit scholars, manuscript editors, and veteran practitioners of the Braj Rasik lineages (including Gaudiya, Radhavallabh, and Haridasi traditions). We believe that the preservation of this wisdom must be done with utmost care, maintaining scriptural accuracy while leveraging modern technology to build a lightweight, fast, and accessible content hub.
+            Our platform operates under the direct supervision of Sanskrit scholars, manuscript editors, and veteran practitioners of the VrindaVaani Devotee lineages (including Gaudiya, Radhavallabh, and Haridasi traditions). We believe that the preservation of this wisdom must be done with utmost care, maintaining scriptural accuracy while leveraging modern technology to build a lightweight, fast, and accessible content hub.
           </p>
 
           <h2 className="text-2xl font-bold mb-4 text-white/90">Why It Matters</h2>

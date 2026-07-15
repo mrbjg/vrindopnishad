@@ -1149,7 +1149,7 @@ const HomePage = ({
             <strong className="text-white/55 font-bold">Vrindopnishad Paath (वृंदोपनिषद् पाठ)</strong> online sanctuary: Engage daily with authentic Vedic Sanskrit Shlokas (श्लोक), devotional hymns (Strotras / स्तोत्र), and spiritual poetry from Braj Dham saints including Premanand Ji Maharaj, Swami Haridas, Hit Harivansh, and other Braj rasiks. Access complete Hindi भावार्थ translations, English meanings, and classical Raga notations for devotional chanting and swadhyaya.
           </p>
           <p>
-            वृंदोपनिषद् पाठ: रस उपासना और ब्रज रसिक संतों की वाणी का एक पवित्र डिजिटल संग्रह। हमारा उद्देश्य संस्कृत ग्रंथों, स्तोत्रों, और कविताओं के अमूल्य ज्ञान को सुगम और सुंदर रूप में जिज्ञासुओं तक पहुँचाना है।
+            वृंदोपनिषद् पाठ: रस उपासना और वृन्दावाणि संतों की वाणी का एक पवित्र डिजिटल संग्रह। हमारा उद्देश्य संस्कृत ग्रंथों, स्तोत्रों, और कविताओं के अमूल्य ज्ञान को सुगम और सुंदर रूप में जिज्ञासुओं तक पहुँचाना है।
           </p>
 
         </div>

@@ -65,7 +65,7 @@ const PilgrimageHub = ({ isHi, navigate }) => {
           className="glass-card p-5 sm:p-6 rounded-3xl border border-white/5 hover:border-amber-500/20 cursor-pointer group transition-all flex flex-col justify-between space-y-4 hover:scale-[1.01] touch-manipulation relative overflow-hidden"
           role="button"
           tabIndex={0}
-          aria-label={isHi ? "ब्रज रसिक शब्दावली" : "Braj Rasik Glossary"}
+          aria-label={isHi ? "वृन्दावाणि शब्दावली" : "VrindaVaani Devotee Glossary"}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               navigate(isHi ? "/hi/glossary" : "/glossary");
@@ -86,7 +86,7 @@ const PilgrimageHub = ({ isHi, navigate }) => {
             </div>
             <div className="space-y-1">
               <h3 className="font-bold text-sm md:text-base text-white/95 group-hover:text-primary transition-colors leading-snug">
-                {isHi ? "ब्रज रसिक शब्दावली" : "Braj Rasik Glossary"}
+                {isHi ? "वृन्दावाणि शब्दावली" : "VrindaVaani Devotee Glossary"}
               </h3>
               <p className="text-[11px] text-white/45 font-light leading-relaxed">
                 {isHi

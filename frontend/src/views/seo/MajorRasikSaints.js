@@ -96,7 +96,7 @@ const MajorRasikSaints = () => {
               3. The Prolific Chronicles: Shri Dhruvdas
             </h2>
             <p className="text-xs text-white/70 leading-relaxed">
-              Living in the 17th century, **Shri Dhruvdas** was one of the most prolific authors of the Radhavallabh lineage. He took it upon himself to systematically record the spiritual history and theology of the earlier Rasik acharyas. His masterpiece, the **Bayalees Leela (बयालीस लीला)**, consists of forty-two distinct poetic works detailing everything from the physical and spiritual layout of Vrindavan to guidelines for daily meditation and the practice of Sahachari Bhava. His works remain the most accessed manuals for studying the philosophy of Braj Ras.
+              Living in the 17th century, **Shri Dhruvdas** was one of the most prolific authors of the Radhavallabh lineage. He took it upon himself to systematically record the spiritual history and theology of the earlier Rasik acharyas. His masterpiece, the **Bayalees Leela (बयालीस लीला)**, consists of forty-two distinct poetic works detailing everything from the physical and spiritual layout of Vrindavan to guidelines for daily meditation and the practice of Sahachari Bhava. His works remain the most accessed manuals for studying the philosophy of Vrindavan Devotion.
             </p>
           </section>
 

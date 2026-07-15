@@ -13,7 +13,7 @@ export const articles = [
     titleEn: 'What is Vrindopnishad?',
     titleHi: 'वृंदोपनिषद् क्या है?',
     descEn: 'Introduction to the sacred digital ashram preserving Vedic and devotional Braj heritage.',
-    descHi: 'ब्रज रस और वैदिक विरासत के संरक्षण के लिए समर्पित डिजिटल आश्रम का परिचय।',
+    descHi: 'वृन्दावन भक्ति और वैदिक विरासत के संरक्षण के लिए समर्पित डिजिटल आश्रम का परिचय।',
     category: 'philosophy',
     readTime: '4 min'
   },
@@ -58,7 +58,7 @@ export const articles = [
     titleEn: 'Importance of Preservation',
     titleHi: 'ग्रन्थ संरक्षण का महत्त्व',
     descEn: 'Why digital archival of medieval rasik scriptures is crucial for cultural heritage.',
-    descHi: 'ब्रज रस के मध्यकालीन शास्त्रों के डिजिटलीकरण और पुस्तकालय संरक्षण की आवश्यकता।',
+    descHi: 'वृन्दावन भक्ति के मध्यकालीन शास्त्रों के डिजिटलीकरण और पुस्तकालय संरक्षण की आवश्यकता।',
     category: 'philosophy',
     readTime: '3 min'
   },
@@ -101,7 +101,7 @@ export const articles = [
   {
     slug: 'vrindavan-devotional-heritage',
     titleEn: 'Team VrindaVaani',
-    titleHi: 'ब्रज रसिक धरोहर व परम्परा',
+    titleHi: 'वृन्दावाणि धरोहर व परम्परा',
     descEn: 'Profiles of the great medieval rasik acharyas and authors of Braj poetry.',
     descHi: 'ब्रज भाषा के मध्यकालीन रस कवियों, आचार्यों और उनके सम्प्रदायों का इतिहास।',
     category: 'traditions',

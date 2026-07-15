@@ -94,7 +94,7 @@ const RagasListPage = ({ initialRagas }) => {
     <div className="animate-fade-in max-w-6xl mx-auto px-4 py-8">
       <Helmet>
         <title>{isHindiRoute ? "रागों के अनुसार वाणी पद | Vrindopnishad" : "Ragas & Devotional Songs | Vrindopnishad"}</title>
-        <meta name="description" content={isHindiRoute ? "शास्त्रीय रागों में निबंध ब्रज रस के पदों का वर्गीकरण।" : "Explore sacred songs and poetry categorized by classical Indian musical ragas."} />
+        <meta name="description" content={isHindiRoute ? "शास्त्रीय रागों में निबंध वृन्दावन भक्ति के पदों का वर्गीकरण।" : "Explore sacred songs and poetry categorized by classical Indian musical ragas."} />
         <link rel="canonical" href={isHindiRoute ? "https://path.vrindopnishad.in/hi/ragas" : "https://path.vrindopnishad.in/ragas"} />
       </Helmet>
 
