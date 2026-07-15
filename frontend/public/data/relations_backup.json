@@ -13190,7 +13190,6 @@
         "996da2da-420e-4f28-86a0-f3451929c237",
         "04c25e4e-f11e-4d18-86a3-88c97f96c87a",
         "f2b9efdb-62a0-403f-85b4-31ca6737c755",
-        "393a1c42-b683-419f-b523-8d9dee718ec6",
         "07960544-5ac9-41f6-bad4-69b1483470f3",
         "f959095e-ebda-4341-a930-231e341c686a",
         "4aec5b91-ee52-4fc7-8e89-57cd6b7676cb",
@@ -21785,17 +21784,6 @@
       ]
     },
     {
-      "name": "राग की",
-      "slug": "rag-ki",
-      "hinglishName": "rag ki",
-      "verseIds": [
-        "f2904c69-dd34-4978-9b5f-32c4728e3fcc",
-        "70fcc118-9710-4a1b-96bd-3cb94dfb6122",
-        "8f54fc31-3931-4651-8016-93b073c8a05f",
-        "393a1c42-b683-419f-b523-8d9dee718ec6"
-      ]
-    },
-    {
       "name": "राग टोडी",
       "slug": "rag-todi",
       "hinglishName": "rag todi",
@@ -21945,6 +21933,16 @@
         "0b90a872-493f-41bf-96b8-1e73638360ec",
         "362247cd-ae63-4a14-86f5-69356d75003e",
         "4aec5b91-ee52-4fc7-8e89-57cd6b7676cb"
+      ]
+    },
+    {
+      "name": "राग की",
+      "slug": "rag-ki",
+      "hinglishName": "rag ki",
+      "verseIds": [
+        "f2904c69-dd34-4978-9b5f-32c4728e3fcc",
+        "70fcc118-9710-4a1b-96bd-3cb94dfb6122",
+        "8f54fc31-3931-4651-8016-93b073c8a05f"
       ]
     },
     {
