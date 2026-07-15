@@ -1,6 +1,7 @@
 [
   {
     "id": "saint-local-0",
+    "category": "saint_biography",
     "title": "स्वामी श्री हरिदास",
     "hindi_text": "स्वामी श्री हरिदास, वृंदावन के रसिक शिरोमणि संत थे, जो श्री ललिता सखी के अवतार थे, जो श्री राधारानी की मुख्य सखी हैं। स्वामी हरिदास जी ने 'केलिमाल' की रचना में 'अखंड नित्य विहार' रस निकुंज उपासना को प्रस्तुत किया है ।",
     "english_translation": "",
@@ -10,12 +11,11 @@
       "Saint",
       "Biography"
     ],
-    "author": "Team VrindaVaani",
-    "category": "saint",
-    "slug": ""
+    "author": "Team VrindaVaani"
   },
   {
     "id": "saint-local-1",
+    "category": "saint_biography",
     "title": "श्री हित हरिवंश महाप्रभु",
     "hindi_text": "श्री हित हरिवंश महाप्रभु, श्री वृंदावन धाम के रसिक शिरोमणि संत और श्री कृष्ण की वंशी के अवतार हैं। वे श्री राधारानी को ही अपना गुरु और इष्ट मानते हैं और राधावल्लभ संप्रदाय के मुख्य आचार्य हैं। इनकी उपासना में मुख्य रूप से सहचरी भाव है, जिसमें श्री राधा चरण प्रधानता है।",
     "english_translation": "",
@@ -25,8 +25,6 @@
       "Saint",
       "Biography"
     ],
-    "author": "Team VrindaVaani",
-    "category": "saint",
-    "slug": ""
+    "author": "Team VrindaVaani"
   }
 ]
