@@ -26,7 +26,7 @@ def enrich_item(item):
     new_tags = []
     for tag in old_tags:
         tag_clean = tag.strip()
-        if tag_clean == 'Braj Rasik':
+        if tag_clean == 'Vrindavan devotee':
             new_tags.append('VrindaVaani')
         elif tag_clean == 'Mass Import':
             continue

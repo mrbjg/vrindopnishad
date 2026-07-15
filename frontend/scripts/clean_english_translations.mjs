@@ -132,7 +132,7 @@ function cleanDatabase() {
   console.log(`✅ Removed Hindi text on ${dualTextCleanedCount} items where Sanskrit was also present.`);
   console.log(`✅ Stripped embedded English sentences from ${englishStrippedHindiCount} Hindi text fields.`);
 
-  // 3. Write back to data/brajrasik_hi_full.json
+  // 3. Write back to data/original source_hi_full.json
   fs.writeFileSync(dbPath, JSON.stringify(cleanedData, null, 2), 'utf8');
   console.log(`💾 Saved cleaned data to: ${dbPath}`);
 

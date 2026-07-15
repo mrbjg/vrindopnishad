@@ -92,4 +92,13 @@ frontend/.env
 frontend/scripts/brajrasik/*.json
 frontend/articles_deployment.json
 backend/scripts/paraphrase_checkpoint.json
+backend/scripts/*_raw.json
+backend/scripts/articles_raw.json
+backend/scripts/albums_raw.json
+backend/scripts/glossarys_raw.json
+backend/scripts/medias_raw.json
+backend/scripts/places_raw.json
+backend/scripts/raags_raw.json
+backend/scripts/tags_raw.json
+backend/scripts/subjects_raw.json
 

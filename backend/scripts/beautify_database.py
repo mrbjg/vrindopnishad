@@ -57,7 +57,7 @@ def call_gemini_batch(items_batch):
             url = f'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}'
             
             prompt = f'''
-You are an expert specializing in Braj Rasika literature and Vedic devotional texts.
+You are an expert specializing in Vrindavan devotional literature and Vedic devotional texts.
 Translate the Sanskrit or Braj Bhasha verse ("sanskrit_text") into a spiritually accurate, poetic, and natural Hindi prose explanation.
 Preserve terms like "रसिक भक्त", names of saints, and places (Vrindavan, Barsana, Yamuna) exactly.
 Output ONLY a JSON array of objects with keys "id" and "hindi_text".

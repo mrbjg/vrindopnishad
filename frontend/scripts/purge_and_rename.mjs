@@ -104,7 +104,7 @@ function main() {
   let collisionCount = 0;
 
   const cleanedData = data.map(item => {
-    // 1. Purge references to BrajRasik.org
+    // 1. Purge references to the original source
     item.reference_url = "";
     item.english_text = "";
     item.english_translation = "";
