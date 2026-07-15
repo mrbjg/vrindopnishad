@@ -280,6 +280,19 @@ function App() {
       }
     };
 
+    // Disable DevTools debugger loop in production
+    let debuggerInterval;
+    if (process.env.NODE_ENV !== 'development') {
+      const blockDevTools = () => {
+        try {
+          const dummy = function() {};
+          const func = dummy.constructor("debugger");
+          debuggerInterval = setInterval(func, 100);
+        } catch (e) {}
+      };
+      blockDevTools();
+    }
+
     document.addEventListener('contextmenu', handleContextMenu);
     document.addEventListener('copy', handleCopy);
     document.addEventListener('selectstart', handleSelectStart);
@@ -290,6 +303,9 @@ function App() {
       document.removeEventListener('copy', handleCopy);
       document.removeEventListener('selectstart', handleSelectStart);
       document.removeEventListener('keydown', handleKeyDown);
+      if (debuggerInterval) {
+        clearInterval(debuggerInterval);
+      }
     };
   }, []);
 
