@@ -240,9 +240,9 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
   const [autoExplain, setAutoExplain] = useState(() => {
     try {
       const saved = localStorage.getItem('auto_explain_ai');
-      return saved ? saved === 'true' : true; // default to true
+      return saved ? saved === 'true' : false; // default to false
     } catch (e) {
-      return true;
+      return false;
     }
   });
 
