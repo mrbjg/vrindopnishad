@@ -102,11 +102,8 @@ function cleanDatabase() {
     let hindi = item.hindi_text ? item.hindi_text.trim() : "";
     let content = item.content_text ? item.content_text.trim() : "";
 
-    // 1. Condition: If BOTH sanskrit_text and hindi_text are present, keep sanskrit_text and remove hindi_text
-    if (sanskrit.length > 0 && hindi.length > 0) {
-      hindi = "";
-      dualTextCleanedCount++;
-    }
+    // 1. Condition: If BOTH sanskrit_text and hindi_text are present, preserve both.
+    // (Disabled clearing hindi_text as it now holds paraphrased prose explanations)
 
     // 2. Strip English sentences from hindi_text and content_text
     if (hindi.length > 0) {

@@ -122,3 +122,12 @@ When introducing or modifying any client-side/server-side dynamic page that read
 
 Rule for Copyright Auditing:
 When importing external content databases, always strip all modern translations, commentaries, and metadata beforehand to avoid DMCA takedown alerts, keeping only public domain texts and generating transliterations programmatically.
+
+Always Verify Builds Post-Refactor:
+
+When modifying layout components, styling classes, or imports, always run a production-equivalent build (npm run build or framework equivalent) synchronously or in the background to guarantee zero regressions or TypeScript/lint compilation errors.
+
+Clean Up Unused Components & Imports:
+
+When deprecating or disabling a UI element or feature, do not leave unused imports or dead React component instances rendered in parent templates. Ensure both the import statements and JSX tags are fully pruned.
+

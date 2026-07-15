@@ -3,7 +3,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import Loader from '../components/Loader';
 
-
 const LoadingContext = createContext();
 
 export const useLoading = () => {

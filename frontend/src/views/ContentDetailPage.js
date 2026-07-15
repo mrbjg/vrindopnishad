@@ -1127,26 +1127,6 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
               </div>
             )}
 
-            {content.reference_url && (
-              <div className="pt-8 border-t border-white/5 text-sm text-white/50 flex flex-col sm:flex-row items-center justify-between gap-4 font-inter">
-                <div className="flex items-center gap-2">
-                  <Sparkles size={16} className="text-amber-500/80 animate-pulse" />
-                  <span>
-                    {isHindiRoute 
-                      ? "इस सामग्री का मूल स्रोत जानने के लिए:" 
-                      : "To read the original commentary/source for this verse:"}
-                  </span>
-                </div>
-                <a 
-                  href={isHindiRoute ? content.reference_url.replace('/articles/', '/hi/articles/') : content.reference_url} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="inline-flex items-center gap-1 text-amber-400 hover:text-amber-300 underline font-medium transition-colors"
-                >
-                  {isHindiRoute ? "ब्रज रसिक (BrajRasik.org)" : "Visit BrajRasik.org"}
-                </a>
-              </div>
-            )}
             
             <div className="lg:hidden mt-20 pt-10 border-t border-white/5 flex flex-col items-center gap-6">
               <span className="content-section-label text-[10px] uppercase tracking-[0.3em] font-bold">Reading Settings</span>
