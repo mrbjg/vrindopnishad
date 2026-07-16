@@ -1,0 +1,236 @@
+[
+  {
+    "id": 1,
+    "name": "अन्य",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-03-01T13:32:37.683Z",
+    "updated_at": "2023-03-01T13:32:37.683Z"
+  },
+  {
+    "id": 2,
+    "name": "वन विहार",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-03-01T13:32:37.687Z",
+    "updated_at": "2023-03-01T13:32:37.687Z"
+  },
+  {
+    "id": 3,
+    "name": "श्रृंगार",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-03-01T13:32:37.689Z",
+    "updated_at": "2023-03-01T13:32:37.689Z"
+  },
+  {
+    "id": 4,
+    "name": "शरद ऋतु",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-03-01T13:32:37.692Z",
+    "updated_at": "2023-03-01T13:32:37.692Z"
+  },
+  {
+    "id": 5,
+    "name": "वर्षा ऋतु",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-03-01T13:32:37.695Z",
+    "updated_at": "2023-03-01T13:32:37.695Z"
+  },
+  {
+    "id": 6,
+    "name": "नौका विहार",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-03-01T13:32:37.698Z",
+    "updated_at": "2023-03-01T13:32:37.698Z"
+  },
+  {
+    "id": 7,
+    "name": "होली",
+    "is_approved": true,
+    "user_id": 2,
+    "theme_id": null,
+    "created_at": "2023-03-04T03:59:49.959Z",
+    "updated_at": "2023-03-07T10:33:25.147Z"
+  },
+  {
+    "id": 8,
+    "name": "व्याहुला",
+    "is_approved": false,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-03-07T11:03:10.884Z",
+    "updated_at": "2023-03-07T11:03:10.884Z"
+  },
+  {
+    "id": 10,
+    "name": "झूलन उत्सव",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-03-13T14:30:37.405Z",
+    "updated_at": "2023-03-13T14:30:37.405Z"
+  },
+  {
+    "id": 9,
+    "name": "जन्म उत्सव",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-03-13T14:26:31.770Z",
+    "updated_at": "2023-03-14T06:17:20.111Z"
+  },
+  {
+    "id": 13,
+    "name": "फूल बंगला उत्सव",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-03-14T07:36:33.536Z",
+    "updated_at": "2023-03-14T07:36:33.536Z"
+  },
+  {
+    "id": 14,
+    "name": "खिचड़ी उत्सव",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-03-14T13:22:17.281Z",
+    "updated_at": "2023-03-14T13:22:17.281Z"
+  },
+  {
+    "id": 15,
+    "name": "शीत ऋतू",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-03-14T13:29:40.319Z",
+    "updated_at": "2023-03-14T13:29:40.319Z"
+  },
+  {
+    "id": 16,
+    "name": "दान लीला",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-03-16T11:16:44.132Z",
+    "updated_at": "2023-03-16T11:16:44.132Z"
+  },
+  {
+    "id": 17,
+    "name": "रास लीला",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-03-16T12:53:40.937Z",
+    "updated_at": "2023-03-16T12:53:40.937Z"
+  },
+  {
+    "id": 20,
+    "name": "जनकलली जमनोत्सव",
+    "is_approved": false,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-09-12T11:49:17.864Z",
+    "updated_at": "2023-09-12T11:49:17.864Z"
+  },
+  {
+    "id": 21,
+    "name": "वृषभानुलली जमनोत्सव",
+    "is_approved": false,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-09-12T11:49:24.664Z",
+    "updated_at": "2023-09-12T11:49:24.664Z"
+  },
+  {
+    "id": 18,
+    "name": "श्रीकृष्ण जन्मोत्सव",
+    "is_approved": false,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-09-12T11:49:03.616Z",
+    "updated_at": "2023-09-12T11:58:06.327Z"
+  },
+  {
+    "id": 19,
+    "name": "रामलला जमनोत्सव",
+    "is_approved": false,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-09-12T11:49:11.483Z",
+    "updated_at": "2023-09-12T12:18:32.735Z"
+  },
+  {
+    "id": 22,
+    "name": "सांझी उत्सव",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-09-20T16:47:09.576Z",
+    "updated_at": "2023-09-20T16:47:09.576Z"
+  },
+  {
+    "id": 23,
+    "name": "मान लीला",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-10-11T06:30:21.537Z",
+    "updated_at": "2023-10-11T06:30:30.882Z"
+  },
+  {
+    "id": 24,
+    "name": "ग्रीष्म ऋतू",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-10-26T09:27:30.205Z",
+    "updated_at": "2023-10-26T09:27:30.205Z"
+  },
+  {
+    "id": 25,
+    "name": "होली (रामलला)",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-10-27T17:20:04.777Z",
+    "updated_at": "2023-10-27T17:20:04.777Z"
+  },
+  {
+    "id": 26,
+    "name": "व्याहुला(श्री सीताराम जी )",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-10-28T15:47:00.184Z",
+    "updated_at": "2023-10-28T15:47:00.184Z"
+  },
+  {
+    "id": 27,
+    "name": "अष्टयाम सेवा",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-11-07T09:34:36.140Z",
+    "updated_at": "2023-11-07T09:34:36.140Z"
+  },
+  {
+    "id": 28,
+    "name": "श्री शिव विवाह",
+    "is_approved": true,
+    "user_id": 1,
+    "theme_id": null,
+    "created_at": "2023-12-26T12:21:02.506Z",
+    "updated_at": "2023-12-26T12:21:02.506Z"
+  }
+]
