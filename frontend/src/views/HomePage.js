@@ -87,10 +87,10 @@ const getInitials = (name) => {
   return first.match(/[a-zA-Z]/) ? first.toUpperCase() : first;
 };
 
-const HomePage = ({ 
-  initialAllItems, 
-  initialSaints, 
-  initialBooks, 
+const HomePage = ({
+  initialAllItems,
+  initialSaints,
+  initialBooks,
   initialRagas,
   initialLatestVerses,
   initialAajKaPad,
@@ -108,12 +108,12 @@ const HomePage = ({
   const [ragas, setRagas] = useState(initialRagas || []);
   const [loading, setLoading] = useState(!initialAllItems && !(initialLatestVerses && initialAajKaPad && initialCategoryStats));
 
-  
+
   const [isCompleted, setIsCompleted] = useState(false);
   const [streak, setStreak] = useState(0);
   const [particles, setParticles] = useState([]);
 
-  
+
   const [calendarData, setCalendarData] = useState(() => {
     try {
       const saved = localStorage.getItem('vrindopnishad_calendar_data');
@@ -141,7 +141,7 @@ const HomePage = ({
     }
   });
 
-  
+
   const [selectedItem, setSelectedItem] = useState(null);
   const [previewType, setPreviewType] = useState(null);
 
@@ -159,7 +159,7 @@ const HomePage = ({
   const [isEditingName, setIsEditingName] = useState(false);
   const [tempName, setTempName] = useState(settings.devoteeName || '');
 
-  
+
   useEffect(() => {
     setTempName(settings.devoteeName || '');
   }, [settings.devoteeName]);
@@ -269,7 +269,7 @@ const HomePage = ({
       });
     }
 
-    
+
     const newParticles = Array.from({ length: 24 }).map((_, i) => ({
       id: i,
       x: (Math.random() - 0.5) * 140,
@@ -283,12 +283,12 @@ const HomePage = ({
 
   const [japaCount, setJapaCount] = useState(0);
 
-  
+
   useEffect(() => {
     if (!user) return;
 
     let active = true;
-    let unsubscribe = () => {};
+    let unsubscribe = () => { };
 
     if (isSupabase) {
       const syncUserSadhana = async () => {
@@ -479,7 +479,7 @@ const HomePage = ({
     };
   }, [user]);
 
-  
+
   useEffect(() => {
     try {
       const saved = localStorage.getItem('vrindopnishad_calendar_data');
@@ -588,7 +588,7 @@ const HomePage = ({
       for (const keyword of keywords) {
         if (keyword.length > 3) {
           const cleanKeyword = keyword.replace(/ekadashi/gi, 'एकादशी').replace(/gopashtami/gi, 'गोपाष्टमी').trim();
-          const match = verses.find(v => 
+          const match = verses.find(v =>
             (v.title && v.title.toLowerCase().includes(cleanKeyword)) ||
             (v.title && v.title.toLowerCase().includes(keyword)) ||
             (v.description && v.description.toLowerCase().includes(keyword)) ||
@@ -613,7 +613,7 @@ const HomePage = ({
 
   const dailyShloka = DAILY_SHLOKAS[new Date().getDate() % DAILY_SHLOKAS.length];
 
-  
+
   const categoryStats = useMemo(() => {
     if (initialCategoryStats) return initialCategoryStats;
     const counts = { shloka: 0, strotra: 0, poem: 0, raga: ragas.length };
@@ -626,19 +626,19 @@ const HomePage = ({
     return counts;
   }, [allItems, ragas, initialCategoryStats]);
 
-  
+
   if (loading) {
     return (
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-left min-h-screen">
-        
+
         <div className="flex justify-between items-center mb-10">
           <div className="skeleton w-48 h-8 rounded-lg" />
           <div className="skeleton w-24 h-6 rounded-full" />
         </div>
 
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start mb-16">
-          
+
           <div className="skeleton-card p-6 h-[440px] flex flex-col justify-between">
             <div>
               <div className="skeleton w-32 h-5 mb-6" />
@@ -654,7 +654,7 @@ const HomePage = ({
             <div className="skeleton w-full h-10 rounded-xl" />
           </div>
 
-          
+
           <div className="skeleton-card lg:col-span-2 p-8 h-[440px] flex flex-col justify-between">
             <div>
               <div className="flex gap-3 mb-6">
@@ -678,7 +678,7 @@ const HomePage = ({
             </div>
           </div>
 
-          
+
           <div className="skeleton-card p-6 h-[440px] flex flex-col justify-between items-center text-center">
             <div className="w-full">
               <div className="skeleton w-36 h-5 mx-auto mb-8" />
@@ -694,7 +694,7 @@ const HomePage = ({
           </div>
         </div>
 
-        
+
         <div className="py-8 border-t border-white/5 mb-16">
           <div className="skeleton w-40 h-6 mb-8" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -710,7 +710,7 @@ const HomePage = ({
           </div>
         </div>
 
-        
+
         <div className="py-8 border-t border-white/5">
           <div className="skeleton w-44 h-6 mb-8" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -762,7 +762,7 @@ const HomePage = ({
 
   return (
     <div className="relative overflow-hidden animate-fade-in font-sans min-h-screen">
-      
+
       <Helmet>
         <title>Vrindopnishad Paath — वृंदोपनिषद् पाठ | Sacred Shlokas, Strotras &amp; Devotional Poetry</title>
         <meta name="description" content="Vrindopnishad Paath (वृंदोपनिषद् पाठ) — Read and listen to authentic sacred Sanskrit shlokas, devotional strotras, spiritual poetry &amp; Vedic wisdom from Vrindavan saints. Free online paath in Hindi, Sanskrit &amp; English." />
@@ -801,7 +801,7 @@ const HomePage = ({
         })}</script>
       </Helmet>
 
-      
+
       <div className="home-theme-glow-ambient top-[-250px] left-[-200px] md:w-[800px] md:h-[800px]"
         style={{ background: `radial-gradient(circle, rgba(var(--primary-rgb), 0.03) 0%, rgba(var(--primary-rgb), 0.005) 50%, transparent 70%)` }} />
 
@@ -810,11 +810,9 @@ const HomePage = ({
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-4 animate-fade-in space-y-12 pt-6">
 
-        
 
-        
         <div className="space-y-6">
-          
+
           <div className="glass-card !p-4 sm:!p-5 rounded-3xl border border-primary/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-left shadow-lg select-none">
             <div className="flex items-center gap-4 w-full sm:w-auto">
               <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-xl uppercase shrink-0">
@@ -904,7 +902,7 @@ const HomePage = ({
             </div>
           </div>
 
-          
+
           <AtmosphereCustomizer
             isHi={isHi}
             theme={settings.theme}
@@ -912,9 +910,9 @@ const HomePage = ({
           />
         </div>
 
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 max-w-6xl mx-auto items-stretch">
-          
+
           <div className="lg:col-span-1 h-full">
             <BrajCalendar
               isHi={isHi}
@@ -923,7 +921,7 @@ const HomePage = ({
             />
           </div>
 
-          
+
           <div id="daily-swadhyaya-container" className="lg:col-span-2 h-full flex flex-col">
             <DailySwadhyaya
               isHi={isHi}
@@ -935,7 +933,7 @@ const HomePage = ({
             />
           </div>
 
-          
+
           <div className="lg:col-span-1 h-full">
             <ChantSanctuary
               isHi={isHi}
@@ -953,7 +951,7 @@ const HomePage = ({
           <div className="max-w-6xl mx-auto w-full my-8">
             <div className="glass-card p-6 md:p-8 relative overflow-hidden group border border-white/5 hover:border-primary/20 transition-all rounded-3xl bg-gradient-to-br from-white/[0.02] to-transparent text-left">
               <div className="absolute top-0 right-0 p-8 opacity-[0.03] text-9xl font-serif pointer-events-none text-primary">ॐ</div>
-              
+
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-white/5 pb-4">
                 <div>
                   <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-bold block mb-1">
@@ -963,7 +961,7 @@ const HomePage = ({
                     {isHi ? "आज का पद" : "Aaj Ka Pad"}
                   </h2>
                 </div>
-                
+
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => shareVerseCard(aajKaPad, isHi)}
@@ -988,8 +986,8 @@ const HomePage = ({
                     {aajKaPad.author}
                   </span>
                 )}
-                
-                <div 
+
+                <div
                   className="font-headings text-lg md:text-2xl leading-relaxed text-white/95 max-w-3xl mx-auto hindi-text"
                   style={{ whiteSpace: 'pre-line' }}
                 >
@@ -1004,7 +1002,7 @@ const HomePage = ({
           </div>
         )}
 
-        
+
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { to: '/category/shloka', name: isHi ? 'वैदिक श्लोक' : 'Sacred Shlokas', label: 'Vedic', count: categoryStats.shloka, color: 'from-amber-500/20 to-yellow-600/5', border: 'border-amber-500/20', text: 'text-amber-400' },
@@ -1023,34 +1021,34 @@ const HomePage = ({
           ))}
         </div>
 
-        
+
         <LibraryShowcase
           isHi={isHi}
           books={books}
           navigate={navigate}
         />
 
-        
+
         <SaintsSpotlight
           isHi={isHi}
           saints={saints}
           navigate={navigate}
         />
 
-        
+
         <PilgrimageHub
           isHi={isHi}
           navigate={navigate}
         />
 
-        
+
         <LatestVersesFeed
           isHi={isHi}
           latestVerses={latestVerses}
           navigate={navigate}
         />
 
-        
+
         <RagasIndex
           isHi={isHi}
           ragas={ragas}
@@ -1066,8 +1064,8 @@ const HomePage = ({
             {isHi ? "लुप्त हो रही धरोहर का संरक्षण" : "Preserving a 400-Year-Old Legacy"}
           </h2>
           <p className="text-sm md:text-base text-white/80 leading-relaxed italic max-w-2xl mx-auto font-light">
-            {isHi 
-              ? "“मंदिरों और संदूक़ों में रखे सैकड़ों वर्ष पुराने हस्तलिखित ग्रंथ और रसिक संतों की अमूल्य वाणी समय, दीमक और उपेक्षा के कारण सदा के लिए खो सकती है।”" 
+            {isHi
+              ? "“मंदिरों और संदूक़ों में रखे सैकड़ों वर्ष पुराने हस्तलिखित ग्रंथ और रसिक संतों की अमूल्य वाणी समय, दीमक और उपेक्षा के कारण सदा के लिए खो सकती है।”"
               : "“Centuries-old handwritten manuscripts of rasik saints kept in temple chests are at risk of being lost forever to time, humidity, and neglect.”"
             }
           </p>
@@ -1079,7 +1077,7 @@ const HomePage = ({
           </p>
         </div>
 
-        
+
         <div className="py-8 max-w-4xl mx-auto border-t border-white/5 text-center text-xs text-white/35 leading-relaxed font-light space-y-4 select-none">
           <p>
             <strong className="text-white/55 font-bold">Vrindopnishad Paath (वृंदोपनिषद् पाठ)</strong> online sanctuary: Engage daily with authentic Vedic Sanskrit Shlokas (श्लोक), devotional hymns (Strotras / स्तोत्र), and spiritual poetry from Braj Dham saints including Premanand Ji Maharaj, Swami Haridas, Hit Harivansh, and other Braj rasiks. Access complete Hindi भावार्थ translations, English meanings, and classical Raga notations for devotional chanting and swadhyaya.
@@ -1092,7 +1090,7 @@ const HomePage = ({
 
       </div>
 
-      
+
       {selectedItem && (
         <React.Suspense fallback={null}>
           <PreviewDrawer

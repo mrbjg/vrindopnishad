@@ -142,3 +142,12 @@ Any main page wrapper or article container must utilize a minimum of lg:pt-24 pa
 Phonetic Deduplication Check on Ingestion:
 New data ingestion or translation jobs must be run through a tokenized fuzzy-matcher utilizing Devanagari-to-Hinglish mapping to identify existing verses before inserting duplicate records.
 
+Content-First Landing Page Rule:
+Design home and landing layouts to prioritize dynamic user actions, personalized feeds, or dashboard controls immediately below the top header, omitting redundant static text banners to maximize user engagement.
+
+Asset Validation Prior to UI Deletion:
+Before removing any UI component or block (such as search inputs, buttons, or icons), verify that no other view or global helper relies on its specific state or handlers to avoid compile-time undefined issues.
+
+Responsive Header Cleansing:
+Ensure that the layout wrapper's vertical offsets match the active layout mode dynamically so that changing layout settings (like switching presets or toggling elements) maintains exact clearances.
+
