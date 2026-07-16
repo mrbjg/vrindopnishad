@@ -212,6 +212,18 @@ body {
     transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
+.glass-card[style*="--hover-border"]:hover {
+    border-color: var(--hover-border) !important;
+}
+
+.glass-card:hover .saint-card-title {
+    color: var(--text-hover-color) !important;
+}
+
+.glass-card:hover div[style*="--avatar-border-hover"] {
+    border-color: var(--avatar-border-hover) !important;
+}
+
 .glass-card::after {
     content: '';
     position: absolute;

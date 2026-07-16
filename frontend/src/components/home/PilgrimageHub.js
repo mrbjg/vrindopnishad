@@ -17,7 +17,7 @@ const PilgrimageHub = ({ isHi, navigate }) => {
         
         <div
           onClick={() => navigate(isHi ? "/hi/places" : "/places")}
-          className="glass-card p-5 sm:p-6 rounded-3xl border border-white/5 hover:border-amber-500/20 cursor-pointer group transition-all flex flex-col justify-between space-y-4 hover:scale-[1.01] touch-manipulation relative overflow-hidden"
+          className="glass-card p-5 sm:p-6 rounded-3xl border border-white/5 hover:border-orange-500/25 cursor-pointer group transition-all flex flex-col justify-between space-y-4 hover:scale-[1.01] touch-manipulation relative overflow-hidden"
           role="button"
           tabIndex={0}
           aria-label={isHi ? "ब्रज धाम दर्शन मार्गदर्शिका" : "Braj Dham Sacred Places"}
@@ -32,15 +32,15 @@ const PilgrimageHub = ({ isHi, navigate }) => {
           </div>
           <div className="space-y-3">
             <div className="flex justify-between items-start">
-              <div className="w-10 h-10 rounded-2xl bg-amber-500/5 border border-amber-500/10 flex items-center justify-center text-amber-500 group-hover:border-amber-500/30 transition-all duration-300 select-none">
+              <div className="w-10 h-10 rounded-2xl bg-orange-500/5 border border-orange-500/10 flex items-center justify-center text-orange-400 group-hover:border-orange-500/30 transition-all duration-300 select-none">
                 <MapPin size={18} />
               </div>
-              <span className="text-[8px] bg-amber-500/10 text-primary border border-amber-500/20 px-2.5 py-0.5 rounded-full uppercase tracking-wider font-bold select-none">
+              <span className="text-[8px] bg-orange-500/10 text-orange-300 border border-orange-500/20 px-2.5 py-0.5 rounded-full uppercase tracking-wider font-bold select-none">
                 {isHi ? "तीर्थ दर्शन" : "Pilgrimage"}
               </span>
             </div>
             <div className="space-y-1">
-              <h3 className="font-bold text-sm md:text-base text-white/95 group-hover:text-primary transition-colors leading-snug">
+              <h3 className="font-bold text-sm md:text-base text-white/95 group-hover:text-orange-300 transition-colors leading-snug">
                 {isHi ? "ब्रज धाम दर्शन मार्गदर्शिका" : "Braj Dham Sacred Places"}
               </h3>
               <p className="text-[11px] text-white/45 font-light leading-relaxed">
@@ -52,7 +52,7 @@ const PilgrimageHub = ({ isHi, navigate }) => {
             </div>
           </div>
           <div className="flex items-center justify-between border-t border-white/5 pt-3">
-            <span className="text-[9px] uppercase tracking-wider text-white/35 flex items-center gap-1 font-bold group-hover:text-primary transition-colors select-none">
+            <span className="text-[9px] uppercase tracking-wider text-white/35 flex items-center gap-1 font-bold group-hover:text-orange-300 transition-colors select-none">
               {isHi ? "यात्रा प्रारंभ करें" : "Start Pilgrimage"} <ArrowRight size={10} />
             </span>
             <span className="text-[9px] text-white/30 font-light select-none">10+ Sacred Sites</span>
@@ -62,7 +62,7 @@ const PilgrimageHub = ({ isHi, navigate }) => {
         
         <div
           onClick={() => navigate(isHi ? "/hi/glossary" : "/glossary")}
-          className="glass-card p-5 sm:p-6 rounded-3xl border border-white/5 hover:border-amber-500/20 cursor-pointer group transition-all flex flex-col justify-between space-y-4 hover:scale-[1.01] touch-manipulation relative overflow-hidden"
+          className="glass-card p-5 sm:p-6 rounded-3xl border border-white/5 hover:border-cyan-500/25 cursor-pointer group transition-all flex flex-col justify-between space-y-4 hover:scale-[1.01] touch-manipulation relative overflow-hidden"
           role="button"
           tabIndex={0}
           aria-label={isHi ? "वृन्दावाणि शब्दावली" : "VrindaVaani Devotee Glossary"}
@@ -77,15 +77,15 @@ const PilgrimageHub = ({ isHi, navigate }) => {
           </div>
           <div className="space-y-3">
             <div className="flex justify-between items-start">
-              <div className="w-10 h-10 rounded-2xl bg-sky-500/5 border border-sky-500/10 flex items-center justify-center text-sky-400 group-hover:border-sky-500/30 transition-all duration-300 select-none">
+              <div className="w-10 h-10 rounded-2xl bg-cyan-500/5 border border-cyan-500/10 flex items-center justify-center text-cyan-400 group-hover:border-cyan-500/30 transition-all duration-300 select-none">
                 <BookOpen size={18} />
               </div>
-              <span className="text-[8px] bg-sky-500/10 text-sky-400 border border-sky-500/20 px-2.5 py-0.5 rounded-full uppercase tracking-wider font-bold select-none">
+              <span className="text-[8px] bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 px-2.5 py-0.5 rounded-full uppercase tracking-wider font-bold select-none">
                 {isHi ? "शब्दावली" : "Encyclopedia"}
               </span>
             </div>
             <div className="space-y-1">
-              <h3 className="font-bold text-sm md:text-base text-white/95 group-hover:text-primary transition-colors leading-snug">
+              <h3 className="font-bold text-sm md:text-base text-white/95 group-hover:text-cyan-300 transition-colors leading-snug">
                 {isHi ? "वृन्दावाणि शब्दावली" : "VrindaVaani Devotee Glossary"}
               </h3>
               <p className="text-[11px] text-white/45 font-light leading-relaxed">
@@ -97,7 +97,7 @@ const PilgrimageHub = ({ isHi, navigate }) => {
             </div>
           </div>
           <div className="flex items-center justify-between border-t border-white/5 pt-3">
-            <span className="text-[9px] uppercase tracking-wider text-white/35 flex items-center gap-1 font-bold group-hover:text-primary transition-colors select-none">
+            <span className="text-[9px] uppercase tracking-wider text-white/35 flex items-center gap-1 font-bold group-hover:text-cyan-300 transition-colors select-none">
               {isHi ? "शब्दकोश देखें" : "Explore Glossary"} <ArrowRight size={10} />
             </span>
             <span className="text-[9px] text-white/30 font-light select-none">15+ Core Terms</span>
