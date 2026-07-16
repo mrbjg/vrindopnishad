@@ -40,11 +40,33 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
   const cleanLines = React.useMemo(() => {
     if (!text) return [];
     let processed = text;
-    const pattern = /(॥\s*(?:\[\d+\]|\(\d+\))?精度|।\s*(?:\[\d+\]|\(\d+\))?|।।|॥|\[\d+\]|\(\d+\))/g;
-    // Standardize verse endings to newline
-    processed = processed.replace(/(॥\s*(?:\[\d+\]|\(\d+\))?|।\s*(?:\[\d+\]|\(\d+\))?|।।|॥|\[\d+\]|\(\d+\))/g, "$1\n");
+
+    // 1. Protect section headers enclosed in dandas, like "॥ दोहा ॥", "॥ चौपाई ॥", "॥ सोरठा ॥"
+    const protectedBlocks = [];
+    processed = processed.replace(/(?:॥|\|\||।|\|)\s*([^॥।\d\s\(\)\[\]]{2,12})\s*(?:॥|\|\||।|\|)/g, (match) => {
+      protectedBlocks.push(match.trim());
+      return ` __PB${protectedBlocks.length - 1}__`;
+    });
+
+    // 2. Protect verse numbers like "॥ १ ॥", "॥ १२ ॥", "। ३ ।", "(४)", "[५]", "१ ॥"
+    processed = processed.replace(/(?:॥|\|\||।|\|)?\s*(?:\[\s*[०-९\d]+\s*\]|\(\s*[०-९\d]+\s*\)|[०-९\d]+)\s*(?:॥|\|\||।|\|)?/g, (match) => {
+      const trimmed = match.trim();
+      if (!trimmed || /^[०-९\d]+$/.test(trimmed)) return match;
+      protectedBlocks.push(trimmed);
+      return ` __PB${protectedBlocks.length - 1}__`;
+    });
+
+    // 3. Standardize normal verse endings to newline
+    processed = processed.replace(/(।।|॥|\|\||।|\|)/g, "$1\n");
     processed = processed.replace(/(\s*-\s*श्री|\s*—\s*श्री)/g, "\n— श्री");
 
+    // 4. Restore all protected blocks
+    processed = processed.replace(/__PB(\d+)__/g, (match, index) => {
+      const idx = parseInt(index, 10);
+      return ` ${protectedBlocks[idx]}`;
+    });
+
+    // 5. Split and clean up lines
     return processed
       .split('\n')
       .map(p => p.trim())
@@ -52,7 +74,12 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
   }, [text]);
 
   const maxLineLength = React.useMemo(() => {
-    const verseLines = cleanLines.filter(line => !line.startsWith('— श्री') && !line.startsWith('- श्री'));
+    const verseLines = cleanLines.filter(line => {
+      const isAttribution = line.startsWith('— श्री') || line.startsWith('- श्री');
+      const isHeader = (line.startsWith('॥') && line.endsWith('॥') && !/[०-९\d]/.test(line)) ||
+                       (line.startsWith('।') && line.endsWith('।') && !/[०-९\d]/.test(line));
+      return !isAttribution && !isHeader;
+    });
     return Math.max(...verseLines.map(l => l.length), 1);
   }, [cleanLines]);
 
@@ -95,6 +122,9 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
     >
       {cleanLines.map((line, idx) => {
         const isAttribution = line.startsWith('— श्री') || line.startsWith('- श्री');
+        const isHeader = (line.startsWith('॥') && line.endsWith('॥') && !/[०-९\d]/.test(line)) ||
+                         (line.startsWith('।') && line.endsWith('।') && !/[०-९\d]/.test(line));
+
         if (isAttribution) {
           return (
             <div
@@ -106,6 +136,19 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
             </div>
           );
         }
+
+        if (isHeader) {
+          return (
+            <div
+              key={idx}
+              className="text-primary font-bold text-center uppercase tracking-widest mt-8 mb-2 font-headings"
+              style={{ fontSize: '1.1rem', opacity: 0.95 }}
+            >
+              {line}
+            </div>
+          );
+        }
+
         return (
           <div
             key={idx}
