@@ -310,6 +310,7 @@ const LayoutInner = ({ children }) => {
   return (
     <div className={`min-h-screen relative text-foreground ${hideHeaderSearch ? 'layout-no-header-search' : ''} ${isKbRoute ? 'lg:h-screen lg:min-h-0 lg:overflow-hidden' : ''}`}>
       <SkipLink />
+      <div className="morning-shine" />
       
       
 
