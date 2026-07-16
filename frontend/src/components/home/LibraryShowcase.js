@@ -7,7 +7,7 @@ const getBookGradient = (name) => {
   for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
   const h1 = Math.abs(h % 360);
   const h2 = (h1 + 60) % 360;
-  return `linear-gradient(135deg, hsl(${h1}, 75%, 26%) 0%, hsl(${h2}, 60%, 8%) 100%)`;
+  return `linear-gradient(135deg, hsl(${h1}, 80%, 38%) 0%, hsl(${h2}, 75%, 16%) 100%)`;
 };
 
 const LibraryShowcase = ({ isHi, books, navigate }) => {

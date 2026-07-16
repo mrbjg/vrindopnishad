@@ -172,7 +172,7 @@ body {
     right: -15vw;
     width: 80vw;
     height: 80vh;
-    background: radial-gradient(circle at 80% 20%, rgba(var(--primary-rgb), 0.035) 0%, rgba(var(--primary-rgb), 0.008) 45%, transparent 70%);
+    background: radial-gradient(circle at 80% 20%, rgba(226, 204, 122, 0.045) 0%, rgba(226, 204, 122, 0.01) 45%, transparent 70%);
     pointer-events: none;
     z-index: 0;
 }
@@ -180,11 +180,22 @@ body {
 .morning-shine::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.01) 0%, transparent 60%);
+    top: 40vh;
+    left: -40vw;
+    width: 75vw;
+    height: 75vh;
+    background: radial-gradient(circle at 20% 50%, rgba(244, 114, 182, 0.03) 0%, rgba(244, 114, 182, 0.005) 50%, transparent 80%);
+    pointer-events: none;
+}
+
+.morning-shine::after {
+    content: '';
+    position: absolute;
+    bottom: -20vh;
+    right: -10vw;
+    width: 70vw;
+    height: 70vh;
+    background: radial-gradient(circle at 70% 80%, rgba(52, 211, 153, 0.025) 0%, rgba(52, 211, 153, 0.005) 50%, transparent 80%);
     pointer-events: none;
 }
 
@@ -3904,7 +3915,7 @@ html.light-mode .book-cover-premium {
 }
 
 .book-cover-inner-gold {
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(226, 204, 122, 0.35);
     height: 100%;
     width: 100%;
     border-radius: 4px;
