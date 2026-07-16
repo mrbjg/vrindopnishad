@@ -131,3 +131,5 @@ Clean Up Unused Components & Imports:
 
 When deprecating or disabling a UI element or feature, do not leave unused imports or dead React component instances rendered in parent templates. Ensure both the import statements and JSX tags are fully pruned.
 
+- **SEO Slug Protection**: Never overwrite or regenerate database `slug` fields during sanitization or database updates. Always preserve the original indexed URLs (derived from sitemaps or original sources) to prevent breaking Google indexing and causing 404 errors.
+
