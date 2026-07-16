@@ -215,9 +215,11 @@ function loadLocalJSONFallback() {
             slug = slug.substring(0, 100).replace(/-+$/, '');
           }
         }
+        const normalizedTags = !item.tags ? [] : Array.isArray(item.tags) ? item.tags : String(item.tags).split(',').map(t => t.trim()).filter(Boolean);
         return {
           id: item.id || `local-${idx}`,
           ...item,
+          tags: normalizedTags,
           category: cleanCategory,
           slug: slug
         };
@@ -393,8 +395,10 @@ export async function ensureDataLoaded() {
                     slug = slug.substring(0, 100).replace(/-+$/, '');
                   }
                 }
+                const normalizedTags = !item.tags ? [] : Array.isArray(item.tags) ? item.tags : String(item.tags).split(',').map(t => t.trim()).filter(Boolean);
                 return {
                   ...item,
+                  tags: normalizedTags,
                   slug: slug
                 };
               });
