@@ -20,6 +20,17 @@ export const THEME_SWATCHES = {
   aurora: '#040d1a',
 };
 
+const ATMOSPHERE_COLORS = {
+  dark: { border: 'rgba(226, 204, 122, 0.4)', bg: 'rgba(226, 204, 122, 0.08)', text: '#e2cc7a', glow: 'rgba(226, 204, 122, 0.12)' },
+  light: { border: 'rgba(217, 119, 6, 0.4)', bg: 'rgba(217, 119, 6, 0.08)', text: '#b3922e', glow: 'rgba(217, 119, 6, 0.12)' },
+  night: { border: 'rgba(96, 165, 250, 0.4)', bg: 'rgba(96, 165, 250, 0.08)', text: '#60a5fa', glow: 'rgba(96, 165, 250, 0.12)' },
+  space: { border: 'rgba(167, 139, 250, 0.4)', bg: 'rgba(167, 139, 250, 0.08)', text: '#a78bfa', glow: 'rgba(167, 139, 250, 0.12)' },
+  void: { border: 'rgba(129, 140, 248, 0.4)', bg: 'rgba(129, 140, 248, 0.08)', text: '#818cf8', glow: 'rgba(129, 140, 248, 0.12)' },
+  sunset: { border: 'rgba(251, 113, 133, 0.4)', bg: 'rgba(251, 113, 133, 0.08)', text: '#fb7185', glow: 'rgba(251, 113, 133, 0.12)' },
+  waterfall: { border: 'rgba(45, 212, 191, 0.4)', bg: 'rgba(45, 212, 191, 0.08)', text: '#2dd4bf', glow: 'rgba(45, 212, 191, 0.12)' },
+  mountains: { border: 'rgba(167, 243, 208, 0.4)', bg: 'rgba(167, 243, 208, 0.08)', text: '#a7f3d0', glow: 'rgba(167, 243, 208, 0.12)' }
+};
+
 const AtmosphereCustomizer = ({ isHi, theme, updateSetting }) => {
   const themesList = [
     { id: 'dark', label: isHi ? 'मूल डार्क' : 'Base Dark', desc: 'Serene charcoal' },
@@ -39,33 +50,43 @@ const AtmosphereCustomizer = ({ isHi, theme, updateSetting }) => {
         <span className="text-[9px] text-white/40 block font-light">Customize your sanctuary environment</span>
       </div>
       <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide book-shelf-row select-none">
-        {themesList.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => updateSetting('theme', t.id)}
-            className={`flex-none px-4 py-3 rounded-2xl border text-left transition-all duration-300 w-44 hover:scale-[1.02] relative group overflow-hidden ${
-              theme === t.id
-                ? 'border-primary bg-primary/10 text-primary shadow-lg shadow-primary/5'
-                : 'border-white/5 bg-white/2 text-white/60 hover:border-white/10'
-            }`}
-            aria-label={isHi ? `${t.label} वातावरण सक्रिय करें` : `Activate ${t.label} atmosphere`}
-            title={t.desc}
-          >
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-bold truncate block">{t.label}</span>
+        {themesList.map((t) => {
+          const isActive = theme === t.id;
+          const colors = ATMOSPHERE_COLORS[t.id] || ATMOSPHERE_COLORS.dark;
+
+          return (
+            <button
+              key={t.id}
+              onClick={() => updateSetting('theme', t.id)}
+              className="flex-none px-4 py-3 rounded-2xl border text-left transition-all duration-300 w-44 hover:scale-[1.02] relative group overflow-hidden"
+              style={{
+                borderColor: isActive ? colors.border : 'rgba(255, 255, 255, 0.05)',
+                backgroundColor: isActive ? colors.bg : 'rgba(255, 255, 255, 0.02)',
+                color: isActive ? colors.text : 'rgba(255, 255, 255, 0.6)',
+                boxShadow: isActive ? `0 4px 15px ${colors.glow}` : 'none'
+              }}
+              aria-label={isHi ? `${t.label} वातावरण सक्रिय करें` : `Activate ${t.label} atmosphere`}
+              title={t.desc}
+            >
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-bold truncate block">{t.label}</span>
+                <div
+                  className="w-3 h-3 rounded-full border border-white/10 shrink-0"
+                  style={{ background: THEME_SWATCHES[t.id] }}
+                />
+              </div>
+              <span className="text-[9px] text-white/35 mt-1 block font-light leading-none truncate">{t.desc}</span>
               <div
-                className="w-3 h-3 rounded-full border border-white/10 shrink-0"
-                style={{ background: THEME_SWATCHES[t.id] }}
-              />
-            </div>
-            <span className="text-[9px] text-white/35 mt-1 block font-light leading-none truncate">{t.desc}</span>
-            <div className="absolute inset-0 bg-amber-500/10 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-              <span className="text-[9px] font-bold text-primary uppercase tracking-[0.2em]">
-                {theme === t.id ? (isHi ? 'सक्रिय' : 'Active') : (isHi ? 'चुनें' : 'Select')}
-              </span>
-            </div>
-          </button>
-        ))}
+                className="absolute inset-0 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                style={{ backgroundColor: colors.bg }}
+              >
+                <span className="text-[9px] font-bold uppercase tracking-[0.2em]" style={{ color: colors.text }}>
+                  {isActive ? (isHi ? 'सक्रिय' : 'Active') : (isHi ? 'चुनें' : 'Select')}
+                </span>
+              </div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

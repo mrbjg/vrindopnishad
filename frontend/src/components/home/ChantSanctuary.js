@@ -102,7 +102,7 @@ const ChantSanctuary = ({
   }, [tanpuraTimer, audioCtx]);
 
   return (
-    <div className="glass-card p-5 rounded-3xl border border-primary/10 flex flex-col justify-between h-full select-none text-left">
+    <div className="glass-card p-5 rounded-3xl border border-rose-500/10 flex flex-col justify-between h-full select-none text-left">
       <div>
         <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/5">
           <div className="flex items-center gap-2">
@@ -125,7 +125,7 @@ const ChantSanctuary = ({
               {isHi ? "कुल जाप / Total Chants" : "Total Chants"}
             </span>
             <div className="flex items-baseline justify-between">
-              <span className="text-xl font-extrabold text-minimal-gold block mt-0.5 font-mono">{japaCount}</span>
+              <span className="text-xl font-extrabold text-rose-300 block mt-0.5 font-mono">{japaCount}</span>
               <button
                 onClick={toggleTanpura}
                 className={`p-1.5 rounded-full border transition-all touch-manipulation min-w-[28px] min-h-[28px] flex items-center justify-center relative group ${isTanpuraPlaying
@@ -168,7 +168,7 @@ const ChantSanctuary = ({
           </button>
           <button
             onClick={() => handleUpdateJapaCount(japaCount + 108)}
-            className="bg-primary/10 hover:bg-primary/20 border border-primary/25 rounded-xl py-2.5 text-center text-xs font-bold text-primary transition-colors touch-manipulation min-h-[38px] relative group"
+            className="bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/25 rounded-xl py-2.5 text-center text-xs font-bold text-rose-300 transition-colors touch-manipulation min-h-[38px] relative group"
             title={isHi ? "१ माला जोड़ें" : "Add 1 Mala (108)"}
             aria-label={isHi ? "१ माला जोड़ें" : "Add 1 Mala (108)"}
           >
@@ -198,11 +198,11 @@ const ChantSanctuary = ({
       <div className="space-y-2 mt-4 pt-3 border-t border-white/5">
         <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-wider">
           <span className="text-white/50">{isHi ? "दैनिक लक्ष्य" : "Daily Goal"}</span>
-          <span className="text-primary">{percentComplete}%</span>
+          <span className="text-rose-400">{percentComplete}%</span>
         </div>
         <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
           <div
-            className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
+            className="h-full bg-rose-400 rounded-full transition-all duration-500 ease-out"
             style={{ width: `${percentComplete}%` }}
           />
         </div>

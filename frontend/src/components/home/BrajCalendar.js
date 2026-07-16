@@ -21,11 +21,11 @@ const BrajCalendar = ({ isHi, calendarData, onSaveCalendar }) => {
   };
 
   return (
-    <div className="glass-card p-5 rounded-3xl border border-primary/10 flex flex-col justify-between h-full select-none text-left">
+    <div className="glass-card p-5 rounded-3xl border border-emerald-500/10 flex flex-col justify-between h-full select-none text-left">
       <div>
         <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/5">
           <div className="flex items-center gap-2">
-            <Clock size={16} className="text-primary" />
+            <Clock size={16} className="text-emerald-400" />
             <span className="text-[10px] uppercase tracking-[0.2em] text-white/60 font-bold">
               {isHi ? "ब्रज पंचांग" : "Braj Calendar"}
             </span>
@@ -52,14 +52,14 @@ const BrajCalendar = ({ isHi, calendarData, onSaveCalendar }) => {
               <div className="grid grid-cols-2 gap-1">
                 <input
                   type="text"
-                  className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
+                  className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-emerald-500/50 font-light"
                   value={form.tithiEn}
                   onChange={e => setForm(prev => ({ ...prev, tithiEn: e.target.value }))}
                   placeholder="Tithi EN"
                 />
                 <input
                   type="text"
-                  className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
+                  className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-emerald-500/50 font-light"
                   value={form.tithiHi}
                   onChange={e => setForm(prev => ({ ...prev, tithiHi: e.target.value }))}
                   placeholder="तिथि हिन्दी"
@@ -71,14 +71,14 @@ const BrajCalendar = ({ isHi, calendarData, onSaveCalendar }) => {
               <div className="grid grid-cols-2 gap-1">
                 <input
                   type="text"
-                  className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
+                  className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-emerald-500/50 font-light"
                   value={form.seasonEn}
                   onChange={e => setForm(prev => ({ ...prev, seasonEn: e.target.value }))}
                   placeholder="Season EN"
                 />
                 <input
                   type="text"
-                  className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
+                  className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-emerald-500/50 font-light"
                   value={form.seasonHi}
                   onChange={e => setForm(prev => ({ ...prev, seasonHi: e.target.value }))}
                   placeholder="ऋतु हिन्दी"
@@ -90,14 +90,14 @@ const BrajCalendar = ({ isHi, calendarData, onSaveCalendar }) => {
               <div className="grid grid-cols-2 gap-1">
                 <input
                   type="text"
-                  className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
+                  className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-emerald-500/50 font-light"
                   value={form.lilaEn}
                   onChange={e => setForm(prev => ({ ...prev, lilaEn: e.target.value }))}
                   placeholder="Lila EN"
                 />
                 <input
                   type="text"
-                  className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
+                  className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-emerald-500/50 font-light"
                   value={form.lilaHi}
                   onChange={e => setForm(prev => ({ ...prev, lilaHi: e.target.value }))}
                   placeholder="लीला हिन्दी"
@@ -109,14 +109,14 @@ const BrajCalendar = ({ isHi, calendarData, onSaveCalendar }) => {
               <div className="grid grid-cols-2 gap-1">
                 <input
                   type="text"
-                  className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
+                  className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-emerald-500/50 font-light"
                   value={form.festivalEn}
                   onChange={e => setForm(prev => ({ ...prev, festivalEn: e.target.value }))}
                   placeholder="Festival EN"
                 />
                 <input
                   type="text"
-                  className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-primary/50 font-light"
+                  className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-emerald-500/50 font-light"
                   value={form.festivalHi}
                   onChange={e => setForm(prev => ({ ...prev, festivalHi: e.target.value }))}
                   placeholder="उत्सव हिन्दी"
@@ -176,10 +176,10 @@ const BrajCalendar = ({ isHi, calendarData, onSaveCalendar }) => {
             </div>
 
             <div className="mt-4 pt-3 border-t border-white/5">
-              <span className="text-[9px] uppercase tracking-wider text-primary font-bold block mb-1">
+              <span className="text-[9px] uppercase tracking-wider text-emerald-400 font-bold block mb-1">
                 🎉 {isHi ? "आगामी उत्सव" : "Next Festival"}
               </span>
-              <span className="text-[11px] font-semibold text-minimal-gold block">
+              <span className="text-[11px] font-semibold text-emerald-400/90 block">
                 {isHi ? calendarData.festivalHi : calendarData.festivalEn}
               </span>
             </div>
