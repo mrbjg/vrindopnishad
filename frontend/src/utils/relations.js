@@ -142,18 +142,18 @@ export function extractRelations(items) {
 
   items.forEach(item => {
     if (item.category?.toLowerCase() === 'saint') {
-      const title = item.title || '';
-      const cleanName = title.replace(/\([^)]+\)/g, '').replace(/महाप्रभु/g, '').trim();
+      const nameVal = item.name || item.title || '';
+      const cleanName = nameVal.replace(/\([^)]+\)/g, '').replace(/महाप्रभु/g, '').trim();
       const transliteratedName = transliterate(cleanName);
       const saintSlug = getNormalizedSaintSlug(cleanName);
 
       biographies.push({
         id: item.id,
         slug: saintSlug,
-        originalTitle: title,
+        originalTitle: nameVal,
         name: cleanName,
         hinglishName: transliteratedName,
-        text: item.hindi_text || item.description || '',
+        text: item.biography || item.hindi_text || item.description || '',
         tags: item.tags || [],
         image: item.image_url || null
       });

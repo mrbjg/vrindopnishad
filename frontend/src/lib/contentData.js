@@ -594,14 +594,13 @@ function buildRelations(items) {
 
   items.forEach(item => {
     if (item.category?.toLowerCase() === 'saint') {
-      const title = item.title || '';
-      const cleanName = title.replace(/\([^)]+\)/g, '').replace(/महाप्रभु/g, '').trim();
-      const transliteratedName = transliterate(cleanName);
+      const nameVal = item.name || item.title || '';
+      const cleanName = nameVal.replace(/\([^)]+\)/g, '').replace(/महाप्रभु/g, '').trim();
       const saintSlug = getNormalizedSaintSlug(cleanName);
       biographies.push({
         name: cleanName,
         slug: saintSlug,
-        text: item.hindi_text || item.description || '',
+        text: item.biography || item.hindi_text || item.description || '',
         imageUrl: item.image_url || null,
         rawItem: item
       });
