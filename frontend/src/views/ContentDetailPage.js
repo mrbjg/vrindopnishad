@@ -141,8 +141,8 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
           return (
             <div
               key={idx}
-              className="text-primary font-bold text-center uppercase tracking-widest mt-8 mb-2 font-headings"
-              style={{ fontSize: '1.1rem', opacity: 0.95 }}
+              className="font-bold text-center uppercase tracking-widest mt-8 mb-2 font-headings"
+              style={{ color: 'var(--verse-header-color)', fontSize: '1.1rem', opacity: 0.95 }}
             >
               {line}
             </div>

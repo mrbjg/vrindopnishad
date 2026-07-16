@@ -802,12 +802,6 @@ const HomePage = ({
       </Helmet>
 
 
-      <div className="home-theme-glow-ambient top-[-250px] left-[-200px] md:w-[800px] md:h-[800px]"
-        style={{ background: `radial-gradient(circle, rgba(var(--primary-rgb), 0.03) 0%, rgba(var(--primary-rgb), 0.005) 50%, transparent 70%)` }} />
-
-      <div className="home-theme-glow-ambient bottom-[20%] right-[-200px] md:w-[700px] md:h-[700px]"
-        style={{ background: `radial-gradient(circle, rgba(var(--primary-rgb), 0.015) 0%, transparent 70%)` }} />
-
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-4 animate-fade-in space-y-12 pt-6">
 
 
