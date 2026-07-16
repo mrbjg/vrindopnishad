@@ -133,3 +133,12 @@ When deprecating or disabling a UI element or feature, do not leave unused impor
 
 - **SEO Slug Protection**: Never overwrite or regenerate database `slug` fields during sanitization or database updates. Always preserve the original indexed URLs (derived from sitemaps or original sources) to prevent breaking Google indexing and causing 404 errors.
 
+Strict Cache Sync Rule:
+Whenever a modification or data cleanup is made to vrindavaani_content.json or any metadata file under frontend/data/, the developer or assistant must immediately execute node frontend/scripts/sync_cache.mjs to synchronize all static cache and category build targets.
+
+Fixed Header Safety Margins:
+Any main page wrapper or article container must utilize a minimum of lg:pt-24 padding-top on viewport widths >= 1024px to accommodate responsive wrap height variations in the navigation header without content occlusion.
+
+Phonetic Deduplication Check on Ingestion:
+New data ingestion or translation jobs must be run through a tokenized fuzzy-matcher utilizing Devanagari-to-Hinglish mapping to identify existing verses before inserting duplicate records.
+

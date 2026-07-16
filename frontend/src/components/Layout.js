@@ -23,7 +23,8 @@ import {
   X,
   User,
   BookOpen,
-  Bookmark
+  Bookmark,
+  Calendar
 } from 'lucide-react';
 import GlobalAudioPlayer from './GlobalAudioPlayer';
 import SettingsModal from './SettingsModal';
@@ -554,6 +555,9 @@ const LayoutInner = ({ children }) => {
               <Link to={isHiRoute ? "/hi/ragas" : "/ragas"} className={`header-nav-link text-xs xl:text-sm ${isActive('/ragas') ? 'active' : ''}`}>
                 {isHiRoute ? "राग" : "Ragas"}
               </Link>
+              <Link to={isHiRoute ? "/hi/practice" : "/practice"} className={`header-nav-link text-xs xl:text-sm ${isActive('/practice') ? 'active' : ''}`}>
+                {isHiRoute ? "नित्य नियम" : "Practice"}
+              </Link>
               <div 
                 className="relative"
                 onMouseEnter={() => setReadMenuOpen(true)}
@@ -717,6 +721,10 @@ const LayoutInner = ({ children }) => {
             <Bookmark size={22} />
             <span className="dock-tooltip-minimal">{isHiRoute ? "मेरी पाठ सूची" : "My Bookmarks"}</span>
           </Link>
+          <Link to={isHiRoute ? "/hi/practice" : "/practice"} className={`dock-item-minimal ${location.pathname.includes('/practice') ? 'active' : ''}`} title="Daily Practice">
+            <Calendar size={22} />
+            <span className="dock-tooltip-minimal">{isHiRoute ? "नित्य नियम व साधना" : "Daily Practice"}</span>
+          </Link>
           <div className="w-8 h-[1px] bg-white/10 my-1"></div>
           <Link to={isHiRoute ? "/hi/category/shloka" : "/category/shloka"} className={`dock-item-minimal ${isCategoryActive('shloka') ? 'active' : ''}`} title="Shlokas">
             <Sparkle size={22} />
@@ -744,6 +752,9 @@ const LayoutInner = ({ children }) => {
           </Link>
           <Link to={isHiRoute ? "/hi/ragas" : "/ragas"} className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all ${isActive('/ragas') ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-white/5 text-white/60 border border-white/5'}`}>
             {isHiRoute ? "राग" : "Ragas"}
+          </Link>
+          <Link to={isHiRoute ? "/hi/practice" : "/practice"} className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all ${isActive('/practice') ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-white/5 text-white/60 border border-white/5'}`}>
+            {isHiRoute ? "नित्य नियम" : "Practice"}
           </Link>
           <Link to={isHiRoute ? "/hi/category/shloka" : "/category/shloka"} className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all ${isCategoryActive('shloka') ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-white/5 text-white/60 border border-white/5'}`}>
             {isHiRoute ? "श्लोक" : "Shlokas"}

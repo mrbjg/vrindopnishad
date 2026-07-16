@@ -7771,6 +7771,17 @@
       ]
     },
     {
+      "name": "पारम्परिक",
+      "slug": "paramparika",
+      "hinglishName": "paramparika",
+      "verseIds": [
+        "e8a93e3d-71b5-4b08-9df8-2b8a74e50721",
+        "e8a93e3d-71b5-4b08-9df8-2b8a74e50722",
+        "e8a93e3d-71b5-4b08-9df8-2b8a74e50723"
+      ],
+      "books": []
+    },
+    {
       "name": "श्री नूपीबाई",
       "slug": "shri-nupibai",
       "hinglishName": "shri nupibai",
@@ -8526,6 +8537,16 @@
       "books": [
         "विलाप कुसुमांजलि"
       ]
+    },
+    {
+      "name": "गोस्वामी तुलसीदास",
+      "slug": "gosvami-tulasidasa",
+      "hinglishName": "gosvami tulasidasa",
+      "verseIds": [
+        "e8a93e3d-71b5-4b08-9df8-2b8a74e50720",
+        "e8a93e3d-71b5-4b08-9df8-2b8a74e50726"
+      ],
+      "books": []
     },
     {
       "name": "श्री अलबेली शरण",
@@ -11471,6 +11492,24 @@
       "hinglishName": "sanat kumar snhita",
       "verseIds": [
         "181fbf46-8b21-4672-b252-2636ce19bed8"
+      ],
+      "books": []
+    },
+    {
+      "name": "रावण",
+      "slug": "ravana",
+      "hinglishName": "ravana",
+      "verseIds": [
+        "e8a93e3d-71b5-4b08-9df8-2b8a74e50724"
+      ],
+      "books": []
+    },
+    {
+      "name": "श्रीवल्लभाचार्य",
+      "slug": "shrivallabhacharya",
+      "hinglishName": "shrivallabhacharya",
+      "verseIds": [
+        "e8a93e3d-71b5-4b08-9df8-2b8a74e50725"
       ],
       "books": []
     }
@@ -25175,6 +25214,16 @@
     },
     {
       "id": null,
+      "slug": "paramparika",
+      "originalTitle": "पारम्परिक",
+      "name": "पारम्परिक",
+      "hinglishName": "paramparika",
+      "text": "",
+      "tags": [],
+      "image": null
+    },
+    {
+      "id": null,
       "slug": "shri-nupibai",
       "originalTitle": "श्री नूपीबाई",
       "name": "श्री नूपीबाई",
@@ -25869,6 +25918,16 @@
       "originalTitle": "श्री रघुनाथ दास",
       "name": "श्री रघुनाथ दास",
       "hinglishName": "shri raghunath dasa",
+      "text": "",
+      "tags": [],
+      "image": null
+    },
+    {
+      "id": null,
+      "slug": "gosvami-tulasidasa",
+      "originalTitle": "गोस्वामी तुलसीदास",
+      "name": "गोस्वामी तुलसीदास",
+      "hinglishName": "gosvami tulasidasa",
       "text": "",
       "tags": [],
       "image": null
@@ -28968,6 +29027,26 @@
       "originalTitle": "सनत कुमार संहिता",
       "name": "सनत कुमार संहिता",
       "hinglishName": "sanat kumar snhita",
+      "text": "",
+      "tags": [],
+      "image": null
+    },
+    {
+      "id": null,
+      "slug": "ravana",
+      "originalTitle": "रावण",
+      "name": "रावण",
+      "hinglishName": "ravana",
+      "text": "",
+      "tags": [],
+      "image": null
+    },
+    {
+      "id": null,
+      "slug": "shrivallabhacharya",
+      "originalTitle": "श्रीवल्लभाचार्य",
+      "name": "श्रीवल्लभाचार्य",
+      "hinglishName": "shrivallabhacharya",
       "text": "",
       "tags": [],
       "image": null
