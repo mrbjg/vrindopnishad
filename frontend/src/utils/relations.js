@@ -216,6 +216,10 @@ export function extractRelations(items) {
       saintName = item.author;
     }
 
+    if (saintName && /^[0-9\s\(\)\-\.#]+$/.test(saintName)) {
+      saintName = null;
+    }
+
     let ragaName = null;
     const ragaRegex = /(राग\s+[^\s,;()\-]+)/;
     const matchTitle = title.match(ragaRegex);
@@ -333,10 +337,12 @@ export function extractRelations(items) {
     };
   }
 
-  const sants = Object.values(santsMap).map(s => ({
-    ...s,
-    books: Array.from(s.books)
-  })).sort((a, b) => b.verseIds.length - a.verseIds.length);
+  const sants = Object.values(santsMap)
+    .filter(s => !/^[0-9\s\(\)\-\.#]+$/.test(s.name) && s.name.trim() !== "")
+    .map(s => ({
+      ...s,
+      books: Array.from(s.books)
+    })).sort((a, b) => b.verseIds.length - a.verseIds.length);
 
   const books = Object.values(booksMap).sort((a, b) => b.verseIds.length - a.verseIds.length);
   const ragas = Object.values(ragasMap).sort((a, b) => b.verseIds.length - a.verseIds.length);

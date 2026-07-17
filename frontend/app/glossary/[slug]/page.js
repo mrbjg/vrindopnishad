@@ -47,7 +47,7 @@ export default function GlossaryRoute({ params }) {
     notFound();
   }
 
-  if (params.slug !== term.slug) {
+  if (decodeURIComponent(params.slug) !== decodeURIComponent(term.slug)) {
     permanentRedirect(`/glossary/${term.slug}`);
   }
 

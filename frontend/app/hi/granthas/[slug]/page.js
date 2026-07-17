@@ -138,7 +138,7 @@ export default async function HindiBookRoute({ params }) {
     notFound();
   }
 
-  if (params.slug !== book.slug) {
+  if (decodeURIComponent(params.slug) !== decodeURIComponent(book.slug)) {
     permanentRedirect(`/hi/granthas/${book.slug}`);
   }
 

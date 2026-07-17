@@ -60,9 +60,10 @@ const AtmosphereCustomizer = ({ isHi, theme, updateSetting }) => {
               onClick={() => updateSetting('theme', t.id)}
               className="flex-none px-4 py-3 rounded-2xl border text-left transition-all duration-300 w-44 hover:scale-[1.02] relative group overflow-hidden"
               style={{
-                borderColor: isActive ? colors.border : 'rgba(255, 255, 255, 0.05)',
-                backgroundColor: isActive ? colors.bg : 'rgba(255, 255, 255, 0.02)',
-                color: isActive ? colors.text : 'rgba(255, 255, 255, 0.6)',
+                borderColor: isActive ? colors.border : 'var(--glass-border)',
+                backgroundColor: isActive ? colors.bg : 'var(--glass-bg)',
+                color: isActive ? colors.text : 'var(--text-color)',
+                opacity: isActive ? 1 : 0.7,
                 boxShadow: isActive ? `0 4px 15px ${colors.glow}` : 'none'
               }}
               aria-label={isHi ? `${t.label} वातावरण सक्रिय करें` : `Activate ${t.label} atmosphere`}

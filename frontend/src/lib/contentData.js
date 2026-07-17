@@ -664,6 +664,10 @@ function buildRelations(items) {
       saintName = item.author;
     }
 
+    if (saintName && /^[0-9\s\(\)\-\.#]+$/.test(saintName)) {
+      saintName = null;
+    }
+
     let ragaName = null;
     const ragaRegex = /(राग\s+[^\s,;()\-]+)/;
     const matchTitle = title.match(ragaRegex);
@@ -820,7 +824,9 @@ function buildRelations(items) {
   }
 
   return {
-    saints: Object.values(santsMap).map(s => ({ ...s, books: Array.from(s.books) })),
+    saints: Object.values(santsMap)
+      .filter(s => !/^[0-9\s\(\)\-\.#]+$/.test(s.name) && s.name.trim() !== "")
+      .map(s => ({ ...s, books: Array.from(s.books) })),
     books: Object.values(booksMap),
     ragas: Object.values(ragasMap)
   };

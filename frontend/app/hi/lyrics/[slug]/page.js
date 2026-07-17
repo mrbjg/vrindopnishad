@@ -102,7 +102,7 @@ export default async function HindiLyricsDetailPage({ params }) {
   }
 
   // Canonical redirection if slug mismatch
-  if (params.slug !== verse.slug) {
+  if (decodeURIComponent(params.slug) !== decodeURIComponent(verse.slug)) {
     permanentRedirect(`/hi/lyrics/${verse.slug}`);
   }
 

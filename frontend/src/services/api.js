@@ -371,9 +371,13 @@ export const apiService = {
     }
 
     try {
-      const cached = localStorage.getItem('vrindopnishad_relations_cache');
+      const cached = localStorage.getItem('vrindopnishad_relations_cache_v2');
       if (cached) {
-        return JSON.parse(cached);
+        const parsed = JSON.parse(cached);
+        if (parsed && parsed.sants) {
+          parsed.sants = parsed.sants.filter(s => !/^[0-9\s\(\)\-\.#]+$/.test(s.name) && s.name.trim() !== "");
+        }
+        return parsed;
       }
     } catch (e) {
       console.warn('Failed to parse relations cache:', e);
@@ -381,8 +385,11 @@ export const apiService = {
 
     console.log('[Relations-Cache-Miss] Loading relations from backup file...');
     const relations = await fetchRelationsBackup();
+    if (relations && relations.sants) {
+      relations.sants = relations.sants.filter(s => !/^[0-9\s\(\)\-\.#]+$/.test(s.name) && s.name.trim() !== "");
+    }
     try {
-      localStorage.setItem('vrindopnishad_relations_cache', JSON.stringify(relations));
+      localStorage.setItem('vrindopnishad_relations_cache_v2', JSON.stringify(relations));
     } catch (e) {
       console.warn('Failed to write relations to LocalStorage:', e);
     }

@@ -421,13 +421,13 @@ const LayoutInner = ({ children }) => {
                   onChange={(e) => setSearchFilter(e.target.value)}
                   className="bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 rounded-full text-[9px] md:text-[10px] text-white/70 py-0.5 px-2 outline-none cursor-pointer shrink-0 transition-colors mr-1"
                 >
-                  <option value="all" className="bg-[#121215] text-white/80">{isHiRoute ? "सभी" : "All"}</option>
-                  <option value="saint" className="bg-[#121215] text-white/80">{isHiRoute ? "सन्त" : "Saints"}</option>
-                  <option value="book" className="bg-[#121215] text-white/80">{isHiRoute ? "ग्रन्थ" : "Granthas"}</option>
-                  <option value="raga" className="bg-[#121215] text-white/80">{isHiRoute ? "राग" : "Ragas"}</option>
-                  <option value="verse" className="bg-[#121215] text-white/80">{isHiRoute ? "वाणी" : "Verses"}</option>
-                  <option value="festival" className="bg-[#121215] text-white/80">{isHiRoute ? "उत्सव" : "Festivals"}</option>
-                  <option value="glossary" className="bg-[#121215] text-white/80">{isHiRoute ? "शब्दावली" : "Glossary"}</option>
+                  <option value="all" className="bg-popover text-foreground">{isHiRoute ? "सभी" : "All"}</option>
+                  <option value="saint" className="bg-popover text-foreground">{isHiRoute ? "सन्त" : "Saints"}</option>
+                  <option value="book" className="bg-popover text-foreground">{isHiRoute ? "ग्रन्थ" : "Granthas"}</option>
+                  <option value="raga" className="bg-popover text-foreground">{isHiRoute ? "राग" : "Ragas"}</option>
+                  <option value="verse" className="bg-popover text-foreground">{isHiRoute ? "वाणी" : "Verses"}</option>
+                  <option value="festival" className="bg-popover text-foreground">{isHiRoute ? "उत्सव" : "Festivals"}</option>
+                  <option value="glossary" className="bg-popover text-foreground">{isHiRoute ? "शब्दावली" : "Glossary"}</option>
                 </select>
 
                 {searchQuery && (
@@ -439,7 +439,7 @@ const LayoutInner = ({ children }) => {
 
               
               {searchFocused && searchQuery.trim().length >= 2 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-[#121216]/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-md z-[3000] overflow-y-auto max-h-[50vh] p-3 text-left header-dropdown-menu">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-popover/95 border border-border/40 rounded-2xl shadow-2xl backdrop-blur-md z-[3000] overflow-y-auto max-h-[50vh] p-3 text-left header-dropdown-menu">
                   {loadingSearchData ? (
                     <p className="text-[10px] text-white/30 py-4 text-center animate-pulse">Loading search realm...</p>
                   ) : !filteredResults.sants.length && !filteredResults.books.length && !filteredResults.ragas.length && !filteredResults.verses.length ? (
@@ -572,7 +572,7 @@ const LayoutInner = ({ children }) => {
                   <span className="text-[10px] opacity-60">▼</span>
                 </button>
                 {readMenuOpen && (
-                  <div className="absolute top-full left-0 mt-0.5 w-40 bg-[#121216]/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-md z-50 py-1.5 animate-in fade-in slide-in-from-top-1 duration-150 text-left header-dropdown-menu">
+                  <div className="absolute top-full left-0 mt-0.5 w-40 bg-popover/95 border border-border/40 rounded-2xl shadow-2xl backdrop-blur-md z-50 py-1.5 animate-in fade-in slide-in-from-top-1 duration-150 text-left header-dropdown-menu">
                     <Link 
                       to={isHiRoute ? "/hi/lyrics" : "/lyrics"} 
                       onClick={() => setReadMenuOpen(false)}

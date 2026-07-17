@@ -140,7 +140,7 @@ export default async function HindiSaintRoute({ params }) {
     notFound();
   }
 
-  if (params.slug !== saint.slug) {
+  if (decodeURIComponent(params.slug) !== decodeURIComponent(saint.slug)) {
     permanentRedirect(`/hi/saints/${saint.slug}`);
   }
 
