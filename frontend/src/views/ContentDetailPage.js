@@ -53,7 +53,7 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
       const trimmed = match.trim();
       if (!trimmed || /^[०-९\d]+$/.test(trimmed)) return match;
       protectedBlocks.push(trimmed);
-      return ` __PB${protectedBlocks.length - 1}__`;
+      return ` __PB${protectedBlocks.length - 1}__\n`;
     });
 
     // 3. Standardize normal verse endings to newline
