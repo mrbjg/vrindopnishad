@@ -24,7 +24,7 @@ const DailyPracticePage = () => {
     let active = true;
     const fetchPrayers = async () => {
       try {
-        const allContent = await apiService.getAllContent(null, 2000);
+        const allContent = await apiService.getAllContent(null, 15000);
         // Filter for items containing 'daily-practice' in tags
         const filtered = allContent.filter(item => 
           item.tags && item.tags.includes('daily-practice')
