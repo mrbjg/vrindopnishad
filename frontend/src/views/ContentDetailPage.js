@@ -402,9 +402,13 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
     if (!content) return;
 
     setLoading(false);
-    performConceptScan(content);
 
     let active = true;
+
+    // Defer concept scan to prevent thread blocking on mount
+    const scanTimer = setTimeout(() => {
+      if (active) performConceptScan(content);
+    }, 40);
 
     // Defer the extraction of relations to avoid blocking UI rendering
     const timer = setTimeout(async () => {
@@ -513,6 +517,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
     return () => {
       active = false;
+      clearTimeout(scanTimer);
       clearTimeout(timer);
     };
   }, [content, apiService, initialRelatedSaint, initialRelatedBook, initialRelatedRaga, initialRelatedVerses]);

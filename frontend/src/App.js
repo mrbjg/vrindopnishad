@@ -13,20 +13,19 @@ import PageSkeleton from './components/ui/PageSkeleton';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 
-
-const lazyWithRetry = (componentImport) => React.lazy(() => 
+const lazyWithRetry = (componentImport) => React.lazy(() =>
   componentImport().catch((error) => {
     const errorMsg = error && error.message ? String(error.message).toLowerCase() : '';
     const errorName = error && error.name ? String(error.name).toLowerCase() : '';
-    const isChunkError = 
-      errorMsg.includes('loading chunk') || 
-      errorMsg.includes('unexpected token') || 
+    const isChunkError =
+      errorMsg.includes('loading chunk') ||
+      errorMsg.includes('unexpected token') ||
       errorMsg.includes('failed to fetch') ||
       errorMsg.includes('dynamically imported') ||
       errorName.includes('chunkloaderror');
     if (isChunkError) {
       window.location.reload();
-      return new Promise(() => {}); 
+      return new Promise(() => { });
     }
     throw error;
   })
@@ -107,17 +106,17 @@ const LenisScroll = () => {
   const { pathname } = useLocation();
   const [containerType, setContainerType] = useState('window');
 
-  
-  const isMobile = window.matchMedia('(max-width: 1023px)').matches || 
-                   ('ontouchstart' in window) || 
-                   (navigator.maxTouchPoints > 0);
 
-  
+  const isMobile = window.matchMedia('(max-width: 1023px)').matches ||
+    ('ontouchstart' in window) ||
+    (navigator.maxTouchPoints > 0);
+
+
   useEffect(() => {
     const checkContainer = () => {
       const pookizContainer = document.getElementById('pookiz-main-scroll-container');
       const kbClassicContainer = document.getElementById('kb-classic-content-container');
-      
+
       let detectedType = 'window';
       if (settings.layoutMode === 'pookiz' && pookizContainer) {
         detectedType = 'pookiz';
@@ -135,10 +134,10 @@ const LenisScroll = () => {
   }, [pathname, settings.layoutMode, containerType]);
 
   useEffect(() => {
-    
+
     if (isMobile) return;
 
-    
+
     if (!settings.smoothScroll) {
       document.documentElement.style.removeProperty('overflow');
       document.body.style.removeProperty('overflow');
@@ -149,7 +148,7 @@ const LenisScroll = () => {
     const pookizContainer = document.getElementById('pookiz-main-scroll-container');
     const kbClassicContainer = document.getElementById('kb-classic-content-container');
 
-    
+
     const lenisOptions = {
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -179,14 +178,14 @@ const LenisScroll = () => {
 
     const rafId = requestAnimationFrame(raf);
 
-    
+
     const resizeObserver = new ResizeObserver(() => {
       lenis.resize();
     });
 
     const target = containerType === 'pookiz' && pookizContainer ? pookizContainer :
-                   containerType === 'kb' && kbClassicContainer ? kbClassicContainer :
-                   document.body;
+      containerType === 'kb' && kbClassicContainer ? kbClassicContainer :
+        document.body;
 
     if (target) {
       resizeObserver.observe(target);
@@ -199,7 +198,7 @@ const LenisScroll = () => {
       window.lenis = null;
       document.documentElement.style.removeProperty('overflow');
       document.body.style.removeProperty('overflow');
-      
+
       if (pookizContainer) {
         pookizContainer.style.removeProperty('overflow');
       }
@@ -221,12 +220,12 @@ function App() {
   useEffect(() => {
     const storedToken = localStorage.getItem('admin_token');
 
-    
+
     const unsubscribe = apiService.onAuthChanged(async (currentUser, activeToken) => {
       setUser(currentUser);
       setToken(activeToken);
       if (currentUser) {
-        
+
         if (currentUser.email === 'admin@vrindopnishad.com' || currentUser.email === 'admin@vrindavaani.com') {
           setIsAdmin(true);
         }
@@ -285,10 +284,10 @@ function App() {
     if (process.env.NODE_ENV !== 'development') {
       const blockDevTools = () => {
         try {
-          const dummy = function() {};
+          const dummy = function () { };
           const func = dummy.constructor("debugger");
           debuggerInterval = setInterval(func, 100);
-        } catch (e) {}
+        } catch (e) { }
       };
       blockDevTools();
     }
@@ -313,7 +312,7 @@ function App() {
     // Warm up database cache using requestIdleCallback to avoid blocking main thread rendering
     const timer = setTimeout(() => {
       const scheduler = window.requestIdleCallback || ((cb) => setTimeout(cb, 1000));
-      
+
       scheduler(() => {
         try {
           console.log('[Cache] Warming up relations cache dynamically when thread is idle...');
@@ -351,7 +350,7 @@ function App() {
 
         loadNextChunk(0);
       });
-    }, 800); 
+    }, 800);
     return () => clearTimeout(timer);
   }, []);
 
@@ -394,7 +393,7 @@ function App() {
 
   const refreshUser = () => {
     if (auth?.currentUser) {
-      
+
       setUser({ ...auth.currentUser });
     }
   };
@@ -414,7 +413,7 @@ function App() {
     );
   }
 
-  
+
   const mainRoutes = [
     { path: '/', element: <HomePage /> },
     { path: '/content', element: <ContentListPage /> },
@@ -477,7 +476,7 @@ function App() {
       <LoadingProvider>
         <AuthContext.Provider value={{ isAdmin, user, token, login, logout, refreshUser }}>
           <ApiContext.Provider value={{ apiService: apiService, isDemoMode: USE_MOCK_DATA }}>
-            <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <BrowserRouter future={{ v7_relativeSplatPath: true }}>
               <ScrollToTop />
               <LenisScroll />
               <Routes>
