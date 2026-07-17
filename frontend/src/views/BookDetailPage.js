@@ -7,6 +7,7 @@ import { extractRelations } from '../utils/relations';
 import { ArrowLeft, FileText, Music, User, Bookmark } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import PageSkeleton from '../components/ui/PageSkeleton';
+import { useSWR } from '../hooks/useSWR';
 
 const BookDetailPage = ({ initialBook }) => {
   const params = useParams();
@@ -16,6 +17,9 @@ const BookDetailPage = ({ initialBook }) => {
   const { apiService } = useContext(ApiContext);
 
   const [book, setBook] = useState(initialBook || (() => {
+    if (typeof window !== 'undefined' && location.state?.item) {
+      return location.state.item;
+    }
     try {
       const memCached = apiService.getMemoryCachedItems();
       if (memCached) {
@@ -34,72 +38,46 @@ const BookDetailPage = ({ initialBook }) => {
   }));
   const [loading, setLoading] = useState(() => {
     if (initialBook) return false;
-    try {
-      const memCached = apiService.getMemoryCachedItems();
-      if (memCached) {
-        const relations = extractRelations(memCached);
-        if (relations && relations.books.length > 0) {
-          return !relations.books.find(b => b.slug === slug);
-        }
-      }
-    } catch (e) {}
-    return true;
+    return !book;
   });
 
-  useEffect(() => {
-    let active = true;
+  const { data: fetchedBook } = useSWR(
+    slug ? `book_${slug}` : null,
+    async ({ signal }) => {
+      const relations = await apiService.getRelations({ signal });
+      const foundBook = relations.books.find(b => b.slug === slug);
+      if (foundBook) {
+        const allContent = await apiService.getAllContent(null, 5000);
+        const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
+        foundBook.verses = (foundBook.verseIds || [])
+          .map(id => contentMap.get(id?.toString()))
+          .filter(Boolean);
+      }
+      return foundBook || null;
+    },
+    {
+      initialData: book,
+      dedupingInterval: 3000
+    }
+  );
 
+  useEffect(() => {
+    if (fetchedBook) {
+      setBook(fetchedBook);
+      setLoading(false);
+    }
+  }, [fetchedBook]);
+
+  useEffect(() => {
     if (initialBook) {
       setBook(initialBook);
       setLoading(false);
       return;
     }
-
-    const getInitialBook = () => {
-      try {
-        const memCached = apiService.getMemoryCachedItems();
-        if (memCached) {
-          const relations = extractRelations(memCached);
-          if (relations && relations.books.length > 0) {
-            const found = relations.books.find(b => b.slug === slug) || null;
-            if (found && found.verseIds && !found.verses) {
-              const contentMap = new Map(memCached.map(item => [item.id ? item.id.toString() : '', item]));
-              found.verses = found.verseIds.map(id => contentMap.get(id?.toString())).filter(Boolean);
-            }
-            return found;
-          }
-        }
-      } catch (e) {}
-      return null;
-    };
-
-    const cachedBook = getInitialBook();
-    setBook(cachedBook);
-    setLoading(cachedBook === null);
-
-    const load = async () => {
-      try {
-        const relations = await apiService.getRelations();
-        const foundBook = relations.books.find(b => b.slug === slug);
-        if (foundBook) {
-          const allContent = await apiService.getAllContent(null, 5000);
-          const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
-          foundBook.verses = (foundBook.verseIds || [])
-            .map(id => contentMap.get(id?.toString()))
-            .filter(Boolean);
-        }
-        if (active) {
-          setBook(foundBook || null);
-        }
-      } catch (error) {
-        console.error('Error loading book details:', error);
-      } finally {
-        if (active) setLoading(false);
-      }
-    };
-    load();
-    return () => { active = false; };
-  }, [slug, apiService, initialBook]);
+    if (book) {
+      setLoading(false);
+    }
+  }, [slug, initialBook]);
 
   const [isBookmarked, setIsBookmarked] = useState(false);
 
@@ -268,6 +246,7 @@ const BookDetailPage = ({ initialBook }) => {
             <Link
               key={verse.id}
               to={isHindiRoute ? `/hi/lyrics/${verse.slug || verse.id}` : `/lyrics/${verse.slug || verse.id}`}
+              state={{ item: verse }}
               className="glass-card p-4 flex flex-col justify-between group hover:border-amber-500/20 transition-all min-h-[140px]"
             >
               <div>

@@ -159,6 +159,7 @@ const BookmarksPage = () => {
                     >
                       <Link 
                         to={isHindiRoute ? `/hi/lyrics/${verse.slug || verse.id}` : `/lyrics/${verse.slug || verse.id}`}
+                        state={{ item: verse }}
                         className="flex-1 min-w-0"
                       >
                         <div className="flex items-center gap-2 mb-1">
@@ -202,6 +203,7 @@ const BookmarksPage = () => {
                   >
                     <Link 
                       to={isHindiRoute ? `/hi/granthas/${book.slug}` : `/granthas/${book.slug}`}
+                      state={{ item: book }}
                       className="flex-1 min-w-0"
                     >
                       <span className="text-[9px] uppercase tracking-wider text-amber-500 mb-1.5 block">

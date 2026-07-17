@@ -7,6 +7,7 @@ import { extractRelations } from '../utils/relations';
 import { ArrowLeft, Music, FileText } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import PageSkeleton from '../components/ui/PageSkeleton';
+import { useSWR } from '../hooks/useSWR';
 
 const RagaDetailPage = ({ initialRaga }) => {
   const { slug } = useParams();
@@ -15,6 +16,9 @@ const RagaDetailPage = ({ initialRaga }) => {
   const { apiService } = useContext(ApiContext);
 
   const [raga, setRaga] = useState(initialRaga || (() => {
+    if (typeof window !== 'undefined' && location.state?.item) {
+      return location.state.item;
+    }
     try {
       const memCached = apiService.getMemoryCachedItems();
       if (memCached) {
@@ -33,71 +37,46 @@ const RagaDetailPage = ({ initialRaga }) => {
   }));
   const [loading, setLoading] = useState(() => {
     if (initialRaga) return false;
-    try {
-      const memCached = apiService.getMemoryCachedItems();
-      if (memCached) {
-        const relations = extractRelations(memCached);
-        if (relations && relations.ragas.length > 0) {
-          return !relations.ragas.find(r => r.slug === slug);
-        }
-      }
-    } catch (e) {}
-    return true;
+    return !raga;
   });
 
+  const { data: fetchedRaga } = useSWR(
+    slug ? `raga_${slug}` : null,
+    async ({ signal }) => {
+      const relations = await apiService.getRelations({ signal });
+      const foundRaga = relations.ragas.find(r => r.slug === slug);
+      if (foundRaga) {
+        const allContent = await apiService.getAllContent(null, 5000);
+        const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
+        foundRaga.verses = (foundRaga.verseIds || [])
+          .map(id => contentMap.get(id?.toString()))
+          .filter(Boolean);
+      }
+      return foundRaga || null;
+    },
+    {
+      initialData: raga,
+      dedupingInterval: 3000
+    }
+  );
+
   useEffect(() => {
-    let active = true;
+    if (fetchedRaga) {
+      setRaga(fetchedRaga);
+      setLoading(false);
+    }
+  }, [fetchedRaga]);
+
+  useEffect(() => {
     if (initialRaga) {
       setRaga(initialRaga);
       setLoading(false);
       return;
     }
-
-    const getInitialRaga = () => {
-      try {
-        const memCached = apiService.getMemoryCachedItems();
-        if (memCached) {
-          const relations = extractRelations(memCached);
-          if (relations && relations.ragas.length > 0) {
-            const found = relations.ragas.find(r => r.slug === slug) || null;
-            if (found && found.verseIds && !found.verses) {
-              const contentMap = new Map(memCached.map(item => [item.id ? item.id.toString() : '', item]));
-              found.verses = found.verseIds.map(id => contentMap.get(id?.toString())).filter(Boolean);
-            }
-            return found;
-          }
-        }
-      } catch (e) {}
-      return null;
-    };
-
-    const initialVal = getInitialRaga();
-    setRaga(initialVal);
-    setLoading(initialVal === null);
-
-    const load = async () => {
-      try {
-        const relations = await apiService.getRelations();
-        const foundRaga = relations.ragas.find(r => r.slug === slug);
-        if (foundRaga) {
-          const allContent = await apiService.getAllContent(null, 5000);
-          const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
-          foundRaga.verses = (foundRaga.verseIds || [])
-            .map(id => contentMap.get(id?.toString()))
-            .filter(Boolean);
-        }
-        if (active) {
-          setRaga(foundRaga || null);
-        }
-      } catch (error) {
-        console.error('Error loading raga details:', error);
-      } finally {
-        if (active) setLoading(false);
-      }
-    };
-    load();
-    return () => { active = false; };
-  }, [slug, apiService, initialRaga]);
+    if (raga) {
+      setLoading(false);
+    }
+  }, [slug, initialRaga]);
 
   if (loading) {
     return <PageSkeleton variant="granth" />;
@@ -157,6 +136,7 @@ const RagaDetailPage = ({ initialRaga }) => {
             <Link
               key={verse.id}
               to={isHindiRoute ? `/hi/lyrics/${verse.slug || verse.id}` : `/lyrics/${verse.slug || verse.id}`}
+              state={{ item: verse }}
               className="glass-card p-4 flex flex-col justify-between group hover:border-amber-500/20 transition-all min-h-[140px]"
             >
               <div>

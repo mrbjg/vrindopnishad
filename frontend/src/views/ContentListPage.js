@@ -136,10 +136,10 @@ const ContentListPage = ({ initialContent, initialCategories }) => {
 
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
-        setVisibleCount(prev => prev + 12);
+        setVisibleCount(prev => prev + 36);
       }
     }, {
-      rootMargin: '200px'
+      rootMargin: '1000px'
     });
 
     const currentSentinel = sentinelRef.current;
@@ -275,6 +275,7 @@ const ContentListPage = ({ initialContent, initialCategories }) => {
             return (
               <Link 
                 to={isHindiRoute ? `/hi/lyrics/${item.slug || item.id}` : `/lyrics/${item.slug || item.id}`} 
+                state={{ item }}
                 key={`${item.slug || item.id || 'item'}-${index}`} 
                 className={`glass-card group flex flex-col justify-between transition-all duration-500 border border-[var(--glass-border)] ${colors.hover} hover:shadow-2xl`}
               >
@@ -360,6 +361,7 @@ const ContentListPage = ({ initialContent, initialCategories }) => {
                 <Link
                   key={item.id || item.slug || `${item.title || 'ai'}-${i}`}
                   to={isHindiRoute ? `/hi/lyrics/${item.slug || item.id}` : `/lyrics/${item.slug || item.id}`}
+                  state={{ item }}
                   className="glass-card group hover:border-purple-400/30 transition-all duration-300 relative overflow-hidden"
                 >
                   <div className="absolute top-0 right-0 px-3 py-1 bg-purple-500/10 rounded-bl-xl">

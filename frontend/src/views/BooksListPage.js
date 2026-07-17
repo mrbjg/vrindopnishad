@@ -12,7 +12,7 @@ const BooksListPage = ({ initialBooks }) => {
   const location = useLocation();
   const isHindiRoute = location.pathname.startsWith('/hi');
   const { apiService } = useContext(ApiContext);
-  
+
   const [books, setBooks] = useState(initialBooks || (() => {
     try {
       const memCached = apiService.getMemoryCachedItems();
@@ -36,7 +36,7 @@ const BooksListPage = ({ initialBooks }) => {
   const sentinelRef = useRef(null);
 
   useEffect(() => {
-    setVisibleCount(12); 
+    setVisibleCount(12);
   }, [searchQuery]);
 
   useEffect(() => {
@@ -61,22 +61,22 @@ const BooksListPage = ({ initialBooks }) => {
     return () => { active = false; };
   }, [apiService, initialBooks]);
 
-  const filteredBooks = books.filter(b => 
+  const filteredBooks = books.filter(b =>
     b.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     b.hinglishName.toLowerCase().includes(searchQuery.toLowerCase()) ||
     b.author.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  
+
   useEffect(() => {
     if (loading || filteredBooks.length <= visibleCount) return;
 
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
-        setVisibleCount(prev => prev + 12);
+        setVisibleCount(prev => prev + 36);
       }
     }, {
-      rootMargin: '200px'
+      rootMargin: '1000px'
     });
 
     const currentSentinel = sentinelRef.current;
@@ -116,9 +116,9 @@ const BooksListPage = ({ initialBooks }) => {
         <div className="relative w-full md:w-80 max-w-xs">
           <div className="premium-search-container flex items-center pl-4 pr-6 h-11">
             <Search className="text-[var(--text-color)]/30 shrink-0 mr-3" size={16} />
-            <input 
-              type="text" 
-              placeholder={isHindiRoute ? "ग्रन्थ खोजें..." : "Search Books..."} 
+            <input
+              type="text"
+              placeholder={isHindiRoute ? "ग्रन्थ खोजें..." : "Search Books..."}
               className="w-full bg-transparent outline-none text-[var(--text-color)]/90 placeholder:text-[var(--text-color)]/35 h-full text-sm font-light"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -138,9 +138,10 @@ const BooksListPage = ({ initialBooks }) => {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredBooks.slice(0, visibleCount).map(book => (
-              <Link 
-                key={book.name} 
+              <Link
+                key={book.name}
                 to={isHindiRoute ? `/hi/granthas/${book.slug}` : `/granthas/${book.slug}`}
+                state={{ item: book }}
                 className="glass-card group hover:border-[rgba(var(--primary-rgb),0.3)] transition-all duration-300 flex flex-col justify-between hover:shadow-2xl"
               >
                 <div>
@@ -152,7 +153,7 @@ const BooksListPage = ({ initialBooks }) => {
                     By {isHindiRoute ? book.author : book.author}
                   </span>
                 </div>
-                
+
                 <div className="pt-4 mt-6 border-t border-[var(--glass-border)] flex justify-between items-center text-xs">
                   <span className="text-[var(--text-color)]/40 flex items-center gap-1">
                     <FileText size={12} />
@@ -166,7 +167,6 @@ const BooksListPage = ({ initialBooks }) => {
             ))}
           </div>
 
-          
           {filteredBooks.length > visibleCount && (
             <div ref={sentinelRef} className="py-10 flex justify-center w-full">
               <div className="w-8 h-8 border-2 border-[var(--primary-color)] border-t-transparent rounded-full animate-spin"></div>

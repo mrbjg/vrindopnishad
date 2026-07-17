@@ -140,10 +140,10 @@ const CategoryPage = ({ category: propCategory }) => {
 
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
-        setVisibleCount(prev => prev + 12);
+        setVisibleCount(prev => prev + 36);
       }
     }, {
-      rootMargin: '200px'
+      rootMargin: '1000px'
     });
 
     const currentSentinel = sentinelRef.current;
@@ -231,6 +231,7 @@ const CategoryPage = ({ category: propCategory }) => {
                 <Link 
                   key={`${item.id || item.slug || 'item'}-${index}`} 
                   to={isHindiRoute ? `/hi/lyrics/${item.slug || item.id}` : `/lyrics/${item.slug || item.id}`} 
+                  state={{ item }}
                   className={`glass-card group flex flex-col justify-between transition-all duration-500 border border-[var(--glass-border)] ${colors.hover} hover:shadow-2xl`}
                 >
                   <div>

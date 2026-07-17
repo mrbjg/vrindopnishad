@@ -93,10 +93,10 @@ const SaintsListPage = ({ initialSaints }) => {
 
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
-        setVisibleCount(prev => prev + 12);
+        setVisibleCount(prev => prev + 36);
       }
     }, {
-      rootMargin: '200px'
+      rootMargin: '1000px'
     });
 
     const currentSentinel = sentinelRef.current;
@@ -167,6 +167,7 @@ const SaintsListPage = ({ initialSaints }) => {
                 <Link 
                   key={sant.cleanName} 
                   to={isHindiRoute ? `/hi/saints/${sant.slug}` : `/saints/${sant.slug}`}
+                  state={{ item: sant }}
                   className="glass-card group hover:border-[rgba(var(--primary-rgb),0.3)] transition-all duration-300 flex flex-col justify-between hover:shadow-2xl"
                 >
                   <div>

@@ -8,6 +8,7 @@ import { ArrowLeft, Music, FileText, Tag, BookOpen, Star, HelpCircle, GitCommit 
 import { Helmet } from 'react-helmet-async';
 import { getSaintMetadata } from '../utils/saintMetadata';
 import PageSkeleton from '../components/ui/PageSkeleton';
+import { useSWR } from '../hooks/useSWR';
 
 const getInitials = (name) => {
   if (!name) return 'V';
@@ -25,6 +26,9 @@ const SaintDetailPage = ({ initialSaint }) => {
   const { apiService } = useContext(ApiContext);
 
   const [sant, setSant] = useState(initialSaint || (() => {
+    if (typeof window !== 'undefined' && location.state?.item) {
+      return location.state.item;
+    }
     try {
       const memCached = apiService.getMemoryCachedItems();
       if (memCached) {
@@ -43,73 +47,48 @@ const SaintDetailPage = ({ initialSaint }) => {
   }));
   const [loading, setLoading] = useState(() => {
     if (initialSaint) return false;
-    try {
-      const memCached = apiService.getMemoryCachedItems();
-      if (memCached) {
-        const relations = extractRelations(memCached);
-        if (relations && relations.sants.length > 0) {
-          return !relations.sants.find(s => s.slug === slug);
-        }
-      }
-    } catch (e) {}
-    return true;
+    return !sant;
   });
+
+  const { data: fetchedSaint } = useSWR(
+    slug ? `saint_${slug}` : null,
+    async ({ signal }) => {
+      const relations = await apiService.getRelations({ signal });
+      const foundSant = relations.sants.find(s => s.slug === slug);
+      if (foundSant) {
+        const allContent = await apiService.getAllContent(null, 5000);
+        const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
+        foundSant.verses = (foundSant.verseIds || [])
+          .map(id => contentMap.get(id?.toString()))
+          .filter(Boolean);
+      }
+      return foundSant || null;
+    },
+    {
+      initialData: sant,
+      dedupingInterval: 3000
+    }
+  );
+
+  useEffect(() => {
+    if (fetchedSaint) {
+      setSant(fetchedSaint);
+      setLoading(false);
+    }
+  }, [fetchedSaint]);
+
   const [activeDetailTab, setActiveDetailTab] = useState('bio');
 
   useEffect(() => {
-    let active = true;
-
     if (initialSaint) {
       setSant(initialSaint);
       setLoading(false);
       return;
     }
-
-    const getInitialSaint = () => {
-      try {
-        const memCached = apiService.getMemoryCachedItems();
-        if (memCached) {
-          const relations = extractRelations(memCached);
-          if (relations && relations.sants.length > 0) {
-            const found = relations.sants.find(s => s.slug === slug) || null;
-            if (found && found.verseIds && !found.verses) {
-              const contentMap = new Map(memCached.map(item => [item.id ? item.id.toString() : '', item]));
-              found.verses = found.verseIds.map(id => contentMap.get(id?.toString())).filter(Boolean);
-            }
-            return found;
-          }
-        }
-      } catch (e) {}
-      return null;
-    };
-
-    const cachedSaint = getInitialSaint();
-    setSant(cachedSaint);
-    setLoading(cachedSaint === null);
-
-    const load = async () => {
-      try {
-        const relations = await apiService.getRelations();
-        const foundSant = relations.sants.find(s => s.slug === slug);
-        if (foundSant) {
-          const allContent = await apiService.getAllContent(null, 5000);
-          const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
-          foundSant.verses = (foundSant.verseIds || [])
-            .map(id => contentMap.get(id?.toString()))
-            .filter(Boolean);
-        }
-        if (active) {
-          setSant(foundSant || null);
-        }
-      } catch (error) {
-        console.error('Error loading saint details:', error);
-      } finally {
-        if (active) setLoading(false);
-      }
-    };
-    load();
-    return () => { active = false; };
-  }, [slug, apiService, initialSaint]);
+    if (sant) {
+      setLoading(false);
+    }
+  }, [slug, initialSaint]);
 
   if (loading) {
     return <PageSkeleton variant="saint" />;
@@ -432,6 +411,7 @@ const SaintDetailPage = ({ initialSaint }) => {
                     <Link
                       key={s.slug}
                       to={isHindiRoute ? `/hi/saints/${s.slug}` : `/saints/${s.slug}`}
+                      state={{ item: { ...s, name: s.nameHi, hinglishName: s.nameEn } }}
                       className="px-3 py-1.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-amber-500/30 text-xs text-white/80 hover:text-primary transition-all select-none"
                     >
                       {isHindiRoute ? s.nameHi : s.nameEn}
@@ -452,6 +432,7 @@ const SaintDetailPage = ({ initialSaint }) => {
                     <Link
                       key={g.slug}
                       to={isHindiRoute ? `/hi/granthas/${g.slug}` : `/granthas/${g.slug}`}
+                      state={{ item: { ...g, name: g.nameHi, hinglishName: g.nameEn } }}
                       className="px-3 py-1.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-sky-500/30 text-xs text-white/80 hover:text-sky-400 transition-all select-none"
                     >
                       {isHindiRoute ? g.nameHi : g.nameEn}
@@ -495,6 +476,7 @@ const SaintDetailPage = ({ initialSaint }) => {
             <Link
               key={verse.id}
               to={isHindiRoute ? `/hi/lyrics/${verse.slug || verse.id}` : `/lyrics/${verse.slug || verse.id}`}
+              state={{ item: verse }}
               className="glass-card p-4 flex flex-col justify-between group hover:border-amber-500/20 transition-all min-h-[140px] text-left"
             >
               <div>

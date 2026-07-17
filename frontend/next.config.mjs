@@ -8,6 +8,7 @@ const __dirname = path.dirname(__filename);
 const nextConfig = {
   reactStrictMode: true,
   optimizeFonts: false,
+  staticPageGenerationTimeout: 1000,
   experimental: {
     outputFileTracingIncludes: {
       '/**/*': [

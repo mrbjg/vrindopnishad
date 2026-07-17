@@ -32,6 +32,7 @@ import { GLOSSARY_TERMS } from '../utils/glossaryTerms';
 import { shareVerseCard } from '../utils/shareCard';
 import PageSkeleton from '../components/ui/PageSkeleton';
 import { splitVerseAndTranslation } from '../utils/textSplitter';
+import { useSWR } from '../hooks/useSWR';
 
 // Professional typographic scaling component for Sanskrit/Hindi & Hinglish verses.
 // Provides elegant, consistent sizing based on viewport width and user preferences (sizeLevel).
@@ -174,6 +175,9 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
   const sizeLevel = settings.fontSize || 2;
 
   const [rawContent, setRawContent] = useState(initialContent || (() => {
+    if (typeof window !== 'undefined' && location.state?.item) {
+      return location.state.item;
+    }
     const sessionCached = apiService.getCachedData(`id_${id}`);
     if (sessionCached && !sessionCached.isLightweight) return sessionCached;
     try {
@@ -181,10 +185,10 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
       if (memCached && memCached.length > 0) {
         const decodedId = decodeURIComponent(id);
         const matched = memCached.find(item => 
-          (item.id?.toString() === id.toString() ||
+          item.id?.toString() === id.toString() ||
           item.id?.toString() === decodedId.toString() ||
           item.slug === id ||
-          item.slug === decodedId) && !item.isLightweight
+          item.slug === decodedId
         );
         return matched || null;
       }
@@ -192,34 +196,32 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
     return null;
   }));
 
+  const { data: fetchedData, isValidating } = useSWR(
+    id ? `content_${id}` : null,
+    async ({ signal }) => {
+      const decodedId = decodeURIComponent(id);
+      return await apiService.getContentById(decodedId, { signal });
+    },
+    {
+      initialData: rawContent,
+      dedupingInterval: 3000
+    }
+  );
+
   const content = React.useMemo(() => {
-    if (!rawContent) return null;
-    const { verse, translation } = splitVerseAndTranslation(rawContent.hindi_text);
+    const activeData = fetchedData || rawContent;
+    if (!activeData) return null;
+    const { verse, translation } = splitVerseAndTranslation(activeData.hindi_text);
     return {
-      ...rawContent,
-      hindi_text: verse || rawContent.hindi_text,
-      english_translation: rawContent.english_translation || translation
+      ...activeData,
+      hindi_text: verse || activeData.hindi_text,
+      english_translation: activeData.english_translation || translation
     };
-  }, [rawContent]);
+  }, [fetchedData, rawContent]);
   
   const [loading, setLoading] = useState(() => {
     if (initialContent) return false;
-    const sessionCached = apiService.getCachedData(`id_${id}`);
-    if (sessionCached && !sessionCached.isLightweight) return false;
-    try {
-      const memCached = apiService.getMemoryCachedItems();
-      if (memCached && memCached.length > 0) {
-        const decodedId = decodeURIComponent(id);
-        const matched = memCached.find(item => 
-          (item.id?.toString() === id.toString() ||
-          item.id?.toString() === decodedId.toString() ||
-          item.slug === id ||
-          item.slug === decodedId) && !item.isLightweight
-        );
-        if (matched) return false;
-      }
-    } catch (e) {}
-    return true;
+    return !content;
   });
   
   const [relatedSaint, setRelatedSaint] = useState(initialRelatedSaint || null);
@@ -375,190 +377,145 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
     }
   };
 
+  const performConceptScan = (itemData) => {
+    if (!itemData) return;
+    const scannedText = [
+      itemData.title,
+      itemData.sanskrit_text,
+      itemData.hindi_text,
+      itemData.english_translation,
+      itemData.description
+    ].filter(Boolean).join(' ').toLowerCase();
+
+    const matchedConcepts = GLOSSARY_TERMS.filter(term => {
+      const engName = (term.term || '').toLowerCase();
+      const devName = (term.devanagari || '').toLowerCase();
+      const wordRegexEng = new RegExp('\\b' + engName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '\\b', 'i');
+      const hasEngMatch = wordRegexEng.test(scannedText);
+      const hasDevMatch = devName && scannedText.includes(devName);
+      return hasEngMatch || hasDevMatch;
+    });
+    setDetectedConcepts(matchedConcepts);
+  };
+
   useEffect(() => {
+    if (!content) return;
+
+    setLoading(false);
+    performConceptScan(content);
+
     let active = true;
 
-    const performConceptScan = (itemData) => {
-      if (!itemData) return;
-      const scannedText = [
-        itemData.title,
-        itemData.sanskrit_text,
-        itemData.hindi_text,
-        itemData.english_translation,
-        itemData.description
-      ].filter(Boolean).join(' ').toLowerCase();
-
-      const matchedConcepts = GLOSSARY_TERMS.filter(term => {
-        const engName = (term.term || '').toLowerCase();
-        const devName = (term.devanagari || '').toLowerCase();
-        const wordRegexEng = new RegExp('\\b' + engName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '\\b', 'i');
-        const hasEngMatch = wordRegexEng.test(scannedText);
-        const hasDevMatch = devName && scannedText.includes(devName);
-        return hasEngMatch || hasDevMatch;
-      });
-      setDetectedConcepts(matchedConcepts);
-    };
-
-    if (initialContent) {
-      setRawContent(initialContent);
-      setRelatedSaint(initialRelatedSaint || null);
-      setRelatedBook(initialRelatedBook || null);
-      setRelatedRaga(initialRelatedRaga || null);
-      setRelatedVerses(initialRelatedVerses || []);
-      performConceptScan(initialContent);
-      setLoading(false);
-      return;
-    }
-
-    const getInitialContent = () => {
-      const sessionCached = apiService.getCachedData(`id_${id}`);
-      if (sessionCached && !sessionCached.isLightweight) return sessionCached;
+    // Defer the extraction of relations to avoid blocking UI rendering
+    const timer = setTimeout(async () => {
+      if (!active) return;
       try {
-        const memCached = apiService.getMemoryCachedItems();
-        if (memCached && memCached.length > 0) {
-          const decodedId = decodeURIComponent(id);
-          return memCached.find(item => 
-            (item.id?.toString() === id.toString() ||
-            item.id?.toString() === decodedId.toString() ||
-            item.slug === id ||
-            item.slug === decodedId) && !item.isLightweight
-          ) || null;
+        const allItems = await apiService.getAllContent(null, 10000);
+        const relations = extractRelations(allItems);
+        
+        const authorInfo = parseAuthorField(content.author || "");
+        let matchedSaint = null;
+        if (authorInfo.saintName) {
+          const saintSlug = getNormalizedSaintSlug(authorInfo.saintName);
+          matchedSaint = relations.sants.find(s => s.slug === saintSlug);
         }
-      } catch (e) {}
-      return null;
-    };
+        
+        let matchedBook = null;
+        if (authorInfo.bookName) {
+          const bookSlug = getNormalizedBookSlug(authorInfo.bookName);
+          matchedBook = relations.books.find(b => b.slug === bookSlug);
+        }
 
-    const cachedContent = getInitialContent();
-    setRawContent(cachedContent);
-    performConceptScan(cachedContent);
-    setLoading(cachedContent === null);
+        const textToScan = [
+          content.title,
+          content.author,
+          content.hindi_text,
+          content.sanskrit_text,
+          content.english_translation,
+          content.description
+        ].filter(Boolean).join(' ').toLowerCase();
+        
+        const isSevaKunj = textToScan.includes('सेवा कुंज') || 
+                           textToScan.includes('सेवाकुंज') || 
+                           textToScan.includes('seva kunj') || 
+                           textToScan.includes('sewakunj') || 
+                           textToScan.includes('seva-kunj') || 
+                           textToScan.includes('सेवा सुख') ||
+                           (content.tags && content.tags.some(t => t.toLowerCase().includes('seva') || t.toLowerCase().includes('kunj')));
+        
+        if (isSevaKunj) {
+          matchedBook = relations.books.find(b => b.slug === 'seva-kunj-texts') || matchedBook;
+        }
+        
+        let ragaName = null;
+        const ragaRegex = /(राग\s+[^\s,;()-]+)/;
+        const cleanTitle = content.title || "";
+        const matchTitle = cleanTitle.match(ragaRegex);
+        const matchSanskrit = content.sanskrit_text?.match(ragaRegex);
+        const matchHindi = content.hindi_text?.match(ragaRegex);
+        if (matchTitle) ragaName = matchTitle[1];
+        else if (matchSanskrit) ragaName = matchSanskrit[1];
+        else if (matchHindi) ragaName = matchHindi[1];
+        if (ragaName) ragaName = ragaName.split(/[,]/)[0].trim();
+        
+        const matchedRaga = ragaName ? relations.ragas.find(r => r.name === ragaName) : null;
+        
+        // --- Dynamic Tag-Based Recommendations ---
+        const currentTags = new Set((content.tags || []).map(t => t.toLowerCase()));
+        const currentId = content.id?.toString();
+        const currentAuthor = (content.author || '').toLowerCase();
+        const umbrellaTag = 'vrindavaani'; // low-weight umbrella
 
-    const fetchContentData = async () => {
-      try {
-        const decodedId = decodeURIComponent(id);
-        const data = await apiService.getContentById(decodedId);
-        if (active) {
-          setRawContent(data);
-          performConceptScan(data);
-          setLoading(false); // Render the main content on screen IMMEDIATELY
+        const scored = allItems
+          .filter(item =>
+            item.id?.toString() !== currentId &&
+            item.category?.toLowerCase() !== 'saint'
+          )
+          .map(item => {
+            const itemTags = new Set((item.tags || []).map(t => t.toLowerCase()));
+            let score = 0;
 
-          // Defer the extraction of relations to avoid blocking UI rendering
-          setTimeout(async () => {
-            if (!active) return;
-            try {
-              const allItems = await apiService.getAllContent(null, 10000);
-              const relations = extractRelations(allItems);
-              
-              const authorInfo = parseAuthorField(data.author || "");
-              let matchedSaint = null;
-              if (authorInfo.saintName) {
-                const saintSlug = getNormalizedSaintSlug(authorInfo.saintName);
-                matchedSaint = relations.sants.find(s => s.slug === saintSlug);
+            // Tag overlap scoring (specific tags worth more)
+            for (const tag of itemTags) {
+              if (currentTags.has(tag)) {
+                score += (tag === umbrellaTag) ? 0.5 : 2;
               }
-              
-              let matchedBook = null;
-              if (authorInfo.bookName) {
-                const bookSlug = getNormalizedBookSlug(authorInfo.bookName);
-                matchedBook = relations.books.find(b => b.slug === bookSlug);
-              }
-
-              const textToScan = [
-                data.title,
-                data.author,
-                data.hindi_text,
-                data.sanskrit_text,
-                data.english_translation,
-                data.description
-              ].filter(Boolean).join(' ').toLowerCase();
-              
-              const isSevaKunj = textToScan.includes('सेवा कुंज') || 
-                                 textToScan.includes('सेवाकुंज') || 
-                                 textToScan.includes('seva kunj') || 
-                                 textToScan.includes('sewakunj') || 
-                                 textToScan.includes('seva-kunj') || 
-                                 textToScan.includes('सेवा सुख') ||
-                                 (data.tags && data.tags.some(t => t.toLowerCase().includes('seva') || t.toLowerCase().includes('kunj')));
-              
-              if (isSevaKunj) {
-                matchedBook = relations.books.find(b => b.slug === 'seva-kunj-texts') || matchedBook;
-              }
-              
-              let ragaName = null;
-              const ragaRegex = /(राग\s+[^\s,;()-]+)/;
-              const cleanTitle = data.title || "";
-              const matchTitle = cleanTitle.match(ragaRegex);
-              const matchSanskrit = data.sanskrit_text?.match(ragaRegex);
-              const matchHindi = data.hindi_text?.match(ragaRegex);
-              if (matchTitle) ragaName = matchTitle[1];
-              else if (matchSanskrit) ragaName = matchSanskrit[1];
-              else if (matchHindi) ragaName = matchHindi[1];
-              if (ragaName) ragaName = ragaName.split(/[,]/)[0].trim();
-              
-              const matchedRaga = ragaName ? relations.ragas.find(r => r.name === ragaName) : null;
-              
-              // --- Dynamic Tag-Based Recommendations ---
-              const currentTags = new Set((data.tags || []).map(t => t.toLowerCase()));
-              const currentId = data.id?.toString();
-              const currentAuthor = (data.author || '').toLowerCase();
-              const umbrellaTag = 'vrindavaani'; // low-weight umbrella
-
-              const scored = allItems
-                .filter(item =>
-                  item.id?.toString() !== currentId &&
-                  item.category?.toLowerCase() !== 'saint'
-                )
-                .map(item => {
-                  const itemTags = new Set((item.tags || []).map(t => t.toLowerCase()));
-                  let score = 0;
-
-                  // Tag overlap scoring (specific tags worth more)
-                  for (const tag of itemTags) {
-                    if (currentTags.has(tag)) {
-                      score += (tag === umbrellaTag) ? 0.5 : 2;
-                    }
-                  }
-
-                  // Same author bonus
-                  if (currentAuthor && (item.author || '').toLowerCase() === currentAuthor) {
-                    score += 3;
-                  }
-
-                  // Same category bonus
-                  if (data.category && item.category === data.category) {
-                    score += 1;
-                  }
-
-                  return { item, score };
-                })
-                .filter(s => s.score > 0)
-                .sort((a, b) => b.score - a.score || Math.random() - 0.5);
-
-              // Pick top 6, adding light randomness within equal-score ties
-              const categoryVerses = scored.slice(0, 6).map(s => s.item);
-              
-              setRelatedSaint(matchedSaint || null);
-              setRelatedBook(matchedBook || null);
-              setRelatedRaga(matchedRaga || null);
-              setRelatedVerses(categoryVerses);
-            } catch (err) {
-              console.warn('Deferred relations loading failed:', err);
             }
-          }, 60);
-        }
-      } catch (error) {
-        console.error('Error fetching content:', error);
-      } finally {
+
+            // Same author bonus
+            if (currentAuthor && (item.author || '').toLowerCase() === currentAuthor) {
+              score += 3;
+            }
+
+            // Same category bonus
+            if (content.category && item.category === content.category) {
+              score += 1;
+            }
+
+            return { item, score };
+          })
+          .filter(s => s.score > 0)
+          .sort((a, b) => b.score - a.score || Math.random() - 0.5);
+
+        // Pick top 6
+        const categoryVerses = scored.slice(0, 6).map(s => s.item);
+        
         if (active) {
-          setLoading(false);
+          setRelatedSaint(matchedSaint || null);
+          setRelatedBook(matchedBook || null);
+          setRelatedRaga(matchedRaga || null);
+          setRelatedVerses(categoryVerses);
         }
+      } catch (err) {
+        console.warn('Deferred relations loading failed:', err);
       }
-    };
-    fetchContentData();
+    }, 60);
 
     return () => {
       active = false;
+      clearTimeout(timer);
     };
-  }, [id, apiService, initialContent, initialRelatedSaint, initialRelatedBook, initialRelatedRaga, initialRelatedVerses]);
+  }, [content, apiService, initialRelatedSaint, initialRelatedBook, initialRelatedRaga, initialRelatedVerses]);
 
   const getCategoryBadgeClass = (category) => {
     switch (category?.toLowerCase()) {
@@ -864,8 +821,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
           )}
 
           <div className="space-y-16">
-            {content.sanskrit_text && (
-              <div className="relative group py-8 sm:py-16 border-b border-white/5">
+            {content.sanskrit_text ? (
+              <div className="relative group py-8 sm:py-16 border-b border-white/5 animate-fade-in">
                 {/* Decorative watermark */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-[0.025] text-[12rem] font-serif pointer-events-none select-none">ॐ</div>
 
@@ -895,6 +852,15 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                   />
                 </div>
               </div>
+            ) : (
+              (loading || isValidating) && (
+                <div className="relative group py-8 sm:py-16 border-b border-white/5 space-y-4 animate-pulse text-center">
+                  <div className="h-2.5 bg-white/10 rounded w-24 mx-auto mb-6"></div>
+                  <div className="h-6 bg-white/5 rounded w-3/4 mx-auto"></div>
+                  <div className="h-6 bg-white/5 rounded w-5/6 mx-auto"></div>
+                  <div className="h-6 bg-white/5 rounded w-2/3 mx-auto"></div>
+                </div>
+              )
             )}
 
             <div className="py-8 border-b border-white/5">
@@ -1029,8 +995,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
               )}
             </div>
 
-            {(transliteratedSanskrit || transliteratedHindi) && (
-              <div className="py-8 sm:py-12 border-b border-white/5">
+            {(transliteratedSanskrit || transliteratedHindi) ? (
+              <div className="py-8 sm:py-12 border-b border-white/5 animate-fade-in">
                 <h2 className="content-section-heading content-section-heading--hinglish text-[10px] sm:text-xs uppercase tracking-[0.4em] mb-6 sm:mb-8 flex items-center justify-center sm:justify-start gap-4 py-2">
                   <span className="content-section-line content-section-line--hinglish h-[1px] w-12 hidden sm:block"></span>
                   Hinglish Transliteration (रोमन पाठ)
@@ -1055,6 +1021,14 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                   />
                 </div>
               </div>
+            ) : (
+              (loading || isValidating) && (
+                <div className="py-8 sm:py-12 border-b border-white/5 space-y-4 animate-pulse">
+                  <div className="h-2.5 bg-white/10 rounded w-36 mb-6"></div>
+                  <div className="h-5 bg-white/5 rounded w-4/5"></div>
+                  <div className="h-5 bg-white/5 rounded w-11/12"></div>
+                </div>
+              )
             )}
 
             {content.english_text && (
@@ -1071,8 +1045,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
               </div>
             )}
 
-            {content.english_translation && (
-              <div className="py-12">
+            {content.english_translation ? (
+              <div className="py-12 animate-fade-in">
                 <h2 className="content-section-heading content-section-heading--english text-xs uppercase tracking-[0.3em] mb-10 flex items-center gap-3">
                   <span className="content-section-line content-section-line--english h-[1px] w-8"></span>
                   English Translation
@@ -1086,6 +1060,14 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                   {content.english_translation}
                 </div>
               </div>
+            ) : (
+              (loading || isValidating) && (
+                <div className="py-12 space-y-4 animate-pulse">
+                  <div className="h-2.5 bg-white/10 rounded w-32 mb-6"></div>
+                  <div className="h-4 bg-white/5 rounded w-5/6"></div>
+                  <div className="h-4 bg-white/5 rounded w-4/5"></div>
+                </div>
+              )
             )}
 
             
