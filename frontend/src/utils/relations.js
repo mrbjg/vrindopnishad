@@ -294,7 +294,8 @@ export function extractRelations(items) {
         };
       }
       santsMap[santSlug].verseIds.push(item.id);
-      santsMap[santSlug].verses.push({ id: item.id, title: item.title, slug: item.slug, category: item.category, author: item.author, cleanTitle: item.cleanTitle || cleanTitle });
+      const finalTitle = item.cleanTitle || cleanTitle || item.title || item.name || 'पद';
+      santsMap[santSlug].verses.push({ id: item.id, title: item.title || finalTitle, slug: item.slug, category: item.category, author: item.author, cleanTitle: finalTitle });
       if (bookName) {
         const normalizedBName = getNormalizedBookName(bookName);
         santsMap[santSlug].books.add(normalizedBName);
@@ -304,6 +305,7 @@ export function extractRelations(items) {
     if (bookName) {
       const bookSlug = getNormalizedBookSlug(bookName);
       const normalizedBName = getNormalizedBookName(bookName);
+      const finalTitle = item.cleanTitle || cleanTitle || item.title || item.name || 'पद';
       if (!booksMap[bookSlug]) {
         booksMap[bookSlug] = {
           name: normalizedBName,
@@ -321,11 +323,12 @@ export function extractRelations(items) {
         }
       }
       booksMap[bookSlug].verseIds.push(item.id);
-      booksMap[bookSlug].verses.push({ id: item.id, title: item.title, slug: item.slug, category: item.category, author: item.author, cleanTitle: item.cleanTitle || cleanTitle });
+      booksMap[bookSlug].verses.push({ id: item.id, title: item.title || finalTitle, slug: item.slug, category: item.category, author: item.author, cleanTitle: finalTitle });
     }
 
     if (ragaName) {
       const ragaSlug = slugify(transliterate(ragaName));
+      const finalTitle = item.cleanTitle || cleanTitle || item.title || item.name || 'पद';
       if (!ragasMap[ragaName]) {
         ragasMap[ragaName] = {
           name: ragaName,
@@ -336,7 +339,7 @@ export function extractRelations(items) {
         };
       }
       ragasMap[ragaName].verseIds.push(item.id);
-      ragasMap[ragaName].verses.push({ id: item.id, title: item.title, slug: item.slug, category: item.category, author: item.author, cleanTitle: item.cleanTitle || cleanTitle });
+      ragasMap[ragaName].verses.push({ id: item.id, title: item.title || finalTitle, slug: item.slug, category: item.category, author: item.author, cleanTitle: finalTitle });
     }
   });
 

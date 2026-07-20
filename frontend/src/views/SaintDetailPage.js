@@ -131,10 +131,11 @@ const SaintDetailPage = ({ initialSaint }) => {
     ? (isHindiRoute ? meta.biographyHi : meta.biographyEn)
     : (sant.biography?.text || (isHindiRoute ? "ब्रज परंपरा के वैष्णव संत।" : "Vaishnava saint of the Braj tradition."));
 
-  const helmetTitle = `${isHindiRoute ? sant.name : sant.hinglishName} — [भजन/वाणियाँ] | Vrindopnishad`;
+  const santName = (isHindiRoute ? sant.name : sant.hinglishName) || sant.name || sant.hinglishName || sant.cleanName || sant.slug || (isHindiRoute ? "रसिक संत" : "Rasik Saint");
+  const helmetTitle = `${santName} — [भजन/वाणियाँ] | Vrindopnishad`;
   const helmetDescription = isHindiRoute
-    ? `महान रसिक संत ${sant.name} (परंपरा: ${lineage}, काल: ${timeline}) का जीवन चरित्र, इतिहास, ग्रन्थ और वाणी संग्रह। हिन्दी, संस्कृत, ब्रजभाषा और अंग्रेजी रोमन अनुवाद (with meaning) में बिल्कुल निःशुल्क (completely free) उपलब्ध।`
-    : `Explore the biography of ${sant.hinglishName} (Lineage: ${lineage}, Era: ${timeline}), including spiritual teachings and complete verses. Available in Hindi, Sanskrit, Braj Bhasha, and English transliteration. Completely free online with meaning, biography, and complete collection.`;
+    ? `महान रसिक संत ${santName} (परंपरा: ${lineage}, काल: ${timeline}) का जीवन चरित्र, इतिहास, ग्रन्थ और वाणी संग्रह। हिन्दी, संस्कृत, ब्रजभाषा और अंग्रेजी रोमन अनुवाद (with meaning) में बिल्कुल निःशुल्क (completely free) उपलब्ध।`
+    : `Explore the biography of ${santName} (Lineage: ${lineage}, Era: ${timeline}), including spiritual teachings and complete verses. Available in Hindi, Sanskrit, Braj Bhasha, and English transliteration. Completely free online with meaning, biography, and complete collection.`;
 
   return (
     <div className="animate-fade-in max-w-4xl mx-auto px-4 py-8">
@@ -143,7 +144,6 @@ const SaintDetailPage = ({ initialSaint }) => {
         <meta name="description" content={helmetDescription} />
         <link rel="canonical" href={isHindiRoute ? `https://path.vrindopnishad.in/hi/saints/${slug}` : `https://path.vrindopnishad.in/saints/${slug}`} />
         
-        
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -151,8 +151,8 @@ const SaintDetailPage = ({ initialSaint }) => {
               {
                 "@type": "Person",
                 "@id": `https://path.vrindopnishad.in/saints/${slug}#person`,
-                "name": sant.name,
-                "alternateName": sant.hinglishName !== sant.name ? sant.hinglishName : undefined,
+                "name": santName,
+                "alternateName": sant.hinglishName && sant.hinglishName !== sant.name ? sant.hinglishName : undefined,
                 "description": bioText.substring(0, 200),
                 "url": `https://path.vrindopnishad.in/saints/${slug}`,
                 "image": sant.image || "https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png",
@@ -181,7 +181,7 @@ const SaintDetailPage = ({ initialSaint }) => {
                   {
                     "@type": "ListItem",
                     "position": 3,
-                    "name": isHindiRoute ? sant.name : sant.hinglishName,
+                    "name": santName,
                     "item": isHindiRoute ? `https://path.vrindopnishad.in/hi/saints/${slug}` : `https://path.vrindopnishad.in/saints/${slug}`
                   }
                 ]
@@ -216,14 +216,14 @@ const SaintDetailPage = ({ initialSaint }) => {
       
       <div className="flex flex-col sm:flex-row items-center gap-6 mb-8 pb-6 border-b border-white/5 text-center sm:text-left select-none">
         <div className="w-24 h-24 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 font-bold text-4xl shadow-xl shrink-0">
-          {getInitials(isHindiRoute ? sant.name : sant.hinglishName)}
+          {getInitials(santName)}
         </div>
         <div className="flex-1 min-w-0 flex flex-col items-center sm:items-start w-full">
           <div className="badge border-amber-500/20 text-amber-500 bg-amber-500/5 mb-2 uppercase tracking-widest text-[9px] font-bold">
             {isHindiRoute ? "रसिक संत जीवनी" : "Rasik Saint Biography"}
           </div>
           <h1 className="text-3xl md:text-4xl font-bold font-headings text-sacred-gradient mb-3 text-center sm:text-left w-full truncate">
-            {isHindiRoute ? sant.name : sant.hinglishName}
+            {santName}
           </h1>
           
           
@@ -496,11 +496,11 @@ const SaintDetailPage = ({ initialSaint }) => {
                     </span>
                   )}
                 </div>
-                <h3 className="font-bold text-base text-white/90 group-hover:text-primary transition-colors leading-snug line-clamp-1 py-1">
-                  {verse.cleanTitle}
+                <h3 className="font-bold text-base text-[var(--text-color)] group-hover:text-primary transition-colors leading-snug line-clamp-1 py-1">
+                  {verse.cleanTitle || verse.title || verse.name || (isHindiRoute ? 'वाणी / पद' : 'Verse')}
                 </h3>
               </div>
-              <p className="text-white/45 text-xs line-clamp-2 leading-relaxed mt-2 select-none">
+              <p className="text-[var(--text-color)]/60 text-xs line-clamp-2 leading-relaxed mt-2 select-none">
                 {verse.sanskrit_text}
               </p>
             </Link>

@@ -264,11 +264,11 @@ const BookDetailPage = ({ initialBook }) => {
                     </span>
                   )}
                 </div>
-                <h3 className="font-bold text-base text-white/90 group-hover:text-primary transition-colors leading-snug line-clamp-1 py-1">
-                  {verse.cleanTitle}
+                <h3 className="font-bold text-base text-[var(--text-color)] group-hover:text-primary transition-colors leading-snug line-clamp-1 py-1">
+                  {verse.cleanTitle || verse.title || verse.name || (isHindiRoute ? 'पद / श्लोक' : 'Passage')}
                 </h3>
               </div>
-              <p className="text-white/40 text-xs line-clamp-2 leading-relaxed mt-2">
+              <p className="text-[var(--text-color)]/60 text-xs line-clamp-2 leading-relaxed mt-2">
                 {verse.sanskrit_text}
               </p>
             </Link>

@@ -99,6 +99,37 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`dark ${laila.variable} ${poppins.variable} ${inter.variable} ${notoSerifDevanagari.variable}`}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){
+              try {
+                var s = localStorage.getItem('user_settings');
+                if (s) {
+                  var p = JSON.parse(s);
+                  var t = p.theme || 'light';
+                  var darkThemes = ['dark', 'night', 'space', 'void', 'waterfall', 'cherryblossom', 'aurora'];
+                  var isDark = darkThemes.indexOf(t) !== -1;
+                  document.documentElement.setAttribute('data-theme', t);
+                  if (p.fontSize) document.documentElement.setAttribute('data-font-size', p.fontSize);
+                  if (p.fontStyle) document.documentElement.setAttribute('data-font-style', p.fontStyle);
+                  if (p.layoutMode) document.documentElement.setAttribute('data-layout-mode', p.layoutMode);
+                  if (isDark) {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.classList.remove('light-mode');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.classList.add('light-mode');
+                  }
+                } else {
+                  document.documentElement.classList.remove('dark');
+                  document.documentElement.classList.add('light-mode');
+                }
+              } catch(e) {}
+            })()`
+          }}
+        />
+      </head>
       <body className="antialiased">
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-FJWN1FJE6H"
