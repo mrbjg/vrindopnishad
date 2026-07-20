@@ -62,4 +62,4 @@ Disallow: /static/js/*.map
 Disallow: /static/css/*.map
 
 # SEO Rule: Sitemap location
-Sitemap: https://path.vrindopnishad.in/sitemap.xml
+Sitemap: https://path.vrindopnishad.in/sitemap.xml?v=4

@@ -407,6 +407,25 @@ export const apiService = {
   },
 
   getAllContent: async (category = null, limit = 25000) => {
+    // Fast path: 'home' category fetches a small pre-built backup (100 items) for instant first paint
+    if (category === 'home') {
+      if (memoryCategoryCache['home'] && memoryCategoryCache['home'].length > 0) {
+        return memoryCategoryCache['home'].slice(0, limit);
+      }
+      try {
+        const res = await fetch('/data/content_backup_home.json');
+        if (res.ok) {
+          const items = await res.json();
+          memoryCategoryCache['home'] = ensureSorted(items);
+          return memoryCategoryCache['home'].slice(0, limit);
+        }
+      } catch (e) {
+        console.warn('[Home-Cache] Failed to load home backup, falling back to shloka:', e);
+      }
+      // Fallback: load shloka category (smallest)
+      category = 'shloka';
+    }
+
     const targetCategories = category
       ? [category.toLowerCase().trim()]
       : ['shloka', 'strotra', 'poem', 'saint', 'dham'];

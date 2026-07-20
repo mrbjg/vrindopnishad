@@ -546,7 +546,7 @@ const HomePage = ({
     const load = async () => {
       try {
         const rel = await apiService.getRelations();
-        const items = await apiService.getAllContent(null, 50);
+        const items = await apiService.getAllContent('home', 50);
         if (active) {
           setAllItems(items);
           setSaints(rel.sants);

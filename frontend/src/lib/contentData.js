@@ -441,6 +441,16 @@ function writeBackupFile(verses, force = false) {
       }
     });
 
+    // Write a smaller backup for the home screen (latest 100 items) to speed up initial page load
+    const homeFile = path.join(dataDir, 'content_backup_home.json');
+    if (force || !fs.existsSync(homeFile)) {
+      console.log(`[DataCache] Saving home screen backup (first 100 items) to: ${homeFile}...`);
+      const homeVerses = verses.slice(0, 100);
+      fs.writeFile(homeFile, JSON.stringify(homeVerses), 'utf8', (err) => {
+        if (err) console.warn("[DataCache] Async home backup write failed:", err);
+      });
+    }
+
     // Pre-compute and save relations
     const relationsFile = path.join(dataDir, 'relations_backup.json');
     if (force || !fs.existsSync(relationsFile)) {
