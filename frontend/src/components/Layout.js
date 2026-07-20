@@ -9,6 +9,7 @@ import { articles } from '../utils/kbArticles';
 import { hinglishMatch } from '../utils/hinglishSearch';
 import { GLOSSARY_TERMS } from '../data/glossaryTerms';
 import { FESTIVALS_DATA } from '../data/festivalsData';
+import { startBackgroundPrefetch } from '../services/api';
 import {
   Home,
   Compass,
@@ -126,6 +127,8 @@ const LayoutInner = ({ children }) => {
     } catch (e) {
       console.warn('Failed to load japa count:', e);
     }
+    // Preload all category data in background for instant panel switches
+    startBackgroundPrefetch();
   }, []);
 
   

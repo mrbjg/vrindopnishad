@@ -288,11 +288,13 @@ export function extractRelations(items) {
           slug: santSlug,
           hinglishName: transliterate(matchedBio ? matchedBio.name : saintName),
           verseIds: [],
+          verses: [],
           books: new Set(),
           biography: matchedBio || null
         };
       }
       santsMap[santSlug].verseIds.push(item.id);
+      santsMap[santSlug].verses.push({ id: item.id, title: item.title, slug: item.slug, category: item.category, author: item.author, cleanTitle: item.cleanTitle || cleanTitle });
       if (bookName) {
         const normalizedBName = getNormalizedBookName(bookName);
         santsMap[santSlug].books.add(normalizedBName);
@@ -309,7 +311,8 @@ export function extractRelations(items) {
           hinglishName: transliterate(normalizedBName),
           author: saintName || 'Unknown',
           authorSlug: saintName ? getNormalizedSaintSlug(saintName) : null,
-          verseIds: []
+          verseIds: [],
+          verses: []
         };
       } else {
         if (saintName && booksMap[bookSlug].author === 'Unknown') {
@@ -318,6 +321,7 @@ export function extractRelations(items) {
         }
       }
       booksMap[bookSlug].verseIds.push(item.id);
+      booksMap[bookSlug].verses.push({ id: item.id, title: item.title, slug: item.slug, category: item.category, author: item.author, cleanTitle: item.cleanTitle || cleanTitle });
     }
 
     if (ragaName) {
@@ -327,10 +331,12 @@ export function extractRelations(items) {
           name: ragaName,
           slug: ragaSlug,
           hinglishName: transliterate(ragaName),
-          verseIds: []
+          verseIds: [],
+          verses: []
         };
       }
       ragasMap[ragaName].verseIds.push(item.id);
+      ragasMap[ragaName].verses.push({ id: item.id, title: item.title, slug: item.slug, category: item.category, author: item.author, cleanTitle: item.cleanTitle || cleanTitle });
     }
   });
 

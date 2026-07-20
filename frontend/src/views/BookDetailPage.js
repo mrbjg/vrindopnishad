@@ -47,11 +47,15 @@ const BookDetailPage = ({ initialBook }) => {
       const relations = await apiService.getRelations({ signal });
       const foundBook = relations.books.find(b => b.slug === slug);
       if (foundBook) {
-        const allContent = await apiService.getAllContent(null, 25000);
-        const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
-        foundBook.verses = (foundBook.verseIds || [])
-          .map(id => contentMap.get(id?.toString()))
-          .filter(Boolean);
+        if (foundBook.verses && foundBook.verses.length > 0) {
+          // Already have verse objects — use them directly
+        } else if (foundBook.verseIds && foundBook.verseIds.length > 0) {
+          const allContent = await apiService.getAllContent(null, 25000);
+          const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
+          foundBook.verses = (foundBook.verseIds || [])
+            .map(id => contentMap.get(id?.toString()))
+            .filter(Boolean);
+        }
       }
       return foundBook || null;
     },

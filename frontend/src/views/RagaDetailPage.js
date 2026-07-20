@@ -46,11 +46,15 @@ const RagaDetailPage = ({ initialRaga }) => {
       const relations = await apiService.getRelations({ signal });
       const foundRaga = relations.ragas.find(r => r.slug === slug);
       if (foundRaga) {
-        const allContent = await apiService.getAllContent(null, 25000);
-        const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
-        foundRaga.verses = (foundRaga.verseIds || [])
-          .map(id => contentMap.get(id?.toString()))
-          .filter(Boolean);
+        if (foundRaga.verses && foundRaga.verses.length > 0) {
+          // Already have verse objects — use them directly
+        } else if (foundRaga.verseIds && foundRaga.verseIds.length > 0) {
+          const allContent = await apiService.getAllContent(null, 25000);
+          const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
+          foundRaga.verses = (foundRaga.verseIds || [])
+            .map(id => contentMap.get(id?.toString()))
+            .filter(Boolean);
+        }
       }
       return foundRaga || null;
     },

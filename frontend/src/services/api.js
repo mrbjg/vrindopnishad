@@ -1153,3 +1153,41 @@ export const apiService = {
 };
 
 export const isDemoMode = USE_MOCK;
+
+// ─── Background Prefetch ───────────────────────────────────
+// Fires 2s after first page paint to preload ALL data into memory.
+// Makes every subsequent panel switch instant.
+let prefetchStarted = false;
+export function startBackgroundPrefetch() {
+  if (prefetchStarted || typeof window === 'undefined') return;
+  prefetchStarted = true;
+
+  setTimeout(async () => {
+    try {
+      // 1. Prefetch relations (small file ~200KB)
+      apiService.getRelations().catch(() => {});
+
+      // 2. Prefetch all category backups in parallel
+      const categories = ['shloka', 'strotra', 'poem', 'saint', 'dham'];
+      await Promise.allSettled(
+        categories.map(cat => {
+          if (memoryCategoryCache[cat] && memoryCategoryCache[cat].length > 0) {
+            return Promise.resolve(); // Already loaded
+          }
+          return fetchCategoryBackup(cat).then(items => {
+            if (items && items.length > 0) {
+              memoryCategoryCache[cat] = ensureSorted(items);
+              try {
+                localStorage.setItem(`vrindopnishad_cache_${cat}`, JSON.stringify(items));
+              } catch (e) {}
+            }
+          });
+        })
+      );
+      rebuildMemoryMaps();
+      console.log('[Prefetch] All category data loaded in background.');
+    } catch (e) {
+      console.warn('[Prefetch] Background prefetch failed:', e);
+    }
+  }, 2000);
+}
