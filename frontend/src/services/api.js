@@ -350,13 +350,16 @@ const fetchCategoryBackup = async (category) => {
     const indexRes = await fetch(`/data/content_index_${category}.json`);
     if (indexRes.ok) return await indexRes.json();
   } catch (e) {}
+  return await fetchCategoryFullBackup(category);
+};
+
+const fetchCategoryFullBackup = async (category) => {
   try {
-    // Fallback to full backup
     const res = await fetch(`/data/content_backup_${category}.json`);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
   } catch (e) {
-    console.warn(`Failed to fetch category backup for ${category}:`, e);
+    console.warn(`Failed to fetch full category backup for ${category}:`, e);
     return [];
   }
 };
@@ -372,7 +375,26 @@ const fetchRelationsBackup = async () => {
   }
 };
 
-let inMemoryRelationsCache = null;
+const ensureFullVerseText = async (matched) => {
+  if (!matched) return matched;
+  const cat = (matched.category || classifyItemCategory(matched)).toLowerCase();
+  const needsFullText = !matched.hindi_text && (!matched.sanskrit_text || matched.sanskrit_text.length <= 100);
+  if (needsFullText) {
+    try {
+      const fullItems = await fetchCategoryFullBackup(cat);
+      if (fullItems && fullItems.length > 0) {
+        const foundFull = fullItems.find(x => x.id?.toString() === matched.id?.toString() || x.slug === matched.slug);
+        if (foundFull) {
+          const merged = { ...matched, ...foundFull };
+          if (merged.id) contentMapById.set(merged.id.toString(), merged);
+          if (merged.slug) contentMapBySlug.set(merged.slug, merged);
+          return merged;
+        }
+      }
+    } catch (e) {}
+  }
+  return matched;
+};
 
 export const apiService = {
   getCachedData: (key) => getCache(key),
@@ -689,10 +711,11 @@ export const apiService = {
     if (matched) {
       console.log(`[Cache-Hit] getContentById matched item ${id} in memory map.`);
       const cleanCategory = classifyItemCategory(matched);
+      const fullData = await ensureFullVerseText(matched);
       const data = {
-        ...matched,
+        ...fullData,
         category: cleanCategory,
-        slug: matched.slug || generateSlug(matched.title)
+        slug: fullData.slug || generateSlug(fullData.title)
       };
       setCache(cacheKey, data);
       return data;
@@ -732,10 +755,11 @@ export const apiService = {
       if (matched) {
         console.log(`[Local-Backup-Hit] getContentById found item ${id} in local backup.`);
         const cleanCategory = classifyItemCategory(matched);
+        const fullData = await ensureFullVerseText(matched);
         const data = {
-          ...matched,
+          ...fullData,
           category: cleanCategory,
-          slug: matched.slug || generateSlug(matched.title)
+          slug: fullData.slug || generateSlug(fullData.title)
         };
         setCache(cacheKey, data);
         return data;

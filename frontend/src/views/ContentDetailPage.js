@@ -800,16 +800,21 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                   {content.category}
                 </span>
                 
-                {content.author && (
-                  <div className="flex flex-col items-center lg:items-start">
-                    <span className="content-section-label text-[10px] uppercase tracking-[0.3em] mb-1 font-bold">Written By</span>
-                    <span className={`text-sacred-gradient font-headings font-bold tracking-wide text-center lg:text-left ${
-                      content.author.length > 25 ? 'text-lg' : 'text-xl sm:text-2xl'
-                    }`}>
-                      {content.author}
-                    </span>
-                  </div>
-                )}
+                {(() => {
+                  const displayAuthorName = (content.author && content.author !== 'Team VrindaVaani')
+                    ? content.author
+                    : (parsedSaintName || cleanSaint || (isHindiRoute ? 'रसिक संत' : 'Rasik Saint'));
+                  return (
+                    <div className="flex flex-col items-center lg:items-start">
+                      <span className="content-section-label text-[10px] uppercase tracking-[0.3em] mb-1 font-bold">Written By</span>
+                      <span className={`text-sacred-gradient font-headings font-bold tracking-wide text-center lg:text-left ${
+                        displayAuthorName.length > 25 ? 'text-lg' : 'text-xl sm:text-2xl'
+                      }`}>
+                        {displayAuthorName}
+                      </span>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
 
