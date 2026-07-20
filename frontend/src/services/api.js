@@ -699,7 +699,47 @@ export const apiService = {
       return data;
     }
 
-    // 2. Try fetching from live DB asynchronously
+    // 2. Try loading local backup files into memory map first (instant 0ms response)
+    try {
+      const categories = ['shloka', 'strotra', 'poem', 'saint', 'dham'];
+      for (const cat of categories) {
+        if (!memoryCategoryCache[cat] || memoryCategoryCache[cat].length === 0) {
+          const backupItems = await fetchCategoryBackup(cat);
+          if (backupItems && backupItems.length > 0) {
+            memoryCategoryCache[cat] = ensureSorted(backupItems);
+            backupItems.forEach(item => {
+              if (item.id) contentMapById.set(item.id.toString(), item);
+              if (item.slug) {
+                contentMapBySlug.set(item.slug, item);
+                contentMapBySlug.set(decodeURIComponent(item.slug), item);
+              }
+            });
+          }
+        }
+      }
+      rebuildMemoryMaps();
+
+      matched = contentMapById.get(id.toString()) ||
+        contentMapById.get(decodedId.toString()) ||
+        contentMapBySlug.get(id) ||
+        contentMapBySlug.get(decodedId);
+
+      if (matched) {
+        console.log(`[Local-Backup-Hit] getContentById found item ${id} in local backup.`);
+        const cleanCategory = classifyItemCategory(matched);
+        const data = {
+          ...matched,
+          category: cleanCategory,
+          slug: matched.slug || generateSlug(matched.title)
+        };
+        setCache(cacheKey, data);
+        return data;
+      }
+    } catch (e) {
+      console.warn('[Local-Lookup] Category backup search failed:', e);
+    }
+
+    // 3. Fallback to live DB network request ONLY if not present in any local backup
     let rawData = null;
     try {
       if (DB_PROVIDER === 'supabase') {

@@ -922,16 +922,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                     {isHindiRoute ? 'मूल पाठ डेटाबेस में उपलब्ध नहीं है। दिव्य व्याख्या नीचे उपलब्ध है।' : 'Original text not in database. Dynamic AI commentary is available below.'}
                   </p>
                 </div>
-              ) : (
-                (loading || isValidating) && (
-                  <div className="relative group py-8 sm:py-16 border-b border-white/5 space-y-4 animate-pulse text-center">
-                    <div className="h-2.5 bg-white/10 rounded w-24 mx-auto mb-6"></div>
-                    <div className="h-6 bg-white/5 rounded w-3/4 mx-auto"></div>
-                    <div className="h-6 bg-white/5 rounded w-5/6 mx-auto"></div>
-                    <div className="h-6 bg-white/5 rounded w-2/3 mx-auto"></div>
-                  </div>
-                )
-              )
+              ) : null
             )}
 
             <div className="py-8 border-b border-white/5">
@@ -1092,15 +1083,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                   />
                 </div>
               </div>
-            ) : (
-              (loading || isValidating) && (
-                <div className="py-8 sm:py-12 border-b border-white/5 space-y-4 animate-pulse">
-                  <div className="h-2.5 bg-white/10 rounded w-36 mb-6"></div>
-                  <div className="h-5 bg-white/5 rounded w-4/5"></div>
-                  <div className="h-5 bg-white/5 rounded w-11/12"></div>
-                </div>
-              )
-            )}
+            ) : null}
 
             {content.english_text && (
               <div>
@@ -1131,15 +1114,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                   {content.english_translation}
                 </div>
               </div>
-            ) : (
-              (loading || isValidating) && (
-                <div className="py-12 space-y-4 animate-pulse">
-                  <div className="h-2.5 bg-white/10 rounded w-32 mb-6"></div>
-                  <div className="h-4 bg-white/5 rounded w-5/6"></div>
-                  <div className="h-4 bg-white/5 rounded w-4/5"></div>
-                </div>
-              )
-            )}
+            ) : null}
 
             
             {content.audio_url && (
