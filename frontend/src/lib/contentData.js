@@ -531,7 +531,6 @@ export async function ensureDataLoaded() {
                 ragas: cachePayload.ragas || []
               };
               console.log(`[DataCache] Successfully loaded pre-compiled cache in ${Date.now() - startTime}ms.`);
-              writeBackupFile(contentCache.verses, false);
               if (typeof global !== 'undefined') global.contentCache = contentCache;
               return contentCache;
             }

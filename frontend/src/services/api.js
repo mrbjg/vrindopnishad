@@ -1235,5 +1235,5 @@ export function startBackgroundPrefetch() {
     } catch (e) {
       console.warn('[Prefetch] Background prefetch failed:', e);
     }
-  }, 2000);
+  }, 100);
 }
