@@ -94,6 +94,55 @@ let lastItemsRef = null;
 let lastResult = null;
 let globalRelationsCache = null;
 
+const VALID_RAGAS = new Set([
+  'कल्याण', 'कल्यान', 'केदार', 'केदारो', 'केदारौ', 'नट', 'सारंग', 'बिलावल', 'विलावल', 'काफी', 'काफ़ी', 'काफ़ी', 
+  'ललित', 'भैरव', 'भैरवी', 'भैरो', 'भैरों', 'भैरौं', 'भैंरु', 'सोरठ', 'सोरठा', 'सोरठि', 'मल्हार', 'मलार', 'मलहार', 
+  'आसावरी', 'असावरी', 'आसावारी', 'हिंडोल', 'हिंडोरा', 'विभास', 'बिभास', 'परज', 'खमाच', 'खमाज', 'खमांच', 'खम्माच', 'खम्माज', 
+  'बिहाग', 'विहाग', 'बिहागरो', 'बिहागरौ', 'विहागरो', 'विहागरौ', 'विहगरौ', 'यमन', 'ईमन', 'टोड़ी', 'तोड़ी', 'टोडी', 
+  'धनाश्री', 'कान्हरा', 'कान्हरो', 'कान्हरौ', 'कान्हरौं', 'कानरा', 'कानरौ', 'कानहरौ', 'कानहारौं', 'कन्हारो', 'जयजयवन्ती', 
+  'जयजयवंती', 'जैजैवंती', 'जैजैवन्ती', 'बागेश्री', 'देश', 'देस', 'पीलू', 'वृंदावनी', 'रामकली', 'रामग्री', 'देवगंधार', 
+  'देवगन्धार', 'सुहा', 'सुहाई', 'जैतश्री', 'जयतिश्री', 'मांड', 'माँड़', 'मारू', 'मालकौंस', 'मालकोंस', 'मालकोश', 'मालकोस', 
+  'मालकौस', 'श्री', 'अड़ाना', 'अड़ानो', 'अडानो', 'सिंधुरा', 'जौनपुरी', 'गूजरी', 'गोंड', 'गोड', 'गौड', 'गौड़', 'गौरी', 
+  'गोरी', 'गौर', 'कामोद', 'जंगला', 'झंझोटी', 'झँझोटी', 'झंझौटी', 'झिंझोटी', 'दरबारी', 'तिलककामोद', 'बहार', 'भीमपलासी', 
+  'भूपाल', 'भूपली', 'भुपाली', 'मेघ', 'हमीर', 'प्रभाती', 'अलहिया', 'अहीर', 'कलावती', 'कलिंगडा', 'कलिंगड़ा', 'कालंगड़ा', 
+  'कालिंगड़ा', 'कालिंगडा', 'खंजनाक्षी', 'खट', 'खाट', 'खिमटासिंधुका', 'गंधार', 'गन्धार', 'चर्चरी', 'चैती', 'ज़िला', 
+  'जिला', 'जै', 'तेतालौ', 'टेटलौ', 'धमाल', 'ध्रुपद', 'नाइकी', 'नायकी', 'नारायणी', 'पंचम', 'पटदीप', 'पूरबी', 'पूरवी', 
+  'पूरिया', 'पूर्वी', 'बरवा', 'बसंत', 'बसन्त', 'वसंत', 'वसन्त', 'भाल', 'मरवा', 'मालव', 'मुलतानी', 'मुल्तानी', 'योगिया', 
+  'ललित', 'लावनी', 'शहानौ', 'श्यामकल्याण', 'हमीर', 'हल्हैया'
+]);
+
+function extractCleanRaga(textSanskrit, textHindi, title) {
+  const testExtract = (text) => {
+    if (!text) return null;
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean).slice(0, 3);
+    for (const line of lines) {
+      const lineRegex = /^[([]?\s*(राग\s+[^\s,;()\]\-]+)/;
+      const match = line.match(lineRegex);
+      if (match) return match[1];
+    }
+    return null;
+  };
+
+  const titleRegex = /(?:-\s*|,\s*|\s+)(राग\s+[^\s,;()\-]+)/;
+  const cleanTitle = title || '';
+  const titleMatch = cleanTitle.match(titleRegex);
+  let candidate = null;
+  if (titleMatch) {
+    candidate = titleMatch[1];
+  } else {
+    candidate = testExtract(textSanskrit) || testExtract(textHindi);
+  }
+
+  if (candidate) {
+    const rawRaga = candidate.split(/[,]/)[0].trim();
+    const nameWithoutPrefix = rawRaga.replace(/^राग\s+/, '').trim();
+    if (VALID_RAGAS.has(nameWithoutPrefix)) {
+      return rawRaga;
+    }
+  }
+  return null;
+}
+
 export function extractRelations(items) {
   if (!items || !items.length) {
     return { sants: [], books: [], ragas: [] };
@@ -220,19 +269,7 @@ export function extractRelations(items) {
       saintName = null;
     }
 
-    let ragaName = null;
-    const ragaRegex = /(राग\s+[^\s,;()\-]+)/;
-    const matchTitle = title.match(ragaRegex);
-    const matchSanskrit = item.sanskrit_text?.match(ragaRegex);
-    const matchHindi = item.hindi_text?.match(ragaRegex);
-
-    if (matchTitle) ragaName = matchTitle[1];
-    else if (matchSanskrit) ragaName = matchSanskrit[1];
-    else if (matchHindi) ragaName = matchHindi[1];
-
-    if (ragaName) {
-      ragaName = ragaName.split(/[,]/)[0].trim();
-    }
+    const ragaName = extractCleanRaga(item.sanskrit_text, item.hindi_text, title);
 
     if (saintName) {
       const cleanSantKey = saintName.replace(/जी की वाणी/g, '').replace(/जी/g, '').replace(/महाप्रभु/g, '').trim();
