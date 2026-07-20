@@ -77,6 +77,15 @@ function extractCleanRaga(textSanskrit, textHindi, title) {
   }
   return null;
 }
+
+function extractFirstLine(title) {
+  if (!title) return '';
+  const parts = title.split(/\s+-\s+/);
+  if (parts.length > 0) {
+    return parts[0].trim().replace(/[()[\]{}]+$/, '').trim();
+  }
+  return title;
+}
 import { GLOSSARY_TERMS } from '../utils/glossaryTerms';
 import { shareVerseCard } from '../utils/shareCard';
 import PageSkeleton from '../components/ui/PageSkeleton';
@@ -866,7 +875,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
           )}
 
           <div className="space-y-16">
-            {(content.sanskrit_text || content.hindi_text) ? (
+            {content.sanskrit_text ? (
               <div className="relative group py-8 sm:py-16 border-b border-white/5 animate-fade-in">
                 {/* Decorative watermark */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-[0.025] text-[12rem] font-serif pointer-events-none select-none">ॐ</div>
@@ -874,10 +883,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 {/* Section label */}
                 <h2 className="content-section-heading text-[10px] sm:text-xs uppercase tracking-[0.45em] mb-8 sm:mb-12 flex items-center justify-center gap-4 py-2">
                   <span className="content-section-line h-px w-8 opacity-40"></span>
-                  {isHindiRoute 
-                    ? (content.sanskrit_text ? 'मूल पाठ' : 'पद पाठ') 
-                    : (content.sanskrit_text ? 'Sanskrit Text' : 'Hindi Text')
-                  }
+                  {isHindiRoute ? 'मूल पाठ' : 'Sanskrit Text'}
                   <span className="content-section-line h-px w-8 opacity-40"></span>
                 </h2>
 
@@ -891,7 +897,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                   style={{ containerType: 'inline-size' }}
                 >
                   <AutoFitVerse 
-                    text={content.sanskrit_text || content.hindi_text} 
+                    text={content.sanskrit_text} 
                     sizeLevel={sizeLevel} 
                     fontStyle={settings.fontStyle} 
                     isHindiRoute={isHindiRoute} 
@@ -901,31 +907,31 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 </div>
               </div>
             ) : (
-              (loading || isValidating) && (
-                <div className="relative group py-8 sm:py-16 border-b border-white/5 space-y-4 animate-pulse text-center">
-                  <div className="h-2.5 bg-white/10 rounded w-24 mx-auto mb-6"></div>
-                  <div className="h-6 bg-white/5 rounded w-3/4 mx-auto"></div>
-                  <div className="h-6 bg-white/5 rounded w-5/6 mx-auto"></div>
-                  <div className="h-6 bg-white/5 rounded w-2/3 mx-auto"></div>
+              content.title ? (
+                <div className="relative group py-8 sm:py-16 border-b border-white/5 animate-fade-in text-center">
+                  <div className="absolute inset-0 flex items-center justify-center opacity-[0.02] text-[12rem] font-serif pointer-events-none select-none">ॐ</div>
+                  <h2 className="content-section-heading text-[10px] sm:text-xs uppercase tracking-[0.45em] mb-8 sm:mb-12 flex items-center justify-center gap-4 py-2">
+                    <span className="content-section-line h-px w-8 opacity-40"></span>
+                    {isHindiRoute ? 'प्रथम पंक्ति' : 'Opening Line'}
+                    <span className="content-section-line h-px w-8 opacity-40"></span>
+                  </h2>
+                  <div className="mx-auto w-full max-w-2xl font-headings text-xl sm:text-2xl text-amber-100/90 leading-relaxed font-semibold italic">
+                    "{extractFirstLine(content.title)}"
+                  </div>
+                  <p className="text-[10px] text-white/40 mt-6 tracking-wide uppercase">
+                    {isHindiRoute ? 'मूल पाठ डेटाबेस में उपलब्ध नहीं है। दिव्य व्याख्या नीचे उपलब्ध है।' : 'Original text not in database. Dynamic AI commentary is available below.'}
+                  </p>
                 </div>
+              ) : (
+                (loading || isValidating) && (
+                  <div className="relative group py-8 sm:py-16 border-b border-white/5 space-y-4 animate-pulse text-center">
+                    <div className="h-2.5 bg-white/10 rounded w-24 mx-auto mb-6"></div>
+                    <div className="h-6 bg-white/5 rounded w-3/4 mx-auto"></div>
+                    <div className="h-6 bg-white/5 rounded w-5/6 mx-auto"></div>
+                    <div className="h-6 bg-white/5 rounded w-2/3 mx-auto"></div>
+                  </div>
+                )
               )
-            )}
-
-            {(content.sanskrit_text && content.hindi_text) && (
-              <div className="py-12 border-b border-white/5 animate-fade-in">
-                <h2 className="content-section-heading text-xs uppercase tracking-[0.3em] mb-10 flex items-center gap-3">
-                  <span className="content-section-line h-[1px] w-8 opacity-40"></span>
-                  {isHindiRoute ? 'हिन्दी अनुवाद / व्याख्या' : 'Hindi Meaning'}
-                </h2>
-                <div className="content-body-text leading-relaxed font-light hindi-text font-medium" style={{
-                  fontSize: sizeLevel === 1 ? '1.1rem' :
-                            sizeLevel === 2 ? '1.4rem' :
-                            sizeLevel === 3 ? '1.8rem' :
-                            sizeLevel === 4 ? '2.2rem' : '2.5rem'
-                }}>
-                  {content.hindi_text}
-                </div>
-              </div>
             )}
 
             <div className="py-8 border-b border-white/5">
@@ -1531,14 +1537,12 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
             {/* Verse Texts */}
             <div className="w-full space-y-20">
-              {(content.sanskrit_text || content.hindi_text) && (
+              {content.sanskrit_text ? (
                 <div className="space-y-6 w-full">
-                  <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">
-                    {content.sanskrit_text ? 'मूल पाठ (Sanskrit)' : 'पद पाठ (Hindi)'}
-                  </div>
+                  <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">मूल पाठ (Sanskrit)</div>
                   <div className="w-full" style={{ containerType: 'inline-size' }}>
                     <AutoFitVerse 
-                      text={content.sanskrit_text || content.hindi_text} 
+                      text={content.sanskrit_text} 
                       sizeLevel={sizeLevel} 
                       fontStyle={settings.fontStyle} 
                       isHindiRoute={isHindiRoute} 
@@ -1547,23 +1551,15 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                     />
                   </div>
                 </div>
-              )}
-
-              {(content.sanskrit_text && content.hindi_text) && (
-                <div className="space-y-6 pt-10 border-t border-current/5 w-full">
-                  <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">हिन्दी अनुवाद (Hindi Meaning)</div>
-                  <div 
-                    className="leading-[1.8] font-medium hindi-text"
-                    style={{
-                      fontSize: sizeLevel === 1 ? '1.1rem' :
-                                sizeLevel === 2 ? '1.4rem' :
-                                sizeLevel === 3 ? '1.8rem' :
-                                sizeLevel === 4 ? '2.2rem' : '2.5rem'
-                    }}
-                  >
-                    {content.hindi_text}
+              ) : (
+                content.title && (
+                  <div className="space-y-4 w-full text-center py-6">
+                    <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">{isHindiRoute ? 'प्रथम पंक्ति' : 'Opening Line'}</div>
+                    <div className="text-xl font-semibold italic text-current/90">
+                      "{extractFirstLine(content.title)}"
+                    </div>
                   </div>
-                </div>
+                )
               )}
 
               {(currentExplanation || loadingAi) && (

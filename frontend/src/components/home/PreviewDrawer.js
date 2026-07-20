@@ -5,6 +5,15 @@ import AudioPlayButton from '../ui/AudioPlayButton';
 import { ApiContext } from '../../contexts/ClientProviders';
 import { splitVerseAndTranslation } from '../../utils/textSplitter';
 
+const extractFirstLine = (title) => {
+  if (!title) return '';
+  const parts = title.split(/\s+-\s+/);
+  if (parts.length > 0) {
+    return parts[0].trim().replace(/[()[\]{}]+$/, '').trim();
+  }
+  return title;
+};
+
 const PreviewDrawer = ({
   isHi,
   selectedItem: rawSelectedItem,
@@ -228,24 +237,16 @@ const PreviewDrawer = ({
                     />
                   </div>
                 )}
-                {selectedItem.sanskrit_text && (
+                {(selectedItem.sanskrit_text || selectedItem.title) ? (
                   <div className="bg-white/5 p-4 sm:p-5 rounded-2xl border border-white/5 text-center">
                     <h5 className="text-[9px] uppercase tracking-wider text-amber-500/60 font-bold mb-2">
-                      Original Scripture
+                      {selectedItem.sanskrit_text ? (isHi ? 'मूल पाठ' : 'Original Scripture') : (isHi ? 'प्रथम पंक्ति' : 'Opening Line')}
                     </h5>
                     <p className="font-bold text-minimal-gold leading-relaxed whitespace-pre-line font-headings select-all text-sm sm:text-base text-center py-1">
-                      {selectedItem.sanskrit_text}
+                      {selectedItem.sanskrit_text || extractFirstLine(selectedItem.title)}
                     </p>
                   </div>
-                )}
-                {selectedItem.hindi_text && (
-                  <div className="bg-white/5 p-4 rounded-xl border border-white/5">
-                    <h5 className="text-[9px] uppercase tracking-wider text-white/40 font-bold mb-1">भावार्थ</h5>
-                    <p className="text-white/70 leading-relaxed font-light text-xs sm:text-sm">
-                      {selectedItem.hindi_text}
-                    </p>
-                  </div>
-                )}
+                ) : null}
                 {selectedItem.english_translation && (
                   <div className="bg-white/5 p-4 rounded-xl border border-white/5">
                     <h5 className="text-[9px] uppercase tracking-wider text-white/40 font-bold mb-1">English</h5>

@@ -499,7 +499,7 @@ const LayoutInner = ({ children }) => {
                                 <Link key={v.id} to={isHiRoute ? `/hi${prefix}${v.slug || v.id}` : `${prefix}${v.slug || v.id}`} onClick={() => setSearchFocused(false)}
                                   className="block p-1.5 rounded-lg hover:bg-white/5 transition-colors text-[11px] text-white/85 truncate">
                                   <span className="font-semibold block">{v.title}</span>
-                                  <p className="text-[9px] text-white/30 truncate mt-0.5">{v.hindi_text || v.english_translation || v.description}</p>
+                                  <p className="text-[9px] text-white/30 truncate mt-0.5">{v.sanskrit_text || v.description || v.english_translation}</p>
                                 </Link>
                               );
                             })}
