@@ -866,7 +866,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
           )}
 
           <div className="space-y-16">
-            {content.sanskrit_text ? (
+            {(content.sanskrit_text || content.hindi_text) ? (
               <div className="relative group py-8 sm:py-16 border-b border-white/5 animate-fade-in">
                 {/* Decorative watermark */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-[0.025] text-[12rem] font-serif pointer-events-none select-none">ॐ</div>
@@ -874,7 +874,10 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 {/* Section label */}
                 <h2 className="content-section-heading text-[10px] sm:text-xs uppercase tracking-[0.45em] mb-8 sm:mb-12 flex items-center justify-center gap-4 py-2">
                   <span className="content-section-line h-px w-8 opacity-40"></span>
-                  {isHindiRoute ? 'मूल पाठ' : 'Sanskrit Text'}
+                  {isHindiRoute 
+                    ? (content.sanskrit_text ? 'मूल पाठ' : 'पद पाठ') 
+                    : (content.sanskrit_text ? 'Sanskrit Text' : 'Hindi Text')
+                  }
                   <span className="content-section-line h-px w-8 opacity-40"></span>
                 </h2>
 
@@ -888,7 +891,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                   style={{ containerType: 'inline-size' }}
                 >
                   <AutoFitVerse 
-                    text={content.sanskrit_text} 
+                    text={content.sanskrit_text || content.hindi_text} 
                     sizeLevel={sizeLevel} 
                     fontStyle={settings.fontStyle} 
                     isHindiRoute={isHindiRoute} 
@@ -906,6 +909,23 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                   <div className="h-6 bg-white/5 rounded w-2/3 mx-auto"></div>
                 </div>
               )
+            )}
+
+            {(content.sanskrit_text && content.hindi_text) && (
+              <div className="py-12 border-b border-white/5 animate-fade-in">
+                <h2 className="content-section-heading text-xs uppercase tracking-[0.3em] mb-10 flex items-center gap-3">
+                  <span className="content-section-line h-[1px] w-8 opacity-40"></span>
+                  {isHindiRoute ? 'हिन्दी अनुवाद / व्याख्या' : 'Hindi Meaning'}
+                </h2>
+                <div className="content-body-text leading-relaxed font-light hindi-text font-medium" style={{
+                  fontSize: sizeLevel === 1 ? '1.1rem' :
+                            sizeLevel === 2 ? '1.4rem' :
+                            sizeLevel === 3 ? '1.8rem' :
+                            sizeLevel === 4 ? '2.2rem' : '2.5rem'
+                }}>
+                  {content.hindi_text}
+                </div>
+              </div>
             )}
 
             <div className="py-8 border-b border-white/5">
@@ -1511,18 +1531,37 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
             {/* Verse Texts */}
             <div className="w-full space-y-20">
-              {content.sanskrit_text && (
+              {(content.sanskrit_text || content.hindi_text) && (
                 <div className="space-y-6 w-full">
-                  <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">मूल पाठ (Sanskrit)</div>
+                  <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">
+                    {content.sanskrit_text ? 'मूल पाठ (Sanskrit)' : 'पद पाठ (Hindi)'}
+                  </div>
                   <div className="w-full" style={{ containerType: 'inline-size' }}>
                     <AutoFitVerse 
-                      text={content.sanskrit_text} 
+                      text={content.sanskrit_text || content.hindi_text} 
                       sizeLevel={sizeLevel} 
                       fontStyle={settings.fontStyle} 
                       isHindiRoute={isHindiRoute} 
                       centered={true} 
                       className="content-verse-text hindi-text"
                     />
+                  </div>
+                </div>
+              )}
+
+              {(content.sanskrit_text && content.hindi_text) && (
+                <div className="space-y-6 pt-10 border-t border-current/5 w-full">
+                  <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">हिन्दी अनुवाद (Hindi Meaning)</div>
+                  <div 
+                    className="leading-[1.8] font-medium hindi-text"
+                    style={{
+                      fontSize: sizeLevel === 1 ? '1.1rem' :
+                                sizeLevel === 2 ? '1.4rem' :
+                                sizeLevel === 3 ? '1.8rem' :
+                                sizeLevel === 4 ? '2.2rem' : '2.5rem'
+                    }}
+                  >
+                    {content.hindi_text}
                   </div>
                 </div>
               )}
