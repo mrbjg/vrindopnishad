@@ -346,20 +346,32 @@ const mapToAppModel = (item) => {
 
 const fetchCategoryBackup = async (category) => {
   try {
-    // Try lightweight index first (~2MB vs ~56MB full backup)
-    const indexRes = await fetch(`/data/content_index_${category}.json`);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+    const indexRes = await fetch(`/data/content_index_${category}.json`, { signal: controller.signal });
+    clearTimeout(timeoutId);
     if (indexRes.ok) return await indexRes.json();
-  } catch (e) {}
+  } catch (e) {
+    console.warn(`[DataCache] Index fetch failed/timed out for ${category}:`, e.message);
+  }
+  // Avoid attempting 60MB+ full backup downloads for heavy categories (shloka/all) in browser
+  if (category === 'shloka' || category === 'all') {
+    return [];
+  }
   return await fetchCategoryFullBackup(category);
 };
 
 const fetchCategoryFullBackup = async (category) => {
+  if (category === 'shloka' || category === 'all') return [];
   try {
-    const res = await fetch(`/data/content_backup_${category}.json`);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(`/data/content_backup_${category}.json`, { signal: controller.signal });
+    clearTimeout(timeoutId);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
   } catch (e) {
-    console.warn(`Failed to fetch full category backup for ${category}:`, e);
+    console.warn(`Failed to fetch full category backup for ${category}:`, e.message);
     return [];
   }
 };
