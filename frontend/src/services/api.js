@@ -95,6 +95,16 @@ const rebuildMemoryMaps = () => {
       }
     }
 
+    if (!item.cleanTitle) {
+      const title = item.title || '';
+      let cleanTitle = title;
+      const realParts = title.split(/\s+-\s+/);
+      if (realParts.length >= 2) {
+        cleanTitle = realParts[0].trim();
+      }
+      item.cleanTitle = cleanTitle;
+    }
+
     if (item.id) {
       contentMapById.set(item.id.toString(), item);
     }

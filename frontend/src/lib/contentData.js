@@ -215,12 +215,19 @@ function loadLocalJSONFallback() {
             slug = slug.substring(0, 100).replace(/-+$/, '');
           }
         }
+        const title = item.title || '';
+        let cleanTitle = title;
+        const realParts = title.split(/\s+-\s+/);
+        if (realParts.length >= 2) {
+          cleanTitle = realParts[0].trim();
+        }
         const normalizedTags = !item.tags ? [] : Array.isArray(item.tags) ? item.tags : String(item.tags).split(',').map(t => t.trim()).filter(Boolean);
         return {
           id: item.id || `local-${idx}`,
           ...item,
           tags: normalizedTags,
           category: cleanCategory,
+          cleanTitle: cleanTitle,
           slug: slug
         };
       });
