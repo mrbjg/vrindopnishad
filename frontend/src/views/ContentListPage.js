@@ -103,7 +103,7 @@ const ContentListPage = ({ initialContent, initialCategories }) => {
       }
       
       try {
-        const fullData = await apiService.getAllContent(selectedCategory, 10000);
+        const fullData = await apiService.getAllContent(selectedCategory, 25000);
         const cats = await apiService.getCategories();
         
         if (active) {

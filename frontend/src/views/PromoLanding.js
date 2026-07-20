@@ -188,7 +188,7 @@ export default function PromoLanding() {
           setStats(JSON.parse(cached));
           return;
         }
-        const items = await apiService.getAllContent(null, 10000);
+        const items = await apiService.getAllContent(null, 25000);
         let counts = { shloka: 0, strotra: 0, poem: 0, raga: 0, sant: 0, book: 0 };
         items.forEach(item => {
           const cat = item.category?.toLowerCase();

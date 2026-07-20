@@ -46,7 +46,7 @@ const RagaDetailPage = ({ initialRaga }) => {
       const relations = await apiService.getRelations({ signal });
       const foundRaga = relations.ragas.find(r => r.slug === slug);
       if (foundRaga) {
-        const allContent = await apiService.getAllContent(null, 5000);
+        const allContent = await apiService.getAllContent(null, 25000);
         const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
         foundRaga.verses = (foundRaga.verseIds || [])
           .map(id => contentMap.get(id?.toString()))

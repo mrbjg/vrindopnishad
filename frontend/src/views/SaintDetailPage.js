@@ -56,7 +56,7 @@ const SaintDetailPage = ({ initialSaint }) => {
       const relations = await apiService.getRelations({ signal });
       const foundSant = relations.sants.find(s => s.slug === slug);
       if (foundSant) {
-        const allContent = await apiService.getAllContent(null, 5000);
+        const allContent = await apiService.getAllContent(null, 25000);
         const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
         foundSant.verses = (foundSant.verseIds || [])
           .map(id => contentMap.get(id?.toString()))

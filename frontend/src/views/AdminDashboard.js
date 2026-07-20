@@ -40,7 +40,7 @@ const AdminDashboard = () => {
   const fetchContent = async () => {
     try {
       setLoading(true);
-      const items = await apiService.getAllContent(null, 10000);
+      const items = await apiService.getAllContent(null, 25000);
       setContent(items || []);
     } catch (error) {
       console.error('Error fetching content:', error);

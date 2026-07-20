@@ -113,7 +113,7 @@ const CategoryPage = ({ category: propCategory }) => {
 
     const load = async () => {
       try {
-        const data = await apiService.getAllContent(category, 10000);
+        const data = await apiService.getAllContent(category, 25000);
         if (active) {
           setContent(data || []);
         }

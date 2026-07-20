@@ -43,7 +43,7 @@ const PreviewDrawer = ({
 
     const resolve = async () => {
       try {
-        const allContent = await apiService.getAllContent(null, 5000);
+        const allContent = await apiService.getAllContent(null, 25000);
         if (active) {
           const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
           const mapped = (selectedItem.verseIds || [])

@@ -463,7 +463,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
     const timer = setTimeout(async () => {
       if (!active) return;
       try {
-        const allItems = await apiService.getAllContent(null, 10000);
+        const allItems = await apiService.getAllContent(null, 25000);
         const relations = extractRelations(allItems);
         
         const authorInfo = parseAuthorField(content.author || "");

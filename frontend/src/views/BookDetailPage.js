@@ -47,7 +47,7 @@ const BookDetailPage = ({ initialBook }) => {
       const relations = await apiService.getRelations({ signal });
       const foundBook = relations.books.find(b => b.slug === slug);
       if (foundBook) {
-        const allContent = await apiService.getAllContent(null, 5000);
+        const allContent = await apiService.getAllContent(null, 25000);
         const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
         foundBook.verses = (foundBook.verseIds || [])
           .map(id => contentMap.get(id?.toString()))

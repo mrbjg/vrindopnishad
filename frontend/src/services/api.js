@@ -406,7 +406,7 @@ export const apiService = {
     return relations;
   },
 
-  getAllContent: async (category = null, limit = 50) => {
+  getAllContent: async (category = null, limit = 25000) => {
     const targetCategories = category
       ? [category.toLowerCase().trim()]
       : ['shloka', 'strotra', 'poem', 'saint', 'dham'];

@@ -222,7 +222,7 @@ const LayoutInner = ({ children }) => {
     if (dataLoaded || loadingSearchData) return;
     setLoadingSearchData(true);
     try {
-      const items = await apiService.getAllContent(null, 10000);
+      const items = await apiService.getAllContent(null, 25000);
       const rel = extractRelations(items);
       setSearchData({
         sants: rel.sants || [],
