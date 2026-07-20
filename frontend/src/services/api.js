@@ -372,6 +372,8 @@ const fetchRelationsBackup = async () => {
   }
 };
 
+let inMemoryRelationsCache = null;
+
 export const apiService = {
   getCachedData: (key) => getCache(key),
   getMemoryCachedItems: () => memoryCachedItems,
@@ -382,6 +384,7 @@ export const apiService = {
   },
 
   getRelations: async () => {
+    if (inMemoryRelationsCache) return inMemoryRelationsCache;
     if (typeof window === 'undefined') {
       return { sants: [], books: [], ragas: [], biographies: [] };
     }
@@ -393,6 +396,7 @@ export const apiService = {
         if (parsed && parsed.sants) {
           parsed.sants = parsed.sants.filter(s => !/^[0-9\s\(\)\-\.#]+$/.test(s.name) && s.name.trim() !== "");
         }
+        inMemoryRelationsCache = parsed;
         return parsed;
       }
     } catch (e) {
@@ -404,6 +408,7 @@ export const apiService = {
     if (relations && relations.sants) {
       relations.sants = relations.sants.filter(s => !/^[0-9\s\(\)\-\.#]+$/.test(s.name) && s.name.trim() !== "");
     }
+    inMemoryRelationsCache = relations;
     try {
       localStorage.setItem('vrindopnishad_relations_cache_v2', JSON.stringify(relations));
     } catch (e) {

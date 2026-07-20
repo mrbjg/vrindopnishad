@@ -232,6 +232,7 @@ const LayoutInner = ({ children }) => {
         books: rel.books || [],
         ragas: rel.ragas || []
       }));
+      setDataLoaded(true); // Allow immediate search over saints, books, and ragas
 
       // 2. Fetch all content for verses matching in the background
       const items = await apiService.getAllContent(null, 25000);
@@ -239,7 +240,6 @@ const LayoutInner = ({ children }) => {
         ...prev,
         verses: items.filter(v => v.category?.toLowerCase() !== 'saint') || []
       }));
-      setDataLoaded(true);
     } catch (e) {
       console.error('Failed to load global search data:', e);
     } finally {

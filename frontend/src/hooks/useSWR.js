@@ -93,15 +93,13 @@ export const useSWR = (cacheKey, fetchFn, options = {}) => {
           // Write to memory cache
           memoryCache.set(cacheKey, result);
 
-          // Write to localStorage cache
+          // Write to localStorage cache (for small data only)
           try {
-            localStorage.setItem(
-              `vrindopnishad_swr_${cacheKey}`,
-              JSON.stringify({ timestamp: Date.now(), value: result })
-            );
-          } catch (e) {
-            console.warn('[useSWR] localStorage write error:', e);
-          }
+            const str = JSON.stringify({ timestamp: Date.now(), value: result });
+            if (str.length < 200000) { // < 200KB limit for localStorage
+              localStorage.setItem(`vrindopnishad_swr_${cacheKey}`, str);
+            }
+          } catch (e) {}
         }
       } catch (err) {
         if (err.name === 'AbortError') return;
