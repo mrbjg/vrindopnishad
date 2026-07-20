@@ -2,12 +2,7 @@ import React from 'react';
 import CategoryPage from '../../../src/views/CategoryPage';
 import Layout from '../../../src/components/Layout';
 
-export async function generateStaticParams() {
-  const categories = ['shloka', 'strotra', 'poem', 'katha', 'sankirtan', 'saint', 'dham', 'literature'];
-  return categories.map(category => ({
-    category: category
-  }));
-}
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }) {
   const category = params.category;
@@ -30,4 +25,4 @@ export default function CategoryRoute({ params }) {
   );
 }
 
-export const revalidate = 604800;
+

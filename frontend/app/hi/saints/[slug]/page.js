@@ -5,13 +5,7 @@ import { getSaintBySlug, getAllSaints, ensureDataLoaded } from '../../../../src/
 import { notFound, permanentRedirect } from 'next/navigation';
 import { Link } from '../../../../src/lib/router-compat';
 
-export async function generateStaticParams() {
-  await ensureDataLoaded();
-  const saints = getAllSaints().slice(0, 50);
-  return saints.map(saint => ({
-    slug: encodeURIComponent(saint.slug),
-  }));
-}
+export const dynamic = 'force-dynamic';
 
 import { supabase } from '../../../../src/lib/supabase';
 import { getSaintMetadata } from '../../../../src/utils/saintMetadata';
@@ -91,7 +85,7 @@ async function fetchSaintFromSupabaseBySlug(slug) {
   }
 }
 
-export const dynamicParams = true;
+
 
 export async function generateMetadata({ params }) {
   await ensureDataLoaded();
@@ -207,4 +201,4 @@ export default async function HindiSaintRoute({ params }) {
     </>
   );
 }
-export const revalidate = 604800;
+

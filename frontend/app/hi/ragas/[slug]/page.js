@@ -5,13 +5,7 @@ import { getRagaBySlug, getAllRagas, ensureDataLoaded } from '../../../../src/li
 import { notFound, permanentRedirect } from 'next/navigation';
 import { Link } from '../../../../src/lib/router-compat';
 
-export async function generateStaticParams() {
-  await ensureDataLoaded();
-  const ragas = getAllRagas();
-  return ragas.map(raga => ({
-    slug: encodeURIComponent(raga.slug),
-  }));
-}
+export const dynamic = 'force-dynamic';
 
 import { supabase } from '../../../../src/lib/supabase';
 
@@ -67,7 +61,7 @@ async function fetchRagaFromSupabaseBySlug(slug) {
   }
 }
 
-export const dynamicParams = true;
+
 
 export async function generateMetadata({ params }) {
   await ensureDataLoaded();
@@ -183,4 +177,4 @@ export default async function HindiRagaRoute({ params }) {
     </>
   );
 }
-export const revalidate = 604800;
+

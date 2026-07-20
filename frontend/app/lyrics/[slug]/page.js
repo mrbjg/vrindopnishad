@@ -21,14 +21,7 @@ import RelatedContent, { RelatedItem } from '../../../src/components/seo/Related
 import ReadingTime from '../../../src/components/seo/ReadingTime';
 import LastUpdated from '../../../src/components/seo/LastUpdated';
 import AuthorCard from '../../../src/components/seo/AuthorCard';
-
-export async function generateStaticParams() {
-  await ensureDataLoaded();
-  const verses = getAllVerses().slice(0, 200);
-  return verses.map(verse => ({
-    slug: encodeURIComponent(verse.slug),
-  }));
-}
+export const dynamic = 'force-dynamic';
 
 import { supabase } from '../../../src/lib/supabase';
 
@@ -68,7 +61,6 @@ async function fetchVerseFromSupabaseBySlug(slug) {
   }
 }
 
-export const dynamicParams = true;
 
 export async function generateMetadata({ params }) {
   await ensureDataLoaded();
@@ -231,4 +223,3 @@ export default async function LyricsDetailPage({ params }) {
     </>
   );
 }
-export const revalidate = 604800;

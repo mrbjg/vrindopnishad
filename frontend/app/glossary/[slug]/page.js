@@ -4,14 +4,9 @@ import Layout from '../../../src/components/Layout';
 import { getGlossaryTermBySlug, getGlossaryTerms } from '../../../src/lib/contentData';
 import { notFound, permanentRedirect } from 'next/navigation';
 
-export async function generateStaticParams() {
-  const terms = getGlossaryTerms();
-  return terms.map(t => ({
-    slug: encodeURIComponent(t.slug),
-  }));
-}
+export const dynamic = 'force-dynamic';
 
-export const dynamicParams = true;
+
 
 export async function generateMetadata({ params }) {
   const decodedSlug = decodeURIComponent(params.slug);
@@ -76,4 +71,4 @@ export default function GlossaryRoute({ params }) {
     </>
   );
 }
-export const revalidate = 604800;
+

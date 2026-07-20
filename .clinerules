@@ -151,3 +151,7 @@ Before removing any UI component or block (such as search inputs, buttons, or ic
 Responsive Header Cleansing:
 Ensure that the layout wrapper's vertical offsets match the active layout mode dynamically so that changing layout settings (like switching presets or toggling elements) maintains exact clearances.
 
+# Next.js Caching & Vercel Hobby Quotas
+- For high-cardinality dynamic routes (>500 paths) on Vercel where the content has in-memory local fallback lookup, use Server-Side Rendering (SSR) via `export const dynamic = 'force-dynamic';`.
+- Avoid using ISR (time-based revalidate) on routes that bots/crawlers hit heavily to prevent cache-busting writes from exceeding Vercel Hobby limits during active development deployments.
+
