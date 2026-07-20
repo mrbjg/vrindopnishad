@@ -30,7 +30,7 @@ async function fetchVerseFromSupabaseBySlug(slug) {
     const { data, error } = await supabase
       .from('content')
       .select('*')
-      .eq('slug', slug)
+      .or(`slug.eq.${slug},id.eq.${slug}`)
       .maybeSingle();
 
     if (error || !data) return null;

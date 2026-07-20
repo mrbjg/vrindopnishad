@@ -108,7 +108,7 @@ export default async function handler(req, res) {
     ) + '...'
     : 'Sacred shlokas, strotras, and devotional poetry from Vrindavan saints.';
 
-  const pageUrl = `${DOMAIN}/content/${encodeURIComponent(slug)}`;
+  const pageUrl = `${DOMAIN}/lyrics/${encodeURIComponent(slug)}`;
   const imageUrl = content?.image_url || 'https://vrindopnishad.in/Vrindopnishad%20Web/class/logo/v-logo.png';
 
   // JSON-LD structured data
