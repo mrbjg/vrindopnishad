@@ -346,6 +346,12 @@ const mapToAppModel = (item) => {
 
 const fetchCategoryBackup = async (category) => {
   try {
+    // Try lightweight index first (~2MB vs ~56MB full backup)
+    const indexRes = await fetch(`/data/content_index_${category}.json`);
+    if (indexRes.ok) return await indexRes.json();
+  } catch (e) {}
+  try {
+    // Fallback to full backup
     const res = await fetch(`/data/content_backup_${category}.json`);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();

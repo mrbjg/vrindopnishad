@@ -425,30 +425,50 @@ function writeBackupFile(verses, force = false) {
       });
     }
 
-    // Split and write category-specific files
+    // Helper: strip a verse to lightweight card fields only
+    const toLightweight = (v) => ({
+      id: v.id,
+      title: v.title,
+      slug: v.slug,
+      category: v.category,
+      author: v.author,
+      cleanTitle: v.cleanTitle,
+      sanskrit_text: (v.sanskrit_text || '').substring(0, 100),
+      tags: v.tags,
+      audio_url: v.audio_url ? true : undefined,
+      image_urls: v.image_urls?.length ? true : undefined,
+      video_urls: v.video_urls?.length ? true : undefined,
+    });
+
+    // Split and write category-specific index files (lightweight, ~2MB each)
     const categories = ['shloka', 'strotra', 'poem', 'saint', 'dham'];
     categories.forEach(cat => {
-      const catFile = path.join(dataDir, `content_backup_${cat}.json`);
-      if (force || !fs.existsSync(catFile)) {
+      const indexFile = path.join(dataDir, `content_index_${cat}.json`);
+      if (force || !fs.existsSync(indexFile)) {
         const catVerses = verses.filter(v => {
           const itemCat = classifyItemCategory(v);
           return itemCat === cat;
         });
-        console.log(`[DataCache] Saving category backup [${cat}] to: ${catFile}...`);
-        fs.writeFile(catFile, JSON.stringify(catVerses), 'utf8', (err) => {
-          if (err) console.warn(`[DataCache] Async backup write failed for ${cat}:`, err);
-        });
+        const lightweightVerses = catVerses.map(toLightweight);
+        console.log(`[DataCache] Saving lightweight index [${cat}] (${lightweightVerses.length} items) to: ${indexFile}...`);
+        try {
+          fs.writeFileSync(indexFile, JSON.stringify(lightweightVerses), 'utf8');
+        } catch (err) {
+          console.warn(`[DataCache] Index write failed for ${cat}:`, err);
+        }
       }
     });
 
-    // Write a smaller backup for the home screen (latest 100 items) to speed up initial page load
+    // Write a smaller backup for the home screen (latest 100 items)
     const homeFile = path.join(dataDir, 'content_backup_home.json');
     if (force || !fs.existsSync(homeFile)) {
       console.log(`[DataCache] Saving home screen backup (first 100 items) to: ${homeFile}...`);
-      const homeVerses = verses.slice(0, 100);
-      fs.writeFile(homeFile, JSON.stringify(homeVerses), 'utf8', (err) => {
-        if (err) console.warn("[DataCache] Async home backup write failed:", err);
-      });
+      const homeVerses = verses.slice(0, 100).map(toLightweight);
+      try {
+        fs.writeFileSync(homeFile, JSON.stringify(homeVerses), 'utf8');
+      } catch (err) {
+        console.warn("[DataCache] Home backup write failed:", err);
+      }
     }
 
     // Pre-compute and save relations
@@ -456,9 +476,11 @@ function writeBackupFile(verses, force = false) {
     if (force || !fs.existsSync(relationsFile)) {
       console.log(`[DataCache] Pre-computing and saving relations backup to: ${relationsFile}...`);
       const relations = extractRelations(verses);
-      fs.writeFile(relationsFile, JSON.stringify(relations), 'utf8', (err) => {
-        if (err) console.warn("[DataCache] Async relations backup write failed:", err);
-      });
+      try {
+        fs.writeFileSync(relationsFile, JSON.stringify(relations), 'utf8');
+      } catch (err) {
+        console.warn("[DataCache] Relations backup write failed:", err);
+      }
     }
 
   } catch (err) {
