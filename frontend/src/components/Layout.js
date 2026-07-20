@@ -5,7 +5,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext, ApiContext } from '../contexts/ClientProviders';
 import { useTheme } from '../contexts/ThemeContext';
 import { useSettings } from '../contexts/SettingsContext';
-import { extractRelations } from '../utils/relations';
 import { articles } from '../utils/kbArticles';
 import { hinglishMatch } from '../utils/hinglishSearch';
 import { GLOSSARY_TERMS } from '../data/glossaryTerms';
@@ -222,14 +221,21 @@ const LayoutInner = ({ children }) => {
     if (dataLoaded || loadingSearchData) return;
     setLoadingSearchData(true);
     try {
-      const items = await apiService.getAllContent(null, 25000);
-      const rel = extractRelations(items);
-      setSearchData({
+      // 1. Instantly fetch pre-computed relations from backup JSON
+      const rel = await apiService.getRelations();
+      setSearchData(prev => ({
+        ...prev,
         sants: rel.sants || [],
         books: rel.books || [],
-        ragas: rel.ragas || [],
+        ragas: rel.ragas || []
+      }));
+
+      // 2. Fetch all content for verses matching in the background
+      const items = await apiService.getAllContent(null, 25000);
+      setSearchData(prev => ({
+        ...prev,
         verses: items.filter(v => v.category?.toLowerCase() !== 'saint') || []
-      });
+      }));
       setDataLoaded(true);
     } catch (e) {
       console.error('Failed to load global search data:', e);

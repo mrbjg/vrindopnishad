@@ -170,9 +170,26 @@ let contentCache = typeof global !== 'undefined' ? (global.contentCache || null)
 let localFallbackCache = typeof global !== 'undefined' ? (global.localFallbackCache || null) : null;
 let initializationPromise = typeof global !== 'undefined' ? (global.initializationPromise || null) : null;
 
-async function fetchAllFromDataConnect() {
-  console.log("[DataConnect] Blocked: fetchAllFromDataConnect has been disabled.");
-  return [];
+function normalizeForFuzzy(str) {
+  if (!str) return '';
+  return str
+    .toLowerCase()
+    .replace(/v/g, 'b')
+    .replace(/sh/g, 's')
+    .replace(/oo/g, 'u')
+    .replace(/ee/g, 'i')
+    .replace(/aa/g, 'a')
+    .replace(/kh/g, 'k')
+    .replace(/gh/g, 'g')
+    .replace(/ch/g, 'c')
+    .replace(/jh/g, 'j')
+    .replace(/th/g, 't')
+    .replace(/dh/g, 'd')
+    .replace(/ph/g, 'f')
+    .replace(/bh/g, 'b')
+    .replace(/(.)\1+/g, '$1') // Remove double characters
+    .replace(/[^a-z0-9]/g, '') // Keep alphanumeric only
+    .trim();
 }
 
 function loadLocalJSONFallback() {
@@ -222,13 +239,49 @@ function loadLocalJSONFallback() {
           cleanTitle = realParts[0].trim();
         }
         const normalizedTags = !item.tags ? [] : Array.isArray(item.tags) ? item.tags : String(item.tags).split(',').map(t => t.trim()).filter(Boolean);
+
+        // Pre-compute search fields
+        const sansFirstLine = item.sanskrit_text ? item.sanskrit_text.split(/[\n।॥]/).map(l => l.trim()).filter(Boolean)[0] || '' : '';
+        const hindiFirstLine = item.hindi_text ? item.hindi_text.split(/[\n।॥]/).map(l => l.trim()).filter(Boolean)[0] || '' : '';
+
+        const _textDevanagari = [
+          title,
+          item.name,
+          item.hindi_text,
+          item.sanskrit_text,
+          item.author,
+          item.description,
+          cleanCategory,
+          sansFirstLine,
+          hindiFirstLine
+        ].filter(Boolean).join(' ').toLowerCase();
+
+        const _textHinglish = [
+          item.hinglishName,
+          transliterate(title),
+          transliterate(item.name || ''),
+          transliterate(item.author || ''),
+          transliterate(item.description || ''),
+          transliterate(sansFirstLine),
+          transliterate(hindiFirstLine),
+          item.english_translation,
+          item.english_text,
+          slug,
+          ...(normalizedTags)
+        ].filter(Boolean).join(' ').toLowerCase();
+
+        const _normalizedHinglish = normalizeForFuzzy(_textHinglish);
+
         return {
           id: item.id || `local-${idx}`,
           ...item,
           tags: normalizedTags,
           category: cleanCategory,
           cleanTitle: cleanTitle,
-          slug: slug
+          slug: slug,
+          _textDevanagari,
+          _textHinglish,
+          _normalizedHinglish
         };
       });
     }
@@ -238,14 +291,39 @@ function loadLocalJSONFallback() {
       const rawSaintsData = fs.readFileSync(saintsPath, 'utf8');
       rawSaints = JSON.parse(rawSaintsData).map((saint, idx) => {
         const nameVal = saint.name || saint.title || '';
+        const bioText = saint.biography || saint.hindi_text || saint.description || '';
+        const saintSlug = saint.slug || generateSlug(nameVal);
+        const hinglishSaintName = saint.hinglishName || transliterate(nameVal);
+
+        const _textDevanagari = [
+          nameVal,
+          bioText,
+          saint.author,
+          saint.description,
+          'saint'
+        ].filter(Boolean).join(' ').toLowerCase();
+
+        const _textHinglish = [
+          hinglishSaintName,
+          transliterate(nameVal),
+          transliterate(bioText),
+          transliterate(saint.description || ''),
+          saintSlug
+        ].filter(Boolean).join(' ').toLowerCase();
+
+        const _normalizedHinglish = normalizeForFuzzy(_textHinglish);
+
         return {
           id: saint.id || `saint-local-${idx}`,
           ...saint,
           name: nameVal,
-          hinglishName: saint.hinglishName || transliterate(nameVal),
-          biography: saint.biography || saint.hindi_text || saint.description || '',
+          hinglishName: hinglishSaintName,
+          biography: bioText,
           category: 'saint',
-          slug: saint.slug || generateSlug(nameVal)
+          slug: saintSlug,
+          _textDevanagari,
+          _textHinglish,
+          _normalizedHinglish
         };
       });
     }
