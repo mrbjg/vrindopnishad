@@ -13,12 +13,37 @@ export async function generateStaticParams() {
   return [
     { sub: 'pages.xml' },
     { sub: 'content.xml' },
+    { sub: 'content-1.xml' },
+    { sub: 'content-2.xml' },
+    { sub: 'content-3.xml' },
+    { sub: 'content-4.xml' },
     { sub: 'saints.xml' },
     { sub: 'granthas.xml' },
     { sub: 'ragas.xml' },
     { sub: 'glossary.xml' },
     { sub: 'festivals.xml' }
   ];
+}
+
+function escapeXml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+function safeFormatDate(input, fallback = '2026-06-27') {
+  if (!input) return fallback;
+  try {
+    const d = new Date(input);
+    if (isNaN(d.getTime())) return fallback;
+    return d.toISOString().split('T')[0];
+  } catch (e) {
+    return fallback;
+  }
 }
 
 export async function GET(request, { params }) {
@@ -30,7 +55,6 @@ export async function GET(request, { params }) {
   const base = 'https://path.vrindopnishad.in';
 
   if (type === 'pages') {
-    // Core routes
     const coreRoutes = [
       '',
       '/hi',
@@ -55,7 +79,6 @@ export async function GET(request, { params }) {
       });
     });
 
-    // Static pages
     const staticSlugs = Object.keys(STATIC_SEO_PAGES);
     staticSlugs.forEach(slug => {
       urlItems.push({
@@ -71,12 +94,32 @@ export async function GET(request, { params }) {
         lastmod: '2026-06-02'
       });
     });
-  } else if (type === 'content') {
-    const items = getAllVerses();
+  } else if (type === 'content' || type.startsWith('content-')) {
+    const allVerses = getAllVerses();
+    let items = allVerses;
+    
+    // Chunking content into parts of 3,000 items (up to 6,000 URLs per part)
+    // to prevent Google Search Console response size/timeout "General HTTP error"
+    const CHUNK_SIZE = 3000;
+    if (type === 'content-1') {
+      items = allVerses.slice(0, CHUNK_SIZE);
+    } else if (type === 'content-2') {
+      items = allVerses.slice(CHUNK_SIZE, CHUNK_SIZE * 2);
+    } else if (type === 'content-3') {
+      items = allVerses.slice(CHUNK_SIZE * 2, CHUNK_SIZE * 3);
+    } else if (type === 'content-4') {
+      items = allVerses.slice(CHUNK_SIZE * 3);
+    } else if (type === 'content') {
+      items = allVerses.slice(0, CHUNK_SIZE);
+    }
+
     items.forEach(v => {
-      const slug = encodeURIComponent(v.slug || v.id?.toString() || '');
-      const lastmodDate = v.updated_at || v.updatedAt || v.created_at || v.createdAt || '2026-06-27';
-      const formattedDate = new Date(lastmodDate).toISOString().split('T')[0];
+      const rawSlug = v.slug || v.id?.toString() || '';
+      if (!rawSlug) return;
+      const slug = encodeURIComponent(rawSlug);
+      const lastmodDate = v.updated_at || v.updatedAt || v.created_at || v.createdAt;
+      const formattedDate = safeFormatDate(lastmodDate);
+
       urlItems.push({
         loc: `${base}/lyrics/${slug}`,
         changefreq: 'weekly',
@@ -93,9 +136,10 @@ export async function GET(request, { params }) {
   } else if (type === 'saints') {
     const items = getAllSaints();
     items.forEach(s => {
+      if (!s || !s.slug) return;
       const slug = encodeURIComponent(s.slug);
-      const lastmodDate = s.rawItem?.updated_at || s.rawItem?.updatedAt || '2026-06-27';
-      const formattedDate = new Date(lastmodDate).toISOString().split('T')[0];
+      const lastmodDate = s.rawItem?.updated_at || s.rawItem?.updatedAt;
+      const formattedDate = safeFormatDate(lastmodDate);
       urlItems.push({
         loc: `${base}/saints/${slug}`,
         changefreq: 'weekly',
@@ -112,12 +156,18 @@ export async function GET(request, { params }) {
   } else if (type === 'granthas') {
     const items = getAllGranthas();
     items.forEach(b => {
+      if (!b || !b.slug) return;
       const slug = encodeURIComponent(b.slug);
       let lastmod = '2026-06-27';
-      if (b.verses && b.verses.length > 0) {
-        const timestamps = b.verses.map(v => v.updated_at || v.updatedAt || v.created_at || v.createdAt).filter(Boolean);
+      if (b.verses && Array.isArray(b.verses) && b.verses.length > 0) {
+        const timestamps = b.verses
+          .map(v => v?.updated_at || v?.updatedAt || v?.created_at || v?.createdAt)
+          .filter(Boolean);
         if (timestamps.length > 0) {
-          lastmod = new Date(Math.max(...timestamps.map(t => new Date(t).getTime()))).toISOString().split('T')[0];
+          const validTimes = timestamps.map(t => new Date(t).getTime()).filter(t => !isNaN(t));
+          if (validTimes.length > 0) {
+            lastmod = safeFormatDate(Math.max(...validTimes));
+          }
         }
       }
       urlItems.push({
@@ -136,12 +186,18 @@ export async function GET(request, { params }) {
   } else if (type === 'ragas') {
     const items = getAllRagas();
     items.forEach(r => {
+      if (!r || !r.slug) return;
       const slug = encodeURIComponent(r.slug);
       let lastmod = '2026-06-27';
-      if (r.verses && r.verses.length > 0) {
-        const timestamps = r.verses.map(v => v.updated_at || v.updatedAt || v.created_at || v.createdAt).filter(Boolean);
+      if (r.verses && Array.isArray(r.verses) && r.verses.length > 0) {
+        const timestamps = r.verses
+          .map(v => v?.updated_at || v?.updatedAt || v?.created_at || v?.createdAt)
+          .filter(Boolean);
         if (timestamps.length > 0) {
-          lastmod = new Date(Math.max(...timestamps.map(t => new Date(t).getTime()))).toISOString().split('T')[0];
+          const validTimes = timestamps.map(t => new Date(t).getTime()).filter(t => !isNaN(t));
+          if (validTimes.length > 0) {
+            lastmod = safeFormatDate(Math.max(...validTimes));
+          }
         }
       }
       urlItems.push({
@@ -160,6 +216,7 @@ export async function GET(request, { params }) {
   } else if (type === 'glossary') {
     const items = getGlossaryTerms();
     items.forEach(t => {
+      if (!t || !t.slug) return;
       const slug = encodeURIComponent(t.slug);
       urlItems.push({
         loc: `${base}/glossary/${slug}`,
@@ -195,10 +252,10 @@ export async function GET(request, { params }) {
   }
 
   const xmlUrls = urlItems.map(item => `  <url>
-    <loc>${item.loc}</loc>
-    <lastmod>${item.lastmod}</lastmod>
-    <changefreq>${item.changefreq}</changefreq>
-    <priority>${item.priority}</priority>
+    <loc>${escapeXml(item.loc)}</loc>
+    <lastmod>${escapeXml(item.lastmod)}</lastmod>
+    <changefreq>${escapeXml(item.changefreq)}</changefreq>
+    <priority>${escapeXml(item.priority)}</priority>
   </url>`).join('\n');
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -209,6 +266,7 @@ ${xmlUrls}
   return new Response(xml, {
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400'
     },
   });
 }

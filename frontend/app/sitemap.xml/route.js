@@ -7,7 +7,19 @@ export async function GET() {
     <lastmod>${today}</lastmod>
   </sitemap>
   <sitemap>
-    <loc>https://path.vrindopnishad.in/sitemaps/content.xml</loc>
+    <loc>https://path.vrindopnishad.in/sitemaps/content-1.xml</loc>
+    <lastmod>${today}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://path.vrindopnishad.in/sitemaps/content-2.xml</loc>
+    <lastmod>${today}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://path.vrindopnishad.in/sitemaps/content-3.xml</loc>
+    <lastmod>${today}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://path.vrindopnishad.in/sitemaps/content-4.xml</loc>
     <lastmod>${today}</lastmod>
   </sitemap>
   <sitemap>
@@ -35,6 +47,7 @@ export async function GET() {
   return new Response(xml, {
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400'
     },
   });
 }

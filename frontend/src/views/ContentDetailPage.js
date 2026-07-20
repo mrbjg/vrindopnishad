@@ -5,6 +5,7 @@ import { useParams, Link, useLocation } from 'react-router-dom';
 import { ApiContext } from '../contexts/ClientProviders';
 import {
   ArrowLeft,
+  ArrowRight,
   Music,
   Image as ImageIcon,
   Video,
@@ -27,7 +28,16 @@ import FontWheel from '../components/FontWheel';
 import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { Helmet } from 'react-helmet-async';
 import { transliterate } from '../utils/transliterate';
-import { extractRelations, parseAuthorField, getNormalizedSaintSlug, getNormalizedBookSlug, getNormalizedBookName } from '../utils/relations';
+import { extractRelations, parseAuthorField, getNormalizedSaintSlug, getNormalizedBookSlug, getNormalizedBookName, slugify } from '../utils/relations';
+
+const getInitials = (name) => {
+  if (!name) return 'VV';
+  const words = name.trim().split(/\s+/);
+  if (words.length >= 2) {
+    return (words[0][0] + words[1][0]).toUpperCase();
+  }
+  return name.slice(0, 2).toUpperCase();
+};
 
 const VALID_RAGAS = new Set([
   'कल्याण', 'कल्यान', 'केदार', 'केदारो', 'केदारौ', 'नट', 'सारंग', 'बिलावल', 'विलावल', 'काफी', 'काफ़ी', 'काफ़ी',
@@ -798,7 +808,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 const displayAuthorName = (content.author && content.author !== 'Team VrindaVaani')
                   ? content.author
                   : (parsedSaintName || cleanSaint || (isHindiRoute ? 'रसिक संत' : 'Rasik Saint'));
-                const saintSlug = cleanSaint ? slugify(transliterate(cleanSaint)) : null;
+                const saintSlug = cleanSaint ? getNormalizedSaintSlug(cleanSaint) : null;
                 const granthSlug = cleanGranth ? getNormalizedBookSlug(cleanGranth) : null;
                 return (
                   <div className="flex flex-wrap items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-[var(--glass-bg)] border border-[var(--glass-border)] shadow-lg text-left flex-1">
