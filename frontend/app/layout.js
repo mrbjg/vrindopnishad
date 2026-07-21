@@ -98,7 +98,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`dark ${laila.variable} ${poppins.variable} ${inter.variable} ${notoSerifDevanagari.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`dark ${laila.variable} ${poppins.variable} ${inter.variable} ${notoSerifDevanagari.variable}`}>
       <head>
         <script
           dangerouslySetInnerHTML={{

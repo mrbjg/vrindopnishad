@@ -158,53 +158,65 @@ const SettingsModal = ({ isOpen, onClose }) => {
               <div>
                 <span className="settings-modal-subsection text-[10px] uppercase tracking-widest block mb-2 font-bold">Core Modes</span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {THEMES.filter(t => t.group === 'base').map((t) => (
-                    <button
-                      key={t.id}
-                      onClick={() => updateSetting('theme', t.id)}
-                      className={`theme-picker-card-v2 ${settings.theme === t.id ? 'active' : ''}`}
-                    >
-                      <div className="theme-picker-inner">
-                        <div className="flex items-center gap-2.5">
-                          <div className="theme-icon-wrap-v2 p-1.5 rounded-lg">
-                            <ThemeIcon name={t.icon} size={14} />
+                  {THEMES.filter(t => t.group === 'base').map((t) => {
+                    const isActive = settings.theme === t.id;
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => updateSetting('theme', t.id)}
+                        className={`theme-picker-card-v2 relative ${isActive ? 'active' : ''}`}
+                      >
+                        <div className="theme-picker-inner">
+                          <div className="flex items-center gap-2.5">
+                            <div className="theme-icon-wrap-v2 p-1.5 rounded-lg">
+                              <ThemeIcon name={t.icon} size={14} />
+                            </div>
+                            <span className="font-bold text-sm tracking-wide">{t.label}</span>
                           </div>
-                          <span className="font-bold text-sm tracking-wide">{t.label}</span>
+                          <div className="flex items-center gap-2">
+                            {isActive && <Check size={14} className="text-primary" />}
+                            <div 
+                              className="theme-swatch-v2 flex-shrink-0"
+                              style={{ background: themeGradients[t.id] }}
+                            ></div>
+                          </div>
                         </div>
-                        <div 
-                          className="theme-swatch-v2 flex-shrink-0"
-                          style={{ background: themeGradients[t.id] }}
-                        ></div>
-                      </div>
-                    </button>
-                  ))}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              
+              {/* Celestial Moods */}
               <div>
                 <span className="settings-modal-subsection text-[10px] uppercase tracking-widest block mb-2 font-bold">Celestial Moods</span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {THEMES.filter(t => t.group === 'mood').map((t) => (
-                    <button
-                      key={t.id}
-                      onClick={() => updateSetting('theme', t.id)}
-                      className={`theme-picker-card-v2 ${settings.theme === t.id ? 'active' : ''}`}
-                    >
-                      <div className="theme-picker-inner">
-                        <div className="flex items-center gap-2.5">
-                          <div className="theme-icon-wrap-v2 p-1.5 rounded-lg">
-                            <ThemeIcon name={t.icon} size={14} />
+                  {THEMES.filter(t => t.group === 'mood').map((t) => {
+                    const isActive = settings.theme === t.id;
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => updateSetting('theme', t.id)}
+                        className={`theme-picker-card-v2 relative ${isActive ? 'active' : ''}`}
+                      >
+                        <div className="theme-picker-inner">
+                          <div className="flex items-center gap-2.5">
+                            <div className="theme-icon-wrap-v2 p-1.5 rounded-lg">
+                              <ThemeIcon name={t.icon} size={14} />
+                            </div>
+                            <span className="font-bold text-sm tracking-wide">{t.label}</span>
                           </div>
-                          <span className="font-bold text-sm tracking-wide">{t.label}</span>
+                          <div className="flex items-center gap-2">
+                            {isActive && <Check size={14} className="text-primary" />}
+                            <div 
+                              className="theme-swatch-v2 flex-shrink-0"
+                              style={{ background: themeGradients[t.id] }}
+                            ></div>
+                          </div>
                         </div>
-                        <div 
-                          className="theme-swatch-v2 flex-shrink-0"
-                          style={{ background: themeGradients[t.id] }}
-                        ></div>
-                      </div>
-                    </button>
-                  ))}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -347,9 +359,9 @@ const SettingsModal = ({ isOpen, onClose }) => {
         <div className="settings-modal-footer p-6 sm:p-8 pt-3 sm:pt-4">
           <button 
             onClick={onClose}
-            className="w-full h-14 shimmer-btn font-bold text-sm tracking-widest uppercase shadow-2xl transition-all cursor-pointer"
+            className="w-full h-12 shimmer-btn font-bold text-sm tracking-widest uppercase shadow-xl transition-all cursor-pointer"
           >
-            Save Preferences
+            Done
           </button>
         </div>
       </div>

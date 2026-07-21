@@ -18,9 +18,17 @@
     --font-headings: var(--font-laila), serif;
     --font-body: var(--font-poppins), sans-serif;
     --line-height: 1.8;
+    --line-height-hindi: 1.9;
     --transition-smooth: cubic-bezier(0.16, 1, 0.3, 1);
     --border-radius-md: 24px;
     --blur-effect: blur(12px);
+
+    /* V5 Typography Scale */
+    --text-h1: clamp(2.5rem, 4vw, 4rem);
+    --text-h2: clamp(1.75rem, 3vw, 2.625rem);
+    --text-body: 1.125rem;
+    --text-caption: 0.9375rem;
+    --text-max-reading-width: 72ch;
 
     --star-color: rgba(255, 235, 210, 0.4);
     --nebula-color-1: rgba(245, 130, 32, 0.04);
@@ -29,7 +37,7 @@
 
 
     --glass-bg: rgba(13, 12, 11, 0.65);
-    --glass-border: rgba(245, 130, 32, 0.07);
+    --glass-border: rgba(245, 130, 32, 0.05);
     --header-bg: rgba(13, 12, 11, 0.88);
     --stars-opacity: 0.08;
     --celestial-bg: #0D0C0B;
@@ -210,8 +218,8 @@ body {
     position: relative;
     overflow: hidden;
 
-    will-change: border-color, box-shadow;
-    transition: border-color 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: border-color, box-shadow, transform;
+    transition: border-color 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card[style*="--hover-border"]:hover {
@@ -259,8 +267,8 @@ body {
 .app-header .header-profile-pill {
     background: rgba(255, 255, 255, 0.03);
     box-shadow:
-        inset 0 1px 1px rgba(255, 255, 255, 0.05),
-        0 10px 30px rgba(0, 0, 0, 0.2);
+        inset 0 1px 1px rgba(255, 255, 255, 0.04),
+        0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
 
@@ -344,7 +352,6 @@ body {
 }
 
 .btn-sacred-gold:hover {
-    transform: scale(1.025) !important;
     box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2) !important;
 }
 
@@ -426,7 +433,7 @@ body {
 .sanskrit-text {
     font-family: 'Noto Serif Devanagari', 'Tiro Devanagari Sanskrit', 'Laila', serif !important;
     display: block;
-    line-height: 2;
+    line-height: var(--line-height-hindi, 1.9);
     padding-top: 0.8em;
     padding-bottom: 0.4em;
     transition:
@@ -986,38 +993,38 @@ html[data-theme='night'] {
 
 
 html[data-theme='space'] {
-    --background: 260 65% 1.8%;
-    --foreground: 260 10% 97%;
-    --text-color: #fae8ff;
-    --primary: 325 90% 60%;
-    --primary-color: #ec4899;
-    --primary-rgb: 236, 72, 153;
+    --background: 265 60% 3%;
+    --foreground: 265 10% 97%;
+    --text-color: #f3e8ff;
+    --primary: 270 95% 65%;
+    --primary-color: #a855f7;
+    --primary-rgb: 168, 85, 247;
     --accent-gold: #c084fc;
-    --verse-header-color: #f472b6;
-    --primary-btn-text: #020205;
+    --verse-header-color: #c084fc;
+    --primary-btn-text: #05020a;
 
-    --card: 260 50% 3.5%;
-    --card-foreground: 260 10% 97%;
-    --popover: 260 50% 3.5%;
-    --popover-foreground: 260 10% 97%;
-    --secondary: 260 25% 8%;
-    --secondary-foreground: 260 10% 97%;
-    --muted: 260 25% 8%;
-    --muted-foreground: 260 15% 65%;
-    --accent: 260 25% 8%;
-    --accent-foreground: 260 10% 97%;
-    --border: 260 20% 12%;
-    --input: 260 20% 12%;
+    --card: 265 55% 5%;
+    --card-foreground: 265 10% 97%;
+    --popover: 265 55% 5%;
+    --popover-foreground: 265 10% 97%;
+    --secondary: 265 30% 10%;
+    --secondary-foreground: 265 10% 97%;
+    --muted: 265 30% 10%;
+    --muted-foreground: 265 20% 70%;
+    --accent: 265 30% 10%;
+    --accent-foreground: 265 10% 97%;
+    --border: 265 30% 15%;
+    --input: 265 30% 15%;
 
-    --celestial-bg: #030107;
-    --stars-opacity: 0.15;
-    --nebula-color-1: rgba(236, 72, 153, 0.08);
-    --nebula-color-2: rgba(99, 102, 241, 0.06);
-    --nebula-color-3: rgba(168, 85, 247, 0.05);
+    --celestial-bg: #040108;
+    --stars-opacity: 0.25;
+    --nebula-color-1: rgba(168, 85, 247, 0.15);
+    --nebula-color-2: rgba(147, 51, 234, 0.12);
+    --nebula-color-3: rgba(192, 132, 252, 0.08);
 
-    --glass-bg: rgba(6, 2, 12, 0.6);
-    --glass-border: rgba(236, 72, 153, 0.06);
-    --header-bg: rgba(4, 1, 8, 0.75);
+    --glass-bg: rgba(15, 7, 26, 0.65);
+    --glass-border: rgba(168, 85, 247, 0.18);
+    --header-bg: rgba(8, 3, 14, 0.85);
 }
 
 
@@ -1745,8 +1752,7 @@ h6 {
 
 
 .btn-premium:hover {
-    transform: scale(1.05);
-    box-shadow: none;
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.15);
 }
 
 
@@ -2331,7 +2337,6 @@ html.light-mode .login-card {
     box-shadow:
         0 15px 30px rgba(0, 0, 0, 0.4),
         0 0 20px rgba(var(--primary-rgb), 0.15) !important;
-    transform: translateY(-2px);
 }
 
 .login-footer {
@@ -2418,25 +2423,25 @@ html.light-mode .login-card {
 
 
 .header-nav-link {
-    color: hsl(var(--foreground) / 0.7);
+    color: hsl(var(--foreground) / 0.6);
     font-size: 0.875rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    transition: all 0.3s ease;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    transition: color 0.2s var(--transition-smooth), background-color 0.2s var(--transition-smooth);
     position: relative;
     padding: 0.5rem 0.75rem;
     border-radius: 8px;
 }
 
 .header-nav-link:hover {
-    color: var(--primary-color);
+    color: hsl(var(--foreground) / 0.95);
     background-color: hsl(var(--foreground) / 0.04);
 }
 
 .header-nav-link.active {
     color: var(--primary-color);
-    background-color: hsl(var(--foreground) / 0.08);
-    font-weight: 600;
+    background-color: hsl(var(--foreground) / 0.06);
+    font-weight: 500;
 }
 
 .header-dropdown-menu {
@@ -2579,8 +2584,9 @@ html.light-mode .login-card {
         align-items: center;
         justify-content: space-around;
         padding: 0 1rem;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
         z-index: 1000;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
         animation: fade-in-up 0.5s ease-out;
     }
 }
@@ -2589,11 +2595,13 @@ html.light-mode .login-card {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 3.25rem;
-    height: 3.25rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    min-width: 44px;
+    min-height: 44px;
     border-radius: 50%;
     color: hsl(var(--foreground) / 0.4);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: color 0.25s var(--transition-smooth), background-color 0.25s var(--transition-smooth), transform 0.25s var(--transition-smooth);
 }
 
 .mobile-nav-item:hover {
@@ -2604,8 +2612,8 @@ html.light-mode .login-card {
 .mobile-nav-item.active {
     color: var(--primary-color);
     background-color: hsl(var(--foreground) / 0.08);
-    transform: scale(1.15);
-    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.05);
+    transform: scale(1.12);
+    box-shadow: none;
 }
 
 
@@ -3929,8 +3937,8 @@ html.light-mode .book-cover-premium {
 .premium-content-card {
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 20px;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transition: border-color 0.25s var(--transition-smooth), box-shadow 0.25s var(--transition-smooth), transform 0.25s var(--transition-smooth);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     position: relative;
     overflow: hidden;
 }
@@ -3947,19 +3955,19 @@ html.light-mode .book-cover-premium {
 }
 
 .premium-content-card:hover {
-    border-color: rgba(var(--primary-rgb), 0.25);
-    box-shadow: none !important;
+    border-color: rgba(var(--primary-rgb), 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 html.light-mode .premium-content-card {
     background: rgba(255, 255, 255, 0.7);
     border-color: rgba(0, 0, 0, 0.05);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.015);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
 }
 
 html.light-mode .premium-content-card:hover {
-    border-color: rgba(var(--primary-rgb), 0.3);
-    box-shadow: 0 12px 30px rgba(var(--primary-rgb), 0.04);
+    border-color: rgba(var(--primary-rgb), 0.25);
+    box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.04);
 }
 
 
@@ -4575,6 +4583,46 @@ html:not(.dark) .absolute.bg-black\/85 *,
 html:not(.dark) .absolute[class*="bg-black"][class*="text-white"] *,
 html:not(.dark) [class*="keep-dark"] * {
     color: #ffffff !important;
+}
+
+/* ========================================
+   V5 Refinements — Global Polish
+   ======================================== */
+
+/* Glass card hover styling */
+.glass-card:hover {
+    border-color: rgba(var(--primary-rgb), 0.18);
+}
+
+/* Accessibility: Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Focus visible ring for keyboard navigation */
+:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* V5 Reading content max-width */
+.v5-reading-content {
+    max-width: var(--text-max-reading-width, 72ch);
 }
 
 html:not(.dark) .bg-\[\#121216\]\/95 {

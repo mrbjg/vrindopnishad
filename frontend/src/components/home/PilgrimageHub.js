@@ -17,7 +17,7 @@ const PilgrimageHub = ({ isHi, navigate }) => {
         
         <div
           onClick={() => navigate(isHi ? "/hi/places" : "/places")}
-          className="glass-card p-5 sm:p-6 rounded-3xl border border-white/5 hover:border-orange-500/25 cursor-pointer group transition-all flex flex-col justify-between space-y-4 hover:scale-[1.01] touch-manipulation relative overflow-hidden"
+          className="glass-card p-5 sm:p-6 rounded-3xl border border-white/5 hover:border-orange-500/25 cursor-pointer group transition-all flex flex-col justify-between space-y-4 touch-manipulation relative overflow-hidden"
           role="button"
           tabIndex={0}
           aria-label={isHi ? "ब्रज धाम दर्शन मार्गदर्शिका" : "Braj Dham Sacred Places"}
@@ -27,7 +27,7 @@ const PilgrimageHub = ({ isHi, navigate }) => {
             }
           }}
         >
-          <div className="absolute top-2 right-2 scale-0 group-hover:scale-100 bg-black/80 text-[8px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-10">
+          <div className="absolute top-2 right-2 opacity-0 pointer-events-none group-hover:opacity-100 bg-black/85 text-[8px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-opacity duration-200 whitespace-nowrap z-10">
             {isHi ? "दर्शन प्रारम्भ करें" : "Start journey"}
           </div>
           <div className="space-y-3">
@@ -59,10 +59,10 @@ const PilgrimageHub = ({ isHi, navigate }) => {
           </div>
         </div>
 
-        
+        {/* Glossary Card */}
         <div
           onClick={() => navigate(isHi ? "/hi/glossary" : "/glossary")}
-          className="glass-card p-5 sm:p-6 rounded-3xl border border-white/5 hover:border-cyan-500/25 cursor-pointer group transition-all flex flex-col justify-between space-y-4 hover:scale-[1.01] touch-manipulation relative overflow-hidden"
+          className="glass-card p-5 sm:p-6 rounded-3xl border border-white/5 hover:border-cyan-500/25 cursor-pointer group transition-all flex flex-col justify-between space-y-4 touch-manipulation relative overflow-hidden"
           role="button"
           tabIndex={0}
           aria-label={isHi ? "वृन्दावाणि शब्दावली" : "VrindaVaani Devotee Glossary"}
@@ -72,7 +72,7 @@ const PilgrimageHub = ({ isHi, navigate }) => {
             }
           }}
         >
-          <div className="absolute top-2 right-2 scale-0 group-hover:scale-100 bg-black/80 text-[8px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-10">
+          <div className="absolute top-2 right-2 opacity-0 pointer-events-none group-hover:opacity-100 bg-black/85 text-[8px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-opacity duration-200 whitespace-nowrap z-10">
             {isHi ? "शब्दावली खोजें" : "Explore glossary"}
           </div>
           <div className="space-y-3">

@@ -387,72 +387,126 @@ const fetchRelationsBackup = async () => {
   }
 };
 
+const isTruncatedText = (str) => {
+  if (!str) return true;
+  const trimmed = str.trim();
+  if (trimmed.length <= 120) return true;
+  if (trimmed.length <= 350 && !/[॥।.\!\?\n\”\"']/.test(trimmed.slice(-3))) return true;
+  return false;
+};
+
 const ensureFullVerseText = async (matched) => {
   if (!matched) return matched;
-  
-  const isTruncated = (str) => {
-    if (!str) return false;
-    const trimmed = str.trim();
-    if (trimmed.length === 100) return true;
-    if (trimmed.length <= 150 && !/[॥।.\!\?\n]/.test(trimmed.slice(-2))) return true;
-    return false;
-  };
 
-  const needsFullText = (!matched.hindi_text && !matched.sanskrit_text && !matched.english_translation) ||
-                        isTruncated(matched.sanskrit_text) ||
-                        isTruncated(matched.hindi_text) ||
-                        isTruncated(matched.english_translation);
+  let current = { ...matched };
 
-  if (needsFullText) {
-    try {
-      const targetSlug = matched.slug;
-      const targetId = matched.id;
-      let query = supabase.from('content').select('*');
-      if (targetSlug) {
-        query = query.eq('slug', targetSlug);
-      } else if (targetId) {
-        query = query.eq('id', targetId);
+  // 1. Try Supabase content_text first if present
+  try {
+    const targetSlug = matched.slug;
+    const targetId = matched.id;
+    let query = supabase.from('content').select('*');
+    if (targetSlug) {
+      query = query.eq('slug', targetSlug);
+    } else if (targetId) {
+      query = query.eq('id', targetId);
+    }
+    const { data, error } = await query.maybeSingle();
+    if (!error && data) {
+      let sanskrit = data.sanskrit_text || data.sanskritText || current.sanskrit_text || '';
+      let hindi = data.hindi_text || data.hindiText || current.hindi_text || '';
+      
+      if (data.content_text && data.content_text.length > (sanskrit.length + 30)) {
+        const parts = data.content_text.split('\n\n');
+        if (parts.length >= 2) {
+          if (isTruncatedText(sanskrit)) sanskrit = parts[0];
+          if (isTruncatedText(hindi)) hindi = parts.slice(1).join('\n\n');
+        } else if (isTruncatedText(sanskrit)) {
+          sanskrit = data.content_text;
+        }
       }
-      const { data, error } = await query.maybeSingle();
-      if (!error && data) {
-        let sanskrit = data.sanskrit_text || data.sanskritText || matched.sanskrit_text || '';
-        let hindi = data.hindi_text || data.hindiText || matched.hindi_text || '';
-        if (data.content_text && data.content_text.length > (sanskrit.length + hindi.length + 50)) {
-          const parts = data.content_text.split('\n\n');
-          if (parts.length >= 2) {
-            if (!sanskrit || isTruncated(sanskrit)) sanskrit = parts[0];
-            if (!hindi || isTruncated(hindi)) hindi = parts.slice(1).join('\n\n');
-          } else if (!sanskrit || isTruncated(sanskrit)) {
-            sanskrit = data.content_text;
+      current = { ...current, ...data, sanskrit_text: sanskrit, hindi_text: hindi };
+    }
+  } catch (e) {
+    console.warn('[FullText] Supabase fetch failed:', e);
+  }
+
+  // 2. Fetch relations_backup.json if text is still truncated or short (< 350 chars)
+  if (isTruncatedText(current.sanskrit_text) || isTruncatedText(current.hindi_text) || (current.sanskrit_text || '').length < 300) {
+    try {
+      if (!inMemoryRelationsCache) {
+        const resRel = await fetch('/data/relations_backup.json');
+        if (resRel.ok) {
+          inMemoryRelationsCache = await resRel.json();
+        }
+      }
+
+      if (inMemoryRelationsCache) {
+        const allRelItems = [
+          ...(inMemoryRelationsCache.sants || []),
+          ...(inMemoryRelationsCache.biographies || []),
+          ...(inMemoryRelationsCache.books || []),
+          ...(inMemoryRelationsCache.ragas || [])
+        ];
+        const targetSlug = (current.slug || '').replace(/^-+|-+$/g, '');
+        const targetId = (current.id || '').toString();
+
+        const foundRel = allRelItems.find(x =>
+          (x.id && targetId && x.id.toString() === targetId) ||
+          (x.slug && targetSlug && x.slug.replace(/^-+|-+$/g, '') === targetSlug) ||
+          (x.originalTitle && current.title && x.originalTitle.trim() === current.title.trim())
+        );
+
+        if (foundRel && foundRel.text && foundRel.text.length > (current.sanskrit_text || '').length) {
+          current.sanskrit_text = foundRel.text;
+          if (!current.hindi_text || current.hindi_text.length < foundRel.text.length) {
+            current.hindi_text = foundRel.text;
           }
         }
-        const merged = { ...matched, ...data, sanskrit_text: sanskrit, hindi_text: hindi };
-        if (merged.id) contentMapById.set(merged.id.toString(), merged);
-        if (merged.slug) contentMapBySlug.set(merged.slug, merged);
-        return merged;
+      }
+    } catch (e) { }
+  }
+
+  // 3. Fetch master content_backup.json if still truncated or short
+  if (isTruncatedText(current.sanskrit_text) || isTruncatedText(current.hindi_text) || (current.sanskrit_text || '').length < 300) {
+    try {
+      const filesToTry = ['/data/content_backup.json', '/data/content_backup_saint.json'];
+      for (const fileUrl of filesToTry) {
+        const res = await fetch(fileUrl);
+        if (res.ok) {
+          const fullItems = await res.json();
+          if (fullItems && fullItems.length > 0) {
+            const foundFull = fullItems.find(x =>
+              (x.id && current.id && x.id.toString() === current.id.toString()) ||
+              (x.slug && current.slug && x.slug.replace(/^-+|-+$/g, '') === current.slug.replace(/^-+|-+$/g, '')) ||
+              (x.title && current.title && x.title.trim() === current.title.trim())
+            );
+            if (foundFull) {
+              const sans = (foundFull.sanskrit_text && foundFull.sanskrit_text.length > (current.sanskrit_text || '').length)
+                ? foundFull.sanskrit_text
+                : (foundFull.content_text && foundFull.content_text.length > (current.sanskrit_text || '').length ? foundFull.content_text : current.sanskrit_text);
+              const hin = (foundFull.hindi_text && foundFull.hindi_text.length > (current.hindi_text || '').length)
+                ? foundFull.hindi_text
+                : current.hindi_text;
+
+              current = {
+                ...current,
+                ...foundFull,
+                sanskrit_text: sans || current.sanskrit_text,
+                hindi_text: hin || current.hindi_text
+              };
+              if (!isTruncatedText(current.sanskrit_text)) break;
+            }
+          }
+        }
       }
     } catch (e) {
-      console.warn('[FullText] Supabase fetch failed:', e);
+      console.warn('[FullText] Local backup fetch failed:', e);
     }
-
-    try {
-      const cat = (matched.category || classifyItemCategory(matched)).toLowerCase();
-      const res = await fetch(`/data/content_backup_${cat}.json`);
-      if (res.ok) {
-        const fullItems = await res.json();
-        if (fullItems && fullItems.length > 0) {
-          const foundFull = fullItems.find(x => x.id?.toString() === matched.id?.toString() || (x.slug && x.slug.replace(/^-+|-+$/g, '') === (matched.slug || '').replace(/^-+|-+$/g, '')));
-          if (foundFull) {
-            const merged = { ...matched, ...foundFull };
-            if (merged.id) contentMapById.set(merged.id.toString(), merged);
-            if (merged.slug) contentMapBySlug.set(merged.slug, merged);
-            return merged;
-          }
-        }
-      }
-    } catch (e) {}
   }
-  return matched;
+
+  if (current.id) contentMapById.set(current.id.toString(), current);
+  if (current.slug) contentMapBySlug.set(current.slug, current);
+  return current;
 };
 
 export const apiService = {
@@ -756,7 +810,9 @@ export const apiService = {
   getContentById: async (id) => {
     const cacheKey = `id_${id}`;
     let cached = getCache(cacheKey);
-    if (cached) return cached;
+    if (cached && !isTruncatedText(cached.sanskrit_text) && !isTruncatedText(cached.hindi_text)) {
+      return cached;
+    }
 
     const decodedId = decodeURIComponent(id);
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decodedId);

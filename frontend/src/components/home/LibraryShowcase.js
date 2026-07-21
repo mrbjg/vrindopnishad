@@ -32,13 +32,10 @@ const LibraryShowcase = ({ isHi, books, navigate }) => {
         >
           {isHi ? "सभी ग्रन्थ" : "View All Granthas"}
           <ChevronRight size={14} />
-          <span className="absolute -top-7 right-0 scale-0 group-hover:scale-100 bg-black text-[9px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-30">
-            {isHi ? "सभी ग्रन्थ सूची" : "Explore all granthas"}
-          </span>
         </Link>
       </div>
 
-      
+      {/* Scripture Card Shelf */}
       <div className="flex gap-4 overflow-x-auto pb-4 pt-1 snap-x book-shelf-row scrollbar-hide select-none -mx-4 px-4 sm:mx-0 sm:px-0">
         {books.slice(0, 8).map((book, index) => (
           <div
@@ -54,7 +51,7 @@ const LibraryShowcase = ({ isHi, books, navigate }) => {
               }
             }}
           >
-            <div className="absolute top-2 right-2 scale-0 group-hover:scale-100 bg-black/80 text-[8px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-10">
+            <div className="absolute top-2 right-2 opacity-0 pointer-events-none group-hover:opacity-100 bg-black/85 text-[8px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-opacity duration-200 whitespace-nowrap z-10">
               {isHi ? "ग्रन्थ खोलें" : "Open Book"}
             </div>
             

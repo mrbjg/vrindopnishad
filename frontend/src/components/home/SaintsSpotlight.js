@@ -89,9 +89,6 @@ const SaintsSpotlight = ({ isHi, saints, navigate }) => {
         >
           {isHi ? "सभी सन्त" : "View All Saints"}
           <ChevronRight size={14} />
-          <span className="absolute -top-7 right-0 scale-0 group-hover:scale-100 bg-black text-[9px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-30">
-            {isHi ? "सभी संत जीवनी" : "Explore all saints"}
-          </span>
         </Link>
       </div>
 
@@ -102,7 +99,7 @@ const SaintsSpotlight = ({ isHi, saints, navigate }) => {
             <div
               key={`${sant.slug || sant.cleanName || 'sant'}-${index}`}
               onClick={() => navigate(isHi ? `/hi/saints/${sant.slug}` : `/saints/${sant.slug}`)}
-              className="glass-card !p-3 rounded-2xl border border-white/5 text-center cursor-pointer group transition-all flex flex-col items-center justify-between space-y-2.5 touch-manipulation hover:scale-[1.02] relative overflow-hidden"
+              className="glass-card !p-3 rounded-2xl border border-white/5 text-center cursor-pointer group transition-all flex flex-col items-center justify-between space-y-2.5 touch-manipulation relative overflow-hidden"
               style={{
                 '--hover-border': c.borderHover
               }}
@@ -115,12 +112,12 @@ const SaintsSpotlight = ({ isHi, saints, navigate }) => {
                 }
               }}
             >
-              <div className="absolute top-1 right-1.5 scale-0 group-hover:scale-100 bg-black/85 text-[7px] text-white/90 px-1 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-10">
+              <div className="absolute top-1 right-1.5 opacity-0 pointer-events-none group-hover:opacity-100 bg-black/85 text-[7px] text-white/90 px-1 py-0.5 rounded border border-white/10 transition-opacity duration-200 whitespace-nowrap z-10">
                 {isHi ? "जीवनी देखें" : "View Bio"}
               </div>
 
               <div
-                className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center font-bold text-base sm:text-lg shadow-inner group-hover:scale-105 transition-all duration-300 select-none border"
+                className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center font-bold text-base sm:text-lg shadow-inner transition-all duration-300 select-none border"
                 style={{
                   backgroundColor: c.avatarBg,
                   borderColor: c.avatarBorder,

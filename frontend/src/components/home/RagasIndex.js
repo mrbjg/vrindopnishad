@@ -24,7 +24,7 @@ const RagasIndex = ({ isHi, ragas, navigate }) => {
           <button
             key={`${raga.slug || raga.name || 'raga'}-${index}`}
             onClick={() => navigate(isHi ? `/hi/ragas/${raga.slug}` : `/ragas/${raga.slug}`)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 text-xs text-left transition-all group touch-manipulation hover:scale-[1.02]"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 text-xs text-left transition-all group touch-manipulation"
           >
             <span className="font-semibold text-white/90 group-hover:text-primary transition-colors text-[11px]">
               {raga.name}

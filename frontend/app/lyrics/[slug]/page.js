@@ -25,6 +25,94 @@ export const dynamic = 'force-dynamic';
 
 import { supabase } from '../../../src/lib/supabase';
 
+import fs from 'fs';
+import path from 'path';
+
+let serverRelationsCache = null;
+let serverBackupCache = null;
+
+function getUntruncatedServerText(slug, id, sanskrit, hindi, title) {
+  const isTruncated = (str) => {
+    if (!str) return true;
+    const trimmed = str.trim();
+    if (trimmed.length <= 120) return true;
+    if (trimmed.length <= 350 && !/[॥।.\!\?\n\”\"']/.test(trimmed.slice(-3))) return true;
+    return false;
+  };
+
+  let fullSanskrit = sanskrit || '';
+  let fullHindi = hindi || '';
+
+  // Try reading relations_backup.json from disk
+  try {
+    if (!serverRelationsCache) {
+      const relPath = path.join(process.cwd(), 'public/data/relations_backup.json');
+      if (fs.existsSync(relPath)) {
+        serverRelationsCache = JSON.parse(fs.readFileSync(relPath, 'utf8'));
+      }
+    }
+
+    if (serverRelationsCache) {
+      const allRelItems = [
+        ...(serverRelationsCache.sants || []),
+        ...(serverRelationsCache.biographies || []),
+        ...(serverRelationsCache.books || []),
+        ...(serverRelationsCache.ragas || [])
+      ];
+      const targetSlug = (slug || '').replace(/^-+|-+$/g, '');
+      const targetId = (id || '').toString();
+
+      const foundRel = allRelItems.find(x =>
+        (x.id && targetId && x.id.toString() === targetId) ||
+        (x.slug && targetSlug && x.slug.replace(/^-+|-+$/g, '') === targetSlug) ||
+        (x.originalTitle && title && x.originalTitle.trim() === title.trim())
+      );
+
+      if (foundRel && foundRel.text && foundRel.text.length > fullSanskrit.length) {
+        fullSanskrit = foundRel.text;
+        if (!fullHindi || fullHindi.length < foundRel.text.length) fullHindi = foundRel.text;
+      }
+    }
+  } catch (e) { }
+
+  // Try reading content_backup.json from disk if text is still short (< 300 chars) or truncated
+  if (isTruncated(fullSanskrit) || isTruncated(fullHindi) || fullSanskrit.length < 300) {
+    try {
+      if (!serverBackupCache) {
+        const backupPath = path.join(process.cwd(), 'public/data/content_backup.json');
+        if (fs.existsSync(backupPath)) {
+          serverBackupCache = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
+        }
+      }
+
+      if (serverBackupCache && serverBackupCache.length > 0) {
+        const targetSlug = (slug || '').replace(/^-+|-+$/g, '');
+        const targetId = (id || '').toString();
+
+        const foundBackup = serverBackupCache.find(x =>
+          (x.id && targetId && x.id.toString() === targetId) ||
+          (x.slug && targetSlug && x.slug.replace(/^-+|-+$/g, '') === targetSlug) ||
+          (x.title && title && x.title.trim() === title.trim())
+        );
+
+        if (foundBackup) {
+          const sText = foundBackup.sanskrit_text || foundBackup.content_text || '';
+          const hText = foundBackup.hindi_text || '';
+
+          if (sText && sText.length > fullSanskrit.length) {
+            fullSanskrit = sText;
+          }
+          if (hText && hText.length > fullHindi.length) {
+            fullHindi = hText;
+          }
+        }
+      }
+    } catch (e) { }
+  }
+
+  return { sanskrit: fullSanskrit, hindi: fullHindi };
+}
+
 async function fetchVerseFromSupabaseBySlug(slug) {
   try {
     const { data, error } = await supabase
@@ -38,35 +126,29 @@ async function fetchVerseFromSupabaseBySlug(slug) {
     let sanskrit = data.sanskrit_text || data.sanskritText || '';
     let hindi = data.hindi_text || data.hindiText || '';
 
-    const isTruncated = (str) => {
-      if (!str) return true;
-      const trimmed = str.trim();
-      if (trimmed.length === 100) return true;
-      if (trimmed.length <= 150 && !/[॥।.\!\?\n]/.test(trimmed.slice(-2))) return true;
-      return false;
-    };
-
-    if (isTruncated(sanskrit) || isTruncated(hindi)) {
-      const local = getVerseBySlug(slug) || getVerseBySlug(data.slug || '');
-      if (local) {
-        if (local.sanskrit_text && local.sanskrit_text.length > sanskrit.length) {
-          sanskrit = local.sanskrit_text;
-        }
-        if (local.hindi_text && local.hindi_text.length > hindi.length) {
-          hindi = local.hindi_text;
-        }
+    const local = getVerseBySlug(slug) || getVerseBySlug(data.slug || '');
+    if (local) {
+      if (local.sanskrit_text && local.sanskrit_text.length > sanskrit.length) {
+        sanskrit = local.sanskrit_text;
       }
-
-      if ((isTruncated(sanskrit) || isTruncated(hindi)) && data.content_text && data.content_text.length > (sanskrit.length + hindi.length + 30)) {
-        const parts = data.content_text.split('\n\n');
-        if (parts.length >= 2) {
-          if (isTruncated(sanskrit)) sanskrit = parts[0];
-          if (isTruncated(hindi)) hindi = parts.slice(1).join('\n\n');
-        } else if (isTruncated(sanskrit)) {
-          sanskrit = data.content_text;
-        }
+      if (local.hindi_text && local.hindi_text.length > hindi.length) {
+        hindi = local.hindi_text;
       }
     }
+
+    if (data.content_text && data.content_text.length > (sanskrit.length + hindi.length + 30)) {
+      const parts = data.content_text.split('\n\n');
+      if (parts.length >= 2) {
+        sanskrit = parts[0];
+        hindi = parts.slice(1).join('\n\n');
+      } else {
+        sanskrit = data.content_text;
+      }
+    }
+
+    const full = getUntruncatedServerText(slug, data.id, sanskrit, hindi, data.title);
+    sanskrit = full.sanskrit;
+    hindi = full.hindi;
 
     return {
       id: data.id,

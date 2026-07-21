@@ -109,37 +109,31 @@ const HomePage = ({
   const [loading, setLoading] = useState(!initialAllItems && !(initialLatestVerses && initialAajKaPad && initialCategoryStats));
 
 
+  const [isMounted, setIsMounted] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [streak, setStreak] = useState(0);
   const [particles, setParticles] = useState([]);
 
+  const defaultCalendarData = {
+    tithiEn: "Ekadashi (Shukla)",
+    tithiHi: "एकादशी (शुक्ल पक्ष)",
+    seasonEn: "Grishma Ritu (Summer)",
+    seasonHi: "ग्रीष्म ऋतु (Summer)",
+    lilaEn: "Madhyāhna (Radha Kund)",
+    lilaHi: "मध्याह्न लीला (राधा कुण्ड)",
+    festivalEn: "Nirjala Ekadashi (in 3 Days)",
+    festivalHi: "निर्जला एकादशी (3 दिन में)"
+  };
 
-  const [calendarData, setCalendarData] = useState(() => {
+  const [calendarData, setCalendarData] = useState(defaultCalendarData);
+
+  useEffect(() => {
+    setIsMounted(true);
     try {
       const saved = localStorage.getItem('vrindopnishad_calendar_data');
-      return saved ? JSON.parse(saved) : {
-        tithiEn: "Ekadashi (Shukla)",
-        tithiHi: "एकादशी (शुक्ल पक्ष)",
-        seasonEn: "Grishma Ritu (Summer)",
-        seasonHi: "ग्रीष्म ऋतु (Summer)",
-        lilaEn: "Madhyāhna (Radha Kund)",
-        lilaHi: "मध्याह्न लीला (राधा कुण्ड)",
-        festivalEn: "Nirjala Ekadashi (in 3 Days)",
-        festivalHi: "निर्जला एकादशी (3 दिन में)"
-      };
-    } catch (e) {
-      return {
-        tithiEn: "Ekadashi (Shukla)",
-        tithiHi: "एकादशी (शुक्ल पक्ष)",
-        seasonEn: "Grishma Ritu (Summer)",
-        seasonHi: "ग्रीष्म ऋतु (Summer)",
-        lilaEn: "Madhyāhna (Radha Kund)",
-        lilaHi: "मध्याह्न लीला (राधा कुण्ड)",
-        festivalEn: "Nirjala Ekadashi (in 3 Days)",
-        festivalHi: "निर्जला एकादशी (3 दिन में)"
-      };
-    }
-  });
+      if (saved) setCalendarData(JSON.parse(saved));
+    } catch (e) { }
+  }, []);
 
 
   const [selectedItem, setSelectedItem] = useState(null);
@@ -802,12 +796,12 @@ const HomePage = ({
       </Helmet>
 
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 py-4 animate-fade-in space-y-12 pt-6">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 py-2 animate-fade-in space-y-8 pt-3">
 
 
         <div className="space-y-6">
 
-          <div className="glass-card !p-4 sm:!p-5 rounded-3xl border border-primary/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-left shadow-lg select-none">
+          <div className="glass-card !p-3 sm:!p-4 rounded-3xl border border-primary/10 flex flex-col sm:flex-row justify-between items-center gap-3 text-left shadow-sm select-none">
             <div className="flex items-center gap-4 w-full sm:w-auto">
               <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-xl uppercase shrink-0">
                 {getInitials(settings.devoteeName || 'Seeker')}
@@ -997,6 +991,37 @@ const HomePage = ({
         )}
 
 
+        {/* Continue Reading - for returning users */}
+        {isMounted && (() => {
+          try {
+            const lastRead = localStorage.getItem('vrindopnishad_last_read');
+            if (lastRead) {
+              const parsed = JSON.parse(lastRead);
+              if (parsed && parsed.slug && parsed.title) {
+                return (
+                  <div className="rounded-2xl border border-primary/10 bg-primary/[0.03] p-4 flex items-center justify-between gap-4">
+                    <div className="min-w-0">
+                      <span className="text-[9px] uppercase tracking-[0.2em] text-primary font-bold block mb-1">
+                        {isHi ? "जहाँ आपने छोड़ा था" : "Continue Reading"}
+                      </span>
+                      <h3 className="text-sm font-bold text-white/90 truncate">{parsed.title}</h3>
+                      {parsed.author && <span className="text-[10px] text-white/40">{parsed.author}</span>}
+                    </div>
+                    <Link
+                      to={isHi ? `/hi/lyrics/${parsed.slug}` : `/lyrics/${parsed.slug}`}
+                      className="btn-premium px-4 py-2 text-xs shrink-0"
+                    >
+                      {isHi ? "पढ़ें" : "Resume"}
+                    </Link>
+                  </div>
+                );
+              }
+            }
+          } catch (e) { }
+          return null;
+        })()}
+
+        {/* Category Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { to: '/category/shloka', name: isHi ? 'वैदिक श्लोक' : 'Sacred Shlokas', label: 'Vedic', count: categoryStats.shloka, color: 'from-amber-500/20 to-yellow-600/5', border: 'border-amber-500/20', text: 'text-amber-400' },
@@ -1005,7 +1030,7 @@ const HomePage = ({
             { to: '/ragas', name: isHi ? 'शास्त्रीय राग' : 'Sankirtan Ragas', label: 'Melodies', count: categoryStats.raga, color: 'from-rose-500/20 to-red-600/5', border: 'border-rose-500/20', text: 'text-rose-400' }
           ].map(c => (
             <Link key={c.to} to={isHi ? `/hi${c.to}` : c.to}
-              className={`p-5 rounded-2xl bg-gradient-to-br ${c.color} border ${c.border} flex flex-col justify-between h-32 hover:scale-[1.02] transition-all group touch-manipulation`}>
+              className={`p-5 rounded-2xl bg-gradient-to-br ${c.color} border ${c.border} flex flex-col justify-between h-32 transition-all group touch-manipulation`}>
               <div>
                 <span className={`text-[10px] font-bold uppercase tracking-widest ${c.text} block mb-1.5`}>{c.label}</span>
                 <h3 className="font-bold text-sm text-white/90 group-hover:text-primary transition-colors line-clamp-2 leading-snug">{c.name}</h3>
@@ -1022,12 +1047,14 @@ const HomePage = ({
           navigate={navigate}
         />
 
-
-        <SaintsSpotlight
-          isHi={isHi}
-          saints={saints}
-          navigate={navigate}
-        />
+        {/* Section with warm background rhythm */}
+        <div className="-mx-4 px-4 py-8 rounded-none" style={{ background: 'rgba(var(--primary-rgb), 0.015)' }}>
+          <SaintsSpotlight
+            isHi={isHi}
+            saints={saints}
+            navigate={navigate}
+          />
+        </div>
 
 
         <PilgrimageHub
@@ -1035,12 +1062,14 @@ const HomePage = ({
           navigate={navigate}
         />
 
-
-        <LatestVersesFeed
-          isHi={isHi}
-          latestVerses={latestVerses}
-          navigate={navigate}
-        />
+        {/* Section with paper-like rhythm */}
+        <div className="-mx-4 px-4 py-8 rounded-none" style={{ background: 'rgba(var(--primary-rgb), 0.01)' }}>
+          <LatestVersesFeed
+            isHi={isHi}
+            latestVerses={latestVerses}
+            navigate={navigate}
+          />
+        </div>
 
 
         <RagasIndex

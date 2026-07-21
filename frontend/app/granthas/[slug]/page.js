@@ -1,7 +1,7 @@
 import React from 'react';
 import BookDetailPage from '../../../src/views/BookDetailPage';
 import Layout from '../../../src/components/Layout';
-import { getGranthaBySlug, getAllGranthas, ensureDataLoaded } from '../../../src/lib/contentData';
+import { getGranthaBySlug, getAllGranthas, getVerseBySlug, ensureDataLoaded } from '../../../src/lib/contentData';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { Link } from '../../../src/lib/router-compat';
 
@@ -129,6 +129,10 @@ export default async function BookRoute({ params }) {
     book = await fetchGranthaFromSupabaseBySlug(decodedSlug);
   }
   if (!book) {
+    const verse = getVerseBySlug(decodedSlug);
+    if (verse) {
+      permanentRedirect(`/lyrics/${verse.slug || decodedSlug}`);
+    }
     notFound();
   }
 

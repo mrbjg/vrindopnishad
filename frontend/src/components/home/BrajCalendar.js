@@ -38,9 +38,6 @@ const BrajCalendar = ({ isHi, calendarData, onSaveCalendar }) => {
               aria-label={isHi ? "पंचांग संपादित करें" : "Edit Braj Calendar"}
             >
               <Edit2 size={12} />
-              <span className="absolute -top-7 right-0 scale-0 group-hover:scale-100 bg-black text-[9px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-30">
-                {isHi ? "संपादन" : "Edit"}
-              </span>
             </button>
           )}
         </div>
@@ -130,9 +127,6 @@ const BrajCalendar = ({ isHi, calendarData, onSaveCalendar }) => {
                 aria-label={isHi ? "संपादन रद्द करें" : "Cancel edit"}
               >
                 {isHi ? "रद्द करें" : "Cancel"}
-                <span className="absolute -top-7 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[9px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-30">
-                  {isHi ? "रद्द करें" : "Cancel changes"}
-                </span>
               </button>
               <button
                 onClick={handleSave}
@@ -140,9 +134,6 @@ const BrajCalendar = ({ isHi, calendarData, onSaveCalendar }) => {
                 aria-label={isHi ? "पंचांग सहेजें" : "Save calendar"}
               >
                 {isHi ? "सहेजें" : "Save"}
-                <span className="absolute -top-7 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[9px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-30">
-                  {isHi ? "सहेजें" : "Save changes"}
-                </span>
               </button>
             </div>
           </div>

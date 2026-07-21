@@ -19,15 +19,12 @@ const LatestVersesFeed = ({ isHi, latestVerses, navigate }) => {
         </div>
         <Link
           to={isHi ? "/hi/lyrics" : "/lyrics"}
-          className="text-xs text-primary hover:underline flex items-center gap-0.5 font-bold min-h-[30px] flex items-center relative group"
+          className="text-xs text-primary hover:underline flex items-center gap-0.5 font-bold min-h-[30px] relative group"
           aria-label={isHi ? "सम्पूर्ण आध्यात्मिक वाणी ग्रन्थागार देखें" : "View all spiritual verses"}
           title={isHi ? "सम्पूर्ण वाणियाँ" : "View Library"}
         >
           {isHi ? "सम्पूर्ण वाणियाँ" : "View Library"}
           <ChevronRight size={14} />
-          <span className="absolute -top-7 right-0 scale-0 group-hover:scale-100 bg-black text-[9px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-30">
-            {isHi ? "सम्पूर्ण वाणियाँ देखें" : "Explore complete library"}
-          </span>
         </Link>
       </div>
 
@@ -40,12 +37,15 @@ const LatestVersesFeed = ({ isHi, latestVerses, navigate }) => {
             verse.description ||
             "";
           const readingTime = Math.max(1, Math.ceil(excerpt.length / 120)) + " min read";
+          const isFeatured = index === 0;
 
           return (
             <div
               key={`${verse.slug || verse.id || 'verse'}-${index}`}
               onClick={() => navigate(isHi ? `/hi/lyrics/${verse.slug || verse.id}` : `/lyrics/${verse.slug || verse.id}`)}
-              className="premium-content-card p-5 cursor-pointer flex flex-col justify-between space-y-4 group hover:scale-[1.01] transition-all duration-300 touch-manipulation relative overflow-hidden"
+              className={`premium-content-card cursor-pointer flex flex-col justify-between group touch-manipulation relative overflow-hidden ${
+                isFeatured ? 'md:col-span-3 p-6 space-y-5' : 'p-4 space-y-3'
+              }`}
               role="button"
               tabIndex={0}
               aria-label={isHi ? `वाणी: ${verse.cleanTitle || verse.title}` : `Verse: ${verse.cleanTitle || verse.title}`}
@@ -55,11 +55,7 @@ const LatestVersesFeed = ({ isHi, latestVerses, navigate }) => {
                 }
               }}
             >
-              <div className="absolute top-2 right-2 scale-0 group-hover:scale-100 bg-black/80 text-[8px] text-white/90 px-1.5 py-0.5 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap z-10">
-                {isHi ? "सम्पूर्ण वाणी पढ़ें" : "Read full verse"}
-              </div>
-
-              <div className="space-y-3">
+              <div className={isFeatured ? 'space-y-4' : 'space-y-2'}>
                 <div className="flex items-center justify-between">
                   <span className="text-[9px] uppercase tracking-wider text-amber-500/80 bg-amber-500/5 px-2.5 py-0.5 rounded border border-amber-500/10 font-bold select-none">
                     {verse.category}
@@ -69,8 +65,10 @@ const LatestVersesFeed = ({ isHi, latestVerses, navigate }) => {
                     {readingTime}
                   </span>
                 </div>
-                <div className="space-y-1">
-                  <h3 className="font-bold text-sm text-white/95 group-hover:text-primary transition-colors leading-snug line-clamp-2">
+                <div className={isFeatured ? 'space-y-2' : 'space-y-1'}>
+                  <h3 className={`font-bold text-white/95 group-hover:text-primary transition-colors leading-snug line-clamp-2 ${
+                    isFeatured ? 'text-lg md:text-xl' : 'text-sm'
+                  }`}>
                     {verse.cleanTitle || verse.title}
                   </h3>
                   {verse.author && (
@@ -79,7 +77,9 @@ const LatestVersesFeed = ({ isHi, latestVerses, navigate }) => {
                     </span>
                   )}
                 </div>
-                <p className="text-[11px] text-white/45 font-light leading-relaxed line-clamp-3 select-none">
+                <p className={`text-white/45 font-light leading-relaxed select-none ${
+                  isFeatured ? 'text-sm line-clamp-4' : 'text-[11px] line-clamp-3'
+                }`}>
                   {excerpt}
                 </p>
               </div>
@@ -92,7 +92,7 @@ const LatestVersesFeed = ({ isHi, latestVerses, navigate }) => {
                   <div onClick={(e) => e.stopPropagation()} className="relative z-20">
                     <AudioPlayButton
                       track={verse}
-                      className="bg-sky-500/10 text-sky-400 border border-sky-500/20 p-2 rounded-full hover:scale-105 transition-transform"
+                      className="bg-sky-500/10 text-sky-400 border border-sky-500/20 p-2 rounded-full transition-colors"
                       size={14}
                       aria-label={isHi ? "ऑडियो उच्चारण सुनें" : "Listen to audio chanting"}
                       title={isHi ? "ऑडियो सुनें" : "Listen to audio"}

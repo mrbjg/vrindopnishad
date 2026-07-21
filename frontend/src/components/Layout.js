@@ -332,7 +332,7 @@ const LayoutInner = ({ children }) => {
                 <img
                   src={isDark ? '/official-logo-dark.svg' : '/official-logo.svg'}
                   alt="Vrindopnishad Logo"
-                  className="app-logo hover:scale-110 transition-transform duration-500"
+                  className="app-logo transition-opacity duration-300 hover:opacity-90"
                 />
               </Link>
               <span className="app-title hidden lg:block text-minimal-gold font-headings text-lg">वृंदोपनिषद्</span>
@@ -416,13 +416,20 @@ const LayoutInner = ({ children }) => {
                 <input
                   ref={searchInputRef}
                   type="text"
-                  placeholder={isHiRoute ? "खोजें..." : "Search..."}
+                  placeholder={isHiRoute ? "संत, ग्रन्थ, वाणी खोजें..." : "Saints, Books, Verses..."}
                   className="w-full bg-transparent outline-none pr-2 text-white/95 placeholder:text-white/35 h-full text-xs font-light"
                   value={searchQuery}
                   onFocus={handleSearchFocus}
                   onKeyDown={handleKeyDown}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
+
+                {/* V5: Keyboard shortcut hint */}
+                {!searchQuery && (
+                  <kbd className="hidden md:inline-flex items-center gap-0.5 text-[9px] text-white/25 bg-white/5 border border-white/10 rounded px-1.5 py-0.5 shrink-0 font-mono select-none">
+                    ⌘K
+                  </kbd>
+                )}
 
                 
                 <select
@@ -552,7 +559,7 @@ const LayoutInner = ({ children }) => {
 
           
           <div className="hidden md:flex items-center gap-4">
-            <nav className="hidden lg:flex items-center gap-1.5 xl:gap-3">
+            <nav className="hidden lg:flex items-center gap-3 xl:gap-5">
               <Link to={isHiRoute ? "/hi" : "/"} className={`header-nav-link text-xs xl:text-sm ${isActive('/') ? 'active' : ''}`}>
                 {isHiRoute ? "मुख्य" : "Home"}
               </Link>

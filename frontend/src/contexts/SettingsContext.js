@@ -28,6 +28,8 @@ export const THEMES = [
 
 const DARK_THEMES = ['dark', 'night', 'space', 'void', 'waterfall', 'cherryblossom', 'aurora'];
 
+const RANDOM_ATMOSPHERES = ['space', 'night', 'void', 'aurora', 'sunset', 'cherryblossom'];
+
 export const isLightTheme = (themeId) => !DARK_THEMES.includes(themeId);
 
 export const SettingsProvider = ({ children }) => {
@@ -36,7 +38,8 @@ export const SettingsProvider = ({ children }) => {
     fontStyle: 'Serif',
     lineByLine: true,
     smoothScroll: false,
-    theme: 'light',
+    theme: 'space',
+    hasUserChosenTheme: false,
     devoteeName: '',
     dailyGoal: 432,
     layoutMode: 'sanctuary',
@@ -55,7 +58,11 @@ export const SettingsProvider = ({ children }) => {
           const mapping = { 'normal': 2, 'large': 3, 'xlarge': 4 };
           parsed.fontSize = mapping[parsed.fontSize] || 2;
         }
-        if (!parsed.theme) parsed.theme = 'light';
+        if (!parsed.hasUserChosenTheme) {
+          // If user hasn't explicitly chosen a theme, pick a random high-end theme!
+          const randomTheme = RANDOM_ATMOSPHERES[Math.floor(Math.random() * RANDOM_ATMOSPHERES.length)];
+          parsed.theme = randomTheme;
+        }
         if (parsed.devoteeName === undefined) parsed.devoteeName = '';
         if (parsed.dailyGoal === undefined) parsed.dailyGoal = 432;
         if (parsed.layoutMode === undefined) parsed.layoutMode = 'sanctuary';
@@ -64,6 +71,14 @@ export const SettingsProvider = ({ children }) => {
       } catch (e) {
         console.warn('Failed to parse settings', e);
       }
+    } else {
+      // First visit! Randomly pick a breathtaking sanctuary theme
+      const randomTheme = RANDOM_ATMOSPHERES[Math.floor(Math.random() * RANDOM_ATMOSPHERES.length)];
+      setSettings(prev => ({
+        ...prev,
+        theme: randomTheme,
+        hasUserChosenTheme: false
+      }));
     }
   }, []);
 
@@ -75,7 +90,7 @@ export const SettingsProvider = ({ children }) => {
     document.documentElement.setAttribute('data-font-style', settings.fontStyle);
     document.documentElement.setAttribute('data-layout-mode', settings.layoutMode || 'sanctuary');
 
-    const theme = settings.theme || 'light';
+    const theme = settings.theme || 'space';
     document.documentElement.setAttribute('data-theme', theme);
 
     if (isLightTheme(theme)) {
@@ -88,7 +103,13 @@ export const SettingsProvider = ({ children }) => {
   }, [settings, mounted]);
 
   const updateSetting = (key, value) => {
-    setSettings(prev => ({ ...prev, [key]: value }));
+    setSettings(prev => {
+      const next = { ...prev, [key]: value };
+      if (key === 'theme') {
+        next.hasUserChosenTheme = true;
+      }
+      return next;
+    });
   };
 
   return (

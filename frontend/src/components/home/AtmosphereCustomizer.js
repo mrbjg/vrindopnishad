@@ -1,46 +1,39 @@
 import React from 'react';
 
 export const THEME_SWATCHES = {
+  space: 'linear-gradient(135deg, #0f071a 0%, #a855f7 100%)',
+  night: '#030712',
+  void: '#000000',
+  aurora: 'linear-gradient(135deg, #040d1a 0%, #10b981 100%)',
+  sunset: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)',
+  cherryblossom: '#140a15',
+  waterfall: '#061217',
   dark: '#09090b',
   light: 'linear-gradient(135deg, #fdfbf7 0%, #eae5d9 100%)',
-  night: '#030712',
-  space: '#08070d',
-  void: '#000000',
-  winter: 'linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%)',
-  snow: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-  rainy: 'linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%)',
-  mountains: 'linear-gradient(135deg, #fafaf9 0%, #e7e5e4 100%)',
-  mountain_morning: 'linear-gradient(135deg, #ffedd5 0%, #fee2e2 100%)',
-  sunset: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)',
-  forest: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
-  ocean: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)',
-  waterfall: '#061217',
-  cherryblossom: '#140a15',
-  cherryblossom_light: 'linear-gradient(135deg, #fff0f3 0%, #ffe4e6 100%)',
-  aurora: '#040d1a',
 };
 
 const ATMOSPHERE_COLORS = {
-  dark: { border: 'rgba(226, 204, 122, 0.4)', bg: 'rgba(226, 204, 122, 0.08)', text: '#e2cc7a', glow: 'rgba(226, 204, 122, 0.12)' },
-  light: { border: 'rgba(217, 119, 6, 0.4)', bg: 'rgba(217, 119, 6, 0.08)', text: '#b3922e', glow: 'rgba(217, 119, 6, 0.12)' },
-  night: { border: 'rgba(96, 165, 250, 0.4)', bg: 'rgba(96, 165, 250, 0.08)', text: '#60a5fa', glow: 'rgba(96, 165, 250, 0.12)' },
-  space: { border: 'rgba(167, 139, 250, 0.4)', bg: 'rgba(167, 139, 250, 0.08)', text: '#a78bfa', glow: 'rgba(167, 139, 250, 0.12)' },
-  void: { border: 'rgba(129, 140, 248, 0.4)', bg: 'rgba(129, 140, 248, 0.08)', text: '#818cf8', glow: 'rgba(129, 140, 248, 0.12)' },
-  sunset: { border: 'rgba(251, 113, 133, 0.4)', bg: 'rgba(251, 113, 133, 0.08)', text: '#fb7185', glow: 'rgba(251, 113, 133, 0.12)' },
-  waterfall: { border: 'rgba(45, 212, 191, 0.4)', bg: 'rgba(45, 212, 191, 0.08)', text: '#2dd4bf', glow: 'rgba(45, 212, 191, 0.12)' },
-  mountains: { border: 'rgba(167, 243, 208, 0.4)', bg: 'rgba(167, 243, 208, 0.08)', text: '#a7f3d0', glow: 'rgba(167, 243, 208, 0.12)' }
+  space: { border: 'rgba(168, 85, 247, 0.5)', bg: 'rgba(168, 85, 247, 0.12)', text: '#c084fc', glow: 'rgba(168, 85, 247, 0.25)' },
+  night: { border: 'rgba(96, 165, 250, 0.5)', bg: 'rgba(96, 165, 250, 0.12)', text: '#60a5fa', glow: 'rgba(96, 165, 250, 0.25)' },
+  void: { border: 'rgba(129, 140, 248, 0.5)', bg: 'rgba(129, 140, 248, 0.12)', text: '#818cf8', glow: 'rgba(129, 140, 248, 0.25)' },
+  aurora: { border: 'rgba(52, 211, 153, 0.5)', bg: 'rgba(52, 211, 153, 0.12)', text: '#34d399', glow: 'rgba(52, 211, 153, 0.25)' },
+  sunset: { border: 'rgba(251, 113, 133, 0.5)', bg: 'rgba(251, 113, 133, 0.12)', text: '#fb7185', glow: 'rgba(251, 113, 133, 0.25)' },
+  cherryblossom: { border: 'rgba(244, 114, 182, 0.5)', bg: 'rgba(244, 114, 182, 0.12)', text: '#f472b6', glow: 'rgba(244, 114, 182, 0.25)' },
+  waterfall: { border: 'rgba(45, 212, 191, 0.5)', bg: 'rgba(45, 212, 191, 0.12)', text: '#2dd4bf', glow: 'rgba(45, 212, 191, 0.25)' },
+  dark: { border: 'rgba(226, 204, 122, 0.5)', bg: 'rgba(226, 204, 122, 0.12)', text: '#e2cc7a', glow: 'rgba(226, 204, 122, 0.25)' },
+  light: { border: 'rgba(217, 119, 6, 0.5)', bg: 'rgba(217, 119, 6, 0.12)', text: '#b3922e', glow: 'rgba(217, 119, 6, 0.25)' },
 };
 
 const AtmosphereCustomizer = ({ isHi, theme, updateSetting }) => {
   const themesList = [
-    { id: 'dark', label: isHi ? 'मूल डार्क' : 'Base Dark', desc: 'Serene charcoal' },
-    { id: 'light', label: isHi ? 'मूल लाइट' : 'Base Light', desc: 'Minimalist cream' },
-    { id: 'night', label: isHi ? 'चन्द्र रात्रि' : 'Moon Night', desc: 'Twinkling stars & moon' },
-    { id: 'space', label: isHi ? 'दिव्य ब्रह्मांड' : 'Cosmic Space', desc: 'Saturn overlay' },
+    { id: 'space', label: isHi ? 'दिव्य ब्रह्मांड' : 'Cosmic Space', desc: 'Purple nebulae & celestial orbit' },
+    { id: 'night', label: isHi ? 'चन्द्र रात्रि' : 'Moon Night', desc: 'Twinkling sapphire stars & moon' },
     { id: 'void', label: isHi ? 'परम शून्य' : 'Deep Void', desc: 'Event horizon halo' },
+    { id: 'aurora', label: isHi ? 'उत्तरी प्रभा' : 'Aurora Glow', desc: 'Celestial green & violet glow' },
     { id: 'sunset', label: isHi ? 'स्वर्ण संध्या' : 'Sunset Glow', desc: 'Warm peach sky' },
+    { id: 'cherryblossom', label: isHi ? 'कुसुम रात्रि' : 'Sakura Night', desc: 'Midnight blossom velvet' },
     { id: 'waterfall', label: isHi ? 'प्रपात संगीत' : 'Waterfall', desc: 'Cliff & rushing stream' },
-    { id: 'mountains', label: isHi ? 'मौन पर्वत' : 'Mountains', desc: 'Sage-stone peaks' }
+    { id: 'dark', label: isHi ? 'मूल डार्क' : 'Base Dark', desc: 'Serene charcoal' }
   ];
 
   return (
@@ -58,13 +51,13 @@ const AtmosphereCustomizer = ({ isHi, theme, updateSetting }) => {
             <button
               key={t.id}
               onClick={() => updateSetting('theme', t.id)}
-              className="flex-none px-4 py-3 rounded-2xl border text-left transition-all duration-300 w-44 hover:scale-[1.02] relative group overflow-hidden"
+              className="flex-none px-4 py-3 rounded-2xl border-2 text-left transition-all duration-300 w-44 relative group overflow-hidden"
               style={{
                 borderColor: isActive ? colors.border : 'var(--glass-border)',
                 backgroundColor: isActive ? colors.bg : 'var(--glass-bg)',
                 color: isActive ? colors.text : 'var(--text-color)',
                 opacity: isActive ? 1 : 0.7,
-                boxShadow: isActive ? `0 4px 15px ${colors.glow}` : 'none'
+                boxShadow: 'none'
               }}
               aria-label={isHi ? `${t.label} वातावरण सक्रिय करें` : `Activate ${t.label} atmosphere`}
               title={t.desc}
