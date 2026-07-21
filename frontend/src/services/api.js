@@ -1391,17 +1391,28 @@ export const apiService = {
   },
 
   explainContent: async (contentId, sanskritText, hindiText, author, title, language = 'hi') => {
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : (process.env.NEXT_PUBLIC_API_URL || '');
-    const axios = require('axios');
-    const response = await axios.post(`${baseUrl}/ai-api/explain`, {
-      content_id: contentId,
-      sanskrit_text: sanskritText,
-      hindi_text: hindiText,
-      author: author,
-      title: title,
-      language: language
-    });
-    return response.data;
+    try {
+      const baseUrl = typeof window !== 'undefined' ? window.location.origin : (process.env.NEXT_PUBLIC_API_URL || '');
+      const res = await fetch(`${baseUrl}/ai-api/explain`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content_id: contentId,
+          sanskrit_text: sanskritText,
+          hindi_text: hindiText,
+          author: author,
+          title: title,
+          language: language
+        })
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+      return { success: false, message: 'AI explanation endpoint returned non-200' };
+    } catch (err) {
+      console.warn('AI explainContent error:', err);
+      return { success: false, message: err.message };
+    }
   },
 
   resetPassword: async (email) => {

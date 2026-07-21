@@ -21,7 +21,9 @@ import {
   FileText,
   Copy,
   Check,
-  AlignLeft
+  AlignLeft,
+  RotateCcw,
+  Loader2
 } from 'lucide-react';
 import { useSettings } from '../contexts/SettingsContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -1230,6 +1232,96 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                     onChange={(size) => updateSetting('fontSize', size)}
                   />
                 </div>
+              </div>
+
+              {/* Interactive AI Explanation & Spiritual Commentary Section */}
+              <div className="mt-12 pt-8 border-t border-[var(--glass-border)] animate-fade-in text-left">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-[rgba(var(--primary-rgb),0.12)] border border-[rgba(var(--primary-rgb),0.25)] flex items-center justify-center text-[var(--primary-color)] shrink-0">
+                      <Sparkles size={18} />
+                    </div>
+                    <div>
+                      <h3 className="text-base sm:text-lg font-bold text-[var(--text-color)] font-headings flex items-center gap-2">
+                        <span>{isHindiRoute ? "एआई दिव्य भावार्थ एवं व्याख्या" : "AI Spiritual Commentary & Explanation"}</span>
+                      </h3>
+                      <p className="text-xs text-stone-500 dark:text-white/40">
+                        {isHindiRoute ? "पद के गूढ़ भाव एवं भक्ति अर्थ की एआई द्वारा विशद व्याख्या" : "Dynamic AI commentary & spiritual breakdown for this composition"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Language Toggle & Action Controls */}
+                  <div className="flex items-center gap-2">
+                    <div className="inline-flex p-1 rounded-xl bg-black/10 dark:bg-white/5 border border-[var(--glass-border)] text-xs">
+                      <button
+                        onClick={() => handleLangSwitch("hi")}
+                        className={`px-3 py-1 rounded-lg font-medium transition-all ${aiLang === "hi" ? "bg-[var(--primary-color)] text-white font-bold shadow-sm" : "text-stone-600 dark:text-white/60 hover:text-[var(--text-color)]"}`}
+                      >
+                        हिंदी
+                      </button>
+                      <button
+                        onClick={() => handleLangSwitch("en")}
+                        className={`px-3 py-1 rounded-lg font-medium transition-all ${aiLang === "en" ? "bg-[var(--primary-color)] text-white font-bold shadow-sm" : "text-stone-600 dark:text-white/60 hover:text-[var(--text-color)]"}`}
+                      >
+                        English
+                      </button>
+                    </div>
+
+                    {currentExplanation && (
+                      <button
+                        onClick={handleCopy}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] hover:bg-[rgba(var(--primary-rgb),0.1)] text-xs font-semibold text-[var(--primary-color)] transition-all"
+                        title={copied ? (isHindiRoute ? "प्रतिलिपि बनाई गई!" : "Copied!") : (isHindiRoute ? "प्रतिलिपि बनाएं" : "Copy Explanation")}
+                      >
+                        {copied ? <Check size={14} /> : <Copy size={14} />}
+                        <span>{copied ? (isHindiRoute ? "प्रतिलिपि बनाई गई" : "Copied") : (isHindiRoute ? "कॉपी" : "Copy")}</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Explanation Content Box / Trigger Button */}
+                {loadingAi ? (
+                  <div className="p-8 rounded-2xl border border-[rgba(var(--primary-rgb),0.25)] bg-[rgba(var(--primary-rgb),0.05)] flex flex-col items-center justify-center gap-3 text-center">
+                    <Loader2 size={24} className="animate-spin text-[var(--primary-color)]" />
+                    <p className="text-xs font-medium text-[var(--text-color)] opacity-80">
+                      {isHindiRoute ? "दिव्य व्याख्या एवं भावार्थ तैयार किया जा रहा है..." : "Generating spiritual AI commentary & explanation..."}
+                    </p>
+                  </div>
+                ) : currentExplanation ? (
+                  <div className="p-6 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] shadow-md text-stone-700 dark:text-white/80 text-sm sm:text-base leading-relaxed space-y-4 font-serif">
+                    {currentExplanation.split('\n').filter(Boolean).map((para, pIdx) => (
+                      <p key={pIdx} className="leading-relaxed">
+                        {para}
+                      </p>
+                    ))}
+                  </div>
+                ) : errorAi ? (
+                  <div className="p-5 rounded-2xl border border-red-500/20 bg-red-500/5 text-center space-y-3">
+                    <p className="text-xs text-red-500 font-medium">{errorAi}</p>
+                    <button
+                      onClick={() => handleExplainWithAI(aiLang)}
+                      className="px-4 py-2 rounded-xl bg-[var(--primary-color)] text-white text-xs font-bold shadow-md hover:opacity-90 transition-all inline-flex items-center gap-2"
+                    >
+                      <RotateCcw size={14} />
+                      <span>{isHindiRoute ? "पुनः प्रयास करें" : "Retry AI Generation"}</span>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="p-6 rounded-2xl border border-[rgba(var(--primary-rgb),0.25)] bg-[rgba(var(--primary-rgb),0.04)] flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <p className="text-xs text-stone-600 dark:text-white/70 text-center sm:text-left">
+                      {isHindiRoute ? "पद के गूढ़ भाव एवं भक्ति अर्थ को एआई द्वारा विशद रूप से समझें" : "Generate detailed spiritual breakdown and contextual commentary powered by AI"}
+                    </p>
+                    <button
+                      onClick={() => handleExplainWithAI(aiLang)}
+                      className="shrink-0 px-5 py-2.5 rounded-xl bg-[var(--primary-color)] text-white text-xs font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2 group"
+                    >
+                      <Sparkles size={16} />
+                      <span>{isHindiRoute ? "एआई व्याख्या देखें" : "Generate AI Explanation"}</span>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
