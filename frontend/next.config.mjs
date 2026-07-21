@@ -9,6 +9,17 @@ const nextConfig = {
   reactStrictMode: true,
   optimizeFonts: false,
   staticPageGenerationTimeout: 1000,
+  transpilePackages: [
+    'firebase',
+    '@firebase/app',
+    '@firebase/database',
+    '@firebase/auth',
+    '@firebase/firestore',
+    '@firebase/data-connect',
+    '@firebase/component',
+    '@firebase/util',
+    '@firebase/logger'
+  ],
   experimental: {
     outputFileTracingIncludes: {
       '/**/*': [

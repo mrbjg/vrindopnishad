@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getDatabase } from "firebase/database";
@@ -16,11 +16,10 @@ const firebaseConfig = {
     databaseURL: "https://santvaanig-default-rtdb.asia-southeast1.firebasedatabase.app"
 };
 
-
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const contentDb = getDatabase(app);
-export const dataConnect = getDataConnect(app, connectorConfig);
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+export const auth = typeof window !== 'undefined' ? getAuth(app) : null;
+export const db = typeof window !== 'undefined' ? getFirestore(app) : null;
+export const contentDb = typeof window !== 'undefined' ? getDatabase(app) : null;
+export const dataConnect = typeof window !== 'undefined' ? getDataConnect(app, connectorConfig) : null;
 
 export default app;

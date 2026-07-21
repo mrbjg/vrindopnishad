@@ -1461,7 +1461,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                         <Link
                           key={v.id || idx}
                           to={isHindiRoute ? `/hi/lyrics/${v.slug || v.id}` : `/lyrics/${v.slug || v.id}`}
-                          className="glass-card p-5 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] hover:border-[rgba(var(--primary-rgb),0.4)] hover:-translate-y-1 hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
+                          className="glass-card p-5 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] hover:border-[rgba(var(--primary-rgb),0.4)] hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
                         >
                           <div className="space-y-3">
                             {/* Card Header Meta */}
@@ -1496,7 +1496,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                           </div>
 
                           {/* Footer Action */}
-                          <div className="mt-4 pt-3 border-t border-[var(--glass-border)] flex items-center justify-between text-xs font-semibold text-[var(--primary-color)] group-hover:translate-x-0.5 transition-transform">
+                          <div className="mt-4 pt-3 border-t border-[var(--glass-border)] flex items-center justify-between text-xs font-semibold text-[var(--primary-color)]">
                             <span>{isHindiRoute ? "पद पढ़ें" : "Read Verse"}</span>
                             <ArrowRight size={14} />
                           </div>
