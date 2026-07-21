@@ -47,7 +47,7 @@ const nextConfig = {
     ],
   },
   productionBrowserSourceMaps: false,
-  webpack: (config, { dev }) => {
+  webpack: (config) => {
     config.resolve.alias['react-router-dom'] = path.resolve(__dirname, 'src/lib/router-compat.js');
     config.resolve.alias['react-helmet-async'] = path.resolve(__dirname, 'src/lib/helmet-compat.js');
     config.ignoreWarnings = [
@@ -55,9 +55,6 @@ const nextConfig = {
       /sourceMap/,
       /index\.esm\.js\.map/
     ];
-    if (dev) {
-      config.devtool = false;
-    }
     return config;
   },
   async redirects() {
