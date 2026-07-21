@@ -247,6 +247,68 @@ const normalizeFuzzyText = (text) => {
     .replace(/ph/g, 'p')
     .replace(/ch/g, 'c');
 };
+const fetchFromSupabaseBySlugOrId = async (identifier) => {
+  if (!identifier) return null;
+  try {
+    const decoded = decodeURIComponent(identifier);
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decoded);
+    let query = supabase.from('content').select('*');
+    if (isUuid) {
+      query = query.eq('id', decoded);
+    } else {
+      query = query.eq('slug', decoded);
+    }
+    const { data, error } = await query.maybeSingle();
+    if (!error && data) {
+      const mapped = mapToAppModel(data);
+      const cleanCategory = classifyItemCategory(mapped);
+      return {
+        ...mapped,
+        category: cleanCategory,
+        slug: mapped.slug || generateSlug(mapped.title)
+      };
+    }
+  } catch (err) {
+    console.warn('[Supabase-Fallback] Fetch failed for', identifier, err);
+  }
+  return null;
+};
+
+const fetchWithSupabaseFallback = async (primaryPromise, fallbackFn, timeoutMs = 1500) => {
+  let isPrimaryDone = false;
+  return new Promise((resolve) => {
+    const timer = setTimeout(async () => {
+      if (!isPrimaryDone) {
+        console.warn(`[DataFetch] Primary fetch took over ${timeoutMs}ms. Fetching fallback data from Supabase...`);
+        try {
+          const fallbackData = await fallbackFn();
+          if (fallbackData) {
+            console.log('[DataFetch] Successfully retrieved fast fallback data from Supabase!');
+            resolve(fallbackData);
+            return;
+          }
+        } catch (e) {
+          console.warn('[DataFetch] Supabase fallback exception:', e);
+        }
+      }
+    }, timeoutMs);
+
+    primaryPromise.then(res => {
+      isPrimaryDone = true;
+      clearTimeout(timer);
+      if (res) {
+        resolve(res);
+      } else {
+        fallbackFn().then(fallbackRes => resolve(fallbackRes)).catch(() => resolve(null));
+      }
+    }).catch(err => {
+      isPrimaryDone = true;
+      clearTimeout(timer);
+      console.warn('[DataFetch] Primary fetch threw error:', err);
+      fallbackFn().then(fallbackRes => resolve(fallbackRes)).catch(() => resolve(null));
+    });
+  });
+};
 
 const setCache = (key, data) => {
   try {
@@ -908,22 +970,32 @@ export const apiService = {
           return contentData;
         }
       } else {
-        console.log('[DataConnect-Client] Fetching live content for', decodedId);
-        let result;
-        if (isUuid) {
-          result = await getDcContentById(dataConnect, { id: decodedId });
-        } else {
-          result = await getDcContentBySlug(dataConnect, { slug: decodedId });
-        }
-        if (result && result.data && result.data.content) {
-          const mapped = mapToAppModel(result.data.content);
-          const cleanCategory = classifyItemCategory(mapped);
-          const found = {
-            ...mapped,
-            category: cleanCategory,
-            slug: (mapped.slug && !mapped.slug.startsWith('untitled')) ? mapped.slug : generateSlug(mapped.title)
-          };
+        console.log('[DataConnect-Client] Fetching live content for', decodedId, '(with Supabase fallback timeout 1500ms)');
 
+        const primaryPromise = (async () => {
+          let result;
+          if (isUuid) {
+            result = await getDcContentById(dataConnect, { id: decodedId });
+          } else {
+            result = await getDcContentBySlug(dataConnect, { slug: decodedId });
+          }
+          if (result && result.data && result.data.content) {
+            const mapped = mapToAppModel(result.data.content);
+            const cleanCategory = classifyItemCategory(mapped);
+            return {
+              ...mapped,
+              category: cleanCategory,
+              slug: (mapped.slug && !mapped.slug.startsWith('untitled')) ? mapped.slug : generateSlug(mapped.title)
+            };
+          }
+          return null;
+        })();
+
+        const fallbackFn = () => fetchFromSupabaseBySlugOrId(decodedId);
+
+        const found = await fetchWithSupabaseFallback(primaryPromise, fallbackFn, 1500);
+
+        if (found) {
           if (found.id) {
             contentMapById.set(found.id.toString(), found);
           }
