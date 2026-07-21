@@ -105,12 +105,21 @@ const rebuildMemoryMaps = () => {
       item.cleanTitle = cleanTitle;
     }
 
+    const getItemLength = (x) => ((x.sanskrit_text || '').length + (x.hindi_text || '').length + (x.content_text || '').length);
+
     if (item.id) {
-      contentMapById.set(item.id.toString(), item);
+      const idKey = item.id.toString();
+      const existing = contentMapById.get(idKey);
+      if (!existing || getItemLength(item) > getItemLength(existing)) {
+        contentMapById.set(idKey, item);
+      }
     }
     if (item.slug) {
-      contentMapBySlug.set(item.slug, item);
-      contentMapBySlug.set(decodeURIComponent(item.slug), item);
+      const existing = contentMapBySlug.get(item.slug);
+      if (!existing || getItemLength(item) > getItemLength(existing)) {
+        contentMapBySlug.set(item.slug, item);
+        contentMapBySlug.set(decodeURIComponent(item.slug), item);
+      }
     }
   });
 
@@ -528,20 +537,43 @@ const ensureFullVerseText = async (matched) => {
     } catch (e) { }
   }
 
-  // 3. Fetch master content_backup.json if still truncated or short
+  // 3. Search memoryCachedItems and master backups if still truncated or short
   if (isTruncatedText(current.sanskrit_text) || isTruncatedText(current.hindi_text) || (current.sanskrit_text || '').length < 300) {
+    if (memoryCachedItems && memoryCachedItems.length > 0) {
+      const curTitle = (current.cleanTitle || current.title || '').trim().toLowerCase();
+      const curSlug = (current.slug || '').toLowerCase();
+      const longerMemoryItem = memoryCachedItems.find(x => {
+        if (!x) return false;
+        const xTitle = (x.cleanTitle || x.title || '').trim().toLowerCase();
+        const xSlug = (x.slug || '').toLowerCase();
+        const xLen = (x.sanskrit_text || '').length + (x.hindi_text || '').length + (x.content_text || '').length;
+        const curLen = (current.sanskrit_text || '').length + (current.hindi_text || '').length;
+        return xLen > (curLen + 40) && (xSlug === curSlug || xTitle === curTitle || (curTitle && xTitle.startsWith(curTitle)));
+      });
+      if (longerMemoryItem) {
+        const sans = longerMemoryItem.sanskrit_text || longerMemoryItem.content_text || current.sanskrit_text;
+        const hin = longerMemoryItem.hindi_text || current.hindi_text;
+        current = { ...current, ...longerMemoryItem, sanskrit_text: sans, hindi_text: hin };
+      }
+    }
+
     try {
-      const filesToTry = ['/data/content_backup.json', '/data/content_backup_saint.json'];
+      const filesToTry = ['/data/vrindavaani_content.json', '/data/content_backup.json', '/data/content_backup_saint.json'];
       for (const fileUrl of filesToTry) {
         const res = await fetch(fileUrl);
         if (res.ok) {
           const fullItems = await res.json();
           if (fullItems && fullItems.length > 0) {
-            const foundFull = fullItems.find(x =>
-              (x.id && current.id && x.id.toString() === current.id.toString()) ||
-              (x.slug && current.slug && x.slug.replace(/^-+|-+$/g, '') === current.slug.replace(/^-+|-+$/g, '')) ||
-              (x.title && current.title && x.title.trim() === current.title.trim())
-            );
+            const foundFull = fullItems.find(x => {
+              if (!x) return false;
+              const xLen = (x.sanskrit_text || '').length + (x.hindi_text || '').length + (x.content_text || '').length;
+              const curLen = (current.sanskrit_text || '').length + (current.hindi_text || '').length;
+              if (xLen <= curLen) return false;
+
+              return (x.id && current.id && x.id.toString() === current.id.toString()) ||
+                (x.slug && current.slug && x.slug.replace(/^-+|-+$/g, '') === current.slug.replace(/^-+|-+$/g, '')) ||
+                (x.title && current.title && x.title.trim() === current.title.trim());
+            });
             if (foundFull) {
               const sans = (foundFull.sanskrit_text && foundFull.sanskrit_text.length > (current.sanskrit_text || '').length)
                 ? foundFull.sanskrit_text

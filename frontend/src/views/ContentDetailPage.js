@@ -310,14 +310,28 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
   const content = React.useMemo(() => {
     const activeData = fetchedData || rawContent;
     if (!activeData) return null;
-    const rawSanskrit = cleanVerseOnly(activeData.sanskrit_text);
-    const rawHindi = cleanVerseOnly(activeData.hindi_text);
-    const { verse } = splitVerseAndTranslation(rawHindi);
-    const cleanedVerse = cleanVerseOnly(verse || rawHindi);
+
+    let rawSanskrit = activeData.sanskrit_text || '';
+    let rawHindi = activeData.hindi_text || '';
+    let rawContentText = activeData.content_text || '';
+
+    // Pick the longest text if sanskrit_text is truncated or missing lines
+    let richestText = rawSanskrit;
+    if (rawHindi.length > (richestText.length + 30) || (!richestText && rawHindi)) {
+      richestText = rawHindi;
+    }
+    if (rawContentText.length > (richestText.length + 30) || (!richestText && rawContentText)) {
+      richestText = rawContentText;
+    }
+
+    const cleanedVerse = cleanVerseOnly(richestText);
+    const { verse } = splitVerseAndTranslation(cleanedVerse);
+    const finalVerseText = cleanVerseOnly(verse || cleanedVerse);
+
     return {
       ...activeData,
-      sanskrit_text: rawSanskrit,
-      hindi_text: cleanedVerse,
+      sanskrit_text: finalVerseText,
+      hindi_text: finalVerseText,
       english_translation: ''
     };
   }, [fetchedData, rawContent]);
