@@ -984,15 +984,14 @@ export function getVerseBySlug(slug) {
   const decodedSlug = decodeURIComponent(slug).toLowerCase();
   const cleanSlug = sanitizeSlug(decodedSlug);
 
-  const decodedClean = decodedSlug.replace(/-+$/, '');
-  const cleanSlugClean = cleanSlug.replace(/-+$/, '');
+  const decodedClean = decodedSlug.replace(/^-+|-+$/g, '');
+  const cleanSlugClean = cleanSlug.replace(/^-+|-+$/g, '');
 
   // 1. Try exact match
   let matched = verses.find(item => {
-    const itemSlug = (item.slug || '').toLowerCase();
-    const itemSlugClean = itemSlug.replace(/-+$/, '');
-    return itemSlugClean === decodedClean ||
-      itemSlugClean === cleanSlugClean ||
+    const itemSlug = (item.slug || '').toLowerCase().replace(/^-+|-+$/g, '');
+    return itemSlug === decodedClean ||
+      itemSlug === cleanSlugClean ||
       (item.id?.toString() === decodedSlug);
   });
   if (matched) return matched;
@@ -1005,10 +1004,9 @@ export function getVerseBySlug(slug) {
 
     // 2a. Match transliterated slug exactly
     matched = verses.find(item => {
-      const itemSlug = (item.slug || '').toLowerCase();
-      const itemSlugClean = itemSlug.replace(/-+$/, '');
-      const searchSlugClean = searchSlug.replace(/-+$/, '');
-      return itemSlugClean === searchSlugClean;
+      const itemSlug = (item.slug || '').toLowerCase().replace(/^-+|-+$/g, '');
+      const searchSlugClean = searchSlug.replace(/^-+|-+$/g, '');
+      return itemSlug === searchSlugClean;
     });
     if (matched) return matched;
 

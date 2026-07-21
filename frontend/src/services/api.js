@@ -1,5 +1,6 @@
 import { mockApiService } from './mockData';
 import { auth, db, contentDb, dataConnect } from '../firebase';
+import { supabase } from '../lib/supabase';
 import { getContentById as getDcContentById, getContentBySlug as getDcContentBySlug } from '../lib/dataconnect';
 import {
   signInWithEmailAndPassword,
@@ -23,7 +24,6 @@ import {
   limit
 } from 'firebase/firestore';
 import { ref, get, child, set as dbSet, update as dbUpdate, remove as dbRemove, query as rtdbQuery, orderByChild, startAt } from 'firebase/database';
-import { supabase } from '../lib/supabase';
 import { transliterate } from '../utils/transliterate';
 import { normalizeForFuzzy } from '../utils/hinglishSearch';
 
@@ -389,18 +389,65 @@ const fetchRelationsBackup = async () => {
 
 const ensureFullVerseText = async (matched) => {
   if (!matched) return matched;
-  const cat = (matched.category || classifyItemCategory(matched)).toLowerCase();
-  const needsFullText = !matched.hindi_text && (!matched.sanskrit_text || matched.sanskrit_text.length <= 100);
+  
+  const isTruncated = (str) => {
+    if (!str) return false;
+    const trimmed = str.trim();
+    if (trimmed.length === 100) return true;
+    if (trimmed.length <= 150 && !/[॥।.\!\?\n]/.test(trimmed.slice(-2))) return true;
+    return false;
+  };
+
+  const needsFullText = (!matched.hindi_text && !matched.sanskrit_text && !matched.english_translation) ||
+                        isTruncated(matched.sanskrit_text) ||
+                        isTruncated(matched.hindi_text) ||
+                        isTruncated(matched.english_translation);
+
   if (needsFullText) {
     try {
-      const fullItems = await fetchCategoryFullBackup(cat);
-      if (fullItems && fullItems.length > 0) {
-        const foundFull = fullItems.find(x => x.id?.toString() === matched.id?.toString() || x.slug === matched.slug);
-        if (foundFull) {
-          const merged = { ...matched, ...foundFull };
-          if (merged.id) contentMapById.set(merged.id.toString(), merged);
-          if (merged.slug) contentMapBySlug.set(merged.slug, merged);
-          return merged;
+      const targetSlug = matched.slug;
+      const targetId = matched.id;
+      let query = supabase.from('content').select('*');
+      if (targetSlug) {
+        query = query.eq('slug', targetSlug);
+      } else if (targetId) {
+        query = query.eq('id', targetId);
+      }
+      const { data, error } = await query.maybeSingle();
+      if (!error && data) {
+        let sanskrit = data.sanskrit_text || data.sanskritText || matched.sanskrit_text || '';
+        let hindi = data.hindi_text || data.hindiText || matched.hindi_text || '';
+        if (data.content_text && data.content_text.length > (sanskrit.length + hindi.length + 50)) {
+          const parts = data.content_text.split('\n\n');
+          if (parts.length >= 2) {
+            if (!sanskrit || isTruncated(sanskrit)) sanskrit = parts[0];
+            if (!hindi || isTruncated(hindi)) hindi = parts.slice(1).join('\n\n');
+          } else if (!sanskrit || isTruncated(sanskrit)) {
+            sanskrit = data.content_text;
+          }
+        }
+        const merged = { ...matched, ...data, sanskrit_text: sanskrit, hindi_text: hindi };
+        if (merged.id) contentMapById.set(merged.id.toString(), merged);
+        if (merged.slug) contentMapBySlug.set(merged.slug, merged);
+        return merged;
+      }
+    } catch (e) {
+      console.warn('[FullText] Supabase fetch failed:', e);
+    }
+
+    try {
+      const cat = (matched.category || classifyItemCategory(matched)).toLowerCase();
+      const res = await fetch(`/data/content_backup_${cat}.json`);
+      if (res.ok) {
+        const fullItems = await res.json();
+        if (fullItems && fullItems.length > 0) {
+          const foundFull = fullItems.find(x => x.id?.toString() === matched.id?.toString() || (x.slug && x.slug.replace(/^-+|-+$/g, '') === (matched.slug || '').replace(/^-+|-+$/g, '')));
+          if (foundFull) {
+            const merged = { ...matched, ...foundFull };
+            if (merged.id) contentMapById.set(merged.id.toString(), merged);
+            if (merged.slug) contentMapBySlug.set(merged.slug, merged);
+            return merged;
+          }
         }
       }
     } catch (e) {}

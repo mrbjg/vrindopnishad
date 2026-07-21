@@ -167,9 +167,9 @@ export default async function handler(req, res) {
     <h1>${content ? escapeHtml(content.title) : 'Vrindopnishad Paath'}</h1>
     ${content?.author ? `<p><strong>Author:</strong> ${escapeHtml(content.author)}</p>` : ''}
     ${content?.category ? `<p><strong>Category:</strong> ${escapeHtml(content.category)}</p>` : ''}
-    ${content?.sanskrit_text ? `<div lang="sa"><h2>Sanskrit</h2><p>${escapeHtml(content.sanskrit_text.substring(0, 1000))}</p></div>` : ''}
-    ${content?.hindi_text ? `<div lang="hi"><h2>Hindi</h2><p>${escapeHtml(content.hindi_text.substring(0, 1000))}</p></div>` : ''}
-    ${content?.english_text ? `<div lang="en"><h2>English</h2><p>${escapeHtml(content.english_text.substring(0, 1000))}</p></div>` : ''}
+    ${content?.sanskrit_text ? `<div lang="sa"><h2>Sanskrit</h2><p>${escapeHtml(content.sanskrit_text)}</p></div>` : ''}
+    ${content?.hindi_text ? `<div lang="hi"><h2>Hindi</h2><p>${escapeHtml(content.hindi_text)}</p></div>` : ''}
+    ${content?.english_text ? `<div lang="en"><h2>English</h2><p>${escapeHtml(content.english_text)}</p></div>` : ''}
     <nav>
       <p><a href="${DOMAIN}/">Vrindopnishad Home</a> | <a href="${DOMAIN}/content">Browse All Content</a></p>
       <p><a href="${DOMAIN}/category/shloka">Shlokas</a> | <a href="${DOMAIN}/category/dham">Dham</a> | <a href="${DOMAIN}/category/saint">Saints</a></p>
