@@ -100,7 +100,7 @@ function extractFirstLine(title) {
 import { GLOSSARY_TERMS } from '../utils/glossaryTerms';
 import { shareVerseCard } from '../utils/shareCard';
 import PageSkeleton from '../components/ui/PageSkeleton';
-import { splitVerseAndTranslation } from '../utils/textSplitter';
+import { splitVerseAndTranslation, cleanVerseOnly } from '../utils/textSplitter';
 import { useSWR } from '../hooks/useSWR';
 
 // Professional typographic scaling component for Sanskrit/Hindi & Hinglish verses.
@@ -136,11 +136,21 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
       return ` ${protectedBlocks[idx]}`;
     });
 
-    // 5. Split and clean up lines
-    return processed
+    // 5. Split lines and stop processing after attribution line (so no trailing explanations are included)
+    const rawLines = processed
       .split('\n')
       .map(p => p.trim())
       .filter(Boolean);
+
+    const filtered = [];
+    for (const line of rawLines) {
+      filtered.push(line);
+      const isAttribution = /^[—–-]\s*(?:श्री|जगद्गुरु|स्वामी|हठ|रसिया|रसिक|सूरदास|मीरा|कबीर|हित|गोविन्द|गोविंद|भगवत|हरिदास|देव|रूप|सनातन|जीव|ललित|Jagadguru|Shri|Swami|Goswami)/i.test(line);
+      if (isAttribution) {
+        break;
+      }
+    }
+    return filtered;
   }, [text]);
 
   const maxLineLength = React.useMemo(() => {
@@ -191,7 +201,7 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
       }}
     >
       {cleanLines.map((line, idx) => {
-        const isAttribution = line.startsWith('— श्री') || line.startsWith('- श्री');
+        const isAttribution = /^[—–-]\s*(?:श्री|जगद्गुरु|स्वामी|हठ|रसिया|रसिक|सूरदास|मीरा|कबीर|हित|गोविन्द|गोविंद|भगवत|हरिदास|देव|रूप|सनातन|जीव|ललित|Jagadguru|Shri|Swami|Goswami)/i.test(line);
         const isHeader = (line.startsWith('॥') && line.endsWith('॥') && !/[०-९\d]/.test(line)) ||
           (line.startsWith('।') && line.endsWith('।') && !/[०-९\d]/.test(line));
 
@@ -199,8 +209,8 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
           return (
             <div
               key={idx}
-              className="mt-6 pt-4 border-t border-[var(--glass-border)] text-amber-600 dark:text-amber-400 font-semibold w-full block text-center select-text font-headings tracking-wide"
-              style={{ fontSize: '0.95rem', lineHeight: '1.6' }}
+              className="mt-6 pt-4 border-t border-[var(--glass-border)] text-[var(--primary-color)] font-semibold w-full block text-center select-text font-headings tracking-wide"
+              style={{ fontSize: '0.9em', lineHeight: '1.6' }}
             >
               {line}
             </div>
@@ -222,7 +232,7 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
         return (
           <div
             key={idx}
-            className="verse-line-text select-text text-white/95 whitespace-pre-wrap break-words w-full"
+            className="verse-line-text select-text text-current whitespace-pre-wrap break-words w-full"
             style={{ wordBreak: 'keep-all', overflowWrap: 'break-word' }}
           >
             {line}
@@ -298,11 +308,15 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
   const content = React.useMemo(() => {
     const activeData = fetchedData || rawContent;
     if (!activeData) return null;
-    const { verse, translation } = splitVerseAndTranslation(activeData.hindi_text);
+    const rawSanskrit = cleanVerseOnly(activeData.sanskrit_text);
+    const rawHindi = cleanVerseOnly(activeData.hindi_text);
+    const { verse } = splitVerseAndTranslation(rawHindi);
+    const cleanedVerse = cleanVerseOnly(verse || rawHindi);
     return {
       ...activeData,
-      hindi_text: verse || activeData.hindi_text,
-      english_translation: activeData.english_translation || translation
+      sanskrit_text: rawSanskrit,
+      hindi_text: cleanedVerse,
+      english_translation: ''
     };
   }, [fetchedData, rawContent]);
 
@@ -838,7 +852,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
         <article>
           {/* Breadcrumb */}
-          <Link to={isHindiRoute ? "/hi/lyrics" : "/lyrics"} className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-4 transition-colors text-sm">
+          <Link to={isHindiRoute ? "/hi/lyrics" : "/lyrics"} className="inline-flex items-center gap-2 text-stone-600 dark:text-white/50 hover:text-stone-900 dark:hover:text-white mb-4 transition-colors text-sm font-medium">
             <ArrowLeft size={16} />
             {isHindiRoute ? "संग्रह" : "Collection"}
           </Link>
@@ -853,13 +867,13 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 return (
                   <>
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 font-bold text-xs shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-[rgba(var(--primary-rgb),0.12)] border border-[rgba(var(--primary-rgb),0.25)] flex items-center justify-center text-[var(--primary-color)] font-bold text-xs shrink-0">
                         {getInitials(displayAuthorName)}
                       </div>
                       {saintSlug ? (
                         <Link
                           to={isHindiRoute ? `/hi/saints/${saintSlug}` : `/saints/${saintSlug}`}
-                          className="text-sm font-bold font-headings text-amber-500 hover:text-amber-400 transition-colors"
+                          className="text-sm font-bold font-headings text-[var(--primary-color)] hover:opacity-80 transition-opacity"
                         >
                           {displayAuthorName}
                         </Link>
@@ -878,7 +892,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                         <span className="opacity-30 hidden sm:inline">·</span>
                         <Link
                           to={isHindiRoute ? `/hi/granthas/${granthSlug}` : `/granthas/${granthSlug}`}
-                          className="text-xs text-stone-500 dark:text-white/60 hover:text-primary transition-colors hidden sm:flex items-center gap-1.5"
+                          className="text-xs text-stone-700 dark:text-white/60 hover:text-[var(--primary-color)] transition-colors hidden sm:flex items-center gap-1.5 font-medium"
                         >
                           <BookOpen size={14} />
                           {cleanGranth}
@@ -891,19 +905,19 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
             </div>
 
             {/* 2. Main Title — elegant breathing room */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-headings leading-normal md:leading-snug my-6 text-sacred-gradient">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-headings leading-normal md:leading-snug my-6 text-[var(--text-color)]">
               {content.title}
             </h1>
 
             {/* 3. Reading Toolbar — high-end glassmorphic control bar */}
-            <div className="flex items-center justify-between gap-3 py-3.5 px-4 sm:px-6 rounded-2xl border border-amber-500/15 dark:border-amber-400/20 bg-gradient-to-r from-amber-500/[0.04] via-[var(--glass-bg)] to-amber-500/[0.04] backdrop-blur-xl my-8 shadow-md shadow-black/5">
+            <div className="flex items-center justify-between gap-3 py-3.5 px-4 sm:px-6 rounded-2xl border border-[rgba(var(--primary-rgb),0.2)] bg-gradient-to-r from-[rgba(var(--primary-rgb),0.06)] via-[var(--glass-bg)] to-[rgba(var(--primary-rgb),0.06)] backdrop-blur-xl my-8 shadow-md shadow-black/5">
               {/* Left: Quick Action Tools */}
               <div className="flex items-center gap-2 sm:gap-2.5">
                 <button
                   onClick={toggleBookmark}
                   className={`flex items-center justify-center w-9 h-9 rounded-full border transition-all ${isBookmarked
-                      ? 'bg-amber-500/20 border-amber-500 text-amber-500 shadow-sm'
-                      : 'border-[var(--glass-border)] bg-[var(--glass-bg)] text-stone-500 dark:text-white/60 hover:text-stone-900 dark:hover:text-white hover:border-amber-500/30'
+                      ? 'bg-[rgba(var(--primary-rgb),0.15)] border-[var(--primary-color)] text-[var(--primary-color)] shadow-sm'
+                      : 'border-[var(--glass-border)] bg-[var(--glass-bg)] text-stone-700 dark:text-white/60 hover:text-stone-900 dark:hover:text-white hover:border-[rgba(var(--primary-rgb),0.3)]'
                     }`}
                   title={isBookmarked ? (isHindiRoute ? "सहेजा गया" : "Saved") : (isHindiRoute ? "बुकमार्क" : "Bookmark")}
                   aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
@@ -912,7 +926,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 </button>
                 <button
                   onClick={() => shareVerseCard(content, isHindiRoute)}
-                  className="flex items-center justify-center w-9 h-9 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-stone-500 dark:text-white/60 hover:text-stone-900 dark:hover:text-white hover:border-amber-500/30 transition-all"
+                  className="flex items-center justify-center w-9 h-9 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-stone-700 dark:text-white/60 hover:text-stone-900 dark:hover:text-white hover:border-[rgba(var(--primary-rgb),0.3)] transition-all"
                   title={isHindiRoute ? "साझा करें" : "Share"}
                   aria-label="Share verse"
                 >
@@ -927,7 +941,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                       }
                     } catch (e) { }
                   }}
-                  className="flex items-center justify-center w-9 h-9 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-stone-500 dark:text-white/60 hover:text-stone-900 dark:hover:text-white hover:border-amber-500/30 transition-all"
+                  className="flex items-center justify-center w-9 h-9 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-stone-700 dark:text-white/60 hover:text-stone-900 dark:hover:text-white hover:border-[rgba(var(--primary-rgb),0.3)] transition-all"
                   title={isHindiRoute ? "पाठ मोड" : "Fullscreen"}
                   aria-label="Fullscreen reading mode"
                 >
@@ -936,8 +950,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 <button
                   onClick={() => updateSetting('lineByLine', !settings.lineByLine)}
                   className={`flex items-center justify-center w-9 h-9 rounded-full border transition-all ${settings.lineByLine
-                      ? 'bg-amber-500/20 border-amber-500 text-amber-500'
-                      : 'border-[var(--glass-border)] bg-[var(--glass-bg)] text-stone-500 dark:text-white/60 hover:text-stone-900 dark:hover:text-white hover:border-amber-500/30'
+                      ? 'bg-[rgba(var(--primary-rgb),0.15)] border-[var(--primary-color)] text-[var(--primary-color)]'
+                      : 'border-[var(--glass-border)] bg-[var(--glass-bg)] text-stone-700 dark:text-white/60 hover:text-stone-900 dark:hover:text-white hover:border-[rgba(var(--primary-rgb),0.3)]'
                     }`}
                   title={settings.lineByLine ? (isHindiRoute ? "पंक्ति-दर-पंक्ति मोड चालू" : "Line-by-line mode active") : (isHindiRoute ? "पंक्ति-दर-पंक्ति मोड चालू करें" : "Toggle line-by-line mode")}
                   aria-label="Toggle line-by-line mode"
@@ -947,8 +961,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
               </div>
 
               {/* Center: Subtle Sanctum Status Badge */}
-              <div className="hidden md:flex items-center gap-2 text-xs font-medium text-amber-500/80 bg-amber-500/5 px-3.5 py-1.5 rounded-full border border-amber-500/15">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+              <div className="hidden md:flex items-center gap-2 text-xs font-semibold text-[var(--primary-color)] bg-[rgba(var(--primary-rgb),0.1)] px-3.5 py-1.5 rounded-full border border-[rgba(var(--primary-rgb),0.25)]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--primary-color)] animate-pulse"></span>
                 <span>{isHindiRoute ? 'पावन पठन' : 'Sacred Reading'}</span>
               </div>
 
@@ -1024,136 +1038,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 ) : null
               )}
 
-              <div className="py-8 border-b border-white/5">
-                {/* Minimalist AI Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/5 select-none">
-                  <div className="flex items-center gap-2">
-                    <Sparkles size={16} className="text-amber-400 animate-pulse" />
-                    <h3 className="font-headings text-xs font-bold uppercase tracking-widest text-amber-200/90">
-                      {(!isMounted || isHindiRoute) ? "एआई व्याख्या" : "AI Insight"}
-                    </h3>
-                  </div>
 
-                  <div className="flex items-center gap-6">
-                    {/* Auto-Explain Toggle Switch */}
-                    <div className="flex items-center gap-2.5 text-[10px] text-white/50 font-bold uppercase tracking-wider">
-                      <span>{(!isMounted || isHindiRoute) ? "स्वचालित व्याख्या" : "Auto-Explain"}</span>
-                      <button
-                        onClick={toggleAutoExplain}
-                        className={`relative w-8 h-4.5 rounded-full transition-colors duration-200 focus:outline-none ${autoExplain ? 'bg-amber-500' : 'bg-white/10'}`}
-                        title={(!isMounted || isHindiRoute) ? "स्वचालित रूप से व्याख्या लोड करें" : "Automatically load commentary"}
-                      >
-                        <span className={`absolute top-0.5 left-0.5 w-3.5 h-3.5 rounded-full bg-black transition-transform duration-200 ${autoExplain ? 'translate-x-3.5' : 'translate-x-0'}`}></span>
-                      </button>
-                    </div>
-
-                    {/* Language Switcher */}
-                    <div className="relative flex items-center bg-white/[0.03] border border-white/5 p-0.5 rounded-full text-[10px] font-bold">
-                      <button
-                        onClick={() => handleLangSwitch("hi")}
-                        className={`px-3 py-1 rounded-full transition-all duration-200 ${aiLang === 'hi' ? 'bg-white/10 text-white shadow-sm' : 'text-white/40 hover:text-white'}`}
-                      >
-                        हिन्दी
-                      </button>
-                      <button
-                        onClick={() => handleLangSwitch("en")}
-                        className={`px-3 py-1 rounded-full transition-all duration-200 ${aiLang === 'en' ? 'bg-white/10 text-white shadow-sm' : 'text-white/40 hover:text-white'}`}
-                      >
-                        EN
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Initial CTA State */}
-                {!currentExplanation && !loadingAi && !errorAi && (
-                  <div className="text-left py-4">
-                    <p className="text-xs text-white/60 mb-5 leading-relaxed max-w-xl">
-                      {(!isMounted || isHindiRoute)
-                        ? "क्या आप इस पद की गहरी व्याख्या, भाव और संदर्भ समझना चाहते हैं?"
-                        : "Discover the deeper theological context, devotional sentiments, and inner meanings of this verse."}
-                    </p>
-                    <button
-                      onClick={() => handleExplainWithAI(aiLang)}
-                      className="px-5 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 text-white font-bold text-[10px] tracking-wider uppercase transition-all duration-200 flex items-center gap-2 active:scale-95 shadow-sm"
-                    >
-                      <Sparkles size={12} className="text-amber-400" />
-                      <span>{(!isMounted || isHindiRoute) ? "व्याख्या प्रारंभ करें" : "Reveal Explanation"}</span>
-                    </button>
-                  </div>
-                )}
-
-                {/* Loading State */}
-                {loadingAi && (
-                  <div className="py-6 space-y-4 text-left">
-                    <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-amber-200/60 uppercase animate-pulse">
-                      <div className="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
-                      <span>{(!isMounted || isHindiRoute) ? "रस भाव प्रकट हो रहा है..." : "Revealing Inner Meaning..."}</span>
-                    </div>
-                    <div className="w-full space-y-3 opacity-60">
-                      <div className="h-0.5 bg-gradient-to-r from-amber-400/20 via-amber-400/50 to-amber-400/10 rounded-full w-full animate-pulse"></div>
-                      <div className="h-0.5 bg-gradient-to-r from-amber-400/20 via-amber-400/50 to-amber-400/10 rounded-full w-5/6 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Error State */}
-                {errorAi && (
-                  <div className="py-6 text-left">
-                    <h4 className="text-xs font-bold text-red-400 mb-1 flex items-center gap-1.5">
-                      <span>⚠️</span>
-                      <span>{(!isMounted || isHindiRoute) ? "भाव प्रकटन त्रुटि" : "Explanation Failed"}</span>
-                    </h4>
-                    <p className="text-xs text-white/50 mb-4">{errorAi}</p>
-                    <button
-                      onClick={() => handleExplainWithAI(aiLang)}
-                      className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-white text-[10px] font-bold tracking-wider uppercase transition-all duration-200 active:scale-95"
-                    >
-                      {(!isMounted || isHindiRoute) ? "पुनः प्रयास करें" : "Try Again"}
-                    </button>
-                  </div>
-                )}
-
-                {/* Explanation Content State */}
-                {currentExplanation && !loadingAi && (
-                  <div className="space-y-6 text-left">
-                    <div className="relative">
-                      {/* Floating copy button */}
-                      <div className="absolute top-0 right-0 z-10">
-                        <button
-                          onClick={handleCopy}
-                          className="px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/5 hover:bg-white/[0.08] text-white/40 hover:text-white transition-all duration-200 flex items-center gap-1.5 text-[10px] font-bold tracking-wider uppercase active:scale-95"
-                          title={(!isMounted || isHindiRoute) ? "व्याख्या कॉपी करें" : "Copy Commentary"}
-                        >
-                          {copied ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
-                          <span>{copied ? "Copied" : "Copy"}</span>
-                        </button>
-                      </div>
-
-                      <div
-                        className={`text-white/90 leading-[1.8] markdown-content select-text selection:bg-amber-500/30 ${aiLang === 'hi' ? 'hindi-text font-medium' : 'font-inter font-light'
-                          }`}
-                        style={{
-                          whiteSpace: 'pre-line',
-                          fontSize: sizeLevel === 1 ? '15px' :
-                            sizeLevel === 2 ? '17px' :
-                              sizeLevel === 3 ? '19px' :
-                                sizeLevel === 4 ? '21px' : '23px',
-                          paddingTop: '32px'
-                        }}
-                      >
-                        {currentExplanation}
-                      </div>
-                    </div>
-
-                    {/* Footer */}
-                    <div className="pt-4 border-t border-white/5 flex flex-wrap gap-4 items-center justify-between text-[10px] text-white/30 select-none font-bold uppercase tracking-wider">
-                      <span>{(!isMounted || isHindiRoute) ? "कृपा: श्री वृन्दावाणि" : "By VrindaVaani"}</span>
-                      <span>{(!isMounted || isHindiRoute) ? "रसिक कृपा से प्रकाशित" : "Grace of Rasik Saints"}</span>
-                    </div>
-                  </div>
-                )}
-              </div>
 
               {(transliteratedSanskrit || transliteratedHindi) ? (
                 <div className="py-8 sm:py-12 border-b border-white/5 animate-fade-in">
@@ -1511,14 +1396,14 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
       {isPaathMode && (
         <div
-          className={`fixed inset-0 z-[9999] overflow-y-auto transition-all duration-300 ${paathTheme === 'sepia'
+          className={`fixed inset-0 z-[99999] overflow-y-auto transition-all duration-300 ${paathTheme === 'sepia'
               ? 'bg-[#f5ebd6] text-[#2c2212]'
               : 'bg-[#09090b] text-[#e3ded0]'
             }`}
           style={{ fontFamily: "'Noto Serif Devanagari', 'Tiro Devanagari Sanskrit', serif" }}
         >
           {/* Controls Header */}
-          <div className={`sticky top-0 z-[10000] w-full px-6 py-4 flex items-center justify-between backdrop-blur-md border-b ${paathTheme === 'sepia'
+          <div className={`sticky top-0 z-[100000] w-full px-6 py-4 flex items-center justify-between backdrop-blur-md border-b ${paathTheme === 'sepia'
               ? 'bg-[#f5ebd6]/90 border-[#2c2212]/10'
               : 'bg-[#09090b]/90 border-[#e3ded0]/10'
             }`}>
@@ -1578,7 +1463,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
           </div>
 
           {/* Reading Area */}
-          <div className="max-w-3xl mx-auto px-6 py-12 md:py-24 flex flex-col items-center text-center">
+          <div className="max-w-3xl mx-auto px-6 py-12 md:py-20 flex flex-col items-center text-center">
             {/* Header metadata */}
             <div className="mb-12 flex flex-col items-center gap-3">
               <span className={`text-[11px] uppercase tracking-[0.2em] font-semibold border px-3 py-1 rounded-full ${paathTheme === 'sepia' ? 'border-[#2c2212]/20' : 'border-[#e3ded0]/20'
@@ -1596,12 +1481,12 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                     {saintSlug ? (
                       <Link
                         to={isHindiRoute ? `/hi/saints/${saintSlug}` : `/saints/${saintSlug}`}
-                        className="text-xl md:text-2xl font-bold font-headings tracking-wide text-amber-600 dark:text-amber-400 hover:underline transition-all"
+                        className="text-xl md:text-2xl font-bold font-headings tracking-wide text-[var(--primary-color)] hover:underline transition-all"
                       >
                         {displayAuthorName}
                       </Link>
                     ) : (
-                      <span className="text-xl md:text-2xl font-bold font-headings tracking-wide text-amber-600 dark:text-amber-400">
+                      <span className="text-xl md:text-2xl font-bold font-headings tracking-wide text-[var(--primary-color)]">
                         {displayAuthorName}
                       </span>
                     )}
@@ -1642,23 +1527,6 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 )
               )}
 
-              {(currentExplanation || loadingAi) && (
-                <div className="space-y-6 pt-10 border-t border-current/5">
-                  <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">{isHindiRoute ? "दिव्य व्याख्या (AI)" : "Divine Explanation (AI)"}</div>
-                  <div
-                    className="leading-[1.8] font-medium font-inter"
-                    style={{
-                      fontSize: sizeLevel === 1 ? '1.1rem' :
-                        sizeLevel === 2 ? '1.4rem' :
-                          sizeLevel === 3 ? '1.8rem' :
-                            sizeLevel === 4 ? '2.2rem' : '2.5rem'
-                    }}
-                  >
-                    {loadingAi ? (isHindiRoute ? "श्री राधा-कृष्ण स्मरण... रस भाव प्रकट हो रहा है..." : "Recalling Sri Radha-Krishna... Inner meaning revealing...") : currentExplanation}
-                  </div>
-                </div>
-              )}
-
               {(transliteratedSanskrit || transliteratedHindi) && (
                 <div className="space-y-6 pt-10 border-t border-current/5 w-full">
                   <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">रोमन पाठ (Romanized)</div>
@@ -1672,23 +1540,6 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                       className="content-verse-text"
                       isRoman={true}
                     />
-                  </div>
-                </div>
-              )}
-
-              {content.english_translation && (
-                <div className="space-y-6 pt-10 border-t border-current/5">
-                  <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">Translation (English)</div>
-                  <div
-                    className="leading-[1.8] font-light opacity-95"
-                    style={{
-                      fontSize: sizeLevel === 1 ? '1.25rem' :
-                        sizeLevel === 2 ? '1.6rem' :
-                          sizeLevel === 3 ? '2.0rem' :
-                            sizeLevel === 4 ? '2.4rem' : '2.8rem'
-                    }}
-                  >
-                    {content.english_translation}
                   </div>
                 </div>
               )}

@@ -35,6 +35,13 @@ This file documents the strict guidelines, constraints, and professional standar
 
 ---
 
+## 7. Content & Copyright Protection
+- **No Explanations / Commentary Policy**: NEVER display, generate, or render text explanations, commentaries, or interpretations alongside content (stotras, verses, pads). Showing explanations causes copyright claims. Only display original verses/pads/stotras (and optional Romanized transliteration).
+- **Dynamic Mood Theme Accent Policy**: NEVER hardcode static colors (such as amber-500, gold, etc.) for theme accents, badges, buttons, borders, or active states. ALWAYS use CSS dynamic theme variables (`var(--primary-color)` and `rgba(var(--primary-rgb), ...)`) so all elements dynamically adapt to the user's active mood theme across all pages.
+
+
+---
+
 ## 5. Database & Multi-Repo Schema Synchronization
 - **Cross-Component Schema Audits**: When updating database schemas, always perform a search/grep across all linked client applications (e.g. Flutter mobile apps, Next.js web frontends) to ensure database models are fully unified and do not leave out client-required columns.
 - **Unified Data Seeding Checklists**: Keep a centralized SQL directory representing the unified database state to make sure schema alterations and seeding are run as cohesive operations across backend and client repos.
@@ -154,4 +161,10 @@ Ensure that the layout wrapper's vertical offsets match the active layout mode d
 # Next.js Caching & Vercel Hobby Quotas
 - For high-cardinality dynamic routes (>500 paths) on Vercel where the content has in-memory local fallback lookup, use Server-Side Rendering (SSR) via `export const dynamic = 'force-dynamic';`.
 - Avoid using ISR (time-based revalidate) on routes that bots/crawlers hit heavily to prevent cache-busting writes from exceeding Vercel Hobby limits during active development deployments.
+
+When building content/detail pages, automatically include dynamic Open Graph meta tags, JSON-LD schema markup, and bilingual support (Hindi/English) to maximize organic SEO and user retention.
+
+# Dynamic Mood Theme Accent Policy:
+
+- "NEVER hardcode static colors (such as amber-500, gold, etc.) for theme accents, badges, buttons, borders, or active states. ALWAYS use CSS dynamic theme variables (var(--primary-color) and rgba(var(--primary-rgb), ...)) so all elements dynamically adapt to the user's active mood theme across all pages."
 

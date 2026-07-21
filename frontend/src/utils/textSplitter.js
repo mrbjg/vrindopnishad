@@ -10,6 +10,45 @@ const englishVocab = new Set([
 ]);
 
 /**
+ * Trims out any prose explanations, commentaries, or translations
+ * that appear after the main verse attribution or verse body.
+ * 
+ * @param {string} text 
+ * @returns {string} Clean verse text without explanations
+ */
+export const cleanVerseOnly = (text) => {
+  if (!text) return '';
+
+  let cleaned = text.trim();
+
+  // 1. Check if there's an explicit attribution line starting with hyphen/dash (— or -)
+  // e.g. "— श्री गोविन्दशरण देवाचार्य जी, श्री गोविन्दशरण देवाचार्य जी की वाणी (69)"
+  // Everything after this attribution line is Hindi/English prose explanation!
+  const attrMatch = cleaned.match(/(?:^|\n)\s*([—–-]\s*(?:श्री|श्रीमान|जगद्गुरु|स्वामी|हठ|रसिया|रसिक|सूरदास|मीरा|कबीर|हित|गोविन्द|गोविंद|भगवत|हरिदास|देव|रूप|सनातन|जीव|ललित|Jagadguru|Shri|Swami|Goswami)[^\n]+)/i);
+
+  if (attrMatch) {
+    const attrText = attrMatch[1];
+    const attrIdx = cleaned.indexOf(attrText);
+    if (attrIdx !== -1) {
+      // Keep up to the end of the attribution line
+      const endOfAttr = attrIdx + attrText.length;
+      cleaned = cleaned.substring(0, endOfAttr).trim();
+    }
+  }
+
+  // 2. Check for explicit section headers like "भावार्थ:", "व्याख्या:", "अर्थ:", "English Translation:", "Commentary:"
+  const headerMatch = cleaned.match(/(?:^|\n)\s*(?:भावार्थ|व्याख्या|अर्थ|विशेष|टीका|टिप्पणी|Commentary|Explanation|Meaning|Translation)\s*[:：]/i);
+  if (headerMatch) {
+    const headerIdx = cleaned.indexOf(headerMatch[0]);
+    if (headerIdx > 10) {
+      cleaned = cleaned.substring(0, headerIdx).trim();
+    }
+  }
+
+  return cleaned;
+};
+
+/**
  * Splits concatenated English translation from Hindi/Sanskrit verses.
  * 
  * @param {string} text - The raw text from the database (e.g. hindi_text)
@@ -19,7 +58,6 @@ export const splitVerseAndTranslation = (text) => {
   if (!text) return { verse: '', translation: '' };
 
   // 1. Pre-process CamelCase and citation boundaries to insert newlines
-  // This cleans up instances where newlines were stripped during data migration.
   let cleaned = text;
 
   // CamelCase transitions (lowercase followed by uppercase, including unicode capitals)
@@ -35,36 +73,31 @@ export const splitVerseAndTranslation = (text) => {
   const words = cleaned.match(/\b[a-zA-Z]+\b/g) || [];
   const englishCount = words.filter(w => englishVocab.has(w.toLowerCase())).length;
 
-  // If there are very few English vocabulary words, it's likely just Romanized Hindi/Sanskrit, so don't split.
   if (englishCount < 5) {
-    return { verse: text, translation: '' };
+    return { verse: cleanVerseOnly(text), translation: '' };
   }
 
   let splitIdx = -1;
 
   // 3. Search for common attribution patterns
-  // Pattern 1: Hyphen followed by known authors/sources, up to an optional citation, followed by English start
   const pattern1 = /(-\s*(?:Shri|Swami|Rasik|Siddha|Bhagat|Sant|Goswami|Chaitanya|Bhatt|Haridas|Hit|Kripalu|Jagadguru|Braj Ke|Lalit|Ali|Kishori|Biharin|Dhruvdas|Nagaridas|Ganga|Gopal|Prabodhanand|Vrindavan|Radha|Charandas|Sahajo|Dayabai|Mira|Kabir|Surdas|Tulsidas|Raskhan|Roop|Sri|Srimad|Bhaktiras|Kavi|Rasika|Aacharya|Rani)[^-]+?(?:\([^)]+\)|\[[^\]]+\])?)\s*(?=[A-ZŚĀĪŪṚṄÑṬḌṆT])/i;
   const match1 = cleaned.match(pattern1);
   if (match1) {
     const attr = match1[1];
     splitIdx = cleaned.indexOf(attr) + attr.length;
   } else {
-    // Pattern 2: Search for citation like [1], [2], (34), followed by English start
     const pattern2 = /((?:\([^)]+\)|\[[^\]]+\])?\s*-\s*(?:Shri|Swami|Rasik|Siddha|Bhagat|Sant|Goswami|Chaitanya|Bhatt|Haridas|Hit|Kripalu|Jagadguru|Braj Ke|Lalit|Ali|Kishori|Biharin|Dhruvdas|Nagaridas|Ganga|Gopal|Prabodhanand|Vrindavan|Radha|Charandas|Sahajo|Dayabai|Mira|Kabir|Surdas|Tulsidas|Raskhan|Roop|Sri|Srimad|Bhaktiras|Kavi|Rasika|Aacharya|Rani)[^-]+?(?:\([^)]+\)|\[[^\]]+\])?)\s*(?=[A-ZŚĀĪŪṚṄÑṬḌṆT])/i;
     const match2 = cleaned.match(pattern2);
     if (match2) {
       const attr = match2[1];
       splitIdx = cleaned.indexOf(attr) + attr.length;
     } else {
-      // Pattern 3: Search for citation ending at the end of a verse, before english starts
       const pattern3 = /((?:\([^)]+\)|\[[^\]]+\]))\s*(?=[A-ZŚĀĪŪṚṄÑṬḌṆT])/;
       const match3 = cleaned.match(pattern3);
       if (match3) {
         const cit = match3[1];
         splitIdx = cleaned.indexOf(cit) + cit.length;
       } else {
-        // Pattern 4: Fallback - Line splitting heuristic
         const lines = cleaned.split(/\r?\n/);
         let splitLineIdx = -1;
         for (let i = 0; i < lines.length; i++) {
@@ -76,7 +109,6 @@ export const splitVerseAndTranslation = (text) => {
 
           const lineEngCount = lineWords.filter(w => englishVocab.has(w.toLowerCase())).length;
           
-          // If a line is clearly English
           if (lineEngCount >= 3 || (lineWords.length >= 4 && lineEngCount / lineWords.length > 0.4)) {
             splitLineIdx = i;
             break;
@@ -86,7 +118,7 @@ export const splitVerseAndTranslation = (text) => {
           const verseLines = lines.slice(0, splitLineIdx);
           const translationLines = lines.slice(splitLineIdx);
           return {
-            verse: verseLines.join('\n').trim(),
+            verse: cleanVerseOnly(verseLines.join('\n').trim()),
             translation: translationLines.join('\n').trim()
           };
         }
@@ -96,10 +128,10 @@ export const splitVerseAndTranslation = (text) => {
 
   if (splitIdx !== -1 && splitIdx < cleaned.length && splitIdx > 10) {
     return {
-      verse: cleaned.substring(0, splitIdx).trim(),
+      verse: cleanVerseOnly(cleaned.substring(0, splitIdx).trim()),
       translation: cleaned.substring(splitIdx).trim()
     };
   }
 
-  return { verse: text, translation: '' };
+  return { verse: cleanVerseOnly(text), translation: '' };
 };

@@ -19,8 +19,8 @@ const FontWheel = ({ value, onChange, compact = false }) => {
             onClick={() => onChange(size.id)}
             className={`px-3 py-1 text-xs font-bold rounded-full transition-all ${
               parsedValue === size.id
-                ? 'bg-amber-500/20 text-amber-500 border border-amber-500/30 shadow-sm'
-                : 'text-stone-500 dark:text-white/50 hover:text-stone-900 dark:hover:text-white'
+                ? 'bg-[rgba(var(--primary-rgb),0.18)] text-[var(--primary-color)] border border-[rgba(var(--primary-rgb),0.35)] shadow-sm'
+                : 'text-stone-700 dark:text-white/60 hover:text-stone-900 dark:hover:text-white'
             }`}
             title={size.title}
           >
