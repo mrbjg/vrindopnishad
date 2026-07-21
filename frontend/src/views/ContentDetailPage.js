@@ -20,7 +20,8 @@ import {
   Sparkles,
   FileText,
   Copy,
-  Check
+  Check,
+  AlignLeft
 } from 'lucide-react';
 import { useSettings } from '../contexts/SettingsContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -842,17 +843,17 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
             {isHindiRoute ? "संग्रह" : "Collection"}
           </Link>
 
-          <div className="w-full px-0 py-3 md:px-14 md:py-8 mb-8 relative overflow-hidden">
-            {/* V5: Compact metadata row — Author | Category | Book in one line */}
-            <div className="flex flex-wrap items-center gap-3 mb-4 text-left">
+          <div className="w-full px-0 py-4 md:px-6 md:py-6 mb-10 relative">
+            {/* 1. Meta Row — spacious & clear */}
+            <div className="flex flex-wrap items-center gap-3 text-left mb-6">
               {(() => {
                 const displayAuthorName = effectiveSaintName;
                 const saintSlug = getNormalizedSaintSlug(displayAuthorName);
                 const granthSlug = cleanGranth ? getNormalizedBookSlug(cleanGranth) : null;
                 return (
                   <>
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 font-bold text-sm shrink-0">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 font-bold text-xs shrink-0">
                         {getInitials(displayAuthorName)}
                       </div>
                       {saintSlug ? (
@@ -868,18 +869,18 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                         </span>
                       )}
                     </div>
-                    <span className="text-white/15">·</span>
-                    <span className={`sacred-badge text-[9px] py-0.5 px-2 ${getCategoryBadgeClass(content.category)}`}>
+                    <span className="opacity-30">·</span>
+                    <span className={`sacred-badge text-[10px] py-1 px-3 ${getCategoryBadgeClass(content.category)}`}>
                       {content.category}
                     </span>
                     {granthSlug && cleanGranth && !cleanGranth.includes('वृंदोपनिषद्') && (
                       <>
-                        <span className="text-white/15">·</span>
+                        <span className="opacity-30 hidden sm:inline">·</span>
                         <Link
                           to={isHindiRoute ? `/hi/granthas/${granthSlug}` : `/granthas/${granthSlug}`}
-                          className="text-xs text-white/60 hover:text-primary transition-colors flex items-center gap-1"
+                          className="text-xs text-stone-500 dark:text-white/60 hover:text-primary transition-colors hidden sm:flex items-center gap-1.5"
                         >
-                          <BookOpen size={12} />
+                          <BookOpen size={14} />
                           {cleanGranth}
                         </Link>
                       </>
@@ -889,14 +890,20 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
               })()}
             </div>
 
-            {/* V5: Sticky Reading Toolbar */}
-            <div className="sticky top-0 z-40 -mx-4 px-4 py-2 flex items-center justify-between gap-2 border-b border-white/5 bg-[var(--header-bg)] backdrop-blur-xl" style={{ marginTop: '-1px' }}>
-              <div className="flex items-center gap-2">
+            {/* 2. Main Title — elegant breathing room */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-headings leading-normal md:leading-snug my-6 text-sacred-gradient">
+              {content.title}
+            </h1>
+
+            {/* 3. Reading Toolbar — high-end glassmorphic control bar */}
+            <div className="flex items-center justify-between gap-3 py-3.5 px-4 sm:px-6 rounded-2xl border border-amber-500/15 dark:border-amber-400/20 bg-gradient-to-r from-amber-500/[0.04] via-[var(--glass-bg)] to-amber-500/[0.04] backdrop-blur-xl my-8 shadow-md shadow-black/5">
+              {/* Left: Quick Action Tools */}
+              <div className="flex items-center gap-2 sm:gap-2.5">
                 <button
                   onClick={toggleBookmark}
-                  className={`flex items-center justify-center w-9 h-9 min-w-[44px] min-h-[44px] rounded-full border transition-all ${isBookmarked
-                      ? 'bg-primary/20 border-primary text-primary'
-                      : 'bg-white/5 border-white/10 hover:border-white/20 text-white/60 hover:text-white'
+                  className={`flex items-center justify-center w-9 h-9 rounded-full border transition-all ${isBookmarked
+                      ? 'bg-amber-500/20 border-amber-500 text-amber-500 shadow-sm'
+                      : 'border-[var(--glass-border)] bg-[var(--glass-bg)] text-stone-500 dark:text-white/60 hover:text-stone-900 dark:hover:text-white hover:border-amber-500/30'
                     }`}
                   title={isBookmarked ? (isHindiRoute ? "सहेजा गया" : "Saved") : (isHindiRoute ? "बुकमार्क" : "Bookmark")}
                   aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
@@ -905,7 +912,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 </button>
                 <button
                   onClick={() => shareVerseCard(content, isHindiRoute)}
-                  className="flex items-center justify-center w-9 h-9 min-w-[44px] min-h-[44px] rounded-full border bg-white/5 border-white/10 hover:border-white/20 text-white/60 hover:text-white transition-all"
+                  className="flex items-center justify-center w-9 h-9 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-stone-500 dark:text-white/60 hover:text-stone-900 dark:hover:text-white hover:border-amber-500/30 transition-all"
                   title={isHindiRoute ? "साझा करें" : "Share"}
                   aria-label="Share verse"
                 >
@@ -920,25 +927,38 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                       }
                     } catch (e) { }
                   }}
-                  className="flex items-center justify-center w-9 h-9 min-w-[44px] min-h-[44px] rounded-full border bg-white/5 border-white/10 hover:border-white/20 text-white/60 hover:text-white transition-all"
+                  className="flex items-center justify-center w-9 h-9 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-stone-500 dark:text-white/60 hover:text-stone-900 dark:hover:text-white hover:border-amber-500/30 transition-all"
                   title={isHindiRoute ? "पाठ मोड" : "Fullscreen"}
                   aria-label="Fullscreen reading mode"
                 >
                   <Maximize2 size={15} />
                 </button>
+                <button
+                  onClick={() => updateSetting('lineByLine', !settings.lineByLine)}
+                  className={`flex items-center justify-center w-9 h-9 rounded-full border transition-all ${settings.lineByLine
+                      ? 'bg-amber-500/20 border-amber-500 text-amber-500'
+                      : 'border-[var(--glass-border)] bg-[var(--glass-bg)] text-stone-500 dark:text-white/60 hover:text-stone-900 dark:hover:text-white hover:border-amber-500/30'
+                    }`}
+                  title={settings.lineByLine ? (isHindiRoute ? "पंक्ति-दर-पंक्ति मोड चालू" : "Line-by-line mode active") : (isHindiRoute ? "पंक्ति-दर-पंक्ति मोड चालू करें" : "Toggle line-by-line mode")}
+                  aria-label="Toggle line-by-line mode"
+                >
+                  <AlignLeft size={15} />
+                </button>
               </div>
+
+              {/* Center: Subtle Sanctum Status Badge */}
+              <div className="hidden md:flex items-center gap-2 text-xs font-medium text-amber-500/80 bg-amber-500/5 px-3.5 py-1.5 rounded-full border border-amber-500/15">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                <span>{isHindiRoute ? 'पावन पठन' : 'Sacred Reading'}</span>
+              </div>
+
+              {/* Right: Font Sizer */}
               <FontWheel
+                compact={true}
                 value={settings.fontSize}
                 onChange={(size) => updateSetting('fontSize', size)}
               />
             </div>
-
-            {/* Title — immediately after toolbar */}
-            <h1
-              className="text-3xl md:text-5xl font-bold mb-4 leading-[1.2] lg:leading-[1.25] pt-6 pb-2 text-sacred-gradient"
-            >
-              {content.title}
-            </h1>
 
             {content.description && (
               <p

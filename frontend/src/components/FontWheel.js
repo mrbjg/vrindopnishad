@@ -1,7 +1,7 @@
 import React from 'react';
 import { Type } from 'lucide-react';
 
-const FontWheel = ({ value, onChange }) => {
+const FontWheel = ({ value, onChange, compact = false }) => {
   const sizes = [
     { id: 1, label: 'A-', title: 'Smaller Text' },
     { id: 2, label: 'A', title: 'Default Text' },
@@ -9,6 +9,27 @@ const FontWheel = ({ value, onChange }) => {
   ];
 
   const parsedValue = parseInt(value, 10) || 2;
+
+  if (compact) {
+    return (
+      <div className="inline-flex items-center gap-1.5 p-1.5 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-md">
+        {sizes.map((size) => (
+          <button
+            key={size.id}
+            onClick={() => onChange(size.id)}
+            className={`px-3 py-1 text-xs font-bold rounded-full transition-all ${
+              parsedValue === size.id
+                ? 'bg-amber-500/20 text-amber-500 border border-amber-500/30 shadow-sm'
+                : 'text-stone-500 dark:text-white/50 hover:text-stone-900 dark:hover:text-white'
+            }`}
+            title={size.title}
+          >
+            {size.label}
+          </button>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="font-wheel-wrapper group">
