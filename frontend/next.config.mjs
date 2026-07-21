@@ -46,9 +46,15 @@ const nextConfig = {
       }
     ],
   },
+  productionBrowserSourceMaps: false,
   webpack: (config) => {
     config.resolve.alias['react-router-dom'] = path.resolve(__dirname, 'src/lib/router-compat.js');
     config.resolve.alias['react-helmet-async'] = path.resolve(__dirname, 'src/lib/helmet-compat.js');
+    config.ignoreWarnings = [
+      /Failed to parse source map/,
+      /sourceMap/,
+      /index\.esm\.js\.map/
+    ];
     return config;
   },
   async redirects() {
