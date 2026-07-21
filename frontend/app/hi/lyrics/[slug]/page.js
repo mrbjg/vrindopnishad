@@ -34,11 +34,45 @@ async function fetchVerseFromSupabaseBySlug(slug) {
       .maybeSingle();
 
     if (error || !data) return null;
+
+    let sanskrit = data.sanskrit_text || data.sanskritText || '';
+    let hindi = data.hindi_text || data.hindiText || '';
+
+    const isTruncated = (str) => {
+      if (!str) return true;
+      const trimmed = str.trim();
+      if (trimmed.length === 100) return true;
+      if (trimmed.length <= 150 && !/[॥।.\!\?\n]/.test(trimmed.slice(-2))) return true;
+      return false;
+    };
+
+    if (isTruncated(sanskrit) || isTruncated(hindi)) {
+      const local = getVerseBySlug(slug) || getVerseBySlug(data.slug || '');
+      if (local) {
+        if (local.sanskrit_text && local.sanskrit_text.length > sanskrit.length) {
+          sanskrit = local.sanskrit_text;
+        }
+        if (local.hindi_text && local.hindi_text.length > hindi.length) {
+          hindi = local.hindi_text;
+        }
+      }
+
+      if ((isTruncated(sanskrit) || isTruncated(hindi)) && data.content_text && data.content_text.length > (sanskrit.length + hindi.length + 30)) {
+        const parts = data.content_text.split('\n\n');
+        if (parts.length >= 2) {
+          if (isTruncated(sanskrit)) sanskrit = parts[0];
+          if (isTruncated(hindi)) hindi = parts.slice(1).join('\n\n');
+        } else if (isTruncated(sanskrit)) {
+          sanskrit = data.content_text;
+        }
+      }
+    }
+
     return {
       id: data.id,
       title: data.title,
-      sanskrit_text: data.sanskrit_text || data.sanskritText || '',
-      hindi_text: data.hindi_text || data.hindiText || '',
+      sanskrit_text: sanskrit,
+      hindi_text: hindi,
       english_text: data.english_text || data.englishText || '',
       english_translation: data.english_translation || data.englishTranslation || '',
       category: data.category || 'poem',

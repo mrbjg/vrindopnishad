@@ -493,7 +493,7 @@ if (fs.existsSync(saintsPath)) {
 
 // 1. Regenerate processed_cache.json
 console.log('[sync_cache] Generating processed_cache.json...');
-const cachePayload = { verses: data, saintsRaw: saints };
+const cachePayload = { isFullyCompiled: true, verses: data, saintsRaw: saints };
 fs.writeFileSync(cachePath, JSON.stringify(cachePayload), 'utf8');
 const cacheSizeMB = (fs.statSync(cachePath).size / (1024 * 1024)).toFixed(1);
 console.log(`[sync_cache] Saved processed_cache.json (${cacheSizeMB} MB)`);
