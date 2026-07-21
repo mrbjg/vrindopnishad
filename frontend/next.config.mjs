@@ -47,7 +47,7 @@ const nextConfig = {
     ],
   },
   productionBrowserSourceMaps: false,
-  webpack: (config) => {
+  webpack: (config, { dev }) => {
     config.resolve.alias['react-router-dom'] = path.resolve(__dirname, 'src/lib/router-compat.js');
     config.resolve.alias['react-helmet-async'] = path.resolve(__dirname, 'src/lib/helmet-compat.js');
     config.ignoreWarnings = [
@@ -55,6 +55,9 @@ const nextConfig = {
       /sourceMap/,
       /index\.esm\.js\.map/
     ];
+    if (dev) {
+      config.devtool = false;
+    }
     return config;
   },
   async redirects() {
@@ -62,6 +65,71 @@ const nextConfig = {
       {
         source: '/book/:slug',
         destination: '/granthas/:slug',
+        permanent: true,
+      },
+      {
+        source: '/hi/book/:slug',
+        destination: '/hi/granthas/:slug',
+        permanent: true,
+      },
+      {
+        source: '/books',
+        destination: '/granthas',
+        permanent: true,
+      },
+      {
+        source: '/hi/books',
+        destination: '/hi/granthas',
+        permanent: true,
+      },
+      {
+        source: '/books/:slug',
+        destination: '/granthas/:slug',
+        permanent: true,
+      },
+      {
+        source: '/hi/books/:slug',
+        destination: '/hi/granthas/:slug',
+        permanent: true,
+      },
+      {
+        source: '/dham',
+        destination: '/places',
+        permanent: true,
+      },
+      {
+        source: '/dhams',
+        destination: '/places',
+        permanent: true,
+      },
+      {
+        source: '/hi/dham',
+        destination: '/hi/places',
+        permanent: true,
+      },
+      {
+        source: '/hi/dhams',
+        destination: '/hi/places',
+        permanent: true,
+      },
+      {
+        source: '/dham/:slug',
+        destination: '/places/:slug',
+        permanent: true,
+      },
+      {
+        source: '/hi/dham/:slug',
+        destination: '/hi/places/:slug',
+        permanent: true,
+      },
+      {
+        source: '/content',
+        destination: '/lyrics',
+        permanent: true,
+      },
+      {
+        source: '/hi/content',
+        destination: '/hi/lyrics',
         permanent: true,
       },
       {
@@ -80,23 +148,8 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: '/books',
-        destination: '/granthas',
-        permanent: true,
-      },
-      {
-        source: '/hi/book/:slug',
-        destination: '/hi/granthas/:slug',
-        permanent: true,
-      },
-      {
         source: '/hi/saint/:slug',
         destination: '/hi/saints/:slug',
-        permanent: true,
-      },
-      {
-        source: '/hi/books',
-        destination: '/hi/granthas',
         permanent: true,
       },
       {
@@ -107,16 +160,6 @@ const nextConfig = {
       {
         source: '/hi/content/:slug',
         destination: '/hi/lyrics/:slug',
-        permanent: true,
-      },
-      {
-        source: '/content',
-        destination: '/lyrics',
-        permanent: true,
-      },
-      {
-        source: '/hi/content',
-        destination: '/hi/lyrics',
         permanent: true,
       },
       {
@@ -271,6 +314,18 @@ const nextConfig = {
       {
         source: '/(.*)',
         headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, POST, PUT, DELETE, OPTIONS',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'X-Requested-With, Content-Type, Authorization, Accept, rsc, next-router-state-tree, next-router-prefetch, next-url',
+          },
           {
             key: 'X-Content-Type-Options',
             value: 'nosniff',
