@@ -16,9 +16,13 @@ export default function HindiGranthasListRoute() {
   const lightweightBooks = books.map(b => ({
     id: b.id,
     name: b.name || '',
-    hindiName: b.hindiName || b.name || '',
+    hinglishName: b.hinglishName || b.name || '',
+    cleanName: b.cleanName || b.name || '',
     slug: b.slug || '',
-    count: b.count || 0
+    author: b.author || '',
+    count: b.count || (b.verseIds ? b.verseIds.length : 0),
+    verses: [],
+    verseIds: b.verseIds ? b.verseIds.slice(0, 10) : []
   }));
 
   return (

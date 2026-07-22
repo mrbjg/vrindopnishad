@@ -62,9 +62,9 @@ const BooksListPage = ({ initialBooks }) => {
   }, [apiService, initialBooks]);
 
   const filteredBooks = books.filter(b =>
-    b.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    b.hinglishName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    b.author.toLowerCase().includes(searchQuery.toLowerCase())
+    (b?.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (b?.hinglishName || b?.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (b?.author || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
 

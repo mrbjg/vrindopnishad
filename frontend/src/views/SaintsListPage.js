@@ -79,12 +79,12 @@ const SaintsListPage = ({ initialSaints }) => {
   }, [apiService, initialSaints]);
 
   const filteredSaints = saints.filter(s => 
-    s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.hinglishName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (s.lineage && s.lineage.toLowerCase().includes(searchQuery.toLowerCase())) ||
-    (s.lineageEn && s.lineageEn.toLowerCase().includes(searchQuery.toLowerCase())) ||
-    (s.timeline && s.timeline.toLowerCase().includes(searchQuery.toLowerCase())) ||
-    (s.timelineEn && s.timelineEn.toLowerCase().includes(searchQuery.toLowerCase()))
+    (s?.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (s?.hinglishName || s?.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (s?.lineage && s.lineage.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (s?.lineageEn && s.lineageEn.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (s?.timeline && s.timeline.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (s?.timelineEn && s.timelineEn.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   

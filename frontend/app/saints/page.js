@@ -17,9 +17,16 @@ export default function SaintsListRoute() {
   const lightweightSaints = saints.map(s => ({
     id: s.id,
     name: s.name || '',
-    hindiName: s.hindiName || s.name || '',
+    hinglishName: s.hinglishName || s.name || '',
+    cleanName: s.cleanName || s.name || '',
     slug: s.slug || '',
-    period: s.period || ''
+    lineage: s.lineage || '',
+    lineageEn: s.lineageEn || '',
+    timeline: s.timeline || '',
+    timelineEn: s.timelineEn || '',
+    biography: s.biography || null,
+    verses: [],
+    verseIds: s.verseIds ? s.verseIds.slice(0, 10) : []
   }));
 
   return (
