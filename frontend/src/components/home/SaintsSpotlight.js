@@ -125,17 +125,17 @@ const SaintsSpotlight = ({ isHi, saints, navigate }) => {
                   '--avatar-border-hover': c.avatarBorderHover
                 }}
               >
-                {getInitials(isHi ? sant.name : sant.hinglishName)}
+                {getInitials(isHi ? (sant.name || sant.hinglishName) : (sant.hinglishName || sant.name))}
               </div>
               <div className="min-w-0 w-full px-1">
                 <h3
                   className="font-bold text-[10px] sm:text-[11px] text-white/90 transition-colors line-clamp-2 w-full leading-tight py-0.5 saint-card-title"
                   style={{ '--text-hover-color': c.text }}
                 >
-                  {isHi ? sant.name : sant.hinglishName}
+                  {isHi ? (sant.name || sant.hinglishName) : (sant.hinglishName || sant.name)}
                 </h3>
                 <span className="text-[9px] text-white/35 font-light block mt-0.5">
-                  {sant.verses ? sant.verses.length : (sant.verseIds ? sant.verseIds.length : 0)} verses
+                  {sant.verses?.length || sant.verseIds?.length || sant.count || 0} verses
                 </span>
               </div>
               <span

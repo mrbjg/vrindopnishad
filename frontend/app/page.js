@@ -87,8 +87,11 @@ export default async function HomeRoute() {
     id: s.id,
     name: s.name || '',
     hindiName: s.hindiName || s.name || '',
+    hinglishName: s.hinglishName || s.name || '',
     slug: s.slug || '',
-    period: s.period || ''
+    period: s.period || '',
+    verseIds: s.verseIds || s.verses || [],
+    verses: s.verses || []
   }));
 
   const lightweightBooks = books.slice(0, 12).map(b => ({

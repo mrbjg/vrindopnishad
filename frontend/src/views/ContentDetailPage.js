@@ -251,8 +251,9 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
   const checkIsTruncated = (str) => {
     if (!str) return true;
     const trimmed = str.trim();
-    if (trimmed.length <= 120) return true;
-    if (trimmed.length <= 350 && !/[॥।.\!\?\n\”\"']/.test(trimmed.slice(-3))) return true;
+    if (trimmed.endsWith('...') || trimmed.endsWith('…')) return true;
+    if (/(?:—|-)\s*श्री/.test(trimmed) && !/[0-9०-९\)\]॥|।]$/.test(trimmed)) return true;
+    if (trimmed.length <= 120 && !/[0-9०-९\)\]॥|।]$/.test(trimmed)) return true;
     return false;
   };
 
@@ -303,29 +304,25 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
   );
 
   const content = React.useMemo(() => {
-    const activeData = fetchedData || rawContent;
-    if (!activeData) return null;
+    const candidates = [];
+    if (rawContent?.sanskrit_text) candidates.push(rawContent.sanskrit_text);
+    if (rawContent?.hindi_text) candidates.push(rawContent.hindi_text);
+    if (rawContent?.content_text) candidates.push(rawContent.content_text);
+    if (fetchedData?.sanskrit_text) candidates.push(fetchedData.sanskrit_text);
+    if (fetchedData?.hindi_text) candidates.push(fetchedData.hindi_text);
+    if (fetchedData?.content_text) candidates.push(fetchedData.content_text);
 
-    let rawSanskrit = activeData.sanskrit_text || '';
-    let rawHindi = activeData.hindi_text || '';
-    let rawContentText = activeData.content_text || '';
+    const validCandidates = candidates.filter(str => !checkIsTruncated(str));
+    const pool = validCandidates.length > 0 ? validCandidates : candidates;
+    const richestText = pool.reduce((longest, curr) => (curr.length > longest.length ? curr : longest), '');
 
-    // Pick the longest text if sanskrit_text is truncated or missing lines
-    let richestText = rawSanskrit;
-    if (rawHindi.length > (richestText.length + 30) || (!richestText && rawHindi)) {
-      richestText = rawHindi;
-    }
-    if (rawContentText.length > (richestText.length + 30) || (!richestText && rawContentText)) {
-      richestText = rawContentText;
-    }
-
-    const finalVerseText = richestText || rawSanskrit || rawHindi;
+    const activeData = fetchedData || rawContent || {};
 
     return {
       ...activeData,
-      sanskrit_text: finalVerseText,
-      hindi_text: finalVerseText,
-      english_translation: ''
+      sanskrit_text: richestText,
+      hindi_text: richestText,
+      english_translation: activeData.english_translation || rawContent?.english_translation || ''
     };
   }, [fetchedData, rawContent]);
 

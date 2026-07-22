@@ -433,7 +433,7 @@ function writeBackupFile(verses, force = false) {
       category: v.category,
       author: v.author,
       cleanTitle: v.cleanTitle,
-      sanskrit_text: (v.sanskrit_text || '').substring(0, 100),
+      sanskrit_text: v.sanskrit_text || '',
       tags: v.tags,
       audio_url: v.audio_url ? true : undefined,
       image_urls: v.image_urls?.length ? true : undefined,

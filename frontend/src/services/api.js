@@ -550,6 +550,29 @@ const ensureFullVerseText = async (matched) => {
       }
     }
   }
+  if ((isTruncatedText(current.sanskrit_text) || isTruncatedText(current.hindi_text)) && typeof window !== 'undefined') {
+    try {
+      const cat = current.category || 'shloka';
+      const backupUrl = `/data/content_backup_${cat}.json`;
+      const res = await fetch(backupUrl);
+      if (res.ok) {
+        const catItems = await res.json();
+        if (Array.isArray(catItems) && catItems.length > 0) {
+          const targetSlug = (current.slug || '').toLowerCase();
+          const targetId = (current.id || '').toString();
+          const foundBackup = catItems.find(x =>
+            (x.id && targetId && x.id.toString() === targetId) ||
+            (x.slug && targetSlug && x.slug.toLowerCase() === targetSlug)
+          );
+          if (foundBackup) {
+            const sans = foundBackup.sanskrit_text || foundBackup.content_text || current.sanskrit_text;
+            const hin = foundBackup.hindi_text || current.hindi_text;
+            current = { ...current, ...foundBackup, sanskrit_text: sans, hindi_text: hin };
+          }
+        }
+      }
+    } catch (e) { }
+  }
 
   if (current.id) contentMapById.set(current.id.toString(), current);
   if (current.slug) contentMapBySlug.set(current.slug, current);
