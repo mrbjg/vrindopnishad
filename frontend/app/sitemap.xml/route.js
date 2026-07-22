@@ -1,10 +1,16 @@
+import { getAllVerses, ensureDataLoaded } from '../../src/lib/contentData';
+
 export const dynamic = 'force-dynamic';
 
-const NUM_CONTENT_CHUNKS = 15;
+const CHUNK_SIZE = 3000;
 
 export async function GET() {
+  await ensureDataLoaded();
+  const allVerses = getAllVerses();
+  const totalChunks = Math.max(1, Math.ceil(allVerses.length / CHUNK_SIZE));
+
   const today = new Date().toISOString().split('T')[0];
-  const contentSitemaps = Array.from({ length: NUM_CONTENT_CHUNKS }, (_, i) => `  <sitemap>
+  const contentSitemaps = Array.from({ length: totalChunks }, (_, i) => `  <sitemap>
     <loc>https://path.vrindopnishad.in/sitemaps/content-${i + 1}.xml</loc>
     <lastmod>${today}</lastmod>
   </sitemap>`).join('\n');
@@ -15,7 +21,7 @@ export async function GET() {
     <loc>https://path.vrindopnishad.in/sitemaps/pages.xml</loc>
     <lastmod>${today}</lastmod>
   </sitemap>
-  ${contentSitemaps}
+${contentSitemaps}
   <sitemap>
     <loc>https://path.vrindopnishad.in/sitemaps/saints.xml</loc>
     <lastmod>${today}</lastmod>

@@ -9,11 +9,14 @@ import {
 import { STATIC_SEO_PAGES } from '../../../src/data/staticPagesData';
 import { FESTIVALS_DATA } from '../../../src/data/festivalsData';
 
-const NUM_CONTENT_CHUNKS = 15;
-const CHUNK_SIZE = 3500; // 3500 verses = 7000 URLs per sub-sitemap (optimized for fast response & GSC limits)
+const CHUNK_SIZE = 3000; // 3000 items = 6000 URLs per sub-sitemap (exact match for Google Search Console)
 
 export async function generateStaticParams() {
-  const contentSubMaps = Array.from({ length: NUM_CONTENT_CHUNKS }, (_, i) => ({ sub: `content-${i + 1}.xml` }));
+  await ensureDataLoaded();
+  const allVerses = getAllVerses();
+  const totalChunks = Math.max(1, Math.ceil(allVerses.length / CHUNK_SIZE));
+  
+  const contentSubMaps = Array.from({ length: totalChunks }, (_, i) => ({ sub: `content-${i + 1}.xml` }));
   return [
     { sub: 'pages.xml' },
     { sub: 'content.xml' },
@@ -106,6 +109,10 @@ export async function GET(request, { params }) {
       items = allVerses.slice(startIndex, startIndex + CHUNK_SIZE);
     } else if (type === 'content') {
       items = allVerses.slice(0, CHUNK_SIZE);
+    }
+
+    if (items.length === 0) {
+      return new Response('Not Found', { status: 404 });
     }
 
     items.forEach(v => {
