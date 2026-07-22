@@ -1,0 +1,23 @@
+{
+  "name": "श्यामदास",
+  "slug": "shri-shyamadasa",
+  "hinglishName": "shyamadasa",
+  "cleanName": "श्री श्यामदास",
+  "books": [],
+  "verseIds": [
+    "3c48fef6-6376-4845-bf7f-088b935f07c6",
+    "e6be8ae2-5bcb-4827-aa62-1fb8f3883849",
+    "bc422510-6592-468d-8384-ad313190d3ab"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "f4fb09e5-3bdb-4a7a-af14-0636efb41a28",
+    "slug": "shyamadasa",
+    "originalTitle": "श्यामदास",
+    "name": "श्यामदास",
+    "hinglishName": "shyamadasa",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "रामराय जी",
+  "slug": "ramaraya",
+  "hinglishName": "ramaray ji",
+  "cleanName": "रामराय",
+  "books": [],
+  "verseIds": [
+    "69f478c7-2f58-4f8e-a44d-ace523503c16",
+    "26fbf7ff-2738-42dc-a479-551261e84988",
+    "24234167-156f-4d9c-a986-32c9b4eed549",
+    "2fed1018-a84d-448e-a541-0db239685818",
+    "cecc9cdc-dea4-441a-bd14-99ea5f657fcf"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "e91ea84e-d4af-44a4-a6ec-714f20d01103",
+    "slug": "ramaray-ji",
+    "originalTitle": "रामराय जी ",
+    "name": "रामराय जी",
+    "hinglishName": "ramaray ji",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

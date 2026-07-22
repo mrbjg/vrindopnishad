@@ -1,0 +1,29 @@
+{
+  "name": "रसिक गोविन्द",
+  "slug": "rasik-govinda",
+  "hinglishName": "rasik govinda",
+  "cleanName": "रसिक गोविन्द",
+  "books": [],
+  "verseIds": [
+    "fa85d899-e296-4e56-898d-f2853645897f",
+    "216ad967-428d-418b-938d-f9a0643ee778",
+    "21f31bd3-8cbd-4dd6-9ad8-fe7884f61ee5",
+    "1b32595c-14bf-4b1a-883d-34ac060a52ef",
+    "72698991-7d75-48ec-9e5c-e1a907e4c1c2",
+    "a142b672-d04d-4c43-8d76-aafb4d177ddd",
+    "4965bda5-7228-4325-aa6e-dc6d29f0ae1a",
+    "a28a7d5d-f40e-41ec-b2cb-50e461c16885",
+    "ab26f936-cbd4-4745-8249-0f3b3587a749"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "b0da14c9-8a5c-4157-b08f-86ead7620dbc",
+    "slug": "rasik-govinda",
+    "originalTitle": "रसिक गोविन्द ",
+    "name": "रसिक गोविन्द",
+    "hinglishName": "rasik govinda",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

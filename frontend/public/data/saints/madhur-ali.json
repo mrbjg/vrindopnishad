@@ -1,0 +1,28 @@
+{
+  "name": "मधुर अली जी",
+  "slug": "madhur-ali",
+  "hinglishName": "madhur ali ji",
+  "cleanName": "मधुर अली",
+  "books": [],
+  "verseIds": [
+    "ac3c4fd4-f9da-46f9-8a2c-93061e587b5a",
+    "697c44a5-e8c3-40a9-80c3-5bbd6a70df41",
+    "dd8224c2-f40b-40e7-ba33-47c0263c25d1",
+    "5aa5fc75-213f-44bf-801d-3c57de4b7a32",
+    "f274cf85-ed41-46e0-9a66-44d0cbfd1f45",
+    "080ff109-6fc3-4fff-a10a-c8f6892e3af9",
+    "e04e2c75-ac9d-46c9-b4a4-9fed29e70a62",
+    "5b1e881b-9d24-4588-91d7-86115f6b71b5"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "eafc4b0d-2b26-442c-bcf9-2dc20f1c3702",
+    "slug": "madhur-ali-ji",
+    "originalTitle": "मधुर अली जी ",
+    "name": "मधुर अली जी",
+    "hinglishName": "madhur ali ji",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

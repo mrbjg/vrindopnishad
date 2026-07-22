@@ -1,0 +1,25 @@
+{
+  "name": "मीरा",
+  "slug": "mirabai",
+  "hinglishName": "mira",
+  "cleanName": "मीराबाई",
+  "books": [],
+  "verseIds": [
+    "554eb70d-ed41-46d0-bc4e-986f86c2c720",
+    "f5e2c06f-60a7-4fa8-b35a-33c41b05e4ad",
+    "c27ff34d-5f86-411c-b94c-40b9e106d8e4",
+    "3e101833-848a-41e0-a267-4aea8973f8ce",
+    "c3196e94-b3e6-43ed-ab89-a731fc31e3dd"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "49effc56-c37f-4f2b-96c8-9f47ab228bf4",
+    "slug": "mira",
+    "originalTitle": "मीरा",
+    "name": "मीरा",
+    "hinglishName": "mira",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

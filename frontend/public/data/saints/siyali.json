@@ -1,0 +1,29 @@
+{
+  "name": "सियाअली",
+  "slug": "siyali",
+  "hinglishName": "siyali",
+  "cleanName": "सियाअली",
+  "books": [],
+  "verseIds": [
+    "70de04f9-b04a-4ab8-a5d8-1c33a957f473",
+    "e7fe0187-e9de-481c-8997-b0b727cac839",
+    "c4910cc7-e31f-47b0-a045-d955af7b667e",
+    "e57c029e-93cb-41b4-b2f0-51d80a6084e9",
+    "ceeb15dd-3e7f-48bb-a36b-fd95253c7b10",
+    "c394df67-474f-4d01-8d72-2e2cb7b4c62d",
+    "96797959-5b04-4ded-b51c-a682ca40b45b",
+    "f320e7f1-7949-4bcb-a96d-276fede2c275",
+    "b9f4f91c-500e-42bd-b770-8330902df2a1"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "c0c59b59-3d3a-4e44-b5ee-d813b65c583b",
+    "slug": "siyali",
+    "originalTitle": "सियाअली  ",
+    "name": "सियाअली",
+    "hinglishName": "siyali",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

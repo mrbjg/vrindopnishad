@@ -1,0 +1,20 @@
+{
+  "name": "श्री ब्रज निधि ग्रंथावली",
+  "slug": "shri-braj-nidhi-grnthavali",
+  "hinglishName": "shri braj nidhi grnthavali",
+  "cleanName": "श्री ब्रज निधि ग्रंथावली",
+  "books": [
+    "ब्रज शृंगार",
+    "हरि पद संग्रह",
+    "ब्रज निधि मुक्तावली"
+  ],
+  "verseIds": [
+    "30230c26-7837-4c09-84d7-c7af9fdc0516",
+    "6102471d-924f-4045-a475-fcdceb10063a",
+    "ac17d334-3cc7-4079-855f-2cea11097916",
+    "e5b2f2cd-d205-4db6-9625-631c96886c18",
+    "65d6fc6b-2fe6-494c-95fa-85b6e5b03906"
+  ],
+  "verses": [],
+  "biography": null
+}

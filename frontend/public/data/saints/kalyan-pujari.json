@@ -1,0 +1,27 @@
+{
+  "name": "कल्याण पुजारी",
+  "slug": "kalyan-pujari",
+  "hinglishName": "kalyan pujari",
+  "cleanName": "कल्याण पुजारी",
+  "books": [],
+  "verseIds": [
+    "320c3390-82e4-44e7-afd6-e50b286e75d6",
+    "9c86f1ff-4492-40b3-a617-b0a4cd4b959e",
+    "585fcf3c-a831-482c-b307-d4550f4eb23d",
+    "311d7480-3614-4228-ade0-4d4211c0aa05",
+    "5cec5ebc-1d1f-4bbc-9223-5c3e0962fe64",
+    "066dab7c-a3e4-438b-9053-d658e6461732",
+    "83cc7942-bf09-4674-8cf4-645127a0b41b"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "fe131657-6265-4e61-b873-c9f11c3063db",
+    "slug": "kalyan-pujari",
+    "originalTitle": "कल्याण पुजारी",
+    "name": "कल्याण पुजारी",
+    "hinglishName": "kalyan pujari",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

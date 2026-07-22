@@ -1,0 +1,28 @@
+{
+  "name": "जुगलप्रिया",
+  "slug": "shri-jugalapriya",
+  "hinglishName": "jugalapriya",
+  "cleanName": "श्री जुगलप्रिया",
+  "books": [],
+  "verseIds": [
+    "a6079a80-0536-4530-9937-b789c8886e28",
+    "c2074e32-593d-424c-bf64-dfd6092a1258",
+    "6bf93a60-59a9-49ed-a186-fb5e0f65b250",
+    "8bf94151-de40-4c30-92b7-a65a1ace702b",
+    "3dd53bcc-3e83-4406-9aba-33067f88a31c",
+    "28700fbb-721f-45f6-8291-2be49f20eb3e",
+    "a93e93cc-8076-40b2-82fa-eb86a988c804",
+    "e8be5ae3-11a9-42f6-8736-fc552ccd3d79"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "2a642796-4aa4-45f1-a50e-45f4df650b98",
+    "slug": "jugalapriya",
+    "originalTitle": "जुगलप्रिया",
+    "name": "जुगलप्रिया",
+    "hinglishName": "jugalapriya",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

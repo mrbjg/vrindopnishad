@@ -1,0 +1,42 @@
+{
+  "name": "सरसमाधुरी",
+  "slug": "sarasamadhuri",
+  "hinglishName": "sarasamadhuri",
+  "cleanName": "सरसमाधुरी",
+  "books": [],
+  "verseIds": [
+    "1090e7d5-59c1-41f5-bbbd-e98a2824f11e",
+    "6b8418d6-86a2-44e9-a852-023e297060f0",
+    "5428ed48-0789-40ed-bd58-a7f6e3a4230a",
+    "089c73a3-c49b-4fbe-adac-807293ad8ce7",
+    "85f8944b-995b-4fc4-b3be-2a3b4266f870",
+    "910da1cf-9ce5-4d47-9e6f-312dcb8a2ae4",
+    "4c00c679-889b-4062-87fc-0bf8198fcf86",
+    "87db4921-4226-46c5-93e5-531d104fb8fd",
+    "c45bdff3-5d64-4190-a3aa-1e528062470a",
+    "cdecb742-d937-40a6-b1c2-fb9f96a5226a",
+    "b1ed2918-99b9-4143-a948-fab41ab2d453",
+    "0ba2dc18-1897-47af-96db-e015b9803334",
+    "b8e48c1d-5fbb-4191-b57e-0e05705b4b07",
+    "00134084-623f-4693-9425-aeb5f33da920",
+    "07137352-4614-4162-82cd-617ea26dfb95",
+    "cc5fbd8b-af16-45e8-8470-aa0f1373a517",
+    "d9d59da3-1bba-4b2d-ad6e-cd7b03aa64f0",
+    "3b46b047-d0c7-4eb5-80ce-ecad6579f53b",
+    "0fc05be8-b4f3-419c-a8d6-99285ab53e2b",
+    "956581ce-d72b-4edc-ae61-681d0878c0cf",
+    "541ee1c3-4047-40ec-9db6-8a7df6dc9352",
+    "f369aca7-0054-4293-b15a-60694f3c4fd0"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "a1b0c602-0209-4dd8-8a73-1477d3bf661e",
+    "slug": "sarasamadhuri",
+    "originalTitle": "सरसमाधुरी",
+    "name": "सरसमाधुरी",
+    "hinglishName": "sarasamadhuri",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

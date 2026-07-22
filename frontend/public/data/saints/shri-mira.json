@@ -1,0 +1,22 @@
+{
+  "name": "मीरा",
+  "slug": "shri-mira",
+  "hinglishName": "mira",
+  "cleanName": "श्री मीरा",
+  "books": [],
+  "verseIds": [
+    "fb2758ab-eba6-462e-80b4-a516e1af8bf5",
+    "3935ec76-5a43-4553-ad47-48b4ffdc3213"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "49effc56-c37f-4f2b-96c8-9f47ab228bf4",
+    "slug": "mira",
+    "originalTitle": "मीरा",
+    "name": "मीरा",
+    "hinglishName": "mira",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

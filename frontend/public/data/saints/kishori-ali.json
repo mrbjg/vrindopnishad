@@ -1,0 +1,43 @@
+{
+  "name": "किशोरी अलि",
+  "slug": "kishori-ali",
+  "hinglishName": "kishori ali",
+  "cleanName": "किशोरी अलि",
+  "books": [],
+  "verseIds": [
+    "4497330c-9000-4172-9cd2-5236fe9bedd1",
+    "c639071f-dc7e-445b-85ca-7b53b450e9e9",
+    "eedcbd14-54a3-4319-ab31-ff2f9e829795",
+    "16a986fe-0e20-4126-98f1-946eae259f49",
+    "a4e065c5-0767-4cce-9b3f-7ede6333583b",
+    "0eb97542-d981-45df-9ecf-e6b8b66fd92d",
+    "6a149445-fb6a-4269-811c-8bf61b6641ed",
+    "97089660-18ed-42a2-bcec-51cbbbdbd222",
+    "5076720c-a387-497e-83e5-463cf71a0f2f",
+    "fe1360f6-9c49-4f2e-9f03-8f0eea1aa657",
+    "e67c531b-38da-48a0-bf7d-b16ace99e4b6",
+    "aeb1ed53-97ca-4d73-a478-05607b65ac6c",
+    "ea30c563-eeb4-407a-b036-339b2db4dcc6",
+    "2dc04dd7-a2e1-4004-a1e9-d86ae9cd4db3",
+    "c60c5622-8811-4d49-8042-7e3667167872",
+    "8d2a6c57-f823-4ef3-93ec-1a66b28a8356",
+    "a7c193ce-dfe4-470b-b42c-69fa922331d8",
+    "217d306e-c920-4e4e-9afe-59459307dea9",
+    "65d38a6a-8c0e-4fdf-810d-0f9bf04a6827",
+    "3c661621-6ca8-42b2-86fd-e3d9b2d41ed2",
+    "0b89b872-9a93-48c7-a37b-fe53eec98ded",
+    "674ed4a9-f1cd-420d-b90f-8ec94c070540",
+    "263dd7ed-8511-43ae-9cc3-77f0436758cd"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "e74c07d3-65f1-46da-85ec-7927aa8eea6e",
+    "slug": "kishori-ali",
+    "originalTitle": "किशोरी अलि",
+    "name": "किशोरी अलि",
+    "hinglishName": "kishori ali",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "अनन्य अलि",
+  "slug": "anany-ali",
+  "hinglishName": "anany ali",
+  "cleanName": "अनन्य अलि",
+  "books": [],
+  "verseIds": [
+    "da1d9432-c9ea-4af2-a5d7-b1b6c50ce47d",
+    "bfd4ec8d-41a3-491f-835f-eaf38449b890",
+    "e0be5c6d-465d-43fc-b67c-02efaf0ebf7d"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "f9af3ed2-84eb-47e0-ad7c-c913bbb6da80",
+    "slug": "anany-ali",
+    "originalTitle": "अनन्य अलि ",
+    "name": "अनन्य अलि",
+    "hinglishName": "anany ali",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "नागरीदास",
+  "slug": "shri-nagaridas-maharaj-savnt-sinha",
+  "hinglishName": "nagaridasa",
+  "cleanName": "श्री नागरीदास (महाराज सावंत सिंह)",
+  "books": [
+    "छूटक पद",
+    "छूटक कवित्त",
+    "श्री नागरीदास जी की वाणी"
+  ],
+  "verseIds": [
+    "56a6e645-8338-4140-99da-3b304694971e",
+    "87335aa9-dd38-46fa-a4cb-9b3d3c5de8bb",
+    "662bcb94-1b87-4aca-9155-c17986e4e1ef",
+    "35eea8a2-cf89-4579-bfed-5a94bded2e35",
+    "cd87a828-af70-4828-b63e-fac2405d6cd3",
+    "3f3c6619-789a-4da3-bd63-7e3d2d2dd612",
+    "804ee9c1-d3c1-4342-8c7c-d6793b949d6e",
+    "536d2df6-c190-464c-9cd6-144a26dd0ccb",
+    "8c44950e-7b7a-4192-bafe-09f152785cef",
+    "0e14ffbd-8279-4dca-accf-3b2b0b1aa9fd",
+    "b6a25b46-1597-43dd-80c7-cbacf14c2cc9"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "db23ed4a-1b29-47c0-9bd5-0938c208a12b",
+    "slug": "nagaridasa",
+    "originalTitle": "नागरीदास",
+    "name": "नागरीदास",
+    "hinglishName": "nagaridasa",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "रूप माधुरी",
+  "slug": "rup-madhuri",
+  "hinglishName": "rup madhuri",
+  "cleanName": "रूप माधुरी",
+  "books": [],
+  "verseIds": [
+    "af28fe37-c350-475e-aea7-1129fe5d66e6",
+    "253b9f89-b69c-4c69-aba2-749fee634f16",
+    "32f9eba6-187d-4fbe-acdc-3f7e3b44a5a1",
+    "6f7aafe2-4647-43cf-9d4c-c4f855201f83",
+    "cb96f817-04a6-4f48-b8ae-27235424c8e2",
+    "09963091-5e63-47e0-a7dd-6620a6762cd7",
+    "d342680a-6215-482c-85ea-2918990ea1e3",
+    "670d99be-3347-4098-b16c-c31ba5abbc03",
+    "401b29c0-30ae-4856-b8ed-890c305b6af9",
+    "8364d57f-f776-4383-93de-8ad017be91bb",
+    "1248e3c4-d7a6-492c-8584-407d6431aa6d"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "de3c5ae6-c6ad-43b5-a61c-7fbb62211a54",
+    "slug": "rup-madhuri",
+    "originalTitle": "रूप माधुरी",
+    "name": "रूप माधुरी",
+    "hinglishName": "rup madhuri",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

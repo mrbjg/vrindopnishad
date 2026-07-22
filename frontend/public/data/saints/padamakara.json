@@ -1,0 +1,30 @@
+{
+  "name": "पदमाकार",
+  "slug": "padamakara",
+  "hinglishName": "padamakara",
+  "cleanName": "पदमाकार",
+  "books": [],
+  "verseIds": [
+    "37de5678-5aa0-4de1-be10-0bca6ff9c7bc",
+    "8e8be854-b8d9-498c-8109-e002da545518",
+    "f99ea4ed-2d6e-44fd-9cf5-e28cc1704eaa",
+    "8830ec2a-3b5b-4b82-af56-0f0fd30f5c52",
+    "0175bd17-c372-4b32-a406-4913509d5d43",
+    "52aac5a7-0312-4aac-a63d-01132c1f9a63",
+    "e94632a7-e7da-4df2-89ca-27d590b33d84",
+    "d3df2e09-bcb5-480c-88d4-a73ab767072b",
+    "ef95654b-a0b4-4c8f-bcda-078a71088380",
+    "55faa714-2672-44fe-97a1-cafa1d41f40e"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "e955d59c-79d8-4df0-8447-eba4523e6622",
+    "slug": "padamakara",
+    "originalTitle": "पदमाकार",
+    "name": "पदमाकार",
+    "hinglishName": "padamakara",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

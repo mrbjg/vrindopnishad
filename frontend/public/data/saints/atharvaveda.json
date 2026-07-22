@@ -1,0 +1,16 @@
+{
+  "name": "अथर्ववेद",
+  "slug": "atharvaveda",
+  "hinglishName": "atharvaveda",
+  "cleanName": "अथर्ववेद",
+  "books": [
+    "श्रीराधिका तापनीयोपनिषत्"
+  ],
+  "verseIds": [
+    "76fb33d8-9c80-4cef-afde-5f73eb21cab7",
+    "6e6fdbda-25a4-4ae0-a6aa-e4bb2449667a",
+    "f954ac43-5946-4879-9577-81282d1f59f4"
+  ],
+  "verses": [],
+  "biography": null
+}

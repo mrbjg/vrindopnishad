@@ -1,0 +1,38 @@
+{
+  "name": "किशोर दास",
+  "slug": "shri-kishor-dasa",
+  "hinglishName": "kishor dasa",
+  "cleanName": "श्री किशोर दास",
+  "books": [
+    "श्री किशोर दास जी की वाणी",
+    "श्री वृंदाविपुन विलास",
+    "सिद्धांत सार संग्रह",
+    "नेह तरंग"
+  ],
+  "verseIds": [
+    "5fa615c7-7861-4a4c-9d75-669485ff0f86",
+    "eeb3a589-ded1-45f3-9a9b-38ac4620aa9e",
+    "2b18d0f5-196a-457f-8262-3a5b2e085c08",
+    "ac494d8b-bb74-47f0-a969-0fa299552ccd",
+    "e745792c-91c6-4218-a861-bf2bac7b30f5",
+    "e0a2602f-41b6-4fe8-8999-eb8c2638a6c3",
+    "47e4ab6e-1fc9-4874-96bd-123b628bd360",
+    "8c5348a1-c01e-4842-82cb-5f5f152fde19",
+    "38f5202d-ca55-48c7-8ce8-fc23373997cf",
+    "c01bdc1c-ea56-4ea9-8ca7-5b30084edf5a",
+    "15413ae8-cadc-4702-824b-b03d52e78b5c",
+    "b6202d8b-3957-4f9c-9324-a42f58ecd7a9",
+    "5fd9e01d-5266-4e82-9706-22ccb8546475"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "bebd679f-87e3-46ea-b13b-6e19ae0181e1",
+    "slug": "kishor-dasa",
+    "originalTitle": "किशोर दास",
+    "name": "किशोर दास",
+    "hinglishName": "kishor dasa",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "सुधामुखी जी",
+  "slug": "sudhamukhi",
+  "hinglishName": "sudhamukhi ji",
+  "cleanName": "सुधामुखी",
+  "books": [],
+  "verseIds": [
+    "0db9e08c-f93c-44d7-9cb6-b91233600deb",
+    "ab3c745d-7618-4547-b8c0-fbb3adfa141d",
+    "e34f1d70-3e29-4192-92af-e157b63140c6",
+    "09f389ec-f147-4e3c-aa03-dc0b1d59713b",
+    "9d76981e-3a21-455b-8ddb-4476ba41dc69"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "2a1a7dbc-f3e3-48dc-a42f-4bbebf2734cc",
+    "slug": "sudhamukhi-ji",
+    "originalTitle": "सुधामुखी जी ",
+    "name": "सुधामुखी जी",
+    "hinglishName": "sudhamukhi ji",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

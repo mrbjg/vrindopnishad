@@ -1,0 +1,24 @@
+{
+  "name": "रसिकदास",
+  "slug": "rasikadasa",
+  "hinglishName": "rasikadasa",
+  "cleanName": "रसिकदास",
+  "books": [],
+  "verseIds": [
+    "643e792a-2035-4629-a9df-c6240d8611f1",
+    "8db9de23-1dfd-4980-943d-777e14babe25",
+    "87c4fdfc-aa21-4cec-8571-7a7b74ea2209",
+    "08a77e69-5bf2-464a-a039-34cbe90fdedb"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "04297963-efc6-466c-ac66-787142a56654",
+    "slug": "rasikadasa",
+    "originalTitle": "रसिकदास",
+    "name": "रसिकदास",
+    "hinglishName": "rasikadasa",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

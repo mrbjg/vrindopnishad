@@ -1,0 +1,24 @@
+{
+  "name": "किशोरीलाल",
+  "slug": "kishorilala",
+  "hinglishName": "kishorilala",
+  "cleanName": "किशोरीलाल",
+  "books": [],
+  "verseIds": [
+    "3c34305e-b999-4c98-abed-47559d3cf38e",
+    "74f01d41-8e73-41b5-b371-c5298c7f182a",
+    "c14bbc5e-2e36-491f-b311-165bd3d11819",
+    "951d85b3-276d-4c2c-9bc5-66142447ab3d"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "ce60c219-4cb6-4e38-b558-bd1b7f4071f1",
+    "slug": "kishorilala",
+    "originalTitle": "किशोरीलाल",
+    "name": "किशोरीलाल",
+    "hinglishName": "kishorilala",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

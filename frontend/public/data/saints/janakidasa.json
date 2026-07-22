@@ -1,0 +1,22 @@
+{
+  "name": "जानकीदास",
+  "slug": "janakidasa",
+  "hinglishName": "janakidasa",
+  "cleanName": "जानकीदास",
+  "books": [],
+  "verseIds": [
+    "0aaec790-37cc-4d8b-aaf8-66859a1fbabf",
+    "21aec07c-9614-47dd-9792-42149b4bd7c6"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "136d5ea3-66d0-4275-8a90-84c28f3430e5",
+    "slug": "janakidasa",
+    "originalTitle": "जानकीदास ",
+    "name": "जानकीदास",
+    "hinglishName": "janakidasa",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

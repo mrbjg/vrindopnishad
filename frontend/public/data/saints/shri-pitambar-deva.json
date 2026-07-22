@@ -1,0 +1,25 @@
+{
+  "name": "पीताम्बर देव",
+  "slug": "shri-pitambar-deva",
+  "hinglishName": "pitambar deva",
+  "cleanName": "श्री पीताम्बर देव",
+  "books": [
+    "श्री पीताम्बर देव जू की वाणी"
+  ],
+  "verseIds": [
+    "e0177cb4-c8f7-449e-a45b-05249dceed9a",
+    "65d016a0-60d0-4b66-b24b-cd4e0d3a9311",
+    "cac7e1bf-bd79-4380-b75c-2cea178c8abb"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "41334512-dccc-4e92-a4cf-a30cf230e612",
+    "slug": "pitambar-deva",
+    "originalTitle": "पीताम्बर देव",
+    "name": "पीताम्बर देव",
+    "hinglishName": "pitambar deva",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "श्री रामराय जी",
+  "slug": "shri-ramaraya",
+  "hinglishName": "shri ramaray ji",
+  "cleanName": "श्री रामराय",
+  "books": [
+    "आदिवाणी",
+    "गीत गोविंद ब्रज भाषा"
+  ],
+  "verseIds": [
+    "b8718fc4-f902-458e-8fe1-240fbbb0651a",
+    "5c2df10f-e360-4841-b255-a46a3f64cc41",
+    "ca881935-7230-4bbe-8faa-63a208d774ee",
+    "5ef19b66-5e0b-4f9d-a922-11b2beca987c",
+    "96726b7c-1ce6-4b81-9ac0-63e32a444fd4",
+    "0490f60d-80eb-44be-be7c-6e01b8b43fca",
+    "d8b72870-2549-4c5d-8b9c-918017766cb5",
+    "7b342c48-6ead-49e1-9a71-3128d31a445f",
+    "992c2661-3850-4f14-b251-2e361e8188cc",
+    "89f4ed42-87d7-44c7-8145-c5d40b6748b7",
+    "36460c66-f753-4ac9-9e9e-7d54ff1ed8e0",
+    "a60f359b-d84a-40cc-b83c-0c0842e4e904",
+    "1ae80299-64f0-4baf-b2b4-e84b1868b3d7",
+    "6d3d85d8-970c-47c7-bb4a-4ddf1797a4c7",
+    "d65397e9-146b-40d0-8a8b-9ee199cf9e13",
+    "d56fa04c-0f41-48e7-bda1-b15983583c4d"
+  ],
+  "verses": [],
+  "biography": null
+}

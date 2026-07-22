@@ -1,0 +1,33 @@
+{
+  "name": "अलबेली अलि",
+  "slug": "alabeli-ali",
+  "hinglishName": "alabeli ali",
+  "cleanName": "अलबेली अलि",
+  "books": [],
+  "verseIds": [
+    "cc9824ce-f222-4aeb-b821-a8ef51250979",
+    "2785a4e9-78b7-4117-8e7d-0e0c89d2d1a8",
+    "a15729a8-d8cf-4b2f-af2c-03a7ecd5bdb9",
+    "420b3e3a-8731-4709-9230-5f8dcce71750",
+    "2d414ff5-446b-4bd8-b8d6-81e4881edbf7",
+    "e00afe96-10ba-4b0f-a992-916871e45897",
+    "b7fccf5d-aef2-4db5-878f-5816d5f2951c",
+    "b5e4abeb-6652-43b4-b64b-6db7b1162219",
+    "709b84d2-af03-4484-bf66-625f870bc687",
+    "3ddbd40c-9604-4a84-aeea-70891deacaa8",
+    "d0f2f92d-2bb3-4733-8020-ddd8f2e2ffb6",
+    "2fc42298-ebe4-4477-b27a-609479265ebb",
+    "148b101f-95ef-4f00-afec-0caf0a1cdfe2"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "f70d4cc7-9cee-4c4f-9573-fc51693445f9",
+    "slug": "alabeli-ali",
+    "originalTitle": "अलबेली अलि ",
+    "name": "अलबेली अलि",
+    "hinglishName": "alabeli ali",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

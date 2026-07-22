@@ -1,0 +1,32 @@
+{
+  "name": "हित गोपाल दास",
+  "slug": "shri-hit-gopal-dasa",
+  "hinglishName": "hit gopal dasa",
+  "cleanName": "श्री हित गोपाल दास",
+  "books": [
+    "निकुंज रस वल्लरी"
+  ],
+  "verseIds": [
+    "8fef461c-56b6-4e0a-b9ce-1dc65342ef6a",
+    "8f7c75c1-17aa-4201-abf4-8042a7fbccb3",
+    "06e291e5-c6f8-4b09-9ce6-b378c010fb34",
+    "7adf8fc6-3ee7-45a2-be60-626896aac10b",
+    "5555105b-ecc6-415d-b976-ac34919e7e11",
+    "abbb6ffa-8216-4d55-ac77-a9212f664cd9",
+    "40aab50f-cc81-49f2-b91b-1985471638d3",
+    "05460786-4313-4682-bde7-28bce86f102b",
+    "3512bdda-6c88-403d-bfe2-27aa4cb8c3d2",
+    "8c28c13e-294d-4532-ab0e-a9dac2769e72"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "61607840-d9f7-4001-a946-22d65db154cd",
+    "slug": "hit-gopal-dasa",
+    "originalTitle": "हित गोपाल दास ",
+    "name": "हित गोपाल दास",
+    "hinglishName": "hit gopal dasa",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "रसिक बिहारी",
+  "slug": "rasik-bihari",
+  "hinglishName": "rasik bihari",
+  "cleanName": "रसिक बिहारी",
+  "books": [],
+  "verseIds": [
+    "8d8d5426-b237-4257-b53c-57b0345e84f5",
+    "bc524ae8-1d31-43bc-9e44-b42824d500cf",
+    "5e4f27ee-46fd-4635-baba-110b86ee1487",
+    "4350c8e3-357d-487c-8cac-0788ef7bef24",
+    "c1e18cb9-4103-41e3-864c-44f82a9bae53",
+    "d9900c51-0c90-4495-9ae8-51609a2e6c5a",
+    "a5088182-1343-4b7a-92df-97dbad8021f0",
+    "13b1c85e-36d0-49f5-92a1-21020412cf77",
+    "eabb4600-a67d-4a43-93bb-6623c4645b8b",
+    "ac30fa26-c489-488f-962a-da8e4afddd30",
+    "19e5293c-8ba9-4519-8cdb-65f3ac5968b2",
+    "28e6bcff-9ee6-4ff9-9402-cb68e4ffa7fa",
+    "e24ab73c-92f4-49fe-b4ab-1144a06da71b",
+    "08f1e0d4-77fc-46e8-b2de-7feb49fffa8e",
+    "b37ee9d4-4914-4fe2-bc77-8746b9e91bbc",
+    "4aef8de2-13c6-403f-87a8-67482cf1436f",
+    "6cab43c9-0e5e-4c50-8557-1605760b7398",
+    "545a6ab5-cb40-436b-97d8-b108ee4a00b4"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "2cd1f04a-2230-4cf7-b39a-0f1af4762569",
+    "slug": "rasik-bihari",
+    "originalTitle": "रसिक बिहारी",
+    "name": "रसिक बिहारी",
+    "hinglishName": "rasik bihari",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

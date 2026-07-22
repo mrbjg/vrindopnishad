@@ -1,0 +1,32 @@
+{
+  "name": "नंददास",
+  "slug": "shri-nndadas-grnthavali",
+  "hinglishName": "nndadasa",
+  "cleanName": "श्री नंददास ग्रंथावली",
+  "books": [
+    "पदावली",
+    "विरह मंजरी",
+    "श्री कृष्ण सिद्धान्त पंचाध्यायी"
+  ],
+  "verseIds": [
+    "6b7f1062-f563-410d-a656-4f94779691a8",
+    "a4cace8e-667b-4c8c-837e-b92bd89e464e",
+    "71290383-de25-4b48-aff8-526089bc2d49",
+    "f782bcbe-da34-4329-9c28-a263946586a9",
+    "53bd0a40-116c-4a5d-896c-f0be966505eb",
+    "e1c6573e-7e10-4e28-af8a-138917e05431",
+    "555e04de-03b5-48c5-a898-5b35befd872c",
+    "75484e98-ee5f-47ac-801c-3385cdb33543"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "8084136c-145e-4ee0-8e38-497d2f2a9807",
+    "slug": "nndadasa",
+    "originalTitle": "नंददास",
+    "name": "नंददास",
+    "hinglishName": "nndadasa",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

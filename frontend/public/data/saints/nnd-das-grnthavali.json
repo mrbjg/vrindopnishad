@@ -1,0 +1,21 @@
+{
+  "name": "नंद दास ग्रंथावली",
+  "slug": "nnd-das-grnthavali",
+  "hinglishName": "nnd das grnthavali",
+  "cleanName": "नंद दास ग्रंथावली",
+  "books": [
+    "रस मंजरी",
+    "रास पंचाध्यायी"
+  ],
+  "verseIds": [
+    "ea6d2900-610a-4f0f-9609-1e5917587eab",
+    "c462a1f6-57a1-49b9-aa78-516254f144a6",
+    "7de1b96c-61a4-4d28-89c3-e026f030a91d",
+    "731e4d95-7ea3-4bd8-b8cf-300c2ff44e0e",
+    "aad3fd13-918f-468e-a08f-8f9c029c07bb",
+    "f7f6a911-82af-4206-abf0-93155ec89cb9",
+    "f363303e-e20f-4af0-9556-783a64217fd5"
+  ],
+  "verses": [],
+  "biography": null
+}

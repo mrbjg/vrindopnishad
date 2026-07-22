@@ -1,0 +1,26 @@
+{
+  "name": "चतुर्भुजदास",
+  "slug": "shri-hit-chaturbhujadasa",
+  "hinglishName": "chaturbhujadasa",
+  "cleanName": "श्री हित चतुर्भुजदास",
+  "books": [
+    "श्री वृन्दावन महिमाष्टक"
+  ],
+  "verseIds": [
+    "89bdb1ac-d9bb-4ff9-9440-445923ecd1e6",
+    "f9959b83-9c84-496e-b881-50c89509e932",
+    "3853b20a-ac52-4be5-97a3-a52d4e9a93a2",
+    "b551d3bf-42f7-47a5-9adf-4d4d4d6c2b79"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "12766469-9be3-443c-8136-be6dfc1ad5fa",
+    "slug": "chaturbhujadasa",
+    "originalTitle": "चतुर्भुजदास",
+    "name": "चतुर्भुजदास",
+    "hinglishName": "chaturbhujadasa",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

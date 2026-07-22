@@ -1,0 +1,36 @@
+{
+  "name": "दयाबाई",
+  "slug": "shri-dayabai",
+  "hinglishName": "dayabai",
+  "cleanName": "श्री दयाबाई",
+  "books": [],
+  "verseIds": [
+    "ea7d681b-ab79-46dd-b745-a3b453c7c938",
+    "e19447a5-d4a6-47c8-a046-5578bfa305ba",
+    "9f63143b-e351-4140-83af-82f5131a86bb",
+    "b9e39a17-ac48-4cf8-bf70-80b1945d478e",
+    "d27cf9a8-5c09-4c6f-b728-27db09197124",
+    "9d59aa6c-1969-4182-83ab-b1b5b540242e",
+    "e1d23d66-dfde-4c7e-abc7-cc44c116d340",
+    "43496909-ab05-4875-9491-b74a04424d64",
+    "bd45305a-2c95-42de-b8d8-7a752b2cc41e",
+    "4d3deb18-a867-441e-b3a0-9232c5799674",
+    "a7647f84-bc3d-4053-ab81-6ce7675b118d",
+    "a48a18c0-3305-429f-897a-d921aaa470a5",
+    "beb6fb75-3ad5-4e89-9935-90d7fe03d5af",
+    "5d543c9e-45ec-42f8-a1cb-03b568f51091",
+    "e4a932ea-749e-492f-a733-9e0693b2eaf9",
+    "1aac2a09-3481-462c-bdb7-1039a43ffbd8"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "214fbbc0-3b77-438a-8601-47bb397c8cc4",
+    "slug": "dayabai",
+    "originalTitle": "दयाबाई ",
+    "name": "दयाबाई",
+    "hinglishName": "dayabai",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "ब्रह्माण्ड पुराण",
+  "slug": "brahmand-purana",
+  "hinglishName": "brahmand purana",
+  "cleanName": "ब्रह्माण्ड पुराण",
+  "books": [
+    "राधास्तोत्रम्",
+    "श्री राधास्तोत्रम्"
+  ],
+  "verseIds": [
+    "2b93ca1a-ed3b-4f0d-afd6-498380e91d07",
+    "6e555d31-5005-45af-894e-d98d176806f0",
+    "3e2eb85d-1f38-4987-9018-a55077ffa935",
+    "5936f9cc-fc52-45ad-9ecc-fb24adcf1dcd",
+    "fec21447-30b8-4afc-b597-305fbcd25bce",
+    "1408aa0f-f405-49b3-850a-b96b3c8cd4aa",
+    "1d702a9e-123f-41d5-9002-a337fd03614b",
+    "e4fd8eac-0daf-44d7-ae80-f4238ed62f7e",
+    "c3b44d29-8ed8-403d-a379-cdbc0c98ff1b",
+    "67061632-8bb6-4c9d-923e-3762eaeb8a46",
+    "7ae082b6-fb4d-4b80-be43-ac78ac0c6c47"
+  ],
+  "verses": [],
+  "biography": null
+}

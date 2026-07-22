@@ -1,0 +1,22 @@
+{
+  "name": "श्याम सखी",
+  "slug": "shyam-sakhi",
+  "hinglishName": "shyam sakhi",
+  "cleanName": "श्याम सखी",
+  "books": [],
+  "verseIds": [
+    "8301d9bd-2cc5-411f-87d4-4cff8e5c0500",
+    "8354b0ba-0e79-4e10-92a8-7f17ef18c461"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "b055fc0a-40b1-4685-84c7-2bfffbd59445",
+    "slug": "shyam-sakhi",
+    "originalTitle": "श्याम सखी",
+    "name": "श्याम सखी",
+    "hinglishName": "shyam sakhi",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

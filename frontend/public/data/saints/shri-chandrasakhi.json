@@ -1,0 +1,33 @@
+{
+  "name": "चन्द्रसखी",
+  "slug": "shri-chandrasakhi",
+  "hinglishName": "chandrasakhi",
+  "cleanName": "श्री चन्द्रसखी",
+  "books": [
+    "चंद्रसखी पदावाली"
+  ],
+  "verseIds": [
+    "943b5ed7-7d18-491f-b371-778cb44a6793",
+    "9adaa753-25ae-4a7c-ac0d-df78aec2e5b8",
+    "839f03de-3ba3-41c8-a526-3e68739a1207",
+    "f635af96-24b9-430a-bd11-85687f8c0d66",
+    "56f52d0a-7c32-4c14-a18c-228490df08b7",
+    "26619ccb-fd8c-4190-a07c-ddd039353ed1",
+    "367b2a89-70e7-454e-b4cb-791b30e996a1",
+    "f773d82b-088e-4e6c-a085-11795d336d0a",
+    "308588c6-364e-4d8b-9b55-49b321ce3d61",
+    "5ae7fdd8-37da-437c-be11-0fef3ee6acfa",
+    "d2c67010-45a2-4bed-97cf-7141d4e1deba"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "374e7ba9-d710-4206-be31-9b22cc69513d",
+    "slug": "chandrasakhi",
+    "originalTitle": "चन्द्रसखी",
+    "name": "चन्द्रसखी",
+    "hinglishName": "chandrasakhi",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

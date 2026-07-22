@@ -1,0 +1,21 @@
+{
+  "name": "पदमाकार",
+  "slug": "pada",
+  "hinglishName": "padamakara",
+  "cleanName": "पद",
+  "books": [],
+  "verseIds": [
+    "92c7691b-9192-4795-ab01-5ad4e7363967"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "e955d59c-79d8-4df0-8447-eba4523e6622",
+    "slug": "padamakara",
+    "originalTitle": "पदमाकार",
+    "name": "पदमाकार",
+    "hinglishName": "padamakara",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

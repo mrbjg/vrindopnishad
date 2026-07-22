@@ -1,0 +1,38 @@
+{
+  "name": "श्री वल्लभाचार्य",
+  "slug": "shri-vallabhacharya",
+  "hinglishName": "shri vallabhacharya",
+  "cleanName": "श्री वल्लभाचार्य",
+  "books": [
+    "सिद्धान्तमुक्तावली",
+    "नवरत्नम्",
+    "चतुः श्लोकी",
+    "निरोधलक्षणम",
+    "अन्तःकरण प्रबोध",
+    "पंचपदायनी"
+  ],
+  "verseIds": [
+    "b3e8bd8c-e075-48d7-89a5-2d6460131e47",
+    "f3b2ce80-9137-4421-9e83-3feecef18899",
+    "767ff98b-4edd-4c4a-a56c-242d7faa2b9a",
+    "72296ed6-72ff-43ca-95b0-8de4117d08fc",
+    "995cf7d6-c6b7-4aa0-93ab-3bb926e99bdf",
+    "93dbc120-3218-4579-a422-f93583a03983",
+    "749da129-d0f6-414d-9771-e5ab8e15aeb4",
+    "779d3b01-fd5f-4db0-8e41-c1ab20afad7b",
+    "b4c6ac3f-3c43-45b9-b610-663e3bbee1f6",
+    "90ee88d3-861b-43c2-87ee-e76d2851e49d",
+    "618c6e98-619f-421c-ad02-af3ef415dbf7",
+    "dbee7f59-9444-4b90-8a07-f57ee109e49b",
+    "c673df99-6ec2-483d-b2ef-c02976117c3c",
+    "88bf1dda-e035-4ca4-9481-eef9e8ec5dfa",
+    "42eff9bf-5688-44eb-bbc0-92d7594fdf7b",
+    "ec5f4c1e-e512-4560-aa57-086b4e10efcd",
+    "16a71908-2d79-4e36-8c9d-4d3a38699888",
+    "c26cbb2f-34c4-4c6d-a727-f5235f3b6540",
+    "11dab1b9-fe94-4b12-ace7-d0e9a735fb7d",
+    "38d188e0-3680-4854-b1a7-21163d3bb742"
+  ],
+  "verses": [],
+  "biography": null
+}

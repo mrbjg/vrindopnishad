@@ -1,0 +1,27 @@
+{
+  "name": "लाल बलवीर जी",
+  "slug": "lal-balavira",
+  "hinglishName": "lal balavir ji",
+  "cleanName": "लाल बलवीर",
+  "books": [],
+  "verseIds": [
+    "95ef8949-a598-4080-aca0-9844d758f695",
+    "80328dcf-03dc-44cf-a026-488c10ad7ba8",
+    "364b2964-2b8c-4054-9e1e-ece37849924f",
+    "eb168836-bd6e-4c41-93ed-7dcd77402ec0",
+    "fe5374a1-30b9-4eb2-a8ff-d4bf4635de1c",
+    "8c311142-3e2f-4ab7-91e9-eb688148c26a",
+    "1f4241ff-53ce-45fb-8f5b-b72a7ec8505d"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "ae4f6afb-57b9-4064-af88-a1e53fad8b2d",
+    "slug": "lal-balavir-ji",
+    "originalTitle": "लाल बलवीर जी ",
+    "name": "लाल बलवीर जी",
+    "hinglishName": "lal balavir ji",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

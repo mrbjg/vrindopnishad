@@ -1,0 +1,19 @@
+{
+  "name": "गर्ग संहिता",
+  "slug": "garg-snhita",
+  "hinglishName": "garg snhita",
+  "cleanName": "गर्ग संहिता",
+  "books": [
+    "गोलोक खंड"
+  ],
+  "verseIds": [
+    "6d0a0122-3322-409f-a177-398248958c8f",
+    "111af349-db53-4627-a8ed-c06be5b78c6f",
+    "8381c894-90f8-4326-8098-422e91cb650c",
+    "b6b08e10-0eca-4bd0-9897-a1639c5200d4",
+    "bbb7690c-d0df-40fd-b53e-110be3c4be16",
+    "6dfd345d-32dc-425e-9ae6-001014f368a7"
+  ],
+  "verses": [],
+  "biography": null
+}

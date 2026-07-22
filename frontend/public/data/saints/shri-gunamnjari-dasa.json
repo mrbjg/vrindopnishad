@@ -1,0 +1,29 @@
+{
+  "name": "गुणमंजरी",
+  "slug": "shri-gunamnjari-dasa",
+  "hinglishName": "gunamnjari",
+  "cleanName": "श्री गुणमंजरी दास",
+  "books": [],
+  "verseIds": [
+    "97b5d9d0-f50b-4122-8c8f-0fa3ff20131b",
+    "a5dd5477-1db0-4e01-b4bd-b44c557698cb",
+    "a466d2fb-0118-4e83-a2f2-bbdb47e5b1cc",
+    "1aeb0e0c-21c2-4771-bc63-5010fe9a6c0d",
+    "8c88a1df-82f1-463c-a37b-438987ea7e98",
+    "311fcb9a-9a7c-4c13-8006-ae7835ec6353",
+    "91140621-3ce8-4cff-8dc2-ecdea1e01497",
+    "182afd3c-16f2-4a19-9be7-9bb433f172f2",
+    "3177b2f5-808c-4e8c-b3e8-a4e31d93d894"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "b20c0274-d94e-4fe3-a0bf-8cbe23dac542",
+    "slug": "gunamnjari",
+    "originalTitle": "गुणमंजरी",
+    "name": "गुणमंजरी",
+    "hinglishName": "gunamnjari",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "श्रीभट्ट",
+  "slug": "shribhatta",
+  "hinglishName": "shribhatta",
+  "cleanName": "श्रीभट्ट",
+  "books": [],
+  "verseIds": [
+    "75be7677-9033-4c84-a003-4070da434299",
+    "c7d9f39d-d60a-499b-81c4-85a3e5fe262d",
+    "623ecfd7-77d8-4d65-b198-6261be65b20f",
+    "fe21118f-f5cc-4f18-a688-9ec8063eb86b",
+    "0f6adba2-99b6-4115-a0dd-3878e0914891",
+    "174b07b0-4d7b-4f3b-9951-0e57f235c98b",
+    "5d9c658e-eb70-4feb-8d1d-d66376e15e70",
+    "21107411-e8d4-47bc-b443-efad64acee3b",
+    "d3901806-3cd1-4a41-b043-115b80d70429",
+    "8cc3022a-e939-4368-8851-4502a2f8a98d",
+    "af77235d-a603-4d2b-8dad-d9a230a6ed2b",
+    "ce9d9f63-397e-4f85-b647-cc0ee7d3a088",
+    "dd10cb8f-d119-4087-924e-60a12c776a97",
+    "a9585843-06ca-4748-a96d-7a8570649113",
+    "c713f766-20e3-4cd8-ba7d-bf16dfed62da",
+    "558ac929-4dc1-440f-b64f-023a77fec160",
+    "99518c30-1d7e-4544-8f78-199f7c5738a3",
+    "7b99b6cd-4e67-43da-8252-09b9f619ea81"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "2cf18d3a-0b52-4fce-84ab-b646485d8205",
+    "slug": "shribhatta",
+    "originalTitle": "श्रीभट्ट",
+    "name": "श्रीभट्ट",
+    "hinglishName": "shribhatta",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

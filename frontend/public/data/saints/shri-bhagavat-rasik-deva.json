@@ -1,0 +1,23 @@
+{
+  "name": "भगवत रसिक",
+  "slug": "shri-bhagavat-rasik-deva",
+  "hinglishName": "bhagavat rasika",
+  "cleanName": "श्री भगवत रसिक देव",
+  "books": [
+    "श्री नित्यविहारी जुगल ध्यान"
+  ],
+  "verseIds": [
+    "484b28bb-913e-4e05-b7c8-73f8e6cd2dea"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "e386b5d0-525e-4bcf-ad9e-4fea9d4e005f",
+    "slug": "bhagavat-rasika",
+    "originalTitle": "भगवत रसिक",
+    "name": "भगवत रसिक",
+    "hinglishName": "bhagavat rasika",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

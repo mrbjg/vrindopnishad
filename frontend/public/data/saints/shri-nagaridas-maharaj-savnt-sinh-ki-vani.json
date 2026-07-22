@@ -1,0 +1,30 @@
+{
+  "name": "नागरीदास",
+  "slug": "shri-nagaridas-maharaj-savnt-sinh-ki-vani",
+  "hinglishName": "nagaridasa",
+  "cleanName": "श्री नागरीदास  (महाराज सावंत सिंह ) की वाणी",
+  "books": [
+    "मनोरथ मञ्जरी",
+    "छूटक पद",
+    "उत्सव माला"
+  ],
+  "verseIds": [
+    "7b1cdb13-f21b-48a8-96d6-78ed3b531a38",
+    "bc7e198e-8e77-4077-b36c-ed2fa2f354f6",
+    "6c28b06c-4ac4-4764-b020-529773e7bc68",
+    "9466f1b9-f6c0-4244-8bd2-b0d7f38e5ade",
+    "c9c43313-b6b1-4196-ab49-2359f11ffc1d",
+    "32467d38-564a-442a-9166-6b4715ddafc2"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "db23ed4a-1b29-47c0-9bd5-0938c208a12b",
+    "slug": "nagaridasa",
+    "originalTitle": "नागरीदास",
+    "name": "नागरीदास",
+    "hinglishName": "nagaridasa",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

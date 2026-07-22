@@ -1,0 +1,24 @@
+{
+  "name": "ललित किशोरी देव",
+  "slug": "shri-lalit-kishori-dev-ju-ki-bani",
+  "hinglishName": "lalit kishori deva",
+  "cleanName": "श्री ललित किशोरी देव जू की बानी",
+  "books": [
+    "सिद्धान्त की साखी"
+  ],
+  "verseIds": [
+    "6d7af036-9b72-41d8-9cc0-82405366ef79",
+    "bf83e3ab-e129-4253-99f4-789e3c9fd0fc"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "5396dd4e-46fc-4c33-ad1a-e46d4c79dc53",
+    "slug": "lalit-kishori-deva",
+    "originalTitle": "ललित किशोरी देव",
+    "name": "ललित किशोरी देव",
+    "hinglishName": "lalit kishori deva",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

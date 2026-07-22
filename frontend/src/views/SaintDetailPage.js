@@ -52,23 +52,8 @@ const SaintDetailPage = ({ initialSaint }) => {
 
   const { data: fetchedSaint } = useSWR(
     slug ? `saint_${slug}` : null,
-    async ({ signal }) => {
-      const relations = await apiService.getRelations({ signal });
-      const foundSant = relations.sants.find(s => s.slug === slug);
-      if (foundSant) {
-        // Use inline lightweight verses from relations (instant, no extra fetch)
-        if (foundSant.verses && foundSant.verses.length > 0) {
-          // Already have verse objects — use them directly
-        } else if (foundSant.verseIds && foundSant.verseIds.length > 0) {
-          // Fallback: resolve verseIds from full content (slower)
-          const allContent = await apiService.getAllContent(null, 25000);
-          const contentMap = new Map(allContent.map(item => [item.id ? item.id.toString() : '', item]));
-          foundSant.verses = (foundSant.verseIds || [])
-            .map(id => contentMap.get(id?.toString()))
-            .filter(Boolean);
-        }
-      }
-      return foundSant || null;
+    async () => {
+      return await apiService.getSaintBySlug(slug);
     },
     {
       initialData: sant,

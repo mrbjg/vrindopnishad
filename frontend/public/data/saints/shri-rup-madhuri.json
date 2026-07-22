@@ -1,0 +1,42 @@
+{
+  "name": "रूप माधुरी",
+  "slug": "shri-rup-madhuri",
+  "hinglishName": "rup madhuri",
+  "cleanName": "श्री रूप माधुरी",
+  "books": [
+    "श्री राधा नाम अंक",
+    "रसिक पच्चीसी",
+    "भाव महिमा अंग",
+    "उपदेश चिंतामणि",
+    "श्री रूप माधुरी जी की वाणी"
+  ],
+  "verseIds": [
+    "3eec0295-38a4-403d-8ba1-88af390b8f74",
+    "b74be171-91f8-4dbe-a3f6-87bfc639e18e",
+    "a778eb04-83cc-45d5-8324-3fb094d3c8f1",
+    "5134890f-73f0-4c0b-ab1a-f330d846e9dd",
+    "bb14474a-140f-4908-b6d9-1e695be983c7",
+    "896e0883-c58c-45de-aa3a-f36378848317",
+    "e5a1f667-71b0-40c7-8138-fbdffc17e1e6",
+    "34080018-9442-420a-b789-828199474a18",
+    "424f1e8c-0c88-4dd1-b73b-2f7649a64840",
+    "80cb23e5-902f-4f87-83fa-da99ffe35eef",
+    "a09eadf0-8afd-485a-8114-223613bfe2f7",
+    "b4cf8a8b-dd75-4875-a276-fcc35bf5c2bc",
+    "d46af010-b2a9-4216-91a9-335f116fb32d",
+    "5f6652a5-f129-4439-8ca5-682070840d0c",
+    "bb8bace2-de13-4c09-b8f2-e0ce843a297d",
+    "43c6ac59-be0b-4bc3-b830-c84050133b36"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "de3c5ae6-c6ad-43b5-a61c-7fbb62211a54",
+    "slug": "rup-madhuri",
+    "originalTitle": "रूप माधुरी",
+    "name": "रूप माधुरी",
+    "hinglishName": "rup madhuri",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

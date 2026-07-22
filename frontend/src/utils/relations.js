@@ -40,13 +40,31 @@ export function getNormalizedBookSlug(name) {
   if (clean.includes('सिद्धान्त के पद') || clean.includes('सिद्धांत के पद') || clean.includes('सिद्धान्त की पद') || clean.includes('siddhanta-pada') || clean.includes('siddhant-pada')) return 'siddhanta-pada';
   if (clean.includes('बयालीस लीला') || clean.includes('ब्यालीस लीला') || clean.includes('bayalees') || clean.includes('byalees')) return 'bayalees-leela';
   if (clean.includes('व्यास वाणी') || clean.includes('vyas-vani') || clean.includes('vyas vani')) return 'vyas-vani';
-  if (clean.includes('seva-kunj-texts') || clean.includes('seva-kunj') || clean.includes('सेवा कुंज') || clean.includes('सेवा कुञ्ज')) return 'seva-kunj-texts';
+  if (
+    clean.includes('भगवद्गीता') ||
+    clean.includes('भगवद गीता') ||
+    clean.includes('bhagavad-gita') ||
+    clean.includes('bhagavad gita') ||
+    (clean.includes('bhagwad') && clean.includes('gita')) ||
+    clean.includes('bhagwat geeta') ||
+    clean.includes('bhagwat-geeta')
+  ) return 'shrimad-bhagavad-gita';
+  if (clean.includes('सेवा कुंज') || clean.includes('सेवा कुञ्ज') || clean.includes('seva-kunj')) return 'seva-kunj-texts';
   return slugify(transliterate(name));
 }
 
 export function getNormalizedBookName(name) {
   if (!name) return '';
   const clean = name.toLowerCase();
+  if (
+    clean.includes('भगवद्गीता') ||
+    clean.includes('भगवद गीता') ||
+    clean.includes('bhagavad-gita') ||
+    clean.includes('bhagavad gita') ||
+    (clean.includes('bhagwad') && clean.includes('gita')) ||
+    clean.includes('bhagwat geeta') ||
+    clean.includes('bhagwat-geeta')
+  ) return 'श्रीमद्भगवद्गीता';
   if (
     clean.includes('सुधानिधि') ||
     clean.includes('sudhanidhi') ||
@@ -295,7 +313,18 @@ export function extractRelations(items) {
       }
       santsMap[santSlug].verseIds.push(item.id);
       const finalTitle = item.cleanTitle || cleanTitle || item.title || item.name || 'पद';
-      santsMap[santSlug].verses.push({ id: item.id, title: item.title || finalTitle, slug: item.slug, category: item.category, author: item.author, cleanTitle: finalTitle });
+      santsMap[santSlug].verses.push({
+        id: item.id,
+        title: item.title || finalTitle,
+        slug: item.slug,
+        category: item.category,
+        author: item.author,
+        cleanTitle: finalTitle,
+        tags: item.tags || [],
+        sanskrit_text: item.sanskrit_text || '',
+        hindi_text: item.hindi_text || '',
+        audio_url: item.audio_url || ''
+      });
       if (bookName) {
         const normalizedBName = getNormalizedBookName(bookName);
         santsMap[santSlug].books.add(normalizedBName);
@@ -323,7 +352,18 @@ export function extractRelations(items) {
         }
       }
       booksMap[bookSlug].verseIds.push(item.id);
-      booksMap[bookSlug].verses.push({ id: item.id, title: item.title || finalTitle, slug: item.slug, category: item.category, author: item.author, cleanTitle: finalTitle });
+      booksMap[bookSlug].verses.push({
+        id: item.id,
+        title: item.title || finalTitle,
+        slug: item.slug,
+        category: item.category,
+        author: item.author,
+        cleanTitle: finalTitle,
+        tags: item.tags || [],
+        sanskrit_text: item.sanskrit_text || '',
+        hindi_text: item.hindi_text || '',
+        audio_url: item.audio_url || ''
+      });
     }
 
     if (ragaName) {
@@ -339,7 +379,18 @@ export function extractRelations(items) {
         };
       }
       ragasMap[ragaName].verseIds.push(item.id);
-      ragasMap[ragaName].verses.push({ id: item.id, title: item.title || finalTitle, slug: item.slug, category: item.category, author: item.author, cleanTitle: finalTitle });
+      ragasMap[ragaName].verses.push({
+        id: item.id,
+        title: item.title || finalTitle,
+        slug: item.slug,
+        category: item.category,
+        author: item.author,
+        cleanTitle: finalTitle,
+        tags: item.tags || [],
+        sanskrit_text: item.sanskrit_text || '',
+        hindi_text: item.hindi_text || '',
+        audio_url: item.audio_url || ''
+      });
     }
   });
 

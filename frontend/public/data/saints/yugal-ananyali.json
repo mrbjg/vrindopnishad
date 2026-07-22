@@ -1,0 +1,37 @@
+{
+  "name": "युगल अनन्यअली जी",
+  "slug": "yugal-ananyali",
+  "hinglishName": "yugal ananyali ji",
+  "cleanName": "युगल अनन्यअली",
+  "books": [],
+  "verseIds": [
+    "fd0c9fd8-7e1b-4df8-83be-ffdbd8a6580c",
+    "c4c9ca72-2e51-43b3-aa34-9ac85c68569d",
+    "b8d2617a-c522-4733-af2f-f6c9caefb45f",
+    "f7fa36f2-03dd-47d4-99f6-153da089f60c",
+    "e7a3cd54-4ed0-4768-88d5-aaeccdf8c156",
+    "0f70de3d-a727-4c08-b6ce-d9dce3b02e2c",
+    "10267310-8399-4a94-abd6-93c73ca603c8",
+    "bc9db346-7821-4370-a5bf-1b6a43b648a7",
+    "569ce6a9-44ae-4f2b-8e53-e2cb3a98cb56",
+    "0e8d2970-4526-4030-9bb0-b135d6451fd6",
+    "4f7edb20-6df9-4da9-8200-ac7c9eef94b7",
+    "304cf356-2582-40b4-976e-c0125adb6fbc",
+    "deaf9db5-1907-48ab-868e-0328f3133453",
+    "68a0b352-d89f-4aca-8a2c-ba08917e9019",
+    "fe10b392-c2c2-4635-82e1-354f2df5da99",
+    "2fb3dcd7-51af-4a54-abc2-aad6548d2d1c",
+    "6c87b610-ec2e-4d84-8d42-95c09fb3c01c"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "df3a35e4-086d-49b1-9824-76c1ab7d21d7",
+    "slug": "yugal-ananyali-ji",
+    "originalTitle": "युगल अनन्यअली जी ",
+    "name": "युगल अनन्यअली जी",
+    "hinglishName": "yugal ananyali ji",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

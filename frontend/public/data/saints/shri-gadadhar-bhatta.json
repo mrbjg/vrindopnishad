@@ -1,0 +1,35 @@
+{
+  "name": "गदाधर",
+  "slug": "shri-gadadhar-bhatta",
+  "hinglishName": "gadadhara",
+  "cleanName": "श्री गदाधर भट्ट",
+  "books": [
+    "श्री गदाधर भट्ट जी की वाणी",
+    "योग पीठ",
+    "उपदेश पद"
+  ],
+  "verseIds": [
+    "1d80378d-bf5e-4940-b208-84d8f6c9817f",
+    "683c60f9-a370-4033-877d-679f495ff736",
+    "eaf2a348-618c-4b46-aca2-5d03e2deef79",
+    "a25c9db6-fe67-4717-956d-6e06a40fd622",
+    "c80a9eb3-0bc7-4d1f-a340-258df4775a2b",
+    "67a169f7-61a0-41b1-9b9b-d2649f9e45ed",
+    "3287e6c5-c542-4bf3-895f-266f80e0e19d",
+    "fb67352b-badc-43e6-9d80-b37a0b9e16c7",
+    "4300705e-6356-48ee-8d1a-1a86a571771e",
+    "4e197641-a084-4849-b722-37a060fc318f",
+    "415a2f68-8c91-49d6-8488-a0247b7d9991"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "56adeedf-3a04-4762-aeaa-acddbbc72d1a",
+    "slug": "gadadhara",
+    "originalTitle": "गदाधर",
+    "name": "गदाधर",
+    "hinglishName": "gadadhara",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

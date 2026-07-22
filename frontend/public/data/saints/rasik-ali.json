@@ -1,0 +1,35 @@
+{
+  "name": "रसिक अली जी",
+  "slug": "rasik-ali",
+  "hinglishName": "rasik ali ji",
+  "cleanName": "रसिक अली",
+  "books": [],
+  "verseIds": [
+    "dcc52fae-4284-4372-97b6-4e8d5d0c6356",
+    "b2d438f2-56dc-4f8a-9070-32d695f0a3a5",
+    "5feda589-ad14-44ae-9533-454bb9d927c1",
+    "310758fd-5465-4f56-ba07-eed5ed8bc3d9",
+    "edfd5946-178d-4b50-9bda-0f9100b8ca65",
+    "09d6e1ea-eeb2-477c-83a9-002d2f0daab0",
+    "4bd6b418-b67d-48d2-a34a-21a9af72d7b9",
+    "3502a3c3-4e10-417a-af87-faf6e42edcb9",
+    "00bdcc98-cf55-492a-86c4-c55cdb0532fe",
+    "f28303ac-c0ad-4812-8429-3da2f30414bb",
+    "7ddadc24-342e-419a-9e86-4e77d89c7793",
+    "e211ab30-6441-4a7c-97d4-88e3e1dab424",
+    "c011ca2c-1354-4076-932f-4873711e5360",
+    "e4f37cdd-b238-4d4d-8d4e-50abc368d8eb",
+    "c00324db-f0bb-4f87-8a17-216ad4bd0281"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "7f699aa2-4330-4800-a98f-a5c9c4a835ee",
+    "slug": "rasik-ali-ji",
+    "originalTitle": "रसिक अली जी ",
+    "name": "रसिक अली जी",
+    "hinglishName": "rasik ali ji",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

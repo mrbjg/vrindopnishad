@@ -1,0 +1,25 @@
+{
+  "name": "नागरीदास",
+  "slug": "shri-neh-nagaridasa",
+  "hinglishName": "nagaridasa",
+  "cleanName": "श्री नेह नागरीदास",
+  "books": [
+    "दोहावली"
+  ],
+  "verseIds": [
+    "2bcac68c-b1e2-41ef-8542-6f8a277debd0",
+    "47b3398e-abfd-4070-bcba-e992eeaace04",
+    "304b2cac-94a9-4a9e-a4ed-33b2df39d559"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "db23ed4a-1b29-47c0-9bd5-0938c208a12b",
+    "slug": "nagaridasa",
+    "originalTitle": "नागरीदास",
+    "name": "नागरीदास",
+    "hinglishName": "nagaridasa",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

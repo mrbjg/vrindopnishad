@@ -1,0 +1,36 @@
+{
+  "name": "किशोरीदास",
+  "slug": "shri-kishoridasa",
+  "hinglishName": "kishoridasa",
+  "cleanName": "श्री किशोरीदास",
+  "books": [],
+  "verseIds": [
+    "77616590-8e44-41f7-9240-39b7719173c5",
+    "fba0a28f-14bf-4570-b5e6-4873ed3a0a2c",
+    "80c311ce-5023-40ca-967f-f4efd9b1ed86",
+    "4e0f037e-eef6-4a49-9776-a0fdf3664cb7",
+    "4a9adc28-8819-4e9b-aa47-1b9f46a5b953",
+    "1b1fcabe-1a64-4854-9dac-98919108f653",
+    "a03e063e-1221-4370-91be-09a5e614548e",
+    "da133e3b-77ff-4459-b768-84bdc86cc8d7",
+    "5d8644a1-43d4-46e8-b691-70f12a4f23a2",
+    "599ebbd9-9255-4fa5-bbbd-78dc35fea76b",
+    "ffe44830-e5c0-4c64-b2cc-aebce05a6ba4",
+    "9164d049-94e0-4d05-8c94-9f379ca8a061",
+    "9862518a-c0ff-49d1-bfce-37faeb91a851",
+    "800e7894-87b1-4c2a-b8df-e9b076187234",
+    "2a736cd1-7586-469a-9ee0-21fccd355879",
+    "8ed26f5d-20dc-45ca-a690-bbec78fc7b39"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "f19abf7e-b9a8-491b-a30a-c8e4d29e5aae",
+    "slug": "kishoridasa",
+    "originalTitle": "किशोरीदास",
+    "name": "किशोरीदास",
+    "hinglishName": "kishoridasa",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

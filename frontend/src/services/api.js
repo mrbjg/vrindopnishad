@@ -461,8 +461,7 @@ const fetchRelationsBackup = async () => {
 const isTruncatedText = (str) => {
   if (!str) return true;
   const trimmed = str.trim();
-  if (trimmed.length <= 120) return true;
-  if (trimmed.length <= 350 && !/[॥।.\!\?\n\”\"']/.test(trimmed.slice(-3))) return true;
+  if (trimmed.endsWith('...') || trimmed.endsWith('…')) return true;
   return false;
 };
 
@@ -501,16 +500,9 @@ const ensureFullVerseText = async (matched) => {
     console.warn('[FullText] Supabase fetch failed:', e);
   }
 
-  // 2. Fetch relations_backup.json if text is still truncated or short (< 350 chars)
-  if (isTruncatedText(current.sanskrit_text) || isTruncatedText(current.hindi_text) || (current.sanskrit_text || '').length < 300) {
+  // 2. Check inMemoryRelationsCache if text is still truncated
+  if (isTruncatedText(current.sanskrit_text) || isTruncatedText(current.hindi_text)) {
     try {
-      if (!inMemoryRelationsCache) {
-        const resRel = await fetch('/data/relations_backup.json');
-        if (resRel.ok) {
-          inMemoryRelationsCache = await resRel.json();
-        }
-      }
-
       if (inMemoryRelationsCache) {
         const allRelItems = [
           ...(inMemoryRelationsCache.sants || []),
@@ -537,8 +529,8 @@ const ensureFullVerseText = async (matched) => {
     } catch (e) { }
   }
 
-  // 3. Search memoryCachedItems and master backups if still truncated or short
-  if (isTruncatedText(current.sanskrit_text) || isTruncatedText(current.hindi_text) || (current.sanskrit_text || '').length < 300) {
+  // 3. Search memoryCachedItems if still truncated
+  if (isTruncatedText(current.sanskrit_text) || isTruncatedText(current.hindi_text)) {
     if (memoryCachedItems && memoryCachedItems.length > 0) {
       const curTitle = (current.cleanTitle || current.title || '').trim().toLowerCase();
       const curSlug = (current.slug || '').toLowerCase();
@@ -555,46 +547,6 @@ const ensureFullVerseText = async (matched) => {
         const hin = longerMemoryItem.hindi_text || current.hindi_text;
         current = { ...current, ...longerMemoryItem, sanskrit_text: sans, hindi_text: hin };
       }
-    }
-
-    try {
-      const filesToTry = ['/data/vrindavaani_content.json', '/data/content_backup.json', '/data/content_backup_saint.json'];
-      for (const fileUrl of filesToTry) {
-        const res = await fetch(fileUrl);
-        if (res.ok) {
-          const fullItems = await res.json();
-          if (fullItems && fullItems.length > 0) {
-            const foundFull = fullItems.find(x => {
-              if (!x) return false;
-              const xLen = (x.sanskrit_text || '').length + (x.hindi_text || '').length + (x.content_text || '').length;
-              const curLen = (current.sanskrit_text || '').length + (current.hindi_text || '').length;
-              if (xLen <= curLen) return false;
-
-              return (x.id && current.id && x.id.toString() === current.id.toString()) ||
-                (x.slug && current.slug && x.slug.replace(/^-+|-+$/g, '') === current.slug.replace(/^-+|-+$/g, '')) ||
-                (x.title && current.title && x.title.trim() === current.title.trim());
-            });
-            if (foundFull) {
-              const sans = (foundFull.sanskrit_text && foundFull.sanskrit_text.length > (current.sanskrit_text || '').length)
-                ? foundFull.sanskrit_text
-                : (foundFull.content_text && foundFull.content_text.length > (current.sanskrit_text || '').length ? foundFull.content_text : current.sanskrit_text);
-              const hin = (foundFull.hindi_text && foundFull.hindi_text.length > (current.hindi_text || '').length)
-                ? foundFull.hindi_text
-                : current.hindi_text;
-
-              current = {
-                ...current,
-                ...foundFull,
-                sanskrit_text: sans || current.sanskrit_text,
-                hindi_text: hin || current.hindi_text
-              };
-              if (!isTruncatedText(current.sanskrit_text)) break;
-            }
-          }
-        }
-      }
-    } catch (e) {
-      console.warn('[FullText] Local backup fetch failed:', e);
     }
   }
 
@@ -644,6 +596,34 @@ export const apiService = {
       console.warn('Failed to write relations to LocalStorage:', e);
     }
     return relations;
+  },
+
+  getBookBySlug: async (slug) => {
+    if (!slug) return null;
+    try {
+      const res = await fetch(`/data/books/${slug}.json`);
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      console.warn(`[Shard-Fetch] Book shard fetch failed for ${slug}:`, e);
+    }
+    const relations = await apiService.getRelations();
+    return (relations.books || []).find(b => b.slug === slug) || null;
+  },
+
+  getSaintBySlug: async (slug) => {
+    if (!slug) return null;
+    try {
+      const res = await fetch(`/data/saints/${slug}.json`);
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      console.warn(`[Shard-Fetch] Saint shard fetch failed for ${slug}:`, e);
+    }
+    const relations = await apiService.getRelations();
+    return (relations.sants || []).find(s => s.slug === slug) || null;
   },
 
   getAllContent: async (category = null, limit = 25000) => {

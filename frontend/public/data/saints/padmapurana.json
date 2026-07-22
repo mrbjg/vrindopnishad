@@ -1,0 +1,29 @@
+{
+  "name": "पद्मपुराण",
+  "slug": "padmapurana",
+  "hinglishName": "padmapurana",
+  "cleanName": "पद्मपुराण",
+  "books": [
+    "पातालखण्ड",
+    "खण्डः 5 (पातालखण्डः)"
+  ],
+  "verseIds": [
+    "dabda9b5-c67e-4367-816f-103baab8562f",
+    "afaaf926-8e78-4539-8a8d-08b4666510b3",
+    "ebe51f24-ed7a-4d2d-a0a9-30ae0c91cbc5",
+    "44cdb4f8-4ccd-4fae-a2b2-b07f09938fbd",
+    "2a279bfc-ff7b-43f1-9a9e-34ea91ed8c35",
+    "dbdfcc2b-4b94-4775-9f2d-bbe3e939aa12",
+    "0655be9e-bf29-4795-8375-470b5e37dc70",
+    "a411f8aa-0ec3-4109-a27c-3fea7eccf29a",
+    "ad82c145-6522-414c-bbf9-7c6ebc031e87",
+    "b02e6b9b-a6d7-48c1-81a8-53b1891c1930",
+    "733e694f-c4b7-42d1-95c2-daa1e37f5921",
+    "2336ce10-d1e6-40a9-b2d5-d440d778b182",
+    "36111c53-dd17-42fd-9e42-3cc74c06ab07",
+    "7bb06616-073f-4783-b08c-03094f833c0f",
+    "40c91dbe-1d43-4ac2-a429-1f4bdd044868"
+  ],
+  "verses": [],
+  "biography": null
+}

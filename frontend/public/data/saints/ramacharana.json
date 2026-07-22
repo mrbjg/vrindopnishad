@@ -1,0 +1,26 @@
+{
+  "name": "रामचरण जी",
+  "slug": "ramacharana",
+  "hinglishName": "ramacharan ji",
+  "cleanName": "रामचरण",
+  "books": [],
+  "verseIds": [
+    "7216b2cf-a57c-464c-ae0c-1ee955e0a667",
+    "ee0bcb99-42ae-40a6-830f-20ae73c16704",
+    "826b273e-a075-436c-9f83-d32e75ae9e94",
+    "7cba9cd6-414c-4696-950f-8cfffd401f9f",
+    "9fb296e3-fcff-4ea5-9496-441f9a26885b",
+    "89d0eeed-ef88-4060-a2ec-75debe3a73b1"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "2fc17bb9-7604-40ab-a375-3157a4a60cb7",
+    "slug": "ramacharan-ji",
+    "originalTitle": "रामचरण जी ",
+    "name": "रामचरण जी",
+    "hinglishName": "ramacharan ji",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

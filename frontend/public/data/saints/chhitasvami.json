@@ -1,0 +1,33 @@
+{
+  "name": "छीतस्वामी",
+  "slug": "chhitasvami",
+  "hinglishName": "chhitasvami",
+  "cleanName": "छीतस्वामी",
+  "books": [],
+  "verseIds": [
+    "3c120e93-8985-498c-9ba6-dcadd5e2c3de",
+    "4ea3def3-a038-4fe4-a4ad-60795be25249",
+    "d3be4d26-a64a-47c5-b298-f798aaf2e065",
+    "84453749-a75f-4d9e-84b9-5064f404669e",
+    "1f5df7f1-1cda-4f11-be04-a8da7b4499b7",
+    "69cfb950-92f7-4fa1-a95a-a2700c368942",
+    "f062d465-6b01-4229-b1a2-73ec4b0c0710",
+    "c0b63253-3d3f-4d3f-9f5e-f1cb98cacf8c",
+    "268b1c1d-9b64-4667-bbdd-a73a8870366b",
+    "0ef3c23a-5560-453c-bd09-6196156535fd",
+    "34b07556-d72a-41f1-b0ee-84ba7b066df8",
+    "3086d9f9-b921-4625-8b93-399b8caaf0da",
+    "2db4b07c-7246-49ef-8ccf-65ba5e4c3394"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "3952fd34-b3d1-475a-8ac4-04d9c9cfd723",
+    "slug": "chhitasvami",
+    "originalTitle": "छीतस्वामी",
+    "name": "छीतस्वामी",
+    "hinglishName": "chhitasvami",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

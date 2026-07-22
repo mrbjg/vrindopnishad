@@ -1,0 +1,21 @@
+{
+  "name": "घासीराम",
+  "slug": "shri-ghasirama",
+  "hinglishName": "ghasirama",
+  "cleanName": "श्री घासीराम",
+  "books": [],
+  "verseIds": [
+    "7c1d13f8-0740-46b7-8fb4-3ef0be0dfd34"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "46bb32cd-4385-4fcf-86c2-d43487ee56b3",
+    "slug": "ghasirama",
+    "originalTitle": "घासीराम",
+    "name": "घासीराम",
+    "hinglishName": "ghasirama",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

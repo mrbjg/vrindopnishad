@@ -1,0 +1,44 @@
+{
+  "name": "नंददास",
+  "slug": "shri-nndadasa",
+  "hinglishName": "nndadasa",
+  "cleanName": "श्री नंददास",
+  "books": [
+    "श्री नंददास ग्रंथावली",
+    "नंददास ग्रंथावली",
+    "नंद दास ग्रंथावली"
+  ],
+  "verseIds": [
+    "ebce2a86-e35b-4b07-84bb-a5eff61d38ae",
+    "bc19b74b-7885-429a-8628-790086fd64cb",
+    "27e26ffb-213c-46b5-9312-0b3a58e37d8b",
+    "e3b2a87f-aeeb-4233-8b95-9f391f5569c4",
+    "a145a131-708b-4ee1-abdb-219395277537",
+    "8ea7bca5-6a53-400b-82a2-05b6bc175282",
+    "3f7c1e09-f566-42ac-b576-3dff861028ba",
+    "f5c9787f-e45c-4e05-9062-0f235695daf2",
+    "44be9005-3b93-45ae-92d7-5bea0798c199",
+    "0676b1f4-9327-40ba-aecb-5c15f7db3868",
+    "27eea63e-094f-443d-b932-49d600ef8181",
+    "fc27a2af-3e1e-49c1-b519-1e752242e365",
+    "3981d1e9-fb56-43d0-a7ff-333e7fa53b74",
+    "3b0f43f9-d969-40f9-bad2-9ef9fe97a443",
+    "46a2b8f8-9fb8-445c-b32a-92abaeb348ae",
+    "bbdf561c-8b67-4fbf-b812-8d9777d3b126",
+    "09acba65-fe2d-49ae-aeb5-cf1cab1c41a4",
+    "76a64626-c588-4baf-aa43-e2566d5cd189",
+    "103d2dc3-e603-4bc4-83a3-5b347e000f94",
+    "75a460d6-a9f1-4a88-b1a1-9af25eb58116"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "8084136c-145e-4ee0-8e38-497d2f2a9807",
+    "slug": "nndadasa",
+    "originalTitle": "नंददास",
+    "name": "नंददास",
+    "hinglishName": "nndadasa",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

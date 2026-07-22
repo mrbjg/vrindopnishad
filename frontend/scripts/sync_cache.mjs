@@ -532,6 +532,7 @@ const clientRelations = {
     slug: s.slug,
     hinglishName: s.hinglishName,
     verseIds: s.verseIds,
+    verses: s.verses || [],
     books: s.books
   })),
   books: relations.books.map(b => ({
@@ -540,13 +541,15 @@ const clientRelations = {
     hinglishName: b.hinglishName,
     author: b.author,
     authorSlug: b.authorSlug,
-    verseIds: b.verseIds
+    verseIds: b.verseIds,
+    verses: b.verses || []
   })),
   ragas: relations.ragas.map(r => ({
     name: r.name,
     slug: r.slug,
     hinglishName: r.hinglishName,
-    verseIds: r.verseIds
+    verseIds: r.verseIds,
+    verses: r.verses || []
   })),
   biographies: relations.sants.map(s => ({
     id: s.biography?.id || null,
@@ -564,4 +567,51 @@ const relationsFile = path.join(publicDataDir, 'relations_backup.json');
 fs.writeFileSync(relationsFile, JSON.stringify(clientRelations, null, 2), 'utf8');
 console.log(`[sync_cache] Saved relations_backup.json`);
 
-console.log(`[sync_cache] ✅ All local cache files and public backups successfully updated and in sync!`);
+// 6. Write individual per-book static shards
+console.log('[sync_cache] Generating per-book static JSON shards...');
+const publicBooksDir = path.join(publicDataDir, 'books');
+if (!fs.existsSync(publicBooksDir)) {
+  fs.mkdirSync(publicBooksDir, { recursive: true });
+}
+
+relations.books.forEach(b => {
+  if (!b.slug) return;
+  const bookFile = path.join(publicBooksDir, `${b.slug}.json`);
+  const bookData = {
+    name: b.name,
+    slug: b.slug,
+    hinglishName: b.hinglishName,
+    author: b.author,
+    authorSlug: b.authorSlug,
+    verseIds: b.verseIds,
+    verses: b.verses || []
+  };
+  fs.writeFileSync(bookFile, JSON.stringify(bookData, null, 2), 'utf8');
+});
+console.log(`[sync_cache] Saved ${relations.books.length} individual book shards in public/data/books/`);
+
+// 7. Write individual per-saint static shards
+console.log('[sync_cache] Generating per-saint static JSON shards...');
+const publicSaintsDir = path.join(publicDataDir, 'saints');
+if (!fs.existsSync(publicSaintsDir)) {
+  fs.mkdirSync(publicSaintsDir, { recursive: true });
+}
+
+relations.sants.forEach(s => {
+  if (!s.slug) return;
+  const saintFile = path.join(publicSaintsDir, `${s.slug}.json`);
+  const saintData = {
+    name: s.name,
+    slug: s.slug,
+    hinglishName: s.hinglishName,
+    cleanName: s.cleanName,
+    books: s.books,
+    verseIds: s.verseIds,
+    verses: s.verses || [],
+    biography: s.biography || null
+  };
+  fs.writeFileSync(saintFile, JSON.stringify(saintData, null, 2), 'utf8');
+});
+console.log(`[sync_cache] Saved ${relations.sants.length} individual saint shards in public/data/saints/`);
+
+console.log(`[sync_cache] ✅ All local cache files, public backups, and book/saint shards successfully updated and in sync!`);

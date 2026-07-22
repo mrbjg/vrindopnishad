@@ -1,0 +1,26 @@
+{
+  "name": "श्रीभट्ट",
+  "slug": "shribhatt-devacharya",
+  "hinglishName": "shribhatta",
+  "cleanName": "श्रीभट्ट देवाचार्य",
+  "books": [
+    "युगल शतक"
+  ],
+  "verseIds": [
+    "445b5b6b-6f90-4cca-bf36-a1ae6a5912f3",
+    "a8673d77-1060-40dd-b438-6a7a067b79ff",
+    "1a329d0e-3817-4d99-97cf-b4ffd3dd3c58",
+    "2000d378-29dc-4432-95ae-93be37382c07"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "2cf18d3a-0b52-4fce-84ab-b646485d8205",
+    "slug": "shribhatta",
+    "originalTitle": "श्रीभट्ट",
+    "name": "श्रीभट्ट",
+    "hinglishName": "shribhatta",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "ब्रज निधि ग्रंथावली",
+  "slug": "braj-nidhi-grnthavali",
+  "hinglishName": "braj nidhi grnthavali",
+  "cleanName": "ब्रज निधि ग्रंथावली",
+  "books": [
+    "ब्रजनिधि पद संग्रह"
+  ],
+  "verseIds": [
+    "edfd0f3c-c083-4392-b7e0-482cec2a5de5",
+    "0bd45a63-ff8b-435d-a73f-9348b8bf4004",
+    "8da0ca9f-5d32-42e8-ba38-c1f4a8c20f8d",
+    "5a5021f3-4346-4b79-aab1-215886d260b8",
+    "f4f0feeb-873b-49ca-a1bf-15b4e716b494"
+  ],
+  "verses": [],
+  "biography": null
+}

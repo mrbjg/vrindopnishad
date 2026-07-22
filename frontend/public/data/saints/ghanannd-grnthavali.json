@@ -1,0 +1,20 @@
+{
+  "name": "घनानंद ग्रंथावली",
+  "slug": "ghanannd-grnthavali",
+  "hinglishName": "ghanannd grnthavali",
+  "cleanName": "घनानंद ग्रंथावली",
+  "books": [
+    "सुजान हित",
+    "इश्क़लता"
+  ],
+  "verseIds": [
+    "40832a88-d46f-4e4a-9d0b-8899aeb033f8",
+    "fdb49b17-14be-4197-99f1-b9c16b7962f9",
+    "74ae3256-92b6-4caf-a10c-82d50b840c69",
+    "02da4a83-22e1-4a75-b2c2-6d124a5c4bcd",
+    "38d8c4ad-9d77-4ec6-aca9-520fe775eeca",
+    "05f7e3ef-a181-4b04-9bcc-7cd5db7c5d59"
+  ],
+  "verses": [],
+  "biography": null
+}

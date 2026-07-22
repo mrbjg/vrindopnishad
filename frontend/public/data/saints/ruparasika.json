@@ -1,0 +1,42 @@
+{
+  "name": "रुपरसिक",
+  "slug": "ruparasika",
+  "hinglishName": "ruparasika",
+  "cleanName": "रुपरसिक",
+  "books": [],
+  "verseIds": [
+    "402008b8-9447-43db-84d9-8d56b5f5544a",
+    "ece492f6-83e2-461c-9697-56bd7ab094e7",
+    "606374ea-d514-4352-9e9f-4b96a88ecb16",
+    "a47b17b4-470f-4b0b-aa58-cd721bd8c9bc",
+    "e0d2ce1a-5ef4-4357-8e13-819eda3a0fb6",
+    "8ace65c7-fb9c-47db-a96c-06da5f2d52f5",
+    "eac6774e-cd96-4b19-b537-72d2fbe39d03",
+    "a56e0892-a791-459a-bd69-036936d826b0",
+    "0a671744-6306-4e1a-bce6-e688e9da84e6",
+    "135320a6-16d4-4de5-bccc-c304a77f56f2",
+    "c0dada12-62be-4361-9a5b-72947a0eea8d",
+    "05658084-f9cd-4747-b2ca-1ebd30f61225",
+    "18e3fbc1-7a36-4963-a2a0-6a73841ec88f",
+    "fae7d346-03f7-4acf-bec1-0ac12c057d42",
+    "9e1ef1ed-3d25-4f43-85e2-eef0297abbc0",
+    "f2d033bf-3fd8-4e4b-9149-dbdf1a99f2d5",
+    "9eeec2e7-7938-46b3-a393-7d8169689a0f",
+    "def27786-68a6-4d1d-9025-9ed5c72fa4f8",
+    "c781c6de-b3cb-4cd1-9fbc-5fbe0c8a9e1f",
+    "2249f7b5-4e07-4c50-a96c-d1e74ff3faa2",
+    "b3ab094a-a247-409e-bef2-e5745b7199fb",
+    "4750b198-7be8-4100-9c27-c7db83216683"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "a17c1cdf-0e9f-4e68-a2cb-01373dbb85f9",
+    "slug": "ruparasika",
+    "originalTitle": "रुपरसिक ",
+    "name": "रुपरसिक",
+    "hinglishName": "ruparasika",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

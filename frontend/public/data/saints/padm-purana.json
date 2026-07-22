@@ -1,0 +1,34 @@
+{
+  "name": "पद्म पुराण",
+  "slug": "padm-purana",
+  "hinglishName": "padm purana",
+  "cleanName": "पद्म पुराण",
+  "books": [
+    "भागवत माहात्म्य",
+    "पाताल खंड",
+    "पातालखण्ड",
+    "उत्तर खंड",
+    "उत्तरखण्ड",
+    "पाताल-खंड"
+  ],
+  "verseIds": [
+    "b89e1680-725a-47f6-9c4d-f668cb1332a8",
+    "7d4cb0fc-5fbb-4f2d-a375-4740844227df",
+    "71f60342-171c-47f8-9f94-b1ceaa367b3d",
+    "8b8a910b-b3eb-4022-b5ad-2780a1ced53a",
+    "24cb67d6-3ae8-4fee-a3e0-a1a5e15aa092",
+    "28a8cef4-f8ad-42a7-8c2e-30658f5574aa",
+    "f4d33eda-eb8c-4798-92ea-8d39d2faa0af",
+    "bcea0f32-0ce7-482c-9372-4d81d7ce47a7",
+    "dba28b15-8b48-4803-9c38-5a5b6e65bc54",
+    "bce7fd61-5055-4c78-ae9f-ba406870f4a7",
+    "c21f1bb5-638b-475a-ae6f-0681e49615df",
+    "afa88f45-dcd3-468f-b935-2c31ffbc9b81",
+    "aa7e491d-8112-4af3-a3c9-22ab696064ff",
+    "d2994252-2a23-4944-9ef9-5a52d810c773",
+    "639366c4-35b0-4a4d-bbc7-f781fbbb762e",
+    "402f3e13-465b-41c5-a6e1-7ea8ebc8173c"
+  ],
+  "verses": [],
+  "biography": null
+}

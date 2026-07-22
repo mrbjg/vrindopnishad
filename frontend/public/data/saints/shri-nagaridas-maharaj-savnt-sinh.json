@@ -1,0 +1,46 @@
+{
+  "name": "नागरीदास",
+  "slug": "shri-nagaridas-maharaj-savnt-sinh",
+  "hinglishName": "nagaridasa",
+  "cleanName": "श्री नागरीदास (महाराज सावंत सिंह )",
+  "books": [
+    "श्री जुगल रस माधुरी",
+    "वन जन प्रशंसा",
+    "श्री नागरीदास जी की वाणी",
+    "निकुंज विलास",
+    "छूटक पद"
+  ],
+  "verseIds": [
+    "c1d17021-e139-4da1-b37b-f43361aa4cfa",
+    "a001bcf0-5c46-4d1d-baf7-88adb668ba16",
+    "999e3ed3-7d6f-478a-a6a4-5d23737e1c70",
+    "6583e75d-47d5-48d7-9dbc-4566fbc4c80e",
+    "8b0bf9b3-8766-425c-bf96-be5cf024cc46",
+    "0b1406c7-2543-430a-af73-237d0c4dca09",
+    "0dbeaf6a-daf5-489d-a108-f53484cbd8b3",
+    "4c68aa69-ce97-4847-ac8d-40d1620a3e76",
+    "6ab0a085-d518-4e85-acdc-1ba56fa0395f",
+    "36c8b74f-e983-44b6-8f3e-c22d7e39830c",
+    "d197c024-ea8d-4360-8d96-cb776608c988",
+    "d68c98c7-492a-4dc0-993c-a06241dd84f7",
+    "138da829-88b0-4a85-9ac4-59a0a26852e0",
+    "e146d348-831a-4884-abbc-d42bd09841a1",
+    "0a3ed353-3ad3-4681-8778-30d3cb5a7c43",
+    "de0cdeb2-2e56-4456-885e-b039f503e34b",
+    "62d9534e-2b9a-4445-8575-15588f4dbcda",
+    "6bea010b-0e4c-41f1-889f-1c121c9efb1e",
+    "129a646f-c5d8-4874-a993-45dbc5f46f62",
+    "e365e558-3dae-4a99-a0b5-9e01b0df70fa"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "db23ed4a-1b29-47c0-9bd5-0938c208a12b",
+    "slug": "nagaridasa",
+    "originalTitle": "नागरीदास",
+    "name": "नागरीदास",
+    "hinglishName": "nagaridasa",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

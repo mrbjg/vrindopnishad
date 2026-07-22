@@ -1,0 +1,22 @@
+{
+  "name": "हित अलि",
+  "slug": "hit-ali",
+  "hinglishName": "hit ali",
+  "cleanName": "हित अलि",
+  "books": [],
+  "verseIds": [
+    "c2157a85-07f5-4bcf-939d-08da35204ff6",
+    "47ae643d-ff9b-4d74-bc6a-2d9e9d4f5061"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "1bd4605f-ee3d-45ba-a64a-bd11f6d554ea",
+    "slug": "hit-ali",
+    "originalTitle": "हित अलि",
+    "name": "हित अलि",
+    "hinglishName": "hit ali",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

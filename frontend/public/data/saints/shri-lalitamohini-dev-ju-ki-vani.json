@@ -1,0 +1,34 @@
+{
+  "name": "ललितमोहिनी",
+  "slug": "shri-lalitamohini-dev-ju-ki-vani",
+  "hinglishName": "lalitamohini",
+  "cleanName": "श्री ललितमोहिनी देव जू की वाणी",
+  "books": [
+    "रस के पद"
+  ],
+  "verseIds": [
+    "1221993c-3cfe-49a9-8b24-194109fcc2fd",
+    "9dc34b0b-09db-424d-ad20-bc2bec85a083",
+    "cfa85452-c2b1-445e-97fa-f0d10f5dae6d",
+    "a694da39-a2fb-44c0-84b6-782be1a5a9e0",
+    "3ed31c24-7478-4228-ac01-86ce8276d22e",
+    "600d016c-bde4-42f4-8c77-e1f68f0af367",
+    "bd935311-8a23-4b70-84ce-e9d0a9249378",
+    "20385395-2cf9-4f61-8eea-d47afcaa2d12",
+    "4554ceec-e106-4999-a51a-9bde0973f2f9",
+    "6decf1e7-8324-4d33-b41a-3ffbc021e5d3",
+    "ad30a09f-6562-432d-8bce-2a29642f7d9d",
+    "e90a622d-9522-45a0-9ec2-1b569f54e0bd"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "249f2059-dd09-4c5c-91cc-b1bbd5cf1010",
+    "slug": "lalitamohini",
+    "originalTitle": "ललितमोहिनी",
+    "name": "ललितमोहिनी",
+    "hinglishName": "lalitamohini",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

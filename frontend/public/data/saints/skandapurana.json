@@ -1,0 +1,19 @@
+{
+  "name": "स्कन्दपुराण",
+  "slug": "skandapurana",
+  "hinglishName": "skandapurana",
+  "cleanName": "स्कन्दपुराण",
+  "books": [
+    "वैष्णवखण्डः (2)"
+  ],
+  "verseIds": [
+    "93cdba63-92e3-4acc-89f5-e5fb10cd711e",
+    "96a93d70-f926-4201-a842-215410df237c",
+    "0d1653aa-c7a3-4ac5-8161-b3935198a525",
+    "7c358ebc-5a3c-4679-bd4b-3ec306c48c84",
+    "3f9a793e-3f0c-414b-b6bd-3b957e5846b7",
+    "cad529a0-c10f-4ef7-8e00-6ecebd4ab656"
+  ],
+  "verses": [],
+  "biography": null
+}

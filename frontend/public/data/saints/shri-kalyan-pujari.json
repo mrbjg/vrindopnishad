@@ -1,0 +1,25 @@
+{
+  "name": "कल्याण पुजारी",
+  "slug": "shri-kalyan-pujari",
+  "hinglishName": "kalyan pujari",
+  "cleanName": "श्री कल्याण पुजारी",
+  "books": [
+    "श्री हित कल्याण पुजारी जी की वाणी"
+  ],
+  "verseIds": [
+    "750b2bef-399b-4e08-9066-7b1e02cd3986",
+    "873d7372-7a44-4d2d-a127-f6d62d05d6f7",
+    "130540b0-8994-4ccf-a592-d2683859f3b2"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "fe131657-6265-4e61-b873-c9f11c3063db",
+    "slug": "kalyan-pujari",
+    "originalTitle": "कल्याण पुजारी",
+    "name": "कल्याण पुजारी",
+    "hinglishName": "kalyan pujari",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

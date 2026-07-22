@@ -1,0 +1,24 @@
+{
+  "name": "मलूकदास",
+  "slug": "malukadasa",
+  "hinglishName": "malukadasa",
+  "cleanName": "मलूकदास",
+  "books": [],
+  "verseIds": [
+    "cfac9909-100c-439a-ba91-f13bfe17f716",
+    "f3cd59cb-4964-448a-9560-e0b886f6ccb7",
+    "0c6b68bc-d5f4-4740-8550-7487cf3973ff",
+    "27358a86-a4bb-44ab-9e94-524ed80f6863"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "0c40661a-4c23-4e5c-ad2b-d60bb6b1d024",
+    "slug": "malukadasa",
+    "originalTitle": "मलूकदास",
+    "name": "मलूकदास",
+    "hinglishName": "malukadasa",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

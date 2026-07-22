@@ -1,0 +1,26 @@
+{
+  "name": "गुणमंजरी",
+  "slug": "gunamnjari",
+  "hinglishName": "gunamnjari",
+  "cleanName": "गुणमंजरी",
+  "books": [],
+  "verseIds": [
+    "b039aa94-e1b3-4cb9-8247-5e74d3507ca8",
+    "61643722-1f6c-47b2-bc6f-8040266690cd",
+    "5298d569-cb02-454d-afdf-af0665c435f4",
+    "2d035a32-04cd-4d16-b70d-ce74a615282c",
+    "997e35f5-5787-4cb2-b83b-570617b3515b",
+    "06a5ba37-87b2-450a-bb91-2e617ac1cb53"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "b20c0274-d94e-4fe3-a0bf-8cbe23dac542",
+    "slug": "gunamnjari",
+    "originalTitle": "गुणमंजरी",
+    "name": "गुणमंजरी",
+    "hinglishName": "gunamnjari",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

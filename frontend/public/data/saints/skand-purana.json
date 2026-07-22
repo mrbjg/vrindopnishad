@@ -1,0 +1,19 @@
+{
+  "name": "स्कन्द पुराण",
+  "slug": "skand-purana",
+  "hinglishName": "skand purana",
+  "cleanName": "स्कन्द पुराण",
+  "books": [
+    "मथुराखण्ड",
+    "भागवत माहात्म्य"
+  ],
+  "verseIds": [
+    "254fcc76-917b-495e-95f0-07eb42fbc0bc",
+    "e5443228-cf13-4622-844b-8a2f1d59ab23",
+    "90bbe50d-e91f-486a-aa57-03fc135112f6",
+    "2b7de6e5-f27b-45c8-957e-b8306b733cb0",
+    "79d14349-d076-4f4d-9471-110920ea877b"
+  ],
+  "verses": [],
+  "biography": null
+}

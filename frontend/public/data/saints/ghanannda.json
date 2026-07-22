@@ -1,0 +1,28 @@
+{
+  "name": "घनानंद जी",
+  "slug": "ghanannda",
+  "hinglishName": "ghanannd ji",
+  "cleanName": "घनानंद",
+  "books": [
+    "सुजान हित"
+  ],
+  "verseIds": [
+    "683a0bea-6e10-4c89-abfc-c59e8ac87e5f",
+    "6cadaa71-e537-4e09-ae15-7d0d9dab5799",
+    "896f0584-97fc-4f44-aea2-db87923d8516",
+    "bfb8d8aa-f3a0-4e96-939b-9231b9de6654",
+    "2a62b810-64b4-4e56-956a-e250719cd01b",
+    "d1d9fa69-c894-4a42-9624-75434eeb4235"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "77db1b3c-14f2-44bd-9931-cc34e012698b",
+    "slug": "ghanannd-ji",
+    "originalTitle": "घनानंद जी ",
+    "name": "घनानंद जी",
+    "hinglishName": "ghanannd ji",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

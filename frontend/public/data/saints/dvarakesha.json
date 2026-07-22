@@ -1,0 +1,29 @@
+{
+  "name": "द्वारकेश",
+  "slug": "dvarakesha",
+  "hinglishName": "dvarakesha",
+  "cleanName": "द्वारकेश",
+  "books": [],
+  "verseIds": [
+    "5c8f933f-281f-4870-84d5-fb823dd6add0",
+    "68217292-a905-4394-844b-70534628a7fd",
+    "32a57414-d61f-4632-9223-b2ed25d91e8c",
+    "40aa8f9c-0025-4fe1-b149-69245a6b8eec",
+    "979166a2-977f-41c4-b996-fe5c3afba0e6",
+    "60679d15-d773-4089-851f-d41f82716049",
+    "45ec0d77-80da-4649-ace1-5c9e024b9c55",
+    "f1347795-2faf-4a9d-9489-3cd8b2c60872",
+    "6e40a0b8-f569-4e2a-9a00-a4a0b5a2e024"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "b88f5c7b-3344-411b-ae50-7630c51955a8",
+    "slug": "dvarakesha",
+    "originalTitle": "द्वारकेश",
+    "name": "द्वारकेश",
+    "hinglishName": "dvarakesha",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

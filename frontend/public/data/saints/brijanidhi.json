@@ -1,0 +1,28 @@
+{
+  "name": "बृजनिधि",
+  "slug": "brijanidhi",
+  "hinglishName": "brijanidhi",
+  "cleanName": "बृजनिधि",
+  "books": [],
+  "verseIds": [
+    "cd3ef2cf-e63b-47f0-8bcd-b2dbfda2acac",
+    "69585c6d-670f-4a66-a4aa-c23e798569f7",
+    "10c02029-3596-4f1a-ad32-5493c4e314c0",
+    "d1230a34-35c2-48de-b415-059dfcb83ab4",
+    "3c2d19fc-af8c-4bd7-8a9c-3cc864a69305",
+    "c652f8af-d257-4752-8474-11ffd758b11b",
+    "66d1c97a-ce40-411e-8a76-dd420a961960",
+    "082e1dd8-5de1-4e6d-9dcc-46165b207ad8"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "62ff538c-e6a6-4370-b0c3-a6968fd6070f",
+    "slug": "brijanidhi",
+    "originalTitle": "बृजनिधि ",
+    "name": "बृजनिधि",
+    "hinglishName": "brijanidhi",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

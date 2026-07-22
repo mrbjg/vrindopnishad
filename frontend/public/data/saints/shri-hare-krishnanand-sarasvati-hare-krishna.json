@@ -1,0 +1,38 @@
+{
+  "name": "कृष्णानन्द",
+  "slug": "shri-hare-krishnanand-sarasvati-hare-krishna",
+  "hinglishName": "krishnananda",
+  "cleanName": "श्री हरे कृष्णानन्द सरस्वती ‘हरे कृष्ण’",
+  "books": [
+    "वृन्दावन शतक",
+    "वृंदावन शतक"
+  ],
+  "verseIds": [
+    "1c725728-8a25-4309-9896-4df9dc2689f6",
+    "032e224a-d683-49b7-8bd8-08d94c3c2600",
+    "62578c60-dc2f-4d08-ba06-ff988a8b118f",
+    "71947e07-ddaf-4861-b279-5c9d2401043e",
+    "21e6b0ae-dfc1-4282-9133-bf9cc0e25ee8",
+    "69efeec3-2e73-487c-b3a9-89ccd6416a5d",
+    "c5a0dadf-1a41-44e1-9b61-00ffd25ff301",
+    "6138bb4d-a378-4419-b3d1-f170c7290ef2",
+    "16d3df24-8843-4a55-96d3-bcb870e66559",
+    "e455f325-3985-4c71-a36c-79b673a81745",
+    "1e6b5151-877f-411f-966b-befbfdd05acb",
+    "68137474-c704-4019-9c64-6ea5675388d9",
+    "749d017e-89d9-4cd5-b736-ff8ee8930c01",
+    "637630b8-97bc-4cde-a57e-8f88918bc23d",
+    "5faf3a31-9e23-44c7-ab6c-99fbf05c7cfb"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "e368ab2e-f447-4e8f-84cd-3a14748001b4",
+    "slug": "krishnananda",
+    "originalTitle": "कृष्णानन्द ",
+    "name": "कृष्णानन्द",
+    "hinglishName": "krishnananda",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

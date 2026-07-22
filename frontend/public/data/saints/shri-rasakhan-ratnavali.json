@@ -1,0 +1,21 @@
+{
+  "name": "रसखान",
+  "slug": "shri-rasakhan-ratnavali",
+  "hinglishName": "rasakhana",
+  "cleanName": "श्री रसखान रत्नावली",
+  "books": [],
+  "verseIds": [
+    "6d824fc5-a2cc-48f3-ba7f-f75efe295309"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "032b5026-08dc-4211-aa26-502c533846b3",
+    "slug": "rasakhana",
+    "originalTitle": "रसखान",
+    "name": "रसखान",
+    "hinglishName": "rasakhana",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

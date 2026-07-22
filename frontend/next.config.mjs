@@ -23,10 +23,7 @@ const nextConfig = {
   experimental: {
     outputFileTracingIncludes: {
       '/**/*': [
-        'data/processed_cache.json',
         'data/saints_formatted.json',
-        'data/vrindavaani_content.json',
-        'public/data/content_backup.json',
         'public/data/relations_backup.json'
       ]
     }

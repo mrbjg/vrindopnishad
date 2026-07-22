@@ -1,0 +1,29 @@
+{
+  "name": "द्वारकेश",
+  "slug": "shri-dvarakesha",
+  "hinglishName": "dvarakesha",
+  "cleanName": "श्री द्वारकेश",
+  "books": [],
+  "verseIds": [
+    "f0485b64-9393-442a-9a66-780a32599495",
+    "9eec6414-ddaf-4247-ae79-b14695f91602",
+    "c94e2d6a-ee63-450d-85ff-ae7a2fcdd587",
+    "43be762f-9d88-4e02-92af-dbe7981abe6a",
+    "3ff5e836-80ce-402d-be8d-784d1f9c665a",
+    "ab10a8b4-1772-4c14-bb9e-c851ea8c1cb1",
+    "2b69dbf4-c43f-4c8a-9ce8-a9e4565a288c",
+    "fecfef14-624a-4adc-8894-d816beb9c345",
+    "e7ad2a35-69e5-4373-b3d5-1d7fe535fc62"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "b88f5c7b-3344-411b-ae50-7630c51955a8",
+    "slug": "dvarakesha",
+    "originalTitle": "द्वारकेश",
+    "name": "द्वारकेश",
+    "hinglishName": "dvarakesha",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

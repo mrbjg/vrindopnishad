@@ -1,0 +1,27 @@
+{
+  "name": "ललितमोहिनी",
+  "slug": "shri-lalitamohini-deva",
+  "hinglishName": "lalitamohini",
+  "cleanName": "श्री ललितमोहिनी देव",
+  "books": [
+    "श्री ललितमोहिनी देव जू की वाणी",
+    "विशिष्ट पद एवं साखी"
+  ],
+  "verseIds": [
+    "f26321cb-fbf1-4d92-9101-e1cf91ffe796",
+    "89e62676-92da-41cb-8b21-23ee445aaa75",
+    "adfcba89-cea5-42bf-bdff-8faacd785cc0",
+    "d792e4e0-3175-440c-9ce0-fa6e43200d55"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "249f2059-dd09-4c5c-91cc-b1bbd5cf1010",
+    "slug": "lalitamohini",
+    "originalTitle": "ललितमोहिनी",
+    "name": "ललितमोहिनी",
+    "hinglishName": "lalitamohini",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

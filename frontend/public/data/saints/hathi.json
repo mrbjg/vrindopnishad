@@ -1,0 +1,25 @@
+{
+  "name": "हठी जी",
+  "slug": "hathi",
+  "hinglishName": "hathi ji",
+  "cleanName": "हठी",
+  "books": [],
+  "verseIds": [
+    "07766f7d-a122-4cfd-b59a-9522533abd89",
+    "443e6c8d-3d42-4905-9780-272082924d73",
+    "c0f3228c-cfe2-4456-ba11-c83e216d6db6",
+    "b8c77f79-9fc4-416d-8a10-9397518cb187",
+    "99c668bb-81f1-416a-8d9f-e560a742ae82"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "e3900f42-cfd9-4f57-b9a2-da6b19773a82",
+    "slug": "hathi-ji",
+    "originalTitle": "हठी जी ",
+    "name": "हठी जी",
+    "hinglishName": "hathi ji",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

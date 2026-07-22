@@ -1,0 +1,33 @@
+{
+  "name": "गदाधर",
+  "slug": "gadadhara",
+  "hinglishName": "gadadhara",
+  "cleanName": "गदाधर",
+  "books": [],
+  "verseIds": [
+    "7461c87c-2716-41b9-bc89-999f251b18b5",
+    "2c62ce11-0270-4aef-9152-fc7f5a27456d",
+    "4175549b-93f5-4b0e-ad91-c0d375f9ee39",
+    "f84b853b-5fb7-41c0-968e-0f6335aa27b9",
+    "b33646b6-3226-45bc-9872-d23f511944d7",
+    "df00a34a-72bf-47b3-bbd3-4da2e176bc23",
+    "5454b7fd-152b-45b3-9bb3-20cd8d0b3294",
+    "274211b2-9500-4d37-ae37-63f906b8aac4",
+    "a3930950-9ec2-4582-939a-9260cc542df9",
+    "07f13a78-7eac-40d3-b1cf-efd18fd5c999",
+    "ef4268e9-1960-4189-815a-af68e9da63f1",
+    "42126c82-94c4-4b14-8791-bb1982f6dd78",
+    "82a79d30-0ca0-4910-9372-5b917a76f026"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "56adeedf-3a04-4762-aeaa-acddbbc72d1a",
+    "slug": "gadadhara",
+    "originalTitle": "गदाधर",
+    "name": "गदाधर",
+    "hinglishName": "gadadhara",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

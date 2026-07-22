@@ -1,0 +1,23 @@
+{
+  "name": "तुलसीदास",
+  "slug": "shri-tulasidasa",
+  "hinglishName": "tulasidasa",
+  "cleanName": "श्री तुलसीदास",
+  "books": [],
+  "verseIds": [
+    "34760556-4b5c-496b-92c1-df0bf5af925a",
+    "5b947519-0e8a-4166-889b-01497ef360c9",
+    "a6e47abb-e447-463f-b9be-4512a1516aee"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "21fb4b0f-e170-4e76-a354-ec4c9b2b5f0e",
+    "slug": "tulasidasa",
+    "originalTitle": "तुलसीदास",
+    "name": "तुलसीदास",
+    "hinglishName": "tulasidasa",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

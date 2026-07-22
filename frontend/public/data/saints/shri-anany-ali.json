@@ -1,0 +1,34 @@
+{
+  "name": "अनन्य अलि",
+  "slug": "shri-anany-ali",
+  "hinglishName": "anany ali",
+  "cleanName": "श्री अनन्य अलि",
+  "books": [
+    "श्री वृंदावन वास अवस्था"
+  ],
+  "verseIds": [
+    "d0317c2a-eda3-46ed-9301-0f17369c288e",
+    "14bfeac8-7d30-4101-848d-08251ba3e284",
+    "09408a38-a17e-429c-9417-580709d56712",
+    "eb157c4c-09f6-4c7d-a7d6-7918d3b7b485",
+    "8e1b175c-0513-4ce5-bf43-76cf88da6608",
+    "7c92ef36-9fbb-4e89-a70b-ece1bda00ef1",
+    "80e47eb7-edbe-40b6-998a-5945277a61e2",
+    "0a01914a-3c89-405c-b926-81343f88ad68",
+    "08d0e794-06bc-407e-bb97-17371b40eec8",
+    "ccb751e1-e4f7-4b54-ad9e-068b1bbcb7e0",
+    "0b161480-6019-4afd-b68f-ed8c9505dc81",
+    "bb355e36-f2ea-458a-8df4-8aefbc8e0f5d"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "f9af3ed2-84eb-47e0-ad7c-c913bbb6da80",
+    "slug": "anany-ali",
+    "originalTitle": "अनन्य अलि ",
+    "name": "अनन्य अलि",
+    "hinglishName": "anany ali",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

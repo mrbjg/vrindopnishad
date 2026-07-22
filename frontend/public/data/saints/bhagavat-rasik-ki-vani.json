@@ -1,0 +1,25 @@
+{
+  "name": "भगवत रसिक",
+  "slug": "bhagavat-rasik-ki-vani",
+  "hinglishName": "bhagavat rasika",
+  "cleanName": "भगवत रसिक की वाणी",
+  "books": [
+    "निर्विरोध मनरंजन",
+    "अनन्यरसिकाभरण ग्रंथ 7"
+  ],
+  "verseIds": [
+    "f24b847e-da97-490d-aa5d-926e5b7d16f2",
+    "a75d619f-aca0-4755-aec8-af182ff2498d"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "e386b5d0-525e-4bcf-ad9e-4fea9d4e005f",
+    "slug": "bhagavat-rasika",
+    "originalTitle": "भगवत रसिक",
+    "name": "भगवत रसिक",
+    "hinglishName": "bhagavat rasika",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

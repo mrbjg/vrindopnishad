@@ -1,0 +1,51 @@
+{
+  "name": "भगवत रसिक",
+  "slug": "bhagavat-rasika",
+  "hinglishName": "bhagavat rasika",
+  "cleanName": "भगवत रसिक",
+  "books": [
+    "अनन्यरसिकभरण ग्रंथ 5",
+    "अनन्य निश्चयात्मक ग्रंथ [उत्तरार्ध]",
+    "श्री भगवत रसिक की वाणी",
+    "अनन्य निश्चयात्मक ग्रंथ [पूर्वार्ध]"
+  ],
+  "verseIds": [
+    "3a41537f-3b6e-4c7e-95b1-dbeb6b6cc53e",
+    "1dfbcea9-b2b4-4f47-8dc8-a08ee5424097",
+    "fc1305a5-47b8-4ffc-8ac7-77251a62a4e3",
+    "db5e772a-0f76-45b9-86a7-8c5b1bf91d20",
+    "b6c34385-6205-4d3e-a19f-5743a6508c1a",
+    "8cc7b29b-cb4b-4027-8928-3010eebe44e3",
+    "1cf6c8e2-520d-4241-b8eb-cd70ed1e6545",
+    "50d0b7c2-275c-4d0d-b043-5af3adc3834a",
+    "783e1009-bd03-497f-845a-32b58f2d7bb1",
+    "83e01948-afac-49d2-8427-da3b84ce8866",
+    "e01ffb19-07f4-4333-bfc2-3f67f06f671e",
+    "d319429b-1a6b-4721-b0b5-ce08ffc15e0f",
+    "7aa9e5be-9d0c-47ed-bb67-cac0f6b4919f",
+    "50583ee1-1c1d-475d-ba11-85af61236f89",
+    "100828f3-f9fd-44f9-90d3-2414f7b134a6",
+    "1e506a65-7780-4116-bb34-ce50195436c3",
+    "03ac8279-7683-421b-be1e-204490889222",
+    "b9bed409-0b3b-44db-9cea-aca109b5c21c",
+    "39862ca9-5e73-406f-b1e7-f38909faca51",
+    "374659e6-5d92-478d-91ab-6d2b97814a1c",
+    "7d6d28e6-613d-43ed-82b4-f8c0a9079bfa",
+    "4227e693-5b8b-40c5-a73c-29329b8ecfb8",
+    "fc5223fe-e155-4b9e-9e76-41264d3ea854",
+    "0724fd7f-2566-40da-ac9a-013999eebd9c",
+    "4767cec6-4c84-4112-89fc-989771db07ee",
+    "86389b91-0c89-4e37-8b0e-6d08463e64f5"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "e386b5d0-525e-4bcf-ad9e-4fea9d4e005f",
+    "slug": "bhagavat-rasika",
+    "originalTitle": "भगवत रसिक",
+    "name": "भगवत रसिक",
+    "hinglishName": "bhagavat rasika",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

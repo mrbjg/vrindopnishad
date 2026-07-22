@@ -1,0 +1,26 @@
+{
+  "name": "किशोरीदास",
+  "slug": "kishoridasa",
+  "hinglishName": "kishoridasa",
+  "cleanName": "किशोरीदास",
+  "books": [],
+  "verseIds": [
+    "4d20567c-e0a0-4815-8f7e-b929516f347a",
+    "c98fb2b9-d4fb-4d37-b71c-f04bae45ad09",
+    "37f857df-0d34-4563-b12c-4444b478de78",
+    "898f0fa0-d113-4f72-95a9-85d323e07e69",
+    "75356126-5d99-47c1-8ce7-836b7de6177d",
+    "fc3ce0ac-eea7-47d8-b0ae-c3beec98c99f"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "f19abf7e-b9a8-491b-a30a-c8e4d29e5aae",
+    "slug": "kishoridasa",
+    "originalTitle": "किशोरीदास",
+    "name": "किशोरीदास",
+    "hinglishName": "kishoridasa",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

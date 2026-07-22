@@ -1,0 +1,24 @@
+{
+  "name": "कबीर दास जी",
+  "slug": "kabir-dasa",
+  "hinglishName": "kabir das ji",
+  "cleanName": "कबीर दास",
+  "books": [],
+  "verseIds": [
+    "47e14201-815a-4664-b7e1-d4aacb21baae",
+    "d731788f-f4d5-4938-a29d-c0713a755edf",
+    "1702a6c1-8a6f-4189-a1f1-6691f5a87717",
+    "d797ba8f-eba0-4253-949f-b003da48f9f0"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "e3390dd1-cce7-46be-baa7-a2a49be13c0a",
+    "slug": "kabir-das-ji",
+    "originalTitle": "कबीर दास जी ",
+    "name": "कबीर दास जी",
+    "hinglishName": "kabir das ji",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

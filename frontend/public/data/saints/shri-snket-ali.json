@@ -1,0 +1,33 @@
+{
+  "name": "संकेत अली",
+  "slug": "shri-snket-ali",
+  "hinglishName": "snket ali",
+  "cleanName": "श्री संकेत अली",
+  "books": [
+    "संकेत लता",
+    "संकेतलता"
+  ],
+  "verseIds": [
+    "c9b418a7-bcb9-4ab5-b458-7186dfbb14e7",
+    "72f6de1b-f713-4000-b3b8-8af146d7b50f",
+    "f804e4f9-1d45-45b6-aa5c-a356613877b0",
+    "3f52d8a1-ba33-45a2-85a0-0a5a138eb82f",
+    "8ed068bc-1a5e-4462-9dc1-4060759b296d",
+    "fa21d354-109f-4eb4-9ede-59e6ef265437",
+    "b6ed262c-4e6d-42a2-81e4-026b5c609749",
+    "07e9a19f-8482-4fca-9f6a-30cd8b1acf7b",
+    "49ba5f02-6be4-4786-a766-97888c9a1099",
+    "e45855b1-dd8e-47af-a250-cef6005a1a04"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "24e0051d-1324-48c8-a289-597256ace273",
+    "slug": "snket-ali",
+    "originalTitle": "संकेत अली ",
+    "name": "संकेत अली",
+    "hinglishName": "snket ali",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "गोविंदस्वामी",
+  "slug": "govindasvami",
+  "hinglishName": "govindasvami",
+  "cleanName": "गोविंदस्वामी",
+  "books": [],
+  "verseIds": [
+    "5730362e-2af5-4c7d-9a6f-91193817afa2",
+    "83063dd0-def8-4fc4-b234-da31eeba058b",
+    "b51a58b1-877d-4f96-93f2-dd645e40080b",
+    "a0461a3e-d7c0-48b9-9877-78776624e60f",
+    "be390c6e-8c89-416c-8352-e92bcaf6be73",
+    "9308a286-a043-454c-96e2-86ca469b08a8",
+    "bd0e8edc-4f41-4c3e-952f-12d02f44bbd3",
+    "1965eac0-4765-48e0-9ebb-e64d4c79ade8",
+    "416422c9-45df-485f-9b94-332886d0e823",
+    "e8622cc4-54ee-41b0-8fe9-3c22c27b0e72",
+    "22f39a6f-d926-4c32-8363-d4aa416b5d46",
+    "96059057-ddff-444c-8083-e890fafaa367"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "3508f52c-2ff4-477c-92ad-63042b9adc10",
+    "slug": "govindasvami",
+    "originalTitle": "गोविंदस्वामी",
+    "name": "गोविंदस्वामी",
+    "hinglishName": "govindasvami",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

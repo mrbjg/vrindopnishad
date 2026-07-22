@@ -1,0 +1,22 @@
+{
+  "name": "धोंधी",
+  "slug": "dhondhi",
+  "hinglishName": "dhondhi",
+  "cleanName": "धोंधी",
+  "books": [],
+  "verseIds": [
+    "ee26fe8b-5a43-4bd0-a775-75df0c8ec2a4",
+    "37d53800-3e35-477f-8923-ed9d083c1d96"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "08343325-bb68-48b1-9c7e-cca4faa1269f",
+    "slug": "dhondhi",
+    "originalTitle": "धोंधी",
+    "name": "धोंधी",
+    "hinglishName": "dhondhi",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

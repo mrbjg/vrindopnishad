@@ -1,0 +1,24 @@
+{
+  "name": "किशोर दास",
+  "slug": "kishor-dasa",
+  "hinglishName": "kishor dasa",
+  "cleanName": "किशोर दास",
+  "books": [],
+  "verseIds": [
+    "8b29d6b0-65fb-4557-9f3a-f51ec9c55691",
+    "e718ffd3-2b55-4f9d-8ff0-af9ad142b2be",
+    "0825e14d-42b8-434c-a246-469f205c4527",
+    "fa708383-910d-4b76-bd25-1ab80ba4beb7"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "bebd679f-87e3-46ea-b13b-6e19ae0181e1",
+    "slug": "kishor-dasa",
+    "originalTitle": "किशोर दास",
+    "name": "किशोर दास",
+    "hinglishName": "kishor dasa",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

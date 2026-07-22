@@ -1,0 +1,22 @@
+{
+  "name": "हित कल्याण",
+  "slug": "hit-kalyana",
+  "hinglishName": "hit kalyana",
+  "cleanName": "हित कल्याण",
+  "books": [],
+  "verseIds": [
+    "518f3039-b0b7-45d7-8f16-57e3be242121",
+    "d633fb5b-dbd3-4bb8-bb91-e4a5303565ea"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "abec0917-23e1-4a79-9000-3137daf986f5",
+    "slug": "hit-kalyana",
+    "originalTitle": "हित कल्याण",
+    "name": "हित कल्याण",
+    "hinglishName": "hit kalyana",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

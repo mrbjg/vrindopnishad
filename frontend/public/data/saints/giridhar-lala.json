@@ -1,0 +1,26 @@
+{
+  "name": "गिरिधर लाल",
+  "slug": "giridhar-lala",
+  "hinglishName": "giridhar lala",
+  "cleanName": "गिरिधर लाल",
+  "books": [],
+  "verseIds": [
+    "d9c6a330-39ab-4be5-8f58-b97cf172787f",
+    "451d71a8-73d4-4536-9d08-8758d51c48cd",
+    "3cefc771-39df-4613-aca3-9310e56dda5d",
+    "eb0ee716-87f6-4e46-98bc-2761cc9f0a6a",
+    "2a6cd16c-0202-4118-b856-e25372718011",
+    "982eea2a-95ff-41d9-a42f-8cba59350ff2"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "6ea98440-24e8-462c-9481-195fd017d7ef",
+    "slug": "giridhar-lala",
+    "originalTitle": "गिरिधर लाल",
+    "name": "गिरिधर लाल",
+    "hinglishName": "giridhar lala",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

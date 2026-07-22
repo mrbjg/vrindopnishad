@@ -1,0 +1,23 @@
+{
+  "name": "स्कंद पुराण",
+  "slug": "sknd-purana",
+  "hinglishName": "sknd purana",
+  "cleanName": "स्कंद पुराण",
+  "books": [
+    "मथुरा माहात्म्यम्",
+    "भागवत महात्म्य"
+  ],
+  "verseIds": [
+    "a691518a-9048-473f-b694-80ac64686382",
+    "c47ce581-f06f-42d8-ae8d-25db4379544f",
+    "8a9a797d-dd4a-4318-a255-ba40f4bfac04",
+    "236a94dd-7b1f-4261-a04c-a9b509a4aebe",
+    "89b1f665-8537-47ad-bae0-f4d99dd615d1",
+    "12fc9040-e020-465d-ab7c-d06cf7f146c6",
+    "46be6c64-0570-4831-a5da-7b12c8698104",
+    "2538e6ed-d149-4b4b-ab9a-9847a8bc0f0f",
+    "c26a10d1-84d5-4782-9eb6-4fded1686a5f"
+  ],
+  "verses": [],
+  "biography": null
+}

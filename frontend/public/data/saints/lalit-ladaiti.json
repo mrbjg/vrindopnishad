@@ -1,0 +1,32 @@
+{
+  "name": "ललित लड़ैती",
+  "slug": "lalit-ladaiti",
+  "hinglishName": "lalit ladaiti",
+  "cleanName": "ललित लड़ैती",
+  "books": [],
+  "verseIds": [
+    "004ec60f-9996-44d6-9c89-0e656ed71540",
+    "5dfc3e30-01c7-4bef-a1e7-7e268fc7853a",
+    "954196fe-cae8-49b9-8a91-252afa28e52e",
+    "a940d457-54ec-4d20-bad7-6f37b86b11f5",
+    "ed28e86e-fc31-4d05-b053-06e0b121683f",
+    "432340c9-68b6-4601-aa50-44670c27d575",
+    "cac7ab9f-3f75-46ff-8d5c-55675f5ecf18",
+    "5433d8f1-a631-4aa1-b886-6adc82bda700",
+    "d6c97cce-9494-49e8-879a-93c8264ac594",
+    "778c6a0e-ad22-40ea-91b0-eb78fd00706a",
+    "c97a0b5d-b0e2-4009-84d1-969b44c327d8",
+    "d24e3d7f-8839-42ba-badc-49f52d034f1f"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "b6e93957-925c-4016-9a79-86d1b454d79b",
+    "slug": "lalit-ladaiti",
+    "originalTitle": "ललित लड़ैती",
+    "name": "ललित लड़ैती",
+    "hinglishName": "lalit ladaiti",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

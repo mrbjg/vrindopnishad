@@ -1,0 +1,30 @@
+{
+  "name": "रामसखी जी",
+  "slug": "ramasakhi",
+  "hinglishName": "ramasakhi ji",
+  "cleanName": "रामसखी",
+  "books": [],
+  "verseIds": [
+    "61f197fe-8d12-4124-b505-0d1537512cf7",
+    "486c672f-f761-4490-b83e-e8af83d930ba",
+    "78a9f9e8-5b73-4bf3-9d82-fd5f598771fd",
+    "9174c11f-79b6-4ca3-ad9c-d304f57606c6",
+    "5d6ce59e-75b4-40b5-961a-6b9ed27aa5d5",
+    "bb468639-135e-463d-89f3-15fe96a4a5d8",
+    "6ec0c6bb-3960-4742-953c-272792c1ada1",
+    "91c5167c-abb3-4120-b8bf-76a545547704",
+    "01a786c7-89dc-4b79-ae45-dd4455cf4911",
+    "ba176b90-012f-44ca-88ce-8e828de67300"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "0b4fed7e-0667-4956-836b-1378eb51081a",
+    "slug": "ramasakhi-ji",
+    "originalTitle": "रामसखी जी ",
+    "name": "रामसखी जी",
+    "hinglishName": "ramasakhi ji",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "मीरा",
+  "slug": "shri-mirabai",
+  "hinglishName": "mira",
+  "cleanName": "श्री मीराबाई",
+  "books": [],
+  "verseIds": [
+    "5ce7e541-a519-42df-b30c-28b653cbabcf",
+    "2fc7a6ce-cfc8-41d3-af8c-83855607de68",
+    "2a1c38ef-527d-43de-8404-71613ad4fe51",
+    "dd210abb-04e7-4cdc-9e42-f7fd77addcaa",
+    "8dd0fdc6-bb46-4160-b3bd-1b0a11d20d15",
+    "1eb2a9cc-9eed-451d-8e16-1c6b1183bc30",
+    "a17cd7a1-8217-4d5c-a691-40a22ceea0d9",
+    "94648153-36fe-4ec7-abb9-71849024cebd"
+  ],
+  "verses": [],
+  "biography": {
+    "id": "49effc56-c37f-4f2b-96c8-9f47ab228bf4",
+    "slug": "mira",
+    "originalTitle": "मीरा",
+    "name": "मीरा",
+    "hinglishName": "mira",
+    "text": "",
+    "tags": [],
+    "image": null
+  }
+}
