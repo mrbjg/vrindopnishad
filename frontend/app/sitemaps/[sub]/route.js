@@ -28,6 +28,15 @@ function safeFormatDate(input, fallback = '2026-06-27') {
   }
 }
 
+function safeEncodeSlug(rawSlug) {
+  if (!rawSlug) return '';
+  try {
+    return encodeURIComponent(decodeURIComponent(rawSlug));
+  } catch (e) {
+    return encodeURIComponent(rawSlug);
+  }
+}
+
 export async function GET(request, { params }) {
   const manifest = getSitemapManifest();
   const sub = params?.sub || '';
@@ -94,7 +103,7 @@ export async function GET(request, { params }) {
       const lastmodVal = Array.isArray(v) ? v[1] : (v.lastmod || v.updated_at || v.created_at);
       if (!slugVal) return;
 
-      const slug = encodeURIComponent(decodeURIComponent(slugVal));
+      const slug = safeEncodeSlug(slugVal);
       const formattedDate = safeFormatDate(lastmodVal);
 
       urlItems.push({
@@ -117,7 +126,7 @@ export async function GET(request, { params }) {
       const lastmodVal = Array.isArray(s) ? s[1] : (s.lastmod || '2026-06-27');
       if (!slugVal) return;
 
-      const slug = encodeURIComponent(decodeURIComponent(slugVal));
+      const slug = safeEncodeSlug(slugVal);
       const formattedDate = safeFormatDate(lastmodVal);
 
       urlItems.push({
@@ -140,7 +149,7 @@ export async function GET(request, { params }) {
       const lastmodVal = Array.isArray(b) ? b[1] : (b.lastmod || '2026-06-27');
       if (!slugVal) return;
 
-      const slug = encodeURIComponent(decodeURIComponent(slugVal));
+      const slug = safeEncodeSlug(slugVal);
       const formattedDate = safeFormatDate(lastmodVal);
 
       urlItems.push({
@@ -163,7 +172,7 @@ export async function GET(request, { params }) {
       const lastmodVal = Array.isArray(r) ? r[1] : (r.lastmod || '2026-06-27');
       if (!slugVal) return;
 
-      const slug = encodeURIComponent(decodeURIComponent(slugVal));
+      const slug = safeEncodeSlug(slugVal);
       const formattedDate = safeFormatDate(lastmodVal);
 
       urlItems.push({
@@ -183,7 +192,7 @@ export async function GET(request, { params }) {
     const items = GLOSSARY_TERMS || [];
     items.forEach(t => {
       if (!t || !t.slug) return;
-      const slug = encodeURIComponent(decodeURIComponent(t.slug));
+      const slug = safeEncodeSlug(t.slug);
       urlItems.push({
         loc: `${base}/glossary/${slug}`,
         changefreq: 'monthly',
@@ -200,7 +209,7 @@ export async function GET(request, { params }) {
   } else if (type === 'festivals') {
     const slugs = Object.keys(FESTIVALS_DATA || {});
     slugs.forEach(slugRaw => {
-      const slug = encodeURIComponent(decodeURIComponent(slugRaw));
+      const slug = safeEncodeSlug(slugRaw);
       urlItems.push({
         loc: `${base}/festivals/${slug}`,
         changefreq: 'weekly',

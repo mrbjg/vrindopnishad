@@ -4,6 +4,9 @@ import path from 'path';
 let sitemapManifestCache = null;
 
 export function getSitemapManifest() {
+  if (!sitemapManifestCache && typeof global !== 'undefined' && global.sitemapManifestCache) {
+    sitemapManifestCache = global.sitemapManifestCache;
+  }
   if (sitemapManifestCache) return sitemapManifestCache;
 
   const appDirectory = process.cwd();
