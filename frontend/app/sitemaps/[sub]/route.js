@@ -9,14 +9,15 @@ import {
 import { STATIC_SEO_PAGES } from '../../../src/data/staticPagesData';
 import { FESTIVALS_DATA } from '../../../src/data/festivalsData';
 
+const NUM_CONTENT_CHUNKS = 15;
+const CHUNK_SIZE = 3500; // 3500 verses = 7000 URLs per sub-sitemap (optimized for fast response & GSC limits)
+
 export async function generateStaticParams() {
+  const contentSubMaps = Array.from({ length: NUM_CONTENT_CHUNKS }, (_, i) => ({ sub: `content-${i + 1}.xml` }));
   return [
     { sub: 'pages.xml' },
     { sub: 'content.xml' },
-    { sub: 'content-1.xml' },
-    { sub: 'content-2.xml' },
-    { sub: 'content-3.xml' },
-    { sub: 'content-4.xml' },
+    ...contentSubMaps,
     { sub: 'saints.xml' },
     { sub: 'granthas.xml' },
     { sub: 'ragas.xml' },
@@ -96,19 +97,13 @@ export async function GET(request, { params }) {
     });
   } else if (type === 'content' || type.startsWith('content-')) {
     const allVerses = getAllVerses();
-    let items = allVerses;
-    
-    // Chunking content into parts of 3,000 items (up to 6,000 URLs per part)
-    // to prevent Google Search Console response size/timeout "General HTTP error"
-    const CHUNK_SIZE = 3000;
-    if (type === 'content-1') {
-      items = allVerses.slice(0, CHUNK_SIZE);
-    } else if (type === 'content-2') {
-      items = allVerses.slice(CHUNK_SIZE, CHUNK_SIZE * 2);
-    } else if (type === 'content-3') {
-      items = allVerses.slice(CHUNK_SIZE * 2, CHUNK_SIZE * 3);
-    } else if (type === 'content-4') {
-      items = allVerses.slice(CHUNK_SIZE * 3);
+    let items = [];
+
+    const match = type.match(/^content-(\d+)$/);
+    if (match) {
+      const pageNum = parseInt(match[1], 10);
+      const startIndex = (pageNum - 1) * CHUNK_SIZE;
+      items = allVerses.slice(startIndex, startIndex + CHUNK_SIZE);
     } else if (type === 'content') {
       items = allVerses.slice(0, CHUNK_SIZE);
     }

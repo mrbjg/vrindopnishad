@@ -1,29 +1,21 @@
 export const dynamic = 'force-dynamic';
 
+const NUM_CONTENT_CHUNKS = 15;
+
 export async function GET() {
   const today = new Date().toISOString().split('T')[0];
+  const contentSitemaps = Array.from({ length: NUM_CONTENT_CHUNKS }, (_, i) => `  <sitemap>
+    <loc>https://path.vrindopnishad.in/sitemaps/content-${i + 1}.xml</loc>
+    <lastmod>${today}</lastmod>
+  </sitemap>`).join('\n');
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
     <loc>https://path.vrindopnishad.in/sitemaps/pages.xml</loc>
     <lastmod>${today}</lastmod>
   </sitemap>
-  <sitemap>
-    <loc>https://path.vrindopnishad.in/sitemaps/content-1.xml</loc>
-    <lastmod>${today}</lastmod>
-  </sitemap>
-  <sitemap>
-    <loc>https://path.vrindopnishad.in/sitemaps/content-2.xml</loc>
-    <lastmod>${today}</lastmod>
-  </sitemap>
-  <sitemap>
-    <loc>https://path.vrindopnishad.in/sitemaps/content-3.xml</loc>
-    <lastmod>${today}</lastmod>
-  </sitemap>
-  <sitemap>
-    <loc>https://path.vrindopnishad.in/sitemaps/content-4.xml</loc>
-    <lastmod>${today}</lastmod>
-  </sitemap>
+${contentSitemaps}
   <sitemap>
     <loc>https://path.vrindopnishad.in/sitemaps/saints.xml</loc>
     <lastmod>${today}</lastmod>
