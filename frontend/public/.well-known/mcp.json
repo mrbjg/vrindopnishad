@@ -1,0 +1,41 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schema/mcp.json",
+  "name": "Vrindopnishad Paath",
+  "description": "Crawlable, server-rendered digital sanctuary of Vrindavan sacred literature, rasik sants, granthas, shlokas, and devotional verses.",
+  "homepage": "https://path.vrindopnishad.in",
+  "version": "1.0.0",
+  "resources": [
+    {
+      "name": "LLM Metadata Summary",
+      "uri": "https://path.vrindopnishad.in/llms.txt",
+      "mimeType": "text/plain",
+      "description": "Structured guide for AI models explaining site architecture and schemas."
+    },
+    {
+      "name": "Full LLM Knowledge Dump",
+      "uri": "https://path.vrindopnishad.in/llms-full.txt",
+      "mimeType": "text/plain",
+      "description": "Deep reference manifest for RAG systems and AI research agents."
+    },
+    {
+      "name": "Sitemap Index",
+      "uri": "https://path.vrindopnishad.in/sitemap.xml",
+      "mimeType": "application/xml",
+      "description": "Complete index of all static and dynamic verse routes."
+    }
+  ],
+  "capabilities": {
+    "search": {
+      "endpoint": "https://path.vrindopnishad.in/lyrics?q={query}",
+      "supports_devanagari": true,
+      "supports_hinglish": true
+    },
+    "data_indexes": {
+      "shlokas": "https://path.vrindopnishad.in/data/content_index_shloka.json",
+      "strotras": "https://path.vrindopnishad.in/data/content_index_strotra.json",
+      "poems": "https://path.vrindopnishad.in/data/content_index_poem.json",
+      "saints": "https://path.vrindopnishad.in/data/content_index_saint.json",
+      "dhams": "https://path.vrindopnishad.in/data/content_index_dham.json"
+    }
+  }
+}

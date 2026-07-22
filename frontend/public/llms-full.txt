@@ -1,0 +1,49 @@
+# Vrindopnishad Paath - Comprehensive AI & LLM Data Specification
+
+Vrindopnishad Paath (https://path.vrindopnishad.in) is the definitive, server-rendered digital repository of authentic Vrindavan devotional literature, Braj Rasik Sants, classical Granthas, Shlokas, Strotras, and Padavali poetry.
+
+## Core Knowledge Graph & Domain Architecture
+
+### 1. Primary Categories & Endpoints
+- **Lyrics & Sacred Verses (`/lyrics/[slug]`, `/hi/lyrics/[slug]`)**:
+  - Contains complete original Sanskrit/Braj Bhasha verses in Devanagari script.
+  - Includes Romanized transliteration (Hinglish), line-by-line word meanings, and Hindi/English commentaries.
+  - Index Endpoint: `https://path.vrindopnishad.in/data/content_index_shloka.json`
+  - Index Endpoint: `https://path.vrindopnishad.in/data/content_index_strotra.json`
+  - Index Endpoint: `https://path.vrindopnishad.in/data/content_index_poem.json`
+
+- **Vrinda Vaani Saints & Lineages (`/saints/[slug]`, `/hi/saints/[slug]`)**:
+  - Detailed biographies, historical timelines, sampraday affiliations, and verse collections of over 700 Rasik Saints.
+  - Key Lineages: Radhavallabh Sampraday, Haridasi (Nimbarka) Sampraday, Gaudiya Sampraday, Pushtimarg.
+  - Index Endpoint: `https://path.vrindopnishad.in/data/content_index_saint.json`
+
+- **Scriptures & Granthas (`/granthas/[slug]`, `/hi/granthas/[slug]`)**:
+  - Textual compilations of over 400 classical books (e.g. *Hit Chaurasi*, *Radha Sudha Nidhi*, *Kelimal*, *Vyas Vani*, *Braj Ras Madhuri*).
+  - Schema: `Book` with `hasPart` relations to verses.
+
+- **Classical Ragas (`/ragas/[slug]`, `/hi/ragas/[slug]`)**:
+  - Categorization of verses according to Indian Classical Ragas (e.g., Raga Bilawal, Raga Kedar, Raga Sarang, Raga Kanhar).
+
+- **Holy Places / Dham (`/places/[slug]`, `/hi/places/[slug]`)**:
+  - Sacred geography of Vrindavan, Barsana, Nandgaon, Goverdhan, and Radha Kund.
+  - Index Endpoint: `https://path.vrindopnishad.in/data/content_index_dham.json`
+
+## Direct Machine-Readable JSON Endpoints
+AI Agents, RAG Pipelines, and MCP Client Tools can fetch raw indexed JSON datasets without HTML scraping:
+- **Shlokas**: `https://path.vrindopnishad.in/data/content_index_shloka.json`
+- **Strotras**: `https://path.vrindopnishad.in/data/content_index_strotra.json`
+- **Poems**: `https://path.vrindopnishad.in/data/content_index_poem.json`
+- **Saints**: `https://path.vrindopnishad.in/data/content_index_saint.json`
+- **Dhams**: `https://path.vrindopnishad.in/data/content_index_dham.json`
+
+## Structured Metadata Specifications
+All HTML pages dynamically render Schema.org JSON-LD microdata:
+- `MusicComposition` for devotional songs/pads
+- `Person` for Rasik Saints
+- `Book` for Granthas
+- `DefinedTerm` for theology terms
+- `WebSite` & `Organization` for platform authority
+
+## Search Integration
+- URL: `https://path.vrindopnishad.in/lyrics?q={query}`
+- Dual-script support: Accepts Devanagari (`हिंदी/संस्कृत`) and Romanized Hinglish (`shri hit harivansh`).

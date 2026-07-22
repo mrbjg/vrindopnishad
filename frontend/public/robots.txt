@@ -26,6 +26,10 @@ Allow: /hi/granthas/
 Allow: /ragas/
 Allow: /hi/ragas/
 Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /.well-known/mcp.json
+Allow: /.well-known/ai.txt
+Allow: /data/
 
 # Allow all general search engines
 User-agent: *

@@ -1,0 +1,7 @@
+# AI & Bot Protocol Manifest for Vrindopnishad
+User-agent: *
+Allow: /
+Sitemap: https://path.vrindopnishad.in/sitemap.xml
+LLM-Guide: https://path.vrindopnishad.in/llms.txt
+LLM-Full-Guide: https://path.vrindopnishad.in/llms-full.txt
+MCP-Manifest: https://path.vrindopnishad.in/.well-known/mcp.json
