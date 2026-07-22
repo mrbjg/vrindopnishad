@@ -100,8 +100,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning className={`dark ${laila.variable} ${poppins.variable} ${inter.variable} ${notoSerifDevanagari.variable}`}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.clarity.ms" />
         <script
