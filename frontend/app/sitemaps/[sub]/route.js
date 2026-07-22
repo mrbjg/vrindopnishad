@@ -5,7 +5,7 @@ import { GLOSSARY_TERMS } from '../../../src/data/glossaryTerms.js';
 
 export const dynamic = 'force-dynamic';
 
-const CHUNK_SIZE = 3000; // 3000 items = 6000 URLs per sub-sitemap
+const CHUNK_SIZE = 3500; // 3500 items = 7000 URLs per sub-sitemap
 
 function escapeXml(str) {
   if (!str) return '';

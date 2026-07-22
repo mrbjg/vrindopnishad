@@ -2,7 +2,7 @@ import { getSitemapManifest } from '../../src/lib/sitemapData.js';
 
 export const dynamic = 'force-dynamic';
 
-const CHUNK_SIZE = 3000;
+const CHUNK_SIZE = 3500; // 3500 items = 7000 URLs per sub-sitemap
 
 export async function GET() {
   const manifest = getSitemapManifest();

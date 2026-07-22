@@ -88,7 +88,7 @@ function safeDate(input) {
 }
 
 export function generateSitemapManifest() {
-  console.log('[build-sitemap-manifest] Generating sitemap_manifest.json...');
+  console.log('[build-sitemap-manifest] Generating complete sitemap_manifest.json...');
   
   let rawContent = [];
   if (fs.existsSync(dbPath)) {
@@ -112,22 +112,52 @@ export function generateSitemapManifest() {
     contentSlugs.push([slug, lastmod]);
   }
 
-  let saintsList = [];
+  const saintsSet = new Set();
+  const saintsList = [];
+
+  // Load from saints_formatted.json
   if (fs.existsSync(saintsPath)) {
     const rawSaints = JSON.parse(fs.readFileSync(saintsPath, 'utf8'));
-    saintsList = rawSaints.map(s => {
+    rawSaints.forEach(s => {
       const nameVal = s.name || s.title || '';
       const saintSlug = s.slug || generateSlug(nameVal);
-      return [saintSlug, '2026-06-27'];
-    }).filter(s => s[0]);
+      if (saintSlug && !saintsSet.has(saintSlug)) {
+        saintsSet.add(saintSlug);
+        saintsList.push([saintSlug, '2026-06-27']);
+      }
+    });
   }
 
   let granthas = [];
   let ragas = [];
+
+  // Load from relations_backup.json to get all 784 saints, 448 granthas, and 147 ragas
   if (fs.existsSync(relationsPath)) {
     const rel = JSON.parse(fs.readFileSync(relationsPath, 'utf8'));
-    if (rel.books) granthas = rel.books.map(b => [b.slug, '2026-06-27']).filter(b => b[0]);
-    if (rel.ragas) ragas = rel.ragas.map(r => [r.slug, '2026-06-27']).filter(r => r[0]);
+    if (rel.sants && Array.isArray(rel.sants)) {
+      rel.sants.forEach(s => {
+        if (s.slug && !saintsSet.has(s.slug)) {
+          saintsSet.add(s.slug);
+          saintsList.push([s.slug, '2026-06-27']);
+        }
+      });
+    }
+    if (rel.books && Array.isArray(rel.books)) {
+      const granthaSet = new Set();
+      granthas = rel.books.map(b => {
+        if (!b.slug || granthaSet.has(b.slug)) return null;
+        granthaSet.add(b.slug);
+        return [b.slug, '2026-06-27'];
+      }).filter(Boolean);
+    }
+    if (rel.ragas && Array.isArray(rel.ragas)) {
+      const ragaSet = new Set();
+      ragas = rel.ragas.map(r => {
+        if (!r.slug || ragaSet.has(r.slug)) return null;
+        ragaSet.add(r.slug);
+        return [r.slug, '2026-06-27'];
+      }).filter(Boolean);
+    }
   }
 
   const manifest = {
@@ -151,7 +181,7 @@ export function generateSitemapManifest() {
   fs.writeFileSync(publicManifestPath, JSON.stringify(manifest), 'utf8');
 
   const sizeKB = (fs.statSync(manifestPath).size / 1024).toFixed(1);
-  console.log(`[build-sitemap-manifest] ✅ Saved sitemap_manifest.json (${sizeKB} KB)`);
+  console.log(`[build-sitemap-manifest] ✅ Saved complete sitemap_manifest.json (${sizeKB} KB)`);
   console.log(`  Verses: ${contentSlugs.length}, Saints: ${saintsList.length}, Granthas: ${granthas.length}, Ragas: ${ragas.length}`);
   
   return manifest;
