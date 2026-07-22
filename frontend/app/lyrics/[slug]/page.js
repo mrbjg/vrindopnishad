@@ -21,15 +21,12 @@ import RelatedContent, { RelatedItem } from '../../../src/components/seo/Related
 import ReadingTime from '../../../src/components/seo/ReadingTime';
 import LastUpdated from '../../../src/components/seo/LastUpdated';
 import AuthorCard from '../../../src/components/seo/AuthorCard';
-export const dynamic = 'force-dynamic';
+export const revalidate = 604800; // 7 days edge CDN cache to eliminate serverless CPU duration spikes
 
 import { supabase } from '../../../src/lib/supabase';
 
 import fs from 'fs';
 import path from 'path';
-
-let serverRelationsCache = null;
-let serverBackupCache = null;
 
 function getUntruncatedServerText(slug, id, sanskrit, hindi, title) {
   const isTruncated = (str) => {
@@ -43,12 +40,17 @@ function getUntruncatedServerText(slug, id, sanskrit, hindi, title) {
   let fullSanskrit = sanskrit || '';
   let fullHindi = hindi || '';
 
-  // Try reading relations_backup.json from disk
+  // Fast path: if already untruncated, return immediately with 0 disk read
+  if (!isTruncated(fullSanskrit) && !isTruncated(fullHindi) && fullSanskrit.length >= 300) {
+    return { sanskrit: fullSanskrit, hindi: fullHindi };
+  }
+
+  // Try reading relations_backup.json from global memory or disk
   try {
-    if (!serverRelationsCache) {
+    if (!global.serverRelationsCache) {
       const relPath = path.join(process.cwd(), 'public/data/relations_backup.json');
       if (fs.existsSync(relPath)) {
-        serverRelationsCache = JSON.parse(fs.readFileSync(relPath, 'utf8'));
+        global.serverRelationsCache = JSON.parse(fs.readFileSync(relPath, 'utf8'));
       }
     }
 

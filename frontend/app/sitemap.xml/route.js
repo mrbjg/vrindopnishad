@@ -15,7 +15,7 @@ export async function GET() {
     <loc>https://path.vrindopnishad.in/sitemaps/pages.xml</loc>
     <lastmod>${today}</lastmod>
   </sitemap>
-${contentSitemaps}
+  ${contentSitemaps}
   <sitemap>
     <loc>https://path.vrindopnishad.in/sitemaps/saints.xml</loc>
     <lastmod>${today}</lastmod>
