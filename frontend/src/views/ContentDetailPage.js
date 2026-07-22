@@ -106,22 +106,17 @@ import PageSkeleton from '../components/ui/PageSkeleton';
 import { splitVerseAndTranslation, cleanVerseOnly } from '../utils/textSplitter';
 import { useSWR } from '../hooks/useSWR';
 
-// Professional typographic scaling component for Sanskrit/Hindi & Hinglish verses.
-// Provides elegant, consistent sizing based on viewport width and user preferences (sizeLevel).
-// Uses micro-tuning for line length to prevent awkward clipping while maintaining stable sizes.
 const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered = true, className = "", isRoman = false }) => {
   const cleanLines = React.useMemo(() => {
     if (!text) return [];
     let processed = text;
 
-    // 1. Protect section headers enclosed in dandas, like "॥ दोहा ॥", "॥ चौपाई ॥", "॥ सोरठा ॥"
     const protectedBlocks = [];
     processed = processed.replace(/(?:॥|\|\||।|\|)\s*([^॥।\d\s\(\)\[\]]{2,12})\s*(?:॥|\|\||।|\|)/g, (match) => {
       protectedBlocks.push(match.trim());
       return ` __PB${protectedBlocks.length - 1}__`;
     });
 
-    // 2. Protect verse numbers like "॥ १ ॥", "॥ १२ ॥", "। ३ ।", "(४)", "[५]", "१ ॥"
     processed = processed.replace(/(?:॥|\|\||।|\|)?\s*(?:\[\s*[०-९\d]+\s*\]|\(\s*[०-९\d]+\s*\)|[०-९\d]+)\s*(?:॥|\|\||।|\|)?/g, (match) => {
       const trimmed = match.trim();
       if (!trimmed || /^[०-९\d]+$/.test(trimmed)) return match;
@@ -129,17 +124,14 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
       return ` __PB${protectedBlocks.length - 1}__\n`;
     });
 
-    // 3. Standardize normal verse endings to newline
     processed = processed.replace(/(।।|॥|\|\||।|\|)/g, "$1\n");
-    processed = processed.replace(/(\s*-\s*श्री|\s*—\s*श्री)/g, "\n— श्री");
+    processed = processed.replace(/(?:\n|^)\s*([—–-]\s*श्री)/g, "\n— श्री");
 
-    // 4. Restore all protected blocks
     processed = processed.replace(/__PB(\d+)__/g, (match, index) => {
       const idx = parseInt(index, 10);
       return ` ${protectedBlocks[idx]}`;
     });
 
-    // 5. Split lines and stop processing after attribution line (so no trailing explanations are included)
     const rawLines = processed
       .split('\n')
       .map(p => p.trim())
@@ -150,7 +142,7 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
 
   const maxLineLength = React.useMemo(() => {
     const verseLines = cleanLines.filter(line => {
-      const isAttribution = line.startsWith('— श्री') || line.startsWith('- श्री');
+      const isAttribution = line.length <= 70 && /^[—–-]\s*(?:श्री|जगद्गुरु|स्वामी|हठ|रसिया|रसिक|सूरदास|मीरा|कबीर|हित|गोविन्द|गोविंद|भगवत|हरिदास|देव|रूप|सनातन|जीव|ललित|Jagadguru|Shri|Swami|Goswami)/i.test(line);
       const isHeader = (line.startsWith('॥') && line.endsWith('॥') && !/[०-९\d]/.test(line)) ||
         (line.startsWith('।') && line.endsWith('।') && !/[०-९\d]/.test(line));
       return !isAttribution && !isHeader;
@@ -158,29 +150,19 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
     return Math.max(...verseLines.map(l => l.length), 1);
   }, [cleanLines]);
 
-  // Premium, highly consistent fluid typography system
-  // Base font size maps to sizeLevel 1-5 (very stable, minimal steps)
-  // Sanskrit has slightly larger glyph presence than Roman transliteration
   const baseMapDeva = [1.25, 1.55, 1.9, 2.3, 2.8];
   const baseMapRoman = [1.05, 1.25, 1.5, 1.8, 2.15];
 
   const base = isRoman ? baseMapRoman[sizeLevel - 1] : baseMapDeva[sizeLevel - 1];
 
-  // Dynamic tuning based on longest line length:
-  // We apply a gentle, smooth scaling factor. Extremely long lines shrink slightly (max 15%)
-  // to prevent clumsy wrapping. Short single-line couplets grow slightly (max 10%) for a premium display feel.
   let scale = 1.0;
   if (maxLineLength > 34) {
-    // scale down smoothly for long lines
     scale = Math.max(0.85, 1.0 - (maxLineLength - 34) * 0.008);
   } else if (maxLineLength < 18) {
-    // scale up smoothly for short lines
     scale = Math.min(1.1, 1.0 + (18 - maxLineLength) * 0.01);
   }
 
   const finalBaseRem = base * scale;
-
-  // Fluid design rule: rem base + responsive viewport fraction, clamped in a strict range
   const minLimit = finalBaseRem * 0.85;
   const maxLimit = finalBaseRem * 1.15;
   const fluidFontSize = `clamp(${minLimit}rem, calc(${finalBaseRem}rem + 0.3vw), ${maxLimit}rem)`;
@@ -196,7 +178,7 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
       }}
     >
       {cleanLines.map((line, idx) => {
-        const isAttribution = /^[—–-]\s*(?:श्री|जगद्गुरु|स्वामी|हठ|रसिया|रसिक|सूरदास|मीरा|कबीर|हित|गोविन्द|गोविंद|भगवत|हरिदास|देव|रूप|सनातन|जीव|ललित|Jagadguru|Shri|Swami|Goswami)/i.test(line);
+        const isAttribution = line.length <= 70 && /^[—–-]\s*(?:श्री|जगद्गुरु|स्वामी|हठ|रसिया|रसिक|सूरदास|मीरा|कबीर|हित|गोविन्द|गोविंद|भगवत|हरिदास|देव|रूप|सनातन|जीव|ललित|Jagadguru|Shri|Swami|Goswami)/i.test(line) && !/(?:यदि|क्योंकि|अर्थात|अर्थात्|भावार्थ|व्याख्या|इसलिए|मिलें|करो|देखो|होते)/.test(line);
         const isHeader = (line.startsWith('॥') && line.endsWith('॥') && !/[०-९\d]/.test(line)) ||
           (line.startsWith('।') && line.endsWith('।') && !/[०-९\d]/.test(line));
 
@@ -311,11 +293,6 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
     if (checkIsTruncated(sanskritText)) {
       if (rawContent?.sanskrit_text && !checkIsTruncated(rawContent.sanskrit_text)) {
         sanskritText = rawContent.sanskrit_text;
-      } else if (fetchedData?.content_text && !checkIsTruncated(fetchedData.content_text)) {
-        const parts = fetchedData.content_text.split('\n\n');
-        if (parts[0] && !checkIsTruncated(parts[0])) {
-          sanskritText = parts[0];
-        }
       }
     }
 

@@ -508,52 +508,25 @@ const ensureFullVerseText = async (matched) => {
     console.warn('[FullText] Supabase fetch failed:', e);
   }
 
-  // 2. Check inMemoryRelationsCache if text is still truncated
-  if (isTruncatedText(current.sanskrit_text) || isTruncatedText(current.hindi_text)) {
-    try {
-      if (inMemoryRelationsCache) {
-        const allRelItems = [
-          ...(inMemoryRelationsCache.sants || []),
-          ...(inMemoryRelationsCache.biographies || []),
-          ...(inMemoryRelationsCache.books || []),
-          ...(inMemoryRelationsCache.ragas || [])
-        ];
-        const targetSlug = (current.slug || '').replace(/^-+|-+$/g, '');
-        const targetId = (current.id || '').toString();
-
-        const foundRel = allRelItems.find(x =>
-          (x.id && targetId && x.id.toString() === targetId) ||
-          (x.slug && targetSlug && x.slug.replace(/^-+|-+$/g, '') === targetSlug) ||
-          (x.originalTitle && current.title && x.originalTitle.trim() === current.title.trim())
-        );
-
-        if (foundRel && foundRel.text && foundRel.text.length > (current.sanskrit_text || '').length) {
-          current.sanskrit_text = foundRel.text;
-          if (!current.hindi_text || current.hindi_text.length < foundRel.text.length) {
-            current.hindi_text = foundRel.text;
-          }
-        }
-      }
-    } catch (e) { }
-  }
-
-  // 3. Search memoryCachedItems if still truncated
+  // 2. Search memoryCachedItems if text is still truncated
   if (isTruncatedText(current.sanskrit_text) || isTruncatedText(current.hindi_text)) {
     if (memoryCachedItems && memoryCachedItems.length > 0) {
       const curTitle = (current.cleanTitle || current.title || '').trim().toLowerCase();
       const curSlug = (current.slug || '').toLowerCase();
       const longerMemoryItem = memoryCachedItems.find(x => {
-        if (!x) return false;
+        if (!x || !x.sanskrit_text || x.sanskrit_text.trim() === '') return false;
         const xTitle = (x.cleanTitle || x.title || '').trim().toLowerCase();
         const xSlug = (x.slug || '').toLowerCase();
-        const xLen = (x.sanskrit_text || '').length + (x.hindi_text || '').length + (x.content_text || '').length;
-        const curLen = (current.sanskrit_text || '').length + (current.hindi_text || '').length;
-        return xLen > (curLen + 40) && (xSlug === curSlug || xTitle === curTitle || (curTitle && xTitle.startsWith(curTitle)));
+        const xLen = (x.sanskrit_text || '').length;
+        const curLen = (current.sanskrit_text || '').length;
+        return xLen > (curLen + 30) && (xSlug === curSlug || xTitle === curTitle || (curTitle && xTitle.startsWith(curTitle)));
       });
       if (longerMemoryItem) {
-        const sans = longerMemoryItem.sanskrit_text || longerMemoryItem.content_text || current.sanskrit_text;
-        const hin = longerMemoryItem.hindi_text || current.hindi_text;
-        current = { ...current, ...longerMemoryItem, sanskrit_text: sans, hindi_text: hin };
+        current = {
+          ...current,
+          sanskrit_text: longerMemoryItem.sanskrit_text || current.sanskrit_text,
+          hindi_text: longerMemoryItem.hindi_text || current.hindi_text
+        };
       }
     }
   }
