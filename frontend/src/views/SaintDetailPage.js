@@ -25,6 +25,8 @@ const SaintDetailPage = ({ initialSaint }) => {
   const isHindiRoute = location.pathname.startsWith('/hi');
   const { apiService } = useContext(ApiContext);
 
+  const [activeDetailTab, setActiveDetailTab] = useState('bio');
+
   const [sant, setSant] = useState(initialSaint || (() => {
     if (typeof window !== 'undefined' && location.state?.item) {
       return location.state.item;
