@@ -100,6 +100,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning className={`dark ${laila.variable} ${poppins.variable} ${inter.variable} ${notoSerifDevanagari.variable}`}>
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.clarity.ms" />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){
@@ -133,9 +137,9 @@ export default function RootLayout({ children }) {
       <body className="antialiased">
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-FJWN1FJE6H"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script id="google-analytics" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -143,7 +147,7 @@ export default function RootLayout({ children }) {
             gtag('config', 'G-FJWN1FJE6H');
           `}
         </Script>
-        <Script id="clarity-analytics" strategy="afterInteractive">
+        <Script id="clarity-analytics" strategy="lazyOnload">
           {`
             (function(c,l,a,r,i,t,y){
                 c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};

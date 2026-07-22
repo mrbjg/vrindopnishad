@@ -7,7 +7,7 @@ import { AudioProvider } from './AudioContext';
 import { LoadingProvider } from './LoadingContext';
 import { apiService } from '../services/api';
 import { usePathname } from 'next/navigation';
-import CelestialParticles from '../components/CelestialParticles';
+const CelestialParticles = React.lazy(() => import('../components/CelestialParticles'));
 import PageSkeleton from '../components/ui/PageSkeleton';
 import ScrollToTop from '../components/ScrollToTop';
 import Layout from '../components/Layout';
@@ -23,7 +23,11 @@ function PersistentBackground() {
   const { settings } = useSettings();
 
   useEffect(() => {
-    setMounted(true);
+    // Delay particles initialization until after critical FCP / LCP render
+    const timer = setTimeout(() => {
+      setMounted(true);
+    }, 1200);
+    return () => clearTimeout(timer);
   }, []);
 
   if (!mounted) return null;
@@ -40,7 +44,9 @@ function PersistentBackground() {
     <div className="celestial-bg">
       <div className="stars"></div>
       <div className="nebula"></div>
-      <CelestialParticles />
+      <React.Suspense fallback={null}>
+        <CelestialParticles />
+      </React.Suspense>
     </div>
   );
 }

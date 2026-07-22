@@ -7,7 +7,8 @@ const __dirname = path.dirname(__filename);
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  optimizeFonts: false,
+  optimizeFonts: true,
+  swcMinify: true,
   staticPageGenerationTimeout: 1000,
   transpilePackages: [
     'firebase',
@@ -336,6 +337,24 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.clarity.ms https://c.bing.com https://translate.google.com https://translate.googleapis.com https://apis.google.com https://*.googleapis.com https://www.gstatic.com https://unpkg.com https://cdn.jsdelivr.net https://va.vercel-scripts.com https://*.vercel-scripts.com https://vercel.live https://*.vercel.live https://santvaanig-default-rtdb.asia-southeast1.firebasedatabase.app https://santvaanig-default-rtdb.firebaseio.com https://*.firebasedatabase.app https://*.asia-southeast1.firebasedatabase.app https://*.firebaseio.com https://*.firebase.com https://*.vercel.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://translate.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https: http:; connect-src 'self' https: http: wss: ws: https://va.vercel-scripts.com https://*.vercel-scripts.com https://vercel.live https://*.vercel.live https://santvaanig-default-rtdb.asia-southeast1.firebasedatabase.app wss://santvaanig-default-rtdb.asia-southeast1.firebasedatabase.app https://santvaanig-default-rtdb.firebaseio.com wss://santvaanig-default-rtdb.firebaseio.com https://*.firebasedatabase.app https://*.asia-southeast1.firebasedatabase.app https://*.firebaseio.com https://*.firebase.com https://*.googleapis.com https://*.vercel.app; media-src 'self' data: blob: https: http:; object-src 'self' data:; frame-src 'self' https: http: https://vercel.live https://*.vercel.live https://santvaanig-default-rtdb.asia-southeast1.firebasedatabase.app https://santvaanig-default-rtdb.firebaseio.com https://*.firebasedatabase.app https://*.asia-southeast1.firebasedatabase.app https://*.firebaseio.com https://*.firebase.com https://*.googleapis.com https://*.vercel.app;",
           }
+        ],
+      },
+      {
+        source: '/data/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=3600, stale-while-revalidate=86400',
+          },
+        ],
+      },
+      {
+        source: '/:path*.{jpg,jpeg,png,gif,webp,avif,svg,ico,woff,woff2,ttf,eot}',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
         ],
       },
     ];

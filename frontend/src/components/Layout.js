@@ -29,7 +29,7 @@ import {
 import GlobalAudioPlayer from './GlobalAudioPlayer';
 import SettingsModal from './SettingsModal';
 import ThemeOnboardingModal from './ThemeOnboardingModal';
-import CelestialParticles from './CelestialParticles';
+const CelestialParticles = React.lazy(() => import('./CelestialParticles'));
 import PookizLayout from './PookizLayout';
 import PageSkeleton from './ui/PageSkeleton';
 import SkipLink from './seo/SkipLink';
