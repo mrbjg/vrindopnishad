@@ -125,7 +125,6 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
     });
 
     processed = processed.replace(/(।।|॥|\|\||।|\|)/g, "$1\n");
-    processed = processed.replace(/(?:\n|^)\s*([—–-]\s*श्री)/g, "\n— श्री");
 
     processed = processed.replace(/__PB(\d+)__/g, (match, index) => {
       const idx = parseInt(index, 10);

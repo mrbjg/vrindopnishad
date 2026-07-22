@@ -457,13 +457,25 @@ const fetchRelationsBackup = async () => {
     return { sants: [], books: [], ragas: [], biographies: [] };
   }
 };
-
 const isTruncatedText = (str) => {
   if (!str) return true;
   const trimmed = str.trim();
   if (trimmed.endsWith('...') || trimmed.endsWith('…')) return true;
   if (trimmed.length <= 120 && !/[॥।.\!\?\n\”\"'\]\)]/.test(trimmed.slice(-3))) return true;
   return false;
+};
+
+// Validate text looks like actual verse content (has Devanagari verse markers)
+// rather than biography, prose commentary, or translation text
+const looksLikeVerseText = (str) => {
+  if (!str) return false;
+  const trimmed = str.trim();
+  // Must contain verse punctuation markers typical of Sanskrit/Braj verses
+  const hasVerseMarkers = /[।॥]/.test(trimmed) || /\|\|/.test(trimmed);
+  // Prose indicators — long sentences without any verse markers
+  const isProse = trimmed.length > 200 && !hasVerseMarkers && /[।॥]/.test(trimmed) === false;
+  if (isProse) return false;
+  return hasVerseMarkers || trimmed.length < 200;
 };
 
 const ensureFullVerseText = async (matched) => {
@@ -486,20 +498,19 @@ const ensureFullVerseText = async (matched) => {
       let sanskrit = data.sanskrit_text || data.sanskritText || current.sanskrit_text || '';
       let hindi = data.hindi_text || data.hindiText || current.hindi_text || '';
       
-      if (data.content_text && data.content_text.length > (sanskrit.length + 30)) {
+      // Only use content_text as sanskrit source if it actually contains verse markers
+      if (data.content_text && data.content_text.length > (sanskrit.length + 30) && isTruncatedText(sanskrit)) {
         const parts = data.content_text.split('\n\n');
         if (parts.length >= 2) {
-          if (isTruncatedText(sanskrit)) sanskrit = parts[0];
-          if (isTruncatedText(hindi)) hindi = parts.slice(1).join('\n\n');
-        } else if (isTruncatedText(sanskrit)) {
-          // If no double newline split, extract verse up to attribution line
-          const attrMatch = data.content_text.match(/(?:^|\n)\s*([—–-]\s*(?:श्री|श्रीमान|जगद्गुरु|स्वामी|हठ|रसिया|रसिक|सूरदास|मीरा|कबीर|हित|गोविन्द|गोविंद|भगवत|हरिदास|देव|रूप|सनातन|जीव|ललित|Jagadguru|Shri|Swami|Goswami)[^\n]+)/i);
-          if (attrMatch) {
-            const endIdx = data.content_text.indexOf(attrMatch[1]) + attrMatch[1].length;
-            sanskrit = data.content_text.substring(0, endIdx).trim();
-          } else {
-            sanskrit = data.content_text;
+          const candidateVerse = parts[0];
+          // Only use first part as sanskrit if it looks like verse text
+          if (looksLikeVerseText(candidateVerse)) {
+            sanskrit = candidateVerse;
           }
+          if (isTruncatedText(hindi)) hindi = parts.slice(1).join('\n\n');
+        } else if (looksLikeVerseText(data.content_text)) {
+          // Single block — only use if it looks like verse text
+          sanskrit = data.content_text;
         }
       }
       current = { ...current, ...data, sanskrit_text: sanskrit, hindi_text: hindi };
@@ -522,9 +533,12 @@ const ensureFullVerseText = async (matched) => {
         return xLen > (curLen + 30) && (xSlug === curSlug || xTitle === curTitle || (curTitle && xTitle.startsWith(curTitle)));
       });
       if (longerMemoryItem) {
+        // Only use memory item's sanskrit_text if it looks like actual verse content
+        const memorySanskrit = longerMemoryItem.sanskrit_text || '';
         current = {
           ...current,
-          sanskrit_text: longerMemoryItem.sanskrit_text || current.sanskrit_text,
+          sanskrit_text: (isTruncatedText(current.sanskrit_text) && looksLikeVerseText(memorySanskrit))
+            ? memorySanskrit : current.sanskrit_text,
           hindi_text: longerMemoryItem.hindi_text || current.hindi_text
         };
       }
@@ -545,7 +559,9 @@ const ensureFullVerseText = async (matched) => {
             (x.slug && targetSlug && x.slug.toLowerCase() === targetSlug)
           );
           if (foundBackup) {
-            const sans = foundBackup.sanskrit_text || foundBackup.content_text || current.sanskrit_text;
+            // Never use content_text as sanskrit fallback — it's often prose/commentary
+            const sans = (foundBackup.sanskrit_text && looksLikeVerseText(foundBackup.sanskrit_text))
+              ? foundBackup.sanskrit_text : current.sanskrit_text;
             const hin = foundBackup.hindi_text || current.hindi_text;
             current = { ...current, ...foundBackup, sanskrit_text: sans, hindi_text: hin };
           }
