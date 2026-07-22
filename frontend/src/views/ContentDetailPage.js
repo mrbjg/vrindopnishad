@@ -1603,9 +1603,9 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
       {isPaathMode && (
         <div
-          className={`fixed inset-0 z-[99999] overflow-y-auto transition-colors duration-500 ${paathTheme === 'sepia'
-            ? 'bg-[#FAF6EE]'
-            : 'bg-[#090A0F]'
+          className={`fixed inset-0 z-[99999] overflow-y-auto transition-colors duration-500 paath-mode-container ${paathTheme === 'sepia'
+            ? 'paath-theme-sepia bg-[#FAF6EE]'
+            : 'paath-theme-dark bg-[#090A0F]'
             }`}
           style={{
             fontFamily: "'Noto Serif Devanagari', 'Tiro Devanagari Sanskrit', serif",
@@ -1690,7 +1690,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                     {saintSlug ? (
                       <Link
                         to={isHindiRoute ? `/hi/saints/${saintSlug}` : `/saints/${saintSlug}`}
-                        className={`text-lg md:text-xl font-bold font-headings tracking-wide hover:underline underline-offset-4 transition-all ${paathTheme === 'sepia'
+                        className={`paath-author-link text-lg md:text-xl font-bold font-headings tracking-wide hover:underline underline-offset-4 transition-all ${paathTheme === 'sepia'
                           ? 'text-[#B45309] hover:text-[#92400E] decoration-[#B45309]/30'
                           : 'text-amber-400 hover:text-amber-300 decoration-amber-400/30'
                           }`}
@@ -1698,7 +1698,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                         {displayAuthorName}
                       </Link>
                     ) : (
-                      <span className={`text-lg md:text-xl font-bold font-headings tracking-wide ${paathTheme === 'sepia' ? 'text-[#B45309]' : 'text-amber-400'}`}>
+                      <span className={`paath-author-name text-lg md:text-xl font-bold font-headings tracking-wide ${paathTheme === 'sepia' ? 'text-[#B45309]' : 'text-amber-400'}`}>
                         {displayAuthorName}
                       </span>
                     )}
@@ -1709,8 +1709,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
             {/* Title */}
             <h1
-              className="text-2xl sm:text-3xl md:text-[2.75rem] font-bold mb-16 leading-relaxed md:leading-[1.4]"
-              style={{ color: paathTheme === 'sepia' ? '#231A15' : '#F9FAFB' }}
+              className="paath-title text-2xl sm:text-3xl md:text-[2.75rem] font-bold mb-16 leading-relaxed md:leading-[1.4]"
+              style={{ color: paathTheme === 'sepia' ? '#1A1410' : '#FFFFFF' }}
             >
               {content.title}
             </h1>

@@ -4661,3 +4661,46 @@ html:not(.dark) .bg-\[\#121216\]\/95 {
     background: var(--header-bg) !important;
     border-color: var(--glass-border) !important;
 }
+
+/* ========================================
+   Paath Mode (Fullscreen) Unbeatable High-Contrast Overrides
+   ======================================== */
+.paath-mode-container.paath-theme-dark {
+    background-color: #090A0F !important;
+    color: #F5F0E8 !important;
+}
+
+.paath-mode-container.paath-theme-dark h1,
+.paath-mode-container.paath-theme-dark .paath-title {
+    color: #FFFFFF !important;
+}
+
+.paath-mode-container.paath-theme-dark a.paath-author-link,
+.paath-mode-container.paath-theme-dark span.paath-author-name,
+.paath-mode-container.paath-theme-dark .paath-author {
+    color: #FBBF24 !important;
+}
+
+.paath-mode-container.paath-theme-dark a.paath-author-link:hover {
+    color: #FDE68A !important;
+}
+
+.paath-mode-container.paath-theme-sepia {
+    background-color: #FAF6EE !important;
+    color: #2D241E !important;
+}
+
+.paath-mode-container.paath-theme-sepia h1,
+.paath-mode-container.paath-theme-sepia .paath-title {
+    color: #1A1410 !important;
+}
+
+.paath-mode-container.paath-theme-sepia a.paath-author-link,
+.paath-mode-container.paath-theme-sepia span.paath-author-name,
+.paath-mode-container.paath-theme-sepia .paath-author {
+    color: #B45309 !important;
+}
+
+.paath-mode-container.paath-theme-sepia a.paath-author-link:hover {
+    color: #92400E !important;
+}
