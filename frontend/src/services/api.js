@@ -634,16 +634,49 @@ export const apiService = {
 
   getSaintBySlug: async (slug) => {
     if (!slug) return null;
+    const cleanSlug = decodeURIComponent(slug).toLowerCase().trim();
     try {
-      const res = await fetch(`/data/saints/${slug}.json`);
+      const res = await fetch(`/data/saints/${cleanSlug}.json`);
       if (res.ok) {
         return await res.json();
       }
     } catch (e) {
-      console.warn(`[Shard-Fetch] Saint shard fetch failed for ${slug}:`, e);
+      console.warn(`[Shard-Fetch] Saint shard fetch failed for ${cleanSlug}:`, e);
     }
+
     const relations = await apiService.getRelations();
-    return (relations.sants || []).find(s => s.slug === slug) || null;
+    const sants = relations.sants || [];
+
+    // 1. Direct slug match
+    let matched = sants.find(s => (s.slug || '').toLowerCase() === cleanSlug);
+    if (matched) return matched;
+
+    // 2. Match after stripping common suffixes (e.g. -ramayana, -ji, -maharaj, -vani)
+    const baseSlug = cleanSlug.replace(/-(ramayana|ji|maharaj|vani|pad|dasa|das)$/g, '');
+    matched = sants.find(s => (s.slug || '').toLowerCase() === baseSlug);
+    if (matched) {
+      try {
+        const res = await fetch(`/data/saints/${matched.slug}.json`);
+        if (res.ok) return await res.json();
+      } catch (e) {}
+      return matched;
+    }
+
+    // 3. Prefix / Partial match
+    matched = sants.find(s => {
+      const sSlug = (s.slug || '').toLowerCase();
+      return sSlug && (cleanSlug.startsWith(sSlug) || sSlug.startsWith(cleanSlug) || cleanSlug.includes(sSlug));
+    });
+
+    if (matched) {
+      try {
+        const res = await fetch(`/data/saints/${matched.slug}.json`);
+        if (res.ok) return await res.json();
+      } catch (e) {}
+      return matched;
+    }
+
+    return null;
   },
 
   getStotraBySlug: async (slug) => {

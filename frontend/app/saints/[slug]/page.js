@@ -195,7 +195,7 @@ export default async function SaintRoute({ params }) {
     notFound();
   }
 
-  if (params.slug !== saint.slug) {
+  if (decodedSlug !== saint.slug && !decodedSlug.startsWith(saint.slug)) {
     permanentRedirect(`/saints/${saint.slug}`);
   }
 

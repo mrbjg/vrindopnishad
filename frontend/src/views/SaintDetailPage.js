@@ -65,21 +65,11 @@ const SaintDetailPage = ({ initialSaint }) => {
     if (fetchedSaint) {
       setSant(fetchedSaint);
       setLoading(false);
-    }
-  }, [fetchedSaint]);
-
-  const [activeDetailTab, setActiveDetailTab] = useState('bio');
-
-  useEffect(() => {
-    if (initialSaint) {
+    } else if (initialSaint) {
       setSant(initialSaint);
       setLoading(false);
-      return;
     }
-    if (sant) {
-      setLoading(false);
-    }
-  }, [slug, initialSaint]);
+  }, [fetchedSaint, initialSaint, slug]);
 
   if (loading) {
     return <PageSkeleton variant="saint" />;
