@@ -30,6 +30,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import FontWheel from '../components/FontWheel';
 import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { Helmet } from 'react-helmet-async';
+import StotraDetailPage from './StotraDetailPage';
 import { transliterate } from '../utils/transliterate';
 import { extractRelations, parseAuthorField, getNormalizedSaintSlug, getNormalizedBookSlug, getNormalizedBookName, slugify } from '../utils/relations';
 
@@ -298,6 +299,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
     id ? `content_${id}` : null,
     async ({ signal }) => {
       const decodedId = decodeURIComponent(id);
+      const stotraData = await apiService.getStotraBySlug(decodedId);
+      if (stotraData) return { isStotra: true, stotraData };
       return await apiService.getContentById(decodedId, { signal });
     },
     {
@@ -695,6 +698,10 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
       default: return 'badge-general';
     }
   };
+
+  if (fetchedData?.isStotra) {
+    return <StotraDetailPage stotra={fetchedData.stotraData} slug={id} />;
+  }
 
   const showSkeleton = loading && !content;
 

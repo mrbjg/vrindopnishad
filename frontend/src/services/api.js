@@ -626,6 +626,20 @@ export const apiService = {
     return (relations.sants || []).find(s => s.slug === slug) || null;
   },
 
+  getStotraBySlug: async (slug) => {
+    if (!slug) return null;
+    try {
+      const res = await fetch('/data/stotras_data.json');
+      if (res.ok) {
+        const data = await res.json();
+        if (data[slug]) return data[slug];
+      }
+    } catch (e) {
+      console.warn(`[Stotra-Fetch] Failed to fetch stotra for ${slug}:`, e);
+    }
+    return null;
+  },
+
   getAllContent: async (category = null, limit = 25000) => {
     // Fast path: 'home' category fetches a small pre-built backup (100 items) for instant first paint
     if (category === 'home') {
