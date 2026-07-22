@@ -511,138 +511,138 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
       if (active) performConceptScan(content);
     }, 40);
 
-        // Defer the extraction of relations to avoid blocking UI rendering
-        const timer = setTimeout(async () => {
-          if (!active) return;
-          try {
-            const allItems = await apiService.getAllContent(null, 25000);
-            const relations = extractRelations(allItems);
+    // Defer the extraction of relations to avoid blocking UI rendering
+    const timer = setTimeout(async () => {
+      if (!active) return;
+      try {
+        const allItems = await apiService.getAllContent(null, 25000);
+        const relations = extractRelations(allItems);
 
-            // 1. Saint Matching
-            const authorInfo = parseAuthorField(content.author || "");
-            let saintName = authorInfo.saintName;
-            if (!saintName && content.hindi_text) {
-              const attrMatch = content.hindi_text.match(/[—–-]\s*([^\n,()]+)/);
-              if (attrMatch) saintName = attrMatch[1].trim();
-            }
-            let matchedSaint = null;
-            if (saintName) {
-              const saintSlug = getNormalizedSaintSlug(saintName);
-              matchedSaint = relations.sants.find(s => s.slug === saintSlug || s.name === saintName);
-            }
+        // 1. Saint Matching
+        const authorInfo = parseAuthorField(content.author || "");
+        let saintName = authorInfo.saintName;
+        if (!saintName && content.hindi_text) {
+          const attrMatch = content.hindi_text.match(/[—–-]\s*([^\n,()]+)/);
+          if (attrMatch) saintName = attrMatch[1].trim();
+        }
+        let matchedSaint = null;
+        if (saintName) {
+          const saintSlug = getNormalizedSaintSlug(saintName);
+          matchedSaint = relations.sants.find(s => s.slug === saintSlug || s.name === saintName);
+        }
 
-            // 2. Grantha Matching
-            let bookName = authorInfo.bookName;
-            if (!bookName && content.hindi_text) {
-              const lineMatch = content.hindi_text.match(/[—–-]\s*[^\n,]+,\s*([^\n()]+)/);
-              if (lineMatch) bookName = lineMatch[1].trim();
-            }
-            let matchedBook = null;
-            if (bookName) {
-              const bookSlug = getNormalizedBookSlug(bookName);
-              matchedBook = relations.books.find(b => b.slug === bookSlug || b.name === bookName);
-            }
+        // 2. Grantha Matching
+        let bookName = authorInfo.bookName;
+        if (!bookName && content.hindi_text) {
+          const lineMatch = content.hindi_text.match(/[—–-]\s*[^\n,]+,\s*([^\n()]+)/);
+          if (lineMatch) bookName = lineMatch[1].trim();
+        }
+        let matchedBook = null;
+        if (bookName) {
+          const bookSlug = getNormalizedBookSlug(bookName);
+          matchedBook = relations.books.find(b => b.slug === bookSlug || b.name === bookName);
+        }
 
-            const textToScan = [
-              content.title,
-              content.author,
-              content.hindi_text,
-              content.sanskrit_text,
-              content.description
-            ].filter(Boolean).join(' ').toLowerCase();
+        const textToScan = [
+          content.title,
+          content.author,
+          content.hindi_text,
+          content.sanskrit_text,
+          content.description
+        ].filter(Boolean).join(' ').toLowerCase();
 
-            if (textToScan.includes('सेवा कुंज') || textToScan.includes('सेवाकुंज') || textToScan.includes('seva kunj')) {
-              matchedBook = relations.books.find(b => b.slug === 'seva-kunj-texts') || matchedBook;
-            }
+        if (textToScan.includes('सेवा कुंज') || textToScan.includes('सेवाकुंज') || textToScan.includes('seva kunj')) {
+          matchedBook = relations.books.find(b => b.slug === 'seva-kunj-texts') || matchedBook;
+        }
 
-            // 3. Raga Matching
-            const ragaName = extractCleanRaga(content.sanskrit_text, content.hindi_text, content.title);
-            const matchedRaga = ragaName ? relations.ragas.find(r => r.name === ragaName) : null;
+        // 3. Raga Matching
+        const ragaName = extractCleanRaga(content.sanskrit_text, content.hindi_text, content.title);
+        const matchedRaga = ragaName ? relations.ragas.find(r => r.name === ragaName) : null;
 
-            // 4. Multi-Tier Recommendation Engine
-            const currentTags = new Set((content.tags || []).map(t => t.toLowerCase()));
-            const currentId = content.id?.toString();
-            const currentAuthor = (content.author || '').toLowerCase();
-            const currentCategory = (content.category || '').toLowerCase();
+        // 4. Multi-Tier Recommendation Engine
+        const currentTags = new Set((content.tags || []).map(t => t.toLowerCase()));
+        const currentId = content.id?.toString();
+        const currentAuthor = (content.author || '').toLowerCase();
+        const currentCategory = (content.category || '').toLowerCase();
 
-            const candidates = allItems.filter(item =>
-              item.id?.toString() !== currentId &&
-              item.category?.toLowerCase() !== 'saint'
-            );
+        const candidates = allItems.filter(item =>
+          item.id?.toString() !== currentId &&
+          item.category?.toLowerCase() !== 'saint'
+        );
 
-            const scoredList = candidates.map(item => {
-              const itemTags = new Set((item.tags || []).map(t => t.toLowerCase()));
-              let score = 0;
-              let matchReason = isHindiRoute ? "सम्बन्धित पावन पद" : "Related Passage";
+        const scoredList = candidates.map(item => {
+          const itemTags = new Set((item.tags || []).map(t => t.toLowerCase()));
+          let score = 0;
+          let matchReason = isHindiRoute ? "सम्बन्धित पावन पद" : "Related Passage";
 
-              const itemAuthor = (item.author || '').toLowerCase();
-              const itemCategory = (item.category || '').toLowerCase();
+          const itemAuthor = (item.author || '').toLowerCase();
+          const itemCategory = (item.category || '').toLowerCase();
 
-              // Same Saint
-              if (currentAuthor && itemAuthor && (itemAuthor === currentAuthor || (matchedSaint && itemAuthor.includes(matchedSaint.name.toLowerCase())))) {
-                score += 6;
-                matchReason = isHindiRoute ? `सन्त ${matchedSaint?.name ? matchedSaint.name.substring(0, 14) : 'रचित'}` : `By ${matchedSaint?.hinglishName || 'Same Saint'}`;
-              }
-
-              // Same Raga
-              if (ragaName && ((item.sanskrit_text && item.sanskrit_text.includes(ragaName)) || (item.hindi_text && item.hindi_text.includes(ragaName)) || (item.title && item.title.includes(ragaName)))) {
-                score += 5;
-                matchReason = isHindiRoute ? `समान राग (${ragaName})` : `Same Raga (${ragaName})`;
-              }
-
-              // Tag overlap
-              let tagMatches = 0;
-              for (const tag of itemTags) {
-                if (currentTags.has(tag) && tag !== 'vrindavaani') {
-                  tagMatches++;
-                  score += 3;
-                }
-              }
-              if (tagMatches > 0 && score < 5) {
-                matchReason = isHindiRoute ? "समान भाव / विषय" : "Matching Theme";
-              }
-
-              // Same Category
-              if (currentCategory && itemCategory === currentCategory) {
-                score += 2;
-                if (score <= 2) {
-                  matchReason = isHindiRoute ? `समान श्रेणी (${item.category})` : `Same ${item.category}`;
-                }
-              }
-
-              return { item, score, matchReason };
-            });
-
-            scoredList.sort((a, b) => b.score - a.score);
-
-            let recommendedItems = scoredList.filter(s => s.score > 0);
-
-            // Guaranteed padding to 6 recommendations
-            if (recommendedItems.length < 6) {
-              const existingIds = new Set(recommendedItems.map(r => r.item.id));
-              for (const candidate of candidates) {
-                if (!existingIds.has(candidate.id)) {
-                  recommendedItems.push({
-                    item: candidate,
-                    score: 1,
-                    matchReason: isHindiRoute ? "अनुशंसित पावन पद्यावली" : "Recommended Reading"
-                  });
-                  existingIds.add(candidate.id);
-                  if (recommendedItems.length >= 6) break;
-                }
-              }
-            }
-
-            if (active) {
-              setRelatedSaint(matchedSaint || null);
-              setRelatedBook(matchedBook || null);
-              setRelatedRaga(matchedRaga || null);
-              setRelatedVerses(recommendedItems.slice(0, 6));
-            }
-          } catch (err) {
-            console.warn('Deferred relations loading failed:', err);
+          // Same Saint
+          if (currentAuthor && itemAuthor && (itemAuthor === currentAuthor || (matchedSaint && itemAuthor.includes(matchedSaint.name.toLowerCase())))) {
+            score += 6;
+            matchReason = isHindiRoute ? `सन्त ${matchedSaint?.name ? matchedSaint.name.substring(0, 14) : 'रचित'}` : `By ${matchedSaint?.hinglishName || 'Same Saint'}`;
           }
-        }, 60);
+
+          // Same Raga
+          if (ragaName && ((item.sanskrit_text && item.sanskrit_text.includes(ragaName)) || (item.hindi_text && item.hindi_text.includes(ragaName)) || (item.title && item.title.includes(ragaName)))) {
+            score += 5;
+            matchReason = isHindiRoute ? `समान राग (${ragaName})` : `Same Raga (${ragaName})`;
+          }
+
+          // Tag overlap
+          let tagMatches = 0;
+          for (const tag of itemTags) {
+            if (currentTags.has(tag) && tag !== 'vrindavaani') {
+              tagMatches++;
+              score += 3;
+            }
+          }
+          if (tagMatches > 0 && score < 5) {
+            matchReason = isHindiRoute ? "समान भाव / विषय" : "Matching Theme";
+          }
+
+          // Same Category
+          if (currentCategory && itemCategory === currentCategory) {
+            score += 2;
+            if (score <= 2) {
+              matchReason = isHindiRoute ? `समान श्रेणी (${item.category})` : `Same ${item.category}`;
+            }
+          }
+
+          return { item, score, matchReason };
+        });
+
+        scoredList.sort((a, b) => b.score - a.score);
+
+        let recommendedItems = scoredList.filter(s => s.score > 0);
+
+        // Guaranteed padding to 6 recommendations
+        if (recommendedItems.length < 6) {
+          const existingIds = new Set(recommendedItems.map(r => r.item.id));
+          for (const candidate of candidates) {
+            if (!existingIds.has(candidate.id)) {
+              recommendedItems.push({
+                item: candidate,
+                score: 1,
+                matchReason: isHindiRoute ? "अनुशंसित पावन पद्यावली" : "Recommended Reading"
+              });
+              existingIds.add(candidate.id);
+              if (recommendedItems.length >= 6) break;
+            }
+          }
+        }
+
+        if (active) {
+          setRelatedSaint(matchedSaint || null);
+          setRelatedBook(matchedBook || null);
+          setRelatedRaga(matchedRaga || null);
+          setRelatedVerses(recommendedItems.slice(0, 6));
+        }
+      } catch (err) {
+        console.warn('Deferred relations loading failed:', err);
+      }
+    }, 60);
 
     return () => {
       active = false;
@@ -943,8 +943,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 <button
                   onClick={toggleBookmark}
                   className={`flex items-center justify-center w-9 h-9 rounded-full border transition-all ${isBookmarked
-                      ? 'bg-[rgba(var(--primary-rgb),0.15)] border-[var(--primary-color)] text-[var(--primary-color)] shadow-sm'
-                      : 'border-[var(--glass-border)] bg-[var(--glass-bg)] text-stone-700 dark:text-white/60 hover:text-stone-900 dark:hover:text-white hover:border-[rgba(var(--primary-rgb),0.3)]'
+                    ? 'bg-[rgba(var(--primary-rgb),0.15)] border-[var(--primary-color)] text-[var(--primary-color)] shadow-sm'
+                    : 'border-[var(--glass-border)] bg-[var(--glass-bg)] text-stone-700 dark:text-white/60 hover:text-stone-900 dark:hover:text-white hover:border-[rgba(var(--primary-rgb),0.3)]'
                     }`}
                   title={isBookmarked ? (isHindiRoute ? "सहेजा गया" : "Saved") : (isHindiRoute ? "बुकमार्क" : "Bookmark")}
                   aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
@@ -977,8 +977,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 <button
                   onClick={() => updateSetting('lineByLine', !settings.lineByLine)}
                   className={`flex items-center justify-center w-9 h-9 rounded-full border transition-all ${settings.lineByLine
-                      ? 'bg-[rgba(var(--primary-rgb),0.15)] border-[var(--primary-color)] text-[var(--primary-color)]'
-                      : 'border-[var(--glass-border)] bg-[var(--glass-bg)] text-stone-700 dark:text-white/60 hover:text-stone-900 dark:hover:text-white hover:border-[rgba(var(--primary-rgb),0.3)]'
+                    ? 'bg-[rgba(var(--primary-rgb),0.15)] border-[var(--primary-color)] text-[var(--primary-color)]'
+                    : 'border-[var(--glass-border)] bg-[var(--glass-bg)] text-stone-700 dark:text-white/60 hover:text-stone-900 dark:hover:text-white hover:border-[rgba(var(--primary-rgb),0.3)]'
                     }`}
                   title={settings.lineByLine ? (isHindiRoute ? "पंक्ति-दर-पंक्ति मोड चालू" : "Line-by-line mode active") : (isHindiRoute ? "पंक्ति-दर-पंक्ति मोड चालू करें" : "Toggle line-by-line mode")}
                   aria-label="Toggle line-by-line mode"
@@ -1031,8 +1031,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                   {/* Verse body — dynamic size, centered */}
                   <div
                     className={`mx-auto w-full max-w-2xl ${settings.fontStyle === 'Sans' ? 'font-sans' :
-                        settings.fontStyle === 'Inter' ? 'font-inter' :
-                          'font-headings'
+                      settings.fontStyle === 'Inter' ? 'font-inter' :
+                        'font-headings'
                       }`}
                     style={{ containerType: 'inline-size' }}
                   >
@@ -1076,8 +1076,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                   </h2>
                   <div
                     className={`w-full ${settings.fontStyle === 'Sans' ? 'font-sans' :
-                        settings.fontStyle === 'Inter' ? 'font-inter' :
-                          'font-headings'
+                      settings.fontStyle === 'Inter' ? 'font-inter' :
+                        'font-headings'
                       }`}
                     style={{ containerType: 'inline-size' }}
                   >
@@ -1188,8 +1188,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                   <button
                     onClick={toggleBookmark}
                     className={`flex items-center justify-center w-11 h-11 shrink-0 aspect-square rounded-full border transition-all ${isBookmarked
-                        ? 'bg-primary/20 border-primary text-primary'
-                        : 'bg-white/5 border-white/10 text-white/60'
+                      ? 'bg-primary/20 border-primary text-primary'
+                      : 'bg-white/5 border-white/10 text-white/60'
                       }`}
                   >
                     <Bookmark size={18} className={isBookmarked ? "fill-current" : ""} />
@@ -1595,15 +1595,15 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
       {isPaathMode && (
         <div
           className={`fixed inset-0 z-[99999] overflow-y-auto transition-all duration-300 ${paathTheme === 'sepia'
-              ? 'bg-[#f5ebd6] text-[#2c2212]'
-              : 'bg-[#09090b] text-[#e3ded0]'
+            ? 'bg-[#f5ebd6] text-[#2c2212]'
+            : 'bg-[#09090b] text-[#e3ded0]'
             }`}
           style={{ fontFamily: "'Noto Serif Devanagari', 'Tiro Devanagari Sanskrit', serif" }}
         >
           {/* Controls Header */}
           <div className={`sticky top-0 z-[100000] w-full px-6 py-4 flex items-center justify-between backdrop-blur-md border-b ${paathTheme === 'sepia'
-              ? 'bg-[#f5ebd6]/90 border-[#2c2212]/10'
-              : 'bg-[#09090b]/90 border-[#e3ded0]/10'
+            ? 'bg-[#f5ebd6]/90 border-[#2c2212]/10'
+            : 'bg-[#09090b]/90 border-[#e3ded0]/10'
             }`}>
             <div className="flex items-center gap-3">
               <button
@@ -1616,8 +1616,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                   } catch (e) { }
                 }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-semibold ${paathTheme === 'sepia'
-                    ? 'border-[#2c2212]/20 hover:bg-[#2c2212]/5 text-[#2c2212]'
-                    : 'border-[#e3ded0]/20 hover:bg-[#e3ded0]/5 text-[#e3ded0]'
+                  ? 'border-[#2c2212]/20 hover:bg-[#2c2212]/5 text-[#2c2212]'
+                  : 'border-[#e3ded0]/20 hover:bg-[#e3ded0]/5 text-[#e3ded0]'
                   }`}
               >
                 <Minimize2 size={14} />
@@ -1631,8 +1631,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 <button
                   onClick={() => setPaathTheme('sepia')}
                   className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 transition-all ${paathTheme === 'sepia'
-                      ? 'bg-[#2c2212] text-[#f5ebd6]'
-                      : 'opacity-50'
+                    ? 'bg-[#2c2212] text-[#f5ebd6]'
+                    : 'opacity-50'
                     }`}
                 >
                   <Sun size={12} />
@@ -1641,8 +1641,8 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 <button
                   onClick={() => setPaathTheme('dark')}
                   className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 transition-all ${paathTheme === 'dark'
-                      ? 'bg-[#e3ded0] text-[#09090b]'
-                      : 'opacity-50'
+                    ? 'bg-[#e3ded0] text-[#09090b]'
+                    : 'opacity-50'
                     }`}
                 >
                   <Moon size={12} />

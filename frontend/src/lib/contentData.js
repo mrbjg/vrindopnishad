@@ -357,12 +357,26 @@ export function loadRawData() {
       if (cachePayload.isFullyCompiled) {
         const verses = cachePayload.verses || [];
         const saintsRaw = cachePayload.saintsRaw || [];
+        const allItems = [...verses, ...saintsRaw];
+        let saints = cachePayload.saints || [];
+        let books = cachePayload.books || [];
+        let ragas = cachePayload.ragas || [];
+
+        // If cache was written without relations, rebuild them now
+        if (saints.length === 0 && allItems.length > 0) {
+          console.log('[DataCache] Cache missing relations, rebuilding from items...');
+          const relations = buildRelations(allItems);
+          saints = relations.saints || [];
+          books = relations.books || [];
+          ragas = relations.ragas || [];
+        }
+
         const data = {
-          items: [...verses, ...saintsRaw],
+          items: allItems,
           verses: verses,
-          saints: cachePayload.saints || [],
-          books: cachePayload.books || [],
-          ragas: cachePayload.ragas || []
+          saints: saints,
+          books: books,
+          ragas: ragas
         };
         localFallbackCache = data;
         contentCache = data;

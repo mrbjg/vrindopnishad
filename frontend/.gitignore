@@ -30,6 +30,8 @@ public/sitemap.xml
 # Data Cache
 *remote_cache.json
 *processed_cache.json
+public/data/content_backup.json
+public/data/relations_backup.json
 
 # Scratch files
 scratch/
