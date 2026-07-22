@@ -17,12 +17,13 @@ export const metadata = {
 
 export default function HindiContentListRoute() {
   const verses = getAllVersesLightweight();
+  const initialVerses = verses.slice(0, 50);
   const categories = ['shloka', 'strotra', 'poem'];
 
   return (
     <Layout>
       <ContentListPage
-        initialContent={verses}
+        initialContent={initialVerses}
         initialCategories={categories}
       />
     </Layout>

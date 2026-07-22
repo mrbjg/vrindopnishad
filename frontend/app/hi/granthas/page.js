@@ -13,10 +13,17 @@ export const metadata = {
 
 export default function HindiGranthasListRoute() {
   const books = getAllGranthas();
+  const lightweightBooks = books.map(b => ({
+    id: b.id,
+    name: b.name || '',
+    hindiName: b.hindiName || b.name || '',
+    slug: b.slug || '',
+    count: b.count || 0
+  }));
 
   return (
     <Layout>
-      <BooksListPage initialBooks={books} />
+      <BooksListPage initialBooks={lightweightBooks} />
     </Layout>
   );
 }

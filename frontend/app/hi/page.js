@@ -76,6 +76,28 @@ export default async function HindiHomeRoute() {
     "logo": "https://path.vrindopnishad.in/official-logo-dark.svg"
   };
 
+  // Create lightweight stubs for initial SSR rendering to keep HTML payload <50KB
+  const lightweightSaints = saints.slice(0, 12).map(s => ({
+    id: s.id,
+    name: s.name || '',
+    hindiName: s.hindiName || s.name || '',
+    slug: s.slug || '',
+    period: s.period || ''
+  }));
+
+  const lightweightBooks = books.slice(0, 12).map(b => ({
+    id: b.id,
+    name: b.name || '',
+    hindiName: b.hindiName || b.name || '',
+    slug: b.slug || '',
+    count: b.count || 0
+  }));
+
+  const lightweightRagas = ragas.slice(0, 12).map(r => ({
+    name: typeof r === 'string' ? r : (r.name || ''),
+    slug: typeof r === 'string' ? r : (r.slug || '')
+  }));
+
   return (
     <>
       <script
@@ -91,9 +113,9 @@ export default async function HindiHomeRoute() {
           initialLatestVerses={latestVerses}
           initialAajKaPad={aajKaPad}
           initialCategoryStats={categoryStats}
-          initialSaints={saints}
-          initialBooks={books}
-          initialRagas={ragas}
+          initialSaints={lightweightSaints}
+          initialBooks={lightweightBooks}
+          initialRagas={lightweightRagas}
         />
       </Layout>
     </>

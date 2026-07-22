@@ -14,12 +14,13 @@ export const metadata = generatePageMetadata({
 
 export default function ContentListRoute() {
   const verses = getAllVersesLightweight();
+  const initialVerses = verses.slice(0, 50);
   const categories = ['shloka', 'strotra', 'poem'];
 
   return (
     <Layout>
       <ContentListPage
-        initialContent={verses}
+        initialContent={initialVerses}
         initialCategories={categories}
       />
     </Layout>

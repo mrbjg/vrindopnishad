@@ -14,10 +14,17 @@ export const metadata = generatePageMetadata({
 
 export default function SaintsListRoute() {
   const saints = getAllSaints();
+  const lightweightSaints = saints.map(s => ({
+    id: s.id,
+    name: s.name || '',
+    hindiName: s.hindiName || s.name || '',
+    slug: s.slug || '',
+    period: s.period || ''
+  }));
 
   return (
     <Layout>
-      <SaintsListPage initialSaints={saints} />
+      <SaintsListPage initialSaints={lightweightSaints} />
     </Layout>
   );
 }
