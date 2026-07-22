@@ -56,6 +56,15 @@ export const Link = React.forwardRef(({ to, href, children, onClick, ...props },
     destination.startsWith('tel:')
   );
   
+  const handleMouseEnter = (e) => {
+    if (props.onMouseEnter) props.onMouseEnter(e);
+    if (!isHashOrExternal && destination && typeof destination === 'string') {
+      try {
+        router.prefetch(destination);
+      } catch (err) {}
+    }
+  };
+
   const handleClick = (e) => {
     if (onClick) onClick(e);
     if (e.defaultPrevented) return;
@@ -84,7 +93,7 @@ export const Link = React.forwardRef(({ to, href, children, onClick, ...props },
   }
 
   return (
-    <a href={destination} ref={ref} onClick={handleClick} {...props}>
+    <a href={destination} ref={ref} onClick={handleClick} onMouseEnter={handleMouseEnter} onFocus={handleMouseEnter} {...props}>
       {children}
     </a>
   );
@@ -131,6 +140,10 @@ export function useNavigate() {
       if (to === -1) router.back();
       else if (to === 1) router.forward();
       return;
+    }
+    const variant = getSkeletonVariant(to);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('instant-navigate', { detail: { variant, path: to } }));
     }
     if (options?.replace) {
       router.replace(to);

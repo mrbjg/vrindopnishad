@@ -318,8 +318,9 @@ const LayoutInner = ({ children }) => {
 
   return (
     <div className={`min-h-screen relative text-foreground ${hideHeaderSearch ? 'layout-no-header-search' : ''} ${isKbRoute ? 'lg:h-screen lg:min-h-0 lg:overflow-hidden' : ''}`}>
-      <SkipLink />
-      <div className="morning-shine" />
+      {transition && (
+        <div className="fixed top-0 left-0 right-0 z-[10000] h-[3px] bg-gradient-to-r from-amber-500 via-amber-300 to-amber-500 animate-pulse shadow-[0_0_12px_rgba(245,158,11,0.9)] pointer-events-none" />
+      )}
       
       
 

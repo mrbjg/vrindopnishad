@@ -145,15 +145,7 @@ const AutoFitVerse = ({ text, sizeLevel = 2, fontStyle, isHindiRoute, centered =
       .map(p => p.trim())
       .filter(Boolean);
 
-    const filtered = [];
-    for (const line of rawLines) {
-      filtered.push(line);
-      const isAttribution = /^[—–-]\s*(?:श्री|जगद्गुरु|स्वामी|हठ|रसिया|रसिक|सूरदास|मीरा|कबीर|हित|गोविन्द|गोविंद|भगवत|हरिदास|देव|रूप|सनातन|जीव|ललित|Jagadguru|Shri|Swami|Goswami)/i.test(line);
-      if (isAttribution) {
-        break;
-      }
-    }
-    return filtered;
+    return rawLines;
   }, [text]);
 
   const maxLineLength = React.useMemo(() => {
@@ -327,9 +319,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
       richestText = rawContentText;
     }
 
-    const cleanedVerse = cleanVerseOnly(richestText);
-    const { verse } = splitVerseAndTranslation(cleanedVerse);
-    const finalVerseText = cleanVerseOnly(verse || cleanedVerse);
+    const finalVerseText = richestText || rawSanskrit || rawHindi;
 
     return {
       ...activeData,

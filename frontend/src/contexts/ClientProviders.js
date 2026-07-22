@@ -199,10 +199,7 @@ export function ClientProviders({ children }) {
       console.log(`[InstantNavigate] Event received: variant="${variant}", path="${path}" (normalized: "${targetClean}"), currentPathname="${window.location.pathname}" (normalized: "${currentClean}")`);
       
       if (targetClean !== currentClean) {
-        console.log(`[InstantNavigate] Path mismatch detected. Bypassing instant skeleton swap to let Next.js load naturally: variant="${variant}"`);
-        // setTransition({ variant, path });
-      } else {
-        console.log(`[InstantNavigate] Same path clicked. Bypassing skeleton swap.`);
+        setTransition({ variant: variant || 'grid', path });
       }
     };
     window.addEventListener('instant-navigate', handleInstantNavigate);

@@ -462,6 +462,7 @@ const isTruncatedText = (str) => {
   if (!str) return true;
   const trimmed = str.trim();
   if (trimmed.endsWith('...') || trimmed.endsWith('…')) return true;
+  if (trimmed.length <= 120 && !/[॥।.\!\?\n\”\"'\]\)]/.test(trimmed.slice(-3))) return true;
   return false;
 };
 
