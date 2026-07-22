@@ -319,13 +319,20 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isPaathMode, setIsPaathMode] = useState(false);
-  const [paathTheme, setPaathTheme] = useState('sepia'); // 'sepia' or 'dark'
+  const [paathTheme, setPaathTheme] = useState('dark');
 
+  // Escape key exits Paath mode
   useEffect(() => {
-    if (isPaathMode) {
-      setPaathTheme(isDark ? 'dark' : 'sepia');
-    }
-  }, [isPaathMode, isDark]);
+    if (!isPaathMode) return;
+    const handleKey = (e) => {
+      if (e.key === 'Escape') {
+        setIsPaathMode(false);
+        try { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); } catch (_) {}
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [isPaathMode]);
 
   useEffect(() => {
     if (content) {
@@ -961,6 +968,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 </button>
                 <button
                   onClick={() => {
+                    setPaathTheme(isDark ? 'dark' : 'sepia');
                     setIsPaathMode(true);
                     try {
                       if (!document.fullscreenElement) {
@@ -1202,6 +1210,7 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                   </button>
                   <button
                     onClick={() => {
+                      setPaathTheme(isDark ? 'dark' : 'sepia');
                       setIsPaathMode(true);
                       try {
                         if (!document.fullscreenElement) {
@@ -1594,45 +1603,45 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
 
       {isPaathMode && (
         <div
-          className={`fixed inset-0 z-[99999] overflow-y-auto transition-all duration-300 ${paathTheme === 'sepia'
-            ? 'bg-[#f5ebd6] text-[#2c2212]'
-            : 'bg-[#09090b] text-[#e3ded0]'
+          className={`fixed inset-0 z-[99999] overflow-y-auto transition-colors duration-500 ${paathTheme === 'sepia'
+            ? 'bg-[#FAF6EE]'
+            : 'bg-[#090A0F]'
             }`}
-          style={{ fontFamily: "'Noto Serif Devanagari', 'Tiro Devanagari Sanskrit', serif" }}
+          style={{
+            fontFamily: "'Noto Serif Devanagari', 'Tiro Devanagari Sanskrit', serif",
+            color: paathTheme === 'sepia' ? '#2D241E' : '#F5F0E8'
+          }}
         >
           {/* Controls Header */}
-          <div className={`sticky top-0 z-[100000] w-full px-6 py-4 flex items-center justify-between backdrop-blur-md border-b ${paathTheme === 'sepia'
-            ? 'bg-[#f5ebd6]/90 border-[#2c2212]/10'
-            : 'bg-[#09090b]/90 border-[#e3ded0]/10'
-            }`}>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => {
-                  setIsPaathMode(false);
-                  try {
-                    if (document.fullscreenElement) {
-                      document.exitFullscreen().catch(() => { });
-                    }
-                  } catch (e) { }
-                }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-semibold ${paathTheme === 'sepia'
-                  ? 'border-[#2c2212]/20 hover:bg-[#2c2212]/5 text-[#2c2212]'
-                  : 'border-[#e3ded0]/20 hover:bg-[#e3ded0]/5 text-[#e3ded0]'
-                  }`}
-              >
-                <Minimize2 size={14} />
-                <span>{isHindiRoute ? 'सामान्य मोड' : 'Exit Paath Mode'}</span>
-              </button>
-            </div>
+          <div
+            className={`sticky top-0 z-[100000] w-full px-4 sm:px-6 py-3.5 flex items-center justify-between backdrop-blur-xl border-b ${paathTheme === 'sepia'
+              ? 'bg-[#F3ECE0]/95 border-[#E0D5C4]'
+              : 'bg-[#111319]/90 border-white/[0.08]'
+              }`}
+          >
+            <button
+              onClick={() => {
+                setIsPaathMode(false);
+                try { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); } catch (_) {}
+              }}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-semibold transition-all ${paathTheme === 'sepia'
+                ? 'border-[#C9B99A] text-[#6B5744] hover:bg-[#6B5744]/[0.06]'
+                : 'border-white/15 text-stone-300 hover:bg-white/[0.06]'
+                }`}
+            >
+              <Minimize2 size={14} />
+              <span>{isHindiRoute ? 'सामान्य मोड' : 'Exit'}</span>
+              <kbd className={`hidden sm:inline ml-1 text-[9px] px-1.5 py-0.5 rounded font-mono ${paathTheme === 'sepia' ? 'bg-[#6B5744]/10 text-[#6B5744]/60' : 'bg-white/10 text-white/40'}`}>Esc</kbd>
+            </button>
 
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3 sm:gap-5">
               {/* Theme Switcher */}
-              <div className="flex items-center gap-1 rounded-full border p-0.5 border-current/10">
+              <div className={`flex items-center gap-0.5 rounded-full p-0.5 ${paathTheme === 'sepia' ? 'bg-[#E0D5C4]/60' : 'bg-white/[0.06]'}`}>
                 <button
                   onClick={() => setPaathTheme('sepia')}
-                  className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 transition-all ${paathTheme === 'sepia'
-                    ? 'bg-[#2c2212] text-[#f5ebd6]'
-                    : 'opacity-50'
+                  className={`px-3 py-1.5 rounded-full text-[11px] font-semibold flex items-center gap-1.5 transition-all ${paathTheme === 'sepia'
+                    ? 'bg-[#4A3728] text-[#FAF6EE] shadow-sm'
+                    : 'text-stone-400 hover:text-stone-200'
                     }`}
                 >
                   <Sun size={12} />
@@ -1640,9 +1649,9 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 </button>
                 <button
                   onClick={() => setPaathTheme('dark')}
-                  className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 transition-all ${paathTheme === 'dark'
-                    ? 'bg-[#e3ded0] text-[#09090b]'
-                    : 'opacity-50'
+                  className={`px-3 py-1.5 rounded-full text-[11px] font-semibold flex items-center gap-1.5 transition-all ${paathTheme === 'dark'
+                    ? 'bg-[#F5F0E8] text-[#0B0C0E] shadow-sm'
+                    : 'text-[#8B7E6F] hover:text-[#4A3728]'
                     }`}
                 >
                   <Moon size={12} />
@@ -1661,10 +1670,12 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
           </div>
 
           {/* Reading Area */}
-          <div className="max-w-3xl mx-auto px-6 py-12 md:py-20 flex flex-col items-center text-center">
+          <div className="max-w-3xl mx-auto px-5 sm:px-8 py-14 md:py-24 flex flex-col items-center text-center">
             {/* Header metadata */}
-            <div className="mb-12 flex flex-col items-center gap-3">
-              <span className={`text-[11px] uppercase tracking-[0.2em] font-semibold border px-3 py-1 rounded-full ${paathTheme === 'sepia' ? 'border-[#2c2212]/20' : 'border-[#e3ded0]/20'
+            <div className="mb-14 flex flex-col items-center gap-4">
+              <span className={`text-[10px] uppercase tracking-[0.25em] font-bold border px-3.5 py-1 rounded-full ${paathTheme === 'sepia'
+                ? 'border-[#B45309]/25 bg-[#B45309]/[0.06] text-[#92400E]'
+                : 'border-amber-400/20 bg-amber-400/[0.06] text-amber-300/90'
                 }`}>
                 {content.category}
               </span>
@@ -1672,19 +1683,22 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
                 const displayAuthorName = effectiveSaintName;
                 const saintSlug = getNormalizedSaintSlug(displayAuthorName);
                 return (
-                  <div className="text-center mt-2">
-                    <span className="text-[10px] uppercase tracking-[0.25em] font-bold block opacity-40 mb-1">
+                  <div className="text-center mt-1">
+                    <span className={`text-[9px] uppercase tracking-[0.3em] font-bold block mb-1.5 ${paathTheme === 'sepia' ? 'text-[#8B7E6F]' : 'text-stone-500'}`}>
                       {isHindiRoute ? 'रचयिता / संत' : 'Author / Saint'}
                     </span>
                     {saintSlug ? (
                       <Link
                         to={isHindiRoute ? `/hi/saints/${saintSlug}` : `/saints/${saintSlug}`}
-                        className="text-xl md:text-2xl font-bold font-headings tracking-wide text-[var(--primary-color)] hover:underline transition-all"
+                        className={`text-lg md:text-xl font-bold font-headings tracking-wide hover:underline underline-offset-4 transition-all ${paathTheme === 'sepia'
+                          ? 'text-[#B45309] hover:text-[#92400E] decoration-[#B45309]/30'
+                          : 'text-amber-400 hover:text-amber-300 decoration-amber-400/30'
+                          }`}
                       >
                         {displayAuthorName}
                       </Link>
                     ) : (
-                      <span className="text-xl md:text-2xl font-bold font-headings tracking-wide text-[var(--primary-color)]">
+                      <span className={`text-lg md:text-xl font-bold font-headings tracking-wide ${paathTheme === 'sepia' ? 'text-[#B45309]' : 'text-amber-400'}`}>
                         {displayAuthorName}
                       </span>
                     )}
@@ -1694,31 +1708,44 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
             </div>
 
             {/* Title */}
-            <h1 className="text-3xl md:text-5xl font-bold mb-16 leading-[1.3]">
+            <h1
+              className="text-2xl sm:text-3xl md:text-[2.75rem] font-bold mb-16 leading-relaxed md:leading-[1.4]"
+              style={{ color: paathTheme === 'sepia' ? '#231A15' : '#F9FAFB' }}
+            >
               {content.title}
             </h1>
 
             {/* Verse Texts */}
             <div className="w-full space-y-20">
               {content.sanskrit_text ? (
-                <div className="space-y-6 w-full">
-                  <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">मूल पाठ (Sanskrit)</div>
-                  <div className="w-full" style={{ containerType: 'inline-size' }}>
+                <div className="space-y-8 w-full">
+                  <div className={`text-[10px] uppercase tracking-[0.3em] font-bold ${paathTheme === 'sepia' ? 'text-[#92400E]/50' : 'text-amber-400/40'}`}>
+                    मूल पाठ (Sanskrit)
+                  </div>
+                  <div
+                    className="w-full"
+                    style={{
+                      containerType: 'inline-size',
+                      color: paathTheme === 'sepia' ? '#1C1917' : '#F3F4F6'
+                    }}
+                  >
                     <AutoFitVerse
                       text={content.sanskrit_text}
                       sizeLevel={sizeLevel}
                       fontStyle={settings.fontStyle}
                       isHindiRoute={isHindiRoute}
                       centered={true}
-                      className="content-verse-text hindi-text"
+                      className="hindi-text"
                     />
                   </div>
                 </div>
               ) : (
                 content.title && (
                   <div className="space-y-4 w-full text-center py-6">
-                    <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">{isHindiRoute ? 'प्रथम पंक्ति' : 'Opening Line'}</div>
-                    <div className="text-xl font-semibold italic text-current/90">
+                    <div className={`text-[10px] uppercase tracking-[0.3em] font-bold ${paathTheme === 'sepia' ? 'text-[#92400E]/50' : 'text-amber-400/40'}`}>
+                      {isHindiRoute ? 'प्रथम पंक्ति' : 'Opening Line'}
+                    </div>
+                    <div className={`text-xl font-semibold italic ${paathTheme === 'sepia' ? 'text-[#4A3728]/80' : 'text-stone-300'}`}>
                       "{extractFirstLine(content.title)}"
                     </div>
                   </div>
@@ -1726,16 +1753,23 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
               )}
 
               {(transliteratedSanskrit || transliteratedHindi) && (
-                <div className="space-y-6 pt-10 border-t border-current/5 w-full">
-                  <div className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">रोमन पाठ (Romanized)</div>
-                  <div className="w-full" style={{ containerType: 'inline-size' }}>
+                <div className={`space-y-8 pt-12 border-t w-full ${paathTheme === 'sepia' ? 'border-[#E0D5C4]' : 'border-white/[0.06]'}`}>
+                  <div className={`text-[10px] uppercase tracking-[0.3em] font-bold ${paathTheme === 'sepia' ? 'text-[#92400E]/50' : 'text-amber-400/40'}`}>
+                    रोमन पाठ (Romanized)
+                  </div>
+                  <div
+                    className="w-full"
+                    style={{
+                      containerType: 'inline-size',
+                      color: paathTheme === 'sepia' ? '#332924' : '#E5E7EB'
+                    }}
+                  >
                     <AutoFitVerse
                       text={transliteratedSanskrit || transliteratedHindi}
                       sizeLevel={sizeLevel}
                       fontStyle={settings.fontStyle}
                       isHindiRoute={isHindiRoute}
                       centered={true}
-                      className="content-verse-text"
                       isRoman={true}
                     />
                   </div>
@@ -1744,13 +1778,15 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
             </div>
 
             <div className="sm:hidden mt-20 pt-8 border-t border-current/5 w-full flex flex-col items-center gap-4">
-              <span className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-40">अक्षर आकार / Text Size</span>
+              <span className={`text-[10px] uppercase tracking-[0.3em] font-bold ${paathTheme === 'sepia' ? 'text-[#8B7E6F]' : 'text-stone-500'}`}>
+                अक्षर आकार / Text Size
+              </span>
               <FontWheel
                 value={settings.fontSize}
                 onChange={(size) => updateSetting('fontSize', size)}
               />
             </div>
-            <div className="mt-24 mb-12 flex items-center gap-2 opacity-20 justify-center">
+            <div className={`mt-24 mb-12 flex items-center gap-2 justify-center ${paathTheme === 'sepia' ? 'text-[#C9B99A]' : 'text-white/15'}`}>
               <span className="text-xl">ॐ</span>
               <span className="text-xs tracking-[0.4em] uppercase">वृंदोपनिषद्</span>
               <span className="text-xl">ॐ</span>
