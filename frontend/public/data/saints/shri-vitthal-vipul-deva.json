@@ -9,6 +9,22 @@
   "verseIds": [
     "ffbe72d1-30d3-4210-9a57-0e8bada8a0dc"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "ffbe72d1-30d3-4210-9a57-0e8bada8a0dc",
+      "title": "लालन तेरेई आधीन - श्री विट्ठल विपुल देव जी, श्री विट्ठल विपुल देव जी की वाणी (20)",
+      "slug": "lalan-terei-aadhin-tere-ras-bas-shyam-sundar-var-janchat-hai-jyon-deen-his-holiness-shri-vitthal-vipul-dev-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "लालन तेरेई आधीन",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "“लालन तेरेई आधीन, तेरे रस बस श्यामसुंदर वर, जाचत हैं ज्यौं दीन॥” \n- श्री विट्ठल विपुल देव जी, श्री विट्ठल विपुल देव जी की वाणी (20)",
+      "hindi_text": "\"ललन, मैं तुम्हारे वश में हूं, तुम्हारा प्यार एक सुंदर दूल्हा है, मैं दिन की तरह खुश हूं..\" - श्री विट्ठल विपुल देव जी, श्री विट्ठल विपुल देव जी द्वारा संबोधन (20)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

@@ -7,6 +7,19 @@
   "verseIds": [
     "f941cfc8-5d67-4104-b6a8-43252a7e9def"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "f941cfc8-5d67-4104-b6a8-43252a7e9def",
+      "title": "रेरे संसारमग्नाश्च शिष्या मे - स्कंद पुराण [वैष्णवखण्डः] (2.18.32)",
+      "slug": "rere-sansarmaganashya-shishya-me-skanda-purana-vaishnav-khand-21830",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "रेरे संसारमग्नाश्च शिष्या मे",
+      "tags": [],
+      "sanskrit_text": "रेरे संसारमग्नाश्च शिष्या मे शृणुताऽपरे॥\nयदीच्छथ सुखं सांद्रं वासं कुरुत मत्पुरीम्॥\n- स्कंद पुराण [वैष्णवखण्डः] (2.18.32)",
+      "hindi_text": "रेरे संसारमग्नश्च शिष्य मे श्रीनुतापरे.. यदिच्छथ सुखं संद्रं वसन कुरुत् मत्पुरीम्.. - स्कंद पुराण [वैष्णवखंड] (2.18.32)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

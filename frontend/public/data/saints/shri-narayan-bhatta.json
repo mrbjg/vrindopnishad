@@ -9,6 +9,19 @@
   "verseIds": [
     "c425f770-7899-4df9-a50a-7f586e85dce3"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "c425f770-7899-4df9-a50a-7f586e85dce3",
+      "title": "यथा भागवतं श्रेष्ठं - श्री नारायण भट्ट जी, ब्रज भक्ति विलास (1.92)",
+      "slug": "yatha-bhagavatam-shrestham-sri-narayan-bhattji-16th-century-braj-bhakti-vilas-192",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "यथा भागवतं श्रेष्ठं",
+      "tags": [],
+      "sanskrit_text": "यथा भागवतं श्रेष्ठं, शास्त्रे कृष्ण कलेवरम्।\nतथैव पृथ्वी लोके, सबनं ब्रज मण्डलः॥\n- श्री नारायण भट्ट जी, व्रज भक्ति विलास (1.92)",
+      "hindi_text": "यथा भगवत् श्रेष्ठम्, शास्त्रम् कृष्ण कलेवरम्। इसलिए पृथ्वी लोके, सबन्ना ब्रज मंडलः.. - श्री नारायण भट्ट जी, व्रज भक्ति विलास (1.92)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

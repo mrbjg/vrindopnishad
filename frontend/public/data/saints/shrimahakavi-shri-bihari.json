@@ -9,6 +9,19 @@
   "verseIds": [
     "3e8e9ca9-75db-460f-8e9b-cb1782d7c8d2"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "3e8e9ca9-75db-460f-8e9b-cb1782d7c8d2",
+      "title": "मेरी भववाधा हरौ - श्रीमहाकवी श्री बिहारी, मंगलाचरण",
+      "slug": "meri-bhavbadha-harau-shrimahakavi-shri-bihari-mangalacharan",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "मेरी भववाधा हरौ",
+      "tags": [],
+      "sanskrit_text": "मेरी भववाधा हरौ, राधा नागरि सोय।\nजा तन की झाँई परे, स्याम हरित दुति होय॥\n- श्रीमहाकवी श्री बिहारी लाल, मंगलाचरण, बिहारी सतसई (1) ",
+      "hindi_text": "हरो मेरे प्रिय, राधा नगरी सोई। देह के भान से परे हो जाओ, जग हरा-भरा हो जाए.. - श्री महाकवि श्री बिहारी लाल, मंगलाचरण, बिहारी सतसई (1)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

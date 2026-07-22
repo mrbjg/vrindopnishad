@@ -9,6 +9,19 @@
   "verseIds": [
     "5de85fee-5342-4276-b9fc-849374f55c0b"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "5de85fee-5342-4276-b9fc-849374f55c0b",
+      "title": "Jay Jay Shri Ghanshyam Vapu - Shri Bhartendu Harishchandra, Bhartendu Granthawali, Venu Geet (1)",
+      "slug": "jay-jay-shri-ghanshyam-vapu-shri-bhartendu-harishchandra-bhartendu-granthawali-venu-git-1",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Jay Jay Shri Ghanshyam Vapu",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "श्री राधा की जय, जो सदैव उनके वाम भाग में निवास करती हैं। ब्रज के सभी मित्रों की जय! श्री वृन्दावन धाम की पावन भूमि की जय!",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

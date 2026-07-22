@@ -7,6 +7,19 @@
   "verseIds": [
     "6abc69a1-590b-428a-bc53-4e4b7cc0a92f"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "6abc69a1-590b-428a-bc53-4e4b7cc0a92f",
+      "title": "दूजे - तीजे जो जुरै - श्री ध्रुवदास, बयालीस लीला, वृन्दावन शत लीला (89)",
+      "slug": "dooje-teeje-jo-jure-saak-patra-kachhu-aay-shri-dhruvdas-vrindavan-shat-leela-89",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "दूजे",
+      "tags": [],
+      "sanskrit_text": "दूजे तीजे जो जुरै, साक-पत्र कछु आय। \nताही सों संतोष करि, रहै अधिक सुख पाय॥\n- श्री ध्रुवदास, बयालीस लीला, वृन्दावन शत लीला (89)",
+      "hindi_text": "दूजे तिजे जो जुराई, साका-पत्र कछु ए। जब पुत्र संतुष्ट होगा तभी उसे अधिक सुख मिलेगा.. - श्री ध्रुवदास, बयालिस लीला, वृन्दावन शत लीला (89)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

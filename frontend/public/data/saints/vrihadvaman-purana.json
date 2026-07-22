@@ -7,6 +7,19 @@
   "verseIds": [
     "5237a8a8-5d2e-4948-93e7-4ca79caa86d1"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "5237a8a8-5d2e-4948-93e7-4ca79caa86d1",
+      "title": "मम नाम सहस्राणि राधानाम सकृत् स्मरन् -  वृहद्वामन पुराण",
+      "slug": "mam-nam-sahastrani-radhanam-sakrit-samaranam-vrihadvaman-puran",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "मम नाम सहस्राणि राधानाम सकृत् स्मरन्",
+      "tags": [],
+      "sanskrit_text": "मम नाम सहस्राणि राधानाम सकृत् स्मरन् \n\rमुच्यते भवतो जापे न जाने तस्य किं फलम्॥\r\n- वृहद्वामन पुराण",
+      "hindi_text": "मम नाम सहस्राणी राधानाम सकृतं स्मरेण मुच्यते भवतो जपे न जाने तस्य कि फलम्.. - बृहद्वमन पुराण",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

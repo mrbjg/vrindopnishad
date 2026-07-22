@@ -7,6 +7,19 @@
   "verseIds": [
     "2237f206-5768-4ca1-b7f9-5dfc40c0b174"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "2237f206-5768-4ca1-b7f9-5dfc40c0b174",
+      "title": "अहो बत श्व-पचो'तो गरीयान् - श्रीमद्भागवत पुराण (3.33.7)",
+      "slug": "aho-bat-shvpachoto-gareeyaan-shrimad-bhagvat-puran-3337",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "अहो बत श्व-पचो'तो गरीयान्",
+      "tags": [],
+      "sanskrit_text": "अहो बत श्व-पचो'तो गरीयान्\nयज्-जिह्वाग्रे वर्तते नाम तुभ्यम्\n- श्रीमद्भागवत पुराण (3.33.7)",
+      "hindi_text": "अहो बत् श्व-पछोतो गरियां यज-जिह्वग्रे वर्तते नाम तुभ्यम् - श्रीमद्भागवत पुराण (3.33.7)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

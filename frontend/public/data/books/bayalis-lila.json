@@ -7,5 +7,21 @@
   "verseIds": [
     "d940ab6c-8bd7-407f-adb2-a9d43c998d15"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "d940ab6c-8bd7-407f-adb2-a9d43c998d15",
+      "title": "तीन लोक चौदह भुवन - श्री ध्रुवदास, बयालिस लीला, प्रेमावली (51)",
+      "slug": "teen-lok-chaudhah-bhuvan-prem-kahun-dhruv-naahi-jagmag-rahyo-jarava-sou-shri-vrindavan-mahi",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "तीन लोक चौदह भुवन",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "तीन लोक चौदह भुवन, प्रेम कहूँ ध्रुव नाहिं।\n जगमग रह्यो जराव सौ, श्री वृन्दावन माहिं॥ \n- श्री ध्रुवदास, बयालिस लीला, प्रेमावली (51)",
+      "hindi_text": "तीन लोक और चौदह लोक, उनको मैं प्रेम ध्रुव नहीं कहता। जराव साव जगमगाते रहे, श्री वृन्दावन माहि.. - श्री ध्रुवदास, बयालिस लीला, प्रेमावली (51)",
+      "audio_url": ""
+    }
+  ]
 }

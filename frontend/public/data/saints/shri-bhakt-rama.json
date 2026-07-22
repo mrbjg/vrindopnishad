@@ -7,6 +7,19 @@
   "verseIds": [
     "f1a26a99-1d0b-46fe-a8b1-966a8dcdac5b"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "f1a26a99-1d0b-46fe-a8b1-966a8dcdac5b",
+      "title": "नन्दराय के लाडिले भक्तन प्राण अधार - श्री भक्त राम",
+      "slug": "nandray-ke-ladile-bhaktan-pran-adhar-shri-bhakt-ram",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "नन्दराय के लाडिले भक्तन प्राण अधार",
+      "tags": [],
+      "sanskrit_text": "नन्दराय के लाडिले, भक्तन प्राण अधार।\nभक्त रामके उर बसो, पहिरे फूलनहार॥\n- श्री भक्त राम",
+      "hindi_text": "नंदराय के प्रिय भक्त का जीवन खतरे में है। राम के भक्त, उसके दिल में बसो, पूरे कपड़े पहनो.. - श्री भक्त राम",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

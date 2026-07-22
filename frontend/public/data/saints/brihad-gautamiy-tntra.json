@@ -7,6 +7,19 @@
   "verseIds": [
     "44d4cf4c-5581-4142-995c-632112098cdb"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "44d4cf4c-5581-4142-995c-632112098cdb",
+      "title": "देवी कृष्णमयी प्रोक्ता राधिका परदेवता - बृहद गौतमीय तंत्र",
+      "slug": "devi-krishnamayi-prokta-radha-paradevata-brihad-gautamiya-tantra",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "देवी कृष्णमयी प्रोक्ता राधिका परदेवता",
+      "tags": [],
+      "sanskrit_text": "देवी कृष्णमयी प्रोक्ता राधिका परदेवता।\nसर्वलक्ष्मीमयी सर्वकान्तिः सम्मोहिनी परा॥\n- बृहद गौतमीय तंत्र",
+      "hindi_text": "देवी कृष्णमयी प्रोक्ता राधिका परदेवता। सर्वलक्ष्ममय सर्वकांतिः सम्मोहिनी पर.. - बृहद गौतमी तंत्र",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

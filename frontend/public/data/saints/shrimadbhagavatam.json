@@ -7,6 +7,19 @@
   "verseIds": [
     "a2e5cf22-5c88-40d4-8ff2-65702edf40ac"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "a2e5cf22-5c88-40d4-8ff2-65702edf40ac",
+      "title": "वनं वृन्दावनं नाम पशव्यं नव काननम् - श्रीमद्भागवतम् (10.11.28)",
+      "slug": "vanam-vrindavanam-naam-pashavyam-shrimad-bhagavatam-101128",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "वनं वृन्दावनं नाम पशव्यं नव काननम्",
+      "tags": [],
+      "sanskrit_text": "वनं वृन्दावनं नाम पशव्यं नव काननम्।\nगोप गोपी गवां सेव्यं पुण्याद्रि तृणवीरुधम्॥\n- श्रीमद्भागवतम् (10.11.28)",
+      "hindi_text": "वन्न वृन्दावन नो पश्वयं नव काणम्। गोप गोपी गवन सेवयं पुण्याद्रि तृणविरुधाम.. - श्रीमद्भागवतम् (10.11.28)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

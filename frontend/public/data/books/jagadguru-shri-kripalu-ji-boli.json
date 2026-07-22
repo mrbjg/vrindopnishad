@@ -7,5 +7,18 @@
   "verseIds": [
     "02a36f7c-fc47-4b39-8dba-69e7e00158a0"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "02a36f7c-fc47-4b39-8dba-69e7e00158a0",
+      "title": "राधा रानी कृपा करु गोविंद राधे - राधा गोविंद गीत, जगद्गुरु श्री कृपालु जी बोली।",
+      "slug": "\"radha-rani-kripa-karu-govind-radhey\"---radha-govind-geet,-jagadguru-shri-kripaluji-quote.",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "राधा रानी कृपा करु गोविंद राधे",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "\"राधा रानी कृपा करो गोविंद राधे,\nमुझे ब्रज रस पीने दो। \" \n- राधा गोविंद गीत, जगद्गुरु श्री कृपालु जी द्वारा कहा गया।\n\nहे \"राधारानी\" मुझ पर कृपा करें ताकि मुझे ब्रज रस का स्वाद मिल सके।",
+      "audio_url": ""
+    }
+  ]
 }

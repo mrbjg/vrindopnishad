@@ -7,6 +7,19 @@
   "verseIds": [
     "b4bdcf6c-2a6f-44ea-96be-95e0a1c59d8d"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "b4bdcf6c-2a6f-44ea-96be-95e0a1c59d8d",
+      "title": "श्री राधा चालीसा - चालीस श्लोकों में श्री राधा महिमा गुणगान ",
+      "slug": "shri-radhe-vrishabhanujaa-bhaktani-praanaadhaar-shri-radha-chalisa",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "श्री राधा चालीसा",
+      "tags": [],
+      "sanskrit_text": "श्री राधा चालीसा",
+      "hindi_text": "श्री राधा चालीसा",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

@@ -7,6 +7,19 @@
   "verseIds": [
     "2ff32e30-3262-4b0a-bf5f-f806bd6d9c59"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "2ff32e30-3262-4b0a-bf5f-f806bd6d9c59",
+      "title": "नित्य विहार विलसत सदा, वृंदावन दोउ चंद - गोस्वामी श्री जुगतानंद जी",
+      "slug": "nitya-vihar-vilasat-sada-vrindavan-dou-chand-goswami-shri-jugtanand",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "नित्य विहार विलसत सदा, वृंदावन दोउ चंद",
+      "tags": [],
+      "sanskrit_text": "नित्य विहार विलसत सदा, वृंदावन दोउ चंद।\nतहाँ टहल निज महल की, जाचत ‘जुगतानंद'॥\n- गोस्वामी श्री जुगतानंद जी",
+      "hindi_text": "नित्य विहार विलासत सदा, वृन्दावन दो पद। मेरे महल का फर्श 'जुगतानंद' है.. - गोस्वामी श्री जुगतानंद जी",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

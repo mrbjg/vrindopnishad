@@ -7,5 +7,18 @@
   "verseIds": [
     "46a2b8f8-9fb8-445c-b32a-92abaeb348ae"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "46a2b8f8-9fb8-445c-b32a-92abaeb348ae",
+      "title": "श्री वृंदावन चिद्घन घन - श्री नंददास, नंद दास ग्रंथावली, श्री कृष्ण सिद्धांत पंचाध्यायी (20)",
+      "slug": "shri-vrindavan-chidaghan-ghan-shri-nanddas-nanddas-granthavali-shri-krishn-siddhant-panchadhyayi-20",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "श्री वृंदावन चिद्घन घन",
+      "tags": [],
+      "sanskrit_text": "श्री वृंदावन चिद्घन घन घन घन छवि पावे।\nनंद सूनु को नित्य सदन श्रुतिगन जिही गावे॥\n- श्री नंद दास, नंद दास ग्रंथावली, श्री कृष्ण सिद्धांत पंचाध्यायी (20)",
+      "hindi_text": "श्री वृन्दावन चिदघन घन घन घन छवि प्राप्त करें। नंद सुनु को नीता सदन श्रुतिगण जिही।।- श्री नंद दास, नंद दास ग्रंथावली, श्री कृष्ण सिद्धांत पंचाध्यायी (20)",
+      "audio_url": ""
+    }
+  ]
 }

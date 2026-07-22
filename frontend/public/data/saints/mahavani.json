@@ -9,6 +9,19 @@
   "verseIds": [
     "efa7a0ef-70ec-46e7-bfbc-302d3625a70d"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "efa7a0ef-70ec-46e7-bfbc-302d3625a70d",
+      "title": " लुटेरिन लाड़िली लाल को लयो सर्वस रस लूटि - महावाणी, सुरत सुख (83)",
+      "slug": "luterin-ladili-laal-ko-layo-sarvas-ras-looti-mahavani-surat-sukh-83",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "लुटेरिन लाड़िली लाल को लयो सर्वस रस लूटि",
+      "tags": [],
+      "sanskrit_text": "लुटेरिन लाड़िली लाल को, लयो सर्वस रस लूटि।\nबाँधि कियो अपने बस कस करि, क्यों हू न पावत छूटि॥\n- श्री हरिव्यस देवाचार्य, महावाणी, सुरत सुख (83)",
+      "hindi_text": "लुटेरिन लड़ैली लाल को, लियो सर्वस रस लुटी। अपने आप को कसकर बाँध लो, मैं पीछे क्यों न रहूँ? - श्री हरिव्यास देवाचार्य, महावाणी, सुरत सुख (83)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

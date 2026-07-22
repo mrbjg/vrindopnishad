@@ -9,6 +9,19 @@
   "verseIds": [
     "6cfbf567-08e6-4638-8407-b3aa51c2f7b3"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "6cfbf567-08e6-4638-8407-b3aa51c2f7b3",
+      "title": "किं कार्यं वत राधे - श्री वृषभानुपुर शतक (89), श्री वंशी अली द्वारा रचित",
+      "slug": "kim-karyam-vat-radhey-shri-vanshi-ali-shri-vrishbhanupur-shatak-glories-of-barsana-89",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "किं कार्यं वत राधे",
+      "tags": [],
+      "sanskrit_text": "किं कार्यं वत राधे त्वमेव वद त्वत्स्वरूपसक्ताय ।\nदेयं किं मे नाप्तिं मन्यायाप्तावपि ह्यस्मै॥\n- श्री वृषभानुपुर शतक (89), श्री वंशी अली द्वारा रचित",
+      "hindi_text": "किं कार्यवत् राधे तमेवमेव वद त्वत्स्वरूपसक्त्य। देन की में नापति मान्यपत्वपै ह्यासमय.. - श्री वृषभानुपुरा शतक (89), श्री वंशी अली द्वारा लिखित",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

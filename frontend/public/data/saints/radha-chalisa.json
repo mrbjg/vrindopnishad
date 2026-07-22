@@ -7,6 +7,22 @@
   "verseIds": [
     "efdacf82-d2b3-4e53-887e-429056530ec3"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "efdacf82-d2b3-4e53-887e-429056530ec3",
+      "title": "यशुमति नंदन पीछे फिरिहैं , जो कौउ राधा नाम सुमिरिहै - राधा चालिसा",
+      "slug": "yashumati-nandan-pichey-firihain-jo-kau-radha-naam-sumirihain-radha-chalisa",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "यशुमति नंदन पीछे फिरिहैं , जो कौउ राधा नाम सुमिरिहै",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "“ यशुमति नंदन पीछे फिरिहैं , जो कौउ राधा नाम सुमिरिहै । ”\n- राधा चालिसा (18)",
+      "hindi_text": "\"यशुमति नंदन उन भक्तों का अनुसरण करते हैं जो राधा के नाम का स्मरण करते हैं।\"",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

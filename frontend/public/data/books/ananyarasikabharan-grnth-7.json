@@ -7,5 +7,18 @@
   "verseIds": [
     "a75d619f-aca0-4755-aec8-af182ff2498d"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "a75d619f-aca0-4755-aec8-af182ff2498d",
+      "title": "बेगम अगम निगम कहैं - भगवत रसिक की वाणी, अनन्यरसिकाभरण ग्रंथ 7 (7)",
+      "slug": "begam-agam-nigam-kahain-bhagwat-rasik-ki-vani-ananyarasikabharan-granth-7-7",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "बेगम अगम निगम कहैं",
+      "tags": [],
+      "sanskrit_text": "बेगम अगम निगम कहैं, सुगम लाडिली लाल।\nनित्य अनंत अनादि के, भगवत रसिक दलाल॥\n- श्री भगवत रसिक, भगवत रसिक की वाणी, अनन्यरसिकाभरण ग्रंथ 7 (7)",
+      "hindi_text": "बेगम अगम निगम कहती हैं, सुगम लाडिली लाल। नित्य अनंत आदि, भगवत रसिक दलाल.. - श्री भागवत रसिक, भगवत रसिक की वाणी, अनन्यारसिकभरण ग्रंथ 7 (7)",
+      "audio_url": ""
+    }
+  ]
 }

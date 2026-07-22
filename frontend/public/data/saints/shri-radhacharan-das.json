@@ -9,6 +9,19 @@
   "verseIds": [
     "cda98b80-cfa5-4164-909e-fd151a198ada"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "cda98b80-cfa5-4164-909e-fd151a198ada",
+      "title": "Shri Vrindavan Teri Jai Hove - Shri Radhacharan Das, Vrindavan Virudavali (35)",
+      "slug": "shri-vrindavan-teri-jai-hove-shri-radhacharan-das-vrindavan-virudavali-35",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Shri Vrindavan Teri Jai Hove",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "आपकी जय हो। आप करुणा के अनंत सागर, रसीले भक्तों की आत्मा और रसभरी लीलाओं से परिपूर्ण दिव्य वन हैं - आपकी जय हो। [1] आप अभय के दाता, सबसे शुभ और दिव्य युगल, श्री राधा कृष्ण के शाश्वत निवास हैं। आप भक्तों के हृदय की अमूल्य निधि हैं, अत्यंत मंत्रमुग्ध करने वाली और अतुलनीय आनंद देने वाली हैं। [2] आप दिव्य प्रकाश के सर्वोच्च अवतार, प्रेम के अमृत की शाश्वत वर्षा और अमृत की अक्षय खान हैं। आप श्री राधाचरण दास के हृदय की संपूर्ण संपत्ति हैं - हे श्रीवृंदावन, आपकी अनंत महिमा! [3]",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

@@ -10,6 +10,31 @@
     "f6ddb668-fdcb-42fa-af67-b8b2ea51208f",
     "ea2ae7cd-a622-4650-a103-29e3cd734f5f"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "f6ddb668-fdcb-42fa-af67-b8b2ea51208f",
+      "title": "रसिकन के रस दैन कों - श्री पीतांबर देव जी",
+      "slug": "rasikan-ke-ras-dain-kaun-pragate-rasikanand-shri-pitambar-dev-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "रसिकन के रस दैन कों",
+      "tags": [],
+      "sanskrit_text": "रसिकन के रस दैन कों, प्रगटे रसिकानन्द।\nआगे भए न होंगे, अद्भुत आनन्दकन्द॥\n- श्री पीताम्बर देव जी",
+      "hindi_text": "रसिकानन्द का रसिकानन्द किस रसिकानन्द के रस से प्रकट होता है? आपको उम्र का डर नहीं रहेगा, आपको अद्भुत सुख का अनुभव होगा... - श्री पीतांबर देव जी",
+      "audio_url": ""
+    },
+    {
+      "id": "ea2ae7cd-a622-4650-a103-29e3cd734f5f",
+      "title": "नित्य सिद्ध श्री स्वामिनी - श्री पीतांबर देव जी, श्री पीतांबर देव जी की बानी",
+      "slug": "nity-siddh-shri-swamini-shri-pitambar-dev-ji-shri-pitambar-dev-ju-ki-vani",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "नित्य सिद्ध श्री स्वामिनी",
+      "tags": [],
+      "sanskrit_text": "नित्य सिद्ध श्री स्वामिनी, नित्य सिद्ध ए दास।\nनित्य सिद्ध परिकर सबै, सेवत नित्य विलास॥\n- श्री पीतांबर देव जी, श्री पीतांबर देव जी की बानी",
+      "hindi_text": "नित्य सिद्ध श्री स्वामिनी, नित्य सिद्ध ए दास। नित्य सिद्ध परिकर सबै, सेवत नित्य विलास.. - श्री पीतानबर देव जी, श्री पीतानबर देव जी की बानी",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

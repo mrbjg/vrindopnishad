@@ -7,6 +7,19 @@
   "verseIds": [
     "a303de5f-753f-4e1f-bcde-0994658d0187"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "a303de5f-753f-4e1f-bcde-0994658d0187",
+      "title": "राशब्दोच्चारणाद् भक्तो भक्तिं मुक्तिं च राति सः - नारद पाञ्चरात्र (2.3.38)",
+      "slug": "rashabdochcharnad-bhakto-bhaktim-muktim-ch-rati-sah-narad-pancharatra-2338",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "राशब्दोच्चारणाद् भक्तो भक्तिं मुक्तिं च राति सः",
+      "tags": [],
+      "sanskrit_text": "राशब्दोच्चारणाद् भक्तो भक्तिं मुक्तिं च राति सः।\nधाशब्दोच्चारणेनैव धावत्येव हरे: पदम्॥\n- नारद पाञ्चरात्र (2.3.38)",
+      "hindi_text": "रसशब्दोचरणाद् भक्तो भक्तिं मुक्तिं च रति शा। धासभदोचरणेव धावत्येव हरेः पदम्.. - नारद पंचरात्र (2.3.38)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

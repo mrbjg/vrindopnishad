@@ -7,5 +7,18 @@
   "verseIds": [
     "2b7de6e5-f27b-45c8-957e-b8306b733cb0"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "2b7de6e5-f27b-45c8-957e-b8306b733cb0",
+      "title": "मथुरायां वसिष्यामि यस्यामि मथुरामहं - स्कन्द पुराण, मथुराखण्ड",
+      "slug": "mathurayam-vasishyami-yasyami-mathuramaham-skanda-purana-mathurakhand",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "मथुरायां वसिष्यामि यस्यामि मथुरामहं",
+      "tags": [],
+      "sanskrit_text": "मथुरायां वसिष्यामि यस्यामि मथुरामहं।\nइति यस्य भवेद् बुद्धिः सोऽपि बन्धात् प्रमुच्यते॥\n- स्कन्द पुराण, मथुराखण्ड",
+      "hindi_text": "मथुरायां वासिस्यामि यस्यामि मथुराम्। इति यस्य भवेद् बुद्धिः सपुनि बंधात प्रमुच्यते।।- स्कंद पुराण, मथुराखंड",
+      "audio_url": ""
+    }
+  ]
 }

@@ -7,6 +7,19 @@
   "verseIds": [
     "e0d3bab7-e5e5-49ea-8383-d1212cef0da3"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "e0d3bab7-e5e5-49ea-8383-d1212cef0da3",
+      "title": "सुमिरन राधा नाम को, सब सारन को सार - श्री रामूदास जी (शुक संप्रदाय के रसिक भक्त)",
+      "slug": "sumiran-radha-naam-ko-sab-saran-ko-saar-sri-ramudas-of-shuka-sect",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "सुमिरन राधा नाम को, सब सारन को सार",
+      "tags": [],
+      "sanskrit_text": "सुमिरन राधा नाम को, सब सारन को सार।\n‘रामू’ जो निशिदिन रटै, पावै नित्य विहार॥\n- श्री रामूदास जी (शुक संप्रदाय के रसिक भक्त)",
+      "hindi_text": "राधा का नाम स्मरण करो सब ठीक हो जायेगा श्रीमान। नित्य ध्यान करने वाले 'रामू' को नित्य विहार मिलता है... - श्री रामूदास जी (शुक सम्प्रदाय के रसिक भक्त)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

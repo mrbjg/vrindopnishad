@@ -7,6 +7,22 @@
   "verseIds": [
     "0bf44733-b192-4ded-8826-32a47a659ad8"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "0bf44733-b192-4ded-8826-32a47a659ad8",
+      "title": "वृक्ष वृक्ष वेणुधरी और पत्रे पत्रे चतुर्भुज - महाप्रभु वल्लभाचार्य",
+      "slug": "vraksh-vraksh-venudhari-aur-patre-patre-chaturbhuj-mahaprabhu-vallabhacharya",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "वृक्ष वृक्ष वेणुधरी और पत्रे पत्रे चतुर्भुज",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "वृक्ष वृक्ष वेणुधरी और पत्रे पत्रे चतुर्भुज \n- महाप्रभु वल्लभाचार्य",
+      "hindi_text": "वृक्षवृक्ष वेणुधारी एवं पात्रे पात्रे चतुर्भुजा - महाप्रभु वल्लभाचार्य",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

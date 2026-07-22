@@ -7,6 +7,19 @@
   "verseIds": [
     "29f3c8ea-168f-49b1-82e3-5f627a3faf49"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "29f3c8ea-168f-49b1-82e3-5f627a3faf49",
+      "title": "राधेति रुचिरं नाम ब्रूंते नित्यं किशोरकः - आदि वरहा पुराण",
+      "slug": "radheti-ruchiram-naam-brunte-nityam-kishorakah-aadi-varaha-purana",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "राधेति रुचिरं नाम ब्रूंते नित्यं किशोरकः",
+      "tags": [],
+      "sanskrit_text": "राधेति रुचिरं नाम ब्रूंते नित्यं किशोरकः।\nअनेक तापात्परितो रक्षिता देवि राधिका॥\n- आदि वरहा पुराण",
+      "hindi_text": "राधेति रुचिर्न नाम ब्रून्ते नित्यं किशोरख्। कई गर्म आत्माओं की रक्षा करने वाली देवी राधिका.. - आदि वराह पुराण",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

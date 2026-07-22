@@ -7,6 +7,19 @@
   "verseIds": [
     "ec191fc2-6cb6-4883-be7b-a1e1023f92b0"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "ec191fc2-6cb6-4883-be7b-a1e1023f92b0",
+      "title": "अटकी नाव कुठौर में पड़ी भौंरू बिच आय - श्री रामस्वरूप जी",
+      "slug": "atki-naav-kuthaur-mein-padi-bhaunroo-bich-aay-shri-ramswaroop-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "अटकी नाव कुठौर में पड़ी भौंरू बिच आय",
+      "tags": [],
+      "sanskrit_text": "अटकी नाव कुठौर में, पड़ी भौंरू बिच आय।\nअहो लली वृषभान की, तुम बिन कौन सहाय॥\n- श्री रामस्वरूप जी",
+      "hindi_text": "फँसी हुई नाव, मंदबुद्धि मन, पड़ा हुआ भँवर। हे वृषभान लाली, तेरे बिना कौन मदद कर सकता है.. - श्री रामस्वरूप जी",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

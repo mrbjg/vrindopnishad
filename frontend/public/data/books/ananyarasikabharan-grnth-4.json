@@ -7,5 +7,21 @@
   "verseIds": [
     "9177bbc7-c435-48a2-9fa9-c00df49908c5"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "9177bbc7-c435-48a2-9fa9-c00df49908c5",
+      "title": "भगवद रसिक रसिक की बातें - श्री भगवद रसिक, अनन्यरसिकभरण ग्रंथ 4 (6)",
+      "slug": "bhagwad-rasik-rasik-ki-baatein-rasik-bina-kou-samuj-sakena-shri-bhagwad-rasik",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "भगवद रसिक रसिक की बातें",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "\"भगवद रसिक रसिक की बातें, रसिक बीना कौ समुज सकेना\" \n- श्री भगवद रसिक, अनन्यरसिकभरण ग्रंथ 4 (6)",
+      "hindi_text": "\"भगवद रसिका रसिका के वचन, रसिका के बिना कौन समझ सकता है\" - श्री भगवद रसिका, अनन्यरसिकाभरण ग्रंथ 4 (6) रसिका संत को केवल रसिक संत ही समझ सकते हैं।",
+      "audio_url": ""
+    }
+  ]
 }

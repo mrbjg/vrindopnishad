@@ -7,5 +7,18 @@
   "verseIds": [
     "ed4d093b-f2be-46f1-9e05-ea736f824e7e"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "ed4d093b-f2be-46f1-9e05-ea736f824e7e",
+      "title": "Narayan Ghaati Kathin Jahan Neh Ko Dham - Shri Narayan Swami, Anurag Ras (137)",
+      "slug": "narayan-ghati-kathin-jahan-neh-ko-dham-shri-narayan-swami-anurag-ras-137",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Narayan Ghaati Kathin Jahan Neh Ko Dham",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "आराम केवल प्रेम की अचेतन अवस्था में, या आँसू बहाने और दिल दहला देने वाली आहों में पाया जाता है।",
+      "audio_url": ""
+    }
+  ]
 }

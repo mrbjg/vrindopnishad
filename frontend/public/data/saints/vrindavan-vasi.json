@@ -7,6 +7,22 @@
   "verseIds": [
     "deeb4bce-7dcd-446e-bdc9-d14488d5b9a9"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "deeb4bce-7dcd-446e-bdc9-d14488d5b9a9",
+      "title": "कीरत सुता के पग-पग पै प्रयाग यहाँ - वृन्दावन वासी",
+      "slug": "keerat-suta-ke-pag-pag-mein-prayag-yahan-keshav-ki-kunj-keli-koti-koti-kashi-hain-swarg-apvarg-britha-hi-le-kareinge-kaha-jani-lehu-humein-hum-vrindavan-vaasi-hain",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "कीरत सुता के पग-पग पै प्रयाग यहाँ",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "कीरत सुता के पग-पग पै प्रयाग यहाँ, केशव की कुँज केलि कोटि कोटि काशी हैं। \nस्वर्ग अपवर्ग बृथा ही लै करेंगे कहा, जानि लेहु हमें हम वृन्दावन वासी हैं॥\n- वृन्दावन वासी ",
+      "hindi_text": "किरत सुता पग पग प्रयाग, केशव उपवन, कोटि कोटि काशी। अजन्मे ही स्वर्ग में जाकर कहेंगे, जनि लेहु हमन, हम तो वृन्दावन वाले हैं.. - वृन्दावनवासी",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

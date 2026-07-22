@@ -11,6 +11,31 @@
     "f077df56-8238-45b8-b62c-b12d2c6928c6",
     "a8603009-24ff-4f69-9704-bb3f926eb470"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "f077df56-8238-45b8-b62c-b12d2c6928c6",
+      "title": "Kaam Na Aave Kaun Hu - Shri Biharin Dev Ji Ki Vani, Siddhant Ki Saakhi (364)",
+      "slug": "kam-na-aave-kaun-hu-shri-biharin-dev-ji-ki-vani-siddhant-ki-sakhi-364",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Kaam Na Aave Kaun Hu",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "बहुत से लोग जीवन भर सपरस और अपरस, या बाहरी प्रथाओं और अनुष्ठानों की धारणाओं में उलझे रहते हैं। मृत्यु के क्षण में कुछ भी काम का नहीं रह जाता। केवल ईश्वर को दिया गया शुद्ध प्रेम ही स्थायी है; और कुछ नहीं। वह प्रेम ही आत्मा को माया के विशाल सागर से पार ले जाने की शक्ति रखता है।",
+      "audio_url": ""
+    },
+    {
+      "id": "a8603009-24ff-4f69-9704-bb3f926eb470",
+      "title": "Kou Vidya Vidhi Ved Bandhyau Bal - Shri Biharin Dev Ji Ki Vani, Siddhant Ke Kavitt-Sewaiya (20)",
+      "slug": "kou-vidya-vidhi-ved-bandhyau-bal-shri-biharin-dev-ji-ki-vani-siddhant-ke-kavitt-sewaiya-20",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Kou Vidya Vidhi Ved Bandhyau Bal",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "हां, श्री बिहारिन देव जी की वाणी, सिद्धांत के कवित्त-सिवैया (20) कुछ लोग ज्ञान, वेदों और निषेधाज्ञा या निषेध के जाल में उलझे रहते हैं, जबकि अन्य धन, धार्मिक अनुष्ठानों और औपचारिक प्रथाओं की खोज में उलझे रहते हैं। [1] कुछ लोग आत्म-संयम, व्रत, तपस्या, जप और तपस्या के माध्यम से प्रयास करते हैं, जबकि अन्य निष्काम पूजा (पूजा का त्याग) के मार्ग में लक्ष्यहीन रूप से भटकते हैं। [2] कई लोग कार्तिक, अग्रहायण, या मकर संक्रांति के दौरान कठोर सर्दियों को सहन करते हैं, या भक्ति के रूप में बैसाखी या निर्जला एकादशी जैसे व्रतों पर अपनी उम्मीदें टिकाते हैं। [3] लेकिन इन सभी कठिन प्रथाओं से बहुत दूर रस का शाश्वत आनंदमय मार्ग है, जिसे नित्य विहार के नाम से जाना जाता है, जिसका खुलासा किसी और ने नहीं बल्कि रसिकों के मुकुट रत्न स्वामी श्री हरिदास जी महाराज ने किया है। [4]",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

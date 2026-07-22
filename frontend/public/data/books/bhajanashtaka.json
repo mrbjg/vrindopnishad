@@ -7,5 +7,18 @@
   "verseIds": [
     "8ab552f0-74fb-4b8a-af11-1fd399c23ba4"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "8ab552f0-74fb-4b8a-af11-1fd399c23ba4",
+      "title": "सर्वोपरि है मधुर रस, जुगल-किसोर विलास - श्री ध्रुवदास, भजनाष्टक (3)",
+      "slug": "sarvopari-hai-madhur-ras-jugalkisor-vilas-shri-dhruvdas-bhajanashtak-3",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "सर्वोपरि है मधुर रस, जुगल-किसोर विलास",
+      "tags": [],
+      "sanskrit_text": "सर्वोपरि है मधुर रस, जुगल-किसोर विलास।\nललितादिक सेवतिं तिनहिं, मिटत न कबहुँ हुलास॥\n- श्री ध्रुवदास, भजनाष्टक (3)",
+      "hindi_text": "परम वस्तु है मधुर रस, जुगल-किशोर विलास। ललितादिक सेवतिन तिनहिं, मिटत न कबहु हुलास.. - श्री ध्रुवदास, भजनाष्टक (3)",
+      "audio_url": ""
+    }
+  ]
 }

@@ -7,6 +7,19 @@
   "verseIds": [
     "b37d9615-dc76-48c3-9378-3746968e0ac2"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "b37d9615-dc76-48c3-9378-3746968e0ac2",
+      "title": "मम नाम शतेनैव राधा नाम सकृत समम - कुलदीपिकायाम",
+      "slug": "mam-naam-shatenaiv-radha-nam-sakrit-samam-kuldeepikayam",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "मम नाम शतेनैव राधा नाम सकृत समम",
+      "tags": [],
+      "sanskrit_text": "मम नाम शतेनैव राधा नाम सकृत समम।\nय: स्मरते सर्वदा राधां न जाने तस्य किं फलम॥\n- कुलदीपिकायाम",
+      "hindi_text": "मम नाम शतैनैव राधा नाम सकृतं समम्। यः स्मरेते सर्वदा राधानं कर्म का फल न जानिये।।-कुलदीपिकायम्।।",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

@@ -7,6 +7,22 @@
   "verseIds": [
     "4ccf31e7-fea6-4738-b49b-9719349f314e"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "4ccf31e7-fea6-4738-b49b-9719349f314e",
+      "title": "श्यामा ही है श्याम और श्याम ही है श्यामा - जगदुगुरु श्री कृपालु जी महाराज",
+      "slug": "shyama-hi-hein-shyam-aur-shyam-hi-hai-shyama-shyama-shyam-viharata-vrindavan-dhama-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "dham",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "श्यामा ही है श्याम और श्याम ही है श्यामा",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "श्यामा ही है श्याम और श्याम ही है श्यामा।\nश्यामा श्याम विहरत वृंदावन धामा॥\n-जगदुगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "श्याम तो श्याम है और श्याम तो श्याम है. श्यामा श्याम विहार वृन्दावन धाम.. -जगदुगुरू श्री कृपालु जी महाराज",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

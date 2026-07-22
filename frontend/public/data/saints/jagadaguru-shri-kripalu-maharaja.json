@@ -41,6 +41,439 @@
     "04e773f7-a641-4dff-b622-d56f35283e59",
     "489a7f00-82da-4e27-a34a-bfac8cbd1044"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "40f1889e-eeda-4c22-81a1-69e248a6ace2",
+      "title": "युगल रस वृन्दावन बरसे - जगदगुरु श्री कृपालु जी महाराज - प्रेम रस मदिरा",
+      "slug": "vrindavan-barse-yugal-ras-jagadguru-shri-kripaluji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "युगल रस वृन्दावन बरसे",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "युगल रस वृन्दावन बरसे,\nमणि रमणी राधा गज गमनि, कमनी मनहर से॥\n- जगदगुरु श्री कृपालु जी महाराज - प्रेम रस मदिरा, युगल माधुरी (4)",
+      "hindi_text": "युगल रस वृन्दावन बरसे, मणि रमणी राधा गज गमानी, कामनि मनहर से.. - जगद्गुरु श्री कृपालु जी महाराज - प्रेम रस मदिरा, युगल माधुरी (4)",
+      "audio_url": ""
+    },
+    {
+      "id": "b4e5b9cc-68ef-4dc8-9bbd-04d882a7e435",
+      "title": "\"तू ही मेरी मैं भी तेरी, मेरी प्यारी राधे\"  - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "tu-hi-meri-main-bhi-teri-meri-pyari-radhey-quote-by-jagadguru-shri-kripaluji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "\"तू ही मेरी मैं भी तेरी, मेरी प्यारी राधे\"",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "\"तू ही मेरी मैं भी तेरी मेरी प्यारी राधे\" \n- जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "\"तुम मेरी हो, मैं भी तुम्हारा हूँ, मेरी प्यारी राधे\" - जगद्गुरु श्री कृपालु जी महाराज हे मेरी प्यारी राधा! एपी हाय सिर्फ मेरा है और मैं तुम्हारा भी हूं।",
+      "audio_url": ""
+    },
+    {
+      "id": "3ee97416-edc5-490d-8b0c-547bf2f7034d",
+      "title": "मेरे पाप लिख बहीखाता धरो श्यामा - जगदगुरू श्री कृपालु जी महाराज, श्यामा श्याम गीत (146)",
+      "slug": "mere-paap-likh-bahikhata-dharo-shyama-tera-bahikhata-jala-dega-tera-nama-shyama-shyam-geet-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "मेरे पाप लिख बहीखाता धरो श्यामा",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "मेरे पाप लिख बहीखाता धरो श्यामा।\nतेरा बहीखाता जला देगा तेरा नामा॥\n- जगदगुरू श्री कृपालु जी महाराज, श्यामा श्याम गीत (146)",
+      "hindi_text": "मेरे पापों को लिखो और एक बहीखाता रखो, श्यामा। आपकी पुस्तक आपका नाम जला देगी.. - जगद्गुरु श्री कृपालु जी महाराज, श्यामा श्याम गीत (146)",
+      "audio_url": ""
+    },
+    {
+      "id": "9eb38d59-9a66-4987-9c97-648d4bce5e2a",
+      "title": "भलो बुरो जस तेरो री किशोरी राधे - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "bhalo-buro-jas-tero-ri-kishori-radhey-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "भलो बुरो जस तेरो री किशोरी राधे",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "\" भलो बुरो जस तेरो री किशोरी राधे॥ ” \n-जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "\"भोलो बुरो जस तेरो री किशोरी राधे..\" -जगदगुरु श्री कृपालु जी महाराज",
+      "audio_url": ""
+    },
+    {
+      "id": "c1a4ab78-f3d9-4731-bedc-4d11c3c67aad",
+      "title": "कहँ लौं बैकुंठ लोकहूँ, रूचि नहीं तुक सपनेहुँ मोरी - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "kahan-laun-kaha-beikuntha-lokahoonruchi-nahin-tuka-sapanuhun-mori-ika-bhavata-chanchala-nandnandan-ika-vrishbhanu-lalee-bhori-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "कहँ लौं बैकुंठ लोकहूँ, रूचि नहीं तुक सपनेहुँ मोरी",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "“ कहँ लौं बैकुंठ लोकहूँ, रूचि नहीं तुक सपनेहुँ मोरी ।\nइक भावत चंचल नंदनंदन, एक वृषभानुलली भोरी॥ ”\n- जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "\"मैं कहता हूं, मैं एक अकेला संसार हूं, मुझे दिलचस्पी नहीं है लेकिन मैं सपना देख रहा हूं। मैं चंचल नंदनंदन हूं, मैं वृषभानुलाली भोरी हूं..\" - जगद्गुरु श्री कृपालु जी महाराज",
+      "audio_url": ""
+    },
+    {
+      "id": "d97b5970-3813-4fdb-8415-d4c1ee1689de",
+      "title": "पाय तिहारो प्रेम किशोरी - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "paay-tihaaro-prem-kishoree-chhake-premaras-braj-ki-khori-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "पाय तिहारो प्रेम किशोरी",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "“ पाय तिहारो प्रेम किशोरी, छके प्रेमरस ब्रज की खोरी॥ ”\n- जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "\"पाय तिहारो प्रेम किशोरी, छके प्रेमरस ब्रज की खोरी..\" - जगद्गुरु श्री कृपालु जी महाराज",
+      "audio_url": ""
+    },
+    {
+      "id": "4c291617-72e5-4204-829d-aec1d022ded6",
+      "title": "तेहि मोहिं साधन हीन जान के रसिकन दई बताई - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "tehi-mohin-saadhan-heen-jaan-ke-rasikan-daee-baai-soi-kripalu-bin-mol-milat-nidhi-raadhe-naam-sadaee-his-holiness-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "तेहि मोहिं साधन हीन जान के रसिकन दई बताई",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "“ तेहि मोहिं साधन हीन जान के रसिकन दई बताई,\nसोइ कृपालु बिन मोल मिळत निधि, राधे नाम सदाई॥”\n- जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "\"तेहि मोहिं साधना हिन जन के रसिकान दै बताई, सोई कृपालु बिनु मोल, धन पायो, नाम राखो राधे..\" - जगद्गुरु श्री कृपालु जी महाराज",
+      "audio_url": ""
+    },
+    {
+      "id": "e0deb484-2d17-42e3-86e7-087b712e1996",
+      "title": "नरक स्वर्ग अपवर्ग आदि की - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "narak-swarg-apavarg-aadi-ki-khaak-vritha-math-chaniye-tum-ho-nitya-kinkari-jinki-teen-swaroop-pehchaniye-his-holiness-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "नरक स्वर्ग अपवर्ग आदि की",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "“ नरक स्वर्ग अपवर्ग आदि की, ख़ाक वृथा मत छानिये ।\nतुम हो नित्य किंकरी जिनकी, तीन स्वरुप पहचानिये॥ ”\n- जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "\"नरक, ​​स्वर्ग और अन्य वर्गों की राख को बर्बाद मत करो। अपने तीन रूपों को पहचानो जो शाश्वत रूप से नवजात हैं..\" - जगद्गुरु श्री कृपालु जी महाराज",
+      "audio_url": ""
+    },
+    {
+      "id": "dbeafec6-9cf5-4e2c-9437-d3188c6f42b2",
+      "title": "करू ‘कृपालु’ राधे राधे की, रटना आठों याम - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "karu-krupalu-radhey-radhey-ki-ratana-aathon-yaam-his-holiness-jagadguru-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "करू ‘कृपालु’ राधे राधे की, रटना आठों याम",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "“ करू ‘कृपालु’ राधे राधे की, रटना आठों याम । \n- जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "''करु 'कृपालु' राधे राधे की, रतन आठों यम।'' - जगद्गुरु श्री कृपालु जी महाराज श्री राधे नाम की महिमा का चिंतन करते हुए हर पल निरंतर राधा-राधा का जाप करते रहते हैं।",
+      "audio_url": ""
+    },
+    {
+      "id": "67507377-1344-4755-8c21-effd1c05563d",
+      "title": " नहीं उऋण कबहुँ उपकार - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "nahin-urina-kabahun-upakaar-balihaar-balihaar-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "नहीं उऋण कबहुँ उपकार",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "नहीं उऋण कबहुँ उपकार, बलिहार बलिहार॥\n- जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "कब करूँ उपकार बिनु मूत, त्याग त्याग... - जगद्गुरु श्री कृपालु जी महाराज",
+      "audio_url": ""
+    },
+    {
+      "id": "8c7809c9-6888-4773-9f4d-56e0a7f3527f",
+      "title": "मम स्वामिनी गुन की आगरी - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "mama-swaamini-guna-ki-aagaree-gati-gaja-gaamini-chhavi-abhiraamini-radha-naamini-naagaree-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "मम स्वामिनी गुन की आगरी",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "“ मम स्वामिनी गुन की आगरी ।\nगति गज गामिनी, छवि अभिरामिनी, राधा नामिनी नागरी॥ ” \n- जगदगुरु श्री कृपालु जी महाराज, प्रेम रस मदिरा",
+      "hindi_text": "\"मम स्वामिनी गुण की अगारी। गति गज गामिनी, छवि अभिरामिनी, राधा नामिनी नागरी।\" - जगद्गुरु श्री कृपालु जी महाराज, प्रेम रस मदिरा",
+      "audio_url": ""
+    },
+    {
+      "id": "ee01a6a0-7d9e-4cf1-8368-29cc75565fd4",
+      "title": "तो पे कोटि प्रान दऊँ वार - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "to-pei-koti-praan-daoon-vaar-balihaar-balihaar-jai-ho-jai-ho-albeli-sarkar-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "तो पे कोटि प्रान दऊँ वार",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "“ तो पे कोटि प्रान दऊँ वार, बलिहार बलिहार ।\nजय हो जय हो अलबेली सरकार, बलिहार बलिहार॥ ”\n- जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "\"मैं तुम्हारे लिए अपनी जान कुर्बान कर दूंगा, बलिहार बलिहार। जय हो जय अलबेली सरकार, बलिहार बलिहार..\" - जगद्गुरु श्री कृपालु जी महाराज",
+      "audio_url": ""
+    },
+    {
+      "id": "f4c31847-9299-446e-94f9-3697be369ade",
+      "title": "नित्य विहार करत बनि सहचरी - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "nitya-vihaar-karat-bani-sehchari-virah-na-ras-pal-aadha-prem-ras-roop-agadha-radha-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "नित्य विहार करत बनि सहचरी",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "\"नित्य विहार करत बनि सहचरी, विरह न रस पल आधा ।\nप्रेम, रस, रूप अगाधा राधा॥\"\n-जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "\"नित्य फिरती बानी सहचरी, विरह रस आधा, प्रेम रस आधा, प्रेम स्वरूप राधा।\" -जगदगुरु श्री कृपालु जी महाराज",
+      "audio_url": ""
+    },
+    {
+      "id": "b6563612-7b49-4617-9ccc-455f0d1fec7f",
+      "title": "जोई भज ‘राधा राधा - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "joi-bhaj-radha-radha-tehi-apnavati-radha-de-prem-sudha-radha-soi-mam-kripalu-radha-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "जोई भज ‘राधा राधा",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "\" जोई भज ‘राधा राधा’, तेही अपनावती राधा,\nदे प्रेम सुधा राधा, सोइ मम ‘कृपालु’ राधा॥ \"\n- जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "\"जोई भज 'राधा राधा', तेहि अपनवती राधा, दे प्रेम सुधा राधा, सोई मम 'कृपालु' राधा..\" - जगद्गुरु श्री कृपालु जी महाराज",
+      "audio_url": ""
+    },
+    {
+      "id": "f7268d7f-5890-430e-b005-69762c045ccb",
+      "title": "श्यामा प्राण धन श्याम - जगदगुरु श्री कृपालु जी महाराज, श्यामा श्याम गीत",
+      "slug": "shyama-prana-dhan-shyam-shyam-pran-shyama-mero-praan-dhana-dou-shyam-aru-shyama-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "श्यामा प्राण धन श्याम",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "श्यामा प्राण धन श्याम, श्याम प्राण श्यामा।\nमेरो प्राण धना दोउ, श्याम अरु श्यामा॥\n- जगदगुरु श्री कृपालु जी महाराज, श्यामा श्याम गीत",
+      "hindi_text": "श्यामा प्राण धन श्यामा, श्यामा प्राण धन श्यामा। मेरे प्राण और धन दो, श्याम और श्याम.. - जगद्गुरु श्री कृपालु जी महाराज, श्याम श्याम गीता",
+      "audio_url": ""
+    },
+    {
+      "id": "af1de1fe-e2a1-43cd-b6ab-838f34eeaa2a",
+      "title": "जो भी मेरी प्यारी पर जाए वारी वारी - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "jo-bhi-meri-pyari-par-jaye-vari-vari-vahi-badhbhagi-par-jaun-vari-vari-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "जो भी मेरी प्यारी पर जाए वारी वारी",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "जो भी मेरी प्यारी पर जाए वारी वारी , वाही बड़भागी पर जाऊँ वारी वारी॥\n-जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "जो एक-एक करके मेरे प्रियतम के पास जाता है, मैं उस अभागे के पास बार-बार जाऊँगा.. -जगदगुरु श्री कृपालु जी महाराज",
+      "audio_url": ""
+    },
+    {
+      "id": "608d3381-5aa0-401c-bf28-de08a8d5ef72",
+      "title": "वृन्दावन रसिक राजधानी - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "vrindavan-rasik-rajdhani-kah-kripalu-jehi-mahima-kachu-kachu-lalhi-kripa-laal-janhi-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "वृन्दावन रसिक राजधानी",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "\" वृन्दावन रसिक राजधानी । \nकह ‘कृपालु’ जेहि महिमा कछु-कछु, लालिहिं कृपा लाल जानहि॥ ”\n- जगद्गुरु श्री कृपालु जी महाराज, प्रेम रस मदिरा",
+      "hindi_text": "\"वृंदावन रोमांटिक राजधानी है। 'कृपालु' कहें जहां बड़ी महिमा है, हर छोटी चीज धन्य है।\" - जगद्गुरु श्री कृपालु जी महाराज, प्रेम रस मदिरा",
+      "audio_url": ""
+    },
+    {
+      "id": "f09ce8ce-7b15-4b09-abb0-d677b56c2f12",
+      "title": "ऐसी कृपा करू कृपामयी राधे - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "aisi-kripa-karu-kripamayi-radhey-tohi-bhulun-nahin-pal-chinn-aadhey-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "ऐसी कृपा करू कृपामयी राधे",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "ऐसी कृपा करू कृपामयी राधे, \nतोहि भूलूँ नहीं पल छिन्न आधे॥\n- जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "हे दयालु राधा, मुझ पर इतनी कृपा करना कि मैं एक क्षण भी व्यतीत करना न भूलूँ.. - जगद्गुरु श्री कृपालु जी महाराज",
+      "audio_url": ""
+    },
+    {
+      "id": "59ebd15a-1a6c-4892-b7a0-90fdb4e1367b",
+      "title": "पतित जनन हित तोहिं तजि - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "patit-jaenglish-titlenan-hita-tohi-taji-aur-thaur-hot-to-bata-de-tu-hi-to-hai-meri-gati-mati-radhe-tere-siwa-koi-nahin-mera-radhey-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "पतित जनन हित तोहिं तजि",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "“पतित जनन हित तोहिं तजि, और ठौर हो तो बता दे, राधे राधे राधे॥\nतू ही तो है मेरी गति मति राधे, तेरे सिवा कोई नहीं मेरा राधे, राधे राधे राधे॥ ”\n- जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "\"पतित पीढ़ी का हित चला गया, तेरा ठिकाना मिले तो बता देना, राधे-राधे-राधे.. तू ही मेरी गति है, राधे, तेरे सिवा कोई नहीं, मेरी राधे, राधे-राधे-राधे..\" - जगद्गुरु श्री कृपालु जी महाराज",
+      "audio_url": ""
+    },
+    {
+      "id": "5b70b14c-a5bc-437f-b085-382c85f5722a",
+      "title": "धन वृन्दावन धाम है - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "dhan-vrindavan-dham-hai-dhan-vrindavan-naam",
+      "category": "dham",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "धन वृन्दावन धाम है",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "धन वृन्दावन धाम है, धन वृन्दावन नाम। \nधन वृन्दावन रसिक जो, सुमिरै श्यामा श्याम॥\n- जगदगुरु श्री कृपालु जी महाराज, श्यामा श्याम गीत ",
+      "hindi_text": "धन है वृन्दावन धाम, धन है नाम वृन्दावन। धन वृन्दावन रसिक जो, सुमिरै श्यामा श्याम.. - जगद्गुरु श्री कृपालु जी महाराज, श्यामा श्याम गीत",
+      "audio_url": ""
+    },
+    {
+      "id": "2f1c6384-a35a-4078-91d8-73fd2d38341a",
+      "title": "श्री कृष्ण वृन्दावन गोविन्द राधे - जगदगुरु श्री कृपालु जी महाराज, राधा गोविन्द गीत (4870)",
+      "slug": "shri-krishn-vrindavan-govind-radhey-nitya-nai-nai-karein-leela-batade-jagadguru-shri-kripaluji-maharaj-radha-govind-geet-4870",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "श्री कृष्ण वृन्दावन गोविन्द राधे",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "“ श्री कृष्ण वृन्दावन गोविन्द राधे, \nनित नई नई करें लीला बतादे॥ ” \n-जगदगुरु श्री कृपालु जी महाराज, राधा गोविन्द गीत (4870)",
+      "hindi_text": "\"श्री कृष्ण वृन्दावन गोविंद राधे, नित नै करे लीला बतादे..\" -जगदगुरु श्री कृपालु जी महाराज, राधा गोविंद गीत (4870)",
+      "audio_url": ""
+    },
+    {
+      "id": "9dfcbaa5-9a4c-4e32-b339-ff4ce9f60d81",
+      "title": "श्यामा श्याम नाम रूप लीला गुण धामा - जगदगुरु श्री कृपालु जी महाराज, श्यामा श्याम गीत (979)",
+      "slug": "shyama-shyam-naam-roop-leela-guna-dhama-gao-roke-roopdhyana-yukta-aathon-yama-jagadguru-shri-kripaluji-maharaj",
+      "category": "dham",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "श्यामा श्याम नाम रूप लीला गुण धामा",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "श्यामा श्याम नाम रूप लीला गुण धामा। \nगाओ रोके रूप ध्यान युक्ता आठो यामा॥\n- जगदगुरु श्री कृपालु जी महाराज, श्यामा श्याम गीत (979) ",
+      "hindi_text": "श्याम श्याम नाम रूप लीला गुण धामा। गाओ रोके रूप ध्यान युक्त आठो यम.. - जगद्गुरु श्री कृपालु जी महाराज, श्यामा श्याम गीत (979)",
+      "audio_url": ""
+    },
+    {
+      "id": "5d17eab2-9dd8-4a85-bab4-8a47a2dd6f5e",
+      "title": "जेहि रस लगी हरि हर तरसत - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "jehi-ras-lagi-hari-har-tarsat-barsat-ehi-darbar-jagadguru-shri-kripaluji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "जेहि रस लगी हरि हर तरसत",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "“ जेहि रस लगी हरि हर तरसत, बरसत एहि दरबार । ”\n- जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "\"जहाँ हरियाली की ख़ुशी है, बारिश की चाहत है, यही आँगन है।\" - जगद्गुरु श्री कृपालु जी महाराज, जो दिव्य आनंद ब्रह्मा, विष्णु, शंकर आदि देवता भी श्री राधा रानी के दरबार में प्रतिदिन बरसा रहे हैं।",
+      "audio_url": ""
+    },
+    {
+      "id": "5ef9ed2b-3ecd-4ac7-a8be-9e3b92305ba2",
+      "title": "टुक निज-जन क्रंदन सुनी पावे, तजि श्यामहू निज जन पह धावे - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "tuka-nija-jana-krandan-suni-paven-taji-shyamahun-nij-jana-pahan-dhaven-quote-by-jagadguru-shri-kripaluji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "टुक निज-जन क्रंदन सुनी पावे, तजि श्यामहू निज जन पह धावे",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "\"टुक निज-जन क्रंदन सुनी पावे, तजि श्याम हू निज जन पह धावे, जब ऐसी सरल सुकुमार,फिकिर मोहि काहे की।\"\n- जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "\"जब आप अपने प्रियजनों की कॉल सुनते हैं, तो इतनी सरल, नाजुक कॉल के बारे में चिंता क्यों करें?\" - जगद्गुरु श्री कृपालु जी महाराज, जैसे ही हमारे स्वामीजी ने अपनी समर्पित आत्मा की करुण पुकार सुनी, वे तुरंत अपने प्रिय श्यामसुंदर को छोड़कर अपनी अंतरात्मा को भूल गए और अपने लोगों की ओर दौड़ पड़े। जब हमारी किशोरी जी इतनी सौम्य और सरल स्वभाव की हैं तो मुझे किस बात की चिंता है?",
+      "audio_url": ""
+    },
+    {
+      "id": "a1e8c544-5f5b-4451-b8b1-72af09a9fc3e",
+      "title": "वृन्दावन धाम सम गोविन्द राधे - जगदगुरु श्री कृपालु जी महाराज, राधा गोविंद गीत (5913)",
+      "slug": "vrindavan-dham-sam-govind-radhey-athva-adhik-kou-dham-na-batade-quote-by-jagadguru-shri-kripaluji-maharaj",
+      "category": "dham",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "वृन्दावन धाम सम गोविन्द राधे",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "वृन्दावन धाम सम गोविन्द राधे।\nअथवा अधिक कोउ धाम न बतादे॥\n- जगदगुरु श्री कृपालु जी महाराज, राधा गोविंद गीत (5913)",
+      "hindi_text": "वृन्दावन धाम गोविंद राधे समान है। या किसी और का धाम मत बताना.. - जगद्गुरु श्री कृपालु जी महाराज, राधा गोविंद गीत (5913)",
+      "audio_url": ""
+    },
+    {
+      "id": "7cd6aafe-057d-46aa-8983-3b2eb3852645",
+      "title": "कितना ही दुःख देवें तोहि श्याम श्यामा - जगदगुरु श्री कृपालु जी महाराज, श्यामा श्याम गीत (230)",
+      "slug": "kitna-hee-dukh-deven-tohee-shyam-shyama-chhin-chhin-baadhai-soee-prem-nishkaama-shyama-shyam-geet-doha-230-jagadguru-shri-kripaluji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "कितना ही दुःख देवें तोहि श्याम श्यामा",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "कितना ही दुःख देवें तोहि श्याम श्यामा।\nछिन छिन बाढ़ै सोइ प्रेम निष्कामा॥\n- जगदगुरु श्री कृपालु जी महाराज, श्यामा श्याम गीत (230)",
+      "hindi_text": "श्याम-श्याम, मैंने तुम्हें बहुत दर्द दिया है। छिन-छिन बधाई सोई प्रेम निष्काम.. - जगद्गुरु श्री कृपालु जी महाराज, श्यामा श्याम गीत (230)",
+      "audio_url": ""
+    },
+    {
+      "id": "95a9132d-21c5-42c9-9f5e-474a0fa8b28f",
+      "title": "अहो प्राणेश्वर प्राणाधार - जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "aho-praaneshwara-pranaadhaara-rasika-rangeelo-guna-garbeelo-naagara-nand-kumar-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "अहो प्राणेश्वर प्राणाधार",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "“अहो प्राणेश्वर प्राणाधार। \nरसिक रंगीलो गुन गरबीलो, नागर नंद कुमार। \"\n-जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "\"अहो प्राणेश्वर प्राणधर। रसिक रंगीलो गुन गाराबिलो, नागर नंद कुमार।\" -जगदगुरु श्री कृपालु जी महाराज हे रसिक रंगीलो, गुना गैराबिलो नगर श्री कृष्ण, एपी मेरे जीवन के भगवान हैं और वे मेरे जीवन का आधार हैं।",
+      "audio_url": ""
+    },
+    {
+      "id": "04e773f7-a641-4dff-b622-d56f35283e59",
+      "title": "श्री राधे जू ही माधव - जगदगुरु श्री कृपालुजी महाराज, ब्रज रस माधुरी भाग 1 (83)",
+      "slug": "shri-radhe-ju-hein-madhav-madhav-radha-shri-radha-taji-bhajata-shyam-aparadha-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "श्री राधे जू ही माधव",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "श्री राधे जू हैं माधव, माधव राधा,\nश्री राधा तजि भजत श्याम अपराधा\n- (हमारो धन राधा) जगदगुरु श्री कृपालुजी महाराज, ब्रज रस माधुरी भाग 1 (83)",
+      "hindi_text": "श्री राधा जू हैं माधव, माधव राधा, श्री राधा तजि भजत श्याम कृधा - (हमारी धन राधा) जगद्गुरु श्री कृपालुजी महाराज, ब्रज रस माधुरी भाग 1 (83) श्री राधा ही कृष्ण हैं और कृष्ण ही राधा हैं। श्री राधा के बिना श्री कृष्ण की पूजा करना अपराध है।",
+      "audio_url": ""
+    },
+    {
+      "id": "489a7f00-82da-4e27-a34a-bfac8cbd1044",
+      "title": "तू तो कृपा की है मूरति राधारानी - जगदगुरु श्री कृपालुजी महाराज, ब्रज रस माधुरी ",
+      "slug": "tu-to-hei-kripa-ki-moorati-meri-radharani-jagadguru-shri-kripaluji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "तू तो कृपा की है मूरति राधारानी",
+      "tags": [],
+      "sanskrit_text": "\"तू तो कृपा की है मूरति राधारानी, मेरी राधारानी\" \n- जगदगुरु श्री कृपालुजी महाराज, ब्रज रस माधुरी",
+      "hindi_text": "\"आप कृपा की प्रतिमूर्ति हैं राधारानी, ​​मेरी राधारानी\" - जगद्गुरु श्री कृपालुजी महाराज, ब्रज रस माधुरी मेरी श्री राधारानी कृपा की प्रतिमूर्ति हैं।",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

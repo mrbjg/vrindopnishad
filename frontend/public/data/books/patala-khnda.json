@@ -7,5 +7,21 @@
   "verseIds": [
     "afa88f45-dcd3-468f-b935-2c31ffbc9b81"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "afa88f45-dcd3-468f-b935-2c31ffbc9b81",
+      "title": "अहो मधुपुरी धन्या वैकुण्ठाच्च गरीयसी दीनम एकम निवासना हरऊ भक्तिह प्रजायते - पद्म पुराण, पाताल-खंड",
+      "slug": "aho-madhupuri-dhanya-vaikunthac-ca-gariyasi-padma-purana-patalakhanda",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "अहो मधुपुरी धन्या वैकुण्ठाच्च गरीयसी दीनम एकम निवासना हरऊ भक्तिह प्रजायते",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "अहो मधुपुरी धन्या वैकुण्ठाच्च गरीयसी दिन एकम निवासेन हरि भक्तिह प्रजायते\n- पद्म पुराण, पाताल-खंड",
+      "hindi_text": "हे मधुपुरी, धन्य वैकुंठच गरीयसी दीन एकम निवासेन हरि भक्ति: प्रजायते - पद्म पुराण, पाताल-खंड",
+      "audio_url": ""
+    }
+  ]
 }

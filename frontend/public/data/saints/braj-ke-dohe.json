@@ -8,6 +8,31 @@
     "dd0a90c9-a776-4620-897b-b9133082c753",
     "420933d6-fb6d-443b-bdb1-0f5a2cbfd34d"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "dd0a90c9-a776-4620-897b-b9133082c753",
+      "title": "Pati Ke Panv Palothahin Sindhu-Sutaa Gunvant -  Braj Ke Dohe",
+      "slug": "pati-ke-panv-palothahin-sindhu-suta-gunvant-braj-ke-dohe",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Pati Ke Panv Palothahin Sindhu-Sutaa Gunvant",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "समुद्र की पुत्री, सद्गुणों की प्रतिमूर्ति, देवी लक्ष्मी अपने पति भगवान श्रीहरि के चरण धीरे-धीरे दबाकर उनकी सेवा करती रहती हैं। हालाँकि, वही श्री हरि अपनी मालकिन (शासक), एकमात्र - श्री राधा - के चरण कमलों की सेवा करने का अवसर तलाशते हैं।",
+      "audio_url": ""
+    },
+    {
+      "id": "420933d6-fb6d-443b-bdb1-0f5a2cbfd34d",
+      "title": "Phiri-Phiri Radha-Krishn Kahi - Braj Ke Dohe",
+      "slug": "phiri-phiri-radha-krishn-kahi-braj-ke-dohe",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Phiri-Phiri Radha-Krishn Kahi",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "ब्रज के दोहे - \"श्री राधा-कृष्ण, श्री राधा-कृष्ण\" को बार-बार दोहराते हुए - मेरा दिल पूरी तरह से उनकी याद में लीन है, मैं कब श्री धाम वृन्दावन के बगीचों में, उनके दिव्य प्रेम में पूरी तरह से डूबकर, बिना किसी चिंता के घूमूंगा?",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

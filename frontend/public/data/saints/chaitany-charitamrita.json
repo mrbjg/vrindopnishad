@@ -7,6 +7,22 @@
   "verseIds": [
     "d69dcaed-2821-448a-9bc0-634f354f6a28"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "d69dcaed-2821-448a-9bc0-634f354f6a28",
+      "title": "वृन्दावनं परित्यज्य सा कवासिन नैवा गच्छेति - चैतन्य चरितमृत",
+      "slug": "vrndavanam-parityajya-sa-kvacin-naiva-gacchati-chaitanya-charitamrit",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "वृन्दावनं परित्यज्य सा कवासिन नैवा गच्छेति",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "\"वृन्दावनं परित्यज्य सा कवासिन नैवा गच्छेति\" \n- चैतन्य चरितमृत,  अंत्य: (1.67)",
+      "hindi_text": "\"वृंदावन परित्यज्य स कवसीं नैव गच्छेति\" - चैतन्य चरितामृत, अंत्य: (1.67)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

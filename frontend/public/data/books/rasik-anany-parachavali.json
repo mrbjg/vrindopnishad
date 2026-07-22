@@ -7,5 +7,18 @@
   "verseIds": [
     "543ec12d-7045-4a0b-aca9-534a16b6319a"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "543ec12d-7045-4a0b-aca9-534a16b6319a",
+      "title": "जो मारग खोजत फिरत अजहूँ शेष महेश - चाचा वृन्‍दावनदासजी, रसिक अनन्य परचावली (32)",
+      "slug": "jo-marag-khojat-firat-ajahun-shesh-mahesh-chacha-vrindavan-das-ji-sri-rasik-ananya-parchavali-32",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "जो मारग खोजत फिरत अजहूँ शेष महेश",
+      "tags": [],
+      "sanskrit_text": "जो मारग खोजत फिरत, अजहूँ शेष महेश। \nसो दुर्लभ भूतल कियौ, जै जै रसिक नरेश॥\n- चाचा वृन्‍दावनदासजी, रसिक अनन्य परचावली (32)",
+      "hindi_text": "मौत की तलाश में निकला महेश अकेला रह गया है। सो दुर्लभ सतह, जय जय रसिक नरेश.. - चाचा वृन्दावन दासजी, रसिक एवं अन्य परचावली (32)",
+      "audio_url": ""
+    }
+  ]
 }

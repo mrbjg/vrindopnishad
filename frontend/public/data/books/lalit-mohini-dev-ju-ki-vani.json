@@ -7,5 +7,21 @@
   "verseIds": [
     "8085cf61-2f8a-4680-9a22-1eee009251ed"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "8085cf61-2f8a-4680-9a22-1eee009251ed",
+      "title": "यह आनंद कहौ न परे री - श्री ललित मोहिनी देव, ललित मोहिनी देव जू की वाणी, रस के पद (48)",
+      "slug": "yeh-anand-kaho-na-pare-ri-shri-lalit-mohini-yeh-sukh-vilsat-dekhati-nain-sirain-ri-quote-by-shri-lalit-mohini-dev",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "यह आनंद कहौ न परे री",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "यह आनंद कहौ न परे री । \nश्री ललित मोहिनी यह सुख विलसत देखती नैन सीरैं री॥ \n- श्री ललित मोहिनी देव, ललित मोहिनी देव जू की वाणी, रस के पद (48)",
+      "hindi_text": "हां आनंद कहौ एन परे री। श्री ललित मोहिनी यः सुख विलासत देखती नैन सिरैन रे.. - श्री ललित मोहिनी देव, ललित मोहिनी देव जू की वाणी, रुचि के बोल (48)",
+      "audio_url": ""
+    }
+  ]
 }

@@ -7,6 +7,19 @@
   "verseIds": [
     "d56d74aa-093a-4aab-a0c5-172e18ced077"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "d56d74aa-093a-4aab-a0c5-172e18ced077",
+      "title": "प्रेम भक्तौ यदि श्रद्धा मत्प्रसादं  - भविष्योत्तर पुराण ",
+      "slug": "premabhaktau-yadi-sraddha-mat-bhavisyottara-purana",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "प्रेम भक्तौ यदि श्रद्धा मत्प्रसादं",
+      "tags": [],
+      "sanskrit_text": "प्रेम भक्तौ यदि श्रद्धा मत्प्रसादं यदीच्छसि। \nतदा नारद भावेन राधाया राधको भव॥\n- श्री भविष्य पुराण",
+      "hindi_text": "प्रेम भक्तौ यदि श्रद्धा मत्प्रसादन यदिच्छसि। तदा नारद भावेन राधाय राधाको भव.. - श्री भविष्य पुराण",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

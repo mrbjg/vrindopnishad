@@ -7,5 +7,18 @@
   "verseIds": [
     "cf7b977e-86b2-4545-bdae-c7efe9057fd1"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "cf7b977e-86b2-4545-bdae-c7efe9057fd1",
+      "title": "भक्तसुखाय युगलस्वरूपप्रकाशकर्त्री - श्री वंशी अलि, श्री राधातत्वप्रकाश",
+      "slug": "bhaktsukhay-yugalsvaroop-prakashashkartri-it-shri-vanshi-ali-shri-radha-tatva-prakash",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "भक्तसुखाय युगलस्वरूपप्रकाशकर्त्री",
+      "tags": [],
+      "sanskrit_text": "भक्तसुखाय युगलस्वरूपप्रकाशकर्त्री इति।\n- श्री वंशी अलि, श्री राधातत्वप्रकाश",
+      "hindi_text": "भक्तसुखाय युगलस्वरूपप्रकाशकर्तृ इति। - श्री वंशी अली, श्री राधातत्त्व प्रकाश",
+      "audio_url": ""
+    }
+  ]
 }

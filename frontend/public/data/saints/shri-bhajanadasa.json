@@ -7,6 +7,19 @@
   "verseIds": [
     "c5b1d26c-fef9-4ed2-b2db-dfd89d609041"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "c5b1d26c-fef9-4ed2-b2db-dfd89d609041",
+      "title": " तन सौं तन मन सौं जु मन मिले प्राण अरु नैन - श्री भजनदास",
+      "slug": "tan-saun-tan-man-saun-ju-man-mile-praan-aru-nain-shri-bhajan-das",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "तन सौं तन मन सौं जु मन मिले प्राण अरु नैन",
+      "tags": [],
+      "sanskrit_text": "तन सौं तन मन सौं जु मन, मिले प्राण अरु नैन।\nतीव्र प्रेम को रूप यह, तऊ हिेये नहि‍ चैन॥\n- श्री भजनदास",
+      "hindi_text": "तन सौं तन मन सौं जू मन, मि प्रान अरु नैन। गहरे प्रेम का कोई रूप नहीं, लेकिन कोई जंजीर नहीं.. - श्री भजनदास",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

@@ -9,6 +9,22 @@
   "verseIds": [
     "06a99f34-b001-4d3a-a3b5-7dd5092d10e5"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "06a99f34-b001-4d3a-a3b5-7dd5092d10e5",
+      "title": "परमरसग्हस्य नन्दनिस्यन्दिवृन्दा - श्री निकुंज रहस्य तत्व, श्री रूप गोस्वामी",
+      "slug": "paramarasarahasyanandanihsyandivrndavanavipinanikunje-divyadivyair-vilasaih-niravadhi-rasamanau-radhikakrishnacandrau-bhaja-sakalam-upeksya-tavakah-sastrayuktih-shri-roop-goswami",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "परमरसग्हस्य नन्दनिस्यन्दिवृन्दा",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "परमरसग्हस्य नन्दनिस्यन्दिवृन्दा\nवनविपिननिकुञ्जे दिव्यदिव्यै र्विलासैः।\nनिरवधिरसमानौ राधिका कृष्णचन्द्रौ\nभज सकलमुपेक्ष्य तावकी शास्त्रयुक्ती॥\n- श्री निकुंज रहस्य तत्व, श्री रूप गोस्वामी  (31)",
+      "hindi_text": "परमारसघास्य नन्दनिस्यन्दिवृन्दा वनविपिन्निकुण्यजे दिव्यदिव्य रविलास। निर्वधीरसमनु राधिका कृष्णचन्द्रौ भज सकलमुपेक्ष्य तवकि शास्त्रयुक्ति। - श्री निकुंज रहस्य तत्व, श्री रूप गोस्वामी (31)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

@@ -8,5 +8,33 @@
     "31255e55-84ad-40ba-9356-c09ba6d1f307",
     "6c5f66ba-399b-4697-87f2-6256ea84fee8"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "31255e55-84ad-40ba-9356-c09ba6d1f307",
+      "title": "स्वामिनी कब यौं तुम्हे लड़ाऊँ - श्री अली किशोरी, श्री किशोरी अली ग्रंथवाली",
+      "slug": "swamini-kab-yon-tumhe-ladaun-shri-kishori-ali-kishori-ali-granthwali",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "स्वामिनी कब यौं तुम्हे लड़ाऊँ",
+      "tags": [],
+      "sanskrit_text": "स्वामिनी कब यौं तुम्हे लड़ाऊँ,\nसटकारे कारे केशनी में, सुरभित तेल लगाऊं॥\n- श्री अली किशोरी, श्री किशोरी अली ग्रंथवाली",
+      "hindi_text": "मालकिन, कब तुम्हें ऐसे लाड़ करूं, दुलार करूं, खुशबूदार तेल लगाऊं.. - श्री अली किशोरी, श्री किशोरी अली ग्रंथावली",
+      "audio_url": ""
+    },
+    {
+      "id": "6c5f66ba-399b-4697-87f2-6256ea84fee8",
+      "title": "जय जय श्री वृन्दावन धाम - श्री किशोरी अली, श्री किशोरी अली ग्रंथवाली",
+      "slug": "jai-jai-shri-vrindavan-dham-sab-sukh-dain-param-hitakari-rasikan-kou-vishram-ali-kishori-kaun-kahe-gun-nij-gun-gavat-shyam-shri-ali-kishori-shri-kishori-ali-granthawali",
+      "category": "dham",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "जय जय श्री वृन्दावन धाम",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "\"जय जय श्री वृन्दावन धाम । सब सुख देंन परम हितकारी, रसिकनी कौ विश्राम॥\n जाकें एक बार दर्शन सौं, होत पूर्ण सब काम । अली किशोरी कौन कहे गुण, निजु मुख गावत श्याम॥\"\n - श्री किशोरी अली, श्री किशोरी अली ग्रंथवाली",
+      "hindi_text": "\"जय-जय श्री वृन्दावन धाम। सब सुख परम हितकारी, रसिकनि को विश्राम दो। एक बार दर्शन करो, सारे काम सिद्ध हो जाते हैं। अली किशोरी, जो कह सके गुण निजु मुख गावत श्याम।\" - श्री किशोरी अली, श्री किशोरी अली ग्रंथावली",
+      "audio_url": ""
+    }
+  ]
 }

@@ -7,5 +7,18 @@
   "verseIds": [
     "349b40d9-be57-410c-ab4f-bbe5dfce4374"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "349b40d9-be57-410c-ab4f-bbe5dfce4374",
+      "title": "श्रद्धाभक्त्योरभावेपि भगवन्नामसंकीर्तन - जगद्गुरू शंकराचार्य, शांकरभाष्य (14)",
+      "slug": "shraddhabhaktyorabhaavepi-bhagvannaamasankirtan-jagadguru-shankaracharya-shankarbhashya-14",
+      "category": "sankirtan",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "श्रद्धाभक्त्योरभावेपि भगवन्नामसंकीर्तन",
+      "tags": [],
+      "sanskrit_text": "श्रद्धाभक्त्योरभावेपि भगवन्नामसंकीर्तन समस्त दुरितं नाशयतीत्युक्तम् किमतु-श्रद्धापूर्वकम्।\n- जगद्गुरू शंकराचार्य, शांकरभाष्य (14)",
+      "hindi_text": "श्रद्धा भक्तयोरभावेपि भगवन्नामसंकीर्तन समास दुरित्न नाशयुक्तं किम्तु-श्रद्धपूर्वकम्। - जगद्गुरु शंकराचार्य, शंकरभाषी (14)",
+      "audio_url": ""
+    }
+  ]
 }

@@ -7,6 +7,19 @@
   "verseIds": [
     "a9fcb76a-3ca7-43ec-bf50-f1d3ca36f93d"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "a9fcb76a-3ca7-43ec-bf50-f1d3ca36f93d",
+      "title": "राधा नाम महिमा - श्री कृष्ण द्वारा",
+      "slug": "ra-sabdam-kurvatas-trasto-dadami-bhaktim-uttamam-quote",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "राधा नाम महिमा",
+      "tags": [],
+      "sanskrit_text": "\"रा\" शब्दं कुर्वत स्त्रस्तो, ददामि भक्तिमुत्तमम्। \n\"धा\" शब्दं कुर्वतः पश्चाद्यामि श्रवण लोभतः॥",
+      "hindi_text": "\"रा\" शब्दं कुर्वत् स्त्रस्तो, ददामि भक्तिमुत्तमम्। 'धा' शब्द कुर्वत पच्चद्यामि श्रवण लोभथ है।",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

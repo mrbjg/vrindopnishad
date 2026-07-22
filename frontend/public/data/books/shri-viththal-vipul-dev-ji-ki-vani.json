@@ -7,5 +7,21 @@
   "verseIds": [
     "3c8d037b-df81-4c8e-9e15-5baee7c27a03"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "3c8d037b-df81-4c8e-9e15-5baee7c27a03",
+      "title": "प्यारी तेरे नैननि पर तृण टूटत - श्री विठ्ठल विपुल देव जी, श्री विठ्ठल विपुल देव जी की वाणी (26)",
+      "slug": "pyari-tere-nainani-par-trin-tutata-quote-shri-vitthal-vipul-dev-ji-shri-vitthal-vipul-dev-ji-ki-vaani",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "प्यारी तेरे नैननि पर तृण टूटत",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "प्यारी तेरे नैननि पर तृण टूटत,\nश्री विट्ठल विपुल विनोद बिहारिनि पिय को सर्वेषु लूटत॥\n- श्री विठ्ठल विपुल देव जी, श्री विठ्ठल विपुल देव जी की वाणी (26)",
+      "hindi_text": "प्रिय त्रिदेव तेरी मैया टूटी, श्री विट्ठल विपुल विनोद बिहारिणी पिया को सर्वेषु लुटत.. - श्री विट्ठल विपुल देव जी, श्री विट्ठल विपुल देव जी की वाणी (26)",
+      "audio_url": ""
+    }
+  ]
 }

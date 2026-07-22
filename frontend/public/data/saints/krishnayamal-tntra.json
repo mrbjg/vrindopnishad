@@ -7,6 +7,19 @@
   "verseIds": [
     "f9de561e-457f-4362-86d4-26e2374f7c41"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "f9de561e-457f-4362-86d4-26e2374f7c41",
+      "title": "स्थानं नित्य विहारस्य ख्यातं वृन्दावनं वनम्  - कृष्णयामल तंत्र",
+      "slug": "sthaanam-nitya-viharasya-khyatam-vrindavanam-vanam-krishnyamal-tantra",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "स्थानं नित्य विहारस्य ख्यातं वृन्दावनं वनम्",
+      "tags": [],
+      "sanskrit_text": "स्थानं नित्य विहारस्य ख्यातं वृन्दावनं वनम्।\nयत्र नित्यं विहरति कृष्णो राधिकया सह॥\n- कृष्णयामल तंत्र",
+      "hindi_text": "स्थानं नित्य विहारस्य ख्यातनं वृन्दावन वनम्। यत्र नित्यं विहारति कृष्ण राधिकाया सा.. - कृष्णयामल तंत्र",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

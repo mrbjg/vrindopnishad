@@ -11,6 +11,67 @@
     "d6dbf27e-c8bd-453a-b292-8274371c7941",
     "d27b1bb5-14e4-4c59-bf4e-1a0640f68edc"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "58c81a6a-bdb3-44a8-93a8-9fd8c6960937",
+      "title": "रूप दृगन स्रवनन सुजस - श्री रस निधि जी ",
+      "slug": "roop-drigan-shravanan-sujas-shri-rasnidhi-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "रूप दृगन स्रवनन सुजस",
+      "tags": [],
+      "sanskrit_text": "रूप दृगन स्रवनन सुजस, रसना में हरिनाम।\nरसनिधि मन में नित बसैं, चरन कमल अभिराम॥\n- श्री रसनिधि",
+      "hindi_text": "रूप द्रगम श्रवणम् सुजस, रसना पुरुष हरिनाम। रसनिधि आपके मन को हर दिन, हर दिन आनंद से भर देती है.. - श्री रसनिधि",
+      "audio_url": ""
+    },
+    {
+      "id": "56f648d4-e2aa-4006-bc57-d2bb22e989cd",
+      "title": "जिन बारे नँदलाल पै, अपने मन धन ल्याइ - श्री रस निधि जी ",
+      "slug": "jin-bare-nandlal-pai-apne-man-dhan-lyai-shri-rasnidhi-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "जिन बारे नँदलाल पै, अपने मन धन ल्याइ",
+      "tags": [],
+      "sanskrit_text": "जिन बारे नँदलाल पै, अपने मन धन ल्याइ।\nउनके बारे की कछू, मोपै कही न जाइ॥\n- श्री रसनिधि जी",
+      "hindi_text": "जिनके लिए नंदलाल पै, मन में धन लाते। उनके बारे में कुछ भी कहने की जरूरत नहीं है.. - श्री रसनिधि जी",
+      "audio_url": ""
+    },
+    {
+      "id": "f1cae162-f654-4ce7-b1e5-4736855ce90c",
+      "title": "अद्भुत गति यह रसिकनिधि, सरस प्रीत की बात - श्री रस निधि जी ",
+      "slug": "adbhut-gati-yah-rasiknidhi-saras-preet-ki-baat-shri-rasnidhi-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "अद्भुत गति यह रसिकनिधि, सरस प्रीत की बात",
+      "tags": [],
+      "sanskrit_text": "अद्भुत गति यह रसिकनिधि, सरस प्रीत की बात। \nआवत ही मन साँवरो, उर कौ तिमिर नसात॥ \n- श्री रस निधि जी ",
+      "hindi_text": "अद्भुत गति या रसिकनिधि, मधुर प्रेम की बात। आते ही मन को समृद्ध करो, अंधकार नष्ट नहीं होगा.. - श्री रस निधि जी",
+      "audio_url": ""
+    },
+    {
+      "id": "d6dbf27e-c8bd-453a-b292-8274371c7941",
+      "title": "रसनिधि मन मधुकर रमहिं, जो चरनांबुज माहिं - श्री रस निधि जी",
+      "slug": "rasnidhi-man-madhukar-ramhin-jo-charnambuj-mahin-shri-rasnidhi-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "रसनिधि मन मधुकर रमहिं, जो चरनांबुज माहिं",
+      "tags": [],
+      "sanskrit_text": "रसनिधि मन मधुकर रमहिं, जो चरनांबुज माहिं। \nसरस अनखुलौ खुलत है, खुलौ खुलौई नाहिं॥ \n- श्री रस निधि जी ",
+      "hindi_text": "रसनिधि मन मधुकर रामहि, जो चरणाम्बुज माहिं। रस खुलता है, रस नहीं खुलता, रस नहीं खुलता.. - श्री रस निधि जी",
+      "audio_url": ""
+    },
+    {
+      "id": "d27b1bb5-14e4-4c59-bf4e-1a0640f68edc",
+      "title": "को अवराधे जोग तुव, रहु रे मधुकर मौन - श्री रस निधि जी",
+      "slug": "ko-avaradhe-jog-tuv-rahu-re-madhukar-maun-shri-ras-nidhi-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "को अवराधे जोग तुव, रहु रे मधुकर मौन",
+      "tags": [],
+      "sanskrit_text": "को अवराधे जोग तुव, रहु रे मधुकर मौन।\nपीतांबर के छोर तैं, छोर सकैं मन कौन॥\n- श्री रसनिधि जी",
+      "hindi_text": "को अवराधे जोग तुव, राहु रे मधुकर मौन। पहाड़ का कोई अंत नहीं है, कोई अंत तक नहीं पहुंच सकता.. - श्री रसनिधि जी",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

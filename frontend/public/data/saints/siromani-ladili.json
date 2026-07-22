@@ -7,6 +7,19 @@
   "verseIds": [
     "0d4eb1c7-930e-4829-8fc8-5bf6113a6252"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "0d4eb1c7-930e-4829-8fc8-5bf6113a6252",
+      "title": "रुप - सिरोमनि लाडिली - श्री रूप सखी, श्रिंगार रस के दोहे (41)",
+      "slug": "roop-siromani-ladili-rasik-siromani-lal-shri-roop-sakhi-shringar-rasa-ke-dohe-41",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "रुप",
+      "tags": [],
+      "sanskrit_text": "रुप-सिरोमनि लाडिली, रसिक - सिरोमनि लाल। \nचतुर-सिरोमनि निजु सखी, निरखत नैन विसाल॥\n- श्री रूप सखी, श्रिंगार रस के दोहे (41)",
+      "hindi_text": "रूप - सिरोमणी लाडिली, स्वाद - सिरोमणी लाल। चतुरा-सिरोमणि निजु सखी, निरखत नैन विसाल.. - श्री रूप सखी, श्रृंगार रस के दोहे (41)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

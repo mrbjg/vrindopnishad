@@ -7,6 +7,19 @@
   "verseIds": [
     "fd93e653-a4b8-4f93-91e3-be6c06acf9c7"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "fd93e653-a4b8-4f93-91e3-be6c06acf9c7",
+      "title": "कदा वृन्दारण्ये तरणि तनया पुण्य पुलिने - जगद्गुरु श्री शंकराचार्य",
+      "slug": "kada-vrindaranye-tarani-tanaya-punya-puline-jagadguru-shri-shankaracharya",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "कदा वृन्दारण्ये तरणि तनया पुण्य पुलिने",
+      "tags": [],
+      "sanskrit_text": "कदा वृन्दारण्ये तरणि तनया पुण्य पुलिने, \nस्मरन् श्री गोपालं निमिषमिव नेष्यामिदिवसान्।\n- जगद्गुरु श्री शंकराचार्य",
+      "hindi_text": "कदा वृन्दारण्य तारणि तनय पुण्य पुलिने, स्मरण करें श्री गोपाल निमिषामिव नेश्यामिदिवम्। - जगद्गुरु श्री शंकराचार्य",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

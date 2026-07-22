@@ -7,6 +7,19 @@
   "verseIds": [
     "10de13c6-903c-4a77-9651-513f1d1228fc"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "10de13c6-903c-4a77-9651-513f1d1228fc",
+      "title": "निगम अगोचर परते पर, निज वृन्दावन धाम - श्री दण्डौतीरामजी महाराज",
+      "slug": "nigam-agochar-parate-par-nij-vrindavan-dham-shri-dandauti-ram-ji",
+      "category": "dham",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "निगम अगोचर परते पर, निज वृन्दावन धाम",
+      "tags": [],
+      "sanskrit_text": "निगम अगोचर परते पर, निज वृन्दावन धाम।\nविहरत जोरी रंग भरी, सदा 'दण्डौती राम'॥\n- श्री दण्डौतीरामजी महाराज",
+      "hindi_text": "निगम का वृन्दावन धाम अदृश्य परत पर है। बहुत विहारत जोरी, सदा 'दंडौती राम'.. - श्री दंडौती रामजी महाराज",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

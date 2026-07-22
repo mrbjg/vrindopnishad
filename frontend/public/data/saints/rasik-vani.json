@@ -7,6 +7,19 @@
   "verseIds": [
     "fab37061-8159-4c9b-9837-56f7a9e7ef39"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "fab37061-8159-4c9b-9837-56f7a9e7ef39",
+      "title": "Mo Nirdhani Ko Dhan Giridhari - Rasik Vani",
+      "slug": "mo-nirdhani-ko-dhan-giridhari-rasik-vani",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Mo Nirdhani Ko Dhan Giridhari",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "(श्रीकृष्ण) ही एकमात्र सच्चा धन है। जो मेरे मन को मोह ले, वही आनंद का स्रोत है - वह बिहारी मेरे आँगन का चाँद है। [1] उसका चाँद सा चेहरा देखना ही मुझे जीवित रखता है, क्योंकि उसके बिना यह सारा संसार अंधकार में खोया हुआ लगता है। उसकी खातिर, मैं सब कुछ त्यागने को तैयार हूं - चाहे वह गहने हों, मवेशी हों, या अपार धन-संपत्ति हो। [2]",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

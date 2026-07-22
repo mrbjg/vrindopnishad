@@ -7,5 +7,18 @@
   "verseIds": [
     "f74defcd-b0f9-43f8-bfbf-e9dcdc3d21bb"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "f74defcd-b0f9-43f8-bfbf-e9dcdc3d21bb",
+      "title": "नयनं गलदश्रुधारया - श्री चैतन्य महाप्रभु, शिक्षाष्टकम (6)",
+      "slug": "nayanam-galadashrudharya-sri-chaitanya-mahaprabhu-shikshashtakam-6",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "नयनं गलदश्रुधारया",
+      "tags": [],
+      "sanskrit_text": "नयनं गलदश्रुधारया वदनं गदगदरुद्धया गिरा।\nपुलकैर्निचितं वपुः कदा तव नाम-ग्रहणे भविष्यति॥\n- श्री चैतन्य महाप्रभु, शिक्षाष्टकम (6)",
+      "hindi_text": "नयन्न गलादश्रुधरै वदन्न गदगद्रुधय गिरे। पुलकैर्निचितं वपुः कदा तव नाम-गृहणे भविष्यति। - श्री चैतन्य महाप्रभु, शिक्षाष्टकम् (6)",
+      "audio_url": ""
+    }
+  ]
 }

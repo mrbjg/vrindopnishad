@@ -9,6 +9,19 @@
   "verseIds": [
     "abdd6e11-8f49-4fc2-af6a-ad53d372d67c"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "abdd6e11-8f49-4fc2-af6a-ad53d372d67c",
+      "title": "सखीवृंदवृता राधा रराज वर गह्वरे - श्री वृषभानुपुर शतक (75), श्री वंशी अली द्वारा रचित",
+      "slug": "sakhivrindvrita-radha-raraj-var-gahvare-shri-vanshi-ali-vrishbhanupur-shatak-glories-of-barsana-75",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "सखीवृंदवृता राधा रराज वर गह्वरे",
+      "tags": [],
+      "sanskrit_text": "सखीवृंदवृता राधा रराज वर गह्वरे।\nतारागणैः संपरीतः शारदेंदुरिवांवरे॥\n- श्री वृषभानुपुर शतक (75), श्री वंशी अली द्वारा रचित",
+      "hindi_text": "सखी वृन्दाव्रता राधा राजरज वर गहवरे। तर्गनै संपरिथ शरदेंदुरिवनवरे.. - श्री वृषभानुपुरा शतक (75), श्री वंशी अली द्वारा रचित",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

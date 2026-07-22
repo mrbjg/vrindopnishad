@@ -7,6 +7,22 @@
   "verseIds": [
     "11d4d579-5fa8-4c59-8187-1d578bc4339d"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "11d4d579-5fa8-4c59-8187-1d578bc4339d",
+      "title": "तोहि लखि पतित पावनि श्यामा - जगदगुरु श्री कृपालु जी महाराज. श्यामा श्याम गीत (169)",
+      "slug": "tohi-lakhi-patita-pavani-shyama-mana-mane-paap-kiye-maine-aathon-yama-jagadguru-shri-kripaluji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "तोहि लखि पतित पावनि श्यामा",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "तोहि लखि पतित पावनि श्यामा। \nमन माने पाप किया मैंने आठो यामा॥\n- जगदगुरु श्री कृपालु जी महाराज. श्यामा श्याम गीत (169) ",
+      "hindi_text": "तोहि लखि पतित पावि श्यामा। मैंने मन में पाप किया है, मैंने पाप किया है.. - जगद्गुरु श्री कृपालु जी महाराज. श्यामा श्याम गाने (169)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

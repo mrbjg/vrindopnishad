@@ -8,6 +8,31 @@
     "9bea5ced-a3be-4200-b06a-f456d0bc43fb",
     "2b1cae22-fc25-48b1-86cc-bb7ec9ab5f9d"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "9bea5ced-a3be-4200-b06a-f456d0bc43fb",
+      "title": "मम देहस्थितैः सर्वैर्देवैर्ब्रह्मपुरोगमैः - कृष्णयामल तन्त्र (14.45)",
+      "slug": "mama-dehasthitaih-sarvair-devair-krishnayamal-tantra-1445",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "मम देहस्थितैः सर्वैर्देवैर्ब्रह्मपुरोगमैः",
+      "tags": [],
+      "sanskrit_text": "मम देहस्थितैः सर्वैर्देवैर्ब्रह्मपुरोगमैः।\nआराधिता यतस्तस्माद् राधेति परिकीर्तिता॥\n- श्रीकृष्णयामलतंत्र (14.45)",
+      "hindi_text": "मम देहस्थितैः सर्वैर्देवैर्ब्रह्मपुरोगमः। अराधिता यतस्तस्माद् राधेति परिकीर्तित.. - श्री कृष्णयामलतंत्र (14.45)",
+      "audio_url": ""
+    },
+    {
+      "id": "2b1cae22-fc25-48b1-86cc-bb7ec9ab5f9d",
+      "title": "राधाप्रियमयूरस्य यत्र राधेक्षणप्रभम् - कृष्णयामल तन्त्र (16.7)",
+      "slug": "radhapriyamayurasya-yatra-radhekshanaprabham-krishnayamal-tantra-167",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "राधाप्रियमयूरस्य यत्र राधेक्षणप्रभम्",
+      "tags": [],
+      "sanskrit_text": "राधाप्रियमयूरस्य यत्र राधेक्षणप्रभम्।\nविभर्ति शिरसा कृष्णऽस्तस्य चूड़ानिभं सतः॥\n- कृष्णयामल तन्त्र (16.7)",
+      "hindi_text": "राधाप्रियम्यूरस्य यत्र राधेक्षणप्रभम्। विभारती शिरसा कृष्णस्तस्य चुदानिभां सत्.. - कृष्णयामल तंत्र (16.7)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

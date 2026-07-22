@@ -9,6 +9,19 @@
   "verseIds": [
     "56d61b9b-2676-4687-9c3d-f96513c54709"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "56d61b9b-2676-4687-9c3d-f96513c54709",
+      "title": "सीस मुकुट कटि काछनी - श्रीमहाकवी श्री बिहारी लाल, बिहारी सतसई (2) ",
+      "slug": "sees-mukut-kati-kachhni-shrimahakavi-shri-bihari-lal-bihari-satsai-2",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "सीस मुकुट कटि काछनी",
+      "tags": [],
+      "sanskrit_text": "सीस मुकुट, कटि काछनी, कर मुरली उर माल। \nयह बानिक मो मन बसौ, सदा बिहारीलाल॥\n- श्रीमहाकवी श्री बिहारी लाल, बिहारी सतसई (2) ",
+      "hindi_text": "सीस मुकुट कटि काछनि, कर मुरली उर माल। ये बनिक मो मन बसौ, सदा बिहारी लाल.. - श्री महाकवि श्री बिहारी लाल, बिहारी सतसई (2)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

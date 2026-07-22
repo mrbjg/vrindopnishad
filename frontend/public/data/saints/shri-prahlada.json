@@ -8,6 +8,31 @@
     "96aabfd9-5700-4cb8-b441-32c8cc62fd17",
     "2f847ffb-60a3-432c-a84f-3e88ca0fc8c7"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "96aabfd9-5700-4cb8-b441-32c8cc62fd17",
+      "title": "रसशेखर रसराजवर रस अनन्य हरिदास - श्री प्रह्लाद जी",
+      "slug": "ras-shekhar-rasarajvar-ras-ananya-haridas-sri-prahlad-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "रसशेखर रसराजवर रस अनन्य हरिदास",
+      "tags": [],
+      "sanskrit_text": "रसशेखर रसराजवर, रस अनन्य हरिदास।\nसुमिरत दर्शत मन हरत, रंग महल नित वास॥\n- श्री प्रह्लाद जी",
+      "hindi_text": "रसशेखर रसज्वर, रस अनन्य हरिदास। मन का हृदय सुन्दर है, हर महल के भीतर एक महल है.. - श्री प्रह्लाद जी",
+      "audio_url": ""
+    },
+    {
+      "id": "2f847ffb-60a3-432c-a84f-3e88ca0fc8c7",
+      "title": "नाय जानत प्रभु प्रार्थना - श्री प्रह्लाद जी",
+      "slug": "naay-jaanat-prabhu-prarthna-sri-prahlad-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "नाय जानत प्रभु प्रार्थना",
+      "tags": [],
+      "sanskrit_text": "नाय जानत प्रभु प्रार्थना, पूजन नियम प्रसाद।\nबस चाहत है रूप रस, छक पीवौ ‘प्रह्लाद’॥\n- श्री प्रह्लाद जी",
+      "hindi_text": "नाय जानत प्रभु प्रसाद, पूजा नियम प्रसाद। मुझे तो बस सौंदर्य का सौंदर्य चाहिए, इसे पी लो 'प्रह्लाद'.. - श्री प्रह्लाद जी",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

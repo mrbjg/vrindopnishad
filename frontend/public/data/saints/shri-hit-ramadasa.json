@@ -7,6 +7,19 @@
   "verseIds": [
     "d8f9bcd8-dc84-42a3-b396-8b394b825d31"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "d8f9bcd8-dc84-42a3-b396-8b394b825d31",
+      "title": "और कोऊ समझै सो समझे - श्री हित रामदास",
+      "slug": "aur-kou-samjhai-so-samjhe-humakaun-itni-samajh-bhali-shri-hita-ramdas",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "और कोऊ समझै सो समझे",
+      "tags": [],
+      "sanskrit_text": "और कोऊ समझै सो समझे, हमकूँ इतनी समझ भली। \nठाकुर नन्दकिशोर हमारे, ठकुराइन वृषभानु लली॥\n- श्री हित रामराय",
+      "hindi_text": "और कोई समझे तो हमारे लिए इतना ही समझना अच्छा है. ठाकुर नंदकिशोर हमारी हैं, ठकुराइन वृषभानु लाली.. - श्री हित राम राय, कोई कुछ भी सोचे, हम समझ गए हैं कि हमारी ठाकुर-ठकुराइनें श्री राधा-कृष्ण ही हैं।",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

@@ -9,6 +9,19 @@
   "verseIds": [
     "0c8d951e-a479-47d6-9712-173e6a1dee21"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "0c8d951e-a479-47d6-9712-173e6a1dee21",
+      "title": "और कछू न रुचै ध्रुव पीय कौं, भावै यहै सुकुमारि लडाई -  बयालीस लीला, श्रृंगार शत",
+      "slug": "aur-kachu-na-ruche-dhruv-piye-kou-bhave-yahe-sukumari-ladai-shri-dhruvdas-from-bayalees-leela-shringar-shat",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "और कछू न रुचै ध्रुव पीय कौं, भावै यहै सुकुमारि लडाई",
+      "tags": [],
+      "sanskrit_text": "\"और कछू न रुचै ध्रुव पीय कौं, भावै यहै सुकुमारि लडाई॥”\n- बयालीस लीला, श्रृंगार शत, प्रथम श्रृंखला (06)",
+      "hindi_text": "\"ध्रुव पीने में किसे रुचि है, भवै यह सुकुमारी लड़ै..\" - बयालिस लीला, श्रृंगार शत, प्रथम शृंखला (06)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

@@ -10,6 +10,55 @@
     "8ee3cec4-3e46-4a6e-ae6c-faa282df81c0",
     "842fdd8f-ac9d-43be-b2d6-fd86c77e7c76"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "d0ccd6a6-1b29-415e-9771-50b304f535fa",
+      "title": "त्रैलोक्ये पृथिवी धन्या जम्बुद्वीपो - ब्रह्म संहिता (36.78)",
+      "slug": "trailokye-pthiva-dhanya-jambudvipo-sanat-kumar-samhita-78",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "त्रैलोक्ये पृथिवी धन्या जम्बुद्वीपो",
+      "tags": [],
+      "sanskrit_text": "त्रैलोक्ये पृथिवी धन्या जम्बुद्वीपो यतः परम्\nतत्रापि भारतं वर्षं तत्रापि मथुरा पुरी \n-  सनत कुमार संहिता (36.78)",
+      "hindi_text": "त्रैलोक्ये पृथ्वी धान्य जम्बूद्वीपो यथ परमं तत्रापि भारतं वर्ष तत्रापि मथुरा पुरी - सनत कुमार स्नहिता (36.78)",
+      "audio_url": ""
+    },
+    {
+      "id": "eb4416d5-57f3-4901-a5ae-ef8ffe6af9dc",
+      "title": "\"पंचयोजनमेवास्ति वनं मे देह रूपकम” - ब्रह्म संहिता",
+      "slug": "panchyojanamevasti-vanam-me-deharupakam-brahma-samhita",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "\"पंचयोजनमेवास्ति वनं मे देह रूपकम”",
+      "tags": [],
+      "sanskrit_text": "\"पंचयोजनमेवास्ति वनं मे देह रूपकम”\n- ब्रह्म संहिता",
+      "hindi_text": "\"पंच्योजन्मेवस्ति वन्न मे देहा रूपकमा\" - ब्रह्म स्नहिता",
+      "audio_url": ""
+    },
+    {
+      "id": "8ee3cec4-3e46-4a6e-ae6c-faa282df81c0",
+      "title": "द्रुमा भूमिश्चिन्तामणिगणमयी तोयम मृतम् - ब्रह्म संहिता",
+      "slug": "drum-bhoomishchintaamanigammayee-toyam-mrtam-brahma-samhita",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "द्रुमा भूमिश्चिन्तामणिगणमयी तोयम मृतम्",
+      "tags": [],
+      "sanskrit_text": "\"द्रुमा भूमिश्चिन्तामणिगणमयी तोयम मृतम्।\"\n- ब्रह्म संहिता",
+      "hindi_text": "\"द्रुम भूमिशञ्चन्तमानिगमयै तोयं मृतम्।\" - ब्रह्म स्नहिता",
+      "audio_url": ""
+    },
+    {
+      "id": "842fdd8f-ac9d-43be-b2d6-fd86c77e7c76",
+      "title": "तेजोमय इदं रम्यम् - ब्रह्म संहिता",
+      "slug": "tejomayam-idam-ramyam-brahma-samhita",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "तेजोमय इदं रम्यम्",
+      "tags": [],
+      "sanskrit_text": "\"तेजोमय इदं रम्यम् अदृश्यं चर्मचक्षुषा”\n- ब्रह्म संहिता",
+      "hindi_text": "\"तेजोमय इदं रम्यम् अदृशिन् चर्मचक्षुषा\" - ब्रह्म स्नहिता",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

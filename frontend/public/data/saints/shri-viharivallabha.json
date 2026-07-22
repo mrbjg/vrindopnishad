@@ -9,6 +9,22 @@
   "verseIds": [
     "557ccdd8-7cf8-4de9-afe6-64b69610e480"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "557ccdd8-7cf8-4de9-afe6-64b69610e480",
+      "title": "राधा गुनगान करे - श्री विहारीवल्लभ, श्री विहारीवल्लभ जी की वाणी",
+      "slug": "radha-gungaan-karein-jamuna-snan-karein-jamuna-jal-paan-karein-vaas-vrindavan-kou-swami-shri-bhagwat-rasik",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "राधा गुनगान करे",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "राधा गुनगान करें, जमुना स्नान करें । \nजमुना जल पान करें वास वृन्दावन को॥\n- श्री विहारीवल्लभ, श्री विहारीवल्लभ जी की वाणी",
+      "hindi_text": "राधा की स्तुति करो, यमुना में स्नान करो। वृन्दावन, जमुना का जल पियो.. - श्री विहारीवल्लभ, श्री विहारीवल्लभ जी के शब्द।",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

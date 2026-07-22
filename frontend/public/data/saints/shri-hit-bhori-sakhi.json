@@ -9,7 +9,20 @@
   "verseIds": [
     "3bf9df93-fa75-4a63-8354-17fe507d0f3f"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "3bf9df93-fa75-4a63-8354-17fe507d0f3f",
+      "title": "कठिन पीर है प्रेम की - श्री हित भोरी सखी, प्रेम की पीर (185.9)",
+      "slug": "kathin-peer-hai-prem-shri-hita-bhori-sakhi-prem-ki-peer-1859",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "कठिन पीर है प्रेम की",
+      "tags": [],
+      "sanskrit_text": "कठिन पीर है प्रेम की, विरले जानैं ताहि। \nजे जानैं ते कहैं नहिं, रहैं सराहि-सराहि॥\n- श्री हित भोरी सखी, प्रेम की पीर (185.9)",
+      "hindi_text": "प्यार का दर्द बहुत कठिन होता है और कम ही महसूस होता है। कहाँ हो संसार से, रहो सहायक.. - श्री हित भोरी सखी, प्रेम की पीर (185.9)",
+      "audio_url": ""
+    }
+  ],
   "biography": {
     "id": "da8172fb-38ff-49dd-9db4-b157a2ebbfa7",
     "slug": "bhori-sakhi",

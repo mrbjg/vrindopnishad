@@ -10,6 +10,31 @@
     "dbbe8dc5-78aa-46cb-a246-8fe22e50bd4e",
     "7a3df5ea-9b7b-4bb7-98d3-c3825facba8d"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "dbbe8dc5-78aa-46cb-a246-8fe22e50bd4e",
+      "title": "नित हित चित के माहि, लाल किसोरी रटतु हैं - श्री ब्रजनिधि जी, ब्रजनिधि ग्रंथावली, प्रीति लता (31)",
+      "slug": "nita-hita-chita-ke-mahi-lal-kisori-ratatu-hain-shri-brajnidhi-ji-shri-brajnidhi-granthawali-preeti-lata-31",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "नित हित चित के माहि, लाल किसोरी रटतु हैं",
+      "tags": [],
+      "sanskrit_text": "नित हित चित के माहि, लाल किसोरी रटतु हैं।\nऔर न कछू सुहाहिं, राति-दिवस यों कटतु हैं॥\n- श्री ब्रजनिधि जी, ब्रजनिधि ग्रंथावली, प्रीति लता (31)",
+      "hindi_text": "लाल किसोरी रैटटौ हर रुचि की जननी है। अब खुशी का ठिकाना नहीं, शादी के दिन ऐसे होते हैं... - श्री ब्रजनिधि जी, ब्रजनिधि ग्रंथावली, प्रीति लता (31)",
+      "audio_url": ""
+    },
+    {
+      "id": "7a3df5ea-9b7b-4bb7-98d3-c3825facba8d",
+      "title": "राधे सुख को सार - श्री ब्रजनिधि जी, ब्रजनिधि ग्रंथावली, प्रीति लता (28)",
+      "slug": "radhey-sukh-ko-saar-shri-brajnidhi-granthawali-preeti-lata-28",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "राधे सुख को सार",
+      "tags": [],
+      "sanskrit_text": "राधे सुख को सार, निरखत पिय गोहन रहैं। \nहिय बिच किएँ जुहार, अष्ट पहर तुमकों चहैं॥\n- श्री ब्रजनिधि जी, ब्रजनिधि ग्रंथावली, प्रीति लता (28)",
+      "hindi_text": "राधे सुख का सार है, गोहन अवर्णनीय पीनेवाला है। अरे कुतिया, तुझे कैसा जुहार, अष्ट पहर चाहिए? -श्रीब्रजनिधि जी,ब्रजनिधि ग्रंथावली,प्रीति लता (28)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

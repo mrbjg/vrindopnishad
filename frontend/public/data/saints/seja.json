@@ -9,6 +9,19 @@
   "verseIds": [
     "3d8a561b-e29e-4ebd-a9f7-e71452f80bef"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "3d8a561b-e29e-4ebd-a9f7-e71452f80bef",
+      "title": "समन - सेज, पौढे, दोऊ, परिरंभन सुख लेत - श्री भागवत रसिक जी की वाणी, अनन्यरसिकभरण ग्रंथ 1 (17)",
+      "slug": "saman-sej-paude-dou-parirambhan-sukh-let-shri-bhagwat-rasik-ji-ki-vani-ananyarasikabharan-granth-1-17",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "समन",
+      "tags": [],
+      "sanskrit_text": "समन-सेज, पौढे, दोऊ, परिरंभन सुख लेत।\nहँसि हँसि भगवत रसिक कौं, फिरि फिरि चुंबन देत॥ \n- श्री भगवत रसिक जी, श्री भागवत रसिक जी की वाणी, अनन्यरसिकभरण ग्रंथ 1 (17)",
+      "hindi_text": "ऋषि, पौधे, जोड़े, परिवर्तन जैसी चीजें खुशी लाती हैं। कौन हंसता है, हंसाता है और दिव्य प्रेमी को चुनता है? - श्री भागवत रसिक जी, श्री भागवत रसिक जी की वाणी, अनन्यरसिकभरण ग्रंथ 1 (17)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

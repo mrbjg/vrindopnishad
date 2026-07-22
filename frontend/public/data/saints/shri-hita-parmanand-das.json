@@ -7,6 +7,19 @@
   "verseIds": [
     "0cb93155-027a-445c-8470-ccc7414f6362"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "0cb93155-027a-445c-8470-ccc7414f6362",
+      "title": "Panchhi Barsane Jite Pashu Aru Gopi-Gop - Shri Hita Parmanand Das",
+      "slug": "panchhi-barsane-jite-pashu-aru-gopi-gop-shri-hita-parmanand-das",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Panchhi Barsane Jite Pashu Aru Gopi-Gop",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "बरसाना के प्रत्येक पक्षी, पशु, गोपी और ग्वाले के लिए, श्री राधिका जीवन का सार हैं, और उनकी दिव्य चमक हमेशा उनके दिलों में रहती है।",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

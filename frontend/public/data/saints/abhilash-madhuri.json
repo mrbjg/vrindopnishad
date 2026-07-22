@@ -7,7 +7,23 @@
   "verseIds": [
     "95eadb9a-d520-4bab-9d03-2af8e79cc64f"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "95eadb9a-d520-4bab-9d03-2af8e79cc64f",
+      "title": "राधे राधे जो जन कहै। महा प्रेम रस सोई लहै- श्री ललित किशोरी - अभिलाष माधुरी",
+      "slug": "radhey-radhey-jo-jana-kahe-maha-prem-ras-soi-lahe-shri-lalit-kishori-abhilash-madhuri",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "राधे राधे जो जन कहै। महा प्रेम रस सोई लहै- श्री ललित किशोरी",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "राधे राधे जो जन कहै। महा प्रेम रस सोई लह॥\nप्रिया लाल तिनके सुख ढरें। रीझि रीझि अंक में भरें॥\nछिन छिन अति आनंद बढ़ाये। श्री कुंज बिहारिनि निरखि सिहावें॥\nयही बात सब सुख को सार। रसिकनी जीवन प्रान अधार॥\n- श्री ललित किशोरी - अभिलाष माधुरी",
+      "hindi_text": "जो भी लोग कहते हैं राधे-राधे. महा प्रेम रस सोई लह..सुख तिनका पकड़ो प्रिया लाल। रीझी रीझी संख्या पुरुष भारे..छिं छिन अति बधाये। श्री कुंज बिहारिणी निरखि सिहावें.. यही सब सुखों का सार है। रसिकानि जीवन प्राण आधार.. - श्री ललित किशोरी - अभिलाष माधुरी",
+      "audio_url": ""
+    }
+  ],
   "biography": {
     "id": "bf954b75-19a3-4e55-b0b9-6015b1e5874e",
     "slug": "shri-vrindavan-vas-dijiye-shri-lalit-kishori-abhilash-madhuri-vinaya",

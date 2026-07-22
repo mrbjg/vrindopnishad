@@ -7,6 +7,19 @@
   "verseIds": [
     "4ca3adff-11d9-413c-8a0f-1ca0a1414c03"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "4ca3adff-11d9-413c-8a0f-1ca0a1414c03",
+      "title": "मेरै माथै लागी ले धूरि गोबिंद चरनन की - श्री नामदेव जी",
+      "slug": "mere-mathai-laagi-le-dhuri-govind-charanan-ki-shri-namdev",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "मेरै माथै लागी ले धूरि गोबिंद चरनन की",
+      "tags": [],
+      "sanskrit_text": "मेरै माथै लागी ले, धूरि गोबिंद चरनन की।\nसुरि नर मुनि जन, तिनहू ते दूरि॥\n- श्री नामदेव जी",
+      "hindi_text": "मस्तक धरो ध्यान, पकड़ो चरण गोबिंद के। सुरि नर मुनि जन, तिनहु ते दुरि.. - श्री नामदेव जी",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

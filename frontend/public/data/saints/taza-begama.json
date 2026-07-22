@@ -8,6 +8,31 @@
     "e6a092ac-6971-44b0-b94a-f575a4ff8665",
     "377c3ad4-0999-4c55-a695-a12223dfd168"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "e6a092ac-6971-44b0-b94a-f575a4ff8665",
+      "title": "सबहीं भूमि गोपाल की या में अटक कहा - ताज़ बेगम (ताज़ बीबी)",
+      "slug": "sabhin-bhumi-gopal-ki-ya-mein-atak-kahan-taj-begam",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "सबहीं भूमि गोपाल की या में अटक कहा",
+      "tags": [],
+      "sanskrit_text": "सबहीं भूमि गोपाल की, या में अटक कहा।\nजा के मन में अटक है, सोई अटक रहा॥\n- ताज़ बेगम (ताज़ बीबी)",
+      "hindi_text": "उस समय तक सारी ज़मीन गोपाल या उस आदमी की थी। जा मन में अटका है, सोई अटका रहा है.. - ताजा बेगम (ताजा पत्नी)",
+      "audio_url": ""
+    },
+    {
+      "id": "377c3ad4-0999-4c55-a695-a12223dfd168",
+      "title": "कामन, तामन, टोटका, यह सब डारो धोय - ताज़ बेगम (ताज़ बीबी)",
+      "slug": "kaaman-taaman-totka-yah-sab-daaro-dhoye-taj-begam-taj-bibi",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "कामन, तामन, टोटका, यह सब डारो धोय",
+      "tags": [],
+      "sanskrit_text": "कामन, तामन, टोटका, यह सब डारो धोय।\nपिया कहे सो कीजिये, आपहि ते बस होय॥\n- ताज़ बेगम (ताज़ बीबी)",
+      "hindi_text": "काम, तमन, टोटका, इन सबसे डरो और इन्हें धो डालो। पिया जो कहे वही करो, बस बहुत है... - फ्रेश बेगम (ताजा पत्नी)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

@@ -7,6 +7,22 @@
   "verseIds": [
     "150a4885-5a9c-4ab3-9db1-9814f1ac8924"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "150a4885-5a9c-4ab3-9db1-9814f1ac8924",
+      "title": "ब्रज विलास स्तव - रघुनाथ दास गोस्वामी",
+      "slug": "bhraman-kacchekacche-kitidharapater-vakrimagatair-lapan-rdhe-kety-anavaratam-unmattavad-aham-patan-kvpi-kvpy-ucchalita-nayana-dvandvasalilai-kad-kelisthna-sakalam-api-sicmi-vikala-raghunath-das-goswami-sri-vrajavilasastava",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "ब्रज विलास स्तव",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "ओ! ऐसा कब होगा कि मैं ब्रज में गोवर्धन के चारों ओर आपकी याद और मिलन में पागलों कि भाँति बार-बार पुकारता रहूं, \"हे राधे! हे कृष्ण! \", और जब कभी गिरिराज गोवर्धन पर ठोकरें खाकर और कभी-कभी जमीन पर बेसुध होकर गिरूं और मेरी आँखों से आँसु लगातार आपकी याद में बहें ?",
+      "hindi_text": "ओहो! ऐसा कब होगा कि मैं ब्रज में गोवर्धन के चरणों में या तुम्हारी याद और मिलन में पागलों की तरह रोता रहूँगा, \"हे राधे! हे कृष्ण!\" और कभी गिरिराज लड़खड़ा कर गोवर्धन पर गिर जाते हैं और कभी बेहोश होकर जमीन पर गिर जाते हैं और तुम्हें याद करके मेरी आंखों में आंसू आ जाते हैं बहन?",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

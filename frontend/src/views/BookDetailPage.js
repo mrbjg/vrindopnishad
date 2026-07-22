@@ -231,19 +231,20 @@ const BookDetailPage = ({ initialBook }) => {
     }
   }, [book, searchQuery, activeSkandhaKey]);
 
-  // Auto-expand first chapter when active skandha changes
+  // Auto-expand first chapter when active skandha or book changes
   useEffect(() => {
     if (activeSkandhaKey && groups[activeSkandhaKey]) {
       const chKeys = sortKeys(Object.keys(groups[activeSkandhaKey].chapters));
       if (chKeys.length > 0) {
         setExpandedChapters(prev => {
-          const hasExpanded = Object.values(prev).some(Boolean);
-          if (hasExpanded) return prev;
-          return { [chKeys[0]]: true };
+          if (chKeys.length === 1 || isSingleDefaultSkandha || !Object.keys(prev).length) {
+            return { ...prev, [chKeys[0]]: true };
+          }
+          return prev;
         });
       }
     }
-  }, [activeSkandhaKey]);
+  }, [activeSkandhaKey, isSingleDefaultSkandha, book]);
 
   const toggleChapter = (chapterKey) => {
     setExpandedChapters(prev => ({

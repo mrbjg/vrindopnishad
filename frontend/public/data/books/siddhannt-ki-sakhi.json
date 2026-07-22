@@ -7,5 +7,21 @@
   "verseIds": [
     "39eca3d8-689f-4e23-8213-b7e84c8f7823"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "39eca3d8-689f-4e23-8213-b7e84c8f7823",
+      "title": "लाख बार हरि हरि कहो एक बार हरिदास - श्री ललित किशोरी देव, सिद्धांन्त की साखी (447)",
+      "slug": "lakh-baar-hari-hari-kaho-ek-baar-haridas-ati-prasann-shri-laldli-deta-vipin-ko-vaas",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "लाख बार हरि हरि कहो एक बार हरिदास",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "लाख बार हरि हरि कहो, एक बार हरिदास।\nअति प्रसन्न श्री लाड़ली, देत विपिन को वास॥\n- श्री ललित किशोरी देव, सिद्धांन्त की साखी (447)",
+      "hindi_text": "हरि हरि कोटि बार कहो, हरिदास एक बार। अति प्रसन्न श्री लाड़ली, दे रही विपीन को सुख.. - श्री ललित किशोरी देव, सिद्धांत साखी (447)",
+      "audio_url": ""
+    }
+  ]
 }

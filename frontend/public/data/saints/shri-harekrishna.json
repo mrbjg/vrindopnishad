@@ -7,6 +7,19 @@
   "verseIds": [
     "1df9915c-2cc6-422d-805f-f2569da5f87a"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "1df9915c-2cc6-422d-805f-f2569da5f87a",
+      "title": "वह पायेगा क्या रसका चसका - श्री हरेकृष्ण जी",
+      "slug": "vah-payega-kya-rasaka-chasaka-shri-harekrishn-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "वह पायेगा क्या रसका चसका",
+      "tags": [],
+      "sanskrit_text": "(सवैया)\nवह पायेगा क्या रसका चसका, नहिं कृष्ण से नेह लगायेगा जो। \n‘हरेकृष्ण’ इसे समझेगा वही, रसिकों के समाज में जायेगा जो॥ [1]\nब्रज धूल लपेट कलेवर में, गुण नित्य किसोरी के गायेगा जो। \nहँसता हुआ स्याम मिलेगा उसे, निज प्राणों की भेंट चढ़ायेगा जो॥ [2]\n- श्री हरेकृष्ण जी",
+      "hindi_text": "(Savaiya) Wow, will Raska get a drink, no who will love Krishna. इसे 'हरेकृष्ण' ही समझ पाएंगे, जो प्रेममय समाज में जाएंगे.. [1] ब्रज के धूलि रंग में कौन गाएगा, गुन नित्य किसोरी। Those who sacrifice their lives while smiling will get work. [2] - श्री हरेकृष्ण जी",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

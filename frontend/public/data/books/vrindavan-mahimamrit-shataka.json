@@ -7,5 +7,18 @@
   "verseIds": [
     "2f98a09c-ba2d-4e9a-8158-68065843b32d"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "2f98a09c-ba2d-4e9a-8158-68065843b32d",
+      "title": "अद्भुत गुप्त मंत्र की महिमा - वृंदावन महिमामृत् शतक (15.73-76)",
+      "slug": "the-glory-of-the-hidden-mantra-from-all-shri-prabhodanand-sarasvati-vrindavan-mahimamrit-shataka-15",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "अद्भुत गुप्त मंत्र की महिमा",
+      "tags": [],
+      "sanskrit_text": "श्री प्रभोदनन्द सरस्वती जी ने लिखे अपने ग्रन्थ वृन्दावन महिमामृत में एक अद्भुत मन्त्र की महिमा बताई है, जिसे गुप्त रखा गया है। ",
+      "hindi_text": "श्री प्रभोदानंद सरस्वती द्वारा लिखित अपने ग्रंथ 'वृंदावन महिमामृत' में उन्होंने एक अद्भुत मंत्र की महिमा बताई है, जिसे गुप्त रखा गया है।",
+      "audio_url": ""
+    }
+  ]
 }

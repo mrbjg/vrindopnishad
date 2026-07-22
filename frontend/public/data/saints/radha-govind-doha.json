@@ -8,6 +8,37 @@
     "cf382c18-c3ea-4a14-8719-895cfda60dc6",
     "0e1c3c9f-fa3c-48a3-a0ef-66c62b94cef2"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "cf382c18-c3ea-4a14-8719-895cfda60dc6",
+      "title": "“ धामों का मुकुट ब्रज गोविन्द राधे, ब्रज का मुकुट वृन्दावन है बतादे || ” - राधा गोविंद दोहा - 5911, जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "dhamon-ka-mukut-braj-govind-radhey-braj-ka-mukut-vrindavan-hai-batade-quote-by-jagadguru-shri-kripaluji-ji",
+      "category": "dham",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "“ धामों का मुकुट ब्रज गोविन्द राधे, ब्रज का मुकुट वृन्दावन है बतादे || ”",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "“ धामों का मुकुट ब्रज गोविन्द राधे, ब्रज का मुकुट वृन्दावन है बतादे॥ ”\n  - राधा गोविंद दोहा - 5911,जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "\"धामों का मुकुट है वृन्दावन, ब्रज गोविंद राधे, बताओ वृन्दावन है ब्रज का मुकुट..\" - राधा गोविंद दोहा - 5911, जगद्गुरु श्री कृपालु जी महाराज",
+      "audio_url": ""
+    },
+    {
+      "id": "0e1c3c9f-fa3c-48a3-a0ef-66c62b94cef2",
+      "title": "राधे रानी ठकुरानी गोविंद राधे - राधा गोविंद दोहा - 6415, जगदगुरु श्री कृपालु जी महाराज",
+      "slug": "radhey-rani-thakurani-govind-radhey-vrindavan-rasik-rajdhani-batade-jagadguru-shri-kripaluji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "राधे रानी ठकुरानी गोविंद राधे",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "\"राधे रानी ठकुरानी गोविंद राधे, वृन्दावन रसिक राजधानी बतादे॥ ”\n- राधा गोविंद दोहा - 6415, जगदगुरु श्री कृपालु जी महाराज",
+      "hindi_text": "\"राधे रानी ठकुरानी गोविंद राधे, बताओ वृन्दावन की रमणीय राजधानी..\" - राधा गोविंद दोहा - 6415, जगद्गुरु श्री कृपालु जी महाराज",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

@@ -9,6 +9,19 @@
   "verseIds": [
     "31d68d76-71c6-4255-b15a-ef3bedaed4e3"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "31d68d76-71c6-4255-b15a-ef3bedaed4e3",
+      "title": "मिलन हमारो जो सदा चाहत हो मन माँह  - श्री रसलीन, रसलीन ग्रंथावली, स्फुट दोहे (70)",
+      "slug": "milan-humaro-jo-sada-shri-rasleen-rasleen-granthawali-safut-dohe-70",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "मिलन हमारो जो सदा चाहत हो मन माँह",
+      "tags": [],
+      "sanskrit_text": "मिलन हमारो जो सदा, चाहत हो मन माँह।\nतो इन कुंजन में सदा, जनि पकरो मम बाँह॥\n- श्री रसलीन, रसलीन ग्रंथावली, स्फुट दोहे (70)",
+      "hindi_text": "हमारी मुलाकात वही है जो आप हमेशा अपने दिल में चाहते थे। सो सदा इन कुंजन में, जानि पकारो मम बन्ह.. - श्री रसलीन, रसलीन ग्रंथावली, स्फुट दोहे (70)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

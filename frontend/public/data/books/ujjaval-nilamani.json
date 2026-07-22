@@ -7,5 +7,18 @@
   "verseIds": [
     "9b6eb8bc-6e95-4932-8d6d-9c3f0e9c57b0"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "9b6eb8bc-6e95-4932-8d6d-9c3f0e9c57b0",
+      "title": "सर्वथा ध्वंसरहितं सत्यपि ध्वंसकारणे - श्री रूप गोस्वामी, उज्जवल नीलमणि (14.63)",
+      "slug": "sarvatha-dhvansh-rahitam-satyapi-dhavans-karane-shri-roop-goswami-ujjaval-neelmani-1463",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "सर्वथा ध्वंसरहितं सत्यपि ध्वंसकारणे",
+      "tags": [],
+      "sanskrit_text": "सर्वथा ध्वंसरहितं सत्यपि ध्वंसकारणे। \nयद् भावबन्धनं यूनोः स प्रेमा परिकीर्तितः॥\n- श्री रूप गोस्वामी, उज्जवल नीलमणि (14.63)",
+      "hindi_text": "पूरी तरह से विनाशकारी, सचमुच विनाशकारी। Yad bhavabandhan yunoh sa prem parikirtith.. - Sri Rupa Goswami, Ujjwal Sapphire (14.63)",
+      "audio_url": ""
+    }
+  ]
 }

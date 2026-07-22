@@ -7,6 +7,19 @@
   "verseIds": [
     "078b97fa-a532-4e86-9b4b-a9cfb805975b"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "078b97fa-a532-4e86-9b4b-a9cfb805975b",
+      "title": "निखिलगुण वृन्दावन वृन्दावनम् नाम वनम् । - आनंद वृंदावन चम्पू ",
+      "slug": "nikhilgun-vrindavan-vrindvanam-nam-anand-vrindavan-champu",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "निखिलगुण वृन्दावन वृन्दावनम् नाम वनम् ।",
+      "tags": [],
+      "sanskrit_text": "निखिलगुण वृन्दावन वृन्दावनम् नाम वनम्।\n- आनंद वृंदावन चम्पू (1.14)",
+      "hindi_text": "निखिलगुण वृन्दावन वृन्दावनम् नाम वनम्। - आनंद वृन्दावन चम्पू (1.14)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

@@ -7,5 +7,21 @@
   "verseIds": [
     "4fad9f2a-aff0-4bd7-b8cd-f1660f5ef1bf"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "4fad9f2a-aff0-4bd7-b8cd-f1660f5ef1bf",
+      "title": "वह समय कब आएगा - श्री रघुनाथ दास गोस्वामी, श्री ब्रज-विलास तत्व ",
+      "slug": "bhraman-kacche-kacche-kshitidharapater-vakrima-gatair-lapan-radhe-krishnetyanavataram-un-mattavad-aham-patan-kvapi-kvapiucchalita-nayana-dvandva-salilaih-kada-keli-sthanam-sakalam-api-sinchami-vikalah-raghunath-das",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "वह समय कब आएगा",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "वह समय कब आएगा कि मैं ब्रज में रहूंगा? वृंदावन की कुंजों में भटकते हुए, भाव प्रेम से ओतप्रोत, मैं अपनी आँखों में राधा कृष्ण की छवि भर नित्य ही आंसू बहाऊंगा?\n- श्री रघुनाथ दास गोस्वामी, श्री ब्रज-विलास तत्व",
+      "hindi_text": "वाह, कब समय आएगा कि मैं ब्रज में रहूँगा? वृन्दावन की वादियों में प्रेम में सराबोर क्या मैं राधाकृष्ण की छवि आँखों में लेकर हर दिन आँसू बहाऊँगा? - श्रीरघुनाथ दास गोस्वामी, श्रीब्रज-विलास तत्व",
+      "audio_url": ""
+    }
+  ]
 }

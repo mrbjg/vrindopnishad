@@ -7,6 +7,19 @@
   "verseIds": [
     "354b3817-37fa-44fd-939f-68d1150067b1"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "354b3817-37fa-44fd-939f-68d1150067b1",
+      "title": "भक्त भक्ति भगवंत गुरु चतुर नाम बपु एक - भक्तमाल",
+      "slug": "bhakt-bhakti-bhagwant-guru-chatur-nam-bapu-ek-bhakt-maal",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "भक्त भक्ति भगवंत गुरु चतुर नाम बपु एक",
+      "tags": [],
+      "sanskrit_text": "भक्त भक्ति भगवंत गुरु, चतुर नाम बपु एक।\nइनके पद बंदन किएँ, नासत विध्न अनेक॥\n- श्री नाभाजी, भक्तमाल",
+      "hindi_text": "भक्त भक्ति भगवंत गुरु, चतुर नाम बापू एक। उनके पद के प्रतिबन्ध अनेक हैं, विनाश के नियम अनेक हैं.. - श्री नाभाजी, भक्तमाला",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

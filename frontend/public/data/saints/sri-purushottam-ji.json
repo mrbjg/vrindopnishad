@@ -7,6 +7,19 @@
   "verseIds": [
     "99c25974-33e6-4cad-be76-374319625caa"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "99c25974-33e6-4cad-be76-374319625caa",
+      "title": "Darsan Dai Nikasi Ata Mein Te - Sri Purushottam Ji",
+      "slug": "darsan-dai-nikasi-ata-mein-te-sri-purushottam-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Darsan Dai Nikasi Ata Mein Te",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "श्री राधा के सुन्दर रूप और उनके दर्शन की विनम्र अभिलाषा का वर्णन करते हुए वे कहते हैं- जब श्रीराधिका ऊँचे चबूतरे पर आती हैं और धीरे-धीरे अपनी काली जटाएँ खोलती हैं, जिससे उनका चेहरा उजागर हो जाता है, तो ऐसा प्रतीत होता है मानो बादलों के पीछे से पूर्णिमा का चंद्रमा उग रहा हो। [1] उनके चरणकमलों की चमक से ऐसा प्रतीत होता है मानो असंख्य लक्ष्मी, सावित्री और भवानी प्रकट हो गयी हों। पुरूषोत्तम जी कहते हैं कि इस दिव्य रस का स्वाद छाछ से निकाले गये ताजे मथे हुए मक्खन के समान है। [2]",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

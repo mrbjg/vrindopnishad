@@ -7,6 +7,19 @@
   "verseIds": [
     "d5ace603-4f2f-4474-a1bc-44db2e63cb76"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "d5ace603-4f2f-4474-a1bc-44db2e63cb76",
+      "title": "सोई सांचा सूरमा मंड्या जुगल सों हेत - श्री गुरु छौनाजी",
+      "slug": "soi-sancha-surma-mandya-jugal-son-het-shri-guruchauna-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "सोई सांचा सूरमा मंड्या जुगल सों हेत",
+      "tags": [],
+      "sanskrit_text": "सोई सांचा सूरमा, मंड्या जुगल सों हेत।\n‘गुरुछौना’ छाँडै नहीं, वृंदावन रस खेत॥\n- श्री गुरु छौना जी ",
+      "hindi_text": "सोइ सांचा सुरामा, मांड्या जुगल सों हेत। 'गुरुचौना' छलनी नहीं, वृन्दावन का रसक्षेत्र है.. - श्री गुरुचौना जी",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

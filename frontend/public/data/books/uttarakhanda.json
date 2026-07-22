@@ -7,5 +7,18 @@
   "verseIds": [
     "bce7fd61-5055-4c78-ae9f-ba406870f4a7"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "bce7fd61-5055-4c78-ae9f-ba406870f4a7",
+      "title": "हरौ येषां स्थिरा भक्ति भूयसी येषु तत्कृपा - पद्म पुराण, उत्तरखण्ड",
+      "slug": "harau-yesham-sthira-bhaktir-bhuyasi-yeshu-tatkripa-padma-puran-uttarkhand",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "हरौ येषां स्थिरा भक्ति भूयसी येषु तत्कृपा",
+      "tags": [],
+      "sanskrit_text": "हरौ येषां स्थिरा भक्ति भूयसी येषु तत्कृपा।\nतेषामेवाहि धन्यानां मथुरायां भवेद्रतिः॥\n- पद्म पुराण, उत्तरखण्ड",
+      "hindi_text": "हरौ येषां स्थिर भक्ति भूयसि येषु तत्कृपा। तेषामेवहि धन्यानां मथुरायां भवेद्रतिः। - पद्म पुराण, उत्तराखंड",
+      "audio_url": ""
+    }
+  ]
 }

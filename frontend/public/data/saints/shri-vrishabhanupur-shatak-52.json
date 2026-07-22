@@ -9,6 +9,19 @@
   "verseIds": [
     "c264532d-73c4-4edc-bb11-8faa7af554bf"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "c264532d-73c4-4edc-bb11-8faa7af554bf",
+      "title": "त्वं वनराज ! किशोरीचरण द्वन्द्व - श्री वृषभानुपुर शतक (52), श्री वंशी अली द्वारा रचित",
+      "slug": "tvam-vanraj-kishoricharan-dvandv-shri-vanshi-ali-shri-vrishbhanupur-shatak-glories-of-barsana-52",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "त्वं वनराज ! किशोरीचरण द्वन्द्व",
+      "tags": [],
+      "sanskrit_text": "त्वं वनराज ! किशोरीचरण द्वन्द्व ममापि दर्शय भोः।\nश्रीमच्छयामलमूर्तेर्हृदियत्तापं समुद्धरति॥\n- श्री वृषभानुपुर शतक (52), श्री वंशी अली द्वारा रचित",
+      "hindi_text": "टीवीएन वनराज! किशोरी चरण द्वन्द ममापि दर्शय भोः। श्रीमाच्यमालामूर्ति, हृदय-प्रेमी, शांतिपूर्ण। - श्री वृषभानुपुरा शतक (52), श्री वंशी अली द्वारा लिखित",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

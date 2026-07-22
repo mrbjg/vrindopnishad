@@ -7,6 +7,19 @@
   "verseIds": [
     "2b2c366f-da75-4d08-94ca-d548a567dee3"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "2b2c366f-da75-4d08-94ca-d548a567dee3",
+      "title": "गौर तेजो बिना यस्तु श्यामं  - गोपालसहस्रनामस्तोत्रम् [१७]",
+      "slug": "gaur-tejo-bina-yastu-shyamam-gopal-sahastra-naam-strotam-17",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "गौर तेजो बिना यस्तु श्यामं",
+      "tags": [],
+      "sanskrit_text": "गौर तेजो बिना यस्तु श्यामं तेजः समर्चयेत्।\nजपेद् व ध्यायते वापि स भवेत् पातकी शिवे॥\n- गोपालसहस्रनामस्तोत्रम् [१७]",
+      "hindi_text": "गौर तेजो बिना यस्तु श्याम तेज समार्चयेत्। शिव की वापसी पर जप और ध्यान करें.. - गोपालसहस्रनामस्तोत्रम् [17]",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

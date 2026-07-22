@@ -10,6 +10,31 @@
     "3d8a2534-d110-411e-9e4b-c2ed4a5c8620",
     "cf09fb4b-9d67-4127-bbc1-659a8fd8a054"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "3d8a2534-d110-411e-9e4b-c2ed4a5c8620",
+      "title": "राधा देवी जगत्कर्त्री - बृहन्नारदीय पुराण, पूर्व (3.181)",
+      "slug": "radha-devi-jagatkartri-brihad-naradiya-purana-purva-3181",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "राधा देवी जगत्कर्त्री",
+      "tags": [],
+      "sanskrit_text": "राधा देवी जगत्कर्त्री जगत्पालनतत्परा।\nजगल्लयविधात्री च सर्वेशी सर्वसूतिका॥\n- बृहन्नारदीय पुराण, पूर्व (3.181)",
+      "hindi_text": "राधा देवी संसार की रचयिता हैं। जगल्लयाविधात्री च सर्वेषि सर्वसुतिका। - बृहन्नारदाय पुराण, पूर्व (3.181)",
+      "audio_url": ""
+    },
+    {
+      "id": "cf09fb4b-9d67-4127-bbc1-659a8fd8a054",
+      "title": "राधा राधेति राधेति राधाकृष्णेति - बृहन्नारदीय पुराण",
+      "slug": "radha-radheti-radheti-radha-krishneti-brihad-naradiya-purana",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "राधा राधेति राधेति राधाकृष्णेति",
+      "tags": [],
+      "sanskrit_text": "राधा राधेति राधेति राधाकृष्णेति वै पुन:।\nप्रत्यहं पठ पाञ्चालि फलं नाम सहस्रकम्‌॥\n- बृहन्नारदीय पुराण",
+      "hindi_text": "राधा राधाति राधाति राधाकृष्णेति वा रे। प्रत्यहं पथ पांचाली फलं नाम सहस्रकम्.. - बृहन्नारदाय पुराण.",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

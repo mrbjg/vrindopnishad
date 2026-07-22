@@ -9,6 +9,19 @@
   "verseIds": [
     "cbbc0a43-91c1-4691-a0a0-a3ac26d15373"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "cbbc0a43-91c1-4691-a0a0-a3ac26d15373",
+      "title": "Sakal Vibhav Saram Sarva Dharmaika Saram - Shri Prabodhanand Saraswati, Vrindavan Mahimamrit (17.85)",
+      "slug": "sakal-vibhav-saram-sarva-dharmaika-saram-shri-prabodhanand-saraswati-vrindavan-mahimamrit-1785",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Sakal Vibhav Saram Sarva Dharmaika Saram",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "सभी ऐश्वर्यों का सार, सभी धर्मों का सार, सभी भक्ति प्रथाओं का सार, सभी उपलब्धियों का सार, सभी महिमाओं का सार, और सभी मिठास और खुशी का सार कोई और नहीं बल्कि श्री धाम वृन्दावन का नित्य विहार (शाश्वत प्रेम-क्रीड़ा) है।",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

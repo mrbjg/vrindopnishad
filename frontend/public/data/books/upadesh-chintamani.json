@@ -7,5 +7,18 @@
   "verseIds": [
     "e5a1f667-71b0-40c7-8138-fbdffc17e1e6"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "e5a1f667-71b0-40c7-8138-fbdffc17e1e6",
+      "title": "रसिकन की रसना सदा जपै युगल को नाम - श्री रूप माधुरी, उपदेश चिंतामणि, रसिक पच्चीसी (6)",
+      "slug": "rasikan-ki-rasna-sada-japan-yugal-ko-naam-shri-roop-madhuri-ji-ki-vani-rasik-pacchisi-6",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "रसिकन की रसना सदा जपै युगल को नाम",
+      "tags": [],
+      "sanskrit_text": "रसिकन की रसना सदा, जपै युगल को नाम।\nसुरत सनी रहे रूप में, रैन दिना अठ याम॥\n- श्री रूप माधुरी, उपदेश चिंतामणि, रसिक पच्चीसी (6)",
+      "hindi_text": "रसिकान सार सदा युगल नाम जपते हैं। सुरत शनि रहे रूप पुरुष, रैन दीना अथा यम.. - श्री रूप माधुरी, उपदेश चिंतामणि, रसिक पचीसी (6)",
+      "audio_url": ""
+    }
+  ]
 }

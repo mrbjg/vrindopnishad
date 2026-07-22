@@ -10,7 +10,56 @@
     "1f92ce45-6336-4deb-8436-bbf58bce3d05",
     "6dc35d83-5d22-4cb1-aa30-767dd0417ce4"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "38be209a-c80c-4acc-aaea-566304888e8d",
+      "title": "वृन्दावन की भक्ति को मर्म न जाने कोय - श्री तुलसीदास जी महाराज",
+      "slug": "vrindavan-ki-bhakti-ko-marm-na-jane-koy-shri-tulsidas-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "वृन्दावन की भक्ति को मर्म न जाने कोय",
+      "tags": [],
+      "sanskrit_text": "वृन्दावन की भक्ति को, मर्म न जाने कोय।\nडार-डार और पात-पात पै, राधे राधे होय॥\n- गोस्वामी श्री तुलसीदास",
+      "hindi_text": "वृन्दावन की भक्ति का अर्थ कोई नहीं जानता। घर-घर में है राधे-राधे.. - गोस्वामी श्री तुलसीदास",
+      "audio_url": ""
+    },
+    {
+      "id": "19fcddc1-3274-4c70-b515-193d6eaae66b",
+      "title": "राधा राधा रटत हैं आक ढ़ाक अरू खैर - श्री तुलसीदास जी महाराज",
+      "slug": "radha-radha-ratat-hain-aak-dhaak-aru-khair-shri-tulsidas-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "राधा राधा रटत हैं आक ढ़ाक अरू खैर",
+      "tags": [],
+      "sanskrit_text": "राधा राधा रटत हैं आक ढ़ाक अरू खैर।\n- श्री तुलसीदास जी महाराज",
+      "hindi_text": "राधा राधा रटत है एक धक अरु खैर। - श्री तुलसीदास जी महाराज जब श्री तुलसीदास जी महाराज वृन्दावन आये और इस स्थान की दिव्यता देखी तो उन्होंने कहा, वाह, यहाँ के पत्ते, पेड़-पौधे भी राधा-राधा कहते हैं।",
+      "audio_url": ""
+    },
+    {
+      "id": "1f92ce45-6336-4deb-8436-bbf58bce3d05",
+      "title": "वृन्दावन वैकुण्ठ कों, तोल्यौ तुलसी दास - श्री तुलसीदास जी महाराज",
+      "slug": "vrindavan-vaikunth-ko-tolyo-tulsidas-shri-tulsidas-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "वृन्दावन वैकुण्ठ कों, तोल्यौ तुलसी दास",
+      "tags": [],
+      "sanskrit_text": "वृन्दावन वैकुण्ठ कों, तोल्यौ तुलसी दास। \nगरूऔ हो सो थिर रह्यो, हलकौ गयौ अकास॥ \n- श्री तुलसीदास जी महाराज",
+      "hindi_text": "वृन्दावन वैकुण्ठ कोण, टोल्यौ तुलसी दास। डर लगता है तो मजबूत रहो, डर लगता है तो मजबूत रहो.. - श्री तुलसीदास जी महाराज",
+      "audio_url": ""
+    },
+    {
+      "id": "6dc35d83-5d22-4cb1-aa30-767dd0417ce4",
+      "title": "वृन्दावन ब्रजभूमि में - श्री तुलसीदास जी महाराज",
+      "slug": "vrindavan-brajbhumi-mein-shri-tulsidas-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "वृन्दावन ब्रजभूमि में",
+      "tags": [],
+      "sanskrit_text": "वृन्दावन ब्रजभूमि में, कहाँ राम सो बैर।\nराधा राधा रटत हैं, आक ढ़ाक अरू खैर॥\n- श्री तुलसीदास जी महाराज",
+      "hindi_text": "वृन्दावन, ब्रजभूमि पुरूषों की भूमि है, जहां राम शत्रु हैं। राधा राधा रटत है, एक धक अरु खैर.. - श्री तुलसीदास जी महाराज",
+      "audio_url": ""
+    }
+  ],
   "biography": {
     "id": "21fb4b0f-e170-4e76-a354-ec4c9b2b5f0e",
     "slug": "tulasidasa",

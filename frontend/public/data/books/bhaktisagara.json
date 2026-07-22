@@ -15,5 +15,114 @@
     "1aa7d645-ca0a-46f5-a145-f47277224b96",
     "211d5e7d-15c4-4606-8a1b-2663feb7a14c"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "fafda6cd-d894-4dcf-868f-9294772cad10",
+      "title": "अवतारी अवतार नहिं ये दोऊ नित्य किसोर  - श्री चरण दास, भक्तिसागर",
+      "slug": "avtari-avtar-nahin-yeh-dou-nitya-kisor-shri-charan-das-bhakti-sagar",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "अवतारी अवतार नहिं ये दोऊ नित्य किसोर",
+      "tags": [],
+      "sanskrit_text": "अवतारी अवतार नहिं, ये दोऊ नित्य किसोर।\nनित अखंड विहरत विपिन, नहिं जानत निशि भोर॥\n- श्री चरण दास, भक्तिसागर",
+      "hindi_text": "ये दोनों अवतार नहीं, शाश्वत किशोर हैं। नित अखण्ड विहारत विपीन, नहिं जानत निशि भोर।।- श्री चरण दास, भक्तिसागर",
+      "audio_url": ""
+    },
+    {
+      "id": "ea79e0f4-1ee7-4ce9-990d-0cba408311f7",
+      "title": "बीस कोस के फेर में वृंदावन को जान  - श्री चरण दास, भक्तिसागर",
+      "slug": "bees-kosa-ke-pher-mein-vrindavan-ko-jaan-shri-charan-das-bhakti-sagar",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "बीस कोस के फेर में वृंदावन को जान",
+      "tags": [],
+      "sanskrit_text": "बीस कोस के फेर में, वृंदावन को जान।\nकुंजगली अति सोहनी द्रुमबेली पहिचान॥\n- श्री चरणदास, भक्ति सागर",
+      "hindi_text": "जानिये वृन्दावन, बीस कोस दूर एक आदमी। कुंजगली अति सोहनी द्रुम्बेलि परीक्षा.. - श्री चरणदास, भक्ति सागर",
+      "audio_url": ""
+    },
+    {
+      "id": "8d2ed430-c196-4204-9ff2-62e1e9660b89",
+      "title": "निज वृन्दावन देखिया - श्री चरण दास, भक्तिसागर",
+      "slug": "nij-vrindavan-dekhiya-shri-charan-das-bhakti-sagar",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "निज वृन्दावन देखिया",
+      "tags": [],
+      "sanskrit_text": "निज वृन्दावन देखिया, नित अखंड जहां रास।\nपिय प्यारी विहरत सदा, जा पहुंचे व्हां दास॥\n- श्री चरण दास, भक्तिसागर",
+      "hindi_text": "अपने वृन्दावन को देखो, जहाँ शाश्वत आनंद है। सुहावनी यात्रा का सदैव आनंद लो, जाओ और पहुंचो वहां.. - श्री चरण दास, भक्तिसागर",
+      "audio_url": ""
+    },
+    {
+      "id": "803b00f1-7cb5-4604-bc3a-3f312cf11dd6",
+      "title": "गौरीसुत नहिं गा सकै, नहीं शारदा वाम -   श्री चरण दास, भक्तिसागर",
+      "slug": "gaurisut-nahin-gaa-sakai-nahin-sharda-vaam-shri-charan-das-bhakti-sagar",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "गौरीसुत नहिं गा सकै, नहीं शारदा वाम",
+      "tags": [],
+      "sanskrit_text": "गौरीसुत नहिं गा सकै, नहीं शारदा वाम।\n'चरणदास' कह बुद्धि है, वरणि सके निज धाम॥\n- श्री चरण दास, भक्तिसागर",
+      "hindi_text": "गौरीसुत न गा सके, न शारदा गा सकी। चरणदास में यह कहने की बुद्धि है, नहीं तो अपने धाम पहुंच जाओ.. - श्री चरणदास, भक्तिसागर",
+      "audio_url": ""
+    },
+    {
+      "id": "168730f7-3a68-46b9-a045-caf84f266ad5",
+      "title": "नितबिहार जहं करैं विहारी । कृष्णकुंवर अरु राधा प्यारी - श्री चरण दास, भक्तिसागर",
+      "slug": "nitvihar-jahan-karain-vihari-krishn-kunwar-aru-radha-pyari-shri-charan-das-bhakti-sagar",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "नितबिहार जहं करैं विहारी । कृष्णकुंवर अरु राधा प्यारी",
+      "tags": [],
+      "sanskrit_text": "नितबिहार जहं करैं विहारी। कृष्णकुंवर अरु राधा प्यारी॥\nगौर रूप वृषभानुदुलारी। श्याम रूप हैं कृष्णमुरारी॥\n- श्री चरण दास, भक्तिसागर",
+      "hindi_text": "नीता बिहार वह जगह है जहां मैं घूमता हूं। कृष्णकुंवर अरु राधा प्यारी.. गौर रूप वृषभानुदुलारी. कृष्णमुरारी अंधकार का रूप हैं.. - श्री चरण दास, भक्तिसागर",
+      "audio_url": ""
+    },
+    {
+      "id": "bdeeba32-2dc3-4fdc-9455-06e41f1bbe4c",
+      "title": "वृन्दावन की साधुगति कापे बरणी जाय - श्री चरण दास, भक्तिसागर",
+      "slug": "vrindavan-ki-sadhugati-kaape-varni-jaay-shri-charan-das-bhakti-sagar",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "वृन्दावन की साधुगति कापे बरणी जाय",
+      "tags": [],
+      "sanskrit_text": "वृन्दावन की साधुगति, कापे बरणी जाय।\nजैसी जाकी दृष्टि है, तैसो ही दरशाय॥\n- श्री चरण दास, भक्तिसागर",
+      "hindi_text": "वृन्दावन का साधुत्व, कपे बरनि जय। जैसी दृष्टि, वैसी दृष्टि.. - श्री चरण दास, भक्तिसागर",
+      "audio_url": ""
+    },
+    {
+      "id": "e895560f-2276-4a4e-b136-9e47dc03c972",
+      "title": "पंच उपास में हैं नहीं - श्री चरण दास, भक्तिसागर",
+      "slug": "panch-upas-mein-hain-nahin-shri-charan-das-bhakti-sagar",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "पंच उपास में हैं नहीं",
+      "tags": [],
+      "sanskrit_text": "पंच उपास में हैं नहीं, ये दोउ युगल स्वरूप।\nरसिकन के ये धन परम, राख हिये में गूप॥\n- श्री चरण दास, भक्तिसागर",
+      "hindi_text": "पंच उपास पुरुष नहीं हैं, ये दोनों युगल रूप में हैं। यह रसिकन का धन परम है, मिट जाता है मन का रहस्य.. - श्री चरण दास, भक्तिसागर",
+      "audio_url": ""
+    },
+    {
+      "id": "1aa7d645-ca0a-46f5-a145-f47277224b96",
+      "title": "आसपास बहुकुंज हैं, बीच लाल कौ धाम - श्री चरण दास, भक्तिसागर",
+      "slug": "aaspas-bahukunj-hain-beech-lal-kau-dham-shri-charan-das-bhakti-sagar",
+      "category": "dham",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "आसपास बहुकुंज हैं, बीच लाल कौ धाम",
+      "tags": [],
+      "sanskrit_text": "आसपास बहुकुंज हैं, बीच लाल कौ धाम।\nचरणदास कूँ दीजिए, सखियन में विश्राम॥\n- श्री चरण दास, भक्तिसागर",
+      "hindi_text": "चारों ओर बहुत से बगीचे हैं और बीच में लाल कौ धाम है। चरण दास कुण दीजी, सखियां मन विश्राम.. - श्री चरण दास, भक्तिसागर",
+      "audio_url": ""
+    },
+    {
+      "id": "211d5e7d-15c4-4606-8a1b-2663feb7a14c",
+      "title": "श्वासा लेवै नाम बिन सो जीवन धिक्कार - श्री चरण दास, भक्तिसागर",
+      "slug": "shvaasa-levai-naam-bin-so-jeevan-dhikkaar-shri-charan-das-bhakti-sagar",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "श्वासा लेवै नाम बिन सो जीवन धिक्कार",
+      "tags": [],
+      "sanskrit_text": "श्वासा लेवै नाम बिन, सो जीवन धिक्कार।\nश्वास श्वास में नाम जप, यही धारना धार॥\n- श्री चरण दास, भक्तिसागर",
+      "hindi_text": "नाम और श्वास के बिना जीवन अभिशाप है। श्वास लें, श्वास लें, पुरुष नाम का जप करें, यह विश्वास रखें.. - श्री चरण दास, भक्तिसागर",
+      "audio_url": ""
+    }
+  ]
 }

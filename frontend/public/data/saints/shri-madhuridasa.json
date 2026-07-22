@@ -9,6 +9,19 @@
   "verseIds": [
     "0193fec7-6875-49fe-bc76-ebb089906413"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "0193fec7-6875-49fe-bc76-ebb089906413",
+      "title": "नव रस सब नीरस लगे - श्री माधुरीदास, मान माधुरी (39)",
+      "slug": "nav-ras-sab-neeras-lage-shri-madhuridas-maan-madhuri-39",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "नव रस सब नीरस लगे",
+      "tags": [],
+      "sanskrit_text": "नव रस सब नीरस लगे, सब रस को सिर मौर।\nमान माधुरी रस बिना, मन न रसै रस और॥\n- श्री माधुरीदास, मान माधुरी (39)",
+      "hindi_text": "सभी नए स्वाद निराशाजनक लगते हैं, उन सभी का स्वाद मोर जैसा है। रस बिन मन माधुरी, रस बिन मन और.. - श्री माधुरीदास, मन माधुरी (39)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

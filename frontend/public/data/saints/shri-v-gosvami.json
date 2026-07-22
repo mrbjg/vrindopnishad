@@ -9,6 +9,19 @@
   "verseIds": [
     "31109acd-f7fc-4d77-ac0f-a4a471972e2b"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "31109acd-f7fc-4d77-ac0f-a4a471972e2b",
+      "title": "श्री वृंदावनस्य अप्रकट - श्री जीव गोस्वामी, श्री कृष्ण संदर्भ ",
+      "slug": "shri-vrindavanasya-aprakat-shri-jeev-goswami-shri-krishn-sandarbh",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "श्री वृंदावनस्य अप्रकट",
+      "tags": [],
+      "sanskrit_text": "श्री वृंदावनस्य अप्रकट लीलानुगत प्रकाश एव गोलोक इति\n- श्री जीव गोस्वामी, श्री कृष्ण संदर्भ ",
+      "hindi_text": "श्री वृन्दावनस्य अव्यक्त लीलानुगत प्रकाश एवं गोलोक इति - श्री जीव गोस्वामी, श्री कृष्ण सन्दर्भ",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

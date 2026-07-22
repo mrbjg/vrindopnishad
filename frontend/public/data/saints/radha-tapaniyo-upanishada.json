@@ -7,6 +7,22 @@
   "verseIds": [
     "615c2156-689e-4ef9-b7bd-b39f7da6aba1"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "615c2156-689e-4ef9-b7bd-b39f7da6aba1",
+      "title": "राध्या सहिते देवो माधवे नैव राधिका - राधा तापनियो उपनिषद",
+      "slug": "raadhya-sahite-devo-maadhave-naiv-raadhika-yojanayorbhedan-pashyati-sa-sansrte-muktayo-na-bhavati-yastu-raadha-vina-ta-dhyaayati-pravadati-prapathati-sa-moodhataamottam-radha-tapani-upanishad",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "राध्या सहिते देवो माधवे नैव राधिका",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "\" राध्या सहिते देवो माधवे नैव राधिका, \n योजनयोर्भेदं पश्यति स संसृते मुक्तयो न भवति ।\n यस्तु राधा विना त ध्यायति, प्रवदति, प्रपठति स मूढ़तामोत्तम॥ \"\n - राधा तापनियो उपनिषद",
+      "hindi_text": "\"राध्या सहित देवो माधवे नैव राधिका, योजनयोर्भेदन पश्यति स संसारे मुक्तयो न भवति। - राधा तपनियो उपनिषद",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

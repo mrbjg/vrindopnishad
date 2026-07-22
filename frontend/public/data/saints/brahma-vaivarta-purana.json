@@ -9,6 +9,19 @@
   "verseIds": [
     "7ec4e3ba-1096-43ac-9c86-12141461e68f"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "7ec4e3ba-1096-43ac-9c86-12141461e68f",
+      "title": "Athava Te Pravakshyami - Brahma Vaivarta Purana, Section 4 [ShriKrishn Janam Khand], Chapter 17, Verse 213-214",
+      "slug": "athava-te-pravakshyami-brahma-vaivarta-purana-section-4-shrikrishn-janam-khand-chapter-17-verse-213-214",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Athava Te Pravakshyami",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "राधा षोडश नाम्नं च वृंदा नाम श्रुतौ श्रुतम्। तस्यः क्रीड़ावनं रम्य येन वृन्दावनं स्मृतम्। - ब्रह्म वैवर्त पुराण - 4.17.213-214 (खंड 4 [श्री कृष्ण जन्म खंड], अध्याय 17, श्लोक 213-214) नारायण नारद से कहते हैं: हे नारद, ध्यान से सुनो क्योंकि मैं सबसे महत्वपूर्ण कारण बताता हूं कि क्यों भारत की भूमि में इस पवित्र वन को वृंदावन के रूप में जाना जाता है। शास्त्रों में श्री राधा के सोलह पूजनीय नामों में से एक नाम \"वृंदा\" भी है। चूँकि श्री राधा सदैव इस वन में प्रेममय लीलाओं में लीन रहती हैं, इसलिए इसे वृन्दावन के रूप में याद किया जाता है और महिमामंडित किया जाता है।",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

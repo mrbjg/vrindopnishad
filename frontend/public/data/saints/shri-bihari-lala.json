@@ -12,6 +12,55 @@
     "1c45e7e4-5fcf-4223-b641-6e72cca93492",
     "017bab6b-31f5-4ff0-a08f-89d42a488614"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "dfd33e24-fa4b-4a09-9450-d1d2daba93ca",
+      "title": "राधा हरि हरि राधिका बनि आए संकेत - श्री बिहारी लाल, बिहारी सतसई (343)",
+      "slug": "radha-hari-hari-radhika-bani-aaye-sanket-shri-bihari-lal-bihari-satsai-343",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "राधा हरि हरि राधिका बनि आए संकेत",
+      "tags": [],
+      "sanskrit_text": "राधा हरि हरि राधिका, बनि आए संकेत।\nदम्पति रति-बिपरीत-सुखु, सहज सुरत हूँ लेत॥\n- श्रीमहाकवी बिहारी लाल, बिहारी सतसई (343)",
+      "hindi_text": "राधा हरि हरि राधिका, बानी आये संकेत। युगल रति-विपरिता-सुक्खु, सहज सुरत हुन लेट.. - श्री महाकवि बिहारी लाल, बिहारी सतसई (343)",
+      "audio_url": ""
+    },
+    {
+      "id": "a148686d-bf11-477f-99c8-b1956b161b11",
+      "title": "जपमाला छापें तिलक - श्री बिहारी लाल, बिहारी सतसई",
+      "slug": "japmaala-chhapein-tilak-sare-na-ekaukam-shri-bihari-lal-bihari-satsai",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "जपमाला छापें तिलक",
+      "tags": [],
+      "sanskrit_text": "जपमाला छापें तिलक, सरै न एकौ कामु। \nमन कांचे नाचै वृथा, सांचे राचै रामु॥\n- श्रीमहाकवी बिहारी लाल, बिहारी सतसई ",
+      "hindi_text": "माला छापो, तिलक सरै न एकौ कामू। मन नाचता व्यर्थ, रामू रचता सांचे.. - श्री महाकवि बिहारी लाल, बिहारी सतसई",
+      "audio_url": ""
+    },
+    {
+      "id": "1c45e7e4-5fcf-4223-b641-6e72cca93492",
+      "title": "जहाँ जहाँ ठाढ़ौ लख्यौ - श्री बिहारी लाल, बिहारी सतसई (7)",
+      "slug": "jahan-jahan-thadhau-lakhau-shyamu-subhag-sirmauru-shri-bihari-lal-bihari-satsai-7",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "जहाँ जहाँ ठाढ़ौ लख्यौ",
+      "tags": [],
+      "sanskrit_text": "जहाँ जहाँ ठाढ़ौ लख्यौ, स्यामु सुभग सिरमौरु।\nबिनहूँ उनु छिन गहि रहतु, दृगनु अजौं वह ठौरु॥\n- श्रीमहाकवी बिहारी लाल, बिहारी सतसई (7)",
+      "hindi_text": "जहां भी लिखें अच्छा लिखें. बिनहुं उनु छिन गहि रहतु, द्रिगनु अजौं वा थाउरु.. - श्री महाकवि बिहारी लाल, बिहारी सतसई (7)",
+      "audio_url": ""
+    },
+    {
+      "id": "017bab6b-31f5-4ff0-a08f-89d42a488614",
+      "title": "चिरजीवौ जोरी जुरे - श्री बिहारी लाल, बिहारी सतसई (8)",
+      "slug": "chirjivau-jori-jure-kyun-na-sneh-gambheer-shri-bihari-lal-bihari-satsai-8",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "चिरजीवौ जोरी जुरे",
+      "tags": [],
+      "sanskrit_text": "चिरजीवौ जोरी जुरे, क्यों न सनेह गँभीर।\nको घटि ए बृषभानुजा, वे हलधर के बीर॥\n- श्रीमहाकवी बिहारी लाल, बिहारी सतसई (8)",
+      "hindi_text": "चिराजिवौ जोरि जुरे, क्यों न सनेह गणभीर। हे जन्मे बृषभानुज, वे हलधर के पुत्र थे.. - श्री महाकवि बिहारी लाल, बिहारी सतसई (8)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

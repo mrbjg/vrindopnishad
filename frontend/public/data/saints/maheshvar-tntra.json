@@ -7,6 +7,19 @@
   "verseIds": [
     "5f69bdee-ecb8-4def-9507-5a9e82b198e0"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "5f69bdee-ecb8-4def-9507-5a9e82b198e0",
+      "title": "स्वामिनी वासना राधा स्वयं वृन्दावनेश्वरी - माहेश्वर तंत्र (11.31)",
+      "slug": "swamini-vasna-radha-swayam-vrindavaneshwari-maaheshvar-tantra-1131",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "स्वामिनी वासना राधा स्वयं वृन्दावनेश्वरी",
+      "tags": [],
+      "sanskrit_text": "स्वामिनी वासना राधा स्वयं वृन्दावनेश्वरी। \nलवमात्रकालावच्छिन्नो विरहोऽभूदसात्मकः॥\n- माहेश्वर तंत्र (11.31)",
+      "hindi_text": "स्वामिनी वासना राधा स्वयं वृन्दावनेश्वरी। लवमात्रकालवाचीनो विरहोभूदासात्मख.. - महेश्वर तंत्र (11.31)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

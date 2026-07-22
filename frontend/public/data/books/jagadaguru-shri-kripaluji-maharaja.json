@@ -9,5 +9,45 @@
     "5000a076-2b20-4f23-9c02-ba92ea90c7ab",
     "bc592581-c7e4-48a9-8f3a-02bd88b08e93"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "5c2cd277-edfd-4e6c-9663-5fb949c2ceff",
+      "title": "चलो बरसाने मिले बरसानेवारी, नित्य किशोरी, ब्रज रस बोरी प्यारी  - ब्रज रस माधुरी, जगदगुरु श्री कृपालुजी महाराज",
+      "slug": "chalo-barsane-mile-barsanewari-braj-ras-madhuri-jagadguru-shri-kripaluji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "चलो बरसाने मिले बरसानेवारी, नित्य किशोरी, ब्रज रस बोरी प्यारी",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "\"चलो बरसाने मिले बरसानेवारी, नित्य किशोरी, ब्रज रस बोरी प्यारी”\n - ब्रज रस माधुरी,जगदगुरु श्री कृपालुजी महाराज",
+      "hindi_text": "\"आइए हम बरसाना चलें और बरसाना में श्री राधा से मिलें।\" वाह, नित्या किशोरी है और ब्रज रस का स्रोत है।",
+      "audio_url": ""
+    },
+    {
+      "id": "5000a076-2b20-4f23-9c02-ba92ea90c7ab",
+      "title": "बलि जाऊं लाली सुकुमार की - प्रेम रस मदिरा, जगदगुरु श्री कृपालुजी महाराज",
+      "slug": "bali-jaaoon-lalee-sukumaar-ki-abhiraamini-gaja-gaamini-bhaamini-swaamini-nand-kumaar-ki-jagadguru-shri-kripaluji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "बलि जाऊं लाली सुकुमार की",
+      "tags": [],
+      "sanskrit_text": "“बलि जाऊं लाली सुकुमार की,\nअभिरामिनि गज गामिनी भामिनी, स्वामिनी नंद कुमार की। \"\n- प्रेम रस मदिरा, जगदगुरु श्री कृपालुजी महाराज",
+      "hindi_text": "\"यज्ञ जौ लाली सुकुमार की, अभिरामिनी गज गामिनी भामिनी, स्वामिनी नंद कुमार की।\" मालकिन है.",
+      "audio_url": ""
+    },
+    {
+      "id": "bc592581-c7e4-48a9-8f3a-02bd88b08e93",
+      "title": "माँगूँ भुक्ति न मुक्ति राधे - ब्रज रस माधुरी,  जगदगुरु श्री कृपालुजी महाराज",
+      "slug": "mangoon-bhukti-na-mukti-radhe-mangoon-tava-pada-prem-radhe-jagadguru-shri-kripaluji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "माँगूँ भुक्ति न मुक्ति राधे",
+      "tags": [],
+      "sanskrit_text": "माँगूँ भुक्ति न मुक्ति राधे, माँगू तव पद प्रेम राधे। \n- ब्रज रस माधुरी,  जगदगुरु श्री कृपालुजी महाराज",
+      "hindi_text": "मंगुन भुक्ति न मुक्ति राधे, मंगु तव पद प्रेम राधे। -ब्रज रस मधुरी, जगद्गुरु श्री कृपालुजी महाराज हे राधे, मैं कष्टों से मुक्ति नहीं मांगता, मैं केवल आपके चरण कमलों में निस्वार्थ प्रेम चाहता हूं।",
+      "audio_url": ""
+    }
+  ]
 }

@@ -7,6 +7,22 @@
   "verseIds": [
     "a4eb9585-5273-4fe6-8bfe-a264f5ba57e0"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "a4eb9585-5273-4fe6-8bfe-a264f5ba57e0",
+      "title": "जो व्यक्ति राधा कृष्ण की नित्य भक्ति एवं सेवा करते हैं - श्रीमद भागवत (1.2.33)",
+      "slug": "narayanaparah-sarve-na-kutascana-bibhyati-shrimad-bhagwatam-1233",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "जो व्यक्ति राधा कृष्ण की नित्य भक्ति एवं सेवा करते हैं",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "श्रीमद भागवतः - 1.2.33\nजो व्यक्ति राधा कृष्ण की नित्य भक्ति एवं सेवा करते हैं वो संसार की किसी भी परिस्थी से भयभीत नहीं होते।",
+      "hindi_text": "श्रीमद्भागवत - 1.2.33 जो लोग राधा कृष्ण की नित्य भक्ति और सेवा करते हैं, वे संसार की किसी भी परिस्थिति से नहीं डरते।",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

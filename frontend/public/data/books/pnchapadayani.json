@@ -7,5 +7,18 @@
   "verseIds": [
     "42eff9bf-5688-44eb-bbc0-92d7594fdf7b"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "42eff9bf-5688-44eb-bbc0-92d7594fdf7b",
+      "title": "श्रीकृष्णरसविक्षिप्त मानसा रतिवर्जिताः - महाप्रभु श्री वल्लभाचार्य, पंचपदायनी (1)",
+      "slug": "shrikrishnarasavikshipt-maanasa-rativarjitaah-mahaprabhu-shri-vallabhacharya-panchpadayani-1",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "श्रीकृष्णरसविक्षिप्त मानसा रतिवर्जिताः",
+      "tags": [],
+      "sanskrit_text": "श्रीकृष्णरसविक्षिप्त मानसा रतिवर्जिताः।\nअनिर्वृता लोकवेदे मुख्यास्ते श्रवणोत्सुकाः॥\n- महाप्रभु श्री वल्लभाचार्य, पंचपदायनी (1)",
+      "hindi_text": "श्रीकृष्णरसविक्षिप्त मनसा रतिवर्जितः। अनिवृत लोककेदे मुखनास्ते श्रवणोत्सुकः।।- महाप्रभु श्री वल्लभाचार्य, पंचपदायनी (1)",
+      "audio_url": ""
+    }
+  ]
 }

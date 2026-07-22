@@ -7,5 +7,18 @@
   "verseIds": [
     "c7f5cdff-10e8-4953-adb4-eef08521d61d"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "c7f5cdff-10e8-4953-adb4-eef08521d61d",
+      "title": "आई तुमरे द्वार श्रीवृषभानु कुमारि जू - श्री लाल बलबीर जी, श्रीराधा शतक (1)",
+      "slug": "aayi-tumare-dvar-shrivrishbhanu-kumari-ju-shri-lal-balbir-ji-shriradha-shatak-1",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "आई तुमरे द्वार श्रीवृषभानु कुमारि जू",
+      "tags": [],
+      "sanskrit_text": "आई तुमरे द्वार, श्रीवृषभानु कुमारि जू।\nचेरी हौं सुकमार, चरन सरन मैं राखीये॥\n- श्री लाल बलबीर जी, श्रीराधा शतक (1)",
+      "hindi_text": "हे तेरे द्वार श्री वृषभानु कुमारी जू। मैं चेरी हूँ, इसे अपने चरणों के नीचे रखो.. - श्री लाल बलबीर जी, श्री राधा शतक (1)",
+      "audio_url": ""
+    }
+  ]
 }

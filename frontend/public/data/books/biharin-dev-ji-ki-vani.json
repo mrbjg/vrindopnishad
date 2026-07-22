@@ -10,5 +10,66 @@
     "50c0ca5a-4ae3-4862-913f-50e522547280",
     "ff3c9290-0fea-40d2-9682-9c4f34729b38"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "2710c88c-637b-45fd-968c-ac90c67faee6",
+      "title": "साधन श्रम न कछु किये न कछु करने जोग - श्री बिहारिन देव जी, बिहारिन देव जी की वाणी, सिद्धान्त की साखी (149)",
+      "slug": "sadhan-shram-na-kachu-kiye-na-kachu-karne-jog-kripa-biharinidasi-ko-sahaj-sanyogi-bhog-shri-biharin-dev-ji-biharin-dev-ji-ki-vaani",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "साधन श्रम न कछु किये न कछु करने जोग",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "साधन श्रम न कछु किये, न कछु करने जोग। \nकृपा बिहारिनिदासी को, सहज संयोगी भोग॥\n- श्री बिहारिन देव जी, बिहारिन देव जी की वाणी, सिद्धान्त की साखी (149)",
+      "hindi_text": "कोई शारीरिक श्रम न करें, कोई योग न करें। बिहारिनिदसी की कृपा, सहज स्नोयोगी का आनंद... - श्री बिहारिन देव जी की वाणी, सिद्धांत मित्र बिहारिन देव जी (149)",
+      "audio_url": ""
+    },
+    {
+      "id": "5864d96a-9c9d-41af-bcd0-76da543d3860",
+      "title": "श्री वृन्दावन जब देखौं तबहिं - श्री बिहारिन देव, बिहारिन देव जी की वाणी, रस के पद (175)",
+      "slug": "shri-vrindavan-jab-dekhon-tabhin-nayo-nita-leta-prem-upjaai-ya-rang-ras-mein-man-jhumii-tou-bhuli-pachilo-jaai-shri-biharin-dev-ju-shri-biharin-dev-ju-ki-vani",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "श्री वृन्दावन जब देखौं तबहिं",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "श्री वृन्दावन जब देखौं तबहिं, नयौ नित लेत प्रेम उपजाई।\nया रंग रस में मन झूमई तौ, भूली पाछिलौ जाइ॥ \n- श्री बिहारिन देव, बिहारिन देव जी की वाणी, रस के पद (175)",
+      "hindi_text": "मैं जब भी श्री वृन्दावन को देखता हूँ तो मेरा प्रेम बढ़ता ही जाता है। या रंग रस मन झुमै तौ, भूलि पछिलौ जय.. - श्री बिहारिन देव, बिहारिन देव जी की वाणी, रस के छंद (175)",
+      "audio_url": ""
+    },
+    {
+      "id": "50c0ca5a-4ae3-4862-913f-50e522547280",
+      "title": "एक आस एक वास करि - श्री बिहारिन देव, बिहारिन देव जी की वाणी, सिद्धान्त की साखी (598)",
+      "slug": "ek-aas-ek-vaas-kari-ekai-ishta-upwaas-shri-biharidas-anany-mat-badho-bhajan-viswaas-shri-biharin-dev-biharin-dev-ki-vani",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "एक आस एक वास करि",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "एक आस एक वास करि, एकै इष्ट उपास।\nश्रीबिहारीदास अनन्य मत, बड़ौ भजन विस्वास॥\n- श्री बिहारिन देव, बिहारिन देव जी की वाणी, सिद्धान्त की साखी (598)",
+      "hindi_text": "एक होकर जियो, एक ईश्वर की आराधना करो। श्री बिहारीदास अन्य विचार, बादू भजन मान्यताएँ.. - श्री बिहारिन देव, बिहारिन देव जी की वाणी, सिद्धांत के मित्र (598)",
+      "audio_url": ""
+    },
+    {
+      "id": "ff3c9290-0fea-40d2-9682-9c4f34729b38",
+      "title": "सब सारनि को सार सुनि - श्री बिहारिन देव, बिहारिन देव जी की वाणी, सिद्धान्त की साखी (151)",
+      "slug": "sab-sarani-ko-saar-suni-sab-tatvani-ka-tatva-biharini-dasi-ananytam-mamtava-ekatva-shri-biharin-dev-ji-biharin-dev-ji-ki-vaani",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "सब सारनि को सार सुनि",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "सब सारनि कौ सार सुनि, सव तत्वनि को तत्व।\nविहारिनदास अनन्य मत, बड़ो ममत्य एकत्व॥\n- श्री बिहारिन देव, बिहारिन देव जी की वाणी, सिद्धान्त की साखी (151)",
+      "hindi_text": "सब तत्वों का सार सुनो, सब तत्वों का सार सुनो। विहारिन दास अन्य मत, मातृ-प्रेम की एकता बढ़ायें.. - श्री बिहारिन देव, बिहारिन देव जी की आवाज, सिद्धांत के मित्र (151)",
+      "audio_url": ""
+    }
+  ]
 }

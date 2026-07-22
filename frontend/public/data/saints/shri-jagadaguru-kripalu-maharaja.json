@@ -7,6 +7,22 @@
   "verseIds": [
     "a94d7315-d62c-48b6-a1b4-06766d48d25b"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "a94d7315-d62c-48b6-a1b4-06766d48d25b",
+      "title": " रंगीली राधा रसिकन प्राण -  श्री जगदगुरु कृपालुजी महाराज",
+      "slug": "rangeeli-radha-rasikan-pran-quote-by-jagadguru-shri-kripaluji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "रंगीली राधा रसिकन प्राण",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "रंगीली राधा रसिकन प्राण\n - श्री जगदगुरु कृपालुजी महाराज",
+      "hindi_text": "रंग-बिरंगी राधा रसिकन प्राण - श्री जगद्गुरु कृपालुजी महाराज श्री राधा सभी रसिकन पुत्रों की प्राण हैं।",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

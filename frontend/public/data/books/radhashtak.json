@@ -7,5 +7,18 @@
   "verseIds": [
     "4ba8a7fb-ded7-47d0-9e7e-91e2bab33b61"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "4ba8a7fb-ded7-47d0-9e7e-91e2bab33b61",
+      "title": "Krishna-guru Dyuti Para Bahu Gayamana - Shri Kishori Ali, Radhashtak (01)",
+      "slug": "krishna-guru-dyuti-para-bahu-gayamana-shri-kishori-ali-radhashtak-01",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Krishna-guru Dyuti Para Bahu Gayamana",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "कृष्ण के गुरु कौन हैं, सबसे प्रतिभाशाली, असंख्य तरीकों से महिमामंडित, जो यमुना के तट पर प्रेम-क्रीड़ा करते हैं, जो कृष्ण के सार का प्रतीक हैं, जिनकी लंबी भुजाएं उनकी गर्दन को गले लगाती हैं, जो उन्हें सबसे अधिक प्रिय हैं? प्रियतम, सदैव मेरे हृदय में निवास करो।",
+      "audio_url": ""
+    }
+  ]
 }

@@ -801,10 +801,14 @@ function buildRelations(items) {
 
     const lightweightItem = {
       id: enrichedItem.id,
+      title: enrichedItem.title || enrichedItem.cleanTitle || '',
+      cleanTitle: enrichedItem.cleanTitle || enrichedItem.title || '',
       slug: enrichedItem.slug,
       category: enrichedItem.category || 'poem',
+      author: enrichedItem.author || '',
+      tags: enrichedItem.tags || [],
       audio_url: enrichedItem.audio_url || '',
-      cleanTitle: enrichedItem.cleanTitle || '',
+      sanskrit_text: enrichedItem.sanskrit_text || '',
       hindi_text: enrichedItem.hindi_text ? enrichedItem.hindi_text.substring(0, 150) + (enrichedItem.hindi_text.length > 150 ? '...' : '') : '',
       english_translation: enrichedItem.english_translation ? enrichedItem.english_translation.substring(0, 150) + (enrichedItem.english_translation.length > 150 ? '...' : '') : '',
       description: enrichedItem.description ? enrichedItem.description.substring(0, 150) + (enrichedItem.description.length > 150 ? '...' : '') : '',

@@ -7,6 +7,19 @@
   "verseIds": [
     "1ff785af-bbe2-43da-a36a-8dd4e1fde742"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "1ff785af-bbe2-43da-a36a-8dd4e1fde742",
+      "title": "नित्यविहार अखंड है, निज वृंदावन धाम - श्री कुशाली बाई जी (शुक संप्रदाय की रसिक भक्त)",
+      "slug": "nityavihar-akhand-hai-nij-vrindavan-dham-shri-kushali-bai-of-shuka-sect",
+      "category": "dham",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "नित्यविहार अखंड है, निज वृंदावन धाम",
+      "tags": [],
+      "sanskrit_text": "नित्यविहार अखंड है, निज वृंदावन धाम।\n‘बाई कुशाली’ गुरु कृपा, तहाँ अचल विश्राम॥\n- श्री कुशाली बाई जी (शुक संप्रदाय की रसिक भक्त)",
+      "hindi_text": "नित्यविहार अखंड है, निज वृन्दावन धाम। 'बाई कुशली' गुरु की कृपा है, शाश्वत विश्राम है.. - श्री कुशली बाई जी (रसिक भक्त शुक संप्रदाय)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

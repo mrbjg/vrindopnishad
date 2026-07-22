@@ -9,6 +9,19 @@
   "verseIds": [
     "80cdc657-350e-4831-aa05-6ac017a8dbd0"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "80cdc657-350e-4831-aa05-6ac017a8dbd0",
+      "title": "Niranjanam Nirgunamadvitiyam  - Shri Vagish Shastri Ji, Shri Radha Saptashati (5.63)",
+      "slug": "niranjanam-nirgunamadvitiyam-shri-vagish-shastri-ji-shri-radha-saptashati-563",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Niranjanam Nirgunamadvitiyam",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "विद्वान लोग परम सत्य को शुद्ध, निर्गुण और अद्वैत घोषित करते हैं - ऐसा ही होगा। लेकिन जहां तक ​​मेरा सवाल है, मैंने केवल श्रीवृंदावन को ही सर्वोच्च सत्य माना है, क्योंकि इसकी मिट्टी श्री राधा महारानी के पवित्र पदचिह्नों से सुशोभित है।",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

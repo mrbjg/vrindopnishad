@@ -8,6 +8,31 @@
     "fb39d71c-ab55-4653-b4cc-b434fea341be",
     "291d47ae-3436-4b43-96ba-daa6dd9ca04d"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "fb39d71c-ab55-4653-b4cc-b434fea341be",
+      "title": "तत्र वृन्दावनं नाम तत्र गोपी-कदम्बकः - सनत्कुमार सम्हिता (39.79)",
+      "slug": "tatra-vrindavanam-naam-tatra-gopi-kadambak-sanatkumar-samhita-79",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "तत्र वृन्दावनं नाम तत्र गोपी-कदम्बकः",
+      "tags": [],
+      "sanskrit_text": "तत्र वृन्दावनं नाम तत्र गोपी-कदम्बकः\nतत्र राधा-सखी-वर्गस् तत्रापि राधिका परा।\n- सनत्कुमार सम्हिता (39.79)",
+      "hindi_text": "तत्र वृन्दावन नाम तत्र गोपी-कदम्बक तत्र राधा-सखी-वर्गस तत्रापि राधिका परा। - सनतकुमार संहिता (39.79)",
+      "audio_url": ""
+    },
+    {
+      "id": "291d47ae-3436-4b43-96ba-daa6dd9ca04d",
+      "title": "न तत्पदं चागति परं - सनत्कुमार सम्हिता (32.38)",
+      "slug": "na-tatpadam-cagati-param-sanatkumar-samhita-3238",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "न तत्पदं चागति परं",
+      "tags": [],
+      "sanskrit_text": "न तत्पदं चागति परं तस्मात्सेव्यं परात्परम्।\nनातः परतरं किञ्चिल्लोके वै विद्यते ध्रुवम्॥\n-सनत्कुमार सम्हिता (32.38)",
+      "hindi_text": "एन तत्पदं चगति पर्ण तस्मात्सेव्य परतपरम्। नाथ परतं किन्याचिल्लोके वा विद्यते ध्रुवम्.. - सनत्कुमार संहिता (32.38)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

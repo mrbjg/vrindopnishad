@@ -7,5 +7,21 @@
   "verseIds": [
     "1dfbcea9-b2b4-4f47-8dc8-a08ee5424097"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "1dfbcea9-b2b4-4f47-8dc8-a08ee5424097",
+      "title": "जासौं सपरस चाहिए  - भगवत रसिक, अनन्य निश्चयात्मक ग्रंथ [उत्तरार्ध] (21)",
+      "slug": "jason-sapras-chahie-tason-apras-nit-jason-apras-chahie-tason-chibhkou-chitt-swami-shri-bhagwat-rasik",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "जासौं सपरस चाहिए",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "जासौं सपरस चाहिए, तासों अपरस नित।\nजासौं अपरस चाहिए, तासों चिभुकौ चित्त॥\n- भगवत रसिक, अनन्य निश्चयात्मक ग्रंथ [उत्तरार्ध] (21)",
+      "hindi_text": "जैसी आपकी जरूरतें हैं, वैसे ही आपके माता-पिता भी हैं। जसौं अपरस चाहिए, तसो चिभुकौ चित्त.. - भागवत रसिका, अन्य निश्चित ग्रंथ [बाद में] (21)",
+      "audio_url": ""
+    }
+  ]
 }

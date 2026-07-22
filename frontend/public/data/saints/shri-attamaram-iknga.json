@@ -7,6 +7,19 @@
   "verseIds": [
     "bf562ac2-dceb-47a4-b90e-a1a88259eb74"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "bf562ac2-dceb-47a4-b90e-a1a88259eb74",
+      "title": "वृन्दावन विहरत दोउ - श्री आत्तमराम इकंग (शुक संप्रदाय के भक्त)",
+      "slug": "vrindavan-viharat-dou-shri-aatamram-ikang",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "वृन्दावन विहरत दोउ",
+      "tags": [],
+      "sanskrit_text": "वृन्दावन विहरत दोउ, पगे प्रीत रस रंग।\nइक रस आनंद जहाँ नित, 'आत्तमराम इकंग'॥\n- श्री आत्तमराम इकंग (शुक संप्रदाय के भक्त)",
+      "hindi_text": "वृन्दावन विहार दोउ, पृष्ठ प्रीत रस रंज। इक रस आनंद जहां नित, 'आत्माराम इकांग'.. - श्री आत्माराम इकांग (शुक संप्रदाय के भक्त)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

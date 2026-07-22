@@ -7,5 +7,21 @@
   "verseIds": [
     "9bb9b536-0895-47b7-8bdf-3df0d8d8e952"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "9bb9b536-0895-47b7-8bdf-3df0d8d8e952",
+      "title": "तो पै वारी वारी बरसाने वारी प्यारी - ब्रज रस माधुरी, जगद्गुरु श्री कृपालु जी महाराज 1 (37)",
+      "slug": "topewari-wari-pyari-barsanewari-kirtan-written-by-jagadguru-shri-kripalu-ji-maharaj",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "तो पै वारी वारी बरसाने वारी प्यारी",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "तो पै वारी वारी बरसाने वारी प्यारी ।\nहे बरसानेवाली श्री प्यारी जू, मैं आप पर वारी वारी जाता हूँ।",
+      "hindi_text": "तो पाई बहुत मीठी है. हे वर्षा प्रेमी श्री प्यारी जू, मैं बार-बार एपी में आता हूं।",
+      "audio_url": ""
+    }
+  ]
 }

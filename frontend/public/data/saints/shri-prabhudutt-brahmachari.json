@@ -10,6 +10,31 @@
     "28311d0a-97c4-425a-9b48-0b673bde8f1a",
     "e8553886-111a-43a8-a83c-218126810ee5"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "28311d0a-97c4-425a-9b48-0b673bde8f1a",
+      "title": "Kab In Nainani Te Lakhu Vrindavan Ki Dhuri - Shri Prabhudutt Brahmachari, Sri Vrindavan Mahatmya (2)",
+      "slug": "kab-in-nainani-te-lakhu-vrindavan-ki-dhuri-shri-prabhudutt-brahmachari-sri-vrindavan-mahatmya-2",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Kab In Nainani Te Lakhu Vrindavan Ki Dhuri",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "मैं इन आँखों से वृन्दावन के उस परम पवित्र 'रज' (रेत) को कब देखूँगा - वह रज जो रसिकों को अत्यंत प्रिय है और उनके जीवन का स्रोत है?",
+      "audio_url": ""
+    },
+    {
+      "id": "e8553886-111a-43a8-a83c-218126810ee5",
+      "title": "Kab Lotun Ati Vikal Hvai Vraj-Raj mahan Harshay - Shri Prabhudutt Brahmachari, Sri Vrindavan Mahatmya (3)",
+      "slug": "kab-lotun-ati-vikal-hvai-vraj-raj-mahan-harshay-shri-prabhudutt-brahmachari-sri-vrindavan-mahatmya-3",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Kab Lotun Ati Vikal Hvai Vraj-Raj mahan Harshay",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "लालसा से पूर्णतया बेचैन मैं कब आनंदपूर्वक व्रज की धूल में लोटूंगा? उस पवित्र धूल को मैं अपने आँसुओं से कब भिगोऊँगा, कब उसे प्रेम की कीचड़ में बदलूँगा जब मेरी आँखों से प्रेमपूर्ण आँसुओं की धाराएँ बहने लगेंगी?",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

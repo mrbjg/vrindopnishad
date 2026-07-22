@@ -8,5 +8,33 @@
     "3d660ba7-8446-4290-97e2-821f5f9418bf",
     "a43baa42-63fd-4e07-9f1f-bc60eb1e0b7b"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "3d660ba7-8446-4290-97e2-821f5f9418bf",
+      "title": "राधाषोडशनाम्नां च - ब्रह्मवैवर्त पुराण, कृष्ण जन्म खंड (17.219)",
+      "slug": "radhashodashnaamnaam-ch-brahmavaivart-puran-krishn-janm-khand-17219",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "राधाषोडशनाम्नां च",
+      "tags": [],
+      "sanskrit_text": "राधाषोडशनाम्नां च वृन्दानाम श्रुतौ श्रुतम्।\nतस्याः क्रिड़ावनं रम्यं तेन वृन्दावनं स्मृतम्॥\n- ब्रह्मवैवर्त पुराण, कृष्ण जन्म खंड (17.219)",
+      "hindi_text": "राधा षोडशं च वृन्दानं श्रुतौ श्रुतम्। तस्यः क्रीड़ावन्ना रम्यम् तेन वृन्दावन स्मृतम्। - ब्रह्मवैवर्त पुराण, कृष्ण जन्म खंड (17.219)",
+      "audio_url": ""
+    },
+    {
+      "id": "a43baa42-63fd-4e07-9f1f-bc60eb1e0b7b",
+      "title": "रोगशोकमृत्युयमा वपन्ते नात्र संशय - ब्रह्मा वैवरत पुराण, कृष्ण जन्म खंड - 13/111",
+      "slug": "rog-shok-mrtyu-yama-vapante-naatr-sanshay-brahma-vaivarta-purana-quote",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "रोगशोकमृत्युयमा वपन्ते नात्र संशय",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "रोगशोकमृत्युयमा वपन्ते नात्र संशय:\n- ब्रह्मा वैवरत पुराण, कृष्ण जन्म खंड - 13/111",
+      "hindi_text": "रोगशोकामृत्युयामा वापंते नात्र संशय: - ब्रह्म वैवर्त पुराण, कृष्ण जन्म खंड - 13/111",
+      "audio_url": ""
+    }
+  ]
 }

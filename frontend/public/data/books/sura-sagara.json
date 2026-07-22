@@ -7,5 +7,18 @@
   "verseIds": [
     "ee3431fc-cd8a-40e7-89d4-e79ca46934ba"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "ee3431fc-cd8a-40e7-89d4-e79ca46934ba",
+      "title": "Braj-Vasi-Patatar Kou Naahin - Shri Surdas, Sura Sagara",
+      "slug": "braj-vasi-patatar-kou-nahin-shri-surdas-sura-sagara",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Braj-Vasi-Patatar Kou Naahin",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "सूर सागरब्रज के लोगों की तुलना किसी से नहीं की जा सकती। जिस परम भगवान श्री कृष्ण को ब्रह्मा, शिव, सनक ऋषि और अन्य लोग गहन ध्यान में भी प्राप्त नहीं कर सकते, वही कृष्ण प्रेमवश ब्रजवासियों की बची हुई थाली में भोजन करते हैं। [1] बलराम कहते हैं कि जब वे उनके साथ छाछ पीते हैं तो उसका स्वाद अमृत के समान मीठा होता है और वे इसकी प्रशंसा करते हैं। श्री सूरदास जी कहते हैं - जो सम्पूर्ण ब्रह्माण्ड का पालन-पोषण करता है, सर्व-पोषक विश्वम्भर, वह ब्रज के ग्वाल-बालों का बचा हुआ भोजन खाने को उत्सुक रहता है। [2]",
+      "audio_url": ""
+    }
+  ]
 }

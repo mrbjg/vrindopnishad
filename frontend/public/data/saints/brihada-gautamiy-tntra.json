@@ -7,6 +7,19 @@
   "verseIds": [
     "ced5705a-5bc2-486e-aeaa-3861c5124d67"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "ced5705a-5bc2-486e-aeaa-3861c5124d67",
+      "title": "इदं वृन्दावनं रम्यं - बृहद-गौतमीय तंत्र",
+      "slug": "idam-vrindavanam-ramyam-brihad-gautamiya-tantra",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "इदं वृन्दावनं रम्यं",
+      "tags": [],
+      "sanskrit_text": "‘इदं वृन्दावनं रम्यं मम धामैव केवलम्\nअत्र मे पभावः पक्षिमृगाः कीटाः नरामराः\nपंचयोजनमेवास्ति वनं मे देहरूपकम्’\n- बृहद-गौतमीय तंत्र",
+      "hindi_text": "'इदं वृन्दावन रम्यं मम धमैव केवलं अत्र मे पभवः पक्षिमृगः कितः नर्मः पंचयोगेनमेवस्ति वन्न मे देहरूपकम्' - बृहद-गौतमीय तंत्र",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

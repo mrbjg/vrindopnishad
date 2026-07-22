@@ -7,5 +7,18 @@
   "verseIds": [
     "ad3335d0-eaea-45bf-b701-d4259a2e0364"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "ad3335d0-eaea-45bf-b701-d4259a2e0364",
+      "title": "मोतिन के बोरे नहीं हंसन की नहि पांत - श्री बिहारिन देव, रसोपासना तिलक",
+      "slug": "hirani-ke-bore-nahin-hansan-ki-nahin-paant-shri-biharin-dev-rasopasna-tilak",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "मोतिन के बोरे नहीं हंसन की नहि पांत",
+      "tags": [],
+      "sanskrit_text": "मोतिन के बोरे नहीं, हंसन की नहि पांत। \nशेरन के नहि रेवड़े, रसिकन की न जमात॥\n- श्री बिहारिन देव, रसोपासना तिलक",
+      "hindi_text": "मोतिन के पास कोई बोरियत नहीं है, हंसन के पास कोई पैंट नहीं है। न शेरों की टोली, न प्रेमियों की टोली.. - श्री बिहारिन देव, रसोपासना तिलका",
+      "audio_url": ""
+    }
+  ]
 }

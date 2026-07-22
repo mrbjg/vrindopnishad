@@ -7,5 +7,18 @@
   "verseIds": [
     "7ef9d361-d1cd-4e5f-be47-279269b32ee0"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "7ef9d361-d1cd-4e5f-be47-279269b32ee0",
+      "title": "Uttam Kare So Ladili - Shri Lalit Kishori Dev Ju Ki Vani, Vishistha Pada & Saakhi (107)",
+      "slug": "uttam-kare-so-ladili-shri-lalit-kishori-dev-ju-ki-vani-vishistha-pada-sakhi-107",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Uttam Kare So Ladili",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "श्री राधा जो कुछ भी करती हैं वह आत्मा के सर्वोत्तम और उच्चतम कल्याण के लिए होता है, जबकि हम, अपनी सीमित बुद्धि के साथ, केवल औसत या स्वार्थी कार्य करने में सक्षम हैं। जो हर स्थिति में इस सत्य को समझता है और पूर्ण समर्पण के साथ श्री राधा की इच्छा को अपनी इच्छा मानता है, वह वास्तव में श्री हरि का प्रिय बन जाता है।",
+      "audio_url": ""
+    }
+  ]
 }

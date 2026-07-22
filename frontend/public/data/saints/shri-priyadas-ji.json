@@ -9,6 +9,19 @@
   "verseIds": [
     "8d635ebd-3596-4b49-8e30-e307308b455b"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "8d635ebd-3596-4b49-8e30-e307308b455b",
+      "title": "Nipat Prabal Sadhan Karein Tau Mile Tan Tyag -  Shri Priyadas Ji, Rasik Mohini (8)",
+      "slug": "nipat-prabal-sadhan-karein-tau-mile-tan-tyag-shri-priyadas-ji-rasik-mohini-8",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Nipat Prabal Sadhan Karein Tau Mile Tan Tyag",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "श्री वृन्दावन धाम की अनन्त महिमा का वर्णन करते हुए वे कहते हैं कि गहन आध्यात्मिक अनुशासन से भी व्यक्ति शरीर से वैराग्य प्राप्त कर सकता है - दिव्य प्रेम प्राप्त करना तो दूर की बात है। ऐसे प्रयासों से परे. फिर भी कठोर तपस्या के बिना, केवल वृन्दावन में निवास करने से, भौतिक अहंकार स्वाभाविक रूप से विलीन हो जाता है, और दिव्य प्रेम का आनंद अपने आप जागृत हो जाता है।",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

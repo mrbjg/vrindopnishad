@@ -7,5 +7,18 @@
   "verseIds": [
     "1fcdb73c-8df0-4895-9fd7-4833762d6e6b"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "1fcdb73c-8df0-4895-9fd7-4833762d6e6b",
+      "title": "रेफो हि कोटिजन्माघं - ब्रह्मवैवर्तपुराण, श्रीकृष्णजन्मखण्डः (4.13.105)",
+      "slug": "refo-hi-kotijanmagham-brahma-vaivarat-puran-shri-krishn-janma-khand-413105",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "रेफो हि कोटिजन्माघं",
+      "tags": [],
+      "sanskrit_text": "रेफो हि कोटिजन्माघं कर्मभोगं शुभाशुभम्॥\n- ब्रह्मवैवर्तपुराण, श्रीकृष्णजन्मखण्डः (4.13.105)",
+      "hindi_text": "रेफो हि कोटिजन्मघ्न कर्मभोगं शुभाशुभम्.. - ब्रह्मवैवर्तपुराण, श्रीकृष्णजन्मखंड (4.13.105)",
+      "audio_url": ""
+    }
+  ]
 }

@@ -8,5 +8,30 @@
     "e4c95f02-5e21-4a9d-a40f-d98bbda07ea4",
     "1820cbca-44e6-4ca8-9215-d288a429156d"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "e4c95f02-5e21-4a9d-a40f-d98bbda07ea4",
+      "title": "Gunjan Madhupan Sunat Aliri - Shri Albeli Ali, Samay Prabandh (22)",
+      "slug": "gunjan-madhupan-sunat-aliri-shri-albeli-ali-samay-prabandh-22",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Gunjan Madhupan Sunat Aliri",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "और उसका रोम-रोम जागृत प्रेम से रोमांचित हो उठा, मानो प्रेम की कोमल कलियाँ पूर्ण प्रसन्नता के साथ खिल रही हों। श्री अलबेली अली बताते हैं कि श्री राधा के अतुलनीय रूप को देखकर उनका हृदय इतना आनंद से भर गया कि वे बार-बार अपने आपको अर्पित करते रहे। [2]",
+      "audio_url": ""
+    },
+    {
+      "id": "1820cbca-44e6-4ca8-9215-d288a429156d",
+      "title": "Bade Bade Nayan Arun Ratnare - Shri Albeli Ali, Samay Prabandh (68)",
+      "slug": "bade-bade-nayan-arun-ratnare-shri-albeli-ali-samay-prabandh-68",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Bade Bade Nayan Arun Ratnare",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "पूर्णिमा के चंद्रमा की तरह, यह एक चमक बिखेरता है जो चारों ओर सब कुछ रोशन कर देता है। श्री अलबेली अली कहते हैं, उसकी शरारती आँखों की हरकतें इतनी चंचल हैं कि वह पूरी तरह से दिव्य प्रेम के नशे में धुत लगती है। [2]",
+      "audio_url": ""
+    }
+  ]
 }

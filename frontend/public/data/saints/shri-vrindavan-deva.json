@@ -7,6 +7,19 @@
   "verseIds": [
     "39f3e0cd-5384-4a45-87e8-50a2731297db"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "39f3e0cd-5384-4a45-87e8-50a2731297db",
+      "title": "मूर्तिमान श्रिंगार हरि - श्री वृंदावन देव जी ",
+      "slug": "murtiman-shringar-hari-shri-vrindavan-dev-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "मूर्तिमान श्रिंगार हरि",
+      "tags": [],
+      "sanskrit_text": "मूर्तिमान श्रृंगार हरि, सब रस कौ आधार।\nरसपोषक सब शक्ति लै, ब्रज में करत विहार॥\n- श्री वृंदावन देव जी ",
+      "hindi_text": "हरि मूरत साजे, बीच में सारा रस। सभी पोषक शक्तियां वापस ब्रज में लायी गयीं.. - श्री वृन्दावन देव जी",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

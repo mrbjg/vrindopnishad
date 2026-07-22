@@ -7,7 +7,20 @@
   "verseIds": [
     "fc655d3f-00bc-4878-9d92-a0e6ca484609"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "fc655d3f-00bc-4878-9d92-a0e6ca484609",
+      "title": "श्रीराधामाधव रंगे सुरति रंग रस लीन - श्री प्रियासखी",
+      "slug": "shri-radhamadhav-range-surati-rang-rasa-leen-shri-priyasakhi",
+      "category": "dham",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "श्रीराधामाधव रंगे सुरति रंग रस लीन",
+      "tags": [],
+      "sanskrit_text": "श्रीराधामाधव रंगे, सुरति रंग रस लीन। \nप्यारी पिय के प्रेमवश, प्रिय प्यारी आधीन॥\n- श्री प्रियासखी",
+      "hindi_text": "श्रीराधामाधव रंज, सुरति रंज रस लिन। प्रियतम के प्रेम से, प्रियतम के प्रेम तले.. - श्री प्रियसखी",
+      "audio_url": ""
+    }
+  ],
   "biography": {
     "id": "14344385-e28a-44f1-b507-dacca9abb576",
     "slug": "priyasakhi",

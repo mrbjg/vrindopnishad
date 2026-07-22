@@ -7,6 +7,19 @@
   "verseIds": [
     "355769ab-f117-4421-8b6b-0ac1198d0e01"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "355769ab-f117-4421-8b6b-0ac1198d0e01",
+      "title": "दिव्यं वृन्दावनं नाम - पुरुषार्थ बोधनी उपनिषध",
+      "slug": "divyam-vrindavanam-naam-purushaarth-bodhani-upanishadh",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "दिव्यं वृन्दावनं नाम",
+      "tags": [],
+      "sanskrit_text": "\"दिव्यं वृन्दावनं नाम शेषां गस्थं च सर्वदा।\nब्रह्म रूप मिदं देवि सच्चिदानन्द रूपकम्॥\"\n- पुरुषार्थ बोधिनी उपनिषध",
+      "hindi_text": "\"दिव्य वृन्दावन शेषम् गस्थम् च सर्वदा। ब्रह्म रूप मिदम् देवी सच्चिदानन्द रूपकम्।\" - पुरुषार्थ बोधिनी उपनिषद",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

@@ -7,6 +7,19 @@
   "verseIds": [
     "852cc8c7-3f7e-4207-8dca-0ddaff6c1b95"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "852cc8c7-3f7e-4207-8dca-0ddaff6c1b95",
+      "title": "श्री वृषभान कुमारि के वन्दों पद अरविंद - श्री कवि हरिदेव जी",
+      "slug": "shri-vrishbhan-kumari-ke-vandon-pad-arvind-sri-kavi-haridev-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "श्री वृषभान कुमारि के वन्दों पद अरविंद",
+      "tags": [],
+      "sanskrit_text": "श्री वृषभान कुमारि के, वन्दों पद अरविंद।\nजिन रज रंजित मुदित मन, रहत सदा बृजचंद॥  \n- श्री कवि हरिदेव जी",
+      "hindi_text": "श्री वृषभान कुमारी की ओर से अरविन्द को नमस्कार। जिन राज रणजीत, उदास मन, राहत सर्वदा बृजचंद.. - श्री कवि हरिदेव जी",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

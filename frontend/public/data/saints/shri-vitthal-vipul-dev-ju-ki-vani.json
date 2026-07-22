@@ -7,6 +7,19 @@
   "verseIds": [
     "baca38cf-2e75-43a5-b36c-9129a1b07a81"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "baca38cf-2e75-43a5-b36c-9129a1b07a81",
+      "title": "Dola Jhule Syama-Syama Saheli - Shri Vitthal Vipul Dev Ju Ki Vani (16)",
+      "slug": "dola-jhule-syama-syama-saheli-shri-vitthal-vipul-dev-ju-ki-vani-16",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Dola Jhule Syama-Syama Saheli",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "हाँ, श्री विट्ठल विपुल देव जी की वाणी (16) हे प्रिय मित्र! दिव्य युगल, श्री श्यामा श्याम, खुशी से झूले पर झूल रहे हैं। अत्यन्त भव्य एवं सुन्दर, निकुंज के सदैव नवीन, पुष्पित वन मंदिर में श्रीराधा अपने प्रियतम श्रीकृष्ण के साथ मधुर प्रणयक्रीड़ा में रत हैं। [1] कभी कृष्ण अपनी प्रेमिका को धीरे से झुलाते हैं तो कभी कोमल हृदय प्रिया उन्हें झुलाती हैं। सखियाँ, श्री ललिता और अन्य लोगों के साथ, इन रमणीय निकुंजलीलाओं को देखती हैं, पूरी तरह से मंत्रमुग्ध हो जाती हैं और दिव्य परमानंद की लहरों से भर जाती हैं। [2]",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

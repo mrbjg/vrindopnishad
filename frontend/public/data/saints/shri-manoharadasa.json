@@ -7,6 +7,19 @@
   "verseIds": [
     "ecd73a5f-1276-4f71-8f07-a3a5fb3094be"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "ecd73a5f-1276-4f71-8f07-a3a5fb3094be",
+      "title": "सकल भक्त जो कोटि हौं तामें सुद्ध जो एक - श्री मनोहरदास जी",
+      "slug": "sakal-bhakt-jo-koti-haun-taamen-suddh-jo-ek-shri-manohardas-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "सकल भक्त जो कोटि हौं तामें सुद्ध जो एक",
+      "tags": [],
+      "sanskrit_text": "सकल भक्त जो कोटि हौं, तामें सुद्ध जो एक।\nकोटि सुद्ध सम रसिक एक, रसिक अनन्य विशेष॥\n- श्री मनोहरदास जी",
+      "hindi_text": "भक्त तो बहुत हैं परन्तु पवित्र एक ही है। एक पवित्र और दूसरा विशेष.. - श्री मनोहरदास जी",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

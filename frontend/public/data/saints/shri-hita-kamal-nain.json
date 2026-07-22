@@ -9,6 +9,19 @@
   "verseIds": [
     "5bece75c-32e0-45f2-be25-e4f8668e6db8"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "5bece75c-32e0-45f2-be25-e4f8668e6db8",
+      "title": "Pritam Mohi Pranan Hun Tein Pyaro - Shri Hita Kamal Nain, Shri Hita Kamal Nain Ji Ki Vani, Ashtayami Padavali (110)",
+      "slug": "pritam-mohi-pranan-hun-tein-pyaro-shri-hita-kamal-nain-shri-hita-kamal-nain-ji-ki-vani-ashtayami-padavali-110",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Pritam Mohi Pranan Hun Tein Pyaro",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "क्योंकि वे सौंदर्य, आनंद और दिव्य गुणों के अवतार हैं। गोस्वामी श्री कमलनयन जी महाराज कहते हैं - ऐसे मधुर वचन सुनकर अपना तन-मन-धन अर्पित कर देना चाहिए। [2]",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

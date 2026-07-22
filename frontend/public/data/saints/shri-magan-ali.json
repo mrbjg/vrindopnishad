@@ -7,6 +7,19 @@
   "verseIds": [
     "0a23964d-33ee-40db-bf93-f1231736909d"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "0a23964d-33ee-40db-bf93-f1231736909d",
+      "title": "Ha-Ha He Harivansh Prabhu - Shri Magan Ali",
+      "slug": "ha-ha-he-harivansh-prabhu-shri-magan-ali",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Ha-Ha He Harivansh Prabhu",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "महाप्रभु, मैं आपकी शरण में आया हूँ। आप मुझे असहाय समझकर निकुंज महल की सेवा प्रदान करें और मुझे वृन्दावन की पवित्र भूमि में निवास करने का आशीर्वाद दें।",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

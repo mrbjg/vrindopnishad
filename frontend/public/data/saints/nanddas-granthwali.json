@@ -9,6 +9,19 @@
   "verseIds": [
     "2ba62aa9-fe4f-4fd6-a87c-cbca9638d7af"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "2ba62aa9-fe4f-4fd6-a87c-cbca9638d7af",
+      "title": "Ari Teri Sehej Ki Muskyan - Nanddas Granthwali, Padavali (68)",
+      "slug": "ari-teri-sehej-ki-muskyan-nanddas-granthwali-padavali-68",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Ari Teri Sehej Ki Muskyan",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "आपकी मनमोहक, सौम्य मुस्कान ने श्रीकृष्ण को पूर्णतः मोहित कर लिया है। उनका मानना ​​है कि \"सारा संसार आपकी महिमा गा रहा है और अब पूरी तरह से आपके नियंत्रण में है।\" [1] उसने अन्य सभी मित्रों को छोड़कर स्वयं को पूर्णतः आपके प्रति समर्पित कर दिया है। श्री नन्ददास जी कहते हैं कि आपकी तिरछी दृष्टि की शक्ति ने उस पर ऐसा पूर्ण अधिकार कर लिया है कि वह पूर्णतः आपके वश में हो गया है। [2]",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

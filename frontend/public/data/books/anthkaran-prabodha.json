@@ -7,5 +7,18 @@
   "verseIds": [
     "88bf1dda-e035-4ca4-9481-eef9e8ec5dfa"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "88bf1dda-e035-4ca4-9481-eef9e8ec5dfa",
+      "title": "अन्तःकरण मद्वाक्यं - महाप्रभु श्री वल्लभाचार्य, अन्तःकरण प्रबोध (1)",
+      "slug": "antakaharn-madvakyam-shri-vallabhacharya-antahkaran-prabhodh-1",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "अन्तःकरण मद्वाक्यं",
+      "tags": [],
+      "sanskrit_text": "अन्तःकरण मद्वाक्यं सावधानतया शृणु।\nकृष्णात्परं नास्ति दैवं वस्तुतो दोषवर्जितम्॥\n- महाप्रभु श्री वल्लभाचार्य, अन्तःकरण प्रबोध (1)",
+      "hindi_text": "अन्तकारं मद्वाक्यं सावधानं श्रृणु। कृष्णत्पर्ण नास्ति दैवन् वास्तु दोषवर्जितम्। - महाप्रभु श्री वल्लभाचार्य, अन्तःकरण प्रबोध (1)",
+      "audio_url": ""
+    }
+  ]
 }

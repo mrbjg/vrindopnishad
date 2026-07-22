@@ -7,5 +7,21 @@
   "verseIds": [
     "4c7bc00d-26aa-48d8-a861-00c1251cc17a"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "4c7bc00d-26aa-48d8-a861-00c1251cc17a",
+      "title": "यह सुख निरखि सखी नित प्रमुदित - श्री भगवत रसिक की वाणी, अनन्यरसिकभरण ग्रंथ 6 (6)",
+      "slug": "yeh-sukh-nirakhi-sakhi-nita-pramudit-praan-kare-balihari-bhagwat-rasik-piyar-ya-ras-ko-aur-lage-sab-khari-shri-bhagwat-rasik-bhagwat-rasik-ki-vani",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "यह सुख निरखि सखी नित प्रमुदित",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "यह सुख निरखि सखी नित प्रमुदित, प्राण करै बलिहारी।\nभगवत रसिक पियत या रस को, और लगे सब खारी॥\n- श्री भगवत रसिक, भगवत रसिक की वाणी, अनन्यरसिकभरण ग्रंथ 6 (6)",
+      "hindi_text": "यह सुखहीन सखी सदैव प्रसन्न रहती है और अपना जीवन न्यौछावर कर देती है। भगवत रसिक पीते हैं या रस चखते हैं, सब कुछ सत्य लगता है.. - श्री भगवत रसिक, भागवत रसिक की वाणी, अनन्यरसिकभरण ग्रंथ 6 (6)",
+      "audio_url": ""
+    }
+  ]
 }

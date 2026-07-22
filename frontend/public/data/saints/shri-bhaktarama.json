@@ -7,6 +7,19 @@
   "verseIds": [
     "5276186d-8ff6-4f3f-87b8-58353bca44fe"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "5276186d-8ff6-4f3f-87b8-58353bca44fe",
+      "title": "हर्षि देहु वर मांगहूँ यशुमति जीवनमूर - श्री भक्तराम",
+      "slug": "harshi-dehu-var-mangahun-yashumati-jivanamur-shri-bhaktram",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "हर्षि देहु वर मांगहूँ यशुमति जीवनमूर",
+      "tags": [],
+      "sanskrit_text": "हर्षि देहु वर मांगहूँ, यशुमति जीवनमूर।\nनित दासनके पगनकी, भक्तरामको धूर॥\n- श्री भक्तराम",
+      "hindi_text": "हरषि देहु वर मानघुं, यशुमति जीवनमुर। नीता दासनाके पगनाकी, भक्तरामको धुर.. - श्री भक्तराम",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

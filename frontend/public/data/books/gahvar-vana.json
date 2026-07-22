@@ -7,5 +7,21 @@
   "verseIds": [
     "a247a042-455c-40f2-b3f3-38b2c76aa3ef"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "a247a042-455c-40f2-b3f3-38b2c76aa3ef",
+      "title": " 'नागरिया' ब्रज वास कृपा फल पाइए - श्री नगरी दस,गह्वर वन",
+      "slug": "nagaria-braj-waas-kripa-phal-paayie-braj-nagar-nandlal-su-nishidin-gaayie-shri-nagri-das-gehvar-van",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "'नागरिया' ब्रज वास कृपा फल पाइए",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "“ 'नागरिया' ब्रज वास कृपा फल पाइए,\nब्रज नागर नंदलाल सु निशिदिन गाइए॥ ”\n- श्री नेह नागरी दास, गह्वर वन",
+      "hindi_text": "\"'नगरिया' ब्रज वास कृपा पै फल, ब्रज नगर नंदलाल सु निशिदिन गाई..\" - श्री नेह नागरी दास, गहवर वन",
+      "audio_url": ""
+    }
+  ]
 }

@@ -7,6 +7,19 @@
   "verseIds": [
     "73dc21e3-1a42-4d42-8e6c-68fe5e07a7a7"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "73dc21e3-1a42-4d42-8e6c-68fe5e07a7a7",
+      "title": "Mai Ri! Nand-Nandan Merau Man Ju Haryau - Shri Chhit Swami",
+      "slug": "mai-ri-nand-nandan-merau-man-ju-haryau-shri-chhit-swami",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Mai Ri! Nand-Nandan Merau Man Ju Haryau",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "गिरिधर मिलि तुमको हृदय में बसाऊंगी। [2] - श्री छित स्वामी एक मित्र दूसरे से कहता है - हे मित्र! नंदा के खूबसूरत बेटे ने मेरा दिल चुरा लिया है. जैसे ही मैं गाय का दूध निकालने गया, कृष्ण ने मेरी ओर देखा और मुस्कुराए, मुझ पर कोई अज्ञात जादू कर दिया। [1] उस क्षण से मेरा मन किसी भी काम में नहीं लगा, क्योंकि कृष्ण का स्वरूप मेरे हृदय में पूरी तरह से बस गया था। श्री छीतस्वामी कहते हैं - इस बेचैन मन को तभी शांति मिलेगी जब स्वयं गिरिधर लाल, श्री कृष्ण, मेरे सामने खड़े होंगे; अन्यथा, कभी नहीं. [2]",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

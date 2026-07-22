@@ -374,11 +374,26 @@ function extractRelations(items) {
           slug: santSlug,
           hinglishName: transliterate(matchedBio ? matchedBio.name : saintName),
           verseIds: [],
+          verses: [],
           books: new Set(),
           biography: matchedBio || null
         };
       }
       santsMap[santSlug].verseIds.push(item.id);
+      const finalTitle = cleanTitle || item.title || item.name || 'पद';
+      const verseObj = {
+        id: item.id,
+        title: item.title || finalTitle,
+        slug: (item.slug && !item.slug.startsWith('untitled')) ? item.slug : generateSlug(finalTitle),
+        category: item.category || classifyItemCategory(item),
+        author: item.author || saintName || '',
+        cleanTitle: finalTitle,
+        tags: item.tags || [],
+        sanskrit_text: item.sanskrit_text || '',
+        hindi_text: item.hindi_text || '',
+        audio_url: item.audio_url || ''
+      };
+      santsMap[santSlug].verses.push(verseObj);
       if (bookName) {
         const normalizedBName = getNormalizedBookName(bookName);
         santsMap[santSlug].books.add(normalizedBName);
@@ -395,7 +410,8 @@ function extractRelations(items) {
           hinglishName: transliterate(normalizedBName),
           author: saintName || 'Unknown',
           authorSlug: saintName ? getNormalizedSaintSlug(saintName) : null,
-          verseIds: []
+          verseIds: [],
+          verses: []
         };
       } else {
         if (saintName && booksMap[bookSlug].author === 'Unknown') {
@@ -404,6 +420,19 @@ function extractRelations(items) {
         }
       }
       booksMap[bookSlug].verseIds.push(item.id);
+      const finalTitle = cleanTitle || item.title || item.name || 'पद';
+      booksMap[bookSlug].verses.push({
+        id: item.id,
+        title: item.title || finalTitle,
+        slug: (item.slug && !item.slug.startsWith('untitled')) ? item.slug : generateSlug(finalTitle),
+        category: item.category || classifyItemCategory(item),
+        author: item.author || saintName || '',
+        cleanTitle: finalTitle,
+        tags: item.tags || [],
+        sanskrit_text: item.sanskrit_text || '',
+        hindi_text: item.hindi_text || '',
+        audio_url: item.audio_url || ''
+      });
     }
 
     if (ragaName) {
@@ -413,10 +442,24 @@ function extractRelations(items) {
           name: ragaName,
           slug: ragaSlug,
           hinglishName: transliterate(ragaName),
-          verseIds: []
+          verseIds: [],
+          verses: []
         };
       }
       ragasMap[ragaName].verseIds.push(item.id);
+      const finalTitle = cleanTitle || item.title || item.name || 'पद';
+      ragasMap[ragaName].verses.push({
+        id: item.id,
+        title: item.title || finalTitle,
+        slug: (item.slug && !item.slug.startsWith('untitled')) ? item.slug : generateSlug(finalTitle),
+        category: item.category || classifyItemCategory(item),
+        author: item.author || saintName || '',
+        cleanTitle: finalTitle,
+        tags: item.tags || [],
+        sanskrit_text: item.sanskrit_text || '',
+        hindi_text: item.hindi_text || '',
+        audio_url: item.audio_url || ''
+      });
     }
   });
 
@@ -532,7 +575,13 @@ const clientRelations = {
     slug: s.slug,
     hinglishName: s.hinglishName,
     verseIds: s.verseIds,
-    verses: s.verses || [],
+    verses: (s.verses || []).map(v => ({
+      id: v.id,
+      title: v.title || v.cleanTitle || '',
+      cleanTitle: v.cleanTitle || '',
+      slug: v.slug || '',
+      category: v.category || 'poem'
+    })),
     books: s.books
   })),
   books: relations.books.map(b => ({
@@ -542,14 +591,26 @@ const clientRelations = {
     author: b.author,
     authorSlug: b.authorSlug,
     verseIds: b.verseIds,
-    verses: b.verses || []
+    verses: (b.verses || []).map(v => ({
+      id: v.id,
+      title: v.title || v.cleanTitle || '',
+      cleanTitle: v.cleanTitle || '',
+      slug: v.slug || '',
+      category: v.category || 'poem'
+    }))
   })),
   ragas: relations.ragas.map(r => ({
     name: r.name,
     slug: r.slug,
     hinglishName: r.hinglishName,
     verseIds: r.verseIds,
-    verses: r.verses || []
+    verses: (r.verses || []).map(v => ({
+      id: v.id,
+      title: v.title || v.cleanTitle || '',
+      cleanTitle: v.cleanTitle || '',
+      slug: v.slug || '',
+      category: v.category || 'poem'
+    }))
   })),
   biographies: relations.sants.map(s => ({
     id: s.biography?.id || null,

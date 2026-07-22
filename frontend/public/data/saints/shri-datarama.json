@@ -7,6 +7,19 @@
   "verseIds": [
     "85f81e35-29c2-4df6-b906-896e5666c28f"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "85f81e35-29c2-4df6-b906-896e5666c28f",
+      "title": "कुंज महल वृन्दाविपिन - श्री दाताराम",
+      "slug": "kunj-mahal-vrindavipin-shri-dataram",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "कुंज महल वृन्दाविपिन",
+      "tags": [],
+      "sanskrit_text": "कुंज महल वृन्दाविपिन, विलसत श्यामा श्याम।\nसेवति सहचरि प्राणवत, सब दिन 'दाताराम'॥\n- श्री दाताराम",
+      "hindi_text": "कुंज महल वृंदाविपिन, विलासत श्याम श्याम। सेवती सहचरी प्रणवत, सब दीन 'दाताराम'.. - श्री दाताराम",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

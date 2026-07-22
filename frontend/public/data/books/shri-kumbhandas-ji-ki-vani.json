@@ -7,5 +7,18 @@
   "verseIds": [
     "e1d00b66-beb1-4cba-ae62-fe8c1a51a55e"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "e1d00b66-beb1-4cba-ae62-fe8c1a51a55e",
+      "title": "Yah Gati Nanchi-Nanchi Layi - Shri Kumbhandas, Shri Kumbhandas Ji Ki Vani",
+      "slug": "yah-gati-nanchi-nanchi-layi-shri-kumbhandas-shri-kumbhandas-ji-ki-vani",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "Yah Gati Nanchi-Nanchi Layi",
+      "tags": [],
+      "sanskrit_text": "",
+      "hindi_text": "संगीत नोट्स (आलाप) को खूबसूरती से प्रस्तुत करता है। दिव्य युगल, श्री श्यामा-श्याम, इन धुनों के साथ अपनी नृत्य गतिविधियों का समन्वय करते हैं। सखियों द्वारा उच्चारित लयबद्ध शब्दांश \"तत्-तत्-थेई\", नृत्य में सुंदर गति जोड़ते हैं। [2] श्री श्यामसुन्दर चंचल लीलाओं में मग्न रहते हैं और सम्पूर्ण वातावरण को दिव्य प्रेम के रंग में डुबो देते हैं। श्री कुंभनदास कहते हैं, भगवान गिरिधर लाल हर गुजरते पल के साथ प्रेम की नई लहरें बरसाते हैं। [3]",
+      "audio_url": ""
+    }
+  ]
 }

@@ -7,6 +7,19 @@
   "verseIds": [
     "737d6779-7f1a-4701-8391-b227a73cacc4"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "737d6779-7f1a-4701-8391-b227a73cacc4",
+      "title": "श्रीवृषभानु - कुमारि जू - श्री लाल बलबीर जी, वृन्दावन शतक (13)",
+      "slug": "shrivrishbhanu-kumari-ju-vinay-karaun-suni-kaan-shri-laal-balbeer-ji-vrindavan-shatak-13",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "श्रीवृषभानु",
+      "tags": [],
+      "sanskrit_text": "श्रीवृषभानु - कुमारि जू, विनय करौं सुनि कान।\nदेहु निरन्तर आपने, चरन कमल कौ ध्यान॥\n- श्री लाल बलबीर जी, वृन्दावन शतक (13)",
+      "hindi_text": "श्री वृषभानु- मिस जू, कृपया मेरी बात सुनो। मैं निरंतर अपने शरीर और चरण कमलों का ध्यान करता हूँ.. - श्री लाल बलबीर जी, वृन्दावन शतक (13)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

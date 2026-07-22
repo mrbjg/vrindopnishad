@@ -7,6 +7,19 @@
   "verseIds": [
     "d7c6d78e-cfc9-4abe-a0ea-ea856a5ca181"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "d7c6d78e-cfc9-4abe-a0ea-ea856a5ca181",
+      "title": "त्रैलोक्ये पृथिवी धन्या यत्र वृन्दावनं पुरी - आदि पुराण",
+      "slug": "trailokye-prithvi-dhanya-yatra-vrindavanam-puri-aadi-purana",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "त्रैलोक्ये पृथिवी धन्या यत्र वृन्दावनं पुरी",
+      "tags": [],
+      "sanskrit_text": "त्रैलोक्ये पृथिवी धन्या यत्र वृन्दावनं पुरी।\nतत्रापि गोपिकाः पार्थ तत्र राधाभिधा मम॥\n- आदि पुराण",
+      "hindi_text": "त्रैलोक्ये पृथिवी धन्य यत्र वृन्दावन पुरी। तत्रापि गोपिकाः पार्थ तत्र राधाभिधा मम।।-आदि पुराण",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

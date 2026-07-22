@@ -9,6 +9,22 @@
   "verseIds": [
     "b367c7a5-7938-4a90-81c0-d8b8592f8d44"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "b367c7a5-7938-4a90-81c0-d8b8592f8d44",
+      "title": "श्री नरहरि दास निरखि तृण तोरति - श्री नरहरि दास, श्री नरहरी देव जी की वाणी (8)",
+      "slug": "shri-narhari-das-nirakhi-trin-torati-yeh-chavi-barni-na-jaaye-quote-by-shri-narhari-das",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "श्री नरहरि दास निरखि तृण तोरति",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "श्री नरहरि दास निरखि तृण तोरति, यह छवि बरनी न जाए।\nनैंननि भरी शोभा रस पीवत, पीवत मन न अघाइ॥ \n- श्री नरहरि दास, श्री नरहरी देव जी की वाणी (8)",
+      "hindi_text": "श्री नरहरि दास निरखि त्रिन तोरति, ऐसी छवि मत बनाओ। नैननि भारी शोभा रस पीवत, पीवत मन न अघाई.. - श्री नरहरि दास, श्री नरहरि देव जी की वाणी (8)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

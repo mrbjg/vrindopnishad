@@ -9,6 +9,19 @@
   "verseIds": [
     "a2ce26fc-11b9-4f0d-ba58-3664f99784d3"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "a2ce26fc-11b9-4f0d-ba58-3664f99784d3",
+      "title": "स्वकरे सितचामरन्दधद् - श्री वृषभानुपुर शतक (87), श्री वंशी अली द्वारा रचित",
+      "slug": "svakare-sitachamaranddhada-shri-vanshi-ali-shri-vrishbhanupur-shatak-glories-of-barsana-87",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "स्वकरे सितचामरन्दधद्",
+      "tags": [],
+      "sanskrit_text": "स्वकरे सितचामरन्दधद् दयितां रत्नवरासने स्थिताम् ।\nसभजत्यनुरागभावतोक्षरद् , वैस पतति गृहे क्वचित्॥\n- श्री वृषभानुपुर शतक (87), श्री वंशी अली द्वारा रचित",
+      "hindi_text": "स्वकारे सीताचामरन्धद्यताम् रत्नवर्षणे स्थितम्। सभाजात्यनुर्गभवतोक्षरद, वैसा पतति गृह क्वचित्। - श्री वृषभानुपुर शतक (87), श्री वंशी अली द्वारा लिखित",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

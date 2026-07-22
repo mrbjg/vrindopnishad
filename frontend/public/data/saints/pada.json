@@ -7,7 +7,20 @@
   "verseIds": [
     "92c7691b-9192-4795-ab01-5ad4e7363967"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "92c7691b-9192-4795-ab01-5ad4e7363967",
+      "title": "श्री राधा - पद - भक्ति -रस, 'रस वृन्दावन' माँहि - ब्रज के दोहे",
+      "slug": "shri-radha-pad-bhakti-ras-ras-vrindavan-maanhi-braj-ke-sewaiya",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "श्री राधा",
+      "tags": [],
+      "sanskrit_text": "श्री राधा-पद-भक्ति-रस, 'रस वृन्दावन' माँहि।\nयह राधा रस धवलि है, या में संशय नाँहि॥\n- ब्रज के दोहे",
+      "hindi_text": "श्री राधा-पाद-भक्ति-रस, 'रस वृन्दावन' मनहि। या राधा का रस धवल है, या हृदय का प्रेम कम है.. - braj ke dohe",
+      "audio_url": ""
+    }
+  ],
   "biography": {
     "id": "e955d59c-79d8-4df0-8447-eba4523e6622",
     "slug": "padamakara",

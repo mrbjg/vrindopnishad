@@ -13,6 +13,91 @@
     "076c45b1-a2dc-4d36-ae1d-df081d813bf6",
     "1a97b472-08ef-4199-b5ad-ee8bd8ff59be"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "653c2264-b182-47e7-9b5f-c62fb661ad8c",
+      "title": "प्यारी प्रीतम सों लिख्यौं, मत परियौ मौ ध्यान - श्री दयाराम जी",
+      "slug": "pyari-preetam-son-likhyaun-mat-pariyau-mau-dhyan-shri-dayaram-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "प्यारी प्रीतम सों लिख्यौं, मत परियौ मौ ध्यान",
+      "tags": [],
+      "sanskrit_text": "प्यारी प्रीतम सों लिख्यौं, मत परियौ मौ ध्यान। \nतुम मोसे ह्वै जाउगे, करिहों का पें मान॥ \n- श्री दयाराम जी",
+      "hindi_text": "प्यारे प्यारे बेटे, मुझे लिखो, मेरा ध्यान मत भूलना। मूस बनोगे, करिहो ​​के कलमकार.. - श्री दयाराम जी",
+      "audio_url": ""
+    },
+    {
+      "id": "779ed0eb-d7c5-41f5-8f41-0ad89b31b833",
+      "title": "लोक लाज कुल वेद छूटे सबे विवेक बल - श्री दयाराम जी",
+      "slug": "lok-laaj-kul-ved-chhoote-sabe-vivek-bal-shri-dayaram-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "लोक लाज कुल वेद छूटे सबे विवेक बल",
+      "tags": [],
+      "sanskrit_text": "लोक लाज कुल वेद, छूटे सबे विवेक बल।\nपरे हृदे जब छेद, दुसह प्रेम के बानकों॥\n- श्री दयाराम जी",
+      "hindi_text": "लोक लज्जा और समस्त वेद तथा समस्त ज्ञान नष्ट हो गये। जब परे छुपे हैं छेद, उदास प्रेम के चेहरे.. - श्री दयाराम जी",
+      "audio_url": ""
+    },
+    {
+      "id": "3ccf7a78-685c-4c13-96f7-78a170c46f37",
+      "title": "दीनबंधु अधमुद्धरन, नाम ग़रीब निवाज़ - श्री दयाराम जी ",
+      "slug": "deenbandhu-adhamuddharan-naam-gareeb-niwaz-shri-dayaram-ji",
+      "category": "dham",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "दीनबंधु अधमुद्धरन, नाम ग़रीब निवाज़",
+      "tags": [],
+      "sanskrit_text": "दीनबंधु अधमुद्धरन, नाम ग़रीब निवाज़। \nयह सब में मैं कोन जो, सुधि न लेत ब्रजराज॥ \n- श्री दयाराम जी ",
+      "hindi_text": "दीनबंधु अधमुधरन, नाम है गरीब निवाज़। ब्रजराज, यह सब मेरे मन में किसको स्मरण नहीं है? - श्री दयाराम जी",
+      "audio_url": ""
+    },
+    {
+      "id": "a430a288-df49-48c8-83c2-cec1f693131e",
+      "title": "पीतांबर परिधान प्रभु राधा नील निचोल - श्री दयाराम जी ",
+      "slug": "pitambar-paridhan-prabhu-radha-neel-nachol-shri-dayaram-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "पीतांबर परिधान प्रभु राधा नील निचोल",
+      "tags": [],
+      "sanskrit_text": "पीतांबर परिधान प्रभु, राधा नील निचोल।\nअंग रंग सँग परस्पर, यों सब हारद तोल॥\n- श्री दयाराम जी",
+      "hindi_text": "पीतानबर परिधान प्रभु, राधा निल निकोल। Every part of the body interacts with each other, everything has weight.. - Shri Dayaram Ji",
+      "audio_url": ""
+    },
+    {
+      "id": "741819e2-8533-4555-91ec-5e09eec7ef7c",
+      "title": "ढपें दोष गुन फुट करें पर हरिजन यह चाल - श्री दयाराम जी ",
+      "slug": "dhapein-dosh-gun-phut-karein-shri-dayaram-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "ढपें दोष गुन फुट करें पर हरिजन यह चाल",
+      "tags": [],
+      "sanskrit_text": "ढपें दोष गुन फुट करें, पर हरिजन यह चाल। \nलखि शिव दुहु दधि तें लहे, गरल गिल्यो शशिभाल॥ \n- श्री दयाराम जी ",
+      "hindi_text": "धापेना दोष गुण फैल सकता था, लेकिन हरिजन ने उसे जाने दिया। लखि शिव दुहु दधि तेन लहे, गरल गिल्यो शशिभाल.. - श्री दयाराम जी",
+      "audio_url": ""
+    },
+    {
+      "id": "076c45b1-a2dc-4d36-ae1d-df081d813bf6",
+      "title": "योग यज्ञ जप तप तिरिथ - श्री दयाराम जी ",
+      "slug": "yog-yagya-jap-tap-tirith-shri-dayaram-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "योग यज्ञ जप तप तिरिथ",
+      "tags": [],
+      "sanskrit_text": "योग यज्ञ जप तप तिरिथ, ज्ञान धरम व्रत नेम। \nबिहिन वल्लवी वल्लभा, करि हरि इक बल प्रेम॥ \n- श्री दयाराम जी ",
+      "hindi_text": "योग यज्ञ जप तप तिरिथ, ज्ञान धर्म व्रत नाम। बिनु वल्लभी वल्लभा, करि हरि एक बल प्रेम।।- श्री दयाराम जी",
+      "audio_url": ""
+    },
+    {
+      "id": "1a97b472-08ef-4199-b5ad-ee8bd8ff59be",
+      "title": "रसिक नैन नाराचकी अजब अनोंखी रीत - श्री दयाराम जी ",
+      "slug": "rasik-nain-narachaki-ajab-anokhi-reet-shri-dayaram-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "रसिक नैन नाराचकी अजब अनोंखी रीत",
+      "tags": [],
+      "sanskrit_text": "रसिक नैन नाराचकी, अजब अनोंखी रीत। \nदुसमन को परसे नहीं, मारे अपनों मीत॥ \n- श्री दयाराम जी ",
+      "hindi_text": "रोमांटिक आंखें, अजीब और अनोखा अंदाज. अपने दुश्मनों को मत मारो, अपने प्रियजनों को मारो.. - श्री दयाराम जी",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

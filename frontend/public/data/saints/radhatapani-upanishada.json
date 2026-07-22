@@ -7,6 +7,19 @@
   "verseIds": [
     "c1329e40-cbcd-4401-ae12-c997c7d8b677"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "c1329e40-cbcd-4401-ae12-c997c7d8b677",
+      "title": "राधा और जो ये कृष्ण वे एक ही हैं - राधतापनी उपनिषद (12)",
+      "slug": "ye-radha-yas-ca-krsno-rasabdhir-dehadhaikah-kridanartha-dvidhabhut-radha-tapani-upanisad",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "राधा और जो ये कृष्ण वे एक ही हैं",
+      "tags": [],
+      "sanskrit_text": "“येयं राधा यश्च कृष्णो रसाब्धिर्देहश्चैकः क्रीडनार्थं द्विधाभूत”\n- राधतापनी उपनिषद (12)",
+      "hindi_text": "\"येयं राधा यशश्च कृष्ण रासबधिरदेहश्चैख क्रीडनार्थन द्विधाभूत\" - राधातापनी उपनिषद (12)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

@@ -7,6 +7,19 @@
   "verseIds": [
     "dbb729a0-b41c-447d-a28f-3926a660d7a4"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "dbb729a0-b41c-447d-a28f-3926a660d7a4",
+      "title": "सदा अखंडित एक रस आनंद उदधि अपार - श्री गगनदास (शुक संप्रदाय के रसिक भक्त)",
+      "slug": "sada-akhandit-ek-ras-anand-udadhi-apar-shri-gagandas-of-shuka-sect",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "सदा अखंडित एक रस आनंद उदधि अपार",
+      "tags": [],
+      "sanskrit_text": "सदा अखंडित एक रस, आनँद उदधि अपार।\n‘गगनदास’ सखीजन लखै, निरवधि नित्य विहार॥\n- श्री गगनदास (शुक संप्रदाय के रसिक भक्त)",
+      "hindi_text": "एक स्वाद जो सदैव बना रहता है, एक आनंद जो सदैव बना रहता है। 'गगनदास' सखीजन लखाई, निर्वधि नित्य विहार.. - श्री गगनदास (शुक संप्रदाय के रसिक भक्त)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

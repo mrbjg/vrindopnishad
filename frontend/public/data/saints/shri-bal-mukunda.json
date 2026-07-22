@@ -7,6 +7,19 @@
   "verseIds": [
     "ff521731-f622-449e-9630-c00fce8d8810"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "ff521731-f622-449e-9630-c00fce8d8810",
+      "title": "नेह कौ मेह ब्रज में बरसतौ रहै - श्री बाल मुकुंद जी",
+      "slug": "neh-kau-meh-brah-mein-barastau-rahai-naam-shri-radharani-hi-aadhar-hai",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "नेह कौ मेह ब्रज में बरसतौ रहै",
+      "tags": [],
+      "sanskrit_text": "नेह कौ मेह ब्रज में बरसतौ रहै,\nनाम श्री राधारानी ही आधार है॥\n- श्री बाल मुकुंद जी",
+      "hindi_text": "ब्रज में निरंतर वर्षा हो रही है, श्री राधारानी का नाम ही आधार है.. - श्री बाल मुकुंद जी",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

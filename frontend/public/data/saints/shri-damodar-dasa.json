@@ -7,6 +7,19 @@
   "verseIds": [
     "4a112eb2-f8f1-4081-8ed9-92697ab3ad96"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "4a112eb2-f8f1-4081-8ed9-92697ab3ad96",
+      "title": "कुंज कुंज निरखत फिरूँ जमुना जल में नहाऊँ - श्री दामोदर दास",
+      "slug": "kunj-kunj-nirakhat-firun-jamuna-jal-mein-nahaun-shri-damodar-das",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "कुंज कुंज निरखत फिरूँ जमुना जल में नहाऊँ",
+      "tags": [],
+      "sanskrit_text": "कुंज कुंज निरखत फिरूँ, जमुना जल में नहाऊँ।\nश्रीवृंदावन छाँड़ि कें, अनत न कितहूँ जाऊँ॥\n- श्री दामोदर दास",
+      "hindi_text": "मैं निश्चिंत होकर बागों में फिरता हूं, मुझे यमुना के पानी से कोई फर्क नहीं पड़ता। श्री वृन्दावन चंडी केन, अनत न किथौं जौं.. - श्री दामोदर दास",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

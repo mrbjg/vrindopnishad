@@ -7,6 +7,22 @@
   "verseIds": [
     "ee6d9a86-a347-41bb-adae-31d4418ee64d"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "ee6d9a86-a347-41bb-adae-31d4418ee64d",
+      "title": "धनय वृनदावनं तेन भक्तिरनृत्ययित यत च - पदम् पुराण - भागवत माहात्म्य",
+      "slug": "dhanya-vrindavanam-tena-bhakti-nrityachayit-yata-cha-padama-purana-bhagwata-mahatma-161",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "धनय वृनदावनं तेन भक्तिरनृत्ययित यत च",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "“ धनय वृनदावनं तेन भक्तिरनृत्ययित यत च॥ ” \n- पदम् पुराण - भागवत माहात्म्य - 1.61",
+      "hindi_text": "\"धनाय वृन्दावन तेन भक्तिरानरित्यत् यत् च..\" - पद्म पुराण - भागवत महात्म्य - 1.61",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

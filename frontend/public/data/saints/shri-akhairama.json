@@ -7,6 +7,19 @@
   "verseIds": [
     "6c9807fb-7c64-4ee2-920c-2d56d02ccb20"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "6c9807fb-7c64-4ee2-920c-2d56d02ccb20",
+      "title": "सखी भाव राधा भजे सो पहुँचै निज धाम - श्री अखैराम जी (शुक संप्रदाय के रसिक भक्त)",
+      "slug": "sakhi-bhaav-radha-bhaje-so-pahunche-nij-dham-shri-akhairam-shuka-sect",
+      "category": "dham",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "सखी भाव राधा भजे सो पहुँचै निज धाम",
+      "tags": [],
+      "sanskrit_text": "सखी भाव राधा भजे, सो पहुँचै निज धाम।\nटहल लहै सामीपता, अति रीझै घनश्याम॥\n- श्री अखैराम जी (शुक संप्रदाय के रसिक भक्त)",
+      "hindi_text": "यदि मैं राधा को सखी मानकर उनकी पूजा करुंगा तो अपने धाम को प्राप्त हो जाऊंगा। Tehal lahai samipya, ati reezhai ghanshyam.. - Shri Akhairam ji (Rasik devotee of Shuka sect)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

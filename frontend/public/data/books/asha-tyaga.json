@@ -7,5 +7,18 @@
   "verseIds": [
     "0dfd2354-d61a-4ab3-ac69-b7f7f0fbf6e6"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "0dfd2354-d61a-4ab3-ac69-b7f7f0fbf6e6",
+      "title": "यह तन यह वन जमुन तट मिल्यौ वन्यौ है दाउ - श्री हित दामोदर दास, आशा त्याग (42)",
+      "slug": "yah-tan-yah-van-jamun-tat-milyau-vanyau-hai-dau-shri-hita-damodar-das-aasha-tyag-42",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "यह तन यह वन जमुन तट मिल्यौ वन्यौ है दाउ",
+      "tags": [],
+      "sanskrit_text": "यह तन यह वन जमुन तट, मिल्यौ वन्यौ है दाउ। \nतातै आशा छाड़िकै, जुगल किशोरहि गाउ॥\n- श्री हित दामोदर दास, आशा त्याग (42)",
+      "hindi_text": "यं तं यं वन जामुन तत्, मिल्यौ वन्याउ है दाऊ। तातै आशा छदाकै, जुगल किशोरहि गौ.. - श्री हित दामोदर दास, आशा त्याग (42)",
+      "audio_url": ""
+    }
+  ]
 }

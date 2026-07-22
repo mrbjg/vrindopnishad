@@ -7,6 +7,19 @@
   "verseIds": [
     "d5a544fd-a6c5-46a2-bb98-c08234f5d400"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "d5a544fd-a6c5-46a2-bb98-c08234f5d400",
+      "title": "सहस्रदलपद्मस्य वृंदारण्यं वराटकम्  - पद्मपुराणम्/खण्डः ५ (पातालखण्डः)/अध्यायः ०६९ पद ७०",
+      "slug": "sahasradalapadmasya-vindaranyam-varaatakam-padmapuranam-khand-5-patalakhand-chapter-069-pada-70",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "सहस्रदलपद्मस्य वृंदारण्यं वराटकम्",
+      "tags": [],
+      "sanskrit_text": "सहस्रदलपद्मस्य वृंदारण्यं वराटकम् \nयस्य स्पर्शनमात्रेण पृथ्वी धन्या जगत्त्रये \n- पद्मपुराणम्/खण्डः ५ (पातालखण्डः)/अध्यायः ०६९ पद ७०",
+      "hindi_text": "सहस्रदालपद्मस्य वृन्दारण्यं वर्तं यस्य स्पर्शनमात्रेण पृथ्वी धान्य जगत्त्रये - पद्मपुराणम्/खंड 5 (पातालखंड)/अध्याय 069 पाद 70",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

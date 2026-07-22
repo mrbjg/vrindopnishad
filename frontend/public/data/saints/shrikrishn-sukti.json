@@ -7,6 +7,19 @@
   "verseIds": [
     "66da49dd-c02e-4c71-ae00-4784776c6471"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "66da49dd-c02e-4c71-ae00-4784776c6471",
+      "title": "क्षीर सारमपहृत्य शंकया - श्रीकृष्ण सूक्ति",
+      "slug": "kshir-saaramapahrittya-shankaya-sri-krishn-sukati",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "क्षीर सारमपहृत्य शंकया",
+      "tags": [],
+      "sanskrit_text": "क्षीर सारमपहृत्य शंकया स्वीकृतं यदि पलायनं त्वया।\nमानसे मम नितान्ततामसे नन्दनन्दन कथं न लीयसे॥\n- श्रीकृष्ण सूक्ति",
+      "hindi_text": "क्षीर सरमापहृति शंकया स्विकृतं अग्र पलयन्न त्वया। नन्दनन्दन नाथन हेतु मनसे मम नितान्ततमसे।-श्रीकृष्ण सूक्ति",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

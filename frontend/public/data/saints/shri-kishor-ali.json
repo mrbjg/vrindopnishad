@@ -9,6 +9,19 @@
   "verseIds": [
     "43c6f480-c6c1-4656-ac52-7e8849c19d68"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "43c6f480-c6c1-4656-ac52-7e8849c19d68",
+      "title": "श्री राधा पद किंकरी - श्री किशोर अली, किशोरी अली ग्रंथवाली (1040)",
+      "slug": "shri-radha-pad-kinkari-bhav-jasu-hiye-hoe-shri-kishori-ali-kishori-ali-granthwali-1040",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "श्री राधा पद किंकरी",
+      "tags": [],
+      "sanskrit_text": "श्री राधा पद किंकरी, भाव जासु हिय होये।\nवृन्दावन रस कौ मधुर, स्वाद लहै है सोय॥ \n- श्री किशोर अली, किशोरी अली ग्रंथवाली (1040)",
+      "hindi_text": "श्री राधा पद किंकरी, भव जसु हिय होय। वृन्दावन का रस कितना मधुर है, स्वाद कितना मधुर है.. - श्री किशोर अली, किशोरी अली ग्रन्थावली (1040)",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }

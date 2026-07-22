@@ -7,5 +7,21 @@
   "verseIds": [
     "cb7a3c6e-4780-44ca-b5ac-d4a9a428e38d"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "cb7a3c6e-4780-44ca-b5ac-d4a9a428e38d",
+      "title": "ऐ हरी मो सौ न बिगारन कौ - केलिमाल, स्वामी श्री हरिदास जी",
+      "slug": "ae-hari-mo-sau-na-bigaran-kou-lalita-avtar-shri-haridas-ji-ashtadash-pada-05",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "ऐ हरी मो सौ न बिगारन कौ",
+      "tags": [
+        "Radha",
+        "Krishna"
+      ],
+      "sanskrit_text": "\"ऐ हरी मो सौ न बिगारन कौ, तो सौ न सँवारन कौ, मोहिं तोहिं परी होड़॥\" \n- ललिता अवतार श्री हरिदास जी, अष्टादश पद (4)",
+      "hindi_text": "\"हे हरि, कोई परिवर्तन नहीं है, कोई परिवर्तन नहीं है, कोई परिवर्तन नहीं है, केवल प्रेम है।\" - ललिता अवतार श्री हरिदास जी, अष्टादश पाद (4)",
+      "audio_url": ""
+    }
+  ]
 }

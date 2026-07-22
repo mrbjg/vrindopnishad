@@ -7,5 +7,18 @@
   "verseIds": [
     "1defeb94-35f8-4755-aff7-70268c5e2535"
   ],
-  "verses": []
+  "verses": [
+    {
+      "id": "1defeb94-35f8-4755-aff7-70268c5e2535",
+      "title": "भक्ति प्रेम जोगी कहें - श्री जुगलदास, योग कल्पवल्ली",
+      "slug": "bhakti-prem-yogi-kahein-sohi-aathon-jam-shri-jugaldas-yog-kalapvalli",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "भक्ति प्रेम जोगी कहें",
+      "tags": [],
+      "sanskrit_text": "भक्ति प्रेम जोगी कहें, सोही आठौं जाम। \nराधा माधव चाकरी, श्री वृंदावन धाम॥\n- श्री जुगलदास, योग कल्पवल्ली",
+      "hindi_text": "भक्ति प्रेम जोगी कहन, सोहि आठवां जाम। राधा माधव चक्री, श्री वृन्दावन धाम.. - श्री जुगलदास, योग कल्पवल्ली",
+      "audio_url": ""
+    }
+  ]
 }

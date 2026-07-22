@@ -7,6 +7,19 @@
   "verseIds": [
     "749f0d36-f715-4797-8a17-eb29f70b970d"
   ],
-  "verses": [],
+  "verses": [
+    {
+      "id": "749f0d36-f715-4797-8a17-eb29f70b970d",
+      "title": "करनी ही सो करि चुके अब कछु करनी नाहिं - श्री बुलाकीदास जी",
+      "slug": "karani-hi-so-kari-chuke-ab-kachhu-karni-nahin-shri-bulakidas-ji",
+      "category": "general",
+      "author": "Team VrindaVaani",
+      "cleanTitle": "करनी ही सो करि चुके अब कछु करनी नाहिं",
+      "tags": [],
+      "sanskrit_text": "करनी ही सो करि चुके, अब कछु करनी नाहिं।\nशरण गही हरिवंश की, परे विपिन रज माहिं॥\n- श्री बुलाकीदास जी",
+      "hindi_text": "मैंने अपना काम पहले ही कर दिया है, अब मैं और कुछ नहीं कर सकता. हरिवंश की शरण यहीं है, परे है विपीन राज की माता.. - श्री बुलाकीदास जी",
+      "audio_url": ""
+    }
+  ],
   "biography": null
 }
