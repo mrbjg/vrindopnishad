@@ -304,24 +304,28 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
   );
 
   const content = React.useMemo(() => {
-    const candidates = [];
-    if (rawContent?.sanskrit_text) candidates.push(rawContent.sanskrit_text);
-    if (rawContent?.hindi_text) candidates.push(rawContent.hindi_text);
-    if (rawContent?.content_text) candidates.push(rawContent.content_text);
-    if (fetchedData?.sanskrit_text) candidates.push(fetchedData.sanskrit_text);
-    if (fetchedData?.hindi_text) candidates.push(fetchedData.hindi_text);
-    if (fetchedData?.content_text) candidates.push(fetchedData.content_text);
-
-    const validCandidates = candidates.filter(str => !checkIsTruncated(str));
-    const pool = validCandidates.length > 0 ? validCandidates : candidates;
-    const richestText = pool.reduce((longest, curr) => (curr.length > longest.length ? curr : longest), '');
-
     const activeData = fetchedData || rawContent || {};
+
+    // 1. Sanskrit Text (Original Sacred Verse): ALWAYS pick pure sanskrit_text
+    let sanskritText = fetchedData?.sanskrit_text || rawContent?.sanskrit_text || '';
+    if (checkIsTruncated(sanskritText)) {
+      if (rawContent?.sanskrit_text && !checkIsTruncated(rawContent.sanskrit_text)) {
+        sanskritText = rawContent.sanskrit_text;
+      } else if (fetchedData?.content_text && !checkIsTruncated(fetchedData.content_text)) {
+        const parts = fetchedData.content_text.split('\n\n');
+        if (parts[0] && !checkIsTruncated(parts[0])) {
+          sanskritText = parts[0];
+        }
+      }
+    }
+
+    // 2. Hindi Text (Prose Explanation / Translation)
+    let hindiText = fetchedData?.hindi_text || rawContent?.hindi_text || '';
 
     return {
       ...activeData,
-      sanskrit_text: richestText,
-      hindi_text: richestText,
+      sanskrit_text: sanskritText,
+      hindi_text: hindiText,
       english_translation: activeData.english_translation || rawContent?.english_translation || ''
     };
   }, [fetchedData, rawContent]);

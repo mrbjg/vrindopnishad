@@ -492,7 +492,14 @@ const ensureFullVerseText = async (matched) => {
           if (isTruncatedText(sanskrit)) sanskrit = parts[0];
           if (isTruncatedText(hindi)) hindi = parts.slice(1).join('\n\n');
         } else if (isTruncatedText(sanskrit)) {
-          sanskrit = data.content_text;
+          // If no double newline split, extract verse up to attribution line
+          const attrMatch = data.content_text.match(/(?:^|\n)\s*([—–-]\s*(?:श्री|श्रीमान|जगद्गुरु|स्वामी|हठ|रसिया|रसिक|सूरदास|मीरा|कबीर|हित|गोविन्द|गोविंद|भगवत|हरिदास|देव|रूप|सनातन|जीव|ललित|Jagadguru|Shri|Swami|Goswami)[^\n]+)/i);
+          if (attrMatch) {
+            const endIdx = data.content_text.indexOf(attrMatch[1]) + attrMatch[1].length;
+            sanskrit = data.content_text.substring(0, endIdx).trim();
+          } else {
+            sanskrit = data.content_text;
+          }
         }
       }
       current = { ...current, ...data, sanskrit_text: sanskrit, hindi_text: hindi };
