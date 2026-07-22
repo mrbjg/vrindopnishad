@@ -14,21 +14,29 @@ export const metadata = generatePageMetadata({
 
 export default function SaintsListRoute() {
   const saints = getAllSaints();
-  const lightweightSaints = saints.map(s => ({
-    id: s.id,
-    name: s.name || '',
-    hinglishName: s.hinglishName || s.name || '',
-    cleanName: s.cleanName || s.name || '',
-    slug: s.slug || '',
-    lineage: s.lineage || '',
-    lineageEn: s.lineageEn || '',
-    timeline: s.timeline || '',
-    timelineEn: s.timelineEn || '',
-    biography: s.biography || null,
-    books: s.books ? s.books.slice(0, 5) : [],
-    verses: [],
-    verseIds: s.verseIds ? s.verseIds.slice(0, 10) : []
-  }));
+  const lightweightSaints = saints.map(s => {
+    const totalVerses = typeof s.verses === 'number' ? s.verses
+      : (Array.isArray(s.verses) ? s.verses.length
+      : (typeof s.verseIds === 'number' ? s.verseIds
+      : (Array.isArray(s.verseIds) ? s.verseIds.length : (s.verseCount || s.count || 0))));
+    return {
+      id: s.id,
+      name: s.name || '',
+      hinglishName: s.hinglishName || s.name || '',
+      cleanName: s.cleanName || s.name || '',
+      slug: s.slug || '',
+      lineage: s.lineage || '',
+      lineageEn: s.lineageEn || '',
+      timeline: s.timeline || '',
+      timelineEn: s.timelineEn || '',
+      biography: s.biography || null,
+      books: s.books ? s.books.slice(0, 5) : [],
+      verseCount: totalVerses,
+      count: totalVerses,
+      verses: totalVerses,
+      verseIds: s.verseIds ? s.verseIds.slice(0, 10) : []
+    };
+  });
 
   return (
     <Layout>

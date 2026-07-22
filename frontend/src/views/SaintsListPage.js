@@ -10,10 +10,21 @@ import PageSkeleton from '../components/ui/PageSkeleton';
 
 const getInitials = (name) => {
   if (!name) return 'V';
-  let clean = name.replace(/^(Shri|Swami|Sri|Shree|श्री|स्वामी|श्रीमद्)\s+/i, '').trim();
+  let clean = name.replace(/^(Shri|Swami|Sri|Shree|श्री|स्वामी|श्रीमद्|जगद्गुरु)\s+/i, '').trim();
   if (!clean.length) clean = name;
   const first = clean.charAt(0);
   return first.match(/[a-zA-Z]/) ? first.toUpperCase() : first;
+};
+
+const getVerseCount = (sant) => {
+  if (!sant) return 0;
+  if (typeof sant.verseCount === 'number') return sant.verseCount;
+  if (typeof sant.count === 'number') return sant.count;
+  if (typeof sant.verses === 'number') return sant.verses;
+  if (Array.isArray(sant.verses)) return sant.verses.length;
+  if (typeof sant.verseIds === 'number') return sant.verseIds;
+  if (Array.isArray(sant.verseIds)) return sant.verseIds.length;
+  return 0;
 };
 
 const SaintsListPage = ({ initialSaints }) => {
@@ -154,7 +165,7 @@ const SaintsListPage = ({ initialSaints }) => {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredSaints.slice(0, visibleCount).map(sant => {
-              const verseCount = sant.verses?.length || sant.verseIds?.length || 0;
+              const verseCount = getVerseCount(sant);
               const bioText = sant.biography?.text 
                 ? (sant.biography.text.substring(0, 100) + '...')
                 : `${verseCount} verses available in library.`;

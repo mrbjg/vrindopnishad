@@ -83,16 +83,24 @@ export default async function HomeRoute() {
   };
 
   // Create lightweight stubs for initial SSR rendering to keep HTML payload <50KB
-  const lightweightSaints = saints.slice(0, 12).map(s => ({
-    id: s.id,
-    name: s.name || '',
-    hindiName: s.hindiName || s.name || '',
-    hinglishName: s.hinglishName || s.name || '',
-    slug: s.slug || '',
-    period: s.period || '',
-    verseIds: s.verseIds || s.verses || [],
-    verses: s.verses || []
-  }));
+  const lightweightSaints = saints.slice(0, 12).map(s => {
+    const totalVerses = typeof s.verses === 'number' ? s.verses
+      : (Array.isArray(s.verses) ? s.verses.length
+      : (typeof s.verseIds === 'number' ? s.verseIds
+      : (Array.isArray(s.verseIds) ? s.verseIds.length : (s.verseCount || s.count || 0))));
+    return {
+      id: s.id,
+      name: s.name || '',
+      hindiName: s.hindiName || s.name || '',
+      hinglishName: s.hinglishName || s.name || '',
+      slug: s.slug || '',
+      period: s.period || '',
+      verseCount: totalVerses,
+      count: totalVerses,
+      verses: totalVerses,
+      verseIds: totalVerses
+    };
+  });
 
   const lightweightBooks = books.slice(0, 12).map(b => ({
     id: b.id,

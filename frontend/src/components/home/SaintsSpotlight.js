@@ -4,10 +4,21 @@ import { ChevronRight } from 'lucide-react';
 
 const getInitials = (name) => {
   if (!name) return 'V';
-  let clean = name.replace(/^(Shri|Swami|Sri|Shree|श्री|स्वामी|श्रीमद्)\s+/i, '').trim();
+  let clean = name.replace(/^(Shri|Swami|Sri|Shree|श्री|स्वामी|श्रीमद्|जगद्गुरु)\s+/i, '').trim();
   if (!clean.length) clean = name;
   const first = clean.charAt(0);
   return first.match(/[a-zA-Z]/) ? first.toUpperCase() : first;
+};
+
+const getVerseCount = (sant) => {
+  if (!sant) return 0;
+  if (typeof sant.verseCount === 'number') return sant.verseCount;
+  if (typeof sant.count === 'number') return sant.count;
+  if (typeof sant.verses === 'number') return sant.verses;
+  if (Array.isArray(sant.verses)) return sant.verses.length;
+  if (typeof sant.verseIds === 'number') return sant.verseIds;
+  if (Array.isArray(sant.verseIds)) return sant.verseIds.length;
+  return 0;
 };
 
 const SAINT_COLORS = [
@@ -135,7 +146,7 @@ const SaintsSpotlight = ({ isHi, saints, navigate }) => {
                   {isHi ? (sant.name || sant.hinglishName) : (sant.hinglishName || sant.name)}
                 </h3>
                 <span className="text-[9px] text-white/35 font-light block mt-0.5">
-                  {sant.verses?.length || sant.verseIds?.length || sant.count || 0} verses
+                  {getVerseCount(sant)} verses
                 </span>
               </div>
               <span
