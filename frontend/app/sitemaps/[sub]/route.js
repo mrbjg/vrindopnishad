@@ -9,25 +9,9 @@ import {
 import { STATIC_SEO_PAGES } from '../../../src/data/staticPagesData';
 import { FESTIVALS_DATA } from '../../../src/data/festivalsData';
 
-const CHUNK_SIZE = 3000; // 3000 items = 6000 URLs per sub-sitemap (exact match for Google Search Console)
+export const dynamic = 'force-dynamic';
 
-export async function generateStaticParams() {
-  await ensureDataLoaded();
-  const allVerses = getAllVerses();
-  const totalChunks = Math.max(1, Math.ceil(allVerses.length / CHUNK_SIZE));
-  
-  const contentSubMaps = Array.from({ length: totalChunks }, (_, i) => ({ sub: `content-${i + 1}.xml` }));
-  return [
-    { sub: 'pages.xml' },
-    { sub: 'content.xml' },
-    ...contentSubMaps,
-    { sub: 'saints.xml' },
-    { sub: 'granthas.xml' },
-    { sub: 'ragas.xml' },
-    { sub: 'glossary.xml' },
-    { sub: 'festivals.xml' }
-  ];
-}
+const CHUNK_SIZE = 3000; // 3000 items = 6000 URLs per sub-sitemap
 
 function escapeXml(str) {
   if (!str) return '';
