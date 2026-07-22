@@ -180,7 +180,7 @@ const SaintsListPage = ({ initialSaints }) => {
                           {isHindiRoute ? sant.name : sant.hinglishName}
                         </h3>
                         <span className="text-[10px] uppercase tracking-wider text-[var(--text-color)]/40 block mt-1">
-                          {sant.books.length} {sant.books.length === 1 ? 'Book' : 'Books'}
+                          {(sant.books?.length || 0)} {((sant.books?.length || 0) === 1) ? 'Book' : 'Books'}
                         </span>
                       </div>
                     </div>

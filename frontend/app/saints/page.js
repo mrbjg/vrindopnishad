@@ -25,6 +25,7 @@ export default function SaintsListRoute() {
     timeline: s.timeline || '',
     timelineEn: s.timelineEn || '',
     biography: s.biography || null,
+    books: s.books ? s.books.slice(0, 5) : [],
     verses: [],
     verseIds: s.verseIds ? s.verseIds.slice(0, 10) : []
   }));
