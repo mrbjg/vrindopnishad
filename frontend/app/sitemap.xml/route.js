@@ -46,8 +46,8 @@ ${contentSitemaps}
 
   return new Response(xml, {
     headers: {
-      'Content-Type': 'application/xml; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400'
+      'Content-Type': 'text/xml; charset=utf-8',
+      'Cache-Control': 'public, max-age=0, s-maxage=0, must-revalidate'
     },
   });
 }
