@@ -21,23 +21,8 @@ export const cleanVerseOnly = (text) => {
 
   let cleaned = text.trim();
 
-  // 1. Check if there's an explicit attribution line starting with hyphen/dash (— or -)
-  // e.g. "— श्री गोविन्दशरण देवाचार्य जी, श्री गोविन्दशरण देवाचार्य जी की वाणी (69)"
-  // Everything after this attribution line is Hindi/English prose explanation!
-  const attrMatch = cleaned.match(/(?:^|\n)\s*([—–-]\s*(?:श्री|श्रीमान|जगद्गुरु|स्वामी|हठ|रसिया|रसिक|सूरदास|मीरा|कबीर|हित|गोविन्द|गोविंद|भगवत|हरिदास|देव|रूप|सनातन|जीव|ललित|Jagadguru|Shri|Swami|Goswami)[^\n]+)/i);
-
-  if (attrMatch) {
-    const attrText = attrMatch[1];
-    const attrIdx = cleaned.indexOf(attrText);
-    if (attrIdx !== -1) {
-      // Keep up to the end of the attribution line
-      const endOfAttr = attrIdx + attrText.length;
-      cleaned = cleaned.substring(0, endOfAttr).trim();
-    }
-  }
-
-  // 2. Check for explicit section headers like "भावार्थ:", "व्याख्या:", "अर्थ:", "English Translation:", "Commentary:"
-  const headerMatch = cleaned.match(/(?:^|\n)\s*(?:भावार्थ|व्याख्या|अर्थ|विशेष|टीका|टिप्पणी|Commentary|Explanation|Meaning|Translation)\s*[:：]/i);
+  // Check for explicit prose commentary/translation headers like "भावार्थ:", "व्याख्या:", "Commentary:", "Explanation:"
+  const headerMatch = cleaned.match(/(?:^|\n)\s*(?:भावार्थ|व्याख्या|विशेष|टीका|टिप्पणी|Commentary|Explanation|English Translation)\s*[:：]/i);
   if (headerMatch) {
     const headerIdx = cleaned.indexOf(headerMatch[0]);
     if (headerIdx > 10) {

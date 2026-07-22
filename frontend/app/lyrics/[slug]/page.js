@@ -97,14 +97,35 @@ function getUntruncatedServerText(slug, id, sanskrit, hindi, title) {
 
         if (foundBackup) {
           const sText = foundBackup.sanskrit_text || foundBackup.content_text || '';
-          const hText = foundBackup.hindi_text || '';
+        }
+      }
+    } catch (e) { }
+  }
 
-          if (sText && sText.length > fullSanskrit.length) {
-            fullSanskrit = sText;
-          }
-          if (hText && hText.length > fullHindi.length) {
-            fullHindi = hText;
-          }
+  // Try reading vrindavaani_content.json from disk if text is still truncated or short
+  if (isTruncated(fullSanskrit) || isTruncated(fullHindi) || fullSanskrit.length < 300) {
+    try {
+      const appDir = process.cwd();
+      let masterPath = path.join(appDir, 'data/vrindavaani_content.json');
+      if (!fs.existsSync(masterPath)) {
+        masterPath = path.join(appDir, 'frontend/data/vrindavaani_content.json');
+      }
+      if (fs.existsSync(masterPath)) {
+        const rawMaster = JSON.parse(fs.readFileSync(masterPath, 'utf8'));
+        const targetSlug = (slug || '').replace(/^-+|-+$/g, '');
+        const targetId = (id || '').toString();
+
+        const foundMaster = rawMaster.find(x =>
+          (x.id && targetId && x.id.toString() === targetId) ||
+          (x.slug && targetSlug && x.slug.replace(/^-+|-+$/g, '') === targetSlug) ||
+          (x.title && title && x.title.trim() === title.trim())
+        );
+
+        if (foundMaster) {
+          const sText = foundMaster.sanskrit_text || foundMaster.content_text || '';
+          const hText = foundMaster.hindi_text || '';
+          if (sText && sText.length > fullSanskrit.length) fullSanskrit = sText;
+          if (hText && hText.length > fullHindi.length) fullHindi = hText;
         }
       }
     } catch (e) { }
