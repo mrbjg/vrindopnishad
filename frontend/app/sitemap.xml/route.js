@@ -42,7 +42,7 @@ ${contentSitemaps}
     <loc>https://path.vrindopnishad.in/sitemaps/festivals.xml</loc>
     <lastmod>${today}</lastmod>
   </sitemap>
-</sitemapindex>`;
+</sitemapindex>`.trim();
 
   return new Response(xml, {
     headers: {
