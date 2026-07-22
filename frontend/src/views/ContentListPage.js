@@ -91,13 +91,7 @@ const ContentListPage = ({ initialContent, initialCategories }) => {
   useEffect(() => {
     let active = true;
 
-    if (initialContent && selectedCategory === urlCategory) {
-      setLoading(false);
-      return;
-    }
-
     const fetchContent = async () => {
-      setVisibleCount(12);
       if (content.length === 0 && active) {
         setLoading(true);
       }
@@ -106,7 +100,7 @@ const ContentListPage = ({ initialContent, initialCategories }) => {
         const fullData = await apiService.getAllContent(selectedCategory, 25000);
         const cats = await apiService.getCategories();
         
-        if (active) {
+        if (active && fullData && fullData.length > 0) {
           setContent(fullData);
           setCategories(cats);
         }
@@ -121,8 +115,7 @@ const ContentListPage = ({ initialContent, initialCategories }) => {
     return () => {
       active = false;
     };
-    
-  }, [selectedCategory, apiService, initialContent, urlCategory]);
+  }, [selectedCategory, apiService]);
 
   const filteredContent = useMemo(() => {
     if (!debouncedSearch) return content;

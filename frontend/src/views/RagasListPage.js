@@ -41,14 +41,10 @@ const RagasListPage = ({ initialRagas }) => {
 
   useEffect(() => {
     let active = true;
-    if (initialRagas) {
-      setLoading(false);
-      return;
-    }
     const load = async () => {
       try {
         const relations = await apiService.getRelations();
-        if (active) {
+        if (active && relations.ragas && relations.ragas.length > 0) {
           setRagas(relations.ragas);
         }
       } catch (error) {
@@ -59,7 +55,7 @@ const RagasListPage = ({ initialRagas }) => {
     };
     load();
     return () => { active = false; };
-  }, [apiService, initialRagas]);
+  }, [apiService]);
 
   const filteredRagas = ragas.filter(r => 
     r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

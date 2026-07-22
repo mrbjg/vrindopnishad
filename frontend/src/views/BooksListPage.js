@@ -41,14 +41,10 @@ const BooksListPage = ({ initialBooks }) => {
 
   useEffect(() => {
     let active = true;
-    if (initialBooks) {
-      setLoading(false);
-      return;
-    }
     const load = async () => {
       try {
         const relations = await apiService.getRelations();
-        if (active) {
+        if (active && relations.books && relations.books.length > 0) {
           setBooks(relations.books);
         }
       } catch (error) {
@@ -59,7 +55,7 @@ const BooksListPage = ({ initialBooks }) => {
     };
     load();
     return () => { active = false; };
-  }, [apiService, initialBooks]);
+  }, [apiService]);
 
   const filteredBooks = books.filter(b =>
     (b?.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||

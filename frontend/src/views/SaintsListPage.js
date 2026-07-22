@@ -58,14 +58,10 @@ const SaintsListPage = ({ initialSaints }) => {
 
   useEffect(() => {
     let active = true;
-    if (initialSaints) {
-      setLoading(false);
-      return;
-    }
     const load = async () => {
       try {
         const relations = await apiService.getRelations();
-        if (active) {
+        if (active && relations.sants && relations.sants.length > 0) {
           setSaints(relations.sants);
         }
       } catch (error) {
@@ -76,7 +72,7 @@ const SaintsListPage = ({ initialSaints }) => {
     };
     load();
     return () => { active = false; };
-  }, [apiService, initialSaints]);
+  }, [apiService]);
 
   const filteredSaints = saints.filter(s => 
     (s?.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
