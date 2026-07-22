@@ -223,6 +223,10 @@ export async function GET(request, { params }) {
     <priority>${escapeXml(item.priority)}</priority>
   </url>`).join('\n');
 
+  if (urlItems.length === 0) {
+    return new Response('Not Found', { status: 404 });
+  }
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${xmlUrls}
