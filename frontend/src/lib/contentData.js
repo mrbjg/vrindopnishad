@@ -997,6 +997,28 @@ function normalizeFuzzyText(text) {
     .replace(/ch/g, 'c');
 }
 
+let verseSlugMapCache = null;
+
+function getVerseMap(verses) {
+  if (verseSlugMapCache && verseSlugMapCache._versesRef === verses) {
+    return verseSlugMapCache;
+  }
+  const map = new Map();
+  verses.forEach(item => {
+    if (item.slug) {
+      const s = item.slug.toLowerCase().replace(/^-+|-+$/g, '');
+      if (!map.has(s)) map.set(s, item);
+    }
+    if (item.id) {
+      const idStr = item.id.toString().toLowerCase();
+      if (!map.has(idStr)) map.set(idStr, item);
+    }
+  });
+  map._versesRef = verses;
+  verseSlugMapCache = map;
+  return map;
+}
+
 export function getVerseBySlug(slug) {
   const { verses } = loadRawData(false);
   const decodedSlug = decodeURIComponent(slug).toLowerCase();
@@ -1005,13 +1027,9 @@ export function getVerseBySlug(slug) {
   const decodedClean = decodedSlug.replace(/^-+|-+$/g, '');
   const cleanSlugClean = cleanSlug.replace(/^-+|-+$/g, '');
 
-  // 1. Try exact match
-  let matched = verses.find(item => {
-    const itemSlug = (item.slug || '').toLowerCase().replace(/^-+|-+$/g, '');
-    return itemSlug === decodedClean ||
-      itemSlug === cleanSlugClean ||
-      (item.id?.toString() === decodedSlug);
-  });
+  // 1. Try O(1) exact match lookup via Map hashtable
+  const map = getVerseMap(verses);
+  let matched = map.get(decodedClean) || map.get(cleanSlugClean);
   if (matched) return matched;
 
   // 2. Transliterate search slug if it contains Devanagari

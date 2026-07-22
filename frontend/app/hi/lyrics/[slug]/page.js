@@ -54,12 +54,12 @@ function getUntruncatedServerText(slug, id, sanskrit, hindi, title) {
       }
     }
 
-    if (serverRelationsCache) {
+    if (global.serverRelationsCache) {
       const allRelItems = [
-        ...(serverRelationsCache.sants || []),
-        ...(serverRelationsCache.biographies || []),
-        ...(serverRelationsCache.books || []),
-        ...(serverRelationsCache.ragas || [])
+        ...(global.serverRelationsCache.sants || []),
+        ...(global.serverRelationsCache.biographies || []),
+        ...(global.serverRelationsCache.books || []),
+        ...(global.serverRelationsCache.ragas || [])
       ];
       const targetSlug = (slug || '').replace(/^-+|-+$/g, '');
       const targetId = (id || '').toString();
@@ -80,18 +80,18 @@ function getUntruncatedServerText(slug, id, sanskrit, hindi, title) {
   // Try reading content_backup.json from disk if text is still short (< 300 chars) or truncated
   if (isTruncated(fullSanskrit) || isTruncated(fullHindi) || fullSanskrit.length < 300) {
     try {
-      if (!serverBackupCache) {
+      if (!global.serverBackupCache) {
         const backupPath = path.join(process.cwd(), 'public/data/content_backup.json');
         if (fs.existsSync(backupPath)) {
-          serverBackupCache = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
+          global.serverBackupCache = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
         }
       }
 
-      if (serverBackupCache && serverBackupCache.length > 0) {
+      if (global.serverBackupCache && global.serverBackupCache.length > 0) {
         const targetSlug = (slug || '').replace(/^-+|-+$/g, '');
         const targetId = (id || '').toString();
 
-        const foundBackup = serverBackupCache.find(x =>
+        const foundBackup = global.serverBackupCache.find(x =>
           (x.id && targetId && x.id.toString() === targetId) ||
           (x.slug && targetSlug && x.slug.replace(/^-+|-+$/g, '') === targetSlug) ||
           (x.title && title && x.title.trim() === title.trim())
@@ -100,13 +100,42 @@ function getUntruncatedServerText(slug, id, sanskrit, hindi, title) {
         if (foundBackup) {
           const sText = foundBackup.sanskrit_text || foundBackup.content_text || '';
           const hText = foundBackup.hindi_text || '';
+          if (sText && sText.length > fullSanskrit.length) fullSanskrit = sText;
+          if (hText && hText.length > fullHindi.length) fullHindi = hText;
+        }
+      }
+    } catch (e) { }
+  }
 
-          if (sText && sText.length > fullSanskrit.length) {
-            fullSanskrit = sText;
-          }
-          if (hText && hText.length > fullHindi.length) {
-            fullHindi = hText;
-          }
+  // Try reading vrindavaani_content.json from disk if text is still truncated or short
+  if (isTruncated(fullSanskrit) || isTruncated(fullHindi) || fullSanskrit.length < 300) {
+    try {
+      if (!global.serverMasterCache) {
+        const appDir = process.cwd();
+        let masterPath = path.join(appDir, 'data/vrindavaani_content.json');
+        if (!fs.existsSync(masterPath)) {
+          masterPath = path.join(appDir, 'frontend/data/vrindavaani_content.json');
+        }
+        if (fs.existsSync(masterPath)) {
+          global.serverMasterCache = JSON.parse(fs.readFileSync(masterPath, 'utf8'));
+        }
+      }
+
+      if (global.serverMasterCache && global.serverMasterCache.length > 0) {
+        const targetSlug = (slug || '').replace(/^-+|-+$/g, '');
+        const targetId = (id || '').toString();
+
+        const foundMaster = global.serverMasterCache.find(x =>
+          (x.id && targetId && x.id.toString() === targetId) ||
+          (x.slug && targetSlug && x.slug.replace(/^-+|-+$/g, '') === targetSlug) ||
+          (x.title && title && x.title.trim() === title.trim())
+        );
+
+        if (foundMaster) {
+          const sText = foundMaster.sanskrit_text || foundMaster.content_text || '';
+          const hText = foundMaster.hindi_text || '';
+          if (sText && sText.length > fullSanskrit.length) fullSanskrit = sText;
+          if (hText && hText.length > fullHindi.length) fullHindi = hText;
         }
       }
     } catch (e) { }
@@ -318,7 +347,8 @@ export default async function HindiLyricsDetailPage({ params }) {
   }
 
   const allVerses = getAllVerses();
-  const categoryVerses = allVerses.filter(item =>
+  const sampleVerses = allVerses.slice(0, 100);
+  const categoryVerses = sampleVerses.filter(item =>
     item.category === verse.category &&
     item.id?.toString() !== verse.id?.toString() &&
     item.category?.toLowerCase() !== 'saint'

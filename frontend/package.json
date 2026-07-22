@@ -25,6 +25,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "scripts": {
+    "prebuild": "node scripts/build-sitemap-manifest.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start"

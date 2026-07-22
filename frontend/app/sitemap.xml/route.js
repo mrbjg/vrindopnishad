@@ -1,12 +1,12 @@
-import { getAllVerses, ensureDataLoaded } from '../../src/lib/contentData';
+import { getSitemapManifest } from '../../src/lib/sitemapData.js';
 
 export const dynamic = 'force-dynamic';
 
 const CHUNK_SIZE = 3000;
 
 export async function GET() {
-  await ensureDataLoaded();
-  const allVerses = getAllVerses();
+  const manifest = getSitemapManifest();
+  const allVerses = manifest.content || [];
   const totalChunks = Math.max(1, Math.ceil(allVerses.length / CHUNK_SIZE));
 
   const today = new Date().toISOString().split('T')[0];

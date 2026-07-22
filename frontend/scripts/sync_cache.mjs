@@ -8,6 +8,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { generateSitemapManifest } from './build-sitemap-manifest.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -674,5 +675,8 @@ relations.sants.forEach(s => {
   fs.writeFileSync(saintFile, JSON.stringify(saintData, null, 2), 'utf8');
 });
 console.log(`[sync_cache] Saved ${relations.sants.length} individual saint shards in public/data/saints/`);
+
+// 8. Generate sitemap manifest
+generateSitemapManifest();
 
 console.log(`[sync_cache] ✅ All local cache files, public backups, and book/saint shards successfully updated and in sync!`);

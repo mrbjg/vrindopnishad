@@ -168,3 +168,10 @@ When building content/detail pages, automatically include dynamic Open Graph met
 
 - "NEVER hardcode static colors (such as amber-500, gold, etc.) for theme accents, badges, buttons, borders, or active states. ALWAYS use CSS dynamic theme variables (var(--primary-color) and rgba(var(--primary-rgb), ...)) so all elements dynamically adapt to the user's active mood theme across all pages."
 
+Always use pre-compiled lightweight manifests (under 5MB) for dynamic Next.js App Router API routes (sitemaps, robots, feed endpoints) to prevent serverless function timeouts and high memory usage on Vercel.
+
+Always reference server-side global cache objects using explicit global.variableName notation inside try/catch blocks to prevent uncaught ReferenceError fallthroughs to disk reads on Vercel serverless functions.
+
+Lightweight Sitemaps Manifest Rule: Pre-compiling manifests for dynamic Next.js API routes (sitemap, robots, feed) to prevent serverless timeouts on Vercel.
+Explicit Global Cache Variable Scope Rule: Using explicit global.variableName checks to prevent ReferenceError fallthroughs to disk reads.
+

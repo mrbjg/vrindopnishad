@@ -1,13 +1,7 @@
-import { 
-  getAllVerses, 
-  getAllSaints, 
-  getAllGranthas, 
-  getAllRagas, 
-  getGlossaryTerms,
-  ensureDataLoaded
-} from '../../../src/lib/contentData';
-import { STATIC_SEO_PAGES } from '../../../src/data/staticPagesData';
-import { FESTIVALS_DATA } from '../../../src/data/festivalsData';
+import { getSitemapManifest } from '../../../src/lib/sitemapData.js';
+import { STATIC_SEO_PAGES } from '../../../src/data/staticPagesData.js';
+import { FESTIVALS_DATA } from '../../../src/data/festivalsData.js';
+import { GLOSSARY_TERMS } from '../../../src/data/glossaryTerms.js';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,8 +29,8 @@ function safeFormatDate(input, fallback = '2026-06-27') {
 }
 
 export async function GET(request, { params }) {
-  await ensureDataLoaded();
-  const sub = params.sub || '';
+  const manifest = getSitemapManifest();
+  const sub = params?.sub || '';
   const type = sub.replace('.xml', '');
 
   let urlItems = [];
@@ -67,7 +61,7 @@ export async function GET(request, { params }) {
       });
     });
 
-    const staticSlugs = Object.keys(STATIC_SEO_PAGES);
+    const staticSlugs = Object.keys(STATIC_SEO_PAGES || {});
     staticSlugs.forEach(slug => {
       urlItems.push({
         loc: `${base}/${slug}`,
@@ -83,7 +77,7 @@ export async function GET(request, { params }) {
       });
     });
   } else if (type === 'content' || type.startsWith('content-')) {
-    const allVerses = getAllVerses();
+    const allVerses = manifest.content || [];
     let items = [];
 
     const match = type.match(/^content-(\d+)$/);
@@ -95,16 +89,13 @@ export async function GET(request, { params }) {
       items = allVerses.slice(0, CHUNK_SIZE);
     }
 
-    if (items.length === 0) {
-      return new Response('Not Found', { status: 404 });
-    }
-
     items.forEach(v => {
-      const rawSlug = v.slug || v.id?.toString() || '';
-      if (!rawSlug) return;
-      const slug = encodeURIComponent(rawSlug);
-      const lastmodDate = v.updated_at || v.updatedAt || v.created_at || v.createdAt;
-      const formattedDate = safeFormatDate(lastmodDate);
+      const slugVal = Array.isArray(v) ? v[0] : (v.slug || v.id?.toString() || '');
+      const lastmodVal = Array.isArray(v) ? v[1] : (v.lastmod || v.updated_at || v.created_at);
+      if (!slugVal) return;
+
+      const slug = encodeURIComponent(decodeURIComponent(slugVal));
+      const formattedDate = safeFormatDate(lastmodVal);
 
       urlItems.push({
         loc: `${base}/lyrics/${slug}`,
@@ -120,12 +111,15 @@ export async function GET(request, { params }) {
       });
     });
   } else if (type === 'saints') {
-    const items = getAllSaints();
+    const items = manifest.saints || [];
     items.forEach(s => {
-      if (!s || !s.slug) return;
-      const slug = encodeURIComponent(s.slug);
-      const lastmodDate = s.rawItem?.updated_at || s.rawItem?.updatedAt;
-      const formattedDate = safeFormatDate(lastmodDate);
+      const slugVal = Array.isArray(s) ? s[0] : (s.slug || '');
+      const lastmodVal = Array.isArray(s) ? s[1] : (s.lastmod || '2026-06-27');
+      if (!slugVal) return;
+
+      const slug = encodeURIComponent(decodeURIComponent(slugVal));
+      const formattedDate = safeFormatDate(lastmodVal);
+
       urlItems.push({
         loc: `${base}/saints/${slug}`,
         changefreq: 'weekly',
@@ -140,70 +134,56 @@ export async function GET(request, { params }) {
       });
     });
   } else if (type === 'granthas') {
-    const items = getAllGranthas();
+    const items = manifest.granthas || [];
     items.forEach(b => {
-      if (!b || !b.slug) return;
-      const slug = encodeURIComponent(b.slug);
-      let lastmod = '2026-06-27';
-      if (b.verses && Array.isArray(b.verses) && b.verses.length > 0) {
-        const timestamps = b.verses
-          .map(v => v?.updated_at || v?.updatedAt || v?.created_at || v?.createdAt)
-          .filter(Boolean);
-        if (timestamps.length > 0) {
-          const validTimes = timestamps.map(t => new Date(t).getTime()).filter(t => !isNaN(t));
-          if (validTimes.length > 0) {
-            lastmod = safeFormatDate(Math.max(...validTimes));
-          }
-        }
-      }
+      const slugVal = Array.isArray(b) ? b[0] : (b.slug || '');
+      const lastmodVal = Array.isArray(b) ? b[1] : (b.lastmod || '2026-06-27');
+      if (!slugVal) return;
+
+      const slug = encodeURIComponent(decodeURIComponent(slugVal));
+      const formattedDate = safeFormatDate(lastmodVal);
+
       urlItems.push({
         loc: `${base}/granthas/${slug}`,
         changefreq: 'weekly',
         priority: '0.8',
-        lastmod
+        lastmod: formattedDate
       });
       urlItems.push({
         loc: `${base}/hi/granthas/${slug}`,
         changefreq: 'weekly',
         priority: '0.8',
-        lastmod
+        lastmod: formattedDate
       });
     });
   } else if (type === 'ragas') {
-    const items = getAllRagas();
+    const items = manifest.ragas || [];
     items.forEach(r => {
-      if (!r || !r.slug) return;
-      const slug = encodeURIComponent(r.slug);
-      let lastmod = '2026-06-27';
-      if (r.verses && Array.isArray(r.verses) && r.verses.length > 0) {
-        const timestamps = r.verses
-          .map(v => v?.updated_at || v?.updatedAt || v?.created_at || v?.createdAt)
-          .filter(Boolean);
-        if (timestamps.length > 0) {
-          const validTimes = timestamps.map(t => new Date(t).getTime()).filter(t => !isNaN(t));
-          if (validTimes.length > 0) {
-            lastmod = safeFormatDate(Math.max(...validTimes));
-          }
-        }
-      }
+      const slugVal = Array.isArray(r) ? r[0] : (r.slug || '');
+      const lastmodVal = Array.isArray(r) ? r[1] : (r.lastmod || '2026-06-27');
+      if (!slugVal) return;
+
+      const slug = encodeURIComponent(decodeURIComponent(slugVal));
+      const formattedDate = safeFormatDate(lastmodVal);
+
       urlItems.push({
         loc: `${base}/ragas/${slug}`,
         changefreq: 'weekly',
         priority: '0.8',
-        lastmod
+        lastmod: formattedDate
       });
       urlItems.push({
         loc: `${base}/hi/ragas/${slug}`,
         changefreq: 'weekly',
         priority: '0.8',
-        lastmod
+        lastmod: formattedDate
       });
     });
   } else if (type === 'glossary') {
-    const items = getGlossaryTerms();
+    const items = GLOSSARY_TERMS || [];
     items.forEach(t => {
       if (!t || !t.slug) return;
-      const slug = encodeURIComponent(t.slug);
+      const slug = encodeURIComponent(decodeURIComponent(t.slug));
       urlItems.push({
         loc: `${base}/glossary/${slug}`,
         changefreq: 'monthly',
@@ -218,8 +198,9 @@ export async function GET(request, { params }) {
       });
     });
   } else if (type === 'festivals') {
-    const slugs = Object.keys(FESTIVALS_DATA);
-    slugs.forEach(slug => {
+    const slugs = Object.keys(FESTIVALS_DATA || {});
+    slugs.forEach(slugRaw => {
+      const slug = encodeURIComponent(decodeURIComponent(slugRaw));
       urlItems.push({
         loc: `${base}/festivals/${slug}`,
         changefreq: 'weekly',
@@ -233,8 +214,6 @@ export async function GET(request, { params }) {
         lastmod: '2026-06-27'
       });
     });
-  } else {
-    return new Response('Not Found', { status: 404 });
   }
 
   const xmlUrls = urlItems.map(item => `  <url>
@@ -250,6 +229,7 @@ ${xmlUrls}
 </urlset>`;
 
   return new Response(xml, {
+    status: 200,
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
       'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400'
