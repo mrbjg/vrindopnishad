@@ -3,7 +3,6 @@ import '../src/index.css';
 import '../src/App.css';
 import { ClientProviders } from '../src/contexts/ClientProviders';
 import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/react';
 import { Laila, Poppins, Inter, Noto_Serif_Devanagari } from 'next/font/google';
 import Script from 'next/script';
 
@@ -163,7 +162,6 @@ export default function RootLayout({ children }) {
           </Suspense>
         </ClientProviders>
         <Analytics />
-        <SpeedInsights />
       </body>
     </html>
   );

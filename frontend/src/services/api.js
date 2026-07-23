@@ -260,12 +260,16 @@ const fetchFromSupabaseBySlugOrId = async (identifier) => {
   if (!identifier) return null;
   try {
     const decoded = decodeURIComponent(identifier);
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decoded);
+    const unhyphenated = decoded.replace(/-/g, '');
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decoded) || /^[0-9a-f]{32}$/i.test(unhyphenated);
     let query = supabase.from('content').select('*');
     if (isUuid) {
-      query = query.eq('id', decoded);
+      const formattedUuid = unhyphenated.length === 32
+        ? `${unhyphenated.slice(0, 8)}-${unhyphenated.slice(8, 12)}-${unhyphenated.slice(12, 16)}-${unhyphenated.slice(16, 20)}-${unhyphenated.slice(20)}`
+        : decoded;
+      query = query.or(`id.eq.${formattedUuid},id.eq.${decoded},slug.eq.${decoded}`);
     } else {
-      query = query.eq('slug', decoded);
+      query = query.or(`slug.eq.${decoded},id.eq.${decoded}`);
     }
     const { data, error } = await query.maybeSingle();
     if (!error && data) {

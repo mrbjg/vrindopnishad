@@ -349,6 +349,24 @@ const nextConfig = {
         ],
       },
       {
+        source: '/(lyrics|hi/lyrics|saints|hi/saints|granthas|hi/granthas|ragas|hi/ragas)/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
+          },
+        ],
+      },
+      {
+        source: '/(sitemap.xml|sitemaps/:path*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
+          },
+        ],
+      },
+      {
         source: '/:path*.{jpg,jpeg,png,gif,webp,avif,svg,ico,woff,woff2,ttf,eot}',
         headers: [
           {

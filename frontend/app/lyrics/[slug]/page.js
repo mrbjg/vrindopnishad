@@ -146,10 +146,17 @@ function getUntruncatedServerText(slug, id, sanskrit, hindi, title) {
 
 async function fetchVerseFromSupabaseBySlug(slug) {
   try {
+    const raw = decodeURIComponent(slug);
+    const unhyphenated = raw.replace(/-/g, '');
+    let formattedUuid = raw;
+    if (/^[0-9a-fA-F]{32}$/.test(unhyphenated)) {
+      formattedUuid = `${unhyphenated.slice(0, 8)}-${unhyphenated.slice(8, 12)}-${unhyphenated.slice(12, 16)}-${unhyphenated.slice(16, 20)}-${unhyphenated.slice(20)}`;
+    }
+
     const { data, error } = await supabase
       .from('content')
       .select('*')
-      .or(`slug.eq.${slug},id.eq.${slug}`)
+      .or(`slug.eq.${raw},id.eq.${raw},id.eq.${formattedUuid}`)
       .maybeSingle();
 
     if (error || !data) return null;

@@ -218,10 +218,7 @@ function loadLocalJSONFallback() {
       const parsedContent = JSON.parse(rawContent);
       const totalItems = parsedContent.length;
 
-      for (let i = 0; i < totalItems; i += 500) {
-        const end = Math.min(i + 500, totalItems);
-        console.log(`[DataCache] Initializing memory cache... Loaded ${end} / ${totalItems} items`);
-      }
+
 
       allContentItems = parsedContent.map((item, idx) => {
         const cleanCategory = classifyItemCategory(item);
@@ -1008,10 +1005,28 @@ function getVerseMap(verses) {
     if (item.slug) {
       const s = item.slug.toLowerCase().replace(/^-+|-+$/g, '');
       if (!map.has(s)) map.set(s, item);
+      const dec = decodeURIComponent(s);
+      if (!map.has(dec)) map.set(dec, item);
+      const norm = normalizeFuzzyText(s);
+      if (norm && !map.has(norm)) map.set(norm, item);
     }
     if (item.id) {
       const idStr = item.id.toString().toLowerCase();
       if (!map.has(idStr)) map.set(idStr, item);
+      const unhyphenated = idStr.replace(/-/g, '');
+      if (!map.has(unhyphenated)) map.set(unhyphenated, item);
+    }
+    if (item.title) {
+      const titleSlug = generateSlug(item.title);
+      if (titleSlug && !map.has(titleSlug)) map.set(titleSlug, item);
+      const normTitle = normalizeFuzzyText(titleSlug);
+      if (normTitle && !map.has(normTitle)) map.set(normTitle, item);
+    }
+    if (item.cleanTitle && item.cleanTitle !== item.title) {
+      const cleanTitleSlug = generateSlug(item.cleanTitle);
+      if (cleanTitleSlug && !map.has(cleanTitleSlug)) map.set(cleanTitleSlug, item);
+      const normCleanTitle = normalizeFuzzyText(cleanTitleSlug);
+      if (normCleanTitle && !map.has(normCleanTitle)) map.set(normCleanTitle, item);
     }
   });
   map._versesRef = verses;
@@ -1020,85 +1035,89 @@ function getVerseMap(verses) {
 }
 
 export function getVerseBySlug(slug) {
+  if (!slug) return null;
   const { verses } = loadRawData(false);
-  const decodedSlug = decodeURIComponent(slug).toLowerCase();
-  const cleanSlug = sanitizeSlug(decodedSlug);
-
-  const decodedClean = decodedSlug.replace(/^-+|-+$/g, '');
+  const rawDecoded = decodeURIComponent(slug).trim();
+  const lowerSlug = rawDecoded.toLowerCase();
+  const cleanSlug = sanitizeSlug(lowerSlug);
+  const decodedClean = lowerSlug.replace(/^-+|-+$/g, '');
   const cleanSlugClean = cleanSlug.replace(/^-+|-+$/g, '');
 
-  // 1. Try O(1) exact match lookup via Map hashtable
   const map = getVerseMap(verses);
+
+  // 1. Try O(1) exact map lookup
   let matched = map.get(decodedClean) || map.get(cleanSlugClean);
   if (matched) return matched;
 
-  // 2. Transliterate search slug if it contains Devanagari
-  let searchSlug = decodedSlug;
-  if (/[^\x00-\x7F]/.test(decodedSlug)) {
-    const cleanForTransliterate = decodedSlug.replace(/-/g, ' ');
+  // 1b. Check UUID format variations (hyphenated vs unhyphenated)
+  const unhyphenated = decodedClean.replace(/-/g, '');
+  if (/^[0-9a-f]{32}$/i.test(unhyphenated)) {
+    const formattedUuid = `${unhyphenated.slice(0, 8)}-${unhyphenated.slice(8, 12)}-${unhyphenated.slice(12, 16)}-${unhyphenated.slice(16, 20)}-${unhyphenated.slice(20)}`;
+    matched = map.get(unhyphenated) || map.get(formattedUuid);
+    if (matched) return matched;
+  }
+
+  // 2. Transliterate Devanagari search slug
+  let searchSlug = decodedClean;
+  if (/[^\x00-\x7F]/.test(rawDecoded)) {
+    const cleanForTransliterate = rawDecoded.replace(/-/g, ' ');
     searchSlug = generateSlug(cleanForTransliterate);
-
-    // 2a. Match transliterated slug exactly
-    matched = verses.find(item => {
-      const itemSlug = (item.slug || '').toLowerCase().replace(/^-+|-+$/g, '');
-      const searchSlugClean = searchSlug.replace(/^-+|-+$/g, '');
-      return itemSlug === searchSlugClean;
-    });
-    if (matched) return matched;
-
-    // 2b. Match transliterated slug against transliterated item titles
-    matched = verses.find(item => {
-      if (!item.title) return false;
-      const itemTitleTransliterated = generateSlug(item.title);
-      return itemTitleTransliterated === searchSlug;
-    });
+    matched = map.get(searchSlug);
     if (matched) return matched;
   }
 
-  // 3. Try spelling-insensitive normalized fuzzy match
-  const normDecoded = normalizeFuzzyText(searchSlug);
-  const normClean = normalizeFuzzyText(cleanSlug);
-
-  if (normDecoded) {
-    matched = verses.find(item => {
-      if (!item.slug) return false;
-      const normItem = normalizeFuzzyText(item.slug);
-      return normItem === normDecoded ||
-        normItem === normClean ||
-        normItem.startsWith(normDecoded) ||
-        normDecoded.startsWith(normItem) ||
-        normItem.startsWith(normClean) ||
-        normClean.startsWith(normItem) ||
-        (normDecoded.length > 5 && (normItem.includes(normDecoded) || normDecoded.includes(normItem)));
-    });
+  // 3. Normalized fuzzy text exact match
+  const normSearch = normalizeFuzzyText(searchSlug);
+  const normClean = normalizeFuzzyText(cleanSlugClean);
+  if (normSearch) {
+    matched = map.get(normSearch);
     if (matched) return matched;
-
-    // 3b. Try fuzzy match on transliterated title
-    matched = verses.find(item => {
-      if (!item.title) return false;
-      const normTitle = normalizeFuzzyText(generateSlug(item.title));
-      return normTitle === normDecoded ||
-        normTitle.startsWith(normDecoded) ||
-        normDecoded.startsWith(normTitle) ||
-        (normDecoded.length > 5 && (normTitle.includes(normDecoded) || normDecoded.includes(normTitle)));
-    });
+  }
+  if (normClean) {
+    matched = map.get(normClean);
     if (matched) return matched;
   }
 
-  // 4. Try consonantal skeleton match for Devanagari transliteration differences
-  const skeleton = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/[aeiouy]/g, '');
-  const decodedSkeleton = skeleton(searchSlug);
+  // 4. Token Overlap Scoring (Best match with >= 0.5 confidence, NO false positives)
+  const searchTokens = searchSlug.split(/[^a-z0-9]+/i).filter(t => t.length > 1);
+  if (searchTokens.length >= 2) {
+    let bestItem = null;
+    let maxScore = 0;
 
-  if (decodedSkeleton && decodedSkeleton.length > 3) {
-    matched = verses.find(item => {
-      if (!item.slug) return false;
-      const itemSkeleton = skeleton(item.slug);
-      return itemSkeleton === decodedSkeleton ||
-        itemSkeleton.startsWith(decodedSkeleton) ||
-        decodedSkeleton.startsWith(itemSkeleton) ||
-        (decodedSkeleton.length > 5 && (itemSkeleton.includes(decodedSkeleton) || decodedSkeleton.includes(itemSkeleton)));
+    verses.forEach(item => {
+      const candidates = [
+        item.slug,
+        generateSlug(item.title || ''),
+        generateSlug(item.cleanTitle || '')
+      ].filter(Boolean);
+
+      for (const cand of candidates) {
+        const candTokens = cand.split(/[^a-z0-9]+/i).filter(t => t.length > 1);
+        if (candTokens.length === 0) continue;
+
+        const candTokenSet = new Set(candTokens.map(normalizeFuzzyText));
+        let overlap = 0;
+        searchTokens.forEach(st => {
+          const normSt = normalizeFuzzyText(st);
+          if (candTokenSet.has(normSt)) overlap++;
+        });
+
+        if (overlap < 2) continue;
+
+        const coverage = overlap / searchTokens.length;
+        const precision = overlap / candTokens.length;
+        const score = (2 * coverage * precision) / (coverage + precision || 1);
+
+        if (coverage >= 0.4 && score > maxScore) {
+          maxScore = score;
+          bestItem = item;
+        }
+      }
     });
-    if (matched) return matched;
+
+    if (bestItem && maxScore >= 0.5) {
+      return bestItem;
+    }
   }
 
   return null;
