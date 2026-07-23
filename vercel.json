@@ -1,5 +1,4 @@
 {
-  "ignoreCommand": "if [ -d \"frontend\" ]; then git diff --quiet HEAD^ HEAD -- frontend vercel.json; else git diff --quiet HEAD^ HEAD -- . ../vercel.json; fi",
   "experimentalServices": {
     "frontend": {
       "entrypoint": "frontend",
