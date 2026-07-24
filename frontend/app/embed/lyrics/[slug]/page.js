@@ -1,25 +1,20 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
-import { getVerseBySlug, ensureDataLoaded } from '../../../../src/lib/contentData';
 import { supabase } from '../../../../src/lib/supabase';
 
 export const revalidate = 604800; // Cache on CDN for fast iframe load times
 
 async function fetchVerse(slug) {
-  await ensureDataLoaded();
   const decodedSlug = decodeURIComponent(slug);
-  let verse = getVerseBySlug(decodedSlug);
-  if (!verse) {
-    try {
-      const { data } = await supabase
-        .from('content')
-        .select('id, title, sanskrit_text, hindi_text, english_translation, author, category, slug, audio_url')
-        .or(`slug.eq.${decodedSlug},id.eq.${decodedSlug}`)
-        .maybeSingle();
-      if (data) verse = data;
-    } catch (e) {}
-  }
-  return verse;
+  try {
+    const { data } = await supabase
+      .from('content')
+      .select('id, title, sanskrit_text, hindi_text, english_translation, author, category, slug, audio_url')
+      .or(`slug.eq.${decodedSlug},id.eq.${decodedSlug}`)
+      .maybeSingle();
+    if (data) return data;
+  } catch (e) {}
+  return null;
 }
 
 export async function generateMetadata({ params }) {

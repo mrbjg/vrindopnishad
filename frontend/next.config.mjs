@@ -22,10 +22,10 @@ const nextConfig = {
     '@firebase/logger'
   ],
   experimental: {
-    outputFileTracingIncludes: {
+    outputFileTracingExcludes: {
       '/**/*': [
-        'data/saints_formatted.json',
-        'public/data/relations_backup.json'
+        'public/data/**',
+        'data/*.json'
       ]
     }
   },
