@@ -233,7 +233,16 @@ export async function GET(request, { params }) {
   </url>`).join('\n');
 
   if (urlItems.length === 0) {
-    return new Response('Not Found', { status: 404 });
+    const emptyXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+</urlset>`.trim();
+    return new Response(emptyXml, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/xml; charset=utf-8',
+        'Cache-Control': 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800'
+      },
+    });
   }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

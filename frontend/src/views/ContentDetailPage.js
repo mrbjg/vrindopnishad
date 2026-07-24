@@ -32,6 +32,7 @@ import AudioPlayButton from '../components/ui/AudioPlayButton';
 import { Helmet } from 'react-helmet-async';
 import StotraDetailPage from './StotraDetailPage';
 import { transliterate } from '../utils/transliterate';
+import ShareButtons from '../components/seo/ShareButtons';
 import { extractRelations, parseAuthorField, getNormalizedSaintSlug, getNormalizedBookSlug, getNormalizedBookName, slugify } from '../utils/relations';
 
 const getInitials = (name) => {
@@ -1323,6 +1324,16 @@ const ContentDetailPage = ({ initialContent, initialRelatedSaint, initialRelated
             </div>
           </div>
         </article>
+
+        {/* Share, Cite & Embed Action Bar */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 my-8 flex justify-center">
+          <ShareButtons
+            title={content.cleanTitle || content.title}
+            slug={content.slug}
+            author={content.author}
+            url={`https://path.vrindopnishad.in/lyrics/${content.slug}`}
+          />
+        </div>
 
 
         {/* Knowledge Connections & Recommendations System */}

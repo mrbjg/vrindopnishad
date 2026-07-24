@@ -101,6 +101,8 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.clarity.ms" />
+        <link rel="author" href="/humans.txt" />
+        <link rel="security" href="/.well-known/security.txt" />
         <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM Metadata Summary" />
         <link rel="alternate" type="text/plain" href="/llms-full.txt" title="Full LLM Knowledge Specification" />
         <link rel="alternate" type="application/json" href="/.well-known/mcp.json" title="Model Context Protocol Manifest" />

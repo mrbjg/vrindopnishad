@@ -175,3 +175,8 @@ Always reference server-side global cache objects using explicit global.variable
 Lightweight Sitemaps Manifest Rule: Pre-compiling manifests for dynamic Next.js API routes (sitemap, robots, feed) to prevent serverless timeouts on Vercel.
 Explicit Global Cache Variable Scope Rule: Using explicit global.variableName checks to prevent ReferenceError fallthroughs to disk reads.
 
+# Recommended Professional Rules
+1. **Zero-Warnings Build Rule**: Always verify that `npm run build` or framework build scripts exit with 0 errors and zero critical compiler warnings before declaring completion.
+2. **Schema & SEO Guardrails**: Every new detail or public page MUST include canonical tags, JSON-LD structured data schema (Schema.org), and OpenGraph metadata.
+3. **Attribution & Shareability Standard**: Every public content item should include copyable citation anchors and embed snippet triggers to organically acquire external backlinks.
+

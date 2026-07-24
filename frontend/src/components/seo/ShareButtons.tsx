@@ -1,16 +1,26 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import CitationAndEmbedModal from './CitationAndEmbedModal';
 
 interface ShareButtonsProps {
   url?: string;
   title?: string;
+  slug?: string;
+  author?: string;
   className?: string;
 }
 
-export default function ShareButtons({ url, title = 'Check this out on Vrindopnishad', className = '' }: ShareButtonsProps) {
+export default function ShareButtons({
+  url,
+  title = 'Check this out on Vrindopnishad',
+  slug,
+  author,
+  className = ''
+}: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
   const [canShare, setCanShare] = useState(false);
+  const [isEmbedModalOpen, setIsEmbedModalOpen] = useState(false);
   const shareUrl = typeof window !== 'undefined' ? (url || window.location.href) : '';
 
   useEffect(() => {
@@ -121,21 +131,28 @@ export default function ShareButtons({ url, title = 'Check this out on Vrindopni
         </span>
       </a>
 
-      {/* Native Web Share Button (if supported) */}
-      {canShare && (
-        <button
-          onClick={handleShare}
-          className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] hover:bg-amber-500/10 hover:border-amber-500/30 text-white/70 hover:text-amber-400 transition-all duration-300 relative group"
-          title="Share via Device Options"
-          aria-label="Share page via system menu"
-        >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-          </svg>
-          <span className="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 bg-black text-[10px] text-white/90 px-2 py-1 rounded border border-white/10 transition-all duration-200 pointer-events-none whitespace-nowrap">
-            Device Share
-          </span>
-        </button>
+      {/* Cite & Embed Button (Backlink & Attribution Generator) */}
+      <button
+        onClick={() => setIsEmbedModalOpen(true)}
+        className="px-3 py-1 rounded-full border border-amber-500/30 flex items-center gap-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-medium transition-all duration-300 relative group"
+        title="Cite or Embed this Verse"
+        aria-label="Cite or Embed this Verse"
+      >
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+        </svg>
+        <span>Cite / Embed</span>
+      </button>
+
+      {/* Render Citation and Embed Modal */}
+      {slug && (
+        <CitationAndEmbedModal
+          isOpen={isEmbedModalOpen}
+          onClose={() => setIsEmbedModalOpen(false)}
+          title={title}
+          slug={slug}
+          author={author}
+        />
       )}
     </div>
   );

@@ -10,7 +10,7 @@ export interface FAQItem {
   answer: string;
 }
 
-// 1. Site-wide Organization Schema
+// 1. Site-wide Organization Schema (E-E-A-T Enhanced)
 export const generateOrganizationSchema = () => ({
   "@context": "https://schema.org",
   "@type": "Organization",
@@ -20,7 +20,26 @@ export const generateOrganizationSchema = () => ({
   "logo": {
     "@type": "ImageObject",
     "url": `${SITE_URL}/official-logo-dark.svg`,
-    "caption": ORG_NAME
+    "caption": ORG_NAME,
+    "width": "512",
+    "height": "512"
+  },
+  "description": "A non-commercial digital sanctuary preserving authentic Braj Rasik Vani, Grantha literature, and Vedic shlokas of Vrindavan.",
+  "publishingPrinciples": `${SITE_URL}/about`,
+  "knowsAbout": [
+    "Vrindavan Devotional Literature",
+    "Braj Rasik Saints",
+    "Radhavallabh Sampraday",
+    "Haridasi Sampraday",
+    "Nimbarka Sampraday",
+    "Gaudiya Vaishnavism",
+    "Padavali & Sanskrit Shlokas"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "Editorial & Research Inquiry",
+    "url": `${SITE_URL}/about`,
+    "availableLanguage": ["English", "Hindi"]
   },
   "sameAs": [
     "https://facebook.com/vrindopnishad",
@@ -35,10 +54,14 @@ export const generateWebSiteSchema = () => ({
   "@type": "WebSite",
   "@id": `${SITE_URL}/#website`,
   "name": ORG_NAME,
+  "alternateName": ["VrindaVaani", "Vrindopnishad Sanctuary"],
   "url": SITE_URL,
+  "publisher": {
+    "@id": `${SITE_URL}/#organization`
+  },
   "potentialAction": {
     "@type": "SearchAction",
-    "target": `${SITE_URL}/search?q={search_term_string}`,
+    "target": `${SITE_URL}/lyrics?q={search_term_string}`,
     "query-input": "required name=search_term_string"
   }
 });

@@ -1,0 +1,13 @@
+/* TEAM */
+  Publisher & Maintainer: Vrindopnishad Sanctuary Team
+  Site: https://path.vrindopnishad.in
+  Language: English & Hindi (Devanagari)
+  Location: Vrindavan, India
+
+/* THANKS */
+  Rasik Saints of Vrindavan, Rasik Sahitya Samiti, Traditional Scholars & Devotional Contributors.
+
+/* SITE */
+  Last update: 2026/07/23
+  Standards: HTML5, CSS3, ES2024, JSON-LD (Schema.org), Next.js App Router
+  Components: React, Tailwind CSS, Lucide Icons, Modern Web APIs

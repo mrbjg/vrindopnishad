@@ -1,0 +1,8 @@
+# Security Policy for Vrindopnishad / Sant-Vaani
+Contact: mailto:vrinda.connect.us@gmail.com
+Contact: https://path.vrindopnishad.in/about
+Expires: 2027-12-31T23:59:59.000Z
+Preferred-Languages: en, hi
+Canonical: https://path.vrindopnishad.in/.well-known/security.txt
+Policy: https://path.vrindopnishad.in/about
+Hiring: https://path.vrindopnishad.in/about
