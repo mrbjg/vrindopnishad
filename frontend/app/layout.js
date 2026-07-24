@@ -2,7 +2,6 @@ import React, { Suspense } from 'react';
 import '../src/index.css';
 import '../src/App.css';
 import { ClientProviders } from '../src/contexts/ClientProviders';
-import { Analytics } from '@vercel/analytics/react';
 import { Laila, Poppins, Inter, Noto_Serif_Devanagari } from 'next/font/google';
 import Script from 'next/script';
 
@@ -163,7 +162,6 @@ export default function RootLayout({ children }) {
             {children}
           </Suspense>
         </ClientProviders>
-        <Analytics />
       </body>
     </html>
   );
