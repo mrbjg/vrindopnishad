@@ -45,6 +45,7 @@ const CACHE_EXPIRY = 30 * 60 * 1000;
 let memoryCachedItems = null;
 let memoryLastUpdated = '1970-01-01T00:00:00.000Z';
 let memoryCategoryCache = {};
+let inMemoryRelationsCache = null;
 let lastSyncTime = 0;
 
 if (typeof window !== 'undefined') {
@@ -454,12 +455,14 @@ const fetchCategoryFullBackup = async (category) => {
 const fetchRelationsBackup = async () => {
   try {
     const res = await fetch('/data/relations_backup.json');
-    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-    return await res.json();
-  } catch (e) {
-    console.warn("Failed to fetch relations backup:", e);
-    return { sants: [], books: [], ragas: [], biographies: [] };
-  }
+    if (res.ok) return await res.json();
+  } catch (e) {}
+  try {
+    const summaryRes = await fetch('/data/relations_summary.json');
+    if (summaryRes.ok) return await summaryRes.json();
+  } catch (err) {}
+  console.warn("Failed to fetch relations backup or summary.");
+  return { sants: [], books: [], ragas: [], biographies: [] };
 };
 const isTruncatedText = (str) => {
   if (!str) return true;
