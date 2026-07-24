@@ -21,13 +21,11 @@ const nextConfig = {
     '@firebase/util',
     '@firebase/logger'
   ],
-  experimental: {
-    outputFileTracingIncludes: {
-      '/**/*': [
-        'data/saints_formatted.json',
-        'public/data/relations_backup.json'
-      ]
-    }
+  outputFileTracingIncludes: {
+    '/**/*': [
+      'data/saints_formatted.json',
+      'public/data/relations_backup.json'
+    ]
   },
   eslint: {
     ignoreDuringBuilds: true,
