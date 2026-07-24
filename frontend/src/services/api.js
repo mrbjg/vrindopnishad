@@ -636,7 +636,18 @@ export const apiService = {
       console.warn(`[Shard-Fetch] Book shard fetch failed for ${slug}:`, e);
     }
     const relations = await apiService.getRelations();
-    return (relations.books || []).find(b => b.slug === slug) || null;
+    const foundBook = (relations.books || []).find(b => b.slug === slug) || null;
+    if (foundBook && (!foundBook.verses || foundBook.verses.length === 0)) {
+      const allItems = apiService.getMemoryCachedItems() || [];
+      if (allItems.length > 0) {
+        foundBook.verses = allItems.filter(item => {
+          const itemBook = (item.grantha || item.book || item.scripture_name || item.author || '').toLowerCase();
+          const bName = (foundBook.name || foundBook.slug || '').toLowerCase();
+          return itemBook && bName && (itemBook.includes(bName) || bName.includes(itemBook));
+        });
+      }
+    }
+    return foundBook;
   },
 
   getSaintBySlug: async (slug) => {

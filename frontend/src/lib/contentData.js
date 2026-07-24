@@ -1254,7 +1254,22 @@ export function getGranthaBySlug(slug) {
         decodedSkeleton.startsWith(itemSkeleton) ||
         (decodedSkeleton.length > 5 && (itemSkeleton.includes(decodedSkeleton) || decodedSkeleton.includes(itemSkeleton)));
     });
-    if (matched) return matched;
+    if (matched) {
+      if (!matched.verses || matched.verses.length === 0) {
+        const { verses } = loadRawData(false);
+        const bSlug = (matched.slug || '').toLowerCase();
+        const bName = (matched.name || '').toLowerCase();
+        matched.verses = verses.filter(v => {
+          const parsed = parseAuthorField(v.author || '');
+          const bField = (parsed.bookName || v.grantha || v.book || '').toLowerCase();
+          if (bField && bName && (bField.includes(bName) || bName.includes(bField))) return true;
+          const slugMatch = getNormalizedBookSlug(v.author || v.title || v.category);
+          if (slugMatch === bSlug) return true;
+          return false;
+        });
+      }
+      return matched;
+    }
   }
 
   return null;
