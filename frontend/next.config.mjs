@@ -7,6 +7,7 @@ const __dirname = path.dirname(__filename);
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  compress: true,
   optimizeFonts: true,
   swcMinify: true,
   staticPageGenerationTimeout: 1000,
