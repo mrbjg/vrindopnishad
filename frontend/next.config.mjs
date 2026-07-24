@@ -24,8 +24,16 @@ const nextConfig = {
   ],
   experimental: {
     outputFileTracingExcludes: {
+      '*': [
+        'public/data/**',
+        'public/data/*.json',
+        'data/**',
+        'data/*.json'
+      ],
       '/**/*': [
         'public/data/**',
+        'public/data/*.json',
+        'data/**',
         'data/*.json'
       ]
     }

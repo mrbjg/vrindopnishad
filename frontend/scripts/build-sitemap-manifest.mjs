@@ -131,9 +131,11 @@ export function generateSitemapManifest() {
   let granthas = [];
   let ragas = [];
 
-  // Load from relations_backup.json to get all 784 saints, 448 granthas, and 147 ragas
-  if (fs.existsSync(relationsPath)) {
-    const rel = JSON.parse(fs.readFileSync(relationsPath, 'utf8'));
+  const summaryPath = path.join(dataDir, 'relations_summary.json');
+  const relPath = fs.existsSync(relationsPath) ? relationsPath : (fs.existsSync(summaryPath) ? summaryPath : null);
+
+  if (relPath) {
+    const rel = JSON.parse(fs.readFileSync(relPath, 'utf8'));
     if (rel.sants && Array.isArray(rel.sants)) {
       rel.sants.forEach(s => {
         if (s.slug && !saintsSet.has(s.slug)) {
