@@ -2,7 +2,7 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import { supabase } from '../../../../src/lib/supabase';
 
-export const revalidate = 604800; // Cache on CDN for fast iframe load times
+export const revalidate = false; // Cache on CDN for fast iframe load times
 
 async function fetchVerse(slug) {
   const decodedSlug = decodeURIComponent(slug);

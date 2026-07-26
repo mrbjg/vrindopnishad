@@ -43,4 +43,4 @@ export default function HindiSaintsListRoute() {
     </Layout>
   );
 }
-export const revalidate = 604800;
+export const revalidate = false;

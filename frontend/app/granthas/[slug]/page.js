@@ -5,7 +5,7 @@ import { getGranthaBySlug, getAllGranthas, getVerseBySlug, ensureDataLoaded } fr
 import { notFound, permanentRedirect } from 'next/navigation';
 import { Link } from '../../../src/lib/router-compat';
 
-export const revalidate = 604800; // 7 days Edge CDN cache
+export const revalidate = false; // Serve statically with 0 ISR Writes on Vercel
 
 import { supabase } from '../../../src/lib/supabase';
 
@@ -18,6 +18,16 @@ async function fetchGranthaFromSupabaseBySlug(slug) {
   try {
     const decodedSlug = decodeURIComponent(slug).toLowerCase();
     
+    // 1. Try reading local book shard or backup file
+    try {
+      const shardPath = path.join(process.cwd(), 'public/data/books', `${decodedSlug}.json`);
+      if (fs.existsSync(shardPath)) {
+        const shardData = JSON.parse(fs.readFileSync(shardPath, 'utf8'));
+        if (shardData) return shardData;
+      }
+    } catch (e) { }
+
+    // 2. Query Supabase as last resort with safe exception handling
     const { data: verses, error } = await supabase
       .from('content')
       .select('*')
@@ -78,7 +88,7 @@ async function fetchGranthaFromSupabaseBySlug(slug) {
       imageUrl: null
     };
   } catch (err) {
-    console.error('Failed to fetch grantha from Supabase:', err);
+    console.warn('Supabase fetch failed or quota exceeded:', err?.message || err);
     return null;
   }
 }

@@ -5,7 +5,7 @@ import { getRagaBySlug, getAllRagas, ensureDataLoaded } from '../../../../src/li
 import { notFound, permanentRedirect } from 'next/navigation';
 import { Link } from '../../../../src/lib/router-compat';
 
-export const revalidate = 604800; // 7 days Edge CDN cache
+export const revalidate = false; // 7 days Edge CDN cache
 
 import { supabase } from '../../../../src/lib/supabase';
 

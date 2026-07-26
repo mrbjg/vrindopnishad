@@ -5,7 +5,7 @@ import { getSaintBySlug, getAllSaints, ensureDataLoaded } from '../../../src/lib
 import { notFound, permanentRedirect } from 'next/navigation';
 import { Link } from '../../../src/lib/router-compat';
 
-export const revalidate = 604800; // 7 days Edge CDN cache
+export const revalidate = false; // Serve statically with 0 ISR Writes on Vercel
 
 import { supabase } from '../../../src/lib/supabase';
 import { getSaintMetadata } from '../../../src/utils/saintMetadata';
@@ -30,36 +30,52 @@ async function fetchSaintFromSupabaseBySlug(slug) {
     const keywords = getCoreKeywords(decodedSlug);
     const primaryKeyword = keywords[0] || decodedSlug;
 
-    // 1. Query Supabase by slug, author, or title
-    let { data: verses, error } = await supabase
-      .from('content')
-      .select('*')
-      .or(`slug.ilike.%${primaryKeyword}%,author.ilike.%${primaryKeyword}%,title.ilike.%${primaryKeyword}%`);
+    // 1. Check local saint shard FIRST
+    try {
+      const shardPath = path.join(process.cwd(), 'public/data/saints', `${decodedSlug}.json`);
+      if (fs.existsSync(shardPath)) {
+        const shardData = JSON.parse(fs.readFileSync(shardPath, 'utf8'));
+        if (shardData) return shardData;
+      }
+    } catch (e) { }
 
-    // 2. If Supabase returns no results or fails, search local relations_backup.json & content_backup.json
-    if (!verses || verses.length === 0) {
-      try {
-        const relPath = path.join(process.cwd(), 'public/data/relations_backup.json');
-        if (fs.existsSync(relPath)) {
-          const relData = JSON.parse(fs.readFileSync(relPath, 'utf8'));
-          const sants = relData.sants || [];
-          const matchedSant = sants.find(s => {
-            const sSlug = (s.slug || s.name || '').toLowerCase();
-            return keywords.some(kw => sSlug.includes(kw));
-          });
-          if (matchedSant) {
-            return {
-              name: matchedSant.name,
-              hinglishName: matchedSant.name,
-              slug: matchedSant.slug || decodedSlug,
-              verses: matchedSant.verses || [],
-              books: [],
-              biography: { text: matchedSant.text || "Vaishnava saint of the Braj tradition." },
-              imageUrl: null
-            };
-          }
+    // 2. Search local relations_backup.json & content_backup.json
+    try {
+      const relPath = path.join(process.cwd(), 'public/data/relations_backup.json');
+      if (fs.existsSync(relPath)) {
+        const relData = JSON.parse(fs.readFileSync(relPath, 'utf8'));
+        const sants = relData.sants || [];
+        const matchedSant = sants.find(s => {
+          const sSlug = (s.slug || s.name || '').toLowerCase();
+          return keywords.some(kw => sSlug.includes(kw));
+        });
+        if (matchedSant) {
+          return {
+            name: matchedSant.name,
+            hinglishName: matchedSant.name,
+            slug: matchedSant.slug || decodedSlug,
+            verses: matchedSant.verses || [],
+            books: [],
+            biography: { text: matchedSant.text || "Vaishnava saint of the Braj tradition." },
+            imageUrl: null
+          };
         }
-      } catch (e) { }
+      }
+    } catch (e) { }
+
+    // 3. Query Supabase as last resort with safe exception handling
+    let verses = null;
+    try {
+      const { data, error } = await supabase
+        .from('content')
+        .select('*')
+        .or(`slug.ilike.%${primaryKeyword}%,author.ilike.%${primaryKeyword}%,title.ilike.%${primaryKeyword}%`);
+      if (!error && data) verses = data;
+    } catch (sbErr) {
+      console.warn('Supabase query failed or quota reached:', sbErr?.message || sbErr);
+    }
+
+    if (!verses || verses.length === 0) {
 
       try {
         const backupPath = path.join(process.cwd(), 'public/data/content_backup.json');

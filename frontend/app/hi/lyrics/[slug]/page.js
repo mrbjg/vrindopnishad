@@ -21,7 +21,7 @@ import RelatedContent, { RelatedItem } from '../../../../src/components/seo/Rela
 import ReadingTime from '../../../../src/components/seo/ReadingTime';
 import LastUpdated from '../../../../src/components/seo/LastUpdated';
 import AuthorCard from '../../../../src/components/seo/AuthorCard';
-export const revalidate = 604800; // 7 days edge CDN cache to eliminate serverless CPU duration spikes
+export const revalidate = false; // Serve statically with 0 ISR Writes on Vercel
 
 import { supabase } from '../../../../src/lib/supabase';
 

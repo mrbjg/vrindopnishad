@@ -2,7 +2,7 @@ import React from 'react';
 import CategoryPage from '../../../src/views/CategoryPage';
 import Layout from '../../../src/components/Layout';
 
-export const revalidate = 604800; // 7 days Edge CDN cache
+export const revalidate = false; // 7 days Edge CDN cache
 
 export async function generateMetadata({ params }) {
   const category = params.category;

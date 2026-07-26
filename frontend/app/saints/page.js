@@ -44,4 +44,4 @@ export default function SaintsListRoute() {
     </Layout>
   );
 }
-export const revalidate = 604800;
+export const revalidate = false;

@@ -82,4 +82,4 @@ export default function FestivalsPage() {
     </>
   );
 }
-export const revalidate = 604800;
+export const revalidate = false;

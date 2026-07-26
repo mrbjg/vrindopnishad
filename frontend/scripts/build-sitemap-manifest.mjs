@@ -185,7 +185,148 @@ export function generateSitemapManifest() {
   const sizeKB = (fs.statSync(manifestPath).size / 1024).toFixed(1);
   console.log(`[build-sitemap-manifest] ✅ Saved complete sitemap_manifest.json (${sizeKB} KB)`);
   console.log(`  Verses: ${contentSlugs.length}, Saints: ${saintsList.length}, Granthas: ${granthas.length}, Ragas: ${ragas.length}`);
-  
+
+  // --- Generate Static XML Sitemap Files for Google Search Console ---
+  const publicSitemapsDir = path.join(__dirname, '../public/sitemaps');
+  if (!fs.existsSync(publicSitemapsDir)) {
+    fs.mkdirSync(publicSitemapsDir, { recursive: true });
+  }
+
+  function escapeXml(str) {
+    if (!str) return '';
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;');
+  }
+
+  function safeEncodeSlug(rawSlug) {
+    if (!rawSlug) return '';
+    try {
+      return encodeURIComponent(decodeURIComponent(rawSlug));
+    } catch (e) {
+      return encodeURIComponent(rawSlug);
+    }
+  }
+
+  const base = 'https://path.vrindopnishad.in';
+  const today = new Date().toISOString().split('T')[0];
+
+  function buildUrlSet(items) {
+    const urls = items.map(item => `  <url>
+    <loc>${escapeXml(item.loc)}</loc>
+    <lastmod>${escapeXml(item.lastmod || today)}</lastmod>
+    <changefreq>${escapeXml(item.changefreq || 'weekly')}</changefreq>
+    <priority>${escapeXml(item.priority || '0.8')}</priority>
+  </url>`).join('\n');
+
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}
+</urlset>`.trim();
+  }
+
+  // 1. Pages sitemap
+  const pagesItems = [
+    { loc: `${base}`, priority: '1.0', changefreq: 'daily', lastmod: today },
+    { loc: `${base}/hi`, priority: '1.0', changefreq: 'daily', lastmod: today },
+    { loc: `${base}/lyrics`, priority: '0.9', changefreq: 'daily', lastmod: today },
+    { loc: `${base}/hi/lyrics`, priority: '0.9', changefreq: 'daily', lastmod: today },
+    { loc: `${base}/saints`, priority: '0.9', changefreq: 'daily', lastmod: today },
+    { loc: `${base}/hi/saints`, priority: '0.9', changefreq: 'daily', lastmod: today },
+    { loc: `${base}/granthas`, priority: '0.9', changefreq: 'daily', lastmod: today },
+    { loc: `${base}/hi/granthas`, priority: '0.9', changefreq: 'daily', lastmod: today },
+    { loc: `${base}/ragas`, priority: '0.8', changefreq: 'daily', lastmod: today },
+    { loc: `${base}/hi/ragas`, priority: '0.8', changefreq: 'daily', lastmod: today },
+    { loc: `${base}/knowledge-base`, priority: '0.8', changefreq: 'weekly', lastmod: today },
+    { loc: `${base}/hi/knowledge-base`, priority: '0.8', changefreq: 'weekly', lastmod: today }
+  ];
+  fs.writeFileSync(path.join(publicSitemapsDir, 'pages.xml'), buildUrlSet(pagesItems), 'utf8');
+
+  // 2. Saints sitemap
+  const saintItems = [];
+  saintsList.forEach(s => {
+    const slug = safeEncodeSlug(Array.isArray(s) ? s[0] : s.slug);
+    const date = Array.isArray(s) ? s[1] : s.lastmod;
+    if (!slug) return;
+    saintItems.push({ loc: `${base}/saints/${slug}`, priority: '0.9', lastmod: date });
+    saintItems.push({ loc: `${base}/hi/saints/${slug}`, priority: '0.9', lastmod: date });
+  });
+  fs.writeFileSync(path.join(publicSitemapsDir, 'saints.xml'), buildUrlSet(saintItems), 'utf8');
+
+  // 3. Granthas sitemap
+  const granthaItems = [];
+  granthas.forEach(b => {
+    const slug = safeEncodeSlug(Array.isArray(b) ? b[0] : b.slug);
+    const date = Array.isArray(b) ? b[1] : b.lastmod;
+    if (!slug) return;
+    granthaItems.push({ loc: `${base}/granthas/${slug}`, priority: '0.8', lastmod: date });
+    granthaItems.push({ loc: `${base}/hi/granthas/${slug}`, priority: '0.8', lastmod: date });
+  });
+  fs.writeFileSync(path.join(publicSitemapsDir, 'granthas.xml'), buildUrlSet(granthaItems), 'utf8');
+
+  // 4. Ragas sitemap
+  const ragaItems = [];
+  ragas.forEach(r => {
+    const slug = safeEncodeSlug(Array.isArray(r) ? r[0] : r.slug);
+    const date = Array.isArray(r) ? r[1] : r.lastmod;
+    if (!slug) return;
+    ragaItems.push({ loc: `${base}/ragas/${slug}`, priority: '0.8', lastmod: date });
+    ragaItems.push({ loc: `${base}/hi/ragas/${slug}`, priority: '0.8', lastmod: date });
+  });
+  fs.writeFileSync(path.join(publicSitemapsDir, 'ragas.xml'), buildUrlSet(ragaItems), 'utf8');
+
+  // 5. Content sitemaps (chunked)
+  const CHUNK_SIZE = 3500;
+  const totalChunks = Math.max(1, Math.ceil(contentSlugs.length / CHUNK_SIZE));
+  const sitemapListForIndex = [];
+
+  sitemapListForIndex.push(`${base}/sitemaps/pages.xml`);
+
+  for (let c = 0; c < totalChunks; c++) {
+    const chunkSlugs = contentSlugs.slice(c * CHUNK_SIZE, (c + 1) * CHUNK_SIZE);
+    const cItems = [];
+    chunkSlugs.forEach(v => {
+      const slug = safeEncodeSlug(Array.isArray(v) ? v[0] : v.slug);
+      const date = Array.isArray(v) ? v[1] : v.lastmod;
+      if (!slug) return;
+      cItems.push({ loc: `${base}/lyrics/${slug}`, priority: '0.8', lastmod: date });
+      cItems.push({ loc: `${base}/hi/lyrics/${slug}`, priority: '0.8', lastmod: date });
+    });
+    const fileName = `content-${c + 1}.xml`;
+    const xmlContent = buildUrlSet(cItems);
+    fs.writeFileSync(path.join(publicSitemapsDir, fileName), xmlContent, 'utf8');
+    sitemapListForIndex.push(`${base}/sitemaps/${fileName}`);
+
+    // Create legacy content.xml alias for content-1.xml so GSC's old /sitemaps/content.xml entry succeeds 100%
+    if (c === 0) {
+      fs.writeFileSync(path.join(publicSitemapsDir, 'content.xml'), xmlContent, 'utf8');
+      sitemapListForIndex.push(`${base}/sitemaps/content.xml`);
+    }
+  }
+
+  sitemapListForIndex.push(`${base}/sitemaps/saints.xml`);
+  sitemapListForIndex.push(`${base}/sitemaps/granthas.xml`);
+  sitemapListForIndex.push(`${base}/sitemaps/ragas.xml`);
+
+  // 6. Master sitemap.xml index file
+  const indexSitemaps = sitemapListForIndex.map(url => `  <sitemap>
+    <loc>${escapeXml(url)}</loc>
+    <lastmod>${today}</lastmod>
+  </sitemap>`).join('\n');
+
+  const masterSitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${indexSitemaps}
+</sitemapindex>`.trim();
+
+  const publicSitemapXmlPath = path.join(__dirname, '../public/sitemap.xml');
+  fs.writeFileSync(publicSitemapXmlPath, masterSitemapXml, 'utf8');
+
+  console.log(`[build-sitemap-manifest] ✅ Successfully generated static XML sitemaps in public/sitemaps/ & public/sitemap.xml!`);
+
   return manifest;
 }
 

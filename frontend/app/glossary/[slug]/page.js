@@ -4,7 +4,7 @@ import Layout from '../../../src/components/Layout';
 import { getGlossaryTermBySlug, getGlossaryTerms } from '../../../src/lib/contentData';
 import { notFound, permanentRedirect } from 'next/navigation';
 
-export const revalidate = 604800; // 7 days Edge CDN cache
+export const revalidate = false; // 7 days Edge CDN cache
 
 
 

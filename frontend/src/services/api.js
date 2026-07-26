@@ -812,14 +812,19 @@ export const apiService = {
 
             let updates = [];
             if (DB_PROVIDER === 'supabase') {
-              console.log(`[Supabase-Sync] Fetching updates since: ${currentLastUpdated}...`);
-              const { data: rawUpdates, error } = await supabase
-                .from('content')
-                .select('*')
-                .gt('updated_at', currentLastUpdated);
+              try {
+                console.log(`[Supabase-Sync] Fetching updates since: ${currentLastUpdated}...`);
+                const { data: rawUpdates, error } = await supabase
+                  .from('content')
+                  .select('*')
+                  .gt('updated_at', currentLastUpdated);
 
-              if (error) throw error;
-              updates = (rawUpdates || []).map(mapToAppModel).filter(Boolean);
+                if (!error && rawUpdates) {
+                  updates = rawUpdates.map(mapToAppModel).filter(Boolean);
+                }
+              } catch (sbSyncErr) {
+                console.warn('[Supabase-Sync] Sync skipped due to error or quota limits:', sbSyncErr?.message || sbSyncErr);
+              }
             } else {
               let hasUpdates = true;
               try {

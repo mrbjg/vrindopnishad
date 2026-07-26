@@ -20,4 +20,4 @@ export default function HindiKnowledgeBaseRoute() {
     </Layout>
   );
 }
-export const revalidate = 604800;
+export const revalidate = false;

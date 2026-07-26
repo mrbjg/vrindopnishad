@@ -10,7 +10,7 @@ import FAQ from '../../../src/components/seo/FAQ';
 import ShareButtons from '../../../src/components/seo/ShareButtons';
 import RelatedContent, { RelatedItem } from '../../../src/components/seo/RelatedContent';
 
-export const revalidate = 604800; // 7 days Edge CDN cache
+export const revalidate = false; // 7 days Edge CDN cache
 
 
 
